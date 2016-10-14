@@ -11,7 +11,7 @@ MainForm::MainForm(BusinessLayer::OrmasBL ormasBL)
 	CreateConnections();
 }
 
-QWidget* MainForm::isWindowExist(QList <QMdiSubWindow *> mList, QString formName)
+QWidget* MainForm::IsWindowExist(QList <QMdiSubWindow *> mList, QString formName)
 {
 	for (auto subWindow : mList)
 	{
@@ -51,7 +51,7 @@ void MainForm::ShowUsers()
 {
 	QString message = tr("Loading...");
 	statusBar()->showMessage(message);
-	QWidget* checkedWidget = isWindowExist(mdiArea->subWindowList(), QString("userForm"));
+	QWidget* checkedWidget = IsWindowExist(mdiArea->subWindowList(), QString("userForm"));
 	if (checkedWidget == nullptr)
 	{
 		DataForm *dForm = new DataForm(this);
@@ -85,7 +85,7 @@ void MainForm::ShowProductsType()
 {
 	QString message = tr("Loading...");
 	statusBar()->showMessage(message);
-	QWidget* checkedWidget = isWindowExist(mdiArea->subWindowList(), QString("productTypeForm"));
+	QWidget* checkedWidget = IsWindowExist(mdiArea->subWindowList(), QString("productTypeForm"));
 	if (checkedWidget == nullptr)
 	{
 		DataForm *dForm = new DataForm(this);
@@ -116,7 +116,7 @@ void MainForm::ShowProducts()
 {
 	QString message = tr("Loading...");
 	statusBar()->showMessage(message);
-	QWidget* checkedWidget = isWindowExist(mdiArea->subWindowList(), QString("productForm"));
+	QWidget* checkedWidget = IsWindowExist(mdiArea->subWindowList(), QString("productForm"));
 	if (checkedWidget == nullptr)
 	{
 		DataForm *dForm = new DataForm(this);
@@ -147,7 +147,7 @@ void MainForm::ShowOrders()
 {
 	QString message = tr("Loading...");
 	statusBar()->showMessage(message);
-	QWidget* checkedWidget = isWindowExist(mdiArea->subWindowList(), QString("orderForm"));
+	QWidget* checkedWidget = IsWindowExist(mdiArea->subWindowList(), QString("orderForm"));
 	if (checkedWidget == nullptr)
 	{
 		DataForm *dForm = new DataForm(this);
@@ -178,7 +178,7 @@ void MainForm::ShowProductsList()
 {
 	QString message = tr("Loading...");
 	statusBar()->showMessage(message);
-	QWidget* checkedWidget = isWindowExist(mdiArea->subWindowList(), QString("productListForm"));
+	QWidget* checkedWidget = IsWindowExist(mdiArea->subWindowList(), QString("productListForm"));
 	if (checkedWidget == nullptr)
 	{
 		DataForm *dForm = new DataForm(this);
@@ -212,7 +212,7 @@ void MainForm::ShowReturns()
 {
 	QString message = tr("Loading...");
 	statusBar()->showMessage(message);
-	QWidget* checkedWidget = isWindowExist(mdiArea->subWindowList(), QString("returnForm"));
+	QWidget* checkedWidget = IsWindowExist(mdiArea->subWindowList(), QString("returnForm"));
 	if (checkedWidget == nullptr)
 	{
 		DataForm *dForm = new DataForm(this);
@@ -246,7 +246,7 @@ void MainForm::ShowCompanies()
 {
 	QString message = tr("Loading...");
 	statusBar()->showMessage(message);
-	QWidget* checkedWidget = isWindowExist(mdiArea->subWindowList(), QString("companyForm"));
+	QWidget* checkedWidget = IsWindowExist(mdiArea->subWindowList(), QString("companyForm"));
 	if (checkedWidget == nullptr)
 	{
 		DataForm *dForm = new DataForm(this);
@@ -277,7 +277,7 @@ void MainForm::ShowCurrencies()
 {
 	QString message = tr("Loading...");
 	statusBar()->showMessage(message);
-	QWidget* checkedWidget = isWindowExist(mdiArea->subWindowList(), QString("currencyForm"));
+	QWidget* checkedWidget = IsWindowExist(mdiArea->subWindowList(), QString("currencyForm"));
 	if (checkedWidget == nullptr)
 	{
 		DataForm *dForm = new DataForm(this);
@@ -308,7 +308,7 @@ void MainForm::ShowMeasures()
 {
 	QString message = tr("Loading...");
 	statusBar()->showMessage(message);
-	QWidget* checkedWidget = isWindowExist(mdiArea->subWindowList(), QString("measureForm"));
+	QWidget* checkedWidget = IsWindowExist(mdiArea->subWindowList(), QString("measureForm"));
 	if (checkedWidget == nullptr)
 	{
 		DataForm *dForm = new DataForm(this);
@@ -339,7 +339,7 @@ void MainForm::ShowRegions()
 {
 	QString message = tr("Loading...");
 	statusBar()->showMessage(message);
-	QWidget* checkedWidget = isWindowExist(mdiArea->subWindowList(), QString("regionForm"));
+	QWidget* checkedWidget = IsWindowExist(mdiArea->subWindowList(), QString("regionForm"));
 	if (checkedWidget == nullptr)
 	{
 		DataForm *dForm = new DataForm(this);
@@ -370,7 +370,7 @@ void MainForm::ShowRoles()
 {
 	QString message = tr("Loading...");
 	statusBar()->showMessage(message);
-	QWidget* checkedWidget = isWindowExist(mdiArea->subWindowList(), QString("roleForm"));
+	QWidget* checkedWidget = IsWindowExist(mdiArea->subWindowList(), QString("roleForm"));
 	if (checkedWidget == nullptr)
 	{
 		DataForm *dForm = new DataForm(this);
@@ -401,7 +401,7 @@ void MainForm::ShowStatus()
 {
 	QString message = tr("Loading...");
 	statusBar()->showMessage(message);
-	QWidget* checkedWidget = isWindowExist(mdiArea->subWindowList(), QString("statusForm"));
+	QWidget* checkedWidget = IsWindowExist(mdiArea->subWindowList(), QString("statusForm"));
 	if (checkedWidget == nullptr)
 	{
 		DataForm *dForm = new DataForm(this);

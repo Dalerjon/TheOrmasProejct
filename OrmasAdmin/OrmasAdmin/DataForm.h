@@ -20,7 +20,7 @@ public:
 		QStandardItemModel *itemModel = new QStandardItemModel(this);
 		itemModel->setHorizontalHeaderLabels(header);
 		tableView->setModel(itemModel);
-		std::vector<T> dataVector = ((MainForm*)parentWidget())->oBL.getAllDataForClass<T>();
+		std::vector<T> dataVector = ((MainForm*)parentWidget())->oBL.GetAllDataForClass<T>();
 		if (!dataVector.empty())
 		{
 			for (int i = 0; i < dataVector.size();i++)

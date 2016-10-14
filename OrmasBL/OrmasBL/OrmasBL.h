@@ -26,9 +26,9 @@ namespace BusinessLayer
 			return *this;
 		}
 
-		void setDBParams(std::string dbname, std::string username, std::string password, std::string host, int port);
+		void SetDBParams(std::string dbname, std::string username, std::string password, std::string host, int port);
 		template<class T>
-		std::vector<T> getAllDataForClass();
+		std::vector<T> GetAllDataForClass();
 		
 	};
 }

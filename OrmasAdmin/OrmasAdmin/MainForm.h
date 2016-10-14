@@ -12,7 +12,7 @@ class MainForm : public QMainWindow, private Ui::MainWindow
 public:
 	MainForm(BusinessLayer::OrmasBL ormasBL);
 	BusinessLayer::OrmasBL oBL;
-	QWidget* isWindowExist(QList<QMdiSubWindow*> mList, QString formName);
+	QWidget* IsWindowExist(QList<QMdiSubWindow*> mList, QString formName);
 private slots :
 	void ShowUsers();
 	void CreateUser();
