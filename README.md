@@ -1,5 +1,4 @@
 # TheOrmasProejct
-Order Management Solution
 Order Management Solution, briefly "Ormas" is a complex solution for Enterprise, it is a ERP system for managing orders in company.
 Order Management Solution will have the following parts:
 1) Administrative system - it's a C++ projects which will cover all possibilities of "Ormas". Briefly, this is an admin tool, for managing all things.
