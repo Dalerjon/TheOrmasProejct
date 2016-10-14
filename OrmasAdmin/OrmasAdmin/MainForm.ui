@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>800</width>
+    <height>600</height>
+   </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>800</width>
+    <height>600</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>Ormas Admin Panel</string>
+  </property>
+  <property name="locale">
+   <locale language="English" country="UnitedStates"/>
+  </property>
+  <widget class="QWidget" name="centrWidget">
+   <layout class="QGridLayout" name="gridLayout">
+    <property name="leftMargin">
+     <number>0</number>
+    </property>
+    <property name="topMargin">
+     <number>0</number>
+    </property>
+    <property name="rightMargin">
+     <number>0</number>
+    </property>
+    <property name="bottomMargin">
+     <number>0</number>
+    </property>
+    <property name="spacing">
+     <number>0</number>
+    </property>
+    <item row="0" column="0">
+     <widget class="QMdiArea" name="mdiArea"/>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menuBar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>800</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuUsers">
+    <property name="locale">
+     <locale language="English" country="UnitedStates"/>
+    </property>
+    <property name="title">
+     <string>Users</string>
+    </property>
+    <addaction name="actionShowAllUser"/>
+    <addaction name="actionCreateUser"/>
+    <addaction name="actionAccess"/>
+    <addaction name="actionDeleteUser"/>
+   </widget>
+   <widget class="QMenu" name="menuProduct">
+    <property name="title">
+     <string>Products</string>
+    </property>
+    <addaction name="actionProductsType"/>
+    <addaction name="actionProducts"/>
+    <addaction name="actionProductsList"/>
+   </widget>
+   <widget class="QMenu" name="menuOrder">
+    <property name="title">
+     <string>Orders</string>
+    </property>
+    <addaction name="actionShowAllOrders"/>
+    <addaction name="actionCreateOrder"/>
+    <addaction name="actionDeleteOrder"/>
+   </widget>
+   <widget class="QMenu" name="menuReturns">
+    <property name="title">
+     <string>Returns</string>
+    </property>
+    <addaction name="actionShowAllReturns"/>
+    <addaction name="actionCreateReturn"/>
+    <addaction name="actionDeleteReturn"/>
+   </widget>
+   <widget class="QMenu" name="menuReference">
+    <property name="title">
+     <string>Reference</string>
+    </property>
+    <addaction name="actionCompany"/>
+    <addaction name="actionCurrency"/>
+    <addaction name="actionMeasure"/>
+    <addaction name="actionRegion"/>
+    <addaction name="actionRoles"/>
+    <addaction name="actionStatus"/>
+   </widget>
+   <widget class="QMenu" name="menuHelp">
+    <property name="title">
+     <string>Help</string>
+    </property>
+    <addaction name="actionAbout"/>
+   </widget>
+   <addaction name="menuUsers"/>
+   <addaction name="menuProduct"/>
+   <addaction name="menuOrder"/>
+   <addaction name="menuReturns"/>
+   <addaction name="menuReference"/>
+   <addaction name="menuHelp"/>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+  <action name="actionShowAllUser">
+   <property name="text">
+    <string>Show all users</string>
+   </property>
+  </action>
+  <action name="actionCreateUser">
+   <property name="text">
+    <string>Create user</string>
+   </property>
+  </action>
+  <action name="actionAccess">
+   <property name="text">
+    <string>Access</string>
+   </property>
+  </action>
+  <action name="actionDeleteUser">
+   <property name="text">
+    <string>Delete user</string>
+   </property>
+  </action>
+  <action name="actionProductsType">
+   <property name="text">
+    <string>Products type</string>
+   </property>
+  </action>
+  <action name="actionProducts">
+   <property name="text">
+    <string>Products</string>
+   </property>
+  </action>
+  <action name="actionShowAllOrders">
+   <property name="text">
+    <string>Show all orders</string>
+   </property>
+  </action>
+  <action name="actionProductsList">
+   <property name="text">
+    <string>Products list</string>
+   </property>
+  </action>
+  <action name="actionCreateOrder">
+   <property name="text">
+    <string>Create order</string>
+   </property>
+  </action>
+  <action name="actionDeleteOrder">
+   <property name="text">
+    <string>Delete order</string>
+   </property>
+  </action>
+  <action name="actionShowAllReturns">
+   <property name="text">
+    <string>Show all returns</string>
+   </property>
+  </action>
+  <action name="actionCreateReturn">
+   <property name="text">
+    <string>Create return</string>
+   </property>
+  </action>
+  <action name="actionDeleteReturn">
+   <property name="text">
+    <string>Delete return</string>
+   </property>
+  </action>
+  <action name="actionCompany">
+   <property name="text">
+    <string>Company</string>
+   </property>
+  </action>
+  <action name="actionCurrency">
+   <property name="text">
+    <string>Currency</string>
+   </property>
+  </action>
+  <action name="actionMeasure">
+   <property name="text">
+    <string>Measure</string>
+   </property>
+  </action>
+  <action name="actionRegion">
+   <property name="text">
+    <string>Region</string>
+   </property>
+  </action>
+  <action name="actionRoles">
+   <property name="text">
+    <string>Roles</string>
+   </property>
+  </action>
+  <action name="actionStatus">
+   <property name="text">
+    <string>Status</string>
+   </property>
+  </action>
+  <action name="actionAbout">
+   <property name="text">
+    <string>About</string>
+   </property>
+  </action>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

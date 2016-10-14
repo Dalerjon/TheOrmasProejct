@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.40629.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "OrmasDAL", "OrmasDAL\OrmasDAL.vcxproj", "{C05771D8-433D-40A3-BF5C-D46A74B8DE1C}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "OrmasDALTests", "OrmasDALTests\OrmasDALTests.vcxproj", "{252FB759-ACAC-49E1-9E5F-1992306DE536}"
+	ProjectSection(ProjectDependencies) = postProject
+		{C05771D8-433D-40A3-BF5C-D46A74B8DE1C} = {C05771D8-433D-40A3-BF5C-D46A74B8DE1C}
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C05771D8-433D-40A3-BF5C-D46A74B8DE1C}.Debug|Win32.ActiveCfg = Debug|Win32
+		{C05771D8-433D-40A3-BF5C-D46A74B8DE1C}.Debug|Win32.Build.0 = Debug|Win32
+		{C05771D8-433D-40A3-BF5C-D46A74B8DE1C}.Release|Win32.ActiveCfg = Release|Win32
+		{C05771D8-433D-40A3-BF5C-D46A74B8DE1C}.Release|Win32.Build.0 = Release|Win32
+		{252FB759-ACAC-49E1-9E5F-1992306DE536}.Debug|Win32.ActiveCfg = Debug|Win32
+		{252FB759-ACAC-49E1-9E5F-1992306DE536}.Debug|Win32.Build.0 = Debug|Win32
+		{252FB759-ACAC-49E1-9E5F-1992306DE536}.Release|Win32.ActiveCfg = Release|Win32
+		{252FB759-ACAC-49E1-9E5F-1992306DE536}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
