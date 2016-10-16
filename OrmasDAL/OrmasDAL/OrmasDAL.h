@@ -20,14 +20,15 @@ namespace DataLayer{
 		PGconn* GetConnection();
 		void InitFromConfigFile(std::string path);
 		void SetDBParams(std::string dbname, std::string username, std::string password, std::string host, int port);
+		int GetNextID(PGconn *connection);
 
 		//view methods
 		std::vector<companiesCollection> GetCompanies(PGconn *connection, std::string filter = std::string());
 		std::vector<currenciesCollection> GetCurrencies(PGconn *connection, std::string filter = std::string());
 		std::vector<measuresCollection> GetMeasures(PGconn *connection, std::string filter = std::string());
 		std::vector<ordersCollection> GetOrders(PGconn *connection, std::string filter = std::string());
-		std::vector<productListCollection> GetProductList(PGconn *connection, std::string filter = std::string());
-		std::vector<productTypeCollection> GetProductType(PGconn *connection, std::string filter = std::string());
+		std::vector<productListCollection> GetProductLists(PGconn *connection, std::string filter = std::string());
+		std::vector<productTypeCollection> GetProductTypes(PGconn *connection, std::string filter = std::string());
 		std::vector<productsCollection> GetProducts(PGconn *connection, std::string filter = std::string());
 		std::vector<regionsCollection> GetRegions(PGconn *connection, std::string filter = std::string());
 		std::vector<returnsCollection> GetReturns(PGconn *connection, std::string filter = std::string());
@@ -36,43 +37,50 @@ namespace DataLayer{
 		std::vector<usersCollection> GetUsers(PGconn *connection, std::string filter = std::string());
 
 		//create methods
-		bool CreateCompany();
-		bool CreateCurrency();
-		bool CreateMeasure();
-		bool CreateProductList();
-		bool CreateProductType();
-		bool CreateProducts();
-		bool CreateRegion();
-		bool CreateReturns();
-		bool CreateRoles();
-		bool CreateStatus();
-		bool CreateUser();
+		bool CreateCompany(PGconn *connection, int cID, std::string cName, std::string cAddress, std::string cPhone, std::string cComment);
+		bool CreateCurrency(PGconn *connection, int cID, int cCode, std::string cShortName, std::string cName);
+		bool CreateMeasure(PGconn *connection, int mID, std::string mName, std::string mShortName);
+		bool CreateOrder(PGconn *connection, int oID, int uID, std::string oDate, int wID, std::string fName);
+		bool CreateProductList(PGconn *connection, int pListID, int oID, int rID, int pID, int count);
+		bool CreateProductType(PGconn *connection, int pTypeID, std::string pTypeName, std::string pTypeShortName);
+		bool CreateProduct(PGconn *connection, int pID, int cID, std::string pName, float vol, int mID, float price, int pTypeID,
+			std::string dProduce, std::string dEnd);
+		bool CreateRegion(PGconn *connection, int rID, std::string rCode, std::string rName);
+		bool CreateReturn(PGconn *connection, int rID, int uID, std::string rDate, int wID, std::string fName);
+		bool CreateRole(PGconn *connection, int rID, std::string rName, std::string rComment);
+		bool CreateStatus(PGconn *connection, int sID, std::string sCode, std::string sName, std::string sComment);
+		bool CreateUser(PGconn *connection, int uID, std::string uName, std::string uPhone, std::string uAddress, std::string firm, std::string firmNumber,
+			int uRoleID, int uRegionID, std::string uPassword);
 
 		//delete methods
-		bool DeleteCompany();
-		bool DeleteCurrency();
-		bool DeleteMeasure();
-		bool DeleteProductList();
-		bool DeleteProductType();
-		bool DeleteProducts();
-		bool DeleteRegion();
-		bool DeleteReturns();
-		bool DeleteRoles();
-		bool DeleteStatus();
-		bool DeleteUser();
+		bool DeleteCompany(PGconn *connection, int id);
+		bool DeleteCurrency(PGconn *connection, int id);
+		bool DeleteMeasure(PGconn *connection, int id);
+		bool DeleteOrder(PGconn *connection, int id);
+		bool DeleteProductList(PGconn *connection, int id);
+		bool DeleteProductType(PGconn *connection, int id);
+		bool DeleteProduct(PGconn *connection, int id);
+		bool DeleteRegion(PGconn *connection, int id);
+		bool DeleteReturn(PGconn *connection, int id);
+		bool DeleteRole(PGconn *connection, int id);
+		bool DeleteStatus(PGconn *connection, int id);
+		bool DeleteUser(PGconn *connection, int id);
 
 		//update methods
-		bool UpdateCompany();
-		bool UpdateCurrency();
-		bool UpdateMeasure();
-		bool UpdateProductList();
-		bool UpdateProductType();
-		bool UpdateProducts();
-		bool UpdateRegion();
-		bool UpdateReturns();
-		bool UpdateRoles();
-		bool UpdateStatus();
-		bool UpdateUser();
+		bool UpdateCompany(PGconn *connection, int cID, std::string cName, std::string cAddress, std::string cPhone, std::string cComment);
+		bool UpdateCurrency(PGconn *connection, int cID, int cCode, std::string cShortName, std::string cName);
+		bool UpdateMeasure(PGconn *connection, int mID, std::string mName, std::string mShortName);
+		bool UpdateOrder(PGconn *connection, int oID, int uID, std::string oDate, int wID, std::string fName);
+		bool UpdateProductList(PGconn *connection, int pListID, int oID, int rID, int pID, int count);
+		bool UpdateProductType(PGconn *connection, int pTypeID, std::string pTypeName, std::string pTypeShortName);
+		bool UpdateProduct(PGconn *connection, int pID, int cID, std::string pName, float vol, int mID, float price, int pTypeID,
+			std::string dProduce, std::string dEnd);
+		bool UpdateRegion(PGconn *connection, int rID, std::string rCode, std::string rName);
+		bool UpdateReturn(PGconn *connection, int rID, int uID, std::string rDate, int wID, std::string fName);
+		bool UpdateRole(PGconn *connection, int rID, std::string rName, std::string rComment);
+		bool UpdateStatus(PGconn *connection, int sID, std::string sCode, std::string sName, std::string sComment);
+		bool UpdateUser(PGconn *connection, int uID, std::string uName, std::string uPhone, std::string uAddress, std::string firm, std::string firmNumber,
+			int uRoleID, int uRegionID, std::string uPassword);
 
 		//overloaded  operators
 		OrmasDal& operator=(const OrmasDal& od)
