@@ -6,19 +6,18 @@
 namespace BusinessLayer{
 	class Company
 	{
-		int ID;
+		int id = 0;
 		std::string name;
 		std::string address;
 		std::string phone;
 		std::string comment;
 	public:
 		Company(){};
-		Company(int ID, std::string cName, std::string cAddress, std::string cPhone, std::string cComment) :ID(ID),
+		Company(int cID, std::string cName, std::string cAddress, std::string cPhone, std::string cComment) :id(cID),
 			name(cName), address(cAddress), phone(cPhone), comment(cComment){};
 		Company(DataLayer::companiesCollection);
 		~Company(){};
-		int CreateCompany(int ID, std::string cName, std::string cAddress, std::string cPhone, std::string cComment){};
-		
+			
 		//Company class Accessors
 		int GetID();
 		std::string GetName();
@@ -27,6 +26,11 @@ namespace BusinessLayer{
 		std::string GetComment();
 
 		// Please implement Mutators
+		
+		// Create, delete and update company
+		bool CreateCompany(DataLayer::OrmasDal& ormasDal, std::string cName, std::string cAddress, std::string cPhone, std::string cComment);
+		bool DeleteCompany(DataLayer::OrmasDal& ormasDal);
+		bool UpdateCompany(DataLayer::OrmasDal& ormasDal, std::string cName, std::string cAddress, std::string cPhone, std::string cComment);
 	};
 }
 #endif //COMPANYCLASS_H

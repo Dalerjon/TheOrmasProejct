@@ -20,18 +20,18 @@ namespace BusinessLayer{
 	{
 	}
 
-	
-	void OrmasBL::SetDBParams(std::string dbname, std::string username, std::string password, std::string host, int port)
+	bool OrmasBL::ConnectToDB(std::string dbname, std::string username, std::string password, std::string host, int port)
 	{
-		ormasDal.SetDBParams(dbname, username, password, host, port);
+		if (ormasDal.ConnectToDB(dbname, username, password, host, port))
+			return true;
+		return false;
 	}
-
 	
 	template<>
 	std::vector<Company> OrmasBL::GetAllDataForClass<Company>()
 	{
 		std::vector<Company> vecForCompany;
-		std::vector<DataLayer::companiesCollection> dataCollection = ormasDal.GetCompanies(ormasDal.GetConnection());
+		std::vector<DataLayer::companiesCollection> dataCollection = ormasDal.GetCompanies();
 		if (!dataCollection.empty()){
 			for (auto data : dataCollection)
 			{
@@ -45,7 +45,7 @@ namespace BusinessLayer{
 	std::vector<Currency> OrmasBL::GetAllDataForClass<Currency>()
 	{
 		std::vector<Currency> vecForCurrency;
-		std::vector<DataLayer::currenciesCollection> dataCollection = ormasDal.GetCurrencies(ormasDal.GetConnection());
+		std::vector<DataLayer::currenciesCollection> dataCollection = ormasDal.GetCurrencies();
 		if (!dataCollection.empty()){
 			for (auto data : dataCollection)
 			{
@@ -59,7 +59,7 @@ namespace BusinessLayer{
 	std::vector<Measure> OrmasBL::GetAllDataForClass<Measure>()
 	{
 		std::vector<Measure> vecForMeasure;
-		std::vector<DataLayer::measuresCollection> dataCollection = ormasDal.GetMeasures(ormasDal.GetConnection());
+		std::vector<DataLayer::measuresCollection> dataCollection = ormasDal.GetMeasures();
 		if (!dataCollection.empty()){
 			for (auto data : dataCollection)
 			{
@@ -73,7 +73,7 @@ namespace BusinessLayer{
 	std::vector<Order> OrmasBL::GetAllDataForClass<Order>()
 	{
 		std::vector<Order> vecForOrder;
-		std::vector<DataLayer::ordersCollection> dataCollection = ormasDal.GetOrders(ormasDal.GetConnection());
+		std::vector<DataLayer::ordersCollection> dataCollection = ormasDal.GetOrders();
 		if (!dataCollection.empty()){
 			for (auto data : dataCollection)
 			{
@@ -87,7 +87,7 @@ namespace BusinessLayer{
 	std::vector<Product> OrmasBL::GetAllDataForClass<Product>()
 	{
 		std::vector<Product> vecForProduct;
-		std::vector<DataLayer::productsCollection> dataCollection = ormasDal.GetProducts(ormasDal.GetConnection());
+		std::vector<DataLayer::productsCollection> dataCollection = ormasDal.GetProducts();
 		if (!dataCollection.empty()){
 			for (auto data : dataCollection)
 			{
@@ -101,7 +101,7 @@ namespace BusinessLayer{
 	std::vector<ProductList> OrmasBL::GetAllDataForClass<ProductList>()
 	{
 		std::vector<ProductList> vecForProductList;
-		std::vector<DataLayer::productListCollection> dataCollection = ormasDal.GetProductList(ormasDal.GetConnection());
+		std::vector<DataLayer::productListCollection> dataCollection = ormasDal.GetProductLists();
 		if (!dataCollection.empty()){
 			for (auto data : dataCollection)
 			{
@@ -115,7 +115,7 @@ namespace BusinessLayer{
 	std::vector<ProductType> OrmasBL::GetAllDataForClass<ProductType>()
 	{
 		std::vector<ProductType> vecForProductType;
-		std::vector<DataLayer::productTypeCollection> dataCollection = ormasDal.GetProductType(ormasDal.GetConnection());
+		std::vector<DataLayer::productTypeCollection> dataCollection = ormasDal.GetProductTypes();
 		if (!dataCollection.empty()){
 			for (auto data : dataCollection)
 			{
@@ -129,7 +129,7 @@ namespace BusinessLayer{
 	std::vector<Region> OrmasBL::GetAllDataForClass<Region>()
 	{
 		std::vector<Region> vecForRegion;
-		std::vector<DataLayer::regionsCollection> dataCollection = ormasDal.GetRegions(ormasDal.GetConnection());
+		std::vector<DataLayer::regionsCollection> dataCollection = ormasDal.GetRegions();
 		if (!dataCollection.empty()){
 			for (auto data : dataCollection)
 			{
@@ -143,7 +143,7 @@ namespace BusinessLayer{
 	std::vector<Return> OrmasBL::GetAllDataForClass<Return>()
 	{
 		std::vector<Return> vecForReturn;
-		std::vector<DataLayer::returnsCollection> dataCollection = ormasDal.GetReturns(ormasDal.GetConnection());
+		std::vector<DataLayer::returnsCollection> dataCollection = ormasDal.GetReturns();
 		if (!dataCollection.empty()){
 			for (auto data : dataCollection)
 			{
@@ -157,7 +157,7 @@ namespace BusinessLayer{
 	std::vector<Role> OrmasBL::GetAllDataForClass<Role>()
 	{
 		std::vector<Role> vecForRole;
-		std::vector<DataLayer::rolesCollection> dataCollection = ormasDal.GetRoles(ormasDal.GetConnection());
+		std::vector<DataLayer::rolesCollection> dataCollection = ormasDal.GetRoles();
 		if (!dataCollection.empty()){
 			for (auto data : dataCollection)
 			{
@@ -171,7 +171,7 @@ namespace BusinessLayer{
 	std::vector<Status> OrmasBL::GetAllDataForClass<Status>()
 	{
 		std::vector<Status> vecForStatus;
-		std::vector<DataLayer::statusCollection> dataCollection = ormasDal.GetStatus(ormasDal.GetConnection());
+		std::vector<DataLayer::statusCollection> dataCollection = ormasDal.GetStatus();
 		if (!dataCollection.empty()){
 			for (auto data : dataCollection)
 			{
@@ -185,7 +185,7 @@ namespace BusinessLayer{
 	std::vector<User> OrmasBL::GetAllDataForClass<User>()
 	{
 		std::vector<User> vecForUser;
-		std::vector<DataLayer::usersCollection> dataCollection = ormasDal.GetUsers(ormasDal.GetConnection());
+		std::vector<DataLayer::usersCollection> dataCollection = ormasDal.GetUsers();
 		if (!dataCollection.empty()){
 			for (auto data : dataCollection)
 			{

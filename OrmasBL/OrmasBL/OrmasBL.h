@@ -26,7 +26,9 @@ namespace BusinessLayer
 			return *this;
 		}
 
-		void SetDBParams(std::string dbname, std::string username, std::string password, std::string host, int port);
+		//ormasDal, connection to DB 
+		bool ConnectToDB(std::string dbname, std::string username, std::string password, std::string host, int port);
+
 		template<class T>
 		std::vector<T> GetAllDataForClass();
 		
