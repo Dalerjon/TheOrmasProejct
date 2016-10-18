@@ -7,27 +7,31 @@ namespace BusinessLayer
 {
 	class Return
 	{
-		int ID;
+		int id=0;
 		int userID;
-		std::string returnDate;
+		std::string date;
 		int workerID;
 		std::string firmName;
 	public:
-		Return(int rID, int uID, std::string rDate, int wID, std::string fName) :ID(rID), userID(uID),
-			returnDate(rDate), workerID(wID), firmName(fName){};
+		Return(int rID, int uID, std::string rDate, int wID, std::string fName) :id(rID), userID(uID),
+			date(rDate), workerID(wID), firmName(fName){};
 		Return(DataLayer::returnsCollection);
 		Return(){};
 		~Return(){};
-		int CreateReturn(int rID, int uID, std::string rDate, int wID, std::string fName){};
-
+		
 		//Return class Accessors
 		int GetID();
 		int GetUserID();
-		std::string GetReturnDate();
+		std::string GetDate();
 		int GetWorkerID();
 		std::string GetFirmName();
 
 		//Please implement Mutators
+		
+		//Create, delete, update methods
+		bool CreateReturn(DataLayer::OrmasDal& ormasDal, int uID, std::string oDate, int wID, std::string fName);
+		bool DeleteReturn(DataLayer::OrmasDal& ormasDal);
+		bool UpdateReturn(DataLayer::OrmasDal& ormasDal, int uID, std::string oDate, int wID, std::string fName);
 	};
 }
 #endif //RETURNCLASS_H

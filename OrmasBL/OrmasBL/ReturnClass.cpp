@@ -5,16 +5,16 @@ namespace BusinessLayer
 {
 	Return::Return(DataLayer::returnsCollection rCollection)
 	{
-		ID = std::get<0>(rCollection);
+		id = std::get<0>(rCollection);
 		userID = std::get<1>(rCollection);
-		returnDate = std::get<2>(rCollection);
+		date = std::get<2>(rCollection);
 		workerID = std::get<3>(rCollection);
 		firmName = std::get<4>(rCollection);
 	}
 
 	int Return::GetID()
 	{
-		return ID;
+		return id;
 	}
 
 	int Return::GetUserID()
@@ -22,9 +22,9 @@ namespace BusinessLayer
 		return userID;
 	}
 
-	std::string Return::GetReturnDate()
+	std::string Return::GetDate()
 	{
-		return returnDate;
+		return date;
 	}
 
 	int Return::GetWorkerID()
@@ -35,5 +35,67 @@ namespace BusinessLayer
 	std::string Return::GetFirmName()
 	{
 		return firmName;
+	}
+
+	bool Return::CreateReturn(DataLayer::OrmasDal& ormasDal, int uID, std::string oDate, int wID, std::string fName)
+	{
+		id = ormasDal.GenerateID();
+		userID = uID;
+		date = oDate;
+		workerID = wID;
+		firmName = fName;
+		try
+		{
+			if (ormasDal.CreateReturn(id, userID, date, workerID, firmName))
+			{
+				return true;
+			}
+			return false;
+		}
+		catch (...)
+		{
+			return false;
+		}
+	}
+	bool Return::DeleteReturn(DataLayer::OrmasDal& ormasDal)
+	{
+		userID = 0;
+		date.clear();
+		workerID = 0;
+		firmName.clear();
+		try
+		{
+			if (ormasDal.DeleteReturn(id))
+			{
+				id = 0;
+				return true;
+			}
+			return false;
+		}
+		catch (...)
+		{
+			return false;
+		}
+	}
+	bool Return::UpdateReturn(DataLayer::OrmasDal& ormasDal, int uID, std::string oDate, int wID, std::string fName)
+	{
+		if (0 == id)
+			return false;
+		userID = uID;
+		date = oDate;
+		workerID = wID;
+		firmName = fName;
+		try
+		{
+			if (ormasDal.UpdateReturn(id, userID, date, workerID, firmName))
+			{
+				return true;
+			}
+			return false;
+		}
+		catch (...)
+		{
+			return false;
+		}
 	}
 }

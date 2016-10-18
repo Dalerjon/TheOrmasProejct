@@ -7,23 +7,27 @@ namespace BusinessLayer
 {
 	class ProductType
 	{
-		int ID;
+		int id = 0;
 		std::string name;
 		std::string shortName;
 	public:
-		ProductType(int pTypeID, std::string pTypeName, std::string pTypeShortName):ID(pTypeID),
+		ProductType(int pTypeID, std::string pTypeName, std::string pTypeShortName):id(pTypeID),
 			name(pTypeName), shortName(pTypeShortName){};
 		ProductType(DataLayer::productTypeCollection);
 		ProductType(){};
 		~ProductType(){};
-		int CreateProductType(int pTypeID, std::string pTypeName, std::string pTypeShortName){};
-
+		
 		//ProductType class Accessors
 		int GetID();
 		std::string GetName();
 		std::string GetShortName();
 
 		//Please implement Muttators
+		
+		//Create, delete, update methods
+		bool CreateProductType(DataLayer::OrmasDal& ormasDal, std::string pTypeName, std::string pTypeShortName);
+		bool DeleteProductType(DataLayer::OrmasDal& ormasDal);
+		bool UpdatePrdouctType(DataLayer::OrmasDal& ormasDal, std::string pTypeName, std::string pTypeShortName);
 	};
 }
 #endif //PRODUCTTYPECLASS_H

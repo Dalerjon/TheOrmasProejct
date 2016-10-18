@@ -7,17 +7,16 @@ namespace BusinessLayer
 {
 	class Status
 	{
-		int ID;
+		int id=0;
 		std::string code;
 		std::string name;
 		std::string comment;
 	public:
-		Status(int sID, std::string sCode, std::string sName, std::string comment):ID(sID), code(sCode),
+		Status(int sID, std::string sCode, std::string sName, std::string comment):id(sID), code(sCode),
 			name(sName), comment(comment){};
 		Status(DataLayer::statusCollection);
 		Status(){};
 		~Status(){};
-		int CreateStatus(int sID, std::string sCode, std::string sName, std::string comment){};
 
 		//Status class Accessors
 		int GetID();
@@ -26,6 +25,11 @@ namespace BusinessLayer
 		std::string GetComment();
 
 		//Mutators
+		
+		//Create, delete, update methods
+		bool CreateStatus(DataLayer::OrmasDal& ormasDal, std::string sCode, std::string sName, std::string sComment);
+		bool DeleteStatus(DataLayer::OrmasDal& ormasDal);
+		bool UpdateStatus(DataLayer::OrmasDal& ormasDal, std::string sCode, std::string sName, std::string sComment);
 	};
 }
 #endif // STATUSCLASS_H

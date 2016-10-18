@@ -7,22 +7,26 @@ namespace BusinessLayer
 {
 	class Role
 	{
-		int ID;
+		int id=0;
 		std::string name;
 		std::string comment;
 	public:
-		Role(int rID, std::string rName, std::string comment) :ID(rID), name(rName), comment(comment){};
+		Role(int rID, std::string rName, std::string comment) :id(rID), name(rName), comment(comment){};
 		Role(DataLayer::rolesCollection);
 		Role(){};
 		~Role(){};
-		int CreateRole(int rID, std::string rName, std::string comment){};
-
+		
 		//Role class Accessors
 		int GetID();
 		std::string GetName();
 		std::string GetComment();
 
 		//Please implement Mutators
+		
+		//Create, delete, update methods
+		bool CreateRole(DataLayer::OrmasDal& ormasDal, std::string rName, std::string rComment);
+		bool DeleteRole(DataLayer::OrmasDal& ormasDal);
+		bool UpdateRole(DataLayer::OrmasDal& ormasDal, std::string rName, std::string rComment);
 	};
 }
 #endif //ROLECLASS_H

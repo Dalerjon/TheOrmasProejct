@@ -5,7 +5,7 @@ namespace BusinessLayer
 {
 	User::User(DataLayer::usersCollection uCollection)
 	{
-		ID = std::get<0>(uCollection);
+		id = std::get<0>(uCollection);
 		name = std::get<1>(uCollection);
 		phone = std::get<2>(uCollection);
 		address = std::get<3>(uCollection);
@@ -18,7 +18,7 @@ namespace BusinessLayer
 
 	int User::GetID()
 	{
-		return ID;
+		return id;
 	}
 
 	std::string User::GetName()
@@ -59,5 +59,81 @@ namespace BusinessLayer
 	std::string User::GetPassword()
 	{
 		return password;
+	}
+
+	bool User::CreateUser(DataLayer::OrmasDal& ormasDal, std::string uName, std::string uPhone, std::string uAddress,
+		std::string uFirm, std::string uFirmNumber, int uRoleID, int uRegionID, std::string uPassword)
+	{
+		id = ormasDal.GenerateID();
+		name = uName;
+		phone = uPhone;
+		address = uAddress;
+		firm = uFirm;
+		firmNumber = uFirmNumber;
+		roleID = uRoleID;
+		regionID = uRegionID;
+		password = uPassword;
+		try
+		{
+			if (ormasDal.CreateUser(id, name, phone, address, firm, firmNumber, roleID, regionID, password))
+			{
+				return true;
+			}
+			return false;
+		}
+		catch (...)
+		{
+			return false;
+		}
+	}
+	bool User::DeleteUser(DataLayer::OrmasDal& ormasDal)
+	{
+		name.clear();
+		phone.clear();
+		address.clear();
+		firm.clear();
+		firmNumber.clear();
+		roleID = 0;
+		regionID = 0;
+		password.clear();
+		try
+		{
+			if (ormasDal.DeleteUser(id))
+			{
+				id = 0;
+				return true;
+			}
+			return false;
+		}
+		catch (...)
+		{
+			return false;
+		}
+	}
+	bool User::UpdateUser(DataLayer::OrmasDal& ormasDal, std::string uName, std::string uPhone, std::string uAddress,
+		std::string uFirm, std::string uFirmNumber, int uRoleID, int uRegionID, std::string uPassword)
+	{
+		if (0 == id)
+			return false;
+		name = uName;
+		phone = uPhone;
+		address = uAddress;
+		firm = uFirm;
+		firmNumber = uFirmNumber;
+		roleID = uRoleID;
+		regionID = uRegionID;
+		password = uPassword;
+		try
+		{
+			if (ormasDal.UpdateUser(id, name, phone, address, firm, firmNumber, roleID, regionID, password))
+			{
+				return true;
+			}
+			return false;
+		}
+		catch (...)
+		{
+			return false;
+		}
 	}
 }

@@ -7,18 +7,17 @@ namespace BusinessLayer
 {
 	class Currency
 	{
-		int ID;
+		int id = 0;
 		int code;
 		std::string shortName;
 		std::string name;
 	public:
 		Currency(){};
-		Currency(int cID, int cCode, std::string cShortName, std::string cName) :ID(cID), code(cCode),
+		Currency(int cID, int cCode, std::string cShortName, std::string cName) :id(cID), code(cCode),
 			shortName(cShortName), name(cName){};
 		Currency(DataLayer::currenciesCollection);
 		~Currency(){};
-		int CreateCurrency(int cID, int cCode, std::string cShortName, std::string cName){};
-
+		
 		//Currency class Accessors
 		int GetID();
 		int GetCode();
@@ -26,6 +25,11 @@ namespace BusinessLayer
 		std::string GetName();
 
 		//Please implement Mutators
+		
+		// Create, delete and update company
+		bool CreateCurrency(DataLayer::OrmasDal& ormasDal,int cCode, std::string cShortName, std::string cName);
+		bool DeleteCurrency(DataLayer::OrmasDal& ormasDal);
+		bool UpdateCurrency(DataLayer::OrmasDal& ormasDal, int cCode, std::string cShortName, std::string cName);
 	};
 }
 #endif //CURRENCYCLASS_H

@@ -7,19 +7,18 @@ namespace BusinessLayer
 {
 	class Order
 	{
-		int ID;
+		int id=0;
 		int userID;
 		std::string date;
 		int workerID;
 		std::string firmName;
 	public:
-		Order(int oID, int uID, std::string oDate, int wID, std::string fName) :ID(oID),
+		Order(int oID, int uID, std::string oDate, int wID, std::string fName) :id(oID),
 			userID(uID), date(oDate), workerID(wID), firmName(fName){};
 		Order(DataLayer::ordersCollection);
 		Order(){};
 		~Order(){};
-		int CreateOrder(int oID, int uID, std::string oDate, int wID, std::string fName){};
-
+		
 		//Order class Accessors
 		int GetID();
 		int GetUserID();
@@ -28,6 +27,11 @@ namespace BusinessLayer
 		std::string GetFirmName();
 
 		//please implement Mutators
+		
+		//Create, delete, update methods
+		bool CreateOrder(DataLayer::OrmasDal& ormasDal, int uID, std::string oDate, int wID, std::string fName);
+		bool DeleteOrder(DataLayer::OrmasDal& ormasDal);
+		bool UpdateOrder(DataLayer::OrmasDal& ormasDal, int uID, std::string oDate, int wID, std::string fName);
 	};
 }
 #endif //ORDERCLASS_H

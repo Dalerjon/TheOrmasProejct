@@ -7,7 +7,7 @@ namespace BusinessLayer
 {
 	class Product
 	{
-		int ID;
+		int id=0;
 		int companyID;
 		std::string name;
 		float volume;
@@ -18,14 +18,12 @@ namespace BusinessLayer
 		std::string dateEnd;
 	public:
 		Product(int pID, int cID, std::string pName, float vol, int mID, float price, int pTypeID,
-			std::string dProduce, std::string dEnd) :ID(pID), companyID(cID), name(pName), volume(vol), measureID(mID),
+			std::string dProduce, std::string dEnd) :id(pID), companyID(cID), name(pName), volume(vol), measureID(mID),
 			price(price), productTypeID(pTypeID), dateProduce(dProduce), dateEnd(dEnd){};
 		Product(DataLayer::productsCollection);
 		Product(){};
 		~Product(){};
-		int CreateProduct(int pID, int cID, std::string pName, float vol, int mID, float price, int pTypeID,
-			std::string dProduce, std::string dEnd){};
-
+		
 		//Product class Accessors
 		int GetID();
 		int GetCompanyID();
@@ -38,6 +36,13 @@ namespace BusinessLayer
 		std::string GetEndDate();
 
 		//Please implement Mutators
+		
+		//Create, delete, update methods
+		bool CreateProduct(DataLayer::OrmasDal& ormasDal, int cID, std::string pName, float vol, int mID, float price, 
+			int pTypeID,std::string dProduce, std::string dEnd);
+		bool DeleteProduct(DataLayer::OrmasDal& ormasDal);
+		bool UpdateProduct(DataLayer::OrmasDal& ormasDal, int cID, std::string pName, float vol, int mID, float price,
+			int pTypeID, std::string dProduce, std::string dEnd);
 	};
 }
 #endif //PRODUCTCLASS_H
