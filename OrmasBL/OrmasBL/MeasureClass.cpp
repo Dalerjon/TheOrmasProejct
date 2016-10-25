@@ -24,6 +24,19 @@ namespace BusinessLayer{
 		return shortName;
 	}
 
+	void Measure::SetID(int mID)
+	{
+		id = mID;
+	}
+	void Measure::SetName(std::string mName)
+	{
+		name = mName;
+	}
+	void Measure::SetShortName(std::string mShortName)
+	{
+		shortName = mShortName;
+	}
+
 	bool Measure::CreateMeasure(DataLayer::OrmasDal& ormasDal, std::string mName, std::string mShortName)
 	{
 		id = ormasDal.GenerateID();

@@ -23,6 +23,9 @@ namespace BusinessLayer
 		std::string GetShortName();
 
 		//Please implement Muttators
+		void SetID(int);
+		void SetName(std::string);
+		void SetShortName(std::string);
 		
 		//Create, delete, update methods
 		bool CreateProductType(DataLayer::OrmasDal& ormasDal, std::string pTypeName, std::string pTypeShortName);

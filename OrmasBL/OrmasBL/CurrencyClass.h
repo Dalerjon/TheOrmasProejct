@@ -24,7 +24,11 @@ namespace BusinessLayer
 		std::string GetShortName();
 		std::string GetName();
 
-		//Please implement Mutators
+		//Currency class Mutators
+		void SetID(int);
+		void SetCode(int);
+		void SetShortName(std::string);
+		void SetName(std::string);
 		
 		// Create, delete and update company
 		bool CreateCurrency(DataLayer::OrmasDal& ormasDal,int cCode, std::string cShortName, std::string cName);

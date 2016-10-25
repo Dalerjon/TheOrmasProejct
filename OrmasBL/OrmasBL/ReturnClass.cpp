@@ -37,6 +37,27 @@ namespace BusinessLayer
 		return firmName;
 	}
 
+	void Return::SetID(int rID)
+	{
+		id = rID;
+	}
+	void Return::SetUserID(int rUserID)
+	{
+		userID = rUserID;
+	}
+	void Return::SetDate(std::string rDate)
+	{
+		date = rDate;
+	}
+	void Return::SetWorkerID(int rWorkerID)
+	{
+		workerID = rWorkerID;
+	}
+	void Return::SetFirmName(std::string rFirmName)
+	{
+		firmName = rFirmName;
+	}
+
 	bool Return::CreateReturn(DataLayer::OrmasDal& ormasDal, int uID, std::string oDate, int wID, std::string fName)
 	{
 		id = ormasDal.GenerateID();

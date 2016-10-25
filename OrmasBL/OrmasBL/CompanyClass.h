@@ -24,9 +24,14 @@ namespace BusinessLayer{
 		std::string GetAddress();
 		std::string GetPhone();
 		std::string GetComment();
-
-		// Please implement Mutators
 		
+		//Company class Mutators
+		void SetID(int);
+		void SetName(std::string);
+		void SetAddress(std::string);
+		void SetPhone(std::string);
+		void SetComment(std::string);
+
 		// Create, delete and update company
 		bool CreateCompany(DataLayer::OrmasDal& ormasDal, std::string cName, std::string cAddress, std::string cPhone, std::string cComment);
 		bool DeleteCompany(DataLayer::OrmasDal& ormasDal);

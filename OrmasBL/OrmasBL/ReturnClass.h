@@ -27,6 +27,11 @@ namespace BusinessLayer
 		std::string GetFirmName();
 
 		//Please implement Mutators
+		void SetID(int);
+		void SetUserID(int);
+		void SetDate(std::string);
+		void SetWorkerID(int);
+		void SetFirmName(std::string);
 		
 		//Create, delete, update methods
 		bool CreateReturn(DataLayer::OrmasDal& ormasDal, int uID, std::string oDate, int wID, std::string fName);

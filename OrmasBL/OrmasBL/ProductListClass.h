@@ -27,6 +27,11 @@ namespace BusinessLayer
 		int GetCount();
 
 		//Please implement Mutators
+		void SetID(int);
+		void SetOrderID(int);
+		void SetReturnID(int);
+		void SetProductID(int);
+		void SetCount(int);
 		
 		//Create, delete, update methods
 		bool CreateProductList(DataLayer::OrmasDal& ormasDal, int oID, int rID, int pID, int pCount);

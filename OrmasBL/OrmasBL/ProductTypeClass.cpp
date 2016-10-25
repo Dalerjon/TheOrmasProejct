@@ -25,6 +25,19 @@ namespace BusinessLayer
 		return shortName;
 	}
 
+	void ProductType::SetID(int pID)
+	{
+		id = pID;
+	}
+	void ProductType::SetName(std::string pName)
+	{
+		name = pName;
+	}
+	void ProductType::SetShortName(std::string pShortName)
+	{
+		shortName = pShortName;
+	}
+
 	bool ProductType::CreateProductType(DataLayer::OrmasDal& ormasDal, std::string pTypeName, std::string pTypeShortName)
 	{
 		id = ormasDal.GenerateID();

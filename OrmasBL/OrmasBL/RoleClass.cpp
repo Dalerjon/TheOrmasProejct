@@ -25,6 +25,19 @@ namespace BusinessLayer
 		return comment;
 	}
 
+	void Role::SetID(int rID)
+	{
+		id = rID;
+	}
+	void Role::SetName(std::string rName)
+	{
+		name = rName;
+	}
+	void Role::SetComment(std::string rComment)
+	{
+		comment = rComment;
+	}
+
 	bool Role::CreateRole(DataLayer::OrmasDal& ormasDal, std::string rName, std::string rComment)
 	{
 		id = ormasDal.GenerateID();

@@ -4,6 +4,7 @@
 #include "ui_DataForm.h"
 #include "OrmasBL.h"
 #include <QStandardItem>
+#include "AllDlgHeaders.h"
 
 class DataForm : public QWidget, public Ui::DataForm
 {
@@ -31,11 +32,40 @@ public:
 	}
 
 	template<class T>
+	void QtConnect();
+
+	template<class T>
 	QStringList GetTableHeader();
 	
 
 	template<class T>
 	QList<QStandardItem*> GetDataFromClass(T& data);
+
+private slots:
+	void CloseDataForm();
+	void CrtCompanyDlg();
+	void UdpCompanyDlg();
+	void DelCompanyDlg();
+	void CrtCurrencyDlg();
+	void UdpCurrencyDlg();
+	void DelCurrencyDlg();
+	void CrtMeasureDlg();
+	void UdpMeasureDlg();
+	void DelMeasureDlg();
+	void CrtProdTpDlg();
+	void UdpProdTpDlg();
+	void DelProdTpDlg();
+	void CrtRegionDlg();
+	void UdpRegionDlg();
+	void DelRegionDlg();
+	void CrtRoleDlg();
+	void UdpRoleDlg();
+	void DelRoleDlg();
+	void CrtStatusDlg();
+	void UdpStatusDlg();
+	void DelStatusDlg();
+	
+//private:
 	
 };
 #endif //DATAFORM_H

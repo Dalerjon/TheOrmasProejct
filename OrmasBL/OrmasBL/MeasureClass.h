@@ -22,7 +22,10 @@ namespace BusinessLayer
 		std::string GetShortName();
 
 		//please implement Mutators
-		
+		void SetID(int);
+		void SetName(std::string);
+		void SetShortName(std::string);
+
 		//Create, delete and update methods 
 		bool CreateMeasure(DataLayer::OrmasDal& ormasDal, std::string mName, std::string mShortName);
 		bool DeleteMeasure(DataLayer::OrmasDal& ormasDal);

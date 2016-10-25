@@ -37,6 +37,27 @@ namespace BusinessLayer
 		return count;
 	}
 
+	void ProductList::SetID(int pID)
+	{
+		id = pID;
+	}
+	void ProductList::SetOrderID(int pOrderID)
+	{
+		orderID = pOrderID;
+	}
+	void ProductList::SetReturnID(int pReturnID)
+	{
+		returnID = pReturnID;
+	}
+	void ProductList::SetProductID(int pProductID)
+	{
+		productID = pProductID;
+	}
+	void ProductList::SetCount(int pCount)
+	{
+		count = pCount;
+	}
+
 	bool ProductList::CreateProductList(DataLayer::OrmasDal& ormasDal, int oID, int rID, int pID, int pCount)
 	{
 		id = ormasDal.GenerateID();

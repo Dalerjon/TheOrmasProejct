@@ -31,6 +31,23 @@ namespace BusinessLayer
 		return name;
 	}
 
+	void Currency::SetID(int cID)
+	{
+		id = cID;
+	}
+	void Currency::SetCode(int cCode)
+	{
+		code = cCode;
+	}
+	void Currency::SetShortName(std::string cShortName)
+	{
+		shortName = cShortName;
+	}
+	void Currency::SetName(std::string cName)
+	{
+		name = cName;
+	}
+
 	bool Currency::CreateCurrency(DataLayer::OrmasDal& ormasDal, int cCode, std::string cShortName, std::string cName)
 	{
 		id = ormasDal.GenerateID();

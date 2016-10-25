@@ -61,6 +61,43 @@ namespace BusinessLayer
 		return password;
 	}
 
+	void User::SetID(int uID)
+	{
+		id = uID;
+	}
+	void User::SetName(std::string uName)
+	{
+		name = uName;
+	}
+	void User::SetPhone(std::string uPhone)
+	{
+		phone = uPhone;
+	}
+	void User::SetAddress(std::string uAddress)
+	{
+		address = uAddress;
+	}
+	void User::SetFirm(std::string uFirm)
+	{
+		firm = uFirm;
+	}
+	void User::SetFirmNumber(std::string uFirmNumber)
+	{
+		firmNumber = uFirmNumber;
+	}
+	void User::SetRoleID(int uRoleID)
+	{
+		roleID = uRoleID;
+	}
+	void User::SetRegionID(int uRegionID)
+	{
+		regionID = uRegionID;
+	}
+	void User::SetPassword(std::string uPassword)
+	{
+		password = uPassword;
+	}
+
 	bool User::CreateUser(DataLayer::OrmasDal& ormasDal, std::string uName, std::string uPhone, std::string uAddress,
 		std::string uFirm, std::string uFirmNumber, int uRoleID, int uRegionID, std::string uPassword)
 	{

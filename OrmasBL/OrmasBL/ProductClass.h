@@ -36,7 +36,16 @@ namespace BusinessLayer
 		std::string GetEndDate();
 
 		//Please implement Mutators
-		
+		void GetID(int);
+		void GetCompanyID(int);
+		void GetName(std::string);
+		void GetVolume(float);
+		void GetMeasureID(int);
+		void GetPrice(float);
+		void GetProductTypeID(int);
+		void GetProduceDate(std::string);
+		void GetEndDate(std::string);
+
 		//Create, delete, update methods
 		bool CreateProduct(DataLayer::OrmasDal& ormasDal, int cID, std::string pName, float vol, int mID, float price, 
 			int pTypeID,std::string dProduce, std::string dEnd);

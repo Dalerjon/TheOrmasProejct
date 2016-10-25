@@ -91,6 +91,7 @@ void MainForm::ShowProductsType()
 		DataForm *dForm = new DataForm(this);
 		dForm->setWindowTitle(tr("Product types"));
 		dForm->FillTable<BusinessLayer::ProductType>();
+		dForm->QtConnect<BusinessLayer::ProductType>();
 		dForm->setObjectName("productTypeForm");
 		QMdiSubWindow *prodTypeWindow = new QMdiSubWindow;
 		prodTypeWindow->setWidget(dForm);
@@ -253,6 +254,7 @@ void MainForm::ShowCompanies()
 		dForm->setWindowTitle(tr("Companies"));
 		dForm->FillTable<BusinessLayer::Company>();
 		dForm->setObjectName("companyForm");
+		dForm->QtConnect<BusinessLayer::Company>();
 		QMdiSubWindow *companyWindow = new QMdiSubWindow;
 		companyWindow->setWidget(dForm);
 		companyWindow->setAttribute(Qt::WA_DeleteOnClose);
@@ -284,6 +286,7 @@ void MainForm::ShowCurrencies()
 		dForm->setWindowTitle(tr("Currencies"));
 		dForm->FillTable<BusinessLayer::Currency>();
 		dForm->setObjectName("currencyForm");
+		dForm->QtConnect<BusinessLayer::Currency>();
 		QMdiSubWindow *currencyWindow = new QMdiSubWindow;
 		currencyWindow->setWidget(dForm);
 		currencyWindow->setAttribute(Qt::WA_DeleteOnClose);
@@ -315,6 +318,7 @@ void MainForm::ShowMeasures()
 		dForm->setWindowTitle(tr("Measures"));
 		dForm->FillTable<BusinessLayer::Measure>();
 		dForm->setObjectName("measureForm");
+		dForm->QtConnect<BusinessLayer::Measure>();
 		QMdiSubWindow *measureWindow = new QMdiSubWindow;
 		measureWindow->setWidget(dForm);
 		measureWindow->setAttribute(Qt::WA_DeleteOnClose);
@@ -346,6 +350,7 @@ void MainForm::ShowRegions()
 		dForm->setWindowTitle(tr("Regions"));
 		dForm->FillTable<BusinessLayer::Region>();
 		dForm->setObjectName("regionForm");
+		dForm->QtConnect<BusinessLayer::Region>();
 		QMdiSubWindow *regionWindow = new QMdiSubWindow;
 		regionWindow->setWidget(dForm);
 		regionWindow->setAttribute(Qt::WA_DeleteOnClose);
@@ -377,6 +382,7 @@ void MainForm::ShowRoles()
 		dForm->setWindowTitle(tr("Roles"));
 		dForm->FillTable<BusinessLayer::Role>();
 		dForm->setObjectName("roleForm");
+		dForm->QtConnect<BusinessLayer::Role>();
 		QMdiSubWindow *roleWindow = new QMdiSubWindow;
 		roleWindow->setWidget(dForm);
 		roleWindow->setAttribute(Qt::WA_DeleteOnClose);
@@ -408,6 +414,7 @@ void MainForm::ShowStatus()
 		dForm->setWindowTitle(tr("Statuses"));
 		dForm->FillTable<BusinessLayer::Status>();
 		dForm->setObjectName("statusForm");
+		dForm->QtConnect<BusinessLayer::Status>();
 		QMdiSubWindow *statusWindow = new QMdiSubWindow;
 		statusWindow->setWidget(dForm);
 		statusWindow->setAttribute(Qt::WA_DeleteOnClose);

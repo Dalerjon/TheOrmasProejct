@@ -61,6 +61,43 @@ namespace BusinessLayer
 		return dateEnd;
 	}
 
+	void Product::GetID(int pID)
+	{
+		id = pID;
+	}
+	void Product::GetCompanyID(int pCompanyID)
+	{
+		companyID = pCompanyID;
+	}
+	void Product::GetName(std::string pName)
+	{
+		name = pName;
+	}
+	void Product::GetVolume(float pVolume)
+	{
+		volume = pVolume;
+	}
+	void Product::GetMeasureID(int pMeasureID)
+	{
+		measureID = pMeasureID;
+	}
+	void Product::GetPrice(float pPrice)
+	{
+		price = pPrice;
+	}
+	void Product::GetProductTypeID(int pProdTypeID)
+	{
+		productTypeID = pProdTypeID;
+	}
+	void Product::GetProduceDate(std::string pProduceDate)
+	{
+		dateProduce = pProduceDate;
+	}
+	void Product::GetEndDate(std::string pEndDate)
+	{
+		dateEnd = pEndDate;
+	}
+
 	bool Product::CreateProduct(DataLayer::OrmasDal& ormasDal, int cID, std::string pName, float vol, int mID, float pri,
 		int pTypeID, std::string dProduce, std::string dEnd)
 	{

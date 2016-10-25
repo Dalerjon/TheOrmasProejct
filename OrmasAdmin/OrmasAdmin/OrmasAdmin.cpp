@@ -15,7 +15,7 @@ int main(int argc, char* argv[])
 {
 	QApplication app(argc, argv);
 	BusinessLayer::OrmasBL oBL;
-	oBL.SetDBParams("OrmasDB", "postgres", "postgres", "127.0.0.1", 5432);
+	oBL.ConnectToDB("OrmasDB", "postgres", "postgres", "127.0.0.1", 5432);
 	MainForm startForm(oBL);
 	startForm.show();
 	return app.exec();

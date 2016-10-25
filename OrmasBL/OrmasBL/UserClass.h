@@ -36,6 +36,15 @@ namespace BusinessLayer
 		std::string GetPassword();
 
 		//Mutators
+		void SetID(int);
+		void SetName(std::string);
+		void SetPhone(std::string);
+		void SetAddress(std::string);
+		void SetFirm(std::string);
+		void SetFirmNumber(std::string);
+		void SetRoleID(int);
+		void SetRegionID(int);
+		void SetPassword(std::string);
 		
 		//Create, delete, update methods
 		bool CreateUser(DataLayer::OrmasDal& ormasDal, std::string uName, std::string uPhone, std::string uAddress, 

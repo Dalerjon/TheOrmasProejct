@@ -25,6 +25,10 @@ namespace BusinessLayer
 		std::string GetComment();
 
 		//Mutators
+		void SetID(int);
+		void SetCode(std::string);
+		void SetName(std::string);
+		void SetComment(std::string);
 		
 		//Create, delete, update methods
 		bool CreateStatus(DataLayer::OrmasDal& ormasDal, std::string sCode, std::string sName, std::string sComment);

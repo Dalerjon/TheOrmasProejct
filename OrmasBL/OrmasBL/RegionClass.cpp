@@ -25,6 +25,19 @@ namespace BusinessLayer
 		return name;
 	}
 
+	void Region::SetID(int rID)
+	{
+		id = rID;
+	}
+	void Region::SetCode(std::string rCode)
+	{
+		code = rCode;
+	}
+	void Region::SetName(std::string rName)
+	{
+		name = rName;
+	}
+
 	bool Region::CreateRegion(DataLayer::OrmasDal& ormasDal, std::string rCode, std::string rName)
 	{
 		id = ormasDal.GenerateID();

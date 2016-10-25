@@ -22,6 +22,9 @@ namespace BusinessLayer
 		std::string GetName();
 
 		//Please implement Mutators
+		void SetID(int);
+		void SetCode(std::string);
+		void SetName(std::string);
 		
 		//Create, delete, update methods
 		bool CreateRegion(DataLayer::OrmasDal& ormasDal, std::string rCode, std::string rName);

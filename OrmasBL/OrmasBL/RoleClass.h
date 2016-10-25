@@ -22,6 +22,9 @@ namespace BusinessLayer
 		std::string GetComment();
 
 		//Please implement Mutators
+		void SetID(int);
+		void SetName(std::string);
+		void SetComment(std::string);
 		
 		//Create, delete, update methods
 		bool CreateRole(DataLayer::OrmasDal& ormasDal, std::string rName, std::string rComment);

@@ -37,6 +37,27 @@ namespace BusinessLayer{
 		return comment;
 	}
 
+	void Company::SetID(int cID)
+	{
+		id = cID;
+	}
+	void Company::SetName(std::string cName)
+	{
+		name = cName;
+	}
+	void Company::SetAddress(std::string cPhone)
+	{
+		phone = cPhone;
+	}
+	void Company::SetPhone(std::string cAddress)
+	{
+		address = cAddress;
+	}
+	void Company::SetComment(std::string cComment)
+	{
+		comment = cComment;
+	}
+
 	bool Company::CreateCompany(DataLayer::OrmasDal& ormasDal, std::string cName, std::string cAddress, std::string cPhone, std::string cComment)
 	{
 		id = ormasDal.GenerateID();

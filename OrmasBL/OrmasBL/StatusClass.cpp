@@ -31,6 +31,24 @@ namespace BusinessLayer
 		return comment;
 	}
 
+	void Status::SetID(int sID)
+	{
+		id = sID;
+	}
+	void Status::SetCode(std::string sCode)
+	{
+		code = sCode;
+	}
+	void Status::SetName(std::string sName)
+	{
+		name = sName;
+	}
+	void Status::SetComment(std::string sComment)
+	{
+		comment = sComment;
+	}
+
+
 	bool Status::CreateStatus(DataLayer::OrmasDal& ormasDal, std::string sCode, std::string sName, std::string sComment)
 	{
 		id = ormasDal.GenerateID();
