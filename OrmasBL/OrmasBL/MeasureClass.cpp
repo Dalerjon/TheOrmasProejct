@@ -37,59 +37,73 @@ namespace BusinessLayer{
 		shortName = mShortName;
 	}
 
-	bool Measure::CreateMeasure(DataLayer::OrmasDal& ormasDal, std::string mName, std::string mShortName)
+	bool Measure::CreateMeasure(DataLayer::OrmasDal& ormasDal, std::string mName, std::string mShortName, std::string& errorMessage)
 	{
 		id = ormasDal.GenerateID();
 		name = mName;
 		shortName = mShortName;
-		try
+		if (0 != id && ormasDal.CreateMeasure(id, name, shortName, errorMessage))
 		{
-			if (ormasDal.CreateMeasure(id, name,shortName))
-			{
-				return true;
-			}
-			return false;
+			return true;
 		}
-		catch (...)
+		if (errorMessage.empty())
 		{
-			return false;
+			errorMessage = "Warning! ID is 0, or some unexpected error. Please contact with provider.";
 		}
+		return false;
 	}
-	bool Measure::DeleteMeasure(DataLayer::OrmasDal& ormasDal)
+	bool Measure::CreateMeasure(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
+	{
+		id = ormasDal.GenerateID();
+		if (0 != id && ormasDal.CreateMeasure(id, name, shortName, errorMessage))
+		{
+			return true;
+		}
+		if (errorMessage.empty())
+		{
+			errorMessage = "Warning! ID is 0, or some unexpected error. Please contact with provider.";
+		}
+		return false;
+	}
+	bool Measure::DeleteMeasure(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
 		name.clear();
 		shortName.clear();
-		try
+		if (ormasDal.DeleteMeasure(id, errorMessage))
 		{
-			if (ormasDal.DeleteMeasure(id))
-			{
-				id = 0;
-				return true;
-			}
-			return false;
+			id = 0;
+			return true;
 		}
-		catch (...)
+		if (errorMessage.empty())
 		{
-			return false;
+			errorMessage = "Unexpected error. Please contact with application provider.";
 		}
+		return false;
 	}
-	bool Measure::UpdateMeasure(DataLayer::OrmasDal& ormasDal, std::string mName, std::string mShortName)
+	bool Measure::UpdateMeasure(DataLayer::OrmasDal& ormasDal, std::string mName, std::string mShortName, std::string& errorMessage)
 	{
-		if (0 == id)
-			return false;
 		name = mName;
 		shortName = mShortName;
-		try
+		if (0 != id && ormasDal.UpdateMeasure(id, name, shortName, errorMessage))
 		{
-			if (ormasDal.UpdateMeasure(id, name, shortName))
-			{
-				return true;
-			}
-			return false;
+			return true;
 		}
-		catch (...)
+		if (errorMessage.empty())
 		{
-			return false;
+			errorMessage = "Warning! ID is 0, or some unexpected error. Please contact with provider.";
 		}
+		return false;
+	}
+	bool Measure::UpdateMeasure(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
+	{
+		if (0 != id && ormasDal.UpdateMeasure(id, name, shortName, errorMessage))
+		{
+			return true;
+		}
+		if (errorMessage.empty())
+		{
+			errorMessage = "Warning! ID is 0, or some unexpected error. Please contact with provider.";
+		}
+		return false;
 	}
 }

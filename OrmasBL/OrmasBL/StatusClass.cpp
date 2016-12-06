@@ -49,62 +49,78 @@ namespace BusinessLayer
 	}
 
 
-	bool Status::CreateStatus(DataLayer::OrmasDal& ormasDal, std::string sCode, std::string sName, std::string sComment)
+	bool Status::CreateStatus(DataLayer::OrmasDal& ormasDal, std::string sCode, std::string sName, std::string sComment, 
+		std::string& errorMessage)
 	{
 		id = ormasDal.GenerateID();
 		code = sCode;
 		name = sName;
 		comment = sComment;
-		try
+		if (0 != id && ormasDal.CreateStatus(id, code, name, comment, errorMessage))
 		{
-			if (ormasDal.CreateStatus(id, code, name, comment))
-			{
-				return true;
-			}
-			return false;
+			return true;
 		}
-		catch (...)
+		if (errorMessage.empty())
 		{
-			return false;
+			errorMessage = "Warning! ID is 0, or some unexpected error. Please contact with provider.";
 		}
+		return false;
 	}
-	bool Status::DeleteStatus(DataLayer::OrmasDal& ormasDal)
+	bool Status::CreateStatus(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
+	{
+		id = ormasDal.GenerateID();
+		if (0 != id && ormasDal.CreateStatus(id, code, name, comment, errorMessage))
+		{
+			return true;
+		}
+		if (errorMessage.empty())
+		{
+			errorMessage = "Warning! ID is 0, or some unexpected error. Please contact with provider.";
+		}
+		return false;
+	}
+	bool Status::DeleteStatus(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
 		code.clear();
 		name.clear();
 		comment.clear();
-		try
+		if (ormasDal.DeleteStatus(id, errorMessage))
 		{
-			if (ormasDal.DeleteStatus(id))
-			{
-				id = 0;
-				return true;
-			}
-			return false;
+			id = 0;
+			return true;
 		}
-		catch (...)
+		if (errorMessage.empty())
 		{
-			return false;
+			errorMessage = "Unexpected error. Please contact with application provider.";
 		}
+		return false;
 	}
-	bool Status::UpdateStatus(DataLayer::OrmasDal& ormasDal, std::string sCode, std::string sName, std::string sComment)
+	bool Status::UpdateStatus(DataLayer::OrmasDal& ormasDal, std::string sCode, std::string sName, std::string sComment, 
+		std::string& errorMessage)
 	{
-		if (0 == id)
-			return false;
 		code = sCode;
 		name = sName;
 		comment = sComment;
-		try
+		if (0 != id && ormasDal.UpdateStatus(id, code, name, comment, errorMessage))
 		{
-			if (ormasDal.UpdateStatus(id,code, name, comment))
-			{
-				return true;
-			}
-			return false;
+			return true;
 		}
-		catch (...)
+		if (errorMessage.empty())
 		{
-			return false;
+			errorMessage = "Warning! ID is 0, or some unexpected error. Please contact with provider.";
 		}
+		return false;
+	}
+	bool Status::UpdateStatus(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
+	{
+		if (0 != id && ormasDal.UpdateStatus(id, code, name, comment, errorMessage))
+		{
+			return true;
+		}
+		if (errorMessage.empty())
+		{
+			errorMessage = "Warning! ID is 0, or some unexpected error. Please contact with provider.";
+		}
+		return false;
 	}
 }

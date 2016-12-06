@@ -19,8 +19,8 @@
 
 QT_BEGIN_MOC_NAMESPACE
 struct qt_meta_stringdata_DataForm_t {
-    QByteArrayData data[24];
-    char stringdata[303];
+    QByteArrayData data[25];
+    char stringdata[324];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
@@ -44,15 +44,16 @@ QT_MOC_LITERAL(11, 139, 13), // "DelMeasureDlg"
 QT_MOC_LITERAL(12, 153, 12), // "CrtProdTpDlg"
 QT_MOC_LITERAL(13, 166, 12), // "UdpProdTpDlg"
 QT_MOC_LITERAL(14, 179, 12), // "DelProdTpDlg"
-QT_MOC_LITERAL(15, 192, 12), // "CrtRegionDlg"
-QT_MOC_LITERAL(16, 205, 12), // "UdpRegionDlg"
-QT_MOC_LITERAL(17, 218, 12), // "DelRegionDlg"
-QT_MOC_LITERAL(18, 231, 10), // "CrtRoleDlg"
-QT_MOC_LITERAL(19, 242, 10), // "UdpRoleDlg"
-QT_MOC_LITERAL(20, 253, 10), // "DelRoleDlg"
-QT_MOC_LITERAL(21, 264, 12), // "CrtStatusDlg"
-QT_MOC_LITERAL(22, 277, 12), // "UdpStatusDlg"
-QT_MOC_LITERAL(23, 290, 12) // "DelStatusDlg"
+QT_MOC_LITERAL(15, 192, 14), // "CrtLocationDlg"
+QT_MOC_LITERAL(16, 207, 14), // "UdpLocationDlg"
+QT_MOC_LITERAL(17, 222, 14), // "DelLocationDlg"
+QT_MOC_LITERAL(18, 237, 10), // "CrtRoleDlg"
+QT_MOC_LITERAL(19, 248, 10), // "UdpRoleDlg"
+QT_MOC_LITERAL(20, 259, 10), // "DelRoleDlg"
+QT_MOC_LITERAL(21, 270, 12), // "CrtStatusDlg"
+QT_MOC_LITERAL(22, 283, 12), // "UdpStatusDlg"
+QT_MOC_LITERAL(23, 296, 12), // "DelStatusDlg"
+QT_MOC_LITERAL(24, 309, 14) // "ChangeBtnState"
 
     },
     "DataForm\0CloseDataForm\0\0CrtCompanyDlg\0"
@@ -60,9 +61,10 @@ QT_MOC_LITERAL(23, 290, 12) // "DelStatusDlg"
     "UdpCurrencyDlg\0DelCurrencyDlg\0"
     "CrtMeasureDlg\0UdpMeasureDlg\0DelMeasureDlg\0"
     "CrtProdTpDlg\0UdpProdTpDlg\0DelProdTpDlg\0"
-    "CrtRegionDlg\0UdpRegionDlg\0DelRegionDlg\0"
-    "CrtRoleDlg\0UdpRoleDlg\0DelRoleDlg\0"
-    "CrtStatusDlg\0UdpStatusDlg\0DelStatusDlg"
+    "CrtLocationDlg\0UdpLocationDlg\0"
+    "DelLocationDlg\0CrtRoleDlg\0UdpRoleDlg\0"
+    "DelRoleDlg\0CrtStatusDlg\0UdpStatusDlg\0"
+    "DelStatusDlg\0ChangeBtnState"
 };
 #undef QT_MOC_LITERAL
 
@@ -72,7 +74,7 @@ static const uint qt_meta_data_DataForm[] = {
        7,       // revision
        0,       // classname
        0,    0, // classinfo
-      22,   14, // methods
+      23,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -80,30 +82,32 @@ static const uint qt_meta_data_DataForm[] = {
        0,       // signalCount
 
  // slots: name, argc, parameters, tag, flags
-       1,    0,  124,    2, 0x08 /* Private */,
-       3,    0,  125,    2, 0x08 /* Private */,
-       4,    0,  126,    2, 0x08 /* Private */,
-       5,    0,  127,    2, 0x08 /* Private */,
-       6,    0,  128,    2, 0x08 /* Private */,
-       7,    0,  129,    2, 0x08 /* Private */,
-       8,    0,  130,    2, 0x08 /* Private */,
-       9,    0,  131,    2, 0x08 /* Private */,
-      10,    0,  132,    2, 0x08 /* Private */,
-      11,    0,  133,    2, 0x08 /* Private */,
-      12,    0,  134,    2, 0x08 /* Private */,
-      13,    0,  135,    2, 0x08 /* Private */,
-      14,    0,  136,    2, 0x08 /* Private */,
-      15,    0,  137,    2, 0x08 /* Private */,
-      16,    0,  138,    2, 0x08 /* Private */,
-      17,    0,  139,    2, 0x08 /* Private */,
-      18,    0,  140,    2, 0x08 /* Private */,
-      19,    0,  141,    2, 0x08 /* Private */,
-      20,    0,  142,    2, 0x08 /* Private */,
-      21,    0,  143,    2, 0x08 /* Private */,
-      22,    0,  144,    2, 0x08 /* Private */,
-      23,    0,  145,    2, 0x08 /* Private */,
+       1,    0,  129,    2, 0x08 /* Private */,
+       3,    0,  130,    2, 0x08 /* Private */,
+       4,    0,  131,    2, 0x08 /* Private */,
+       5,    0,  132,    2, 0x08 /* Private */,
+       6,    0,  133,    2, 0x08 /* Private */,
+       7,    0,  134,    2, 0x08 /* Private */,
+       8,    0,  135,    2, 0x08 /* Private */,
+       9,    0,  136,    2, 0x08 /* Private */,
+      10,    0,  137,    2, 0x08 /* Private */,
+      11,    0,  138,    2, 0x08 /* Private */,
+      12,    0,  139,    2, 0x08 /* Private */,
+      13,    0,  140,    2, 0x08 /* Private */,
+      14,    0,  141,    2, 0x08 /* Private */,
+      15,    0,  142,    2, 0x08 /* Private */,
+      16,    0,  143,    2, 0x08 /* Private */,
+      17,    0,  144,    2, 0x08 /* Private */,
+      18,    0,  145,    2, 0x08 /* Private */,
+      19,    0,  146,    2, 0x08 /* Private */,
+      20,    0,  147,    2, 0x08 /* Private */,
+      21,    0,  148,    2, 0x08 /* Private */,
+      22,    0,  149,    2, 0x08 /* Private */,
+      23,    0,  150,    2, 0x08 /* Private */,
+      24,    0,  151,    2, 0x08 /* Private */,
 
  // slots: parameters
+    QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void,
@@ -148,15 +152,16 @@ void DataForm::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, vo
         case 10: _t->CrtProdTpDlg(); break;
         case 11: _t->UdpProdTpDlg(); break;
         case 12: _t->DelProdTpDlg(); break;
-        case 13: _t->CrtRegionDlg(); break;
-        case 14: _t->UdpRegionDlg(); break;
-        case 15: _t->DelRegionDlg(); break;
+        case 13: _t->CrtLocationDlg(); break;
+        case 14: _t->UdpLocationDlg(); break;
+        case 15: _t->DelLocationDlg(); break;
         case 16: _t->CrtRoleDlg(); break;
         case 17: _t->UdpRoleDlg(); break;
         case 18: _t->DelRoleDlg(); break;
         case 19: _t->CrtStatusDlg(); break;
         case 20: _t->UdpStatusDlg(); break;
         case 21: _t->DelStatusDlg(); break;
+        case 22: _t->ChangeBtnState(); break;
         default: ;
         }
     }
@@ -190,13 +195,13 @@ int DataForm::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 22)
+        if (_id < 23)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 22;
+        _id -= 23;
     } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 22)
+        if (_id < 23)
             *reinterpret_cast<int*>(_a[0]) = -1;
-        _id -= 22;
+        _id -= 23;
     }
     return _id;
 }

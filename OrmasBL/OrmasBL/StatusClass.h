@@ -7,10 +7,10 @@ namespace BusinessLayer
 {
 	class Status
 	{
-		int id=0;
-		std::string code;
-		std::string name;
-		std::string comment;
+		int id = 0;
+		std::string code = "";
+		std::string name = "";
+		std::string comment = "";
 	public:
 		Status(int sID, std::string sCode, std::string sName, std::string comment):id(sID), code(sCode),
 			name(sName), comment(comment){};
@@ -31,9 +31,13 @@ namespace BusinessLayer
 		void SetComment(std::string);
 		
 		//Create, delete, update methods
-		bool CreateStatus(DataLayer::OrmasDal& ormasDal, std::string sCode, std::string sName, std::string sComment);
-		bool DeleteStatus(DataLayer::OrmasDal& ormasDal);
-		bool UpdateStatus(DataLayer::OrmasDal& ormasDal, std::string sCode, std::string sName, std::string sComment);
+		bool CreateStatus(DataLayer::OrmasDal& ormasDal, std::string& errorMessage);
+		bool UpdateStatus(DataLayer::OrmasDal& ormasDal, std::string& errorMessage);
+		bool DeleteStatus(DataLayer::OrmasDal& ormasDal, std::string& errorMessage);
+		bool CreateStatus(DataLayer::OrmasDal& ormasDal, std::string sCode, std::string sName, std::string sComment, 
+			std::string& errorMessage);
+		bool UpdateStatus(DataLayer::OrmasDal& ormasDal, std::string sCode, std::string sName, std::string sComment, 
+			std::string& errorMessage);
 	};
 }
 #endif // STATUSCLASS_H

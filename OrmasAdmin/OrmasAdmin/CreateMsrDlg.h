@@ -1,12 +1,25 @@
 #ifndef CREATEMSRDLG_H
 #define CREATEMSRDLG_H
 #include "ui_CreateMsrDlg.h"
+#include "OrmasBL.h"
 
 class CreateMsrDlg :public QDialog, public Ui::CreateMeasure
 {
 	Q_OBJECT
 public:
-	CreateMsrDlg(QWidget *parent = 0);
-	~CreateMsrDlg();
+	CreateMsrDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, QWidget *parent = 0);
+	~CreateMsrDlg(){};
+	BusinessLayer::OrmasBL *dialogBL;
+	bool FillDlgElements(QTableView*);
+	std::string errorMessage;
+private slots:
+	void CreateMeasure();
+	void EditMeasure();
+	void DeleteMeasure(){};
+	void Close();
+private:
+	BusinessLayer::Measure *measure = new BusinessLayer::Measure();
+	void SetMeasureParams(QString, QString, int = 0);
+	void FillEditElements(QString, QString);
 };
 #endif //CREATEMSRDLG_H

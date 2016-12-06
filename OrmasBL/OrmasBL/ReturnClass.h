@@ -7,14 +7,14 @@ namespace BusinessLayer
 {
 	class Return
 	{
-		int id=0;
-		int userID;
-		std::string date;
-		int workerID;
-		std::string firmName;
+	protected:
+		int id = 0;
+		int userID = 0;
+		std::string date = "";
+		int workerID = 0;
 	public:
-		Return(int rID, int uID, std::string rDate, int wID, std::string fName) :id(rID), userID(uID),
-			date(rDate), workerID(wID), firmName(fName){};
+		Return(int rID, int uID, std::string rDate, int wID) :id(rID), userID(uID),
+			date(rDate), workerID(wID){};
 		Return(DataLayer::returnsCollection);
 		Return(){};
 		~Return(){};
@@ -24,19 +24,19 @@ namespace BusinessLayer
 		int GetUserID();
 		std::string GetDate();
 		int GetWorkerID();
-		std::string GetFirmName();
-
+		
 		//Please implement Mutators
 		void SetID(int);
 		void SetUserID(int);
 		void SetDate(std::string);
 		void SetWorkerID(int);
-		void SetFirmName(std::string);
 		
 		//Create, delete, update methods
-		bool CreateReturn(DataLayer::OrmasDal& ormasDal, int uID, std::string oDate, int wID, std::string fName);
-		bool DeleteReturn(DataLayer::OrmasDal& ormasDal);
-		bool UpdateReturn(DataLayer::OrmasDal& ormasDal, int uID, std::string oDate, int wID, std::string fName);
+		bool CreateReturn(DataLayer::OrmasDal& ormasDal, std::string& errorMessage){};
+		bool UpdateReturn(DataLayer::OrmasDal& ormasDal, std::string& errorMessage){};
+		bool DeleteReturn(DataLayer::OrmasDal& ormasDal, std::string& errorMessage);
+		bool CreateReturn(DataLayer::OrmasDal& ormasDal, int uID, std::string oDate, int wID, std::string& errorMessage);
+		bool UpdateReturn(DataLayer::OrmasDal& ormasDal, int uID, std::string oDate, int wID, std::string& errorMessage);
 	};
 }
 #endif //RETURNCLASS_H

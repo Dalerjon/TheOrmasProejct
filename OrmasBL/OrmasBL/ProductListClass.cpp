@@ -58,66 +58,61 @@ namespace BusinessLayer
 		count = pCount;
 	}
 
-	bool ProductList::CreateProductList(DataLayer::OrmasDal& ormasDal, int oID, int rID, int pID, int pCount)
+	bool ProductList::CreateProductList(DataLayer::OrmasDal& ormasDal, int oID, int rID, int pID, int pCount, std::string& errorMessage)
 	{
 		id = ormasDal.GenerateID();
 		orderID = oID;
 		returnID = rID;
 		productID = pID;
 		count = pCount;
-		try
+		if (0 != id && ormasDal.CreateProductList(id, orderID, returnID, productID, count, errorMessage))
 		{
-			if (ormasDal.CreateProductList(id, orderID, returnID, productID, count))
-			{
-				return true;
-			}
-			return false;
+			return true;
 		}
-		catch (...)
-		{
-			return false;
-		}
+		return false;
 	}
-	bool ProductList::DeleteProductList(DataLayer::OrmasDal& ormasDal)
+	bool ProductList::CreateProductList(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
+	{
+		id = ormasDal.GenerateID();
+		if (0 != id && ormasDal.CreateProductList(id, orderID, returnID, productID, count, errorMessage))
+		{
+			return true;
+		}
+		return false;
+	}
+	bool ProductList::DeleteProductList(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
 		orderID = 0;
 		returnID = 0;
 		productID = 0;
 		count = 0;
-		try
+		if (ormasDal.DeleteProductList(id, errorMessage))
 		{
-			if (ormasDal.DeleteProductList(id))
-			{
-				id = 0;
-				return true;
-			}
-			return false;
+			id = 0;
+			return true;
 		}
-		catch (...)
-		{
-			return false;
-		}
+		return false;
 	}
-	bool ProductList::UpdateProductList(DataLayer::OrmasDal& ormasDal, int oID, int rID, int pID, int pCount)
+	bool ProductList::UpdateProductList(DataLayer::OrmasDal& ormasDal, int oID, int rID, int pID, int pCount, 
+		std::string& errorMessage)
 	{
-		if (0 == id)
-			return false;
 		id = ormasDal.GenerateID();
 		orderID = oID;
 		returnID = rID;
 		productID = pID;
 		count = pCount;
-		try
+		if (0 != id && ormasDal.UpdateProductList(id, orderID, returnID, productID, count, errorMessage))
 		{
-			if (ormasDal.UpdateProductList(id, orderID, returnID, productID, count))
-			{
-				return true;
-			}
-			return false;
+			return true;
 		}
-		catch (...)
+		return false;
+	}
+	bool ProductList::UpdateProductList(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
+	{
+		if (0 != id && ormasDal.UpdateProductList(id, orderID, returnID, productID, count, errorMessage))
 		{
-			return false;
+			return true;
 		}
+		return false;
 	}
 }

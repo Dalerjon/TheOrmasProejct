@@ -44,7 +44,7 @@ public:
     QAction *actionCompany;
     QAction *actionCurrency;
     QAction *actionMeasure;
-    QAction *actionRegion;
+    QAction *actionLocation;
     QAction *actionRoles;
     QAction *actionStatus;
     QAction *actionAbout;
@@ -99,8 +99,8 @@ public:
         actionCurrency->setObjectName(QStringLiteral("actionCurrency"));
         actionMeasure = new QAction(MainWindow);
         actionMeasure->setObjectName(QStringLiteral("actionMeasure"));
-        actionRegion = new QAction(MainWindow);
-        actionRegion->setObjectName(QStringLiteral("actionRegion"));
+        actionLocation = new QAction(MainWindow);
+        actionLocation->setObjectName(QStringLiteral("actionLocation"));
         actionRoles = new QAction(MainWindow);
         actionRoles->setObjectName(QStringLiteral("actionRoles"));
         actionStatus = new QAction(MainWindow);
@@ -162,7 +162,7 @@ public:
         menuReference->addAction(actionCompany);
         menuReference->addAction(actionCurrency);
         menuReference->addAction(actionMeasure);
-        menuReference->addAction(actionRegion);
+        menuReference->addAction(actionLocation);
         menuReference->addAction(actionRoles);
         menuReference->addAction(actionStatus);
         menuHelp->addAction(actionAbout);
@@ -191,7 +191,7 @@ public:
         actionCompany->setText(QApplication::translate("MainWindow", "Company", 0));
         actionCurrency->setText(QApplication::translate("MainWindow", "Currency", 0));
         actionMeasure->setText(QApplication::translate("MainWindow", "Measure", 0));
-        actionRegion->setText(QApplication::translate("MainWindow", "Region", 0));
+        actionLocation->setText(QApplication::translate("MainWindow", "Location", 0));
         actionRoles->setText(QApplication::translate("MainWindow", "Roles", 0));
         actionStatus->setText(QApplication::translate("MainWindow", "Status", 0));
         actionAbout->setText(QApplication::translate("MainWindow", "About", 0));

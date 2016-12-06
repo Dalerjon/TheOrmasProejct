@@ -5,7 +5,7 @@
 #include "CreateCurDlg.h"
 #include "CreateMsrDlg.h"
 #include "CreatePrdTpDlg.h"
-#include "CreateRgnDlg.h"
+#include "CreateLcnDlg.h"
 #include "CreateRoleDlg.h"
 #include "CreateStsDlg.h"
 

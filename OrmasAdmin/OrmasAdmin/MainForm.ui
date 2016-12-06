@@ -96,7 +96,7 @@
     <addaction name="actionCompany"/>
     <addaction name="actionCurrency"/>
     <addaction name="actionMeasure"/>
-    <addaction name="actionRegion"/>
+    <addaction name="actionLocation"/>
     <addaction name="actionRoles"/>
     <addaction name="actionStatus"/>
    </widget>
@@ -194,9 +194,9 @@
     <string>Measure</string>
    </property>
   </action>
-  <action name="actionRegion">
+  <action name="actionLocation">
    <property name="text">
-    <string>Region</string>
+    <string>Location</string>
    </property>
   </action>
   <action name="actionRoles">

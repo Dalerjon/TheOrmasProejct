@@ -100,8 +100,14 @@ public:
         CreateRole->setWindowTitle(QApplication::translate("CreateRole", "Create/Update role", 0));
         nameLb->setText(QApplication::translate("CreateRole", "Name:", 0));
         label_2->setText(QApplication::translate("CreateRole", "Comment:", 0));
+#ifndef QT_NO_TOOLTIP
+        nameEdit->setToolTip(QApplication::translate("CreateRole", "Must not be empty", 0));
+#endif // QT_NO_TOOLTIP
         okBtn->setText(QApplication::translate("CreateRole", "OK", 0));
         cancelBtn->setText(QApplication::translate("CreateRole", "Cancel", 0));
+#ifndef QT_NO_TOOLTIP
+        commentTextEdit->setToolTip(QApplication::translate("CreateRole", "Can leave it an empty", 0));
+#endif // QT_NO_TOOLTIP
     } // retranslateUi
 
 };

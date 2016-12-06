@@ -42,9 +42,6 @@
     <ClInclude Include="ui_LoginForm.h">
       <Filter>Header Files\UI Headers</Filter>
     </ClInclude>
-    <ClInclude Include="Extra Functions.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="ui_CreateCmpDlg.h">
       <Filter>Header Files\UI Headers</Filter>
     </ClInclude>
@@ -57,9 +54,6 @@
     <ClInclude Include="ui_CreatePrdTpDlg.h">
       <Filter>Header Files\UI Headers</Filter>
     </ClInclude>
-    <ClInclude Include="ui_CreateRgnDlg.h">
-      <Filter>Header Files\UI Headers</Filter>
-    </ClInclude>
     <ClInclude Include="ui_CreateRoleDlg.h">
       <Filter>Header Files\UI Headers</Filter>
     </ClInclude>
@@ -68,6 +62,12 @@
     </ClInclude>
     <ClInclude Include="AllDlgHeaders.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ExtraFunctions.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ui_CreateLcnDlg.h">
+      <Filter>Header Files\UI Headers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -107,9 +107,6 @@
     <ClCompile Include="CreatePrdTpDlg.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="CreateRgnDlg.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="CreateRoleDlg.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -125,9 +122,6 @@
     <ClCompile Include="moc_CreatePrdTpDlg.cpp">
       <Filter>MOC Files</Filter>
     </ClCompile>
-    <ClCompile Include="moc_CreateRgnDlg.cpp">
-      <Filter>MOC Files</Filter>
-    </ClCompile>
     <ClCompile Include="moc_CreateRoleDlg.cpp">
       <Filter>MOC Files</Filter>
     </ClCompile>
@@ -135,6 +129,12 @@
       <Filter>MOC Files</Filter>
     </ClCompile>
     <ClCompile Include="moc_CreateCmpDlg.cpp">
+      <Filter>MOC Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CreateLcnDlg.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="moc_CreateLcnDlg.cpp">
       <Filter>MOC Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -172,9 +172,6 @@
     <CustomBuild Include="CreatePrdTpDlg.ui">
       <Filter>User Interface</Filter>
     </CustomBuild>
-    <CustomBuild Include="CreateRgnDlg.ui">
-      <Filter>User Interface</Filter>
-    </CustomBuild>
     <CustomBuild Include="CreateRoleDlg.ui">
       <Filter>User Interface</Filter>
     </CustomBuild>
@@ -190,14 +187,17 @@
     <CustomBuild Include="CreatePrdTpDlg.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
-    <CustomBuild Include="CreateRgnDlg.h">
-      <Filter>Header Files</Filter>
-    </CustomBuild>
     <CustomBuild Include="CreateRoleDlg.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
     <CustomBuild Include="CreateStsDlg.h">
       <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="CreateLcnDlg.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="CreateLcnDlg.ui">
+      <Filter>User Interface</Filter>
     </CustomBuild>
   </ItemGroup>
 </Project>

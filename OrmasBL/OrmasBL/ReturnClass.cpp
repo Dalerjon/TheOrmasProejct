@@ -9,7 +9,6 @@ namespace BusinessLayer
 		userID = std::get<1>(rCollection);
 		date = std::get<2>(rCollection);
 		workerID = std::get<3>(rCollection);
-		firmName = std::get<4>(rCollection);
 	}
 
 	int Return::GetID()
@@ -32,11 +31,6 @@ namespace BusinessLayer
 		return workerID;
 	}
 
-	std::string Return::GetFirmName()
-	{
-		return firmName;
-	}
-
 	void Return::SetID(int rID)
 	{
 		id = rID;
@@ -53,70 +47,40 @@ namespace BusinessLayer
 	{
 		workerID = rWorkerID;
 	}
-	void Return::SetFirmName(std::string rFirmName)
-	{
-		firmName = rFirmName;
-	}
-
-	bool Return::CreateReturn(DataLayer::OrmasDal& ormasDal, int uID, std::string oDate, int wID, std::string fName)
+	
+	bool Return::CreateReturn(DataLayer::OrmasDal& ormasDal, int uID, std::string oDate, int wID, std::string& errorMessage)
 	{
 		id = ormasDal.GenerateID();
 		userID = uID;
 		date = oDate;
 		workerID = wID;
-		firmName = fName;
-		try
+		if (0 != id && ormasDal.CreateReturn(id, userID, date, workerID, errorMessage))
 		{
-			if (ormasDal.CreateReturn(id, userID, date, workerID, firmName))
-			{
-				return true;
-			}
-			return false;
+			return true;
 		}
-		catch (...)
-		{
-			return false;
-		}
+		return false;
 	}
-	bool Return::DeleteReturn(DataLayer::OrmasDal& ormasDal)
+	bool Return::DeleteReturn(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
 		userID = 0;
 		date.clear();
 		workerID = 0;
-		firmName.clear();
-		try
+		if (ormasDal.DeleteReturn(id, errorMessage))
 		{
-			if (ormasDal.DeleteReturn(id))
-			{
-				id = 0;
-				return true;
-			}
-			return false;
+			id = 0;
+			return true;
 		}
-		catch (...)
-		{
-			return false;
-		}
+		return false;
 	}
-	bool Return::UpdateReturn(DataLayer::OrmasDal& ormasDal, int uID, std::string oDate, int wID, std::string fName)
+	bool Return::UpdateReturn(DataLayer::OrmasDal& ormasDal, int uID, std::string oDate, int wID, std::string& errorMessage)
 	{
-		if (0 == id)
-			return false;
 		userID = uID;
 		date = oDate;
 		workerID = wID;
-		firmName = fName;
-		try
+		if (0 != id && ormasDal.UpdateReturn(id, userID, date, workerID, errorMessage))
 		{
-			if (ormasDal.UpdateReturn(id, userID, date, workerID, firmName))
-			{
-				return true;
-			}
-			return false;
+			return true;
 		}
-		catch (...)
-		{
-			return false;
-		}
+		return false;
 	}
 }

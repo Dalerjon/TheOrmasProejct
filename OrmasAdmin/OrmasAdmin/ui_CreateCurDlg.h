@@ -104,6 +104,10 @@ public:
 
         gridLayout->addWidget(nameEdit, 2, 1, 1, 1);
 
+        QWidget::setTabOrder(codeEdit, shortNameEdit);
+        QWidget::setTabOrder(shortNameEdit, nameEdit);
+        QWidget::setTabOrder(nameEdit, okBtn);
+        QWidget::setTabOrder(okBtn, cancelBtn);
 
         retranslateUi(CreateCurrency);
 
@@ -116,8 +120,18 @@ public:
         codeLb->setText(QApplication::translate("CreateCurrency", "Code:", 0));
         shortNameLb->setText(QApplication::translate("CreateCurrency", "Short name:", 0));
         nameLb->setText(QApplication::translate("CreateCurrency", "Name:", 0));
+#ifndef QT_NO_TOOLTIP
+        shortNameEdit->setToolTip(QApplication::translate("CreateCurrency", "The length must be equal to 3", 0));
+#endif // QT_NO_TOOLTIP
         okBtn->setText(QApplication::translate("CreateCurrency", "OK", 0));
         cancelBtn->setText(QApplication::translate("CreateCurrency", "Cancel", 0));
+#ifndef QT_NO_TOOLTIP
+        codeEdit->setToolTip(QApplication::translate("CreateCurrency", "Only digits. The length must be equal to 3", 0));
+#endif // QT_NO_TOOLTIP
+        codeEdit->setInputMask(QApplication::translate("CreateCurrency", "000", 0));
+#ifndef QT_NO_TOOLTIP
+        nameEdit->setToolTip(QApplication::translate("CreateCurrency", "Must not be empty", 0));
+#endif // QT_NO_TOOLTIP
     } // retranslateUi
 
 };

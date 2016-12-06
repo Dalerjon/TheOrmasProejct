@@ -1,22 +1,159 @@
 #include "stdafx.h"
-#include "CreateCmpDlg.h"
 #include <QMessageBox>
+#include "CreateCmpDlg.h"
+#include "MainForm.h"
+#include "DataForm.h"
+#include "ExtraFunctions.h"
 
-CreateCmpDlg::CreateCmpDlg(QWidget *parent) :QDialog(parent)
+
+CreateCmpDlg::CreateCmpDlg(BusinessLayer::OrmasBL *ormasBL,bool updateFlag ,QWidget *parent) :QDialog(parent)
 {
 	setupUi(this);
+	nameEdit->setMaxLength(30);
+	addressEdit->setMaxLength(30);
+	phoneEdit->setMaxLength(15);
+	dialogBL = ormasBL;
+	if (true == updateFlag)
+	{
+		QObject::connect(okBtn, &QPushButton::released, this, &CreateCmpDlg::EditCompany);
+	}
+	else
+	{
+		QObject::connect(okBtn, &QPushButton::released, this, &CreateCmpDlg::CreateCompany);
+	}
+	QObject::connect(cancelBtn, &QPushButton::released, this, &CreateCmpDlg::Close);
+	QObject::connect(commentTextEdit, &QTextEdit::textChanged, this, &CreateCmpDlg::TextEditChanged);
+}
+
+void CreateCmpDlg::SetCompanyParams(QString cName, QString cAddress, QString cPhone, QString cComment, int id)
+{
+	company->SetName(cName.toUtf8().constData());
+	company->SetAddress(cAddress.toUtf8().constData());
+	company->SetPhone(cPhone.toUtf8().constData());
+	company->SetComment(cComment.toUtf8().constData());
+	company->SetID(id);
+}
+
+void CreateCmpDlg::FillEditElements(QString cName, QString cAddress, QString cPhone, QString cComment)
+{
+	nameEdit->setText(cName);
+	addressEdit->setText(cAddress);
+	phoneEdit->setText(cPhone);
+	commentTextEdit->setText(cComment);
+}
+
+bool CreateCmpDlg::FillDlgElements(QTableView* cTable)
+{
+	QModelIndex mIndex = cTable->selectionModel()->currentIndex();
+	if (mIndex.row() >= 0)
+	{
+		SetCompanyParams(cTable->model()->data(cTable->model()->index(mIndex.row(), 1)).toString().toUtf8().constData(),
+			cTable->model()->data(cTable->model()->index(mIndex.row(), 2)).toString().toUtf8().constData(),
+			cTable->model()->data(cTable->model()->index(mIndex.row(), 3)).toString().toUtf8().constData(),
+			cTable->model()->data(cTable->model()->index(mIndex.row(), 4)).toString().toUtf8().constData(),
+			cTable->model()->data(cTable->model()->index(mIndex.row(), 0)).toInt());
+		FillEditElements(cTable->model()->data(cTable->model()->index(mIndex.row(), 1)).toString().toUtf8().constData(),
+			cTable->model()->data(cTable->model()->index(mIndex.row(), 2)).toString().toUtf8().constData(),
+			cTable->model()->data(cTable->model()->index(mIndex.row(), 3)).toString().toUtf8().constData(),
+			cTable->model()->data(cTable->model()->index(mIndex.row(), 4)).toString().toUtf8().constData());
+		return true;
+	}
+	else
+	{
+		return false;
+	}
 }
 
 void CreateCmpDlg::CreateCompany()
 {
+	errorMessage.clear();
 	if (!(nameEdit->text().isEmpty() || phoneEdit->text().isEmpty() || addressEdit->text().isEmpty()))
 	{
-		
+		DataForm *parentDataForm = (DataForm*)parentWidget();
+		SetCompanyParams(nameEdit->text(), phoneEdit->text(), addressEdit->text(), commentTextEdit->toPlainText());
+		if (dialogBL->CreateCompany(company,errorMessage))
+		{
+			QList<QStandardItem*> companyItem;
+			companyItem << new QStandardItem(QString::number(company->GetID())) << new QStandardItem(company->GetName().c_str())
+				<< new QStandardItem(company->GetAddress().c_str()) << new QStandardItem(company->GetPhone().c_str())
+				<< new QStandardItem(company->GetComment().c_str());
+			QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
+			itemModel->appendRow(companyItem);
+			this->close();
+		}
+		else
+		{
+			QMessageBox::information(NULL, QString(tr("Warning")),
+				QString(tr(errorMessage.c_str())),
+				QString(tr("Ok")));
+			
+			errorMessage.clear();
+		}		
 	}
 	else
 	{
-		QMessageBox msgBox;
-		msgBox.setText(tr("Please fill name, phone and address!"));
-		msgBox.exec();
+		QMessageBox::information(NULL, QString(tr("Warning")),
+			QString(tr("Please fill name, phone and address!")),
+			QString(tr("Ok")));
+	}
+	errorMessage.clear();
+}
+
+void CreateCmpDlg::EditCompany()
+{
+	errorMessage.clear();
+	if (!(nameEdit->text().isEmpty() || phoneEdit->text().isEmpty() || addressEdit->text().isEmpty()))
+	{
+		if (QString(company->GetName().c_str()) != nameEdit->text() || QString(company->GetAddress().c_str()) != addressEdit->text()
+			|| QString(company->GetPhone().c_str()) != phoneEdit->text()
+			|| QString(company->GetComment().c_str()) != commentTextEdit->toPlainText())
+		{
+			DataForm *parentDataForm = (DataForm*)parentWidget();
+			SetCompanyParams(nameEdit->text(), phoneEdit->text(), addressEdit->text(), commentTextEdit->toPlainText(), GetIDFromTable(parentDataForm->tableView, errorMessage));
+			if (dialogBL->UpdateCompany(company, errorMessage))
+			{
+				QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
+				QModelIndex mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
+				itemModel->item(mIndex.row(), 1)->setText(nameEdit->text());
+				itemModel->item(mIndex.row(), 2)->setText(addressEdit->text());
+				itemModel->item(mIndex.row(), 3)->setText(phoneEdit->text());
+				itemModel->item(mIndex.row(), 4)->setText(commentTextEdit->toPlainText());
+				emit itemModel->dataChanged(mIndex, mIndex);
+				this->close();
+			}
+			else
+			{
+				QMessageBox::information(NULL, QString(tr("Warning")),
+					QString(tr(errorMessage.c_str())),
+					QString(tr("Ok")));
+			}
+		}
+		else
+		{
+			this->close();
+		}
+	}
+	else
+	{
+		QMessageBox::information(NULL, QString(tr("Warning")),
+			QString(tr("Please fill name, phone and address!")),
+			QString(tr("Ok")));
+	}
+	errorMessage.clear();
+}
+
+void CreateCmpDlg::Close()
+{
+	this->close();
+}
+
+void CreateCmpDlg::TextEditChanged()
+{
+	if (commentTextEdit->toPlainText().length()> 100) {
+		commentTextEdit->setPlainText(commentTextEdit->toPlainText().left(commentTextEdit->toPlainText().length() - 1));
+		commentTextEdit->moveCursor(QTextCursor::End);
+		QMessageBox::information(NULL, QString(tr("Warning")),
+			QString(tr("Warning: no more then ")) + QString::number(100) + QString(tr(" characters in this field")),
+			QString(tr("Ok")));
 	}
 }

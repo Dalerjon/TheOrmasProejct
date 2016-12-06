@@ -104,8 +104,14 @@ public:
         CreateProductType->setWindowTitle(QApplication::translate("CreateProductType", "Create/Update product type", 0));
         shortNameLb->setText(QApplication::translate("CreateProductType", "Short name", 0));
         nameLb->setText(QApplication::translate("CreateProductType", "Name:", 0));
+#ifndef QT_NO_TOOLTIP
+        nameEdit->setToolTip(QApplication::translate("CreateProductType", "Must not be empty", 0));
+#endif // QT_NO_TOOLTIP
         okBtn->setText(QApplication::translate("CreateProductType", "OK", 0));
         cancelBtn->setText(QApplication::translate("CreateProductType", "Cancel", 0));
+#ifndef QT_NO_TOOLTIP
+        shortNameEdit->setToolTip(QApplication::translate("CreateProductType", "Must not be empty", 0));
+#endif // QT_NO_TOOLTIP
     } // retranslateUi
 
 };

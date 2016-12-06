@@ -45,7 +45,7 @@ public:
     {
         if (CreateStatus->objectName().isEmpty())
             CreateStatus->setObjectName(QStringLiteral("CreateStatus"));
-        CreateStatus->resize(400, 168);
+        CreateStatus->resize(400, 176);
         CreateStatus->setLocale(QLocale(QLocale::English, QLocale::UnitedStates));
         CreateStatus->setModal(true);
         gridLayout = new QGridLayout(CreateStatus);
@@ -113,8 +113,17 @@ public:
         codeLb->setText(QApplication::translate("CreateStatus", "Code:", 0));
         nameLb->setText(QApplication::translate("CreateStatus", "Name:", 0));
         commentLb->setText(QApplication::translate("CreateStatus", "Comment:", 0));
+#ifndef QT_NO_TOOLTIP
+        codeEdit->setToolTip(QApplication::translate("CreateStatus", "Must not be empty", 0));
+#endif // QT_NO_TOOLTIP
         okBtn->setText(QApplication::translate("CreateStatus", "OK", 0));
         cancelBtn->setText(QApplication::translate("CreateStatus", "Cancel", 0));
+#ifndef QT_NO_TOOLTIP
+        nameEdit->setToolTip(QApplication::translate("CreateStatus", "Must not be empty", 0));
+#endif // QT_NO_TOOLTIP
+#ifndef QT_NO_TOOLTIP
+        commentTextEdit->setToolTip(QApplication::translate("CreateStatus", "Can leave it an empty", 0));
+#endif // QT_NO_TOOLTIP
     } // retranslateUi
 
 };

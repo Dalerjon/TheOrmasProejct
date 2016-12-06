@@ -93,6 +93,9 @@ public:
 
         gridLayout->addWidget(nameEdit, 0, 1, 1, 1);
 
+        QWidget::setTabOrder(nameEdit, shortNameEdit);
+        QWidget::setTabOrder(shortNameEdit, okBtn);
+        QWidget::setTabOrder(okBtn, cancelBtn);
 
         retranslateUi(CreateMeasure);
 
@@ -104,8 +107,14 @@ public:
         CreateMeasure->setWindowTitle(QApplication::translate("CreateMeasure", "Create/Update Measure", 0));
         shortNameLb->setText(QApplication::translate("CreateMeasure", "Short name:", 0));
         nameLb->setText(QApplication::translate("CreateMeasure", "Name:", 0));
+#ifndef QT_NO_TOOLTIP
+        shortNameEdit->setToolTip(QApplication::translate("CreateMeasure", "Must not be empty", 0));
+#endif // QT_NO_TOOLTIP
         okBtn->setText(QApplication::translate("CreateMeasure", "OK", 0));
         cancelBtn->setText(QApplication::translate("CreateMeasure", "Cencel", 0));
+#ifndef QT_NO_TOOLTIP
+        nameEdit->setToolTip(QApplication::translate("CreateMeasure", "Must not be empty", 0));
+#endif // QT_NO_TOOLTIP
     } // retranslateUi
 
 };

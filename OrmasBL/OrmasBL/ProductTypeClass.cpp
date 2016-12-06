@@ -38,59 +38,75 @@ namespace BusinessLayer
 		shortName = pShortName;
 	}
 
-	bool ProductType::CreateProductType(DataLayer::OrmasDal& ormasDal, std::string pTypeName, std::string pTypeShortName)
+	bool ProductType::CreateProductType(DataLayer::OrmasDal& ormasDal, std::string pTypeName, std::string pTypeShortName, 
+		std::string& errorMessage)
 	{
 		id = ormasDal.GenerateID();
 		name = pTypeName;
 		shortName = pTypeShortName;
-		try
+		if (0 != id && ormasDal.CreateProductType(id, name, shortName, errorMessage))
 		{
-			if (ormasDal.CreateProductType(id, name, shortName))
-			{
-				return true;
-			}
-			return false;
+			return true;
 		}
-		catch (...)
+		if (errorMessage.empty())
 		{
-			return false;
+			errorMessage = "Warning! ID is 0, or some unexpected error. Please contact with provider.";
 		}
+		return false;
 	}
-	bool ProductType::DeleteProductType(DataLayer::OrmasDal& ormasDal)
+	bool ProductType::CreateProductType(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
+	{
+		id = ormasDal.GenerateID();
+		if (0 != id &&ormasDal.CreateProductType(id, name, shortName, errorMessage))
+		{
+			return true;
+		}
+		if (errorMessage.empty())
+		{
+			errorMessage = "Warning! ID is 0, or some unexpected error. Please contact with provider.";
+		}
+		return false;
+	}
+	bool ProductType::DeleteProductType(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
 		name.clear();
 		shortName.clear();
-		try
+		if (ormasDal.DeleteProductType(id, errorMessage))
 		{
-			if (ormasDal.DeleteProductType(id))
-			{
-				id = 0;
-				return true;
-			}
-			return false;
+			id = 0;
+			return true;
 		}
-		catch (...)
+		if (errorMessage.empty())
 		{
-			return false;
+			errorMessage = "Unexpected error. Please contact with application provider.";
 		}
+		return false;
 	}
-	bool ProductType::UpdatePrdouctType(DataLayer::OrmasDal& ormasDal, std::string pTypeName, std::string pTypeShortName)
+	bool ProductType::UpdateProductType(DataLayer::OrmasDal& ormasDal, std::string pTypeName, std::string pTypeShortName, 
+		std::string& errorMessage)
 	{
-		if (0 == id)
-			return false;
 		name = pTypeName;
 		shortName = pTypeShortName;
-		try
+		if (0 != id &&ormasDal.UpdateProductType(id, name, shortName, errorMessage))
 		{
-			if (ormasDal.UpdateProductType(id, name, shortName))
-			{
-				return true;
-			}
-			return false;
+			return true;
 		}
-		catch (...)
+		if (errorMessage.empty())
 		{
-			return false;
+			errorMessage = "Warning! ID is 0, or some unexpected error. Please contact with provider.";
 		}
+		return false;
+	}
+	bool ProductType::UpdateProductType(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
+	{
+		if (0 != id && ormasDal.UpdateProductType(id, name, shortName, errorMessage))
+		{
+			return true;
+		}
+		if (errorMessage.empty())
+		{
+			errorMessage = "Warning! ID is 0, or some unexpected error. Please contact with provider.";
+		}
+		return false;
 	}
 }

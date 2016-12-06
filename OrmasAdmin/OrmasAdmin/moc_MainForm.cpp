@@ -20,7 +20,7 @@
 QT_BEGIN_MOC_NAMESPACE
 struct qt_meta_stringdata_MainForm_t {
     QByteArrayData data[22];
-    char stringdata[255];
+    char stringdata[257];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
@@ -47,10 +47,10 @@ QT_MOC_LITERAL(14, 161, 12), // "DeleteReturn"
 QT_MOC_LITERAL(15, 174, 13), // "ShowCompanies"
 QT_MOC_LITERAL(16, 188, 14), // "ShowCurrencies"
 QT_MOC_LITERAL(17, 203, 12), // "ShowMeasures"
-QT_MOC_LITERAL(18, 216, 11), // "ShowRegions"
-QT_MOC_LITERAL(19, 228, 9), // "ShowRoles"
-QT_MOC_LITERAL(20, 238, 10), // "ShowStatus"
-QT_MOC_LITERAL(21, 249, 5) // "About"
+QT_MOC_LITERAL(18, 216, 13), // "ShowLocations"
+QT_MOC_LITERAL(19, 230, 9), // "ShowRoles"
+QT_MOC_LITERAL(20, 240, 10), // "ShowStatus"
+QT_MOC_LITERAL(21, 251, 5) // "About"
 
     },
     "MainForm\0ShowUsers\0\0CreateUser\0"
@@ -58,7 +58,7 @@ QT_MOC_LITERAL(21, 249, 5) // "About"
     "ShowProducts\0ShowOrders\0ShowProductsList\0"
     "CreateOrder\0DeleteOrder\0ShowReturns\0"
     "CreateReturn\0DeleteReturn\0ShowCompanies\0"
-    "ShowCurrencies\0ShowMeasures\0ShowRegions\0"
+    "ShowCurrencies\0ShowMeasures\0ShowLocations\0"
     "ShowRoles\0ShowStatus\0About"
 };
 #undef QT_MOC_LITERAL
@@ -144,7 +144,7 @@ void MainForm::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, vo
         case 13: _t->ShowCompanies(); break;
         case 14: _t->ShowCurrencies(); break;
         case 15: _t->ShowMeasures(); break;
-        case 16: _t->ShowRegions(); break;
+        case 16: _t->ShowLocations(); break;
         case 17: _t->ShowRoles(); break;
         case 18: _t->ShowStatus(); break;
         case 19: _t->About(); break;
@@ -170,6 +170,8 @@ void *MainForm::qt_metacast(const char *_clname)
     if (!_clname) return Q_NULLPTR;
     if (!strcmp(_clname, qt_meta_stringdata_MainForm.stringdata))
         return static_cast<void*>(const_cast< MainForm*>(this));
+    if (!strcmp(_clname, "Ui::MainWindow"))
+        return static_cast< Ui::MainWindow*>(const_cast< MainForm*>(this));
     return QMainWindow::qt_metacast(_clname);
 }
 

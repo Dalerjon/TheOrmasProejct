@@ -7,17 +7,18 @@ namespace BusinessLayer{
 	class Company
 	{
 		int id = 0;
-		std::string name;
-		std::string address;
-		std::string phone;
-		std::string comment;
+		std::string name = "";
+		std::string address = "";
+		std::string phone = "";
+		std::string comment = "";
 	public:
-		Company(){};
+		Company();
 		Company(int cID, std::string cName, std::string cAddress, std::string cPhone, std::string cComment) :id(cID),
 			name(cName), address(cAddress), phone(cPhone), comment(cComment){};
 		Company(DataLayer::companiesCollection);
 		~Company(){};
-			
+		
+		std::string errorMessage = "";
 		//Company class Accessors
 		int GetID();
 		std::string GetName();
@@ -33,9 +34,13 @@ namespace BusinessLayer{
 		void SetComment(std::string);
 
 		// Create, delete and update company
-		bool CreateCompany(DataLayer::OrmasDal& ormasDal, std::string cName, std::string cAddress, std::string cPhone, std::string cComment);
-		bool DeleteCompany(DataLayer::OrmasDal& ormasDal);
-		bool UpdateCompany(DataLayer::OrmasDal& ormasDal, std::string cName, std::string cAddress, std::string cPhone, std::string cComment);
+		bool CreateCompany(DataLayer::OrmasDal &ormasDal, std::string& errorMessage);
+		bool UpdateCompany(DataLayer::OrmasDal &ormasDal, std::string& errorMessage);
+		bool DeleteCompany(DataLayer::OrmasDal &ormasDal, std::string& errorMessage);
+		bool CreateCompany(DataLayer::OrmasDal &ormasDal, std::string cName, std::string cAddress, std::string cPhone, 
+			std::string cComment, std::string& errorMessage);
+		bool UpdateCompany(DataLayer::OrmasDal &rmasDal, std::string cName, std::string cAddress, std::string cPhone, 
+			std::string cComment, std::string& errorMessage);
 	};
 }
 #endif //COMPANYCLASS_H

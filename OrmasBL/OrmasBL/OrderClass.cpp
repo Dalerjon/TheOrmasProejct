@@ -9,7 +9,6 @@ namespace BusinessLayer
 		userID = std::get<1>(oCollection);
 		date = std::get<2>(oCollection);
 		workerID = std::get<3>(oCollection);
-		firmName = std::get<4>(oCollection);
 	}
 
 	int Order::GetID()
@@ -32,11 +31,6 @@ namespace BusinessLayer
 		return workerID;
 	}
 
-	std::string Order::GetFirmName()
-	{
-		return firmName;
-	}
-
 	void Order::SetID(int oID)
 	{
 		id = oID;
@@ -53,70 +47,52 @@ namespace BusinessLayer
 	{
 		workerID = oWorkerID;
 	}
-	void Order::SetFirmName(std::string oFirmName)
-	{
-		firmName = oFirmName;
-	}
 
-	bool Order::CreateOrder(DataLayer::OrmasDal& ormasDal, int uID, std::string oDate, int wID, std::string fName)
+	bool Order::CreateOrder(DataLayer::OrmasDal& ormasDal, int uID, std::string oDate, int wID, std::string& errorMessage)
 	{
 		id = ormasDal.GenerateID();
 		userID = uID;
 		date = oDate;
 		workerID = wID;
-		firmName = fName;
-		try
+		if (0 != id && ormasDal.CreateOrder(id, userID, date, workerID, errorMessage))
 		{
-			if (ormasDal.CreateOrder(id, userID, date, workerID, firmName))
-			{
-				return true;
-			}
-			return false;
+			return true;
 		}
-		catch (...)
+		if (errorMessage.empty())
 		{
-			return false;
+			errorMessage = "Warning! ID is 0, or some unexpected error. Please contact with provider.";
 		}
+		return false;
 	}
-	bool Order::DeleteOrder(DataLayer::OrmasDal& ormasDal)
+	bool Order::DeleteOrder(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
 		userID = 0;
 		date.clear();
 		workerID = 0;
-		firmName.clear();
-		try
+		if (ormasDal.DeleteOrder(id, errorMessage))
 		{
-			if (ormasDal.DeleteOrder(id))
-			{
-				id = 0;
-				return true;
-			}
-			return false;
+			id = 0;
+			return true;
 		}
-		catch (...)
+		if (errorMessage.empty())
 		{
-			return false;
+			errorMessage = "Warning! ID is 0, or some unexpected error. Please contact with provider.";
 		}
+		return false;
 	}
-	bool Order::UpdateOrder(DataLayer::OrmasDal& ormasDal, int uID, std::string oDate, int wID, std::string fName)
+	bool Order::UpdateOrder(DataLayer::OrmasDal& ormasDal, int uID, std::string oDate, int wID, std::string& errorMessage)
 	{
-		if (0 == id)
-			return false;
 		userID = uID;
 		date = oDate;
 		workerID = wID;
-		firmName = fName; 
-		try
+		if (0 != id && ormasDal.UpdateOrder(id, userID, date, workerID, errorMessage))
 		{
-			if (ormasDal.UpdateOrder(id, userID, date, workerID, firmName))
-			{
-				return true;
-			}
-			return false;
+			return true;
 		}
-		catch (...)
+		if (errorMessage.empty())
 		{
-			return false;
+			errorMessage = "Warning! ID is 0, or some unexpected error. Please contact with provider.";
 		}
+		return false;
 	}
 }

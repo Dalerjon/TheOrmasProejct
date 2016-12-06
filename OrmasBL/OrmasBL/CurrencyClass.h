@@ -8,9 +8,9 @@ namespace BusinessLayer
 	class Currency
 	{
 		int id = 0;
-		int code;
-		std::string shortName;
-		std::string name;
+		int code = 0;
+		std::string shortName = "";
+		std::string name = "";
 	public:
 		Currency(){};
 		Currency(int cID, int cCode, std::string cShortName, std::string cName) :id(cID), code(cCode),
@@ -31,9 +31,13 @@ namespace BusinessLayer
 		void SetName(std::string);
 		
 		// Create, delete and update company
-		bool CreateCurrency(DataLayer::OrmasDal& ormasDal,int cCode, std::string cShortName, std::string cName);
-		bool DeleteCurrency(DataLayer::OrmasDal& ormasDal);
-		bool UpdateCurrency(DataLayer::OrmasDal& ormasDal, int cCode, std::string cShortName, std::string cName);
+		bool CreateCurrency(DataLayer::OrmasDal& ormasDal, std::string& errorMessage);
+		bool UpdateCurrency(DataLayer::OrmasDal& ormasDal, std::string& errorMessage);
+		bool DeleteCurrency(DataLayer::OrmasDal& ormasDal, std::string& errorMessage);
+		bool CreateCurrency(DataLayer::OrmasDal& ormasDal, int cCode, std::string cShortName, std::string cName,
+			std::string& errorMessage);
+		bool UpdateCurrency(DataLayer::OrmasDal& ormasDal, int cCode, std::string cShortName, std::string cName, 
+			std::string& errorMessage);
 	};
 }
 #endif //CURRENCYCLASS_H

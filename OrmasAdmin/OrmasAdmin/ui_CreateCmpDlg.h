@@ -47,7 +47,7 @@ public:
     {
         if (CreateCompany->objectName().isEmpty())
             CreateCompany->setObjectName(QStringLiteral("CreateCompany"));
-        CreateCompany->resize(461, 202);
+        CreateCompany->resize(461, 323);
         QSizePolicy sizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
         sizePolicy.setHorizontalStretch(0);
         sizePolicy.setVerticalStretch(0);
@@ -123,6 +123,11 @@ public:
 
         gridLayout->addWidget(commentTextEdit, 3, 1, 1, 1);
 
+        QWidget::setTabOrder(nameEdit, addressEdit);
+        QWidget::setTabOrder(addressEdit, phoneEdit);
+        QWidget::setTabOrder(phoneEdit, commentTextEdit);
+        QWidget::setTabOrder(commentTextEdit, okBtn);
+        QWidget::setTabOrder(okBtn, cancelBtn);
 
         retranslateUi(CreateCompany);
 
@@ -132,12 +137,24 @@ public:
     void retranslateUi(QDialog *CreateCompany)
     {
         CreateCompany->setWindowTitle(QApplication::translate("CreateCompany", "Create/Update company", 0));
+#ifndef QT_NO_TOOLTIP
+        phoneEdit->setToolTip(QApplication::translate("CreateCompany", "Must not be an empty", 0));
+#endif // QT_NO_TOOLTIP
         phoneLb->setText(QApplication::translate("CreateCompany", "Phone:", 0));
         addresLb->setText(QApplication::translate("CreateCompany", "Address:", 0));
+#ifndef QT_NO_TOOLTIP
+        addressEdit->setToolTip(QApplication::translate("CreateCompany", "Must not be an empty", 0));
+#endif // QT_NO_TOOLTIP
+#ifndef QT_NO_TOOLTIP
+        nameEdit->setToolTip(QApplication::translate("CreateCompany", "Must not be empty", 0));
+#endif // QT_NO_TOOLTIP
         okBtn->setText(QApplication::translate("CreateCompany", "OK", 0));
         cancelBtn->setText(QApplication::translate("CreateCompany", "Cancel", 0));
         nameLb->setText(QApplication::translate("CreateCompany", "Name:", 0));
         label_4->setText(QApplication::translate("CreateCompany", "Comment:", 0));
+#ifndef QT_NO_TOOLTIP
+        commentTextEdit->setToolTip(QApplication::translate("CreateCompany", "Can leave it an empty", 0));
+#endif // QT_NO_TOOLTIP
     } // retranslateUi
 
 };

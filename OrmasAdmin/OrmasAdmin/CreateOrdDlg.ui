@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>422</width>
-    <height>158</height>
+    <height>160</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -29,7 +29,55 @@
    <property name="bottomMargin">
     <number>11</number>
    </property>
-   <item row="4" column="0" colspan="2">
+   <item row="3" column="0">
+    <widget class="QPushButton" name="addProdBtn">
+     <property name="text">
+      <string>Add products</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="0">
+    <widget class="QLabel" name="dateLb">
+     <property name="text">
+      <string>Date of order:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="0">
+    <widget class="QPushButton" name="choseUserBtn">
+     <property name="minimumSize">
+      <size>
+       <width>200</width>
+       <height>0</height>
+      </size>
+     </property>
+     <property name="text">
+      <string>Select user</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="0">
+    <widget class="QPushButton" name="choseWorkerBtn">
+     <property name="text">
+      <string>Select worker</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="1">
+    <widget class="QLabel" name="prodCountLb">
+     <property name="text">
+      <string>Count of products:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="2">
+    <widget class="QLineEdit" name="prodCountEdit">
+     <property name="readOnly">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="0" colspan="3">
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
       <spacer name="horizontalSpacer">
@@ -60,38 +108,17 @@
      </item>
     </layout>
    </item>
-   <item row="2" column="1">
+   <item row="2" column="1" colspan="2">
     <widget class="QLineEdit" name="workerIDEdit">
+     <property name="toolTip">
+      <string>Enter worker ID</string>
+     </property>
      <property name="readOnly">
       <bool>true</bool>
      </property>
     </widget>
    </item>
-   <item row="1" column="0">
-    <widget class="QLabel" name="dateLb">
-     <property name="text">
-      <string>Date of order:</string>
-     </property>
-    </widget>
-   </item>
-   <item row="3" column="1">
-    <widget class="QLineEdit" name="firmNameEdit"/>
-   </item>
-   <item row="3" column="0">
-    <widget class="QLabel" name="firmLb">
-     <property name="text">
-      <string>Firm name:</string>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="1">
-    <widget class="QLineEdit" name="userIDEdit">
-     <property name="readOnly">
-      <bool>true</bool>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="1">
+   <item row="1" column="1" colspan="2">
     <widget class="QDateEdit" name="dateEdit">
      <property name="dateTime">
       <datetime>
@@ -105,28 +132,29 @@
      </property>
     </widget>
    </item>
-   <item row="0" column="0">
-    <widget class="QPushButton" name="choseUserBtn">
-     <property name="minimumSize">
-      <size>
-       <width>200</width>
-       <height>0</height>
-      </size>
+   <item row="0" column="1" colspan="2">
+    <widget class="QLineEdit" name="userIDEdit">
+     <property name="toolTip">
+      <string>Enter user ID</string>
      </property>
-     <property name="text">
-      <string>Select user</string>
-     </property>
-    </widget>
-   </item>
-   <item row="2" column="0">
-    <widget class="QPushButton" name="choseWorkerBtn">
-     <property name="text">
-      <string>Select worker</string>
+     <property name="readOnly">
+      <bool>true</bool>
      </property>
     </widget>
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>choseUserBtn</tabstop>
+  <tabstop>userIDEdit</tabstop>
+  <tabstop>dateEdit</tabstop>
+  <tabstop>choseWorkerBtn</tabstop>
+  <tabstop>workerIDEdit</tabstop>
+  <tabstop>addProdBtn</tabstop>
+  <tabstop>prodCountEdit</tabstop>
+  <tabstop>okBtn</tabstop>
+  <tabstop>cencalBtn</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

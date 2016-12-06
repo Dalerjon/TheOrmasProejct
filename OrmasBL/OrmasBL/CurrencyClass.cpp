@@ -48,62 +48,78 @@ namespace BusinessLayer
 		name = cName;
 	}
 
-	bool Currency::CreateCurrency(DataLayer::OrmasDal& ormasDal, int cCode, std::string cShortName, std::string cName)
+	bool Currency::CreateCurrency(DataLayer::OrmasDal& ormasDal, int cCode, std::string cShortName, std::string cName, 
+		std::string& errorMessage)
 	{
 		id = ormasDal.GenerateID();
 		code = cCode;
 		shortName = cShortName;
 		name = cName;
-		try
+		if (0 != id && ormasDal.CreateCurrency(id, code, shortName, name, errorMessage))
 		{
-			if (ormasDal.CreateCurrency(id, code, shortName, name))
-			{
-				return true;
-			}
-			return false;
+			return true;
 		}
-		catch (...)
+		if (errorMessage.empty())
 		{
-			return false;
+			errorMessage = "Warning! ID is 0, or some unexpected error. Please contact with provider.";
 		}
+		return false;
 	}
-	bool Currency::DeleteCurrency(DataLayer::OrmasDal& ormasDal)
+	bool Currency::CreateCurrency(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
+	{
+		id = ormasDal.GenerateID();
+		if (0 != id && ormasDal.CreateCurrency(id, code, shortName, name, errorMessage))
+		{
+			return true;
+		}
+		if (errorMessage.empty())
+		{
+			errorMessage = "Warning! ID is 0, or some unexpected error. Please contact with provider.";
+		}
+		return false;
+	}
+	bool Currency::DeleteCurrency(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
 		code = 0;
 		shortName.clear();
 		name.clear();
-		try
+		if (ormasDal.DeleteCurrency(id, errorMessage))
 		{
-			if (ormasDal.DeleteCurrency(id))
-			{
-				id = 0;
-				return true;
-			}
-			return false;
+			id = 0;
+			return true;
 		}
-		catch (...)
+		if (errorMessage.empty())
 		{
-			return false;
+			errorMessage = "Unexpected error. Please contact with application provider.";
 		}
+		return false;
 	}
-	bool Currency::UpdateCurrency(DataLayer::OrmasDal& ormasDal, int cCode, std::string cShortName, std::string cName)
+	bool Currency::UpdateCurrency(DataLayer::OrmasDal& ormasDal, int cCode, std::string cShortName, std::string cName, 
+		std::string& errorMessage)
 	{
-		if (0 == id)
-			return false;
 		code = cCode;
 		shortName = cShortName;
 		name = cName;
-		try
+		if (0 != id && ormasDal.UpdateCurrency(id, code, shortName, name, errorMessage))
 		{
-			if (ormasDal.UpdateCurrency(id, code, shortName, name))
-			{
-				return true;
-			}
-			return false;
+			return true;
 		}
-		catch (...)
+		if (errorMessage.empty())
 		{
-			return false;
+			errorMessage = "Warning! ID is 0, or some unexpected error. Please contact with provider.";
 		}
+		return false;
+	}
+	bool Currency::UpdateCurrency(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
+	{
+		if (0 != id && ormasDal.UpdateCurrency(id, code, shortName, name, errorMessage))
+		{
+			return true;
+		}
+		if (errorMessage.empty())
+		{
+			errorMessage = "Warning! ID is 0, or some unexpected error. Please contact with provider.";
+		}
+		return false;
 	}
 }

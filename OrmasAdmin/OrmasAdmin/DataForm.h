@@ -10,18 +10,18 @@ class DataForm : public QWidget, public Ui::DataForm
 {
 	Q_OBJECT
 public:
-	DataForm(QWidget *parent = 0);
+	DataForm(BusinessLayer::OrmasBL *ormasBL, QWidget *parent = 0);
 	~DataForm(){};
 	
 	template<class T>
-	void FillTable()
+	void FillTable(std::string& errorMessage)
 	{
 		QStringList header = GetTableHeader<T>();
 		QStandardItem *item;
 		QStandardItemModel *itemModel = new QStandardItemModel(this);
 		itemModel->setHorizontalHeaderLabels(header);
 		tableView->setModel(itemModel);
-		std::vector<T> dataVector = ((MainForm*)parentWidget())->oBL.GetAllDataForClass<T>();
+		std::vector<T> dataVector = dataFormBL->GetAllDataForClass<T>(errorMessage);
 		if (!dataVector.empty())
 		{
 			for (int i = 0; i < dataVector.size();i++)
@@ -40,7 +40,9 @@ public:
 
 	template<class T>
 	QList<QStandardItem*> GetDataFromClass(T& data);
-
+private:
+	void DisableButtons();
+	void EnableButtons();
 private slots:
 	void CloseDataForm();
 	void CrtCompanyDlg();
@@ -55,17 +57,18 @@ private slots:
 	void CrtProdTpDlg();
 	void UdpProdTpDlg();
 	void DelProdTpDlg();
-	void CrtRegionDlg();
-	void UdpRegionDlg();
-	void DelRegionDlg();
+	void CrtLocationDlg();
+	void UdpLocationDlg();
+	void DelLocationDlg();
 	void CrtRoleDlg();
 	void UdpRoleDlg();
 	void DelRoleDlg();
 	void CrtStatusDlg();
 	void UdpStatusDlg();
 	void DelStatusDlg();
-	
-//private:
-	
+	void ChangeBtnState();
+public:
+	BusinessLayer::OrmasBL *dataFormBL;
+	QWidget* parentForm;
 };
 #endif //DATAFORM_H

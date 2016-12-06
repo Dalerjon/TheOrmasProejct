@@ -7,14 +7,14 @@ namespace BusinessLayer
 {
 	class Order
 	{
-		int id=0;
-		int userID;
-		std::string date;
-		int workerID;
-		std::string firmName;
+	protected:
+		int id = 0;
+		int userID = 0;
+		std::string date = "";
+		int workerID = 0;
 	public:
-		Order(int oID, int uID, std::string oDate, int wID, std::string fName) :id(oID),
-			userID(uID), date(oDate), workerID(wID), firmName(fName){};
+		Order(int oID, int uID, std::string oDate, int wID) :id(oID),
+			userID(uID), date(oDate), workerID(wID){};
 		Order(DataLayer::ordersCollection);
 		Order(){};
 		~Order(){};
@@ -24,19 +24,19 @@ namespace BusinessLayer
 		int GetUserID();
 		std::string GetDate();
 		int GetWorkerID();
-		std::string GetFirmName();
 
-		//please implement Mutators
+		//Order class Mutators
 		void SetID(int);
 		void SetUserID(int);
 		void SetDate(std::string);
 		void SetWorkerID(int);
-		void SetFirmName(std::string);
-		
+				
 		//Create, delete, update methods
-		bool CreateOrder(DataLayer::OrmasDal& ormasDal, int uID, std::string oDate, int wID, std::string fName);
-		bool DeleteOrder(DataLayer::OrmasDal& ormasDal);
-		bool UpdateOrder(DataLayer::OrmasDal& ormasDal, int uID, std::string oDate, int wID, std::string fName);
+		bool CreateOrder(DataLayer::OrmasDal& ormasDal, std::string& errorMessage){};
+		bool UpdateOrder(DataLayer::OrmasDal& ormasDal, std::string& errorMessage){};
+		bool DeleteOrder(DataLayer::OrmasDal& ormasDal, std::string& errorMessage);
+		bool CreateOrder(DataLayer::OrmasDal& ormasDal, int uID, std::string oDate, int wID, std::string& errorMessage);
+		bool UpdateOrder(DataLayer::OrmasDal& ormasDal, int uID, std::string oDate, int wID, std::string& errorMessage);
 	};
 }
 #endif //ORDERCLASS_H

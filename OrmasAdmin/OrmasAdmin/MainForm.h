@@ -5,14 +5,15 @@
 #include "OrmasBL.h"
 #include "DataForm.h"
 
-class MainForm : public QMainWindow, private Ui::MainWindow
+class MainForm : public QMainWindow, public Ui::MainWindow
 {
 	Q_OBJECT
 
 public:
-	MainForm(BusinessLayer::OrmasBL ormasBL);
-	BusinessLayer::OrmasBL oBL;
-	QWidget* IsWindowExist(QList<QMdiSubWindow*> mList, QString formName);
+	MainForm(BusinessLayer::OrmasBL *ormasBL);
+	BusinessLayer::OrmasBL *oBL;
+	QMdiSubWindow* GetWindowByName(QString);
+	std::string errorMessage = "";
 private slots :
 	void ShowUsers();
 	void CreateUser();
@@ -30,11 +31,12 @@ private slots :
 	void ShowCompanies();
 	void ShowCurrencies();
 	void ShowMeasures();
-	void ShowRegions();
+	void ShowLocations();
 	void ShowRoles();
 	void ShowStatus();
 	void About();
 private:
 	void CreateConnections();
+	
 };
 #endif //MAINFORM_h

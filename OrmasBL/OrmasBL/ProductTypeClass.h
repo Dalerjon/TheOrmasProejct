@@ -8,8 +8,8 @@ namespace BusinessLayer
 	class ProductType
 	{
 		int id = 0;
-		std::string name;
-		std::string shortName;
+		std::string name = "";
+		std::string shortName = "";
 	public:
 		ProductType(int pTypeID, std::string pTypeName, std::string pTypeShortName):id(pTypeID),
 			name(pTypeName), shortName(pTypeShortName){};
@@ -28,9 +28,13 @@ namespace BusinessLayer
 		void SetShortName(std::string);
 		
 		//Create, delete, update methods
-		bool CreateProductType(DataLayer::OrmasDal& ormasDal, std::string pTypeName, std::string pTypeShortName);
-		bool DeleteProductType(DataLayer::OrmasDal& ormasDal);
-		bool UpdatePrdouctType(DataLayer::OrmasDal& ormasDal, std::string pTypeName, std::string pTypeShortName);
+		bool CreateProductType(DataLayer::OrmasDal& ormasDal, std::string& errorMessage);
+		bool UpdateProductType(DataLayer::OrmasDal& ormasDal, std::string& errorMessage);
+		bool DeleteProductType(DataLayer::OrmasDal& ormasDal, std::string& errorMessage);
+		bool CreateProductType(DataLayer::OrmasDal& ormasDal, std::string pTypeName, std::string pTypeShortName, 
+			std::string& errorMessage);
+		bool UpdateProductType(DataLayer::OrmasDal& ormasDal, std::string pTypeName, std::string pTypeShortName, 
+			std::string& errorMessage);
 	};
 }
 #endif //PRODUCTTYPECLASS_H

@@ -38,59 +38,73 @@ namespace BusinessLayer
 		comment = rComment;
 	}
 
-	bool Role::CreateRole(DataLayer::OrmasDal& ormasDal, std::string rName, std::string rComment)
+	bool Role::CreateRole(DataLayer::OrmasDal& ormasDal, std::string rName, std::string rComment, std::string& errorMessage)
 	{
 		id = ormasDal.GenerateID();
 		name = rName;
 		comment = rComment;
-		try
+		if (0 != id && ormasDal.CreateRole(id, name, comment, errorMessage))
 		{
-			if (ormasDal.CreateRole(id, name, comment))
-			{
-				return true;
-			}
-			return false;
+			return true;
 		}
-		catch (...)
+		if (errorMessage.empty())
 		{
-			return false;
+			errorMessage = "Warning! ID is 0, or some unexpected error. Please contact with provider.";
 		}
+		return false;
 	}
-	bool Role::DeleteRole(DataLayer::OrmasDal& ormasDal)
+	bool Role::CreateRole(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
+	{
+		id = ormasDal.GenerateID();
+		if (0 != id && ormasDal.CreateRole(id, name, comment, errorMessage))
+		{
+			return true;
+		}
+		if (errorMessage.empty())
+		{
+			errorMessage = "Warning! ID is 0, or some unexpected error. Please contact with provider.";
+		}
+		return false;
+	}
+	bool Role::DeleteRole(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
 		name.clear();
 		comment.clear();
-		try
+		if (ormasDal.DeleteRole(id, errorMessage))
 		{
-			if (ormasDal.DeleteRole(id))
-			{
-				id = 0;
-				return true;
-			}
-			return false;
+			id = 0;
+			return true;
 		}
-		catch (...)
+		if (errorMessage.empty())
 		{
-			return false;
+			errorMessage = "Unexpected error. Please contact with application provider.";
 		}
+		return false;
 	}
-	bool Role::UpdateRole(DataLayer::OrmasDal& ormasDal, std::string rName, std::string rComment)
+	bool Role::UpdateRole(DataLayer::OrmasDal& ormasDal, std::string rName, std::string rComment, std::string& errorMessage)
 	{
-		if (0 == id)
-			return false;
 		name = rName;
 		comment = rComment;
-		try
+		if (0 != id && ormasDal.UpdateRole(id, name, comment, errorMessage))
 		{
-			if (ormasDal.UpdateRole(id, name, comment))
-			{
-				return true;
-			}
-			return false;
+			return true;
 		}
-		catch (...)
+		if (errorMessage.empty())
 		{
-			return false;
+			errorMessage = "Warning! ID is 0, or some unexpected error. Please contact with provider.";
 		}
+		return false;
+	}
+	bool Role::UpdateRole(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
+	{
+		if (0 != id && ormasDal.UpdateRole(id, name, comment, errorMessage))
+		{
+			return true;
+		}
+		if (errorMessage.empty())
+		{
+			errorMessage = "Warning! ID is 0, or some unexpected error. Please contact with provider.";
+		}
+		return false;
 	}
 }

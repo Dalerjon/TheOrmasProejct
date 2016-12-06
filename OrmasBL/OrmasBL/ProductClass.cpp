@@ -12,8 +12,7 @@ namespace BusinessLayer
 		measureID = std::get<4>(pCollection);
 		price = std::get<5>(pCollection);
 		productTypeID = std::get<6>(pCollection);
-		dateProduce = std::get<7>(pCollection);
-		dateEnd = std::get<8>(pCollection);
+		shelfLife = std::get<7>(pCollection);
 	}
 
 	int Product::GetID()
@@ -51,55 +50,46 @@ namespace BusinessLayer
 		return productTypeID;
 	}
 
-	std::string Product::GetProduceDate()
+	int Product::GetShelfLife()
 	{
-		return dateProduce;
+		return shelfLife;
 	}
 
-	std::string Product::GetEndDate()
-	{
-		return dateEnd;
-	}
-
-	void Product::GetID(int pID)
+	void Product::SetID(int pID)
 	{
 		id = pID;
 	}
-	void Product::GetCompanyID(int pCompanyID)
+	void Product::SetCompanyID(int pCompanyID)
 	{
 		companyID = pCompanyID;
 	}
-	void Product::GetName(std::string pName)
+	void Product::SetName(std::string pName)
 	{
 		name = pName;
 	}
-	void Product::GetVolume(float pVolume)
+	void Product::SetVolume(float pVolume)
 	{
 		volume = pVolume;
 	}
-	void Product::GetMeasureID(int pMeasureID)
+	void Product::SetMeasureID(int pMeasureID)
 	{
 		measureID = pMeasureID;
 	}
-	void Product::GetPrice(float pPrice)
+	void Product::SetPrice(float pPrice)
 	{
 		price = pPrice;
 	}
-	void Product::GetProductTypeID(int pProdTypeID)
+	void Product::SetProductTypeID(int pProdTypeID)
 	{
 		productTypeID = pProdTypeID;
 	}
-	void Product::GetProduceDate(std::string pProduceDate)
+	void Product::SetShelfLife(int pShelfLife)
 	{
-		dateProduce = pProduceDate;
-	}
-	void Product::GetEndDate(std::string pEndDate)
-	{
-		dateEnd = pEndDate;
+		shelfLife = pShelfLife;
 	}
 
 	bool Product::CreateProduct(DataLayer::OrmasDal& ormasDal, int cID, std::string pName, float vol, int mID, float pri,
-		int pTypeID, std::string dProduce, std::string dEnd)
+		int pTypeID, int pShelfLife, std::string& errorMessage)
 	{
 		id = ormasDal.GenerateID();
 		companyID = cID;
@@ -108,22 +98,14 @@ namespace BusinessLayer
 		measureID = mID;
 		price = pri;
 		productTypeID = pTypeID;
-		dateProduce = dProduce;
-		dateEnd = dEnd;
-		try
+		shelfLife = pShelfLife;
+		if (0 != id && ormasDal.CreateProduct(id, companyID, name, volume, measureID, price, productTypeID, shelfLife, errorMessage))
 		{
-			if (ormasDal.CreateProduct(id, companyID, name, volume, measureID, price, productTypeID, dateProduce, dateEnd))
-			{
-				return true;
-			}
-			return false;
+			return true;
 		}
-		catch (...)
-		{
-			return false;
-		}
+		return false;
 	}
-	bool Product::DeleteProduct(DataLayer::OrmasDal& ormasDal)
+	bool Product::DeleteProduct(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
 		companyID = 0;
 		name.clear();
@@ -131,47 +113,28 @@ namespace BusinessLayer
 		measureID = 0;
 		price =  0.0;
 		productTypeID = 0;
-		dateProduce.clear();
-		dateEnd.clear();
-		try
+		shelfLife = 0;
+		if (ormasDal.DeleteProduct(id, errorMessage))
 		{
-			if (ormasDal.DeleteProduct(id))
-			{
-				id = 0;
-				return true;
-			}
-			return false;
+			id = 0;
+			return true;
 		}
-		catch (...)
-		{
-			return false;
-		}
+		return false;
 	}
 	bool Product::UpdateProduct(DataLayer::OrmasDal& ormasDal, int cID, std::string pName, float vol, int mID, float pri,
-		int pTypeID, std::string dProduce, std::string dEnd)
+		int pTypeID, int pShelfLife, std::string& errorMessage)
 	{
-		if (0 == id)
-			return false;
-		id = ormasDal.GenerateID();
 		companyID = cID;
 		name = pName;
 		volume = vol;
 		measureID = mID;
 		price = pri;
 		productTypeID = pTypeID;
-		dateProduce = dProduce;
-		dateEnd = dEnd;
-		try
+		shelfLife = pShelfLife;
+		if (0 != id && ormasDal.UpdateProduct(id, companyID, name, volume, measureID, price, productTypeID, shelfLife, errorMessage))
 		{
-			if (ormasDal.UpdateProduct(id, companyID, name, volume, measureID, price, productTypeID, dateProduce, dateEnd))
-			{
-				return true;
-			}
-			return false;
+			return true;
 		}
-		catch (...)
-		{
-			return false;
-		}
+		return false;
 	}
 }
