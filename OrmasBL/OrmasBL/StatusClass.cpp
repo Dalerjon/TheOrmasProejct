@@ -123,4 +123,39 @@ namespace BusinessLayer
 		}
 		return false;
 	}
+
+	std::string Status::GenerateFilter(DataLayer::OrmasDal& ormasDal)
+	{
+		if (0 != id || !code.empty() || !name.empty() || !comment.empty())
+		{
+			return ormasDal.GetFilterForStatus(id, code, name, comment);
+		}
+		return "";
+	}
+
+	bool Status::GetStatusByID(DataLayer::OrmasDal& ormasDal, int sID, std::string& errorMessage)
+	{
+		id = sID;
+		std::string filter = GenerateFilter(ormasDal);
+		std::vector<DataLayer::statusCollection> statusVector = ormasDal.GetStatus(errorMessage, filter);
+		if (0 != statusVector.size())
+		{
+			id = std::get<0>(statusVector.at(0));
+			code = std::get<1>(statusVector.at(0));
+			name = std::get<2>(statusVector.at(0));
+			comment = std::get<3>(statusVector.at(0));
+			return true;
+		}
+		else
+		{
+			errorMessage = "Cannot find status with this id";
+		}
+		return false;
+	}
+	bool Status::IsEmpty()
+	{
+		if(0 == id && code == "" && name == "" && comment == "")
+			return true;
+		return false;
+	}
 }

@@ -88,9 +88,12 @@
     <ClInclude Include="OrderViewClass.h" />
     <ClInclude Include="OrmasBL.h" />
     <ClInclude Include="ProductClass.h" />
+    <ClInclude Include="ProductionClass.h" />
     <ClInclude Include="ProductListClass.h" />
+    <ClInclude Include="ProductListViewClass.h" />
     <ClInclude Include="ProductTypeClass.h" />
     <ClInclude Include="LocationClass.h" />
+    <ClInclude Include="ProductViewClass.h" />
     <ClInclude Include="ReturnClass.h" />
     <ClInclude Include="ReturnViewClass.h" />
     <ClInclude Include="RoleClass.h" />
@@ -98,6 +101,7 @@
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="UserClass.h" />
+    <ClInclude Include="UserViewClass.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CompanyClass.cpp" />
@@ -107,9 +111,12 @@
     <ClCompile Include="OrderViewClass.cpp" />
     <ClCompile Include="OrmasBL.cpp" />
     <ClCompile Include="ProductClass.cpp" />
+    <ClCompile Include="ProductionClass.cpp" />
     <ClCompile Include="ProductListClass.cpp" />
+    <ClCompile Include="ProductListViewClass.cpp" />
     <ClCompile Include="ProductTypeClass.cpp" />
     <ClCompile Include="LocationClass.cpp" />
+    <ClCompile Include="ProductViewClass.cpp" />
     <ClCompile Include="ReturnClass.cpp" />
     <ClCompile Include="ReturnViewClass.cpp" />
     <ClCompile Include="RoleClass.cpp" />
@@ -119,6 +126,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="UserClass.cpp" />
+    <ClCompile Include="UserViewClass.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

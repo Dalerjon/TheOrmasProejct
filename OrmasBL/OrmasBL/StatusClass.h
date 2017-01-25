@@ -38,6 +38,11 @@ namespace BusinessLayer
 			std::string& errorMessage);
 		bool UpdateStatus(DataLayer::OrmasDal& ormasDal, std::string sCode, std::string sName, std::string sComment, 
 			std::string& errorMessage);
+
+		//Generate filter string for class
+		std::string GenerateFilter(DataLayer::OrmasDal& ormasDal);
+		bool GetStatusByID(DataLayer::OrmasDal& ormasDal, int sID, std::string& errorMessage);
+		bool IsEmpty();
 	};
 }
 #endif // STATUSCLASS_H

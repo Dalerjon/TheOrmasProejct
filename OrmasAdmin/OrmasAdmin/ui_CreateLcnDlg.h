@@ -53,7 +53,7 @@ public:
         sizePolicy.setHeightForWidth(CreateLocation->sizePolicy().hasHeightForWidth());
         CreateLocation->setSizePolicy(sizePolicy);
         CreateLocation->setLocale(QLocale(QLocale::English, QLocale::UnitedStates));
-        CreateLocation->setModal(true);
+        CreateLocation->setModal(false);
         gridLayout = new QGridLayout(CreateLocation);
         gridLayout->setObjectName(QStringLiteral("gridLayout"));
         gridLayout->setContentsMargins(11, 11, 11, 11);

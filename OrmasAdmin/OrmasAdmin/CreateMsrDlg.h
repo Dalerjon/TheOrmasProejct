@@ -19,7 +19,7 @@ private slots:
 	void Close();
 private:
 	BusinessLayer::Measure *measure = new BusinessLayer::Measure();
-	void SetMeasureParams(QString, QString, int = 0);
-	void FillEditElements(QString, QString);
+	void SetMeasureParams(QString, QString, int, int = 0);
+	void FillEditElements(QString, QString, int);
 };
 #endif //CREATEMSRDLG_H

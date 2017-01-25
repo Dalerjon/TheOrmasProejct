@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>createOrder</class>
- <widget class="QDialog" name="createOrder">
+ <class>CreateOrder</class>
+ <widget class="QDialog" name="CreateOrder">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
     <width>422</width>
-    <height>160</height>
+    <height>244</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -15,6 +15,9 @@
   </property>
   <property name="locale">
    <locale language="English" country="UnitedStates"/>
+  </property>
+  <property name="modal">
+   <bool>false</bool>
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <property name="leftMargin">
@@ -29,22 +32,22 @@
    <property name="bottomMargin">
     <number>11</number>
    </property>
-   <item row="3" column="0">
-    <widget class="QPushButton" name="addProdBtn">
-     <property name="text">
-      <string>Add products</string>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="0">
-    <widget class="QLabel" name="dateLb">
-     <property name="text">
-      <string>Date of order:</string>
+   <item row="1" column="1" colspan="2">
+    <widget class="QDateEdit" name="dateEdit">
+     <property name="dateTime">
+      <datetime>
+       <hour>0</hour>
+       <minute>0</minute>
+       <second>0</second>
+       <year>2000</year>
+       <month>1</month>
+       <day>1</day>
+      </datetime>
      </property>
     </widget>
    </item>
    <item row="0" column="0">
-    <widget class="QPushButton" name="choseUserBtn">
+    <widget class="QPushButton" name="userBtn">
      <property name="minimumSize">
       <size>
        <width>200</width>
@@ -56,28 +59,7 @@
      </property>
     </widget>
    </item>
-   <item row="2" column="0">
-    <widget class="QPushButton" name="choseWorkerBtn">
-     <property name="text">
-      <string>Select worker</string>
-     </property>
-    </widget>
-   </item>
-   <item row="3" column="1">
-    <widget class="QLabel" name="prodCountLb">
-     <property name="text">
-      <string>Count of products:</string>
-     </property>
-    </widget>
-   </item>
-   <item row="3" column="2">
-    <widget class="QLineEdit" name="prodCountEdit">
-     <property name="readOnly">
-      <bool>true</bool>
-     </property>
-    </widget>
-   </item>
-   <item row="4" column="0" colspan="3">
+   <item row="7" column="0" colspan="3">
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
       <spacer name="horizontalSpacer">
@@ -100,7 +82,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="cencalBtn">
+      <widget class="QPushButton" name="cancelBtn">
        <property name="text">
         <string>Cancel</string>
        </property>
@@ -108,32 +90,8 @@
      </item>
     </layout>
    </item>
-   <item row="2" column="1" colspan="2">
-    <widget class="QLineEdit" name="workerIDEdit">
-     <property name="toolTip">
-      <string>Enter worker ID</string>
-     </property>
-     <property name="readOnly">
-      <bool>true</bool>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="1" colspan="2">
-    <widget class="QDateEdit" name="dateEdit">
-     <property name="dateTime">
-      <datetime>
-       <hour>0</hour>
-       <minute>0</minute>
-       <second>0</second>
-       <year>2000</year>
-       <month>1</month>
-       <day>1</day>
-      </datetime>
-     </property>
-    </widget>
-   </item>
    <item row="0" column="1" colspan="2">
-    <widget class="QLineEdit" name="userIDEdit">
+    <widget class="QLineEdit" name="userEdit">
      <property name="toolTip">
       <string>Enter user ID</string>
      </property>
@@ -142,18 +100,93 @@
      </property>
     </widget>
    </item>
+   <item row="1" column="0">
+    <widget class="QLabel" name="dateLb">
+     <property name="text">
+      <string>Date of order:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="0">
+    <widget class="QPushButton" name="addProdBtn">
+     <property name="text">
+      <string>Add products</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="2">
+    <widget class="QLineEdit" name="prodCountEdit">
+     <property name="readOnly">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="0">
+    <widget class="QPushButton" name="workerBtn">
+     <property name="text">
+      <string>Select worker</string>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="0">
+    <widget class="QPushButton" name="statusBtn">
+     <property name="text">
+      <string>Change status</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="1">
+    <widget class="QLabel" name="prodCountLb">
+     <property name="text">
+      <string>Count of products:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="6" column="0">
+    <widget class="QPushButton" name="currencyBtn">
+     <property name="text">
+      <string>Select currency</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="1" colspan="2">
+    <widget class="QLineEdit" name="workerEdit">
+     <property name="toolTip">
+      <string>Enter worker ID</string>
+     </property>
+     <property name="readOnly">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="1" colspan="2">
+    <widget class="QLineEdit" name="sumEdit"/>
+   </item>
+   <item row="4" column="1" colspan="2">
+    <widget class="QLineEdit" name="statusEdit"/>
+   </item>
+   <item row="6" column="1" colspan="2">
+    <widget class="QLineEdit" name="currencyEdit"/>
+   </item>
+   <item row="5" column="0">
+    <widget class="QLabel" name="sumLb">
+     <property name="text">
+      <string>Total amount:</string>
+     </property>
+    </widget>
+   </item>
   </layout>
  </widget>
  <tabstops>
-  <tabstop>choseUserBtn</tabstop>
-  <tabstop>userIDEdit</tabstop>
+  <tabstop>userBtn</tabstop>
+  <tabstop>userEdit</tabstop>
   <tabstop>dateEdit</tabstop>
-  <tabstop>choseWorkerBtn</tabstop>
-  <tabstop>workerIDEdit</tabstop>
+  <tabstop>workerBtn</tabstop>
+  <tabstop>workerEdit</tabstop>
   <tabstop>addProdBtn</tabstop>
   <tabstop>prodCountEdit</tabstop>
   <tabstop>okBtn</tabstop>
-  <tabstop>cencalBtn</tabstop>
+  <tabstop>cancelBtn</tabstop>
  </tabstops>
  <resources/>
  <connections/>

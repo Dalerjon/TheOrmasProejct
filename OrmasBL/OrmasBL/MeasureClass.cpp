@@ -7,6 +7,7 @@ namespace BusinessLayer{
 		id = std::get<0>(mCollection);
 		name = std::get<1>(mCollection);
 		shortName = std::get<2>(mCollection);
+		unit = std::get<3>(mCollection);
 	}
 
 	int Measure::GetID()
@@ -24,6 +25,11 @@ namespace BusinessLayer{
 		return shortName;
 	}
 
+	int Measure::GetUnit()
+	{
+		return unit;
+	}
+
 	void Measure::SetID(int mID)
 	{
 		id = mID;
@@ -37,12 +43,18 @@ namespace BusinessLayer{
 		shortName = mShortName;
 	}
 
-	bool Measure::CreateMeasure(DataLayer::OrmasDal& ormasDal, std::string mName, std::string mShortName, std::string& errorMessage)
+	void Measure::SetUnit(int mUnit)
+	{
+		unit = mUnit;
+	}
+
+	bool Measure::CreateMeasure(DataLayer::OrmasDal& ormasDal, std::string mName, std::string mShortName, int mUnit, std::string& errorMessage)
 	{
 		id = ormasDal.GenerateID();
 		name = mName;
 		shortName = mShortName;
-		if (0 != id && ormasDal.CreateMeasure(id, name, shortName, errorMessage))
+		unit = mUnit;
+		if (0 != id && ormasDal.CreateMeasure(id, name, shortName, unit, errorMessage))
 		{
 			return true;
 		}
@@ -55,7 +67,7 @@ namespace BusinessLayer{
 	bool Measure::CreateMeasure(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
 		id = ormasDal.GenerateID();
-		if (0 != id && ormasDal.CreateMeasure(id, name, shortName, errorMessage))
+		if (0 != id && ormasDal.CreateMeasure(id, name, shortName, unit, errorMessage))
 		{
 			return true;
 		}
@@ -80,11 +92,11 @@ namespace BusinessLayer{
 		}
 		return false;
 	}
-	bool Measure::UpdateMeasure(DataLayer::OrmasDal& ormasDal, std::string mName, std::string mShortName, std::string& errorMessage)
+	bool Measure::UpdateMeasure(DataLayer::OrmasDal& ormasDal, std::string mName, std::string mShortName, int mUnit, std::string& errorMessage)
 	{
 		name = mName;
 		shortName = mShortName;
-		if (0 != id && ormasDal.UpdateMeasure(id, name, shortName, errorMessage))
+		if (0 != id && ormasDal.UpdateMeasure(id, name, shortName, mUnit, errorMessage))
 		{
 			return true;
 		}
@@ -96,7 +108,7 @@ namespace BusinessLayer{
 	}
 	bool Measure::UpdateMeasure(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
-		if (0 != id && ormasDal.UpdateMeasure(id, name, shortName, errorMessage))
+		if (0 != id && ormasDal.UpdateMeasure(id, name, shortName, unit, errorMessage))
 		{
 			return true;
 		}
@@ -104,6 +116,41 @@ namespace BusinessLayer{
 		{
 			errorMessage = "Warning! ID is 0, or some unexpected error. Please contact with provider.";
 		}
+		return false;
+	}
+
+	std::string Measure::GenerateFilter(DataLayer::OrmasDal& ormasDal)
+	{
+		if (0 != id || !name.empty() ||  !shortName.empty())
+		{
+			return ormasDal.GetFilterForMeasure(id, name, shortName, unit);
+		}
+		return "";
+	}
+
+	bool Measure::GetMeasureByID(DataLayer::OrmasDal& ormasDal, int mID, std::string& errorMessage)
+	{
+		id = mID;
+		std::string filter = GenerateFilter(ormasDal);
+		std::vector<DataLayer::measuresCollection> measuresVector = ormasDal.GetMeasures(errorMessage, filter);
+		if (0 != measuresVector.size())
+		{
+			id = std::get<0>(measuresVector.at(0));
+			name = std::get<1>(measuresVector.at(0));
+			shortName = std::get<2>(measuresVector.at(0));
+			unit = std::get<3>(measuresVector.at(0));
+			return true;
+		}
+		else
+		{
+			errorMessage = "Cannot find measure with this id";
+		}
+		return false;
+	}
+	bool Measure::IsEmpty()
+	{
+		if (0 == id && name == "" && shortName == "" && 0 == unit)
+			return true;
 		return false;
 	}
 }

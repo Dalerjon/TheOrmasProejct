@@ -8,6 +8,7 @@
 CreatePrdTpDlg::CreatePrdTpDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, QWidget *parent) :QDialog(parent)
 {
 	setupUi(this);
+	setModal(true);
 	nameEdit->setMaxLength(50);
 	shortNameEdit->setMaxLength(10);	
 	dialogBL = ormasBL;
@@ -60,6 +61,7 @@ void CreatePrdTpDlg::CreateProductType()
 	{
 		DataForm *parentDataForm = (DataForm*)parentWidget();
 		SetProdTypeParams(nameEdit->text(), shortNameEdit->text());
+		dialogBL->StartTransaction(errorMessage);
 		if (dialogBL->CreateProductType(prodType, errorMessage))
 		{
 			QList<QStandardItem*> prodTypeItem;
@@ -68,9 +70,11 @@ void CreatePrdTpDlg::CreateProductType()
 			QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
 			itemModel->appendRow(prodTypeItem);
 			this->close();
+			dialogBL->CommitTransaction(errorMessage);
 		}
 		else
 		{
+			dialogBL->CancelTransaction(errorMessage);
 			QMessageBox::information(NULL, QString(tr("Warning")),
 				QString(tr(errorMessage.c_str())),
 				QString(tr("Ok")));
@@ -93,18 +97,21 @@ void CreatePrdTpDlg::EditProductType()
 		if (QString(prodType->GetName().c_str()) != nameEdit->text() || QString(prodType->GetShortName().c_str()) != shortNameEdit->text())
 		{
 			DataForm *parentDataForm = (DataForm*)parentWidget();
-			SetProdTypeParams(nameEdit->text(), shortNameEdit->text(), GetIDFromTable(parentDataForm->tableView, errorMessage));
+			SetProdTypeParams(nameEdit->text(), shortNameEdit->text(), prodType->GetID());
+			dialogBL->StartTransaction(errorMessage);
 			if (dialogBL->UpdateProductType(prodType, errorMessage))
 			{
 				QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
 				QModelIndex mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
-				itemModel->item(mIndex.row(), 1)->setText(nameEdit->text());
-				itemModel->item(mIndex.row(), 2)->setText(shortNameEdit->text());
+				itemModel->item(mIndex.row(), 1)->setText(prodType->GetName().c_str());
+				itemModel->item(mIndex.row(), 2)->setText(prodType->GetShortName().c_str());
 				emit itemModel->dataChanged(mIndex, mIndex);
 				this->close();
+				dialogBL->CommitTransaction(errorMessage);
 			}
 			else
 			{
+				dialogBL->CancelTransaction(errorMessage);
 				QMessageBox::information(NULL, QString(tr("Warning")),
 					QString(tr(errorMessage.c_str())),
 					QString(tr("Ok")));

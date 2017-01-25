@@ -8,6 +8,7 @@
 CreateRoleDlg::CreateRoleDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, QWidget *parent) :QDialog(parent)
 {
 	setupUi(this);
+	setModal(true);
 	nameEdit->setMaxLength(20);
 	dialogBL = ormasBL;
 	if (true == updateFlag)
@@ -60,6 +61,7 @@ void CreateRoleDlg::CreateRole()
 	{
 		DataForm *parentDataForm = (DataForm*)parentWidget();
 		SetRoleParams(nameEdit->text(), commentTextEdit->toPlainText());
+		dialogBL->StartTransaction(errorMessage);
 		if (dialogBL->CreateRole(role, errorMessage))
 		{
 			QList<QStandardItem*> roleItem;
@@ -68,9 +70,11 @@ void CreateRoleDlg::CreateRole()
 			QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
 			itemModel->appendRow(roleItem);
 			this->close();
+			dialogBL->CommitTransaction(errorMessage);
 		}
 		else
 		{
+			dialogBL->CancelTransaction(errorMessage);
 			QMessageBox::information(NULL, QString(tr("Warning")),
 				QString(tr(errorMessage.c_str())),
 				QString(tr("Ok")));
@@ -93,18 +97,21 @@ void CreateRoleDlg::EditRole()
 		if (QString(role->GetName().c_str()) != nameEdit->text() || QString(role->GetComment().c_str()) != commentTextEdit->toPlainText())
 		{
 			DataForm *parentDataForm = (DataForm*)parentWidget();
-			SetRoleParams(nameEdit->text(), commentTextEdit->toPlainText(), GetIDFromTable(parentDataForm->tableView, errorMessage));
+			SetRoleParams(nameEdit->text(), commentTextEdit->toPlainText(), role->GetID());
+			dialogBL->StartTransaction(errorMessage);
 			if (dialogBL->UpdateRole(role, errorMessage))
 			{
 				QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
 				QModelIndex mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
-				itemModel->item(mIndex.row(), 1)->setText(nameEdit->text());
-				itemModel->item(mIndex.row(), 2)->setText(commentTextEdit->toPlainText());
+				itemModel->item(mIndex.row(), 1)->setText(role->GetName().c_str());
+				itemModel->item(mIndex.row(), 2)->setText(role->GetComment().c_str());
 				emit itemModel->dataChanged(mIndex, mIndex);
 				this->close();
+				dialogBL->CommitTransaction(errorMessage);
 			}
 			else
 			{
+				dialogBL->CancelTransaction(errorMessage);
 				QMessageBox::information(NULL, QString(tr("Warning")),
 					QString(tr(errorMessage.c_str())),
 					QString(tr("Ok")));

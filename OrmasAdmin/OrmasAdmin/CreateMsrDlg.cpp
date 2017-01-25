@@ -8,31 +8,38 @@
 CreateMsrDlg::CreateMsrDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, QWidget *parent) :QDialog(parent)
 {
 	setupUi(this);
+	setModal(true);
 	shortNameEdit->setMaxLength(4);
 	nameEdit->setMaxLength(15);
 	dialogBL = ormasBL;
+	QRegExp expr("\\d*");
+	QRegExpValidator v(expr, 0);
+	unitEdit->setValidator(&v);	
 	if (true == updateFlag)
 	{
 		QObject::connect(okBtn, &QPushButton::released, this, &CreateMsrDlg::EditMeasure);
 	}
 	else
 	{
+		unitEdit->setText("0");
 		QObject::connect(okBtn, &QPushButton::released, this, &CreateMsrDlg::CreateMeasure);
 	}
 	QObject::connect(cancelBtn, &QPushButton::released, this, &CreateMsrDlg::Close);
 }
 
-void CreateMsrDlg::SetMeasureParams(QString mName, QString mShortName, int id)
+void CreateMsrDlg::SetMeasureParams(QString mName, QString mShortName, int mUnit, int id)
 {
 	measure->SetName(mName.toUtf8().constData());
 	measure->SetShortName(mShortName.toUtf8().constData());
+	measure->SetUnit(mUnit);
 	measure->SetID(id);
 }
 
-void CreateMsrDlg::FillEditElements(QString mName, QString mShortName)
+void CreateMsrDlg::FillEditElements(QString mName, QString mShortName, int mUnit)
 {
 	nameEdit->setText(mName);
 	shortNameEdit->setText(mShortName);
+	unitEdit->setText(QString::number(mUnit));
 }
 
 bool CreateMsrDlg::FillDlgElements(QTableView* mTable)
@@ -42,9 +49,11 @@ bool CreateMsrDlg::FillDlgElements(QTableView* mTable)
 	{
 		SetMeasureParams(mTable->model()->data(mTable->model()->index(mIndex.row(), 1)).toString().toUtf8().constData(),
 			mTable->model()->data(mTable->model()->index(mIndex.row(), 2)).toString().toUtf8().constData(),
+			mTable->model()->data(mTable->model()->index(mIndex.row(), 3)).toInt(),
 			mTable->model()->data(mTable->model()->index(mIndex.row(), 0)).toInt());
 		FillEditElements(mTable->model()->data(mTable->model()->index(mIndex.row(), 1)).toString().toUtf8().constData(),
-			mTable->model()->data(mTable->model()->index(mIndex.row(), 2)).toString().toUtf8().constData());
+			mTable->model()->data(mTable->model()->index(mIndex.row(), 2)).toString().toUtf8().constData(),
+			mTable->model()->data(mTable->model()->index(mIndex.row(), 3)).toInt());
 		return true;
 	}
 	else
@@ -56,21 +65,24 @@ bool CreateMsrDlg::FillDlgElements(QTableView* mTable)
 void CreateMsrDlg::CreateMeasure()
 {
 	errorMessage.clear();
-	if (!(nameEdit->text().isEmpty() || shortNameEdit->text().isEmpty()))
+	if (!(nameEdit->text().isEmpty() || shortNameEdit->text().isEmpty()) && 0 != unitEdit->text().toInt())
 	{
 		DataForm *parentDataForm = (DataForm*)parentWidget();
-		SetMeasureParams(nameEdit->text(), shortNameEdit->text());
+		SetMeasureParams(nameEdit->text(), shortNameEdit->text(), unitEdit->text().toInt());
+		dialogBL->StartTransaction(errorMessage);
 		if (dialogBL->CreateMeasure(measure,errorMessage))
 		{
 			QList<QStandardItem*> measureItem;
 			measureItem << new QStandardItem(QString::number(measure->GetID())) << new QStandardItem(measure->GetName().c_str())
-				<< new QStandardItem(measure->GetShortName().c_str());
+				<< new QStandardItem(measure->GetShortName().c_str()) << new QStandardItem(QString::number(measure->GetUnit()));
 			QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
 			itemModel->appendRow(measureItem);
 			this->close();
+			dialogBL->CommitTransaction(errorMessage);
 		}
 		else
 		{
+			dialogBL->CancelTransaction(errorMessage);
 			QMessageBox::information(NULL, QString(tr("Warning")),
 				QString(tr(errorMessage.c_str())),
 				QString(tr("Ok")));
@@ -88,23 +100,28 @@ void CreateMsrDlg::CreateMeasure()
 void CreateMsrDlg::EditMeasure()
 {
 	errorMessage.clear();
-	if (!(nameEdit->text().isEmpty() || shortNameEdit->text().isEmpty()))
+	if (!(nameEdit->text().isEmpty() || shortNameEdit->text().isEmpty()) || 0 != unitEdit->text().toInt())
 	{
-		if (QString(measure->GetName().c_str()) != nameEdit->text() || QString(measure->GetShortName().c_str()) != shortNameEdit->text())
+		if (QString(measure->GetName().c_str()) != nameEdit->text() || QString(measure->GetShortName().c_str()) != shortNameEdit->text()
+			|| measure->GetUnit() != unitEdit->text().toInt())
 		{
 			DataForm *parentDataForm = (DataForm*)parentWidget();
-			SetMeasureParams(nameEdit->text(), shortNameEdit->text(), GetIDFromTable(parentDataForm->tableView, errorMessage));
+			SetMeasureParams(nameEdit->text(), shortNameEdit->text(), unitEdit->text().toInt(), measure->GetID());
+			dialogBL->StartTransaction(errorMessage);
 			if (dialogBL->UpdateMeasure(measure,errorMessage))
 			{
 				QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
 				QModelIndex mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
-				itemModel->item(mIndex.row(), 1)->setText(nameEdit->text());
+				itemModel->item(mIndex.row(), 1)->setText(measure->GetName().c_str());
 				itemModel->item(mIndex.row(), 2)->setText(shortNameEdit->text());
+				itemModel->item(mIndex.row(), 3)->setText(QString::number(unitEdit->text().toInt()));
 				emit itemModel->dataChanged(mIndex, mIndex);
 				this->close();
+				dialogBL->CommitTransaction(errorMessage);
 			}
 			else
 			{
+				dialogBL->CancelTransaction(errorMessage);
 				QMessageBox::information(NULL, QString(tr("Warning")),
 					QString(tr(errorMessage.c_str())),
 					QString(tr("Ok")));

@@ -45,7 +45,7 @@ public:
             CreateRole->setObjectName(QStringLiteral("CreateRole"));
         CreateRole->resize(400, 150);
         CreateRole->setLocale(QLocale(QLocale::English, QLocale::UnitedStates));
-        CreateRole->setModal(true);
+        CreateRole->setModal(false);
         gridLayout = new QGridLayout(CreateRole);
         gridLayout->setObjectName(QStringLiteral("gridLayout"));
         gridLayout->setContentsMargins(11, 11, 11, 11);

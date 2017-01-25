@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>400</width>
-    <height>127</height>
+    <height>177</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -22,6 +22,9 @@
   <property name="locale">
    <locale language="English" country="UnitedStates"/>
   </property>
+  <property name="modal">
+   <bool>false</bool>
+  </property>
   <layout class="QGridLayout" name="gridLayout">
    <property name="leftMargin">
     <number>11</number>
@@ -35,19 +38,6 @@
    <property name="bottomMargin">
     <number>11</number>
    </property>
-   <item row="0" column="0">
-    <widget class="QLabel" name="codeLb">
-     <property name="minimumSize">
-      <size>
-       <width>100</width>
-       <height>0</height>
-      </size>
-     </property>
-     <property name="text">
-      <string>Code:</string>
-     </property>
-    </widget>
-   </item>
    <item row="1" column="0">
     <widget class="QLabel" name="shortNameLb">
      <property name="text">
@@ -69,7 +59,14 @@
      </property>
     </widget>
    </item>
-   <item row="3" column="0" colspan="2">
+   <item row="3" column="0">
+    <widget class="QLabel" name="unitLb">
+     <property name="text">
+      <string>Change unit:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="0" colspan="2">
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
       <spacer name="horizontalSpacer">
@@ -100,6 +97,22 @@
      </item>
     </layout>
    </item>
+   <item row="3" column="1">
+    <widget class="QLineEdit" name="unitEdit"/>
+   </item>
+   <item row="0" column="0">
+    <widget class="QLabel" name="codeLb">
+     <property name="minimumSize">
+      <size>
+       <width>100</width>
+       <height>0</height>
+      </size>
+     </property>
+     <property name="text">
+      <string>Code:</string>
+     </property>
+    </widget>
+   </item>
    <item row="0" column="1">
     <widget class="QLineEdit" name="codeEdit">
      <property name="toolTip">
@@ -117,12 +130,26 @@
      </property>
     </widget>
    </item>
+   <item row="4" column="0">
+    <widget class="QLabel" name="mainTradeLb">
+     <property name="frameShape">
+      <enum>QFrame::NoFrame</enum>
+     </property>
+     <property name="text">
+      <string>Main trade:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="1">
+    <widget class="QComboBox" name="mainTradeCmbBox"/>
+   </item>
   </layout>
  </widget>
  <tabstops>
   <tabstop>codeEdit</tabstop>
   <tabstop>shortNameEdit</tabstop>
   <tabstop>nameEdit</tabstop>
+  <tabstop>unitEdit</tabstop>
   <tabstop>okBtn</tabstop>
   <tabstop>cancelBtn</tabstop>
  </tabstops>

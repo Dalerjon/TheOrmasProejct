@@ -9,6 +9,8 @@ namespace BusinessLayer
 		code = std::get<1>(curCollection);
 		shortName = std::get<2>(curCollection);
 		name = std::get<3>(curCollection);
+		unit = std::get<4>(curCollection);
+		mainTrade = std::get<5>(curCollection);
 	}
 	
 	int Currency::GetID()
@@ -31,6 +33,16 @@ namespace BusinessLayer
 		return name;
 	}
 
+	int Currency::GetUnit()
+	{
+		return unit;
+	}
+
+	bool Currency::GetMainTrade()
+	{
+		return mainTrade;
+	}
+
 	void Currency::SetID(int cID)
 	{
 		id = cID;
@@ -47,15 +59,25 @@ namespace BusinessLayer
 	{
 		name = cName;
 	}
+	void Currency::SetUnit(int cUnit)
+	{
+		unit = cUnit;
+	}
+	void Currency::SetMainTrade(bool cMainTrade)
+	{
+		mainTrade = cMainTrade;
+	}
 
-	bool Currency::CreateCurrency(DataLayer::OrmasDal& ormasDal, int cCode, std::string cShortName, std::string cName, 
-		std::string& errorMessage)
+	bool Currency::CreateCurrency(DataLayer::OrmasDal& ormasDal, int cCode, std::string cShortName, std::string cName, int cUnit,
+		bool cMainTrade, std::string& errorMessage)
 	{
 		id = ormasDal.GenerateID();
 		code = cCode;
 		shortName = cShortName;
 		name = cName;
-		if (0 != id && ormasDal.CreateCurrency(id, code, shortName, name, errorMessage))
+		unit = cUnit;
+		mainTrade = cMainTrade;
+		if (0 != id && ormasDal.CreateCurrency(id, code, shortName, name, unit, mainTrade, errorMessage))
 		{
 			return true;
 		}
@@ -68,7 +90,7 @@ namespace BusinessLayer
 	bool Currency::CreateCurrency(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
 		id = ormasDal.GenerateID();
-		if (0 != id && ormasDal.CreateCurrency(id, code, shortName, name, errorMessage))
+		if (0 != id && ormasDal.CreateCurrency(id, code, shortName, name, unit, mainTrade, errorMessage))
 		{
 			return true;
 		}
@@ -94,13 +116,15 @@ namespace BusinessLayer
 		}
 		return false;
 	}
-	bool Currency::UpdateCurrency(DataLayer::OrmasDal& ormasDal, int cCode, std::string cShortName, std::string cName, 
-		std::string& errorMessage)
+	bool Currency::UpdateCurrency(DataLayer::OrmasDal& ormasDal, int cCode, std::string cShortName, std::string cName, int cUnit,
+		bool cMainTrade, std::string& errorMessage)
 	{
 		code = cCode;
 		shortName = cShortName;
 		name = cName;
-		if (0 != id && ormasDal.UpdateCurrency(id, code, shortName, name, errorMessage))
+		unit = cUnit;
+		mainTrade = cMainTrade;
+		if (0 != id && ormasDal.UpdateCurrency(id, code, shortName, name, unit, mainTrade, errorMessage))
 		{
 			return true;
 		}
@@ -112,7 +136,7 @@ namespace BusinessLayer
 	}
 	bool Currency::UpdateCurrency(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
-		if (0 != id && ormasDal.UpdateCurrency(id, code, shortName, name, errorMessage))
+		if (0 != id && ormasDal.UpdateCurrency(id, code, shortName, name, unit, mainTrade, errorMessage))
 		{
 			return true;
 		}
@@ -120,6 +144,44 @@ namespace BusinessLayer
 		{
 			errorMessage = "Warning! ID is 0, or some unexpected error. Please contact with provider.";
 		}
+		return false;
+	}
+	
+	std::string Currency::GenerateFilter(DataLayer::OrmasDal& ormasDal)
+	{
+		if (0 != id || 0 != code || !name.empty() || !shortName.empty())
+		{
+			return ormasDal.GetFilterForCurrency(id, code, shortName, name, unit);
+		}
+		return "";
+	}
+
+	bool Currency::GetCurrencyByID(DataLayer::OrmasDal& ormasDal, int cID, std::string& errorMessage)
+	{
+		id = cID;
+		std::string filter = GenerateFilter(ormasDal);
+		std::vector<DataLayer::currenciesCollection> currencyVector = ormasDal.GetCurrencies(errorMessage, filter);
+		if (0 != currencyVector.size())
+		{
+			id = std::get<0>(currencyVector.at(0));
+			code = std::get<1>(currencyVector.at(0));
+			shortName = std::get<2>(currencyVector.at(0));
+			name = std::get<3>(currencyVector.at(0));
+			unit = std::get<4>(currencyVector.at(0));
+			mainTrade = std::get<5>(currencyVector.at(0));
+			return true;
+		}
+		else
+		{
+			errorMessage = "Cannot find currency with this id";
+		}
+		return false;
+	}
+	
+	bool Currency::IsEmpty()
+	{
+		if (0 == id && 0 == code && shortName == "" &&	name == "" && 0 == unit && mainTrade == false)
+			return true;
 		return false;
 	}
 }

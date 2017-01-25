@@ -41,6 +41,11 @@ namespace BusinessLayer{
 			std::string cComment, std::string& errorMessage);
 		bool UpdateCompany(DataLayer::OrmasDal &rmasDal, std::string cName, std::string cAddress, std::string cPhone, 
 			std::string cComment, std::string& errorMessage);
+
+		//Generate filter string for class
+		std::string GenerateFilter(DataLayer::OrmasDal& ormasDal);
+		bool GetCompanyByID(DataLayer::OrmasDal& ormasDal, int cID, std::string& errorMessage);
+		bool IsEmpty();
 	};
 }
 #endif //COMPANYCLASS_H

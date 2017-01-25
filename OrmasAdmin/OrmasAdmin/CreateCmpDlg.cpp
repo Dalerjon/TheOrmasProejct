@@ -9,6 +9,7 @@
 CreateCmpDlg::CreateCmpDlg(BusinessLayer::OrmasBL *ormasBL,bool updateFlag ,QWidget *parent) :QDialog(parent)
 {
 	setupUi(this);
+	setModal(true);
 	nameEdit->setMaxLength(30);
 	addressEdit->setMaxLength(30);
 	phoneEdit->setMaxLength(15);
@@ -71,6 +72,7 @@ void CreateCmpDlg::CreateCompany()
 	{
 		DataForm *parentDataForm = (DataForm*)parentWidget();
 		SetCompanyParams(nameEdit->text(), phoneEdit->text(), addressEdit->text(), commentTextEdit->toPlainText());
+		dialogBL->StartTransaction(errorMessage);
 		if (dialogBL->CreateCompany(company,errorMessage))
 		{
 			QList<QStandardItem*> companyItem;
@@ -80,9 +82,11 @@ void CreateCmpDlg::CreateCompany()
 			QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
 			itemModel->appendRow(companyItem);
 			this->close();
+			dialogBL->CommitTransaction(errorMessage);
 		}
 		else
 		{
+			dialogBL->CancelTransaction(errorMessage);
 			QMessageBox::information(NULL, QString(tr("Warning")),
 				QString(tr(errorMessage.c_str())),
 				QString(tr("Ok")));
@@ -109,20 +113,23 @@ void CreateCmpDlg::EditCompany()
 			|| QString(company->GetComment().c_str()) != commentTextEdit->toPlainText())
 		{
 			DataForm *parentDataForm = (DataForm*)parentWidget();
-			SetCompanyParams(nameEdit->text(), phoneEdit->text(), addressEdit->text(), commentTextEdit->toPlainText(), GetIDFromTable(parentDataForm->tableView, errorMessage));
+			SetCompanyParams(nameEdit->text(), phoneEdit->text(), addressEdit->text(), commentTextEdit->toPlainText(), company->GetID());
+			dialogBL->StartTransaction(errorMessage);
 			if (dialogBL->UpdateCompany(company, errorMessage))
 			{
 				QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
 				QModelIndex mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
-				itemModel->item(mIndex.row(), 1)->setText(nameEdit->text());
-				itemModel->item(mIndex.row(), 2)->setText(addressEdit->text());
-				itemModel->item(mIndex.row(), 3)->setText(phoneEdit->text());
-				itemModel->item(mIndex.row(), 4)->setText(commentTextEdit->toPlainText());
+				itemModel->item(mIndex.row(), 1)->setText(company->GetName().c_str());
+				itemModel->item(mIndex.row(), 2)->setText(company->GetAddress().c_str());
+				itemModel->item(mIndex.row(), 3)->setText(company->GetPhone().c_str());
+				itemModel->item(mIndex.row(), 4)->setText(company->GetComment().c_str());
 				emit itemModel->dataChanged(mIndex, mIndex);
 				this->close();
+				dialogBL->CommitTransaction(errorMessage);
 			}
 			else
 			{
+				dialogBL->CancelTransaction(errorMessage);
 				QMessageBox::information(NULL, QString(tr("Warning")),
 					QString(tr(errorMessage.c_str())),
 					QString(tr("Ok")));

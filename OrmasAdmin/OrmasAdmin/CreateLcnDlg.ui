@@ -23,7 +23,7 @@
    <locale language="English" country="UnitedStates"/>
   </property>
   <property name="modal">
-   <bool>true</bool>
+   <bool>false</bool>
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <property name="leftMargin">

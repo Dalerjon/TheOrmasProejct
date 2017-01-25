@@ -7,17 +7,20 @@ namespace BusinessLayer
 {
 	class Product
 	{
+	protected:
 		int id = 0;
 		int companyID = 0;
 		std::string name = "";
-		float volume = 0;
+		double volume = 0;
 		int measureID = 0;
-		float price = 0;
+		double price = 0;
 		int productTypeID = 0;
 		int shelfLife = 0;
+		int currencyID = 0;
 	public:
-		Product(int pID, int cID, std::string pName, float vol, int mID, float price, int pTypeID, int pShelfLife) :id(pID), companyID(cID), name(pName), volume(vol), measureID(mID),
-			price(price), productTypeID(pTypeID), shelfLife(pShelfLife){};
+		Product(int pID, int cID, std::string pName, float vol, int mID, float price, int pTypeID, int pShelfLife, int pCurrencyID) 
+			:id(pID), companyID(cID), name(pName), volume(vol), measureID(mID), price(price), productTypeID(pTypeID), 
+			shelfLife(pShelfLife), currencyID(pCurrencyID){};
 		Product(DataLayer::productsCollection);
 		Product(){};
 		~Product(){};
@@ -26,30 +29,37 @@ namespace BusinessLayer
 		int GetID();
 		int GetCompanyID();
 		std::string GetName();
-		float GetVolume();
+		double GetVolume();
 		int GetMeasureID();
-		float GetPrice();
+		double GetPrice();
 		int GetProductTypeID();
 		int GetShelfLife();
+		int GetCurrencyID();
 
 		//Please implement Mutators
 		void SetID(int);
 		void SetCompanyID(int);
 		void SetName(std::string);
-		void SetVolume(float);
+		void SetVolume(double);
 		void SetMeasureID(int);
-		void SetPrice(float);
+		void SetPrice(double);
 		void SetProductTypeID(int);
 		void SetShelfLife(int);
+		void SetCurrencyID(int);
 
 		//Create, delete, update methods
 		bool CreateProduct(DataLayer::OrmasDal& ormasDal, std::string& errorMessage);
 		bool UpdateProduct(DataLayer::OrmasDal& ormasDal, std::string& errorMessage);
 		bool DeleteProduct(DataLayer::OrmasDal& ormasDal, std::string& errorMessage);
 		bool CreateProduct(DataLayer::OrmasDal& ormasDal, int cID, std::string pName, float vol, int mID, float price,
-			int pTypeID, int shelfLife, std::string& errorMessage);
+			int pTypeID, int shelfLife, int curID, std::string& errorMessage);
 		bool UpdateProduct(DataLayer::OrmasDal& ormasDal, int cID, std::string pName, float vol, int mID, float price,
-			int pTypeID, int shelfLife, std::string& errorMessage);
+			int pTypeID, int shelfLife, int curID, std::string& errorMessage);
+
+		//Generate filter string for class
+		std::string GenerateFilter(DataLayer::OrmasDal& ormasDal);
+		bool GetProductByID(DataLayer::OrmasDal& ormasDal, int pID, std::string& errorMessage);
+		bool IsEmpty();
 	};
 }
 #endif //PRODUCTCLASS_H

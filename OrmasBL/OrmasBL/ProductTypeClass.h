@@ -35,6 +35,11 @@ namespace BusinessLayer
 			std::string& errorMessage);
 		bool UpdateProductType(DataLayer::OrmasDal& ormasDal, std::string pTypeName, std::string pTypeShortName, 
 			std::string& errorMessage);
+
+		//Generate filter string for class
+		std::string GenerateFilter(DataLayer::OrmasDal& ormasDal);
+		bool GetProductTypeByID(DataLayer::OrmasDal& ormasDal, int pID, std::string& errorMessage);
+		bool IsEmpty();
 	};
 }
 #endif //PRODUCTTYPECLASS_H

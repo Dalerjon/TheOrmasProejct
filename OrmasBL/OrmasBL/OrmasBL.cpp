@@ -4,6 +4,7 @@
 #include "stdafx.h"
 #include "OrmasBL.h"
 #include <typeinfo>
+#include <math.h>
 
 namespace BusinessLayer{
 	
@@ -30,6 +31,24 @@ namespace BusinessLayer{
 	DataLayer::OrmasDal& OrmasBL::GetOrmasDal()
 	{
 		return ormasDal;
+	}
+
+	int OrmasBL::GenerateID()
+	{
+		return ormasDal.GenerateID();
+	}
+
+	bool OrmasBL::StartTransaction(std::string& errorMessage)
+	{
+		return ormasDal.StartTransaction(errorMessage);
+	}
+	bool OrmasBL::CommitTransaction(std::string& errorMessage)
+	{
+		return ormasDal.CommitTransaction(errorMessage);
+	}
+	bool OrmasBL::CancelTransaction(std::string& errorMessage)
+	{
+		return ormasDal.CancelTransaction(errorMessage);
 	}
 
 	template<>
@@ -121,10 +140,10 @@ namespace BusinessLayer{
 	}
 
 	template<>
-	std::vector<Product> OrmasBL::GetAllDataForClass<Product>(std::string& errorMessage, std::string filter)
+	std::vector<ProductView> OrmasBL::GetAllDataForClass<ProductView>(std::string& errorMessage, std::string filter)
 	{
-		std::vector<Product> vecForProduct;
-		std::vector<DataLayer::productsCollection> dataCollection;
+		std::vector<ProductView> vecForProduct;
+		std::vector<DataLayer::productsViewCollection> dataCollection;
 		if (filter.empty())
 		{
 			dataCollection = ormasDal.GetProducts(errorMessage);
@@ -136,17 +155,17 @@ namespace BusinessLayer{
 		if (!dataCollection.empty()){
 			for (auto data : dataCollection)
 			{
-				vecForProduct.push_back(Product(data));
+				vecForProduct.push_back(ProductView(data));
 			}
 		}
 		return vecForProduct;
 	}
 
 	template<>
-	std::vector<ProductList> OrmasBL::GetAllDataForClass<ProductList>(std::string& errorMessage, std::string filter)
+	std::vector<ProductListView> OrmasBL::GetAllDataForClass<ProductListView>(std::string& errorMessage, std::string filter)
 	{
-		std::vector<ProductList> vecForProductList;
-		std::vector<DataLayer::productListCollection> dataCollection;
+		std::vector<ProductListView> vecForProductList;
+		std::vector<DataLayer::productListViewCollection> dataCollection;
 		if (filter.empty())
 		{
 			dataCollection = ormasDal.GetProductLists(errorMessage);
@@ -158,7 +177,7 @@ namespace BusinessLayer{
 		if (!dataCollection.empty()){
 			for (auto data : dataCollection)
 			{
-				vecForProductList.push_back(ProductList(data));
+				vecForProductList.push_back(ProductListView(data));
 			}
 		}
 		return vecForProductList;
@@ -186,6 +205,28 @@ namespace BusinessLayer{
 		return vecForProductType;
 	}
 	
+	template<>
+	std::vector<Production> OrmasBL::GetAllDataForClass<Production>(std::string& errorMessage, std::string filter)
+	{
+		std::vector<Production> vecForProduction;
+		std::vector<DataLayer::productionCollection> dataCollection;
+		if (filter.empty())
+		{
+			dataCollection = ormasDal.GetProduction(errorMessage);
+		}
+		else
+		{
+			dataCollection = ormasDal.GetProduction(errorMessage, filter);
+		}
+		if (!dataCollection.empty()){
+			for (auto data : dataCollection)
+			{
+				vecForProduction.push_back(Production(data));
+			}
+		}
+		return vecForProduction;
+	}
+
 	template<>
 	std::vector<Location> OrmasBL::GetAllDataForClass<Location>(std::string& errorMessage, std::string filter)
 	{
@@ -275,10 +316,10 @@ namespace BusinessLayer{
 	}
 
 	template<>
-	std::vector<User> OrmasBL::GetAllDataForClass<User>(std::string& errorMessage, std::string filter)
+	std::vector<UserView> OrmasBL::GetAllDataForClass<UserView>(std::string& errorMessage, std::string filter)
 	{
-		std::vector<User> vecForUser;
-		std::vector<DataLayer::usersCollection> dataCollection;
+		std::vector<UserView> vecForUser;
+		std::vector<DataLayer::usersViewCollection> dataCollection;
 		if (filter.empty())
 		{
 			dataCollection = ormasDal.GetUsers(errorMessage);
@@ -290,7 +331,7 @@ namespace BusinessLayer{
 		if (!dataCollection.empty()){
 			for (auto data : dataCollection)
 			{
-				vecForUser.push_back(User(data));
+				vecForUser.push_back(UserView(data));
 			}
 		}
 		return vecForUser;
@@ -360,7 +401,7 @@ namespace BusinessLayer{
 	{
 		try
 		{
-			if (!currency->GetName().empty() && !currency->GetShortName().empty())
+			if (0 != currency->GetCode() && !currency->GetName().empty() && !currency->GetShortName().empty() && 0 != currency->GetUnit())
 			{
 				return currency->CreateCurrency(ormasDal, errorMessage);
 			}
@@ -380,7 +421,7 @@ namespace BusinessLayer{
 	{
 		try
 		{
-			if (0 != currency->GetCode() && !currency->GetName().empty() && !currency->GetShortName().empty())
+			if (0 != currency->GetCode() && !currency->GetName().empty() && !currency->GetShortName().empty() && 0 != currency->GetUnit())
 			{
 				return currency->UpdateCurrency(ormasDal, errorMessage);
 			}
@@ -420,7 +461,7 @@ namespace BusinessLayer{
 	{
 		try
 		{
-			if (!measure->GetName().empty() && !measure->GetShortName().empty())
+			if (!measure->GetName().empty() && !measure->GetShortName().empty() && 0 != measure->GetUnit())
 			{
 				return measure->CreateMeasure(ormasDal, errorMessage);
 			}
@@ -440,7 +481,7 @@ namespace BusinessLayer{
 	{
 		try
 		{
-			if (!measure->GetName().empty() && !measure->GetShortName().empty())
+			if (!measure->GetName().empty() && !measure->GetShortName().empty() && 0 != measure->GetUnit())
 			{
 				return measure->UpdateMeasure(ormasDal, errorMessage);
 			}
@@ -707,7 +748,476 @@ namespace BusinessLayer{
 			}
 			else
 			{
-				errorMessage = "Error! Role ID is 0. Some thing goes wrong!";
+				errorMessage = "Error! Status ID is 0. Some thing goes wrong!";
+			}
+		}
+		catch (...)
+		{
+			errorMessage = "Fatal error! Please contact with application provider.";
+		}
+		return false;
+	}
+
+	bool OrmasBL::CreateUser(BusinessLayer::User* user, std::string& errorMessage)
+	{
+		try
+		{
+			if (!user->GetName().empty() && !user->GetPhone().empty() && !user->GetAddress().empty() && !user->GetFirm().empty()
+				&& !user->GetFirmNumber().empty() && !user->GetPassword().empty() && 0 != user->GetLocationID() && 0 != user->GetRoleID())
+			{
+				return user->CreateUser(ormasDal, errorMessage);
+			}
+			else
+			{
+				errorMessage = "Error! One of feilds are emplty. Please fill up them!";
+			}
+		}
+		catch (...)
+		{
+			errorMessage = "Fatal error! Please contact with application provider.";
+		}
+		return false;
+	}
+
+	bool OrmasBL::UpdateUser(BusinessLayer::User* user, std::string& errorMessage)
+	{
+		try
+		{
+			if (!user->GetName().empty() && !user->GetPhone().empty() && !user->GetAddress().empty() && !user->GetFirm().empty()
+				&& !user->GetFirmNumber().empty() && !user->GetPassword().empty() && 0 != user->GetLocationID() && 0 != user->GetRoleID())
+			{
+				return user->UpdateUser(ormasDal, errorMessage);
+			}
+			else
+			{
+				errorMessage = "Error! One of feilds are emplty. Please fill up them!";
+			}
+		}
+		catch (...)
+		{
+			errorMessage = "Fatal error! Please contact with application provider.";
+		}
+		return false;
+	}
+
+	bool OrmasBL::DeleteUser(BusinessLayer::User* user, std::string& errorMessage)
+	{
+		try
+		{
+			if (0 != user->GetID())
+			{
+				return user->DeleteUser(ormasDal, errorMessage);
+			}
+			else
+			{
+				errorMessage = "Error! User ID is 0. Something goes wrong!";
+			}
+		}
+		catch (...)
+		{
+			errorMessage = "Fatal error! Please contact with application provider.";
+		}
+		return false;
+	}
+	
+	bool OrmasBL::CreateOrder(BusinessLayer::Order* order, std::string& errorMessage)
+	{
+		try
+		{
+			if (!order->GetDate().empty() && 0 != order->GetUserID() && 0 != order->GetCount()
+				&& 0 != order->GetSum() && 0 != order->GetStatusID() && 0 != order->GetCurrencyID())
+			{
+				double roundSum = 0;
+				Currency *cur = new Currency();
+				if (cur->GetCurrencyByID(ormasDal, order->GetCurrencyID(), errorMessage))
+				{
+					roundSum = round(order->GetSum() * cur->GetUnit()) / cur->GetUnit();
+				}
+				else
+				{
+					return false;
+				}
+				delete cur;
+				order->SetSum(roundSum);
+				return order->CreateOrder(ormasDal, errorMessage);
+			}
+			else
+			{
+				errorMessage = "Error! One of feilds are emplty. Please fill up them!";
+			}
+		}
+		catch (...)
+		{
+			errorMessage = "Fatal error! Please contact with application provider.";
+		}
+		return false;
+	}
+
+	bool OrmasBL::UpdateOrder(BusinessLayer::Order* order, std::string& errorMessage)
+	{
+		try
+		{
+			if (!order->GetDate().empty() && 0 != order->GetUserID() && 0 != order->GetCount() 
+				&& 0 != order->GetSum() && 0 != order->GetStatusID() && 0 != order->GetCurrencyID())
+			{
+				double roundSum = 0;
+				Currency *cur = new Currency();
+				if (cur->GetCurrencyByID(ormasDal, order->GetCurrencyID(), errorMessage))
+				{
+					roundSum = round(order->GetSum() * cur->GetUnit()) / cur->GetUnit();
+				}
+				else
+				{
+					return false;
+				}
+				delete cur;
+				order->SetSum(roundSum);
+				return order->UpdateOrder(ormasDal, errorMessage);
+			}
+			else
+			{
+				errorMessage = "Error! One of feilds are emplty. Please fill up them!";
+			}
+		}
+		catch (...)
+		{
+			errorMessage = "Fatal error! Please contact with application provider.";
+		}
+		return false;
+	}
+
+	bool OrmasBL::DeleteOrder(BusinessLayer::Order* order, std::string& errorMessage)
+	{
+		try
+		{
+			if (0 != order->GetID())
+			{
+				return order->DeleteOrder(ormasDal, errorMessage);
+			}
+			else
+			{
+				errorMessage = "Error! Order ID is 0. Something goes wrong!";
+			}
+		}
+		catch (...)
+		{
+			errorMessage = "Fatal error! Please contact with application provider.";
+		}
+		return false;
+	}
+
+	bool OrmasBL::CreateReturn(BusinessLayer::Return* ret, std::string& errorMessage)
+	{
+		try
+		{
+			if (!ret->GetDate().empty() && 0 != ret->GetUserID() && 0 != ret->GetCount() 
+				&& 0 != ret->GetSum() && 0 != ret->GetStatusID() && 0 != ret->GetCurrencyID())
+			{
+				double roundSum = 0;
+				Currency *cur = new Currency();
+				if (cur->GetCurrencyByID(ormasDal, ret->GetCurrencyID(), errorMessage))
+				{
+					roundSum = round(ret->GetSum() * cur->GetUnit()) / cur->GetUnit();
+				}
+				else
+				{
+					return false;
+				}
+				delete cur;
+				ret->SetSum(roundSum);
+				return ret->CreateReturn(ormasDal, errorMessage);
+			}
+			else
+			{
+				errorMessage = "Error! One of feilds are emplty. Please fill up them!";
+			}
+		}
+		catch (...)
+		{
+			errorMessage = "Fatal error! Please contact with application provider.";
+		}
+		return false;
+	}
+
+	bool OrmasBL::UpdateReturn(BusinessLayer::Return* ret, std::string& errorMessage)
+	{
+		try
+		{
+			if (!ret->GetDate().empty() && 0 != ret->GetUserID() && 0 != ret->GetCount() 
+				&& 0 != ret->GetSum() && 0 != ret->GetStatusID() && 0 != ret->GetCurrencyID())
+			{
+				double roundSum = 0;
+				Currency *cur = new Currency();
+				if (cur->GetCurrencyByID(ormasDal, ret->GetCurrencyID(), errorMessage))
+				{
+					roundSum = round(ret->GetSum() * cur->GetUnit()) / cur->GetUnit();
+				}
+				else
+				{
+					return false;
+				}
+				delete cur;
+				ret->SetSum(roundSum);
+				return ret->UpdateReturn(ormasDal, errorMessage);
+			}
+			else
+			{
+				errorMessage = "Error! One of feilds are emplty. Please fill up them!";
+			}
+		}
+		catch (...)
+		{
+			errorMessage = "Fatal error! Please contact with application provider.";
+		}
+		return false;
+	}
+
+	bool OrmasBL::DeleteReturn(BusinessLayer::Return* ret, std::string& errorMessage)
+	{
+		try
+		{
+			if (0 != ret->GetID())
+			{
+				return ret->DeleteReturn(ormasDal, errorMessage);
+			}
+			else
+			{
+				errorMessage = "Error! Return ID is 0. Something goes wrong!";
+			}
+		}
+		catch (...)
+		{
+			errorMessage = "Fatal error! Please contact with application provider.";
+		}
+		return false;
+	}
+	bool OrmasBL::CreateProduction(BusinessLayer::Production* production, std::string& errorMessage)
+	{
+		try
+		{
+			if (!production->GetProductionDate().empty() && !production->GetExpiryDate().empty() && !production->GetSessionStart().empty()
+				&& !production->GetSessionEnd().empty())
+			{
+				return production->CreateProduction(ormasDal, errorMessage);
+			}
+			else
+			{
+				errorMessage = "Error! One of feilds are emplty. Please fill up them!";
+			}
+		}
+		catch (...)
+		{
+			errorMessage = "Fatal error! Please contact with application provider.";
+		}
+		return false;
+	}
+
+	bool OrmasBL::UpdateProduction(BusinessLayer::Production* production, std::string& errorMessage)
+	{
+		try
+		{
+			if (!production->GetProductionDate().empty() && !production->GetExpiryDate().empty() && !production->GetSessionStart().empty()
+				&& !production->GetSessionEnd().empty())
+			{
+				return production->UpdateProduction(ormasDal, errorMessage);
+			}
+			else
+			{
+				errorMessage = "Error! One of feilds are emplty. Please fill up them!";
+			}
+		}
+		catch (...)
+		{
+			errorMessage = "Fatal error! Please contact with application provider.";
+		}
+		return false;
+	}
+
+	bool OrmasBL::DeleteProduction(BusinessLayer::Production* production, std::string& errorMessage)
+	{
+		try
+		{
+			if (0 != production->GetID())
+			{
+				return production->DeleteProduction(ormasDal, errorMessage);
+			}
+			else
+			{
+				errorMessage = "Error! Production ID is 0. Something goes wrong!";
+			}
+		}
+		catch (...)
+		{
+			errorMessage = "Fatal error! Please contact with application provider.";
+		}
+		return false;
+	}
+	
+	bool OrmasBL::CreateProduct(BusinessLayer::Product* product, std::string& errorMessage)
+	{
+		try
+		{
+			if (0 != product->GetCompanyID() && !product->GetName().empty() && 0 != product->GetVolume() && 0 != product->GetMeasureID()
+				&& 0 != product->GetPrice() && 0!= product->GetProductTypeID() && 0 != product->GetShelfLife() && 0 != product->GetCurrencyID()) 
+			{
+				double roundPrice = 0;
+				double roundVolume = 0;
+				Currency *cur = new Currency();
+				if (cur->GetCurrencyByID(ormasDal, product->GetCurrencyID(), errorMessage))
+				{
+					roundPrice = round(product->GetPrice() * cur->GetUnit()) / cur->GetUnit();
+				}
+				else
+				{
+					return false;
+				}
+				delete cur;
+				Measure *mea = new Measure();
+				if (mea->GetMeasureByID(ormasDal, product->GetMeasureID(), errorMessage))
+				{
+					roundVolume = round(product->GetVolume() * mea->GetUnit()) / mea->GetUnit();
+				}
+				else
+				{
+					return false;
+				}
+				delete mea;
+				product->SetVolume(roundVolume);
+				product->SetPrice(roundPrice);
+				return product->CreateProduct(ormasDal, errorMessage);
+			}
+			else
+			{
+				errorMessage = "Error! One of feilds are emplty. Please fill up them!";
+			}
+		}
+		catch (...)
+		{
+			errorMessage = "Fatal error! Please contact with application provider.";
+		}
+		return false;
+	}
+
+	bool OrmasBL::UpdateProduct(BusinessLayer::Product* product, std::string& errorMessage)
+	{
+		try
+		{
+			if (0 != product->GetCompanyID() && !product->GetName().empty() && 0 != product->GetVolume() && 0 != product->GetMeasureID()
+				&& 0 != product->GetPrice() && 0 != product->GetProductTypeID() && 0 != product->GetShelfLife() && 0 != product->GetCurrencyID())
+			{
+				double roundPrice = 0;
+				double roundVolume = 0;
+				Currency *cur = new Currency();
+				if (cur->GetCurrencyByID(ormasDal, product->GetCurrencyID(), errorMessage))
+				{
+					roundPrice = round(product->GetPrice() * cur->GetUnit()) / cur->GetUnit();
+				}
+				else
+				{
+					return false;
+				}
+				delete cur;
+				Measure *mea = new Measure();
+				if (mea->GetMeasureByID(ormasDal, product->GetMeasureID(), errorMessage))
+				{
+					roundVolume = round(product->GetVolume() * mea->GetUnit()) / mea->GetUnit();
+				}
+				else
+				{
+					return false;
+				}
+				delete mea;
+				product->SetVolume(roundVolume);
+				product->SetPrice(roundPrice);
+				return product->UpdateProduct(ormasDal, errorMessage);
+			}
+			else
+			{
+				errorMessage = "Error! One of feilds are emplty. Please fill up them!";
+			}
+		}
+		catch (...)
+		{
+			errorMessage = "Fatal error! Please contact with application provider.";
+		}
+		return false;
+	}
+
+	bool OrmasBL::DeleteProduct(BusinessLayer::Product* product, std::string& errorMessage)
+	{
+		try
+		{
+			if (0 != product->GetID())
+			{
+				return product->DeleteProduct(ormasDal, errorMessage);
+			}
+			else
+			{
+				errorMessage = "Error! Product ID is 0. Something goes wrong!";
+			}
+		}
+		catch (...)
+		{
+			errorMessage = "Fatal error! Please contact with application provider.";
+		}
+		return false;
+	}
+
+	bool OrmasBL::CreateProductList(BusinessLayer::ProductList* productList, std::string& errorMessage)
+	{
+		try
+		{
+			if ((0 != productList->GetOrderID() || 0 != productList->GetReturnID() || 0 != productList->GetProductionID())
+				&& 0 != productList->GetProductID() && 0 != productList->GetProductID() && 0 != productList->GetCount() 
+				&& 0 != productList->GetSum() && 0 != productList->GetStatusID() && 0!= productList->GetCurrencyID())
+			{
+				return productList->CreateProductList(ormasDal, errorMessage);
+			}
+			else
+			{
+				errorMessage = "Error! One of feilds are emplty. Please fill up them!";
+			}
+		}
+		catch (...)
+		{
+			errorMessage = "Fatal error! Please contact with application provider.";
+		}
+		return false;
+	}
+
+	bool OrmasBL::UpdateProductList(BusinessLayer::ProductList* productList, std::string& errorMessage)
+	{
+		try
+		{
+			if ((0 != productList->GetOrderID() || 0 != productList->GetReturnID() || 0 != productList->GetProductionID())
+				&& 0 != productList->GetProductID() && 0 != productList->GetProductID() && 0 != productList->GetCount()
+				&& 0 != productList->GetSum() && 0 != productList->GetStatusID() && 0 != productList->GetCurrencyID())
+			{
+				return productList->UpdateProductList(ormasDal, errorMessage);
+			}
+			else
+			{
+				errorMessage = "Error! One of feilds are emplty. Please fill up them!";
+			}
+		}
+		catch (...)
+		{
+			errorMessage = "Fatal error! Please contact with application provider.";
+		}
+		return false;
+	}
+
+	bool OrmasBL::DeleteProductList(BusinessLayer::ProductList* productList, std::string& errorMessage)
+	{
+		try
+		{
+			if (0 != productList->GetID())
+			{
+				return productList->DeleteProductList(ormasDal, errorMessage);
+			}
+			else
+			{
+				errorMessage = "Error! Product list ID is 0. Something goes wrong!";
 			}
 		}
 		catch (...)

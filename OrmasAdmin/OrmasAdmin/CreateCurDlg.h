@@ -19,8 +19,8 @@ private slots:
 	void Close();
 private:
 	BusinessLayer::Currency *currency = new BusinessLayer::Currency();
-	void SetCurrencyParams(int, QString, QString, int = 0);
-	void FillEditElements(int, QString, QString);
+	void SetCurrencyParams(int, QString, QString, int, QString, int = 0);
+	void FillEditElements(int, QString, QString, int, QString);
 
 };
 #endif //CREATECURDLG_H

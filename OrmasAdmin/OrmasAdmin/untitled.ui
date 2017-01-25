@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>createPrdList</class>
- <widget class="QDialog" name="createPrdList">
+ <class>AddPrdDlg</class>
+ <widget class="QDialog" name="AddPrdDlg">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
     <width>396</width>
-    <height>160</height>
+    <height>108</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Create/Update product list</string>
+   <string>Create/Update product in list</string>
   </property>
   <property name="locale">
    <locale language="English" country="UnitedStates"/>
@@ -32,44 +32,30 @@
    <property name="bottomMargin">
     <number>17</number>
    </property>
-   <item row="2" column="0">
-    <widget class="QPushButton" name="pushButton_3">
-     <property name="text">
-      <string>PushButton</string>
-     </property>
-    </widget>
-   </item>
    <item row="1" column="0">
-    <widget class="QPushButton" name="pushButton_4">
-     <property name="text">
-      <string>PushButton</string>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="0">
-    <widget class="QPushButton" name="pushButton_5">
+    <widget class="QLabel" name="countLb">
      <property name="minimumSize">
       <size>
-       <width>200</width>
+       <width>150</width>
        <height>0</height>
       </size>
      </property>
      <property name="text">
-      <string>Select order</string>
+      <string>Count:</string>
      </property>
     </widget>
    </item>
-   <item row="3" column="0">
-    <widget class="QLabel" name="label_2">
+   <item row="0" column="1">
+    <widget class="QLineEdit" name="productEdit"/>
+   </item>
+   <item row="0" column="0">
+    <widget class="QPushButton" name="productBtn">
      <property name="text">
-      <string>TextLabel</string>
+      <string>Select product</string>
      </property>
     </widget>
    </item>
-   <item row="2" column="1">
-    <widget class="QLineEdit" name="lineEdit"/>
-   </item>
-   <item row="4" column="0" colspan="2">
+   <item row="2" column="0" colspan="2">
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
       <spacer name="horizontalSpacer">
@@ -85,29 +71,23 @@
       </spacer>
      </item>
      <item>
-      <widget class="QPushButton" name="pushButton_2">
+      <widget class="QPushButton" name="addBtn">
        <property name="text">
-        <string>PushButton</string>
+        <string>Add</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="pushButton">
+      <widget class="QPushButton" name="cancelBtn">
        <property name="text">
-        <string>PushButton</string>
+        <string>Cancel</string>
        </property>
       </widget>
      </item>
     </layout>
    </item>
    <item row="1" column="1">
-    <widget class="QLineEdit" name="lineEdit_2"/>
-   </item>
-   <item row="0" column="1">
-    <widget class="QLineEdit" name="lineEdit_3"/>
-   </item>
-   <item row="3" column="1">
-    <widget class="QLineEdit" name="lineEdit_4"/>
+    <widget class="QLineEdit" name="countEdit"/>
    </item>
   </layout>
  </widget>

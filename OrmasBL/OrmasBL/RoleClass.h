@@ -32,6 +32,11 @@ namespace BusinessLayer
 		bool DeleteRole(DataLayer::OrmasDal& ormasDal, std::string& errorMessage);
 		bool CreateRole(DataLayer::OrmasDal& ormasDal, std::string rName, std::string rComment, std::string& errorMessage);
 		bool UpdateRole(DataLayer::OrmasDal& ormasDal, std::string rName, std::string rComment, std::string& errorMessage);
+
+		//Generate filter string for class
+		std::string GenerateFilter(DataLayer::OrmasDal& ormasDal);
+		bool GetRoleByID(DataLayer::OrmasDal& ormasDal, int rID, std::string& errorMessage);
+		bool IsEmpty();
 	};
 }
 #endif //ROLECLASS_H

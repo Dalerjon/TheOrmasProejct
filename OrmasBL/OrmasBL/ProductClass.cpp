@@ -13,6 +13,7 @@ namespace BusinessLayer
 		price = std::get<5>(pCollection);
 		productTypeID = std::get<6>(pCollection);
 		shelfLife = std::get<7>(pCollection);
+		currencyID = std::get<8>(pCollection);
 	}
 
 	int Product::GetID()
@@ -30,7 +31,7 @@ namespace BusinessLayer
 		return name;
 	}
 
-	float Product::GetVolume()
+	double Product::GetVolume()
 	{
 		return volume;
 	}
@@ -40,7 +41,7 @@ namespace BusinessLayer
 		return measureID;
 	}
 
-	float Product::GetPrice()
+	double Product::GetPrice()
 	{
 		return price;
 	}
@@ -55,6 +56,11 @@ namespace BusinessLayer
 		return shelfLife;
 	}
 
+	int Product::GetCurrencyID()
+	{
+		return currencyID;
+	}
+
 	void Product::SetID(int pID)
 	{
 		id = pID;
@@ -67,7 +73,7 @@ namespace BusinessLayer
 	{
 		name = pName;
 	}
-	void Product::SetVolume(float pVolume)
+	void Product::SetVolume(double pVolume)
 	{
 		volume = pVolume;
 	}
@@ -75,7 +81,7 @@ namespace BusinessLayer
 	{
 		measureID = pMeasureID;
 	}
-	void Product::SetPrice(float pPrice)
+	void Product::SetPrice(double pPrice)
 	{
 		price = pPrice;
 	}
@@ -87,9 +93,13 @@ namespace BusinessLayer
 	{
 		shelfLife = pShelfLife;
 	}
+	void Product::SetCurrencyID(int pCurrencyID)
+	{
+		currencyID = pCurrencyID;
+	}
 
 	bool Product::CreateProduct(DataLayer::OrmasDal& ormasDal, int cID, std::string pName, float vol, int mID, float pri,
-		int pTypeID, int pShelfLife, std::string& errorMessage)
+		int pTypeID, int pShelfLife, int currID, std::string& errorMessage)
 	{
 		id = ormasDal.GenerateID();
 		companyID = cID;
@@ -99,7 +109,17 @@ namespace BusinessLayer
 		price = pri;
 		productTypeID = pTypeID;
 		shelfLife = pShelfLife;
-		if (0 != id && ormasDal.CreateProduct(id, companyID, name, volume, measureID, price, productTypeID, shelfLife, errorMessage))
+		currencyID = currID;
+		if (0 != id && ormasDal.CreateProduct(id, companyID, name, volume, measureID, price, productTypeID, shelfLife, currencyID, errorMessage))
+		{
+			return true;
+		}
+		return false;
+	}
+	bool Product::CreateProduct(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
+	{
+		id = ormasDal.GenerateID();
+		if (0 != id && ormasDal.CreateProduct(id, companyID, name, volume, measureID, price, productTypeID, shelfLife, currencyID, errorMessage))
 		{
 			return true;
 		}
@@ -122,7 +142,7 @@ namespace BusinessLayer
 		return false;
 	}
 	bool Product::UpdateProduct(DataLayer::OrmasDal& ormasDal, int cID, std::string pName, float vol, int mID, float pri,
-		int pTypeID, int pShelfLife, std::string& errorMessage)
+		int pTypeID, int pShelfLife, int pCurrencyID, std::string& errorMessage)
 	{
 		companyID = cID;
 		name = pName;
@@ -131,10 +151,61 @@ namespace BusinessLayer
 		price = pri;
 		productTypeID = pTypeID;
 		shelfLife = pShelfLife;
-		if (0 != id && ormasDal.UpdateProduct(id, companyID, name, volume, measureID, price, productTypeID, shelfLife, errorMessage))
+		currencyID = pCurrencyID;
+		if (0 != id && ormasDal.UpdateProduct(id, companyID, name, volume, measureID, price, productTypeID, shelfLife, currencyID, errorMessage))
 		{
 			return true;
 		}
+		return false;
+	}
+	bool Product::UpdateProduct(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
+	{
+		if (0 != id && ormasDal.UpdateProduct(id, companyID, name, volume, measureID, price, productTypeID, shelfLife, currencyID, errorMessage))
+		{
+			return true;
+		}
+		return false;
+	}
+
+	std::string Product::GenerateFilter(DataLayer::OrmasDal& ormasDal)
+	{
+		if (0 != id || 0 != companyID || !name.empty() || 0 != volume || 0 != measureID || 0 != price || 0 != productTypeID 
+			|| 0 != shelfLife || 0 != currencyID)
+		{
+			return ormasDal.GetFilterForProduct(id, companyID, name, volume, measureID, price, productTypeID, shelfLife, currencyID);
+		}
+		return "";
+	}
+
+	bool Product::GetProductByID(DataLayer::OrmasDal& ormasDal, int pID, std::string& errorMessage)
+	{
+		id = pID;
+		std::string filter = GenerateFilter(ormasDal);
+		std::vector<DataLayer::productsViewCollection> productVector = ormasDal.GetProducts(errorMessage, filter);
+		if (0 != productVector.size())
+		{
+			id = std::get<0>(productVector.at(0));
+			name = std::get<1>(productVector.at(0));
+			price = std::get<2>(productVector.at(0));
+			volume = std::get<4>(productVector.at(0));
+			shelfLife = std::get<7>(productVector.at(0));
+			companyID = std::get<9>(productVector.at(0));
+			measureID = std::get<10>(productVector.at(0));
+			productTypeID = std::get<11>(productVector.at(0));
+			currencyID = std::get<12>(productVector.at(0));
+			return true;
+		}
+		else
+		{
+			errorMessage = "Cannot find product with this id";
+		}
+		return false;
+	}
+	bool Product::IsEmpty()
+	{
+		if(0 == id && name == "" && 0 == price && 0 == volume && 0 == shelfLife && 0 == companyID 
+			&& 0 == measureID && 0 == productTypeID && 0 == currencyID)
+			return true;
 		return false;
 	}
 }

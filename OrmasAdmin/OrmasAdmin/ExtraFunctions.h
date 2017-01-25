@@ -37,9 +37,23 @@ inline int GetIDFromTable(QTableView* table, std::string& errorMessage)
 	}
 	catch (...)
 	{
-		errorMessage = "Please select company, deleting is unpossible!";
+		errorMessage = "Please select row, deleting is unpossible!";
 	}
 	return id;
 }
+
+inline int GetIDFromTable(QTableView* table, QModelIndex mIndex)
+{
+	int id = 0;
+	try
+	{
+		id = table->model()->data(table->model()->index(mIndex.row(), 0)).toInt();
+	}
+	catch (...)
+	{
+	}
+	return id;
+}
+
 
 #endif //EXTRAFUNCTIONS_H

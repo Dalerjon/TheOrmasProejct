@@ -30,7 +30,7 @@ class Ui_MainWindow
 public:
     QAction *actionShowAllUser;
     QAction *actionCreateUser;
-    QAction *actionAccess;
+    QAction *actionRights;
     QAction *actionDeleteUser;
     QAction *actionProductsType;
     QAction *actionProducts;
@@ -48,6 +48,7 @@ public:
     QAction *actionRoles;
     QAction *actionStatus;
     QAction *actionAbout;
+    QAction *actionProduction;
     QWidget *centrWidget;
     QGridLayout *gridLayout;
     QMdiArea *mdiArea;
@@ -58,6 +59,7 @@ public:
     QMenu *menuReturns;
     QMenu *menuReference;
     QMenu *menuHelp;
+    QMenu *menuProduction;
     QStatusBar *statusbar;
 
     void setupUi(QMainWindow *MainWindow)
@@ -71,8 +73,8 @@ public:
         actionShowAllUser->setObjectName(QStringLiteral("actionShowAllUser"));
         actionCreateUser = new QAction(MainWindow);
         actionCreateUser->setObjectName(QStringLiteral("actionCreateUser"));
-        actionAccess = new QAction(MainWindow);
-        actionAccess->setObjectName(QStringLiteral("actionAccess"));
+        actionRights = new QAction(MainWindow);
+        actionRights->setObjectName(QStringLiteral("actionRights"));
         actionDeleteUser = new QAction(MainWindow);
         actionDeleteUser->setObjectName(QStringLiteral("actionDeleteUser"));
         actionProductsType = new QAction(MainWindow);
@@ -107,6 +109,8 @@ public:
         actionStatus->setObjectName(QStringLiteral("actionStatus"));
         actionAbout = new QAction(MainWindow);
         actionAbout->setObjectName(QStringLiteral("actionAbout"));
+        actionProduction = new QAction(MainWindow);
+        actionProduction->setObjectName(QStringLiteral("actionProduction"));
         centrWidget = new QWidget(MainWindow);
         centrWidget->setObjectName(QStringLiteral("centrWidget"));
         gridLayout = new QGridLayout(centrWidget);
@@ -135,6 +139,8 @@ public:
         menuReference->setObjectName(QStringLiteral("menuReference"));
         menuHelp = new QMenu(menuBar);
         menuHelp->setObjectName(QStringLiteral("menuHelp"));
+        menuProduction = new QMenu(menuBar);
+        menuProduction->setObjectName(QStringLiteral("menuProduction"));
         MainWindow->setMenuBar(menuBar);
         statusbar = new QStatusBar(MainWindow);
         statusbar->setObjectName(QStringLiteral("statusbar"));
@@ -144,11 +150,12 @@ public:
         menuBar->addAction(menuProduct->menuAction());
         menuBar->addAction(menuOrder->menuAction());
         menuBar->addAction(menuReturns->menuAction());
+        menuBar->addAction(menuProduction->menuAction());
         menuBar->addAction(menuReference->menuAction());
         menuBar->addAction(menuHelp->menuAction());
         menuUsers->addAction(actionShowAllUser);
         menuUsers->addAction(actionCreateUser);
-        menuUsers->addAction(actionAccess);
+        menuUsers->addAction(actionRights);
         menuUsers->addAction(actionDeleteUser);
         menuProduct->addAction(actionProductsType);
         menuProduct->addAction(actionProducts);
@@ -166,6 +173,7 @@ public:
         menuReference->addAction(actionRoles);
         menuReference->addAction(actionStatus);
         menuHelp->addAction(actionAbout);
+        menuProduction->addAction(actionProduction);
 
         retranslateUi(MainWindow);
 
@@ -177,7 +185,7 @@ public:
         MainWindow->setWindowTitle(QApplication::translate("MainWindow", "Ormas Admin Panel", 0));
         actionShowAllUser->setText(QApplication::translate("MainWindow", "Show all users", 0));
         actionCreateUser->setText(QApplication::translate("MainWindow", "Create user", 0));
-        actionAccess->setText(QApplication::translate("MainWindow", "Access", 0));
+        actionRights->setText(QApplication::translate("MainWindow", "Check rights", 0));
         actionDeleteUser->setText(QApplication::translate("MainWindow", "Delete user", 0));
         actionProductsType->setText(QApplication::translate("MainWindow", "Products type", 0));
         actionProducts->setText(QApplication::translate("MainWindow", "Products", 0));
@@ -195,12 +203,14 @@ public:
         actionRoles->setText(QApplication::translate("MainWindow", "Roles", 0));
         actionStatus->setText(QApplication::translate("MainWindow", "Status", 0));
         actionAbout->setText(QApplication::translate("MainWindow", "About", 0));
+        actionProduction->setText(QApplication::translate("MainWindow", "Show all products", 0));
         menuUsers->setTitle(QApplication::translate("MainWindow", "Users", 0));
         menuProduct->setTitle(QApplication::translate("MainWindow", "Products", 0));
         menuOrder->setTitle(QApplication::translate("MainWindow", "Orders", 0));
         menuReturns->setTitle(QApplication::translate("MainWindow", "Returns", 0));
         menuReference->setTitle(QApplication::translate("MainWindow", "Reference", 0));
         menuHelp->setTitle(QApplication::translate("MainWindow", "Help", 0));
+        menuProduction->setTitle(QApplication::translate("MainWindow", "Production", 0));
     } // retranslateUi
 
 };

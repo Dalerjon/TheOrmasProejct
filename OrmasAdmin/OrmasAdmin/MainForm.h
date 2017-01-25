@@ -10,24 +10,29 @@ class MainForm : public QMainWindow, public Ui::MainWindow
 	Q_OBJECT
 
 public:
-	MainForm(BusinessLayer::OrmasBL *ormasBL);
+	MainForm(BusinessLayer::OrmasBL *ormasBL, BusinessLayer::User* user);
 	BusinessLayer::OrmasBL *oBL;
 	QMdiSubWindow* GetWindowByName(QString);
 	std::string errorMessage = "";
 private slots :
 	void ShowUsers();
 	void CreateUser();
-	void CheckAccess();
+	void CheckRights();
 	void DeleteUser();
+
 	void ShowProductsType();
 	void ShowProducts();
-	void ShowOrders();
+	void ShowProduction();
 	void ShowProductsList();
+
+	void ShowOrders();	
 	void CreateOrder();
 	void DeleteOrder();
+
 	void ShowReturns();
 	void CreateReturn();
 	void DeleteReturn();
+
 	void ShowCompanies();
 	void ShowCurrencies();
 	void ShowMeasures();
@@ -37,6 +42,7 @@ private slots :
 	void About();
 private:
 	void CreateConnections();
-	
+	BusinessLayer::User *loggedUser = new BusinessLayer::User();
+	void CheckAccess(std::string&);
 };
 #endif //MAINFORM_h

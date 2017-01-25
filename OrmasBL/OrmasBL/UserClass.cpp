@@ -128,6 +128,20 @@ namespace BusinessLayer
 		}
 		return false;
 	}
+	bool User::CreateUser(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
+	{
+		id = ormasDal.GenerateID();
+		if (0 != id && ormasDal.CreateUser(id, name, phone, address, firm, firmNumber, roleID, locationID, password,
+			activated, errorMessage))
+		{
+			return true;
+		}
+		if (errorMessage.empty())
+		{
+			errorMessage = "Warning! ID is 0, or some unexpected error. Please contact with provider.";
+		}
+		return false;
+	}
 	bool User::DeleteUser(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
 		name.clear();
@@ -164,4 +178,86 @@ namespace BusinessLayer
 		}
 		return false;
 	}
+	bool User::UpdateUser(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
+	{
+		if (0 != id && ormasDal.UpdateUser(id, name, phone, address, firm, firmNumber, roleID, locationID, password,
+			activated, errorMessage))
+		{
+			return true;
+		}
+		if (errorMessage.empty())
+		{
+			errorMessage = "Warning! ID is 0, or some unexpected error. Please contact with provider.";
+		}
+		return false;
+	}
+	std::string User::GenerateFilter(DataLayer::OrmasDal& ormasDal)
+	{
+		if (0 != id || !name.empty() || !address.empty() || !phone.empty() || !firm.empty() || !firmNumber.empty()
+			|| !password.empty() || 0 != roleID || 0 != locationID)
+		{
+			return ormasDal.GetFilterForUser(id, name, phone, address, firm, firmNumber, roleID, locationID, password,
+				activated);
+		}
+		return "";
+	}
+
+	bool User::GetUserByID(DataLayer::OrmasDal& ormasDal, int uID, std::string& errorMessage)
+	{
+		id = uID;
+		std::string filter = GenerateFilter(ormasDal);
+		std::vector<DataLayer::usersViewCollection> userVector = ormasDal.GetUsers(errorMessage, filter);
+		if (0 != userVector.size())
+		{
+			id = std::get<0>(userVector.at(0));
+			name = std::get<1>(userVector.at(0));
+			phone = std::get<2>(userVector.at(0));
+			address = std::get<3>(userVector.at(0));
+			firm = std::get<9>(userVector.at(0));
+			firmNumber = std::get<10>(userVector.at(0));
+			password = std::get<11>(userVector.at(0));
+			activated = std::get<12>(userVector.at(0));
+			roleID = std::get<13>(userVector.at(0));
+			locationID = std::get<14>(userVector.at(0));
+			return true;
+		}
+		else
+		{
+			errorMessage = "Cannot find user with this id";
+		}
+		return false;
+	}
+	
+	bool User::GetUserByCredentials(DataLayer::OrmasDal& ormasDal, std::string uName, std::string uPassword)
+	{
+		std::string errorMessage = "";
+		name = uName;
+		password = uPassword;
+		std::string filter = GenerateFilter(ormasDal);
+		std::vector<DataLayer::usersViewCollection> userVector = ormasDal.GetUsers(errorMessage, filter);
+		if (0 != userVector.size())
+		{
+			id = std::get<0>(userVector.at(0));
+			name = std::get<1>(userVector.at(0));
+			phone = std::get<2>(userVector.at(0));
+			address = std::get<3>(userVector.at(0));
+			firm = std::get<9>(userVector.at(0));
+			firmNumber = std::get<10>(userVector.at(0));
+			password = std::get<11>(userVector.at(0));
+			activated = std::get<12>(userVector.at(0));
+			roleID = std::get<13>(userVector.at(0));
+			locationID = std::get<14>(userVector.at(0));
+			return true;
+		}
+		return false;
+	}
+	
+	bool User::IsEmpty()
+	{
+		if (0 == id && name == "" && phone == "" && address == "" && firm == "" && firmNumber == "" && password == "" &&
+			activated == false && 0 == roleID && 0 == locationID)
+			return true;
+		return false;
+	}
 }
+

@@ -29,46 +29,32 @@ class Ui_CreateMeasure
 {
 public:
     QGridLayout *gridLayout;
-    QLabel *shortNameLb;
-    QLabel *nameLb;
-    QLineEdit *shortNameEdit;
     QHBoxLayout *horizontalLayout;
     QSpacerItem *horizontalSpacer;
     QPushButton *okBtn;
     QPushButton *cancelBtn;
     QLineEdit *nameEdit;
+    QLineEdit *shortNameEdit;
+    QLabel *nameLb;
+    QLabel *shortNameLb;
+    QLabel *unitLb;
+    QLineEdit *unitEdit;
 
     void setupUi(QDialog *CreateMeasure)
     {
         if (CreateMeasure->objectName().isEmpty())
             CreateMeasure->setObjectName(QStringLiteral("CreateMeasure"));
-        CreateMeasure->resize(400, 101);
+        CreateMeasure->resize(400, 125);
         QSizePolicy sizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
         sizePolicy.setHorizontalStretch(0);
         sizePolicy.setVerticalStretch(0);
         sizePolicy.setHeightForWidth(CreateMeasure->sizePolicy().hasHeightForWidth());
         CreateMeasure->setSizePolicy(sizePolicy);
         CreateMeasure->setLocale(QLocale(QLocale::English, QLocale::UnitedStates));
-        CreateMeasure->setModal(true);
+        CreateMeasure->setModal(false);
         gridLayout = new QGridLayout(CreateMeasure);
         gridLayout->setObjectName(QStringLiteral("gridLayout"));
         gridLayout->setContentsMargins(11, 11, 11, 11);
-        shortNameLb = new QLabel(CreateMeasure);
-        shortNameLb->setObjectName(QStringLiteral("shortNameLb"));
-
-        gridLayout->addWidget(shortNameLb, 1, 0, 1, 1);
-
-        nameLb = new QLabel(CreateMeasure);
-        nameLb->setObjectName(QStringLiteral("nameLb"));
-        nameLb->setMinimumSize(QSize(100, 0));
-
-        gridLayout->addWidget(nameLb, 0, 0, 1, 1);
-
-        shortNameEdit = new QLineEdit(CreateMeasure);
-        shortNameEdit->setObjectName(QStringLiteral("shortNameEdit"));
-
-        gridLayout->addWidget(shortNameEdit, 1, 1, 1, 1);
-
         horizontalLayout = new QHBoxLayout();
         horizontalLayout->setObjectName(QStringLiteral("horizontalLayout"));
         horizontalSpacer = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
@@ -86,15 +72,42 @@ public:
         horizontalLayout->addWidget(cancelBtn);
 
 
-        gridLayout->addLayout(horizontalLayout, 2, 0, 1, 2);
+        gridLayout->addLayout(horizontalLayout, 4, 0, 1, 2);
 
         nameEdit = new QLineEdit(CreateMeasure);
         nameEdit->setObjectName(QStringLiteral("nameEdit"));
 
         gridLayout->addWidget(nameEdit, 0, 1, 1, 1);
 
+        shortNameEdit = new QLineEdit(CreateMeasure);
+        shortNameEdit->setObjectName(QStringLiteral("shortNameEdit"));
+
+        gridLayout->addWidget(shortNameEdit, 1, 1, 1, 1);
+
+        nameLb = new QLabel(CreateMeasure);
+        nameLb->setObjectName(QStringLiteral("nameLb"));
+        nameLb->setMinimumSize(QSize(100, 0));
+
+        gridLayout->addWidget(nameLb, 0, 0, 1, 1);
+
+        shortNameLb = new QLabel(CreateMeasure);
+        shortNameLb->setObjectName(QStringLiteral("shortNameLb"));
+
+        gridLayout->addWidget(shortNameLb, 1, 0, 1, 1);
+
+        unitLb = new QLabel(CreateMeasure);
+        unitLb->setObjectName(QStringLiteral("unitLb"));
+
+        gridLayout->addWidget(unitLb, 2, 0, 1, 1);
+
+        unitEdit = new QLineEdit(CreateMeasure);
+        unitEdit->setObjectName(QStringLiteral("unitEdit"));
+
+        gridLayout->addWidget(unitEdit, 2, 1, 1, 1);
+
         QWidget::setTabOrder(nameEdit, shortNameEdit);
-        QWidget::setTabOrder(shortNameEdit, okBtn);
+        QWidget::setTabOrder(shortNameEdit, unitEdit);
+        QWidget::setTabOrder(unitEdit, okBtn);
         QWidget::setTabOrder(okBtn, cancelBtn);
 
         retranslateUi(CreateMeasure);
@@ -105,16 +118,17 @@ public:
     void retranslateUi(QDialog *CreateMeasure)
     {
         CreateMeasure->setWindowTitle(QApplication::translate("CreateMeasure", "Create/Update Measure", 0));
-        shortNameLb->setText(QApplication::translate("CreateMeasure", "Short name:", 0));
-        nameLb->setText(QApplication::translate("CreateMeasure", "Name:", 0));
-#ifndef QT_NO_TOOLTIP
-        shortNameEdit->setToolTip(QApplication::translate("CreateMeasure", "Must not be empty", 0));
-#endif // QT_NO_TOOLTIP
         okBtn->setText(QApplication::translate("CreateMeasure", "OK", 0));
         cancelBtn->setText(QApplication::translate("CreateMeasure", "Cencel", 0));
 #ifndef QT_NO_TOOLTIP
         nameEdit->setToolTip(QApplication::translate("CreateMeasure", "Must not be empty", 0));
 #endif // QT_NO_TOOLTIP
+#ifndef QT_NO_TOOLTIP
+        shortNameEdit->setToolTip(QApplication::translate("CreateMeasure", "Must not be empty", 0));
+#endif // QT_NO_TOOLTIP
+        nameLb->setText(QApplication::translate("CreateMeasure", "Name:", 0));
+        shortNameLb->setText(QApplication::translate("CreateMeasure", "Short name:", 0));
+        unitLb->setText(QApplication::translate("CreateMeasure", "Change unit", 0));
     } // retranslateUi
 
 };

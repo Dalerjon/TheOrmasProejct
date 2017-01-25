@@ -107,4 +107,38 @@ namespace BusinessLayer
 		}
 		return false;
 	}
+
+	std::string Role::GenerateFilter(DataLayer::OrmasDal& ormasDal)
+	{
+		if (0 != id || !name.empty() || !comment.empty())
+		{
+			return ormasDal.GetFilterForRole(id, name, comment);
+		}
+		return "";
+	}
+
+	bool Role::GetRoleByID(DataLayer::OrmasDal& ormasDal, int rID, std::string& errorMessage)
+	{
+		id = rID;
+		std::string filter = GenerateFilter(ormasDal);
+		std::vector<DataLayer::rolesCollection> roleVector = ormasDal.GetRoles(errorMessage, filter);
+		if (0 != roleVector.size())
+		{
+			id = std::get<0>(roleVector.at(0));
+			name = std::get<1>(roleVector.at(0));
+			comment = std::get<2>(roleVector.at(0));
+			return true;
+		}
+		else
+		{
+			errorMessage = "Cannot find role with this id";
+		}
+		return false;
+	}
+	bool Role::IsEmpty()
+	{
+		if(0 == id && name == "" && comment == "")
+			return true;
+		return false;
+	}
 }

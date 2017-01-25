@@ -47,7 +47,7 @@ public:
             CreateStatus->setObjectName(QStringLiteral("CreateStatus"));
         CreateStatus->resize(400, 176);
         CreateStatus->setLocale(QLocale(QLocale::English, QLocale::UnitedStates));
-        CreateStatus->setModal(true);
+        CreateStatus->setModal(false);
         gridLayout = new QGridLayout(CreateStatus);
         gridLayout->setObjectName(QStringLiteral("gridLayout"));
         gridLayout->setContentsMargins(11, 11, 11, 11);
@@ -101,6 +101,10 @@ public:
 
         gridLayout->addWidget(commentTextEdit, 2, 1, 1, 1);
 
+        QWidget::setTabOrder(codeEdit, nameEdit);
+        QWidget::setTabOrder(nameEdit, commentTextEdit);
+        QWidget::setTabOrder(commentTextEdit, okBtn);
+        QWidget::setTabOrder(okBtn, cancelBtn);
 
         retranslateUi(CreateStatus);
 

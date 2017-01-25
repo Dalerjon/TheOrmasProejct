@@ -28,12 +28,25 @@ namespace BusinessLayer
 		DataLayer::OrmasDal& GetOrmasDal();
 		//OrmasBL class Accessor
 		
+		//Generate id
+		int GenerateID();
 
 		//ormasDal, connection to DB 
 		bool ConnectToDB(std::string dbname, std::string username, std::string password, std::string host, int port);
 
 		template<class T>
 		std::vector<T> GetAllDataForClass(std::string& errorMessage, std::string filter = "");
+
+		template<class T>
+		std::string GenerateFilter(T* T)
+		{
+			return T->GenerateFilter(ormasDal);
+		}
+
+		//Transaction methids
+		bool StartTransaction(std::string& errorMessage);
+		bool CommitTransaction(std::string& errorMessage);
+		bool CancelTransaction(std::string& errorMessage);
 
 		//Create, delete and update for all classes
 		bool CreateCompany(BusinessLayer::Company*, std::string&);
@@ -42,6 +55,7 @@ namespace BusinessLayer
 		bool CreateOrder(BusinessLayer::Order*, std::string&);
 		bool CreateProductList(BusinessLayer::ProductList*, std::string&);
 		bool CreateProductType(BusinessLayer::ProductType*, std::string&);
+		bool CreateProduction(BusinessLayer::Production*, std::string&);
 		bool CreateProduct(BusinessLayer::Product*, std::string&);
 		bool CreateLocation(BusinessLayer::Location*, std::string&);
 		bool CreateReturn(BusinessLayer::Return*, std::string&);
@@ -54,6 +68,7 @@ namespace BusinessLayer
 		bool DeleteOrder(BusinessLayer::Order*, std::string&);
 		bool DeleteProductList(BusinessLayer::ProductList*, std::string&);
 		bool DeleteProductType(BusinessLayer::ProductType*, std::string&);
+		bool DeleteProduction(BusinessLayer::Production*, std::string&);
 		bool DeleteProduct(BusinessLayer::Product*, std::string&);
 		bool DeleteLocation(BusinessLayer::Location*, std::string&);
 		bool DeleteReturn(BusinessLayer::Return*, std::string&);
@@ -66,6 +81,7 @@ namespace BusinessLayer
 		bool UpdateOrder(BusinessLayer::Order*, std::string&);
 		bool UpdateProductList(BusinessLayer::ProductList*, std::string&);
 		bool UpdateProductType(BusinessLayer::ProductType*, std::string&);
+		bool UpdateProduction(BusinessLayer::Production*, std::string&);
 		bool UpdateProduct(BusinessLayer::Product*, std::string&);
 		bool UpdateLocation(BusinessLayer::Location*, std::string&);
 		bool UpdateReturn(BusinessLayer::Return*, std::string&);

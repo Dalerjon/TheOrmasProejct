@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>createProduct</class>
- <widget class="QDialog" name="createProduct">
+ <class>CreateProduct</class>
+ <widget class="QDialog" name="CreateProduct">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
     <width>430</width>
-    <height>238</height>
+    <height>267</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -22,6 +22,9 @@
   <property name="locale">
    <locale language="English" country="UnitedStates"/>
   </property>
+  <property name="modal">
+   <bool>false</bool>
+  </property>
   <layout class="QGridLayout" name="gridLayout">
    <property name="leftMargin">
     <number>11</number>
@@ -35,6 +38,20 @@
    <property name="bottomMargin">
     <number>11</number>
    </property>
+   <item row="3" column="1">
+    <widget class="QLineEdit" name="measureEdit">
+     <property name="readOnly">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="6" column="0">
+    <widget class="QPushButton" name="prodTypeBtn">
+     <property name="text">
+      <string>Select product type</string>
+     </property>
+    </widget>
+   </item>
    <item row="4" column="0">
     <widget class="QLabel" name="priceLb">
      <property name="text">
@@ -42,54 +59,17 @@
      </property>
     </widget>
    </item>
-   <item row="2" column="0">
-    <widget class="QLabel" name="volumeLb">
-     <property name="text">
-      <string>Volume:</string>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="0">
-    <widget class="QPushButton" name="companyBtn">
-     <property name="minimumSize">
-      <size>
-       <width>200</width>
-       <height>0</height>
-      </size>
-     </property>
-     <property name="text">
-      <string>Select company</string>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="1">
-    <widget class="QLineEdit" name="nameEdit"/>
-   </item>
    <item row="2" column="1">
     <widget class="QLineEdit" name="volumeEdit"/>
    </item>
-   <item row="6" column="0">
+   <item row="7" column="0">
     <widget class="QLabel" name="shelfLifeLb">
      <property name="text">
       <string>Shelf life(in days):</string>
      </property>
     </widget>
    </item>
-   <item row="1" column="0">
-    <widget class="QLabel" name="nameLb">
-     <property name="text">
-      <string>Product name:</string>
-     </property>
-    </widget>
-   </item>
-   <item row="3" column="0">
-    <widget class="QPushButton" name="measureBtn">
-     <property name="text">
-      <string>Select measure</string>
-     </property>
-    </widget>
-   </item>
-   <item row="7" column="0" colspan="2">
+   <item row="8" column="0" colspan="2">
     <layout class="QHBoxLayout" name="horizontalLayout_2">
      <item>
       <spacer name="horizontalSpacer">
@@ -112,7 +92,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="CancelBtn">
+      <widget class="QPushButton" name="cancelBtn">
        <property name="text">
         <string>Cancel</string>
        </property>
@@ -121,54 +101,87 @@
     </layout>
    </item>
    <item row="0" column="1">
-    <widget class="QLineEdit" name="companyIDEdit">
+    <widget class="QLineEdit" name="companyEdit">
      <property name="readOnly">
       <bool>true</bool>
      </property>
     </widget>
    </item>
-   <item row="6" column="1">
+   <item row="2" column="0">
+    <widget class="QLabel" name="volumeLb">
+     <property name="text">
+      <string>Volume:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="7" column="1">
     <widget class="QLineEdit" name="shelfLifeEdit"/>
    </item>
    <item row="4" column="1">
     <widget class="QLineEdit" name="priceEdit"/>
    </item>
-   <item row="3" column="1">
-    <widget class="QLineEdit" name="measureIDEdit">
+   <item row="1" column="0">
+    <widget class="QLabel" name="nameLb">
+     <property name="text">
+      <string>Product name:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="0">
+    <widget class="QPushButton" name="measureBtn">
+     <property name="text">
+      <string>Select measure</string>
+     </property>
+    </widget>
+   </item>
+   <item row="6" column="1">
+    <widget class="QLineEdit" name="prodTypeEdit">
      <property name="readOnly">
       <bool>true</bool>
      </property>
     </widget>
    </item>
-   <item row="5" column="0">
-    <widget class="QPushButton" name="productTypeBtn">
+   <item row="0" column="0">
+    <widget class="QPushButton" name="companyBtn">
+     <property name="minimumSize">
+      <size>
+       <width>200</width>
+       <height>0</height>
+      </size>
+     </property>
      <property name="text">
-      <string>Select product type</string>
+      <string>Select company</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1">
+    <widget class="QLineEdit" name="nameEdit"/>
+   </item>
+   <item row="5" column="0">
+    <widget class="QPushButton" name="currencyBtn">
+     <property name="text">
+      <string>Select currency</string>
      </property>
     </widget>
    </item>
    <item row="5" column="1">
-    <widget class="QLineEdit" name="prodTypeIDEdit">
-     <property name="readOnly">
-      <bool>true</bool>
-     </property>
-    </widget>
+    <widget class="QLineEdit" name="currencyEdit"/>
    </item>
   </layout>
  </widget>
  <tabstops>
   <tabstop>companyBtn</tabstop>
-  <tabstop>companyIDEdit</tabstop>
+  <tabstop>companyEdit</tabstop>
   <tabstop>nameEdit</tabstop>
   <tabstop>volumeEdit</tabstop>
   <tabstop>measureBtn</tabstop>
-  <tabstop>measureIDEdit</tabstop>
+  <tabstop>measureEdit</tabstop>
   <tabstop>priceEdit</tabstop>
-  <tabstop>productTypeBtn</tabstop>
-  <tabstop>prodTypeIDEdit</tabstop>
+  <tabstop>prodTypeBtn</tabstop>
+  <tabstop>prodTypeEdit</tabstop>
   <tabstop>shelfLifeEdit</tabstop>
   <tabstop>okBtn</tabstop>
-  <tabstop>CancelBtn</tabstop>
+  <tabstop>cancelBtn</tabstop>
  </tabstops>
  <resources/>
  <connections/>

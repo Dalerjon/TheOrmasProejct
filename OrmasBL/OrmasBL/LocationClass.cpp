@@ -134,4 +134,40 @@ namespace BusinessLayer
 		}
 		return false;
 	}
+
+	std::string Location::GenerateFilter(DataLayer::OrmasDal& ormasDal)
+	{
+		if (0 != id || !countryName.empty() || !countryCode.empty() || !regionName.empty() || !cityName.empty())
+		{
+			return ormasDal.GetFilterForLocation(id, countryName, countryCode, regionName, cityName);
+		}
+		return "";
+	}
+
+	bool Location::GetLocationByID(DataLayer::OrmasDal& ormasDal, int lID, std::string& errorMessage)
+	{
+		id = lID;
+		std::string filter = GenerateFilter(ormasDal);
+		std::vector<DataLayer::locationsCollection> locationVector = ormasDal.GetLocations(errorMessage, filter);
+		if (0 != locationVector.size())
+		{
+			id = std::get<0>(locationVector.at(0));
+			countryName = std::get<1>(locationVector.at(0));
+			countryCode = std::get<2>(locationVector.at(0));
+			regionName = std::get<3>(locationVector.at(0));
+			cityName = std::get<4>(locationVector.at(0));
+			return true;
+		}
+		else
+		{
+			errorMessage = "Cannot find loacation with this id";
+		}
+		return false;
+	}
+	bool Location::IsEmpty()
+	{
+		if (0 == id && countryName == "" &&	countryCode == "" && regionName == "" && cityName == "")
+			return true;
+		return false;
+	}
 }

@@ -62,7 +62,7 @@
     </property>
     <addaction name="actionShowAllUser"/>
     <addaction name="actionCreateUser"/>
-    <addaction name="actionAccess"/>
+    <addaction name="actionRights"/>
     <addaction name="actionDeleteUser"/>
    </widget>
    <widget class="QMenu" name="menuProduct">
@@ -106,10 +106,17 @@
     </property>
     <addaction name="actionAbout"/>
    </widget>
+   <widget class="QMenu" name="menuProduction">
+    <property name="title">
+     <string>Production</string>
+    </property>
+    <addaction name="actionProduction"/>
+   </widget>
    <addaction name="menuUsers"/>
    <addaction name="menuProduct"/>
    <addaction name="menuOrder"/>
    <addaction name="menuReturns"/>
+   <addaction name="menuProduction"/>
    <addaction name="menuReference"/>
    <addaction name="menuHelp"/>
   </widget>
@@ -124,9 +131,9 @@
     <string>Create user</string>
    </property>
   </action>
-  <action name="actionAccess">
+  <action name="actionRights">
    <property name="text">
-    <string>Access</string>
+    <string>Check rights</string>
    </property>
   </action>
   <action name="actionDeleteUser">
@@ -212,6 +219,11 @@
   <action name="actionAbout">
    <property name="text">
     <string>About</string>
+   </property>
+  </action>
+  <action name="actionProduction">
+   <property name="text">
+    <string>Show all products</string>
    </property>
   </action>
  </widget>

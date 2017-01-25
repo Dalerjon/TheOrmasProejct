@@ -138,5 +138,42 @@ namespace BusinessLayer{
 		}
 		return false;
 	}
+
+	std::string Company::GenerateFilter(DataLayer::OrmasDal& ormasDal)
+	{
+		if (0 != id || !name.empty() || !address.empty() || !phone.empty() || !comment.empty())
+		{
+			return ormasDal.GetFilterForCompany(id, name, address, phone, comment);
+		}
+		return "";
+	}
+
+	bool Company::GetCompanyByID(DataLayer::OrmasDal& ormasDal, int cID, std::string& errorMessage)
+	{
+		id = cID;
+		std::string filter = GenerateFilter(ormasDal);
+		std::vector<DataLayer::companiesCollection> companyVector = ormasDal.GetCompanies(errorMessage, filter);
+		if (0 != companyVector.size())
+		{
+			id = std::get<0>(companyVector.at(0));
+			name = std::get<1>(companyVector.at(0));
+			address = std::get<2>(companyVector.at(0));
+			phone = std::get<3>(companyVector.at(0));
+			comment = std::get<4>(companyVector.at(0));
+			return true;
+		}
+		else
+		{
+			errorMessage = "Cannot find company with this id";
+		}
+		return false;
+	}
+
+	bool Company::IsEmpty()
+	{
+		if (0 == id && name == "" && address == "" && phone == "" && comment == "")
+			return true;
+		return false;
+	}
 }
 

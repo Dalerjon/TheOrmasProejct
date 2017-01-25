@@ -8,6 +8,7 @@
 CreateLcnDlg::CreateLcnDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, QWidget *parent) :QDialog(parent)
 {
 	setupUi(this);
+	setModal(true);
 	countryNameEdit->setMaxLength(30);
 	countryCodeEdit->setMaxLength(4);
 	regionNameEdit->setMaxLength(30);
@@ -71,6 +72,7 @@ void CreateLcnDlg::CreateLocation()
 	{
 		DataForm *parentDataForm = (DataForm*)parentWidget();
 		SetLocationParams(countryNameEdit->text(), countryCodeEdit->text(), regionNameEdit->text(), cityNameEdit->text());
+		dialogBL->StartTransaction(errorMessage);
 		if (dialogBL->CreateLocation(location, errorMessage))
 		{
 			QList<QStandardItem*> LocationItem;
@@ -80,9 +82,11 @@ void CreateLcnDlg::CreateLocation()
 			QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
 			itemModel->appendRow(LocationItem);
 			this->close();
+			dialogBL->CommitTransaction(errorMessage);
 		}
 		else
 		{
+			dialogBL->CancelTransaction(errorMessage);
 			QMessageBox::information(NULL, QString(tr("Warning")),
 				QString(tr(errorMessage.c_str())),
 				QString(tr("Ok")));
@@ -110,20 +114,23 @@ void CreateLcnDlg::EditLocation()
 		{
 			DataForm *parentDataForm = (DataForm*)parentWidget();
 			SetLocationParams(countryNameEdit->text(), countryCodeEdit->text(), regionNameEdit->text(), cityNameEdit->text(),
-				GetIDFromTable(parentDataForm->tableView, errorMessage));
+				location->GetID());
+			dialogBL->StartTransaction(errorMessage);
 			if (dialogBL->UpdateLocation(location, errorMessage))
 			{
 				QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
 				QModelIndex mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
-				itemModel->item(mIndex.row(), 1)->setText(countryNameEdit->text());
-				itemModel->item(mIndex.row(), 2)->setText(countryCodeEdit->text());
-				itemModel->item(mIndex.row(), 3)->setText(regionNameEdit->text());
-				itemModel->item(mIndex.row(), 4)->setText(cityNameEdit->text());
+				itemModel->item(mIndex.row(), 1)->setText(location->GetCountryName().c_str());
+				itemModel->item(mIndex.row(), 2)->setText(location->GetCountryCode().c_str());
+				itemModel->item(mIndex.row(), 3)->setText(location->GetRegionName().c_str());
+				itemModel->item(mIndex.row(), 4)->setText(location->GetCityName().c_str());
 				emit itemModel->dataChanged(mIndex, mIndex);
 				this->close();
+				dialogBL->CommitTransaction(errorMessage);
 			}
 			else
 			{
+				dialogBL->CancelTransaction(errorMessage);
 				QMessageBox::information(NULL, QString(tr("Warning")),
 					QString(tr(errorMessage.c_str())),
 					QString(tr("Ok")));

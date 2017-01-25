@@ -8,6 +8,7 @@
 CreateStsDlg::CreateStsDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, QWidget *parent) :QDialog(parent)
 {
 	setupUi(this);
+	setModal(true);
 	codeEdit->setMaxLength(4);
 	nameEdit->setMaxLength(10);
 	dialogBL = ormasBL;
@@ -65,6 +66,7 @@ void CreateStsDlg::CreateStatus()
 	{
 		DataForm *parentDataForm = (DataForm*)parentWidget();
 		SetStatusParams(codeEdit->text(), nameEdit->text(), commentTextEdit->toPlainText());
+		dialogBL->StartTransaction(errorMessage);
 		if (dialogBL->CreateStatus(status, errorMessage))
 		{
 			QList<QStandardItem*> statusItem;
@@ -73,9 +75,11 @@ void CreateStsDlg::CreateStatus()
 			QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
 			itemModel->appendRow(statusItem);
 			this->close();
+			dialogBL->CommitTransaction(errorMessage);
 		}
 		else
 		{
+			dialogBL->CancelTransaction(errorMessage);
 			QMessageBox::information(NULL, QString(tr("Warning")),
 				QString(tr(errorMessage.c_str())),
 				QString(tr("Ok")));
@@ -99,19 +103,22 @@ void CreateStsDlg::EditStatus()
 			|| QString(status->GetComment().c_str()) != commentTextEdit->toPlainText())
 		{
 			DataForm *parentDataForm = (DataForm*)parentWidget();
-			SetStatusParams(codeEdit->text(), nameEdit->text(), commentTextEdit->toPlainText(), GetIDFromTable(parentDataForm->tableView, errorMessage));
+			SetStatusParams(codeEdit->text(), nameEdit->text(), commentTextEdit->toPlainText(), status->GetID());
+			dialogBL->StartTransaction(errorMessage);
 			if (dialogBL->UpdateStatus(status, errorMessage))
 			{
 				QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
 				QModelIndex mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
-				itemModel->item(mIndex.row(), 1)->setText(codeEdit->text());
-				itemModel->item(mIndex.row(), 2)->setText(nameEdit->text());
-				itemModel->item(mIndex.row(), 3)->setText(commentTextEdit->toPlainText());
+				itemModel->item(mIndex.row(), 1)->setText(status->GetCode().c_str());
+				itemModel->item(mIndex.row(), 2)->setText(status->GetName().c_str());
+				itemModel->item(mIndex.row(), 3)->setText(status->GetComment().c_str());
 				emit itemModel->dataChanged(mIndex, mIndex);
 				this->close();
+				dialogBL->CommitTransaction(errorMessage);
 			}
 			else
 			{
+				dialogBL->CancelTransaction(errorMessage);
 				QMessageBox::information(NULL, QString(tr("Warning")),
 					QString(tr(errorMessage.c_str())),
 					QString(tr("Ok")));

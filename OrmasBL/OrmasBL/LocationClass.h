@@ -8,10 +8,10 @@ namespace BusinessLayer
 	class Location
 	{
 		int id = 0;
-		std::string countryName;
-		std::string countryCode;
-		std::string regionName;
-		std::string cityName;
+		std::string countryName = "";
+		std::string countryCode = "";
+		std::string regionName = "";
+		std::string cityName = "";
 	public:
 		Location(int lID, std::string lCountryName, std::string lCountryCode, std::string lRegionName, std::string lCityName) 
 			:id(lID), countryName(lCountryName), countryCode(lCountryCode), regionName(lRegionName), cityName(lCityName){};
@@ -41,6 +41,11 @@ namespace BusinessLayer
 			std::string lRegionName, std::string lCityName, std::string& errorMessage);
 		bool UpdateLocation(DataLayer::OrmasDal& ormasDal, std::string lCountryName, std::string lCountryCode,
 			std::string lRegionName, std::string lCityName, std::string& errorMessage);
+		
+		//Generate filter string for class
+		std::string GenerateFilter(DataLayer::OrmasDal& ormasDal);
+		bool GetLocationByID(DataLayer::OrmasDal& ormasDal, int lID, std::string& errorMessage);
+		bool IsEmpty();
 	};
 }
 #endif // LOCATIONCLASS_H

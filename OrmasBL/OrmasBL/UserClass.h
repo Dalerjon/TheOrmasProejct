@@ -7,6 +7,7 @@ namespace BusinessLayer
 {
 	class User
 	{
+	protected:
 		int id = 0;
 		std::string name = "";
 		std::string phone = "";
@@ -50,8 +51,8 @@ namespace BusinessLayer
 		void SetActivated(bool);
 		
 		//Create, delete, update methods
-		bool CreateUser(DataLayer::OrmasDal& ormasDal, std::string& errorMessage){};
-		bool UpdateUser(DataLayer::OrmasDal& ormasDal, std::string& errorMessage){};
+		bool CreateUser(DataLayer::OrmasDal& ormasDal, std::string& errorMessage);
+		bool UpdateUser(DataLayer::OrmasDal& ormasDal, std::string& errorMessage);
 		bool DeleteUser(DataLayer::OrmasDal& ormasDal, std::string& errorMessage);
 		bool CreateUser(DataLayer::OrmasDal& ormasDal, std::string uName, std::string uPhone, std::string uAddress,
 			std::string uFirm, std::string uFirmNumber, int uRoleID, int uLocationID, std::string uPassword, bool uActivated,
@@ -59,6 +60,12 @@ namespace BusinessLayer
 		bool UpdateUser(DataLayer::OrmasDal& ormasDal, std::string uName, std::string uPhone, std::string uAddress,
 			std::string uFirm, std::string uFirmNumber, int uRoleID, int uLocationID, std::string uPassword, bool uActivated,
 			std::string& errorMessage);
+
+		//Generate filter string for class
+		std::string GenerateFilter(DataLayer::OrmasDal& ormasDal);
+		bool GetUserByID(DataLayer::OrmasDal& ormasDal, int uID, std::string& errorMessage);
+		bool GetUserByCredentials(DataLayer::OrmasDal& ormasDal, std::string uName, std::string uPassword);
+		bool IsEmpty();
 	};
 }
 #endif //USERCLASS_H

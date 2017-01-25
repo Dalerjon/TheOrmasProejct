@@ -29,16 +29,17 @@ class Ui_LoginDlg
 {
 public:
     QGridLayout *gridLayout;
+    QHBoxLayout *horizontalLayout;
+    QSpacerItem *horizontalSpacer_2;
+    QPushButton *okBtn;
+    QPushButton *cancelBtn;
     QLineEdit *passwordEdit;
     QLineEdit *userEdit;
-    QLabel *IconLb;
     QLabel *PasswordLb;
     QLabel *UserNameLb;
     QSpacerItem *horizontalSpacer;
-    QHBoxLayout *horizontalLayout;
-    QSpacerItem *horizontalSpacer_2;
-    QPushButton *OKBtn;
-    QPushButton *CancelBtn;
+    QLabel *IconLb;
+    QLabel *messageLb;
 
     void setupUi(QDialog *LoginDlg)
     {
@@ -48,9 +49,29 @@ public:
         LoginDlg->setMinimumSize(QSize(400, 150));
         LoginDlg->setMaximumSize(QSize(16777215, 150));
         LoginDlg->setLocale(QLocale(QLocale::English, QLocale::UnitedStates));
+        LoginDlg->setModal(true);
         gridLayout = new QGridLayout(LoginDlg);
         gridLayout->setObjectName(QStringLiteral("gridLayout"));
         gridLayout->setContentsMargins(20, 20, 20, 20);
+        horizontalLayout = new QHBoxLayout();
+        horizontalLayout->setObjectName(QStringLiteral("horizontalLayout"));
+        horizontalSpacer_2 = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
+
+        horizontalLayout->addItem(horizontalSpacer_2);
+
+        okBtn = new QPushButton(LoginDlg);
+        okBtn->setObjectName(QStringLiteral("okBtn"));
+
+        horizontalLayout->addWidget(okBtn);
+
+        cancelBtn = new QPushButton(LoginDlg);
+        cancelBtn->setObjectName(QStringLiteral("cancelBtn"));
+
+        horizontalLayout->addWidget(cancelBtn);
+
+
+        gridLayout->addLayout(horizontalLayout, 3, 0, 1, 4);
+
         passwordEdit = new QLineEdit(LoginDlg);
         passwordEdit->setObjectName(QStringLiteral("passwordEdit"));
         passwordEdit->setMinimumSize(QSize(180, 0));
@@ -63,12 +84,6 @@ public:
         userEdit->setMinimumSize(QSize(180, 0));
 
         gridLayout->addWidget(userEdit, 0, 3, 1, 1);
-
-        IconLb = new QLabel(LoginDlg);
-        IconLb->setObjectName(QStringLiteral("IconLb"));
-        IconLb->setMinimumSize(QSize(80, 80));
-
-        gridLayout->addWidget(IconLb, 0, 0, 2, 1);
 
         PasswordLb = new QLabel(LoginDlg);
         PasswordLb->setObjectName(QStringLiteral("PasswordLb"));
@@ -86,25 +101,20 @@ public:
 
         gridLayout->addItem(horizontalSpacer, 0, 1, 2, 1);
 
-        horizontalLayout = new QHBoxLayout();
-        horizontalLayout->setObjectName(QStringLiteral("horizontalLayout"));
-        horizontalSpacer_2 = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
+        IconLb = new QLabel(LoginDlg);
+        IconLb->setObjectName(QStringLiteral("IconLb"));
+        IconLb->setMinimumSize(QSize(80, 80));
 
-        horizontalLayout->addItem(horizontalSpacer_2);
+        gridLayout->addWidget(IconLb, 0, 0, 2, 1);
 
-        OKBtn = new QPushButton(LoginDlg);
-        OKBtn->setObjectName(QStringLiteral("OKBtn"));
+        messageLb = new QLabel(LoginDlg);
+        messageLb->setObjectName(QStringLiteral("messageLb"));
 
-        horizontalLayout->addWidget(OKBtn);
+        gridLayout->addWidget(messageLb, 2, 0, 1, 4);
 
-        CancelBtn = new QPushButton(LoginDlg);
-        CancelBtn->setObjectName(QStringLiteral("CancelBtn"));
-
-        horizontalLayout->addWidget(CancelBtn);
-
-
-        gridLayout->addLayout(horizontalLayout, 2, 0, 1, 4);
-
+        QWidget::setTabOrder(userEdit, passwordEdit);
+        QWidget::setTabOrder(passwordEdit, okBtn);
+        QWidget::setTabOrder(okBtn, cancelBtn);
 
         retranslateUi(LoginDlg);
 
@@ -113,12 +123,13 @@ public:
 
     void retranslateUi(QDialog *LoginDlg)
     {
-        LoginDlg->setWindowTitle(QApplication::translate("LoginDlg", "Login", 0));
-        IconLb->setText(QString());
+        LoginDlg->setWindowTitle(QApplication::translate("LoginDlg", "Login to Ormas", 0));
+        okBtn->setText(QApplication::translate("LoginDlg", "OK", 0));
+        cancelBtn->setText(QApplication::translate("LoginDlg", "Cancel", 0));
         PasswordLb->setText(QApplication::translate("LoginDlg", "Passord:", 0));
         UserNameLb->setText(QApplication::translate("LoginDlg", "User name:", 0));
-        OKBtn->setText(QApplication::translate("LoginDlg", "OK", 0));
-        CancelBtn->setText(QApplication::translate("LoginDlg", "Cancel", 0));
+        IconLb->setText(QString());
+        messageLb->setText(QString());
     } // retranslateUi
 
 };
