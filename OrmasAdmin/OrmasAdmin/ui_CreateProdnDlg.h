@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'CreateProdnDlg.ui'
 **
-** Created by: Qt User Interface Compiler version 5.4.1
+** Created by: Qt User Interface Compiler version 5.6.2
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
 ********************************************************************************/
@@ -59,6 +59,7 @@ public:
         gridLayout->setContentsMargins(9, 9, 9, 9);
         prodCountEdit = new QLineEdit(CreateProduction);
         prodCountEdit->setObjectName(QStringLiteral("prodCountEdit"));
+        prodCountEdit->setReadOnly(true);
 
         gridLayout->addWidget(prodCountEdit, 4, 2, 1, 1);
 
@@ -133,6 +134,13 @@ public:
 
         gridLayout->addWidget(prdDateEdit, 0, 1, 1, 2);
 
+        QWidget::setTabOrder(prdDateEdit, expiryDateEdit);
+        QWidget::setTabOrder(expiryDateEdit, sesStartTimeEdit);
+        QWidget::setTabOrder(sesStartTimeEdit, sesEndTimeEdit);
+        QWidget::setTabOrder(sesEndTimeEdit, addProdBtn);
+        QWidget::setTabOrder(addProdBtn, prodCountEdit);
+        QWidget::setTabOrder(prodCountEdit, okBtn);
+        QWidget::setTabOrder(okBtn, cancelBtn);
 
         retranslateUi(CreateProduction);
 

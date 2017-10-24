@@ -36,21 +36,4 @@ namespace BusinessLayer
 	{
 		return currencyName;
 	}
-
-	void ProductView::SetCompanyName(std::string pCompanyName)
-	{
-		companyName = pCompanyName;
-	}
-	void ProductView::SetMeasureName(std::string pMeasureName)
-	{
-		measureName = pMeasureName;
-	}
-	void ProductView::SetProductTypeName(std::string pProductTypeName)
-	{
-		productTypeName = pProductTypeName;
-	}
-	void ProductView::SetCurrencyName(std::string pCurrencyName)
-	{
-		currencyName = pCurrencyName;
-	}
 }

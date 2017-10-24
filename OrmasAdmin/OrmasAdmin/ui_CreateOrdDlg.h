@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'CreateOrdDlg.ui'
 **
-** Created by: Qt User Interface Compiler version 5.4.1
+** Created by: Qt User Interface Compiler version 5.6.2
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
 ********************************************************************************/
@@ -31,20 +31,20 @@ class Ui_CreateOrder
 public:
     QGridLayout *gridLayout;
     QDateEdit *dateEdit;
-    QPushButton *userBtn;
+    QPushButton *clientBtn;
     QHBoxLayout *horizontalLayout;
     QSpacerItem *horizontalSpacer;
     QPushButton *okBtn;
     QPushButton *cancelBtn;
-    QLineEdit *userEdit;
+    QLineEdit *clientEdit;
     QLabel *dateLb;
     QPushButton *addProdBtn;
     QLineEdit *prodCountEdit;
-    QPushButton *workerBtn;
+    QPushButton *employeeBtn;
     QPushButton *statusBtn;
     QLabel *prodCountLb;
     QPushButton *currencyBtn;
-    QLineEdit *workerEdit;
+    QLineEdit *employeeEdit;
     QLineEdit *sumEdit;
     QLineEdit *statusEdit;
     QLineEdit *currencyEdit;
@@ -66,11 +66,11 @@ public:
 
         gridLayout->addWidget(dateEdit, 1, 1, 1, 2);
 
-        userBtn = new QPushButton(CreateOrder);
-        userBtn->setObjectName(QStringLiteral("userBtn"));
-        userBtn->setMinimumSize(QSize(200, 0));
+        clientBtn = new QPushButton(CreateOrder);
+        clientBtn->setObjectName(QStringLiteral("clientBtn"));
+        clientBtn->setMinimumSize(QSize(200, 0));
 
-        gridLayout->addWidget(userBtn, 0, 0, 1, 1);
+        gridLayout->addWidget(clientBtn, 0, 0, 1, 1);
 
         horizontalLayout = new QHBoxLayout();
         horizontalLayout->setObjectName(QStringLiteral("horizontalLayout"));
@@ -91,11 +91,11 @@ public:
 
         gridLayout->addLayout(horizontalLayout, 7, 0, 1, 3);
 
-        userEdit = new QLineEdit(CreateOrder);
-        userEdit->setObjectName(QStringLiteral("userEdit"));
-        userEdit->setReadOnly(true);
+        clientEdit = new QLineEdit(CreateOrder);
+        clientEdit->setObjectName(QStringLiteral("clientEdit"));
+        clientEdit->setReadOnly(true);
 
-        gridLayout->addWidget(userEdit, 0, 1, 1, 2);
+        gridLayout->addWidget(clientEdit, 0, 1, 1, 2);
 
         dateLb = new QLabel(CreateOrder);
         dateLb->setObjectName(QStringLiteral("dateLb"));
@@ -113,10 +113,10 @@ public:
 
         gridLayout->addWidget(prodCountEdit, 3, 2, 1, 1);
 
-        workerBtn = new QPushButton(CreateOrder);
-        workerBtn->setObjectName(QStringLiteral("workerBtn"));
+        employeeBtn = new QPushButton(CreateOrder);
+        employeeBtn->setObjectName(QStringLiteral("employeeBtn"));
 
-        gridLayout->addWidget(workerBtn, 2, 0, 1, 1);
+        gridLayout->addWidget(employeeBtn, 2, 0, 1, 1);
 
         statusBtn = new QPushButton(CreateOrder);
         statusBtn->setObjectName(QStringLiteral("statusBtn"));
@@ -133,24 +133,27 @@ public:
 
         gridLayout->addWidget(currencyBtn, 6, 0, 1, 1);
 
-        workerEdit = new QLineEdit(CreateOrder);
-        workerEdit->setObjectName(QStringLiteral("workerEdit"));
-        workerEdit->setReadOnly(true);
+        employeeEdit = new QLineEdit(CreateOrder);
+        employeeEdit->setObjectName(QStringLiteral("employeeEdit"));
+        employeeEdit->setReadOnly(true);
 
-        gridLayout->addWidget(workerEdit, 2, 1, 1, 2);
+        gridLayout->addWidget(employeeEdit, 2, 1, 1, 2);
 
         sumEdit = new QLineEdit(CreateOrder);
         sumEdit->setObjectName(QStringLiteral("sumEdit"));
+        sumEdit->setReadOnly(true);
 
         gridLayout->addWidget(sumEdit, 5, 1, 1, 2);
 
         statusEdit = new QLineEdit(CreateOrder);
         statusEdit->setObjectName(QStringLiteral("statusEdit"));
+        statusEdit->setReadOnly(true);
 
         gridLayout->addWidget(statusEdit, 4, 1, 1, 2);
 
         currencyEdit = new QLineEdit(CreateOrder);
         currencyEdit->setObjectName(QStringLiteral("currencyEdit"));
+        currencyEdit->setReadOnly(true);
 
         gridLayout->addWidget(currencyEdit, 6, 1, 1, 2);
 
@@ -159,13 +162,18 @@ public:
 
         gridLayout->addWidget(sumLb, 5, 0, 1, 1);
 
-        QWidget::setTabOrder(userBtn, userEdit);
-        QWidget::setTabOrder(userEdit, dateEdit);
-        QWidget::setTabOrder(dateEdit, workerBtn);
-        QWidget::setTabOrder(workerBtn, workerEdit);
-        QWidget::setTabOrder(workerEdit, addProdBtn);
+        QWidget::setTabOrder(clientBtn, clientEdit);
+        QWidget::setTabOrder(clientEdit, dateEdit);
+        QWidget::setTabOrder(dateEdit, employeeBtn);
+        QWidget::setTabOrder(employeeBtn, employeeEdit);
+        QWidget::setTabOrder(employeeEdit, addProdBtn);
         QWidget::setTabOrder(addProdBtn, prodCountEdit);
-        QWidget::setTabOrder(prodCountEdit, okBtn);
+        QWidget::setTabOrder(prodCountEdit, statusBtn);
+        QWidget::setTabOrder(statusBtn, statusEdit);
+        QWidget::setTabOrder(statusEdit, sumEdit);
+        QWidget::setTabOrder(sumEdit, currencyBtn);
+        QWidget::setTabOrder(currencyBtn, currencyEdit);
+        QWidget::setTabOrder(currencyEdit, okBtn);
         QWidget::setTabOrder(okBtn, cancelBtn);
 
         retranslateUi(CreateOrder);
@@ -176,20 +184,20 @@ public:
     void retranslateUi(QDialog *CreateOrder)
     {
         CreateOrder->setWindowTitle(QApplication::translate("CreateOrder", "Create/Update Order", 0));
-        userBtn->setText(QApplication::translate("CreateOrder", "Select user", 0));
+        clientBtn->setText(QApplication::translate("CreateOrder", "Select client", 0));
         okBtn->setText(QApplication::translate("CreateOrder", "OK", 0));
         cancelBtn->setText(QApplication::translate("CreateOrder", "Cancel", 0));
 #ifndef QT_NO_TOOLTIP
-        userEdit->setToolTip(QApplication::translate("CreateOrder", "Enter user ID", 0));
+        clientEdit->setToolTip(QApplication::translate("CreateOrder", "Enter user ID", 0));
 #endif // QT_NO_TOOLTIP
         dateLb->setText(QApplication::translate("CreateOrder", "Date of order:", 0));
         addProdBtn->setText(QApplication::translate("CreateOrder", "Add products", 0));
-        workerBtn->setText(QApplication::translate("CreateOrder", "Select worker", 0));
+        employeeBtn->setText(QApplication::translate("CreateOrder", "Select employee", 0));
         statusBtn->setText(QApplication::translate("CreateOrder", "Change status", 0));
         prodCountLb->setText(QApplication::translate("CreateOrder", "Count of products:", 0));
         currencyBtn->setText(QApplication::translate("CreateOrder", "Select currency", 0));
 #ifndef QT_NO_TOOLTIP
-        workerEdit->setToolTip(QApplication::translate("CreateOrder", "Enter worker ID", 0));
+        employeeEdit->setToolTip(QApplication::translate("CreateOrder", "Enter worker ID", 0));
 #endif // QT_NO_TOOLTIP
         sumLb->setText(QApplication::translate("CreateOrder", "Total amount:", 0));
     } // retranslateUi

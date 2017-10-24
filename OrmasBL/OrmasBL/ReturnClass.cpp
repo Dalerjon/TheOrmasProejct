@@ -6,9 +6,9 @@ namespace BusinessLayer
 	Return::Return(DataLayer::returnsCollection rCollection)
 	{
 		id = std::get<0>(rCollection);
-		userID = std::get<1>(rCollection);
+		clientID = std::get<1>(rCollection);
 		date = std::get<2>(rCollection);
-		workerID = std::get<3>(rCollection);
+		employeeID = std::get<3>(rCollection);
 		count = std::get<4>(rCollection);
 		sum = std::get<5>(rCollection);
 		statusID = std::get<6>(rCollection);
@@ -20,9 +20,9 @@ namespace BusinessLayer
 		return id;
 	}
 
-	int Return::GetUserID()
+	int Return::GetClientID()
 	{
-		return userID;
+		return clientID;
 	}
 
 	std::string Return::GetDate()
@@ -30,9 +30,9 @@ namespace BusinessLayer
 		return date;
 	}
 
-	int Return::GetWorkerID()
+	int Return::GetEmployeeID()
 	{
-		return workerID;
+		return employeeID;
 	}
 
 	int Return::GetCount()
@@ -59,27 +59,27 @@ namespace BusinessLayer
 	{
 		id = rID;
 	}
-	void Return::SetUserID(int rUserID)
+	void Return::SetClientID(int rClientID)
 	{
-		userID = rUserID;
+		clientID = rClientID;
 	}
 	void Return::SetDate(std::string rDate)
 	{
 		date = rDate;
 	}
-	void Return::SetWorkerID(int rWorkerID)
+	void Return::SetEmployeeID(int rEmployeeID)
 	{
-		workerID = rWorkerID;
+		employeeID = rEmployeeID;
 	}
 	
-	void Return::SetCount(int oCount)
+	void Return::SetCount(int rCount)
 	{
-		count = oCount;
+		count = rCount;
 	}
 
-	void Return::SetSum(double oSum)
+	void Return::SetSum(double rSum)
 	{
-		sum = oSum;
+		sum = rSum;
 	}
 
 	void Return::SetStatusID(int rStatusID)
@@ -92,18 +92,20 @@ namespace BusinessLayer
 		currencyID = rCurrencyID;
 	}
 
-	bool Return::CreateReturn(DataLayer::OrmasDal& ormasDal, int uID, std::string oDate, int wID, int oCount, double oSum, 
+	bool Return::CreateReturn(DataLayer::OrmasDal& ormasDal, int clID, std::string rDate, int eID, int rCount, double rSum, 
 		int sID, int cID, std::string& errorMessage)
 	{
+		if (IsDuplicate(ormasDal, clID, rDate, rCount, rSum, cID, errorMessage))
+			return false;
 		//id = ormasDal.GenerateID();
-		userID = uID;
-		date = oDate;
-		workerID = wID;
-		count = oCount;
-		sum = oSum;
+		clientID = clID;
+		date = rDate;
+		employeeID = eID;
+		count = rCount;
+		sum = rSum;
 		statusID = sID;
 		currencyID = cID;
-		if (0 != id && ormasDal.CreateReturn(id, userID, date, workerID, count, sum, statusID, currencyID, errorMessage))
+		if (0 != id && ormasDal.CreateReturn(id, clientID, date, employeeID, count, sum, statusID, currencyID, errorMessage))
 		{
 			return true;
 		}
@@ -115,8 +117,10 @@ namespace BusinessLayer
 	}
 	bool Return::CreateReturn(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
+		if (IsDuplicate(ormasDal, errorMessage))
+			return false;
 		//id = ormasDal.GenerateID();
-		if (0 != id && ormasDal.CreateReturn(id, userID, date, workerID, count, sum, statusID, currencyID, errorMessage))
+		if (0 != id && ormasDal.CreateReturn(id, clientID, date, employeeID, count, sum, statusID, currencyID, errorMessage))
 		{
 			return true;
 		}
@@ -128,9 +132,9 @@ namespace BusinessLayer
 	}
 	bool Return::DeleteReturn(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
-		userID = 0;
+		clientID = 0;
 		date.clear();
-		workerID = 0;
+		employeeID = 0;
 		count = 0;
 		sum = 0;
 		if (ormasDal.DeleteReturn(id, errorMessage))
@@ -140,17 +144,17 @@ namespace BusinessLayer
 		}
 		return false;
 	}
-	bool Return::UpdateReturn(DataLayer::OrmasDal& ormasDal, int uID, std::string oDate, int wID, int oCount, double oSum, 
+	bool Return::UpdateReturn(DataLayer::OrmasDal& ormasDal, int clID, std::string rDate, int eID, int rCount, double rSum, 
 		int sID, int cID, std::string& errorMessage)
 	{
-		userID = uID;
-		date = oDate;
-		workerID = wID;
-		count = oCount;
-		sum = oSum;
+		clientID = clID;
+		date = rDate;
+		employeeID = eID;
+		count = rCount;
+		sum = rSum;
 		statusID = sID;
 		currencyID = cID;
-		if (0 != id && ormasDal.UpdateReturn(id, userID, date, workerID, count, sum, statusID, currencyID, errorMessage))
+		if (0 != id && ormasDal.UpdateReturn(id, clientID, date, employeeID, count, sum, statusID, currencyID, errorMessage))
 		{
 			return true;
 		}
@@ -162,7 +166,7 @@ namespace BusinessLayer
 	}
 	bool Return::UpdateReturn(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
-		if (0 != id && ormasDal.UpdateReturn(id, userID, date, workerID, count, sum, statusID, currencyID, errorMessage))
+		if (0 != id && ormasDal.UpdateReturn(id, clientID, date, employeeID, count, sum, statusID, currencyID, errorMessage))
 		{
 			return true;
 		}
@@ -175,9 +179,9 @@ namespace BusinessLayer
 
 	std::string Return::GenerateFilter(DataLayer::OrmasDal& ormasDal)
 	{
-		if (0 != id || 0 != userID || !date.empty() || 0 != workerID || 0 != count || 0 != sum || 0 != statusID)
+		if (0 != id || 0 != clientID || !date.empty() || 0 != employeeID || 0 != count || 0 != sum || 0 != statusID)
 		{
-			return ormasDal.GetFilterForReturn(id, userID, date, workerID, count, sum, statusID, currencyID);
+			return ormasDal.GetFilterForReturn(id, clientID, date, employeeID, count, sum, statusID, currencyID);
 		}
 		return "";
 	}
@@ -191,12 +195,12 @@ namespace BusinessLayer
 		{
 			id = std::get<0>(returnVector.at(0));
 			date = std::get<1>(returnVector.at(0));
-			count = std::get<10>(returnVector.at(0));
-			sum = std::get<11>(returnVector.at(0));
-			workerID = std::get<13>(returnVector.at(0));
-			userID = std::get<14>(returnVector.at(0));
-			statusID = std::get<15>(returnVector.at(0));
-			currencyID = std::get<16>(returnVector.at(0));
+			count = std::get<12>(returnVector.at(0));
+			sum = std::get<13>(returnVector.at(0));
+			employeeID = std::get<15>(returnVector.at(0));
+			clientID = std::get<16>(returnVector.at(0));
+			statusID = std::get<17>(returnVector.at(0));
+			currencyID = std::get<18>(returnVector.at(0));
 			return true;
 		}
 		else
@@ -205,10 +209,52 @@ namespace BusinessLayer
 		}
 		return false;
 	}
+	
 	bool Return::IsEmpty()
 	{
-		if(0 == id && date == "" && 0 == count && 0 == sum && 0 == workerID && 0 == userID && 0 == statusID && 0 == currencyID)
+		if(0 == id && date == "" && 0 == count && 0 == sum && 0 == employeeID && 0 == clientID && 0 == statusID && 0 == currencyID)
 			return true;
 		return false;
+	}
+
+	bool Return::IsDuplicate(DataLayer::OrmasDal& ormasDal, int clID, std::string rDate, int rCount, double rSum,
+		int cID, std::string& errorMessage)
+	{
+		Return ret;
+		ret.SetClientID(clID);
+		ret.SetDate(rDate);
+		ret.SetCount(rCount);
+		ret.SetSum(rSum);
+		ret.SetCurrencyID(cID);
+		std::string filter = ret.GenerateFilter(ormasDal);
+		std::vector<DataLayer::returnsViewCollection> returnVector = ormasDal.GetReturns(errorMessage, filter);
+		if (!errorMessage.empty())
+			return true;
+		if (0 == returnVector.size())
+		{
+			return false;
+		}
+		errorMessage = "Return with this parameters are already exist! Please avoid the duplication!";
+		return true;
+	}
+
+	bool Return::IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
+	{
+		Return ret;
+		ret.SetClientID(clientID);
+		ret.SetDate(date);
+		ret.SetCount(count);
+		ret.SetSum(sum);
+		ret.SetCurrencyID(currencyID);
+		std::string filter = ret.GenerateFilter(ormasDal);
+		std::vector<DataLayer::returnsViewCollection> returnVector = ormasDal.GetReturns(errorMessage, filter);
+		if (!errorMessage.empty())
+			return true;
+		if (0 == returnVector.size())
+		{
+			return false;
+		}
+		errorMessage = "Return with this parameters are already exist! Please avoid the duplication!";
+		return true;
 	}
 }

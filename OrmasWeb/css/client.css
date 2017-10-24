@@ -1,0 +1,50 @@
+@import url('mainstyle.css');
+
+/*client page*/
+#menu{
+	width:300px;
+	height:100%;
+	padding:5px;
+}
+
+#menu-tab{
+	
+	width:260;
+	margin:5px;
+	padding:5px;
+	background-color: #106392;
+}
+#menu-item{
+	padding: 5px;
+	padding-left: 10px;
+}
+#menu-header h1{
+	color:white;
+	font-family: Arial, serif;
+	padding:2px;
+}
+#menu a{
+	color:white;
+	text-decoration: none !important;
+}
+
+#menu a:hover{
+	color:#CBE2FF;
+	text-decoration: none !important;
+}
+
+#work-panel{
+	width:100%;
+	height:95%;
+	padding:30px;
+	margin-left:5px;
+}
+
+#view{
+	width:100%;
+	height:auto;
+}
+#commands{
+	width:100%;
+	height:25px;
+}

@@ -60,7 +60,11 @@
     </widget>
    </item>
    <item row="2" column="1">
-    <widget class="QLineEdit" name="volumeEdit"/>
+    <widget class="QLineEdit" name="volumeEdit">
+     <property name="toolTip">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;For example: 1 (depending on measure, in that case = 1 liter)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+    </widget>
    </item>
    <item row="7" column="0">
     <widget class="QLabel" name="shelfLifeLb">
@@ -115,10 +119,18 @@
     </widget>
    </item>
    <item row="7" column="1">
-    <widget class="QLineEdit" name="shelfLifeEdit"/>
+    <widget class="QLineEdit" name="shelfLifeEdit">
+     <property name="toolTip">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;For example: 4 (in days, in that case 4 days)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+    </widget>
    </item>
    <item row="4" column="1">
-    <widget class="QLineEdit" name="priceEdit"/>
+    <widget class="QLineEdit" name="priceEdit">
+     <property name="toolTip">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;For example: 3.5 (depending on currency, in that case 3.5 USD)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+    </widget>
    </item>
    <item row="1" column="0">
     <widget class="QLabel" name="nameLb">
@@ -155,7 +167,11 @@
     </widget>
    </item>
    <item row="1" column="1">
-    <widget class="QLineEdit" name="nameEdit"/>
+    <widget class="QLineEdit" name="nameEdit">
+     <property name="toolTip">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;For example: Milk&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+    </widget>
    </item>
    <item row="5" column="0">
     <widget class="QPushButton" name="currencyBtn">
@@ -165,7 +181,11 @@
     </widget>
    </item>
    <item row="5" column="1">
-    <widget class="QLineEdit" name="currencyEdit"/>
+    <widget class="QLineEdit" name="currencyEdit">
+     <property name="readOnly">
+      <bool>true</bool>
+     </property>
+    </widget>
    </item>
   </layout>
  </widget>
@@ -177,6 +197,8 @@
   <tabstop>measureBtn</tabstop>
   <tabstop>measureEdit</tabstop>
   <tabstop>priceEdit</tabstop>
+  <tabstop>currencyBtn</tabstop>
+  <tabstop>currencyEdit</tabstop>
   <tabstop>prodTypeBtn</tabstop>
   <tabstop>prodTypeEdit</tabstop>
   <tabstop>shelfLifeEdit</tabstop>

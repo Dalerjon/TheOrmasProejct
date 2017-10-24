@@ -10,18 +10,20 @@ namespace BusinessLayer
 		statusCode = std::get<2>(rCollection);
 		statusName = std::get<3>(rCollection);
 		clientName = std::get<4>(rCollection);
-		clientPhone = std::get<5>(rCollection);
-		clientAddres = std::get<6>(rCollection);
-		firm = std::get<7>(rCollection);
-		workerName = std::get<8>(rCollection);
-		workerPhone = std::get<9>(rCollection);
-		count = std::get<10>(rCollection);
-		sum = std::get<11>(rCollection);
-		currencyName = std::get<12>(rCollection);
-		workerID = std::get<13>(rCollection);
-		userID = std::get<14>(rCollection);
-		statusID = std::get<15>(rCollection);
-		currencyID = std::get<16>(rCollection);
+		clientSurname = std::get<5>(rCollection);
+		clientPhone = std::get<6>(rCollection);
+		clientAddres = std::get<7>(rCollection);
+		clientFirm = std::get<8>(rCollection);
+		employeeName = std::get<9>(rCollection);
+		employeeSurname = std::get<10>(rCollection);
+		employeePhone = std::get<11>(rCollection);
+		count = std::get<12>(rCollection);
+		sum = std::get<13>(rCollection);
+		currencyName = std::get<14>(rCollection);
+		employeeID = std::get<15>(rCollection);
+		clientID = std::get<16>(rCollection);
+		statusID = std::get<17>(rCollection);
+		currencyID = std::get<18>(rCollection);
 	}
 	
 	std::string ReturnView::GetStatusCode()
@@ -36,6 +38,10 @@ namespace BusinessLayer
 	{
 		return clientName;
 	}
+	std::string ReturnView::GetClientSurname()
+	{
+		return clientSurname;
+	}
 	std::string ReturnView::GetClientPhone()
 	{
 		return clientPhone;
@@ -44,58 +50,25 @@ namespace BusinessLayer
 	{
 		return clientAddres;
 	}
-	std::string ReturnView::GetFirm()
+	std::string ReturnView::GetClientFirm()
 	{
-		return firm;
+		return clientFirm;
 	}
-	std::string ReturnView::GetWorkerName()
+	std::string ReturnView::GetEmployeeName()
 	{
-		return workerName;
+		return employeeName;
 	}
-	std::string ReturnView::GetWorkerPhone()
+	std::string ReturnView::GetEmployeeSurname()
 	{
-		return workerPhone;
+		return employeeSurname;
+	}
+	std::string ReturnView::GetEmployeePhone()
+	{
+		return employeePhone;
 	}
 	std::string ReturnView::GetCurrencyName()
 	{
 		return currencyName;
-	}
-
-	void ReturnView::SetStatusCode(std::string rStatusCode)
-	{
-		statusCode = rStatusCode;
-	}
-	void ReturnView::SetStatusName(std::string rStatusName)
-	{
-		statusName = rStatusName;
-	}
-	void ReturnView::SetClientName(std::string rClientName)
-	{
-		clientName = rClientName;
-	}
-	void ReturnView::SetClientPhone(std::string rClientPhone)
-	{
-		clientPhone = rClientPhone;
-	}
-	void ReturnView::SetClientAddress(std::string rClientAddress)
-	{
-		clientAddres = rClientAddress;
-	}
-	void ReturnView::SetFirm(std::string rFirm)
-	{
-		firm = rFirm;
-	}
-	void ReturnView::SetWorkerName(std::string rWorkerName)
-	{
-		workerName = rWorkerName;
-	}
-	void ReturnView::SetWorkerPhone(std::string rWorkerPhone)
-	{
-		workerPhone = rWorkerPhone;
-	}
-	void ReturnView::SetCurrencyName(std::string rCurrencyName)
-	{
-		currencyName = rCurrencyName;
 	}
 }
 

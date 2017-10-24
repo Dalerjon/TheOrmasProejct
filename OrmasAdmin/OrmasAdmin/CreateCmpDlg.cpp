@@ -10,9 +10,9 @@ CreateCmpDlg::CreateCmpDlg(BusinessLayer::OrmasBL *ormasBL,bool updateFlag ,QWid
 {
 	setupUi(this);
 	setModal(true);
-	nameEdit->setMaxLength(30);
-	addressEdit->setMaxLength(30);
-	phoneEdit->setMaxLength(15);
+	nameEdit->setMaxLength(40);
+	addressEdit->setMaxLength(40);
+	phoneEdit->setMaxLength(20);
 	dialogBL = ormasBL;
 	if (true == updateFlag)
 	{

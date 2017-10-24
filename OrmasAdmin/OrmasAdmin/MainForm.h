@@ -11,38 +11,58 @@ class MainForm : public QMainWindow, public Ui::MainWindow
 
 public:
 	MainForm(BusinessLayer::OrmasBL *ormasBL, BusinessLayer::User* user);
+	~MainForm();
 	BusinessLayer::OrmasBL *oBL;
 	QMdiSubWindow* GetWindowByName(QString);
 	std::string errorMessage = "";
+	std::vector<int> rights;
 private slots :
-	void ShowUsers();
-	void CreateUser();
-	void CheckRights();
-	void DeleteUser();
+	void OpenUserForm();
+	void OpenClientForm();
+	void OpenEmployeeForm();
+	void OpenAccessForm();
+	void OpenAccessItemForm();
+	void OpenUserPhotoForm(); 
+	void OpenPositionForm();
 
-	void ShowProductsType();
-	void ShowProducts();
-	void ShowProduction();
-	void ShowProductsList();
+	void OpenProductForm();
+	void OpenProductTypeForm();
+	void OpenProductPhotoForm();
 
-	void ShowOrders();	
-	void CreateOrder();
-	void DeleteOrder();
+	void OpenOrderForm();	
+	void OpenOrderListForm();
 
-	void ShowReturns();
-	void CreateReturn();
-	void DeleteReturn();
+	void OpenReturnForm();
+	void OpenReturnListForm();
 
-	void ShowCompanies();
-	void ShowCurrencies();
-	void ShowMeasures();
-	void ShowLocations();
-	void ShowRoles();
-	void ShowStatus();
-	void About();
+	void OpenProductionForm();
+	void OpenProductionListForm();
+
+	void OpenWriteOffForm();
+	void OpenWriteOffListForm();
+
+	void OpenBalanceForm();
+	void OpenPaymentForm();
+	void OpenPriceForm();
+	void OpenSalaryForm();
+	void OpenSalaryTypeForm();
+
+	void OpenCompanyForm();
+	void OpenCurrencyForm();
+	void OpenMeasureForm();
+	void OpenLocationForm();
+	void OpenRoleForm();
+	void OpenStatusForm();
+	void OpenRelationForm();
+	void OpenRelationTypeForm();
+	
+	void OpenAboutForm();
 private:
 	void CreateConnections();
-	BusinessLayer::User *loggedUser = new BusinessLayer::User();
-	void CheckAccess(std::string&);
+	BusinessLayer::User *loggedUser = nullptr;
+	BusinessLayer::Access *userAccess = nullptr;
+	void SetMenuItemsByAccess(std::vector<int> rights);
+	void SetAllMenuInvisible();
+	void SetAllMenuVisible();
 };
 #endif //MAINFORM_h

@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'CreateLcnDlg.ui'
 **
-** Created by: Qt User Interface Compiler version 5.4.1
+** Created by: Qt User Interface Compiler version 5.6.2
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
 ********************************************************************************/
@@ -134,15 +134,21 @@ public:
         okBtn->setText(QApplication::translate("CreateLocation", "OK", 0));
         cancelBtn->setText(QApplication::translate("CreateLocation", "Cancel", 0));
 #ifndef QT_NO_TOOLTIP
-        countryCodeEdit->setToolTip(QApplication::translate("CreateLocation", "Must not be empty", 0));
+        countryCodeEdit->setToolTip(QApplication::translate("CreateLocation", "<html><head/><body><p>For example : 9999</p></body></html>", 0));
 #endif // QT_NO_TOOLTIP
 #ifndef QT_NO_TOOLTIP
-        countryNameEdit->setToolTip(QApplication::translate("CreateLocation", "Must not be empty", 0));
+        countryNameEdit->setToolTip(QApplication::translate("CreateLocation", "<html><head/><body><p>For example: Russia</p></body></html>", 0));
 #endif // QT_NO_TOOLTIP
         countryCode->setText(QApplication::translate("CreateLocation", "Country code:", 0));
         countryName->setText(QApplication::translate("CreateLocation", "Country name:", 0));
         regionName->setText(QApplication::translate("CreateLocation", "Region name:", 0));
         cityName->setText(QApplication::translate("CreateLocation", "City name:", 0));
+#ifndef QT_NO_TOOLTIP
+        regionNameEdit->setToolTip(QApplication::translate("CreateLocation", "<html><head/><body><p>For example: Novosibirsk</p></body></html>", 0));
+#endif // QT_NO_TOOLTIP
+#ifndef QT_NO_TOOLTIP
+        cityNameEdit->setToolTip(QApplication::translate("CreateLocation", "<html><head/><body><p>For example: Tomsk</p></body></html>", 0));
+#endif // QT_NO_TOOLTIP
     } // retranslateUi
 
 };

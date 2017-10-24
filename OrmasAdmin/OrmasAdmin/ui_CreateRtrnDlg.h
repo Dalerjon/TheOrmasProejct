@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'CreateRtrnDlg.ui'
 **
-** Created by: Qt User Interface Compiler version 5.4.1
+** Created by: Qt User Interface Compiler version 5.6.2
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
 ********************************************************************************/
@@ -38,13 +38,13 @@ public:
     QSpacerItem *horizontalSpacer;
     QPushButton *okBtn;
     QPushButton *cancelBtn;
-    QLineEdit *userEdit;
+    QLineEdit *clientEdit;
     QLabel *dateLb;
-    QPushButton *userBtn;
-    QPushButton *workerBtn;
+    QPushButton *clientBtn;
+    QPushButton *employeeBtn;
     QLineEdit *statusEdit;
     QPushButton *statusBtn;
-    QLineEdit *workerEdit;
+    QLineEdit *employeeEdit;
     QLineEdit *sumEdit;
     QPushButton *currencyBtn;
     QLabel *prodCountLb;
@@ -101,30 +101,31 @@ public:
 
         gridLayout->addLayout(horizontalLayout, 7, 0, 1, 3);
 
-        userEdit = new QLineEdit(CreateReturn);
-        userEdit->setObjectName(QStringLiteral("userEdit"));
-        userEdit->setReadOnly(true);
+        clientEdit = new QLineEdit(CreateReturn);
+        clientEdit->setObjectName(QStringLiteral("clientEdit"));
+        clientEdit->setReadOnly(true);
 
-        gridLayout->addWidget(userEdit, 0, 1, 1, 2);
+        gridLayout->addWidget(clientEdit, 0, 1, 1, 2);
 
         dateLb = new QLabel(CreateReturn);
         dateLb->setObjectName(QStringLiteral("dateLb"));
 
         gridLayout->addWidget(dateLb, 1, 0, 1, 1);
 
-        userBtn = new QPushButton(CreateReturn);
-        userBtn->setObjectName(QStringLiteral("userBtn"));
-        userBtn->setMinimumSize(QSize(200, 0));
+        clientBtn = new QPushButton(CreateReturn);
+        clientBtn->setObjectName(QStringLiteral("clientBtn"));
+        clientBtn->setMinimumSize(QSize(200, 0));
 
-        gridLayout->addWidget(userBtn, 0, 0, 1, 1);
+        gridLayout->addWidget(clientBtn, 0, 0, 1, 1);
 
-        workerBtn = new QPushButton(CreateReturn);
-        workerBtn->setObjectName(QStringLiteral("workerBtn"));
+        employeeBtn = new QPushButton(CreateReturn);
+        employeeBtn->setObjectName(QStringLiteral("employeeBtn"));
 
-        gridLayout->addWidget(workerBtn, 2, 0, 1, 1);
+        gridLayout->addWidget(employeeBtn, 2, 0, 1, 1);
 
         statusEdit = new QLineEdit(CreateReturn);
         statusEdit->setObjectName(QStringLiteral("statusEdit"));
+        statusEdit->setReadOnly(true);
 
         gridLayout->addWidget(statusEdit, 4, 1, 1, 2);
 
@@ -133,14 +134,15 @@ public:
 
         gridLayout->addWidget(statusBtn, 4, 0, 1, 1);
 
-        workerEdit = new QLineEdit(CreateReturn);
-        workerEdit->setObjectName(QStringLiteral("workerEdit"));
-        workerEdit->setReadOnly(true);
+        employeeEdit = new QLineEdit(CreateReturn);
+        employeeEdit->setObjectName(QStringLiteral("employeeEdit"));
+        employeeEdit->setReadOnly(true);
 
-        gridLayout->addWidget(workerEdit, 2, 1, 1, 2);
+        gridLayout->addWidget(employeeEdit, 2, 1, 1, 2);
 
         sumEdit = new QLineEdit(CreateReturn);
         sumEdit->setObjectName(QStringLiteral("sumEdit"));
+        sumEdit->setReadOnly(true);
 
         gridLayout->addWidget(sumEdit, 5, 1, 1, 2);
 
@@ -156,16 +158,22 @@ public:
 
         currencyEdit = new QLineEdit(CreateReturn);
         currencyEdit->setObjectName(QStringLiteral("currencyEdit"));
+        currencyEdit->setReadOnly(false);
 
         gridLayout->addWidget(currencyEdit, 6, 1, 1, 2);
 
-        QWidget::setTabOrder(userBtn, userEdit);
-        QWidget::setTabOrder(userEdit, dateEdit);
-        QWidget::setTabOrder(dateEdit, workerBtn);
-        QWidget::setTabOrder(workerBtn, workerEdit);
-        QWidget::setTabOrder(workerEdit, addProdBtn);
+        QWidget::setTabOrder(clientBtn, clientEdit);
+        QWidget::setTabOrder(clientEdit, dateEdit);
+        QWidget::setTabOrder(dateEdit, employeeBtn);
+        QWidget::setTabOrder(employeeBtn, employeeEdit);
+        QWidget::setTabOrder(employeeEdit, addProdBtn);
         QWidget::setTabOrder(addProdBtn, prodCountEdit);
-        QWidget::setTabOrder(prodCountEdit, okBtn);
+        QWidget::setTabOrder(prodCountEdit, statusBtn);
+        QWidget::setTabOrder(statusBtn, statusEdit);
+        QWidget::setTabOrder(statusEdit, sumEdit);
+        QWidget::setTabOrder(sumEdit, currencyBtn);
+        QWidget::setTabOrder(currencyBtn, currencyEdit);
+        QWidget::setTabOrder(currencyEdit, okBtn);
         QWidget::setTabOrder(okBtn, cancelBtn);
 
         retranslateUi(CreateReturn);
@@ -181,14 +189,14 @@ public:
         okBtn->setText(QApplication::translate("CreateReturn", "OK", 0));
         cancelBtn->setText(QApplication::translate("CreateReturn", "Cancel", 0));
 #ifndef QT_NO_TOOLTIP
-        userEdit->setToolTip(QApplication::translate("CreateReturn", "Enter user ID", 0));
+        clientEdit->setToolTip(QApplication::translate("CreateReturn", "Enter user ID", 0));
 #endif // QT_NO_TOOLTIP
         dateLb->setText(QApplication::translate("CreateReturn", "Date of order:", 0));
-        userBtn->setText(QApplication::translate("CreateReturn", "Select user", 0));
-        workerBtn->setText(QApplication::translate("CreateReturn", "Select worker", 0));
+        clientBtn->setText(QApplication::translate("CreateReturn", "Select client", 0));
+        employeeBtn->setText(QApplication::translate("CreateReturn", "Select employee", 0));
         statusBtn->setText(QApplication::translate("CreateReturn", "Change status", 0));
 #ifndef QT_NO_TOOLTIP
-        workerEdit->setToolTip(QApplication::translate("CreateReturn", "Enter worker ID", 0));
+        employeeEdit->setToolTip(QApplication::translate("CreateReturn", "Enter worker ID", 0));
 #endif // QT_NO_TOOLTIP
         currencyBtn->setText(QApplication::translate("CreateReturn", "Select currency", 0));
         prodCountLb->setText(QApplication::translate("CreateReturn", "Count of products:", 0));

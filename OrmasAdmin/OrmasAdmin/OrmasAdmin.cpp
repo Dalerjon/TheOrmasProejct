@@ -19,12 +19,12 @@ int main(int argc, char* argv[])
 	oBL->ConnectToDB("OrmasDB", "postgres", "postgres", "127.0.0.1", 5432);
 	BusinessLayer::User *loggedUser = new BusinessLayer::User();
 	LoginForm logForm(oBL, loggedUser);
-	logForm.exec();
-	if (!loggedUser->IsEmpty())
-	{
+	//logForm.exec();
+	//if (!loggedUser->IsEmpty())
+	//{
 		MainForm startForm(oBL, loggedUser);
 		startForm.show();
 		return app.exec();
-	}
+	//}
 }
 

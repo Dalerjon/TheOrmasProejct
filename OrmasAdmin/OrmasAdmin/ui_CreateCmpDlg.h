@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'CreateCmpDlg.ui'
 **
-** Created by: Qt User Interface Compiler version 5.4.1
+** Created by: Qt User Interface Compiler version 5.6.2
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
 ********************************************************************************/
@@ -138,22 +138,22 @@ public:
     {
         CreateCompany->setWindowTitle(QApplication::translate("CreateCompany", "Create/Update company", 0));
 #ifndef QT_NO_TOOLTIP
-        phoneEdit->setToolTip(QApplication::translate("CreateCompany", "Must not be an empty", 0));
+        phoneEdit->setToolTip(QApplication::translate("CreateCompany", "<html><head/><body><p>For example: 929999999 (only digits)</p></body></html>", 0));
 #endif // QT_NO_TOOLTIP
         phoneLb->setText(QApplication::translate("CreateCompany", "Phone:", 0));
         addresLb->setText(QApplication::translate("CreateCompany", "Address:", 0));
 #ifndef QT_NO_TOOLTIP
-        addressEdit->setToolTip(QApplication::translate("CreateCompany", "Must not be an empty", 0));
+        addressEdit->setToolTip(QApplication::translate("CreateCompany", "<html><head/><body><p>For example: Main St. 99</p></body></html>", 0));
 #endif // QT_NO_TOOLTIP
 #ifndef QT_NO_TOOLTIP
-        nameEdit->setToolTip(QApplication::translate("CreateCompany", "Must not be empty", 0));
+        nameEdit->setToolTip(QApplication::translate("CreateCompany", "<html><head/><body><p>For example: &quot;River Co.&quot;</p></body></html>", 0));
 #endif // QT_NO_TOOLTIP
         okBtn->setText(QApplication::translate("CreateCompany", "OK", 0));
         cancelBtn->setText(QApplication::translate("CreateCompany", "Cancel", 0));
         nameLb->setText(QApplication::translate("CreateCompany", "Name:", 0));
         label_4->setText(QApplication::translate("CreateCompany", "Comment:", 0));
 #ifndef QT_NO_TOOLTIP
-        commentTextEdit->setToolTip(QApplication::translate("CreateCompany", "Can leave it an empty", 0));
+        commentTextEdit->setToolTip(QApplication::translate("CreateCompany", "<html><head/><body><p>Does not mandatory field! If you want, than add some comments</p></body></html>", 0));
 #endif // QT_NO_TOOLTIP
     } // retranslateUi
 

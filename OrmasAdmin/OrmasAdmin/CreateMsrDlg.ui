@@ -72,14 +72,14 @@
    <item row="0" column="1">
     <widget class="QLineEdit" name="nameEdit">
      <property name="toolTip">
-      <string>Must not be empty</string>
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;For example: Kilograms&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
     </widget>
    </item>
    <item row="1" column="1">
     <widget class="QLineEdit" name="shortNameEdit">
      <property name="toolTip">
-      <string>Must not be empty</string>
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;For example: Kg&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
     </widget>
    </item>
@@ -111,7 +111,11 @@
     </widget>
    </item>
    <item row="2" column="1">
-    <widget class="QLineEdit" name="unitEdit"/>
+    <widget class="QLineEdit" name="unitEdit">
+     <property name="toolTip">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;For example: 1000 (1 kilogram = 1000 grams, only if have mo little measure, otherwise = 1)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+    </widget>
    </item>
   </layout>
  </widget>

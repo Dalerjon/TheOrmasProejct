@@ -20,7 +20,7 @@ private slots:
 	void TextEditChanged();
 private:
 	BusinessLayer::Role *role = new BusinessLayer::Role();
-	void SetRoleParams(QString, QString, int = 0);
-	void FillEditElements(QString, QString);
+	void SetRoleParams(QString, QString ,QString, int = 0);
+	void FillEditElements(QString, QString, QString);
 };
 #endif //CREATEROLEDLG_H

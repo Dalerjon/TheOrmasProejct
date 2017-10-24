@@ -1,0 +1,141 @@
+/* css typography Ormas */
+
+p#status-bar-links{
+	margin-top:0px;
+	margin-bottom:0px;	
+}
+
+p#status-bar-links span{
+	font-size:11pt;
+	font-family:Constantia ,Arial;
+	font-weight:bold;
+	color: #304c7a;
+	text-decoration: none; 
+	padding-right : 20px;
+	padding-top: 5px;
+}
+
+p#status-bar-links span:hover{
+	color: #6eb9cc; 
+	cursor:pointer;
+ }
+ 
+h5 {
+	font-size:18pt;
+	font-family:Myriad Pro;
+	font-weight: normal;
+	color: #ffffff;
+	margin-top:5px;
+	margin-bottom:0px;
+}
+
+a.mainmenu{
+	font-size:13pt;
+	font-family:Minion Pro;
+	color: #ffffff;
+	text-decoration: none; 
+}
+
+a.search{
+	font-size:13pt;
+	font-family:Minion Pro;
+	color: #ffffff;
+	text-decoration: none; 
+}
+
+.form-font{
+	font-size:13pt;
+	font-family:Minion Pro;
+	color: #ffffff;
+	text-decoration: none; 
+}
+
+a.mainmenu:hover{
+	color: #dbeaff;
+}
+
+a.secondarymenu{
+	font-size:11pt;
+	font-family:Minion Pro;
+	color: #ffffff;
+	text-decoration: none; 
+	padding-left :5px;
+	
+}
+a.secondarymenu:hover{
+	color: #abdae4;
+}
+
+.button{
+	font-size:13pt;
+	font-family:Minion Pro;
+	color: #ffffff;
+	text-align:center;
+}
+
+.button:hover{
+	color: black;
+}
+
+h3{
+	font-size: 1.1em;
+	font-family: Minion Pro;
+	color: #304c7a;
+}
+
+h4{
+	font-size: 1.1em;
+	font-family: Minion Pro;
+	padding-left:20px;
+	
+}
+
+h2{
+	font-size: 1.2em;
+	font-family: Minion Pro;
+	color: white;
+	margin:0px;
+	padding:0px;
+}
+
+.ul-type{
+	font-size:10pt;
+	font-family: Arial;
+	font-weight:bold;
+	/*color:white;*/
+	color:black;
+}
+
+.dash-list a{
+	text-decoration: none; 
+}
+
+#help-block  p{
+	font-size: 1em;
+	font-family: Times New Roman;
+	margin: 5px 0px 5px 0px;
+	text-indent:10px;
+}
+
+#help-block  a{
+	display:block;
+	padding:1px 0px 6px 0px;
+	text-decoration:none;
+	color:#304c7a;
+}
+
+#help-block  a:hover{
+	text-decoration: underline;
+	color:#293e5f;
+}
+
+
+.login-style-label{
+	font-size:12pt;
+	font-family: Arial;
+	font-weight:bold;
+	margin:auto;
+	text-align:center;
+	margin-left:40px;
+}
+

@@ -1,5 +1,7 @@
 #include "stdafx.h"
 #include "ProductClass.h"
+#include <boost/algorithm/string.hpp>
+#include "PriceClass.h"
 
 namespace BusinessLayer
 {
@@ -71,6 +73,8 @@ namespace BusinessLayer
 	}
 	void Product::SetName(std::string pName)
 	{
+		if (!pName.empty())
+			boost::trim(pName);
 		name = pName;
 	}
 	void Product::SetVolume(double pVolume)
@@ -98,10 +102,13 @@ namespace BusinessLayer
 		currencyID = pCurrencyID;
 	}
 
-	bool Product::CreateProduct(DataLayer::OrmasDal& ormasDal, int cID, std::string pName, float vol, int mID, float pri,
+	bool Product::CreateProduct(DataLayer::OrmasDal& ormasDal, int cID, std::string pName, double vol, int mID, double pri,
 		int pTypeID, int pShelfLife, int currID, std::string& errorMessage)
 	{
+		if (IsDuplicate(ormasDal, cID, pName, vol, mID, price, currID, errorMessage))
+			return false;
 		id = ormasDal.GenerateID();
+		TrimStrings(pName);
 		companyID = cID;
 		name = pName;
 		volume = vol;
@@ -118,6 +125,8 @@ namespace BusinessLayer
 	}
 	bool Product::CreateProduct(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
+		if (IsDuplicate(ormasDal, errorMessage))
+			return false;
 		id = ormasDal.GenerateID();
 		if (0 != id && ormasDal.CreateProduct(id, companyID, name, volume, measureID, price, productTypeID, shelfLife, currencyID, errorMessage))
 		{
@@ -141,9 +150,10 @@ namespace BusinessLayer
 		}
 		return false;
 	}
-	bool Product::UpdateProduct(DataLayer::OrmasDal& ormasDal, int cID, std::string pName, float vol, int mID, float pri,
+	bool Product::UpdateProduct(DataLayer::OrmasDal& ormasDal, int cID, std::string pName, double vol, int mID, double pri,
 		int pTypeID, int pShelfLife, int pCurrencyID, std::string& errorMessage)
 	{
+		TrimStrings(pName);
 		companyID = cID;
 		name = pName;
 		volume = vol;
@@ -201,11 +211,72 @@ namespace BusinessLayer
 		}
 		return false;
 	}
+	
 	bool Product::IsEmpty()
 	{
 		if(0 == id && name == "" && 0 == price && 0 == volume && 0 == shelfLife && 0 == companyID 
 			&& 0 == measureID && 0 == productTypeID && 0 == currencyID)
 			return true;
+		return false;
+	}
+
+	void Product::TrimStrings(std::string& pName)
+	{
+		if (!pName.empty())
+			boost::trim(pName);
+	}
+
+	bool Product::IsDuplicate(DataLayer::OrmasDal& ormasDal, int cID, std::string pName, double vol, int mID, double price,
+		int curID, std::string& errorMessage)
+	{
+		Product product;
+		product.SetCompanyID(cID);
+		product.SetName(pName);
+		product.SetVolume(vol);
+		product.SetMeasureID(mID);
+		product.SetPrice(price);
+		product.SetCurrencyID(curID);
+		std::string filter = product.GenerateFilter(ormasDal);
+		std::vector<DataLayer::productsViewCollection> productVector = ormasDal.GetProducts(errorMessage, filter);
+		if (!errorMessage.empty())
+			return true;
+		if (0 == productVector.size())
+		{
+			return false;
+		}
+		errorMessage = "Product with this parameters are already exist! Please avoid the duplication!";
+		return true;
+	}
+
+	bool Product::IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
+	{
+		Product product;
+		product.SetCompanyID(companyID);
+		product.SetName(name);
+		product.SetVolume(volume);
+		product.SetMeasureID(measureID);
+		product.SetPrice(price);
+		product.SetCurrencyID(currencyID);
+		std::string filter = product.GenerateFilter(ormasDal);
+		std::vector<DataLayer::productsViewCollection> productVector = ormasDal.GetProducts(errorMessage, filter);
+		if (!errorMessage.empty())
+			return true;
+		if (0 == productVector.size())
+		{
+			return false;
+		}
+		errorMessage = "Product with this parameters are already exist! Please avoid the duplication!";
+		return true;
+	}
+
+	bool Product::AddPriceData(DataLayer::OrmasDal& ormasDal, int pID, double price, int curID, std::string& errorMessage)
+	{
+		Price pri;
+		//To do: impliment this function
+		/*price.SetDate();
+		price.SetValue(price);
+		price.SetCurrencyID(curID);
+		price.SetProductID(pID);*/
 		return false;
 	}
 }

@@ -1,5 +1,7 @@
 #include "stdafx.h"
 #include "CompanyClass.h"
+#include <boost/algorithm/string.hpp>
+
 
 namespace BusinessLayer{
 
@@ -49,14 +51,20 @@ namespace BusinessLayer{
 	}
 	void Company::SetName(std::string cName)
 	{
+		if (!cName.empty())
+			boost::trim(cName);
 		name = cName;
 	}
 	void Company::SetAddress(std::string cPhone)
 	{
+		if (!cPhone.empty())
+			boost::trim(cPhone);
 		phone = cPhone;
 	}
 	void Company::SetPhone(std::string cAddress)
 	{
+		if (!cAddress.empty())
+			boost::trim(cAddress);
 		address = cAddress;
 	}
 	void Company::SetComment(std::string cComment)
@@ -67,7 +75,10 @@ namespace BusinessLayer{
 	bool Company::CreateCompany(DataLayer::OrmasDal& ormasDal, std::string cName, std::string cAddress, std::string cPhone,
 		std::string cComment, std::string& errorMessage)
 	{
+		if (IsDuplicate(ormasDal, cName, cAddress, cPhone, errorMessage))
+			return false;
 		id = ormasDal.GenerateID();
+		TrimStrings(cName, cAddress, cPhone);
 		name = cName;
 		address = cAddress;
 		phone = cPhone;
@@ -84,6 +95,8 @@ namespace BusinessLayer{
 	}
 	bool Company::CreateCompany(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
+		if (IsDuplicate(ormasDal, errorMessage))
+			return false;
 		id = ormasDal.GenerateID();
 		if (0 != id && ormasDal.CreateCompany(id, name, address, phone, comment, errorMessage))
 		{
@@ -112,6 +125,7 @@ namespace BusinessLayer{
 	bool Company::UpdateCompany(DataLayer::OrmasDal& ormasDal, std::string cName, std::string cAddress, std::string cPhone
 		, std::string cComment, std::string& errorMessage)
 	{
+		TrimStrings(cName, cAddress, cPhone);
 		name = cName;
 		address = cAddress;
 		phone = cPhone;
@@ -174,6 +188,52 @@ namespace BusinessLayer{
 		if (0 == id && name == "" && address == "" && phone == "" && comment == "")
 			return true;
 		return false;
+	}
+
+	void Company::TrimStrings(std::string& cName, std::string& cAddress, std::string& cPhone)
+	{
+		if (!cName.empty())
+			boost::trim(cName);
+		if (!cAddress.empty())
+			boost::trim(cAddress);
+		if (!cPhone.empty())
+			boost::trim(cPhone);
+	}
+
+	bool Company::IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string cName, std::string cAddress, std::string cPhone, std::string& errorMessage)
+	{
+		Company company;
+		company.SetName(cName);
+		company.SetAddress(cAddress);
+		company.SetPhone(cPhone);
+		std::string filter = company.GenerateFilter(ormasDal);
+		std::vector<DataLayer::companiesCollection> companyVector = ormasDal.GetCompanies(errorMessage, filter);
+		if (!errorMessage.empty())
+			return true;
+		if (0 == companyVector.size())
+		{
+			return false;
+		}
+		errorMessage = "Company with this parameters are already exist! Please avoid the duplication!";
+		return true;
+	}
+
+	bool Company::IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
+	{
+		Company company;
+		company.SetName(name);
+		company.SetAddress(address);
+		company.SetPhone(phone);
+		std::string filter = company.GenerateFilter(ormasDal);
+		std::vector<DataLayer::companiesCollection> companyVector = ormasDal.GetCompanies(errorMessage, filter);
+		if (!errorMessage.empty())
+			return true;
+		if (0 == companyVector.size())
+		{
+			return false;
+		}
+		errorMessage = "Company with this parameters are already exist! Please avoid the duplication!";
+		return true;
 	}
 }
 

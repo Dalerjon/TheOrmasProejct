@@ -11,14 +11,17 @@ CreateProdDlg::CreateProdDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, Q
 	setupUi(this);
 	//setModal(true);
 	dialogBL = ormasBL;
-	QRegExp expr("\\d*");
-	QRegExpValidator v(expr, 0);
-	companyEdit->setValidator(&v);
-	measureEdit->setValidator(&v);
-	prodTypeEdit->setValidator(&v);
-	shelfLifeEdit->setValidator(&v);
+	vDouble = new QDoubleValidator(0.00, 1000000000.00, 3, this);
+	vInt = new QIntValidator(0, 1000000000, this);
+	companyEdit->setValidator(vInt);
+	measureEdit->setValidator(vInt);
+	prodTypeEdit->setValidator(vInt);
+	shelfLifeEdit->setValidator(vInt);
+	currencyEdit->setValidator(vInt);
+	volumeEdit->setValidator(vDouble);
+	priceEdit->setValidator(vDouble);
 	nameEdit->setMaxLength(20);
-	currencyEdit->setValidator(&v);
+	
 	if (true == updateFlag)
 	{
 		QObject::connect(okBtn, &QPushButton::released, this, &CreateProdDlg::EditProduct);
@@ -39,6 +42,12 @@ CreateProdDlg::CreateProdDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, Q
 	QObject::connect(measureBtn, &QPushButton::released, this, &CreateProdDlg::OpenMsrDlg);
 	QObject::connect(prodTypeBtn, &QPushButton::released, this, &CreateProdDlg::OpenPrdTpDlg);
 	QObject::connect(currencyBtn, &QPushButton::released, this, &CreateProdDlg::OpenCurDlg);
+}
+
+CreateProdDlg::~CreateProdDlg()
+{
+	delete vDouble;
+	delete vInt;
 }
 
 void CreateProdDlg::SetID(int ID, QString childName)
@@ -138,20 +147,8 @@ void CreateProdDlg::CreateProduct()
 		if (dialogBL->CreateProduct(product, errorMessage))
 		{
 			BusinessLayer::Company *company = new BusinessLayer::Company();
-			//company->SetID(companyEdit->text().toInt());
-			//std::string companyFilter = dialogBL->GenerateFilter<BusinessLayer::Company>(company);
-			//std::vector<BusinessLayer::Company> companyVector = dialogBL->GetAllDataForClass<BusinessLayer::Company>(errorMessage, companyFilter);
-
 			BusinessLayer::Measure *measure = new BusinessLayer::Measure();
-			//measure->SetID(measureEdit->text().toInt());
-			//std::string measureFilter = dialogBL->GenerateFilter<BusinessLayer::Measure>(measure);
-			//std::vector<BusinessLayer::Measure> measureVector = dialogBL->GetAllDataForClass<BusinessLayer::Measure>(errorMessage, measureFilter);
-
 			BusinessLayer::ProductType *prodType = new BusinessLayer::ProductType();
-			///prodType->SetID(prodTypeEdit->text().toInt());
-			//std::string prodTypeFilter = dialogBL->GenerateFilter<BusinessLayer::ProductType>(prodType);
-			//std::vector<BusinessLayer::ProductType> prodTypeVector = dialogBL->GetAllDataForClass<BusinessLayer::ProductType>(errorMessage, prodTypeFilter);
-
 			BusinessLayer::Currency *currency = new BusinessLayer::Currency();
 
 			if (!company->GetCompanyByID(dialogBL->GetOrmasDal(), product->GetCompanyID(), errorMessage)
@@ -233,27 +230,14 @@ void CreateProdDlg::EditProduct()
 			dialogBL->StartTransaction(errorMessage);
 			if (dialogBL->UpdateProduct(product, errorMessage))
 			{
-				//updating product data
 				QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
 				QModelIndex mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
 				itemModel->item(mIndex.row(), 1)->setText(product->GetName().c_str());
 				itemModel->item(mIndex.row(), 2)->setText(QString::number(product->GetPrice()));
 								
 				BusinessLayer::Company *company = new BusinessLayer::Company();
-				//company->SetID(companyEdit->text().toInt());
-				//std::string companyFilter = dialogBL->GenerateFilter<BusinessLayer::Company>(company);
-				//std::vector<BusinessLayer::Company> companyVector = dialogBL->GetAllDataForClass<BusinessLayer::Company>(errorMessage, companyFilter);
-
 				BusinessLayer::Measure *measure = new BusinessLayer::Measure();
-				//measure->SetID(measureEdit->text().toInt());
-				//std::string measureFilter = dialogBL->GenerateFilter<BusinessLayer::Measure>(measure);
-				//std::vector<BusinessLayer::Measure> measureVector = dialogBL->GetAllDataForClass<BusinessLayer::Measure>(errorMessage, measureFilter);
-
 				BusinessLayer::ProductType *prodType = new BusinessLayer::ProductType();
-				///prodType->SetID(prodTypeEdit->text().toInt());
-				//std::string prodTypeFilter = dialogBL->GenerateFilter<BusinessLayer::ProductType>(prodType);
-				//std::vector<BusinessLayer::ProductType> prodTypeVector = dialogBL->GetAllDataForClass<BusinessLayer::ProductType>(errorMessage, prodTypeFilter);
-
 				BusinessLayer::Currency *currency = new BusinessLayer::Currency();
 				
 				if (!company->GetCompanyByID(dialogBL->GetOrmasDal(), product->GetCompanyID(), errorMessage)
@@ -275,14 +259,14 @@ void CreateProdDlg::EditProduct()
 
 				itemModel->item(mIndex.row(), 3)->setText(currency->GetShortName().c_str());
 				itemModel->item(mIndex.row(), 4)->setText(QString::number(product->GetVolume()));
-				itemModel->item(mIndex.row(), 4)->setText(measure->GetName().c_str());
-				itemModel->item(mIndex.row(), 5)->setText(prodType->GetShortName().c_str());
-				itemModel->item(mIndex.row(), 6)->setText(shelfLifeEdit->text());
-				itemModel->item(mIndex.row(), 7)->setText(company->GetName().c_str());
-				itemModel->item(mIndex.row(), 8)->setText(QString::number(product->GetCompanyID()));
-				itemModel->item(mIndex.row(), 9)->setText(QString::number(product->GetMeasureID()));
-				itemModel->item(mIndex.row(), 10)->setText(QString::number(product->GetProductTypeID()));
-				itemModel->item(mIndex.row(), 11)->setText(QString::number(product->GetCurrencyID()));
+				itemModel->item(mIndex.row(), 5)->setText(measure->GetName().c_str());
+				itemModel->item(mIndex.row(), 6)->setText(prodType->GetShortName().c_str());
+				itemModel->item(mIndex.row(), 7)->setText(shelfLifeEdit->text());
+				itemModel->item(mIndex.row(), 8)->setText(company->GetName().c_str());
+				itemModel->item(mIndex.row(), 9)->setText(QString::number(product->GetCompanyID()));
+				itemModel->item(mIndex.row(), 10)->setText(QString::number(product->GetMeasureID()));
+				itemModel->item(mIndex.row(), 11)->setText(QString::number(product->GetProductTypeID()));
+				itemModel->item(mIndex.row(), 12)->setText(QString::number(product->GetCurrencyID()));
 				
 				emit itemModel->dataChanged(mIndex, mIndex);
 				this->close();

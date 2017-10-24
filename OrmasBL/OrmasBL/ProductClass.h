@@ -18,7 +18,7 @@ namespace BusinessLayer
 		int shelfLife = 0;
 		int currencyID = 0;
 	public:
-		Product(int pID, int cID, std::string pName, float vol, int mID, float price, int pTypeID, int pShelfLife, int pCurrencyID) 
+		Product(int pID, int cID, std::string pName, double vol, int mID, double price, int pTypeID, int pShelfLife, int pCurrencyID)
 			:id(pID), companyID(cID), name(pName), volume(vol), measureID(mID), price(price), productTypeID(pTypeID), 
 			shelfLife(pShelfLife), currencyID(pCurrencyID){};
 		Product(DataLayer::productsCollection);
@@ -51,15 +51,22 @@ namespace BusinessLayer
 		bool CreateProduct(DataLayer::OrmasDal& ormasDal, std::string& errorMessage);
 		bool UpdateProduct(DataLayer::OrmasDal& ormasDal, std::string& errorMessage);
 		bool DeleteProduct(DataLayer::OrmasDal& ormasDal, std::string& errorMessage);
-		bool CreateProduct(DataLayer::OrmasDal& ormasDal, int cID, std::string pName, float vol, int mID, float price,
+		bool CreateProduct(DataLayer::OrmasDal& ormasDal, int cID, std::string pName, double vol, int mID, double price,
 			int pTypeID, int shelfLife, int curID, std::string& errorMessage);
-		bool UpdateProduct(DataLayer::OrmasDal& ormasDal, int cID, std::string pName, float vol, int mID, float price,
+		bool UpdateProduct(DataLayer::OrmasDal& ormasDal, int cID, std::string pName, double vol, int mID, double price,
 			int pTypeID, int shelfLife, int curID, std::string& errorMessage);
 
 		//Generate filter string for class
 		std::string GenerateFilter(DataLayer::OrmasDal& ormasDal);
 		bool GetProductByID(DataLayer::OrmasDal& ormasDal, int pID, std::string& errorMessage);
 		bool IsEmpty();
+	private:
+		double oldPrice = 0.0;
+		void TrimStrings(std::string&);
+		bool IsDuplicate(DataLayer::OrmasDal& ormasDal, int cID, std::string pName, double vol, int mID, double price,
+			 int curID, std::string& errorMessage);
+		bool IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string& errorMessage);
+		bool AddPriceData(DataLayer::OrmasDal& ormasDal, int pID, double price, int curID, std::string& errorMessage);
 	};
 }
 #endif //PRODUCTCLASS_H

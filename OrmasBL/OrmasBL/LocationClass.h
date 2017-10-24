@@ -46,6 +46,11 @@ namespace BusinessLayer
 		std::string GenerateFilter(DataLayer::OrmasDal& ormasDal);
 		bool GetLocationByID(DataLayer::OrmasDal& ormasDal, int lID, std::string& errorMessage);
 		bool IsEmpty();
+	private:
+		void TrimStrings(std::string&, std::string&, std::string&, std::string&);
+		bool IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string lCountryName, 
+			std::string lRegionName, std::string lCityName, std::string& errorMessage);
+		bool IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string& errorMessage);
 	};
 }
 #endif // LOCATIONCLASS_H

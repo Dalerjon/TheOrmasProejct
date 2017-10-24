@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'CreateProdDlg.ui'
 **
-** Created by: Qt User Interface Compiler version 5.4.1
+** Created by: Qt User Interface Compiler version 5.6.2
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
 ********************************************************************************/
@@ -165,6 +165,7 @@ public:
 
         currencyEdit = new QLineEdit(CreateProduct);
         currencyEdit->setObjectName(QStringLiteral("currencyEdit"));
+        currencyEdit->setReadOnly(true);
 
         gridLayout->addWidget(currencyEdit, 5, 1, 1, 1);
 
@@ -174,7 +175,9 @@ public:
         QWidget::setTabOrder(volumeEdit, measureBtn);
         QWidget::setTabOrder(measureBtn, measureEdit);
         QWidget::setTabOrder(measureEdit, priceEdit);
-        QWidget::setTabOrder(priceEdit, prodTypeBtn);
+        QWidget::setTabOrder(priceEdit, currencyBtn);
+        QWidget::setTabOrder(currencyBtn, currencyEdit);
+        QWidget::setTabOrder(currencyEdit, prodTypeBtn);
         QWidget::setTabOrder(prodTypeBtn, prodTypeEdit);
         QWidget::setTabOrder(prodTypeEdit, shelfLifeEdit);
         QWidget::setTabOrder(shelfLifeEdit, okBtn);
@@ -190,13 +193,25 @@ public:
         CreateProduct->setWindowTitle(QApplication::translate("CreateProduct", "Create/Update Product", 0));
         prodTypeBtn->setText(QApplication::translate("CreateProduct", "Select product type", 0));
         priceLb->setText(QApplication::translate("CreateProduct", "Price:", 0));
+#ifndef QT_NO_TOOLTIP
+        volumeEdit->setToolTip(QApplication::translate("CreateProduct", "<html><head/><body><p>For example: 1 (depending on measure, in that case = 1 liter)</p></body></html>", 0));
+#endif // QT_NO_TOOLTIP
         shelfLifeLb->setText(QApplication::translate("CreateProduct", "Shelf life(in days):", 0));
         okBtn->setText(QApplication::translate("CreateProduct", "OK", 0));
         cancelBtn->setText(QApplication::translate("CreateProduct", "Cancel", 0));
         volumeLb->setText(QApplication::translate("CreateProduct", "Volume:", 0));
+#ifndef QT_NO_TOOLTIP
+        shelfLifeEdit->setToolTip(QApplication::translate("CreateProduct", "<html><head/><body><p>For example: 4 (in days, in that case 4 days)</p></body></html>", 0));
+#endif // QT_NO_TOOLTIP
+#ifndef QT_NO_TOOLTIP
+        priceEdit->setToolTip(QApplication::translate("CreateProduct", "<html><head/><body><p>For example: 3.5 (depending on currency, in that case 3.5 USD)</p></body></html>", 0));
+#endif // QT_NO_TOOLTIP
         nameLb->setText(QApplication::translate("CreateProduct", "Product name:", 0));
         measureBtn->setText(QApplication::translate("CreateProduct", "Select measure", 0));
         companyBtn->setText(QApplication::translate("CreateProduct", "Select company", 0));
+#ifndef QT_NO_TOOLTIP
+        nameEdit->setToolTip(QApplication::translate("CreateProduct", "<html><head/><body><p>For example: Milk</p></body></html>", 0));
+#endif // QT_NO_TOOLTIP
         currencyBtn->setText(QApplication::translate("CreateProduct", "Select currency", 0));
     } // retranslateUi
 

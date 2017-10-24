@@ -10,18 +10,20 @@ namespace BusinessLayer
 		statusCode = std::get<2>(oCollection);
 		statusName = std::get<3>(oCollection);
 		clientName = std::get<4>(oCollection);
-		clientPhone = std::get<5>(oCollection);
-		clientAddres = std::get<6>(oCollection);
-		firm = std::get<7>(oCollection);
-		workerName = std::get<8>(oCollection);
-		workerPhone = std::get<8>(oCollection);
-		count = std::get<10>(oCollection);
-		sum = std::get<11>(oCollection);
-		currencyName = std::get<12>(oCollection);
-		workerID = std::get<13>(oCollection);
-		userID = std::get<14>(oCollection);
-		statusID = std::get<15>(oCollection);
-		currencyID = std::get<16>(oCollection);
+		clientSurname = std::get<5>(oCollection);
+		clientPhone = std::get<6>(oCollection);
+		clientAddres = std::get<7>(oCollection);
+		clientFirm = std::get<8>(oCollection);
+		employeeName = std::get<9>(oCollection);
+		employeeSurname = std::get<10>(oCollection);
+		employeePhone = std::get<11>(oCollection);
+		count = std::get<12>(oCollection);
+		sum = std::get<13>(oCollection);
+		currencyName = std::get<14>(oCollection);
+		employeeID = std::get<15>(oCollection);
+		clientID = std::get<16>(oCollection);
+		statusID = std::get<17>(oCollection);
+		currencyID = std::get<18>(oCollection);
 	}
 
 	std::string OrderView::GetStatusCode()
@@ -36,6 +38,10 @@ namespace BusinessLayer
 	{
 		return clientName;
 	}
+	std::string OrderView::GetClientSurname()
+	{
+		return clientSurname;
+	}
 	std::string OrderView::GetClientPhone()
 	{
 		return clientPhone;
@@ -44,58 +50,26 @@ namespace BusinessLayer
 	{
 		return clientAddres;
 	}
-	std::string OrderView::GetFirm()
+	std::string OrderView::GetClientFirm()
 	{
-		return firm;
+		return clientFirm;
 	}
-	std::string OrderView::GetWorkerName()
+	std::string OrderView::GetEmployeeName()
 	{
-		return workerName;
+		return employeeName;
 	}
-	std::string OrderView::GetWorkerPhone()
+	std::string OrderView::GetEmployeeSurname()
 	{
-		return workerPhone;
+		return employeeSurname;
+	}
+	std::string OrderView::GetEmployeePhone()
+	{
+		return employeePhone;
 	}
 	std::string OrderView::GetCurrencyName()
 	{
 		return currencyName;
 	}
 
-	void OrderView::SetStatusCode(std::string oStatusCode)
-	{
-		statusCode = oStatusCode;
-	}
-	void OrderView::SetStatusName(std::string oStatusName)
-	{
-		statusName = oStatusName;
-	}
-	void OrderView::SetClientName(std::string oClientName)
-	{
-		clientName = oClientName;
-	}
-	void OrderView::SetClientPhone(std::string oClientPhone)
-	{
-		clientPhone = oClientPhone;
-	}
-	void OrderView::SetClientAddress(std::string oClientAddress)
-	{
-		clientAddres = oClientAddress;
-	}
-	void OrderView::SetFirm(std::string oFirm)
-	{
-		firm = oFirm;
-	}
-	void OrderView::SetWorkerName(std::string oWorkerName)
-	{
-		workerName = oWorkerName;
-	}
-	void OrderView::SetWorkerPhone(std::string oWorkerPhone)
-	{
-		workerPhone = oWorkerPhone;
-	}
-	void OrderView::SetCurrencyName(std::string oCurrencyName)
-	{
-		currencyName = oCurrencyName;
-	}
 }
 

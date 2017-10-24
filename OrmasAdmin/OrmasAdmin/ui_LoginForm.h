@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'LoginForm.ui'
 **
-** Created by: Qt User Interface Compiler version 5.4.1
+** Created by: Qt User Interface Compiler version 5.6.2
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
 ********************************************************************************/
@@ -126,8 +126,14 @@ public:
         LoginDlg->setWindowTitle(QApplication::translate("LoginDlg", "Login to Ormas", 0));
         okBtn->setText(QApplication::translate("LoginDlg", "OK", 0));
         cancelBtn->setText(QApplication::translate("LoginDlg", "Cancel", 0));
-        PasswordLb->setText(QApplication::translate("LoginDlg", "Passord:", 0));
-        UserNameLb->setText(QApplication::translate("LoginDlg", "User name:", 0));
+#ifndef QT_NO_TOOLTIP
+        passwordEdit->setToolTip(QApplication::translate("LoginDlg", "<html><head/><body><p>At least 6 characters!</p></body></html>", 0));
+#endif // QT_NO_TOOLTIP
+#ifndef QT_NO_TOOLTIP
+        userEdit->setToolTip(QApplication::translate("LoginDlg", "<html><head/><body><p>For example: 929999999 or John.Doe@gmail.com</p></body></html>", 0));
+#endif // QT_NO_TOOLTIP
+        PasswordLb->setText(QApplication::translate("LoginDlg", "Password:", 0));
+        UserNameLb->setText(QApplication::translate("LoginDlg", "Phone or email:", 0));
         IconLb->setText(QString());
         messageLb->setText(QString());
     } // retranslateUi

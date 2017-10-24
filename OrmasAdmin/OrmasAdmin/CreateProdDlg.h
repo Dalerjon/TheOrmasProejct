@@ -8,7 +8,7 @@ class CreateProdDlg : public QDialog, public Ui::CreateProduct
 	Q_OBJECT
 public:
 	CreateProdDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, QWidget *parent = 0);
-	~CreateProdDlg(){};
+	~CreateProdDlg();
 	BusinessLayer::OrmasBL *dialogBL;
 	bool FillDlgElements(QTableView*);
 	std::string errorMessage;
@@ -27,5 +27,7 @@ private:
 	BusinessLayer::Product *product = new BusinessLayer::Product();
 	void SetProductParams(int, QString, double, int, double, int, int, int, int = 0);
 	void FillEditElements(int, QString, double, int, double, int, int, int);
+	QDoubleValidator *vDouble = nullptr;
+	QIntValidator *vInt = nullptr;
 };
 #endif //CREATEPRODDLG_H

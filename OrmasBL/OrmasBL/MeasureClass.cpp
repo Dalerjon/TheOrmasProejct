@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "MeasureClass.h"
+#include <boost/algorithm/string.hpp>
 
 namespace BusinessLayer{
 	Measure::Measure(DataLayer::measuresCollection mCollection)
@@ -36,10 +37,14 @@ namespace BusinessLayer{
 	}
 	void Measure::SetName(std::string mName)
 	{
+		if (!mName.empty())
+			boost::trim(mName);
 		name = mName;
 	}
 	void Measure::SetShortName(std::string mShortName)
 	{
+		if (!mShortName.empty())
+			boost::trim(mShortName);
 		shortName = mShortName;
 	}
 
@@ -50,7 +55,10 @@ namespace BusinessLayer{
 
 	bool Measure::CreateMeasure(DataLayer::OrmasDal& ormasDal, std::string mName, std::string mShortName, int mUnit, std::string& errorMessage)
 	{
+		if (IsDuplicate(ormasDal, mName, mShortName, errorMessage))
+			return false;
 		id = ormasDal.GenerateID();
+		TrimStrings(mName, mShortName);
 		name = mName;
 		shortName = mShortName;
 		unit = mUnit;
@@ -66,6 +74,8 @@ namespace BusinessLayer{
 	}
 	bool Measure::CreateMeasure(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
+		if (IsDuplicate(ormasDal, errorMessage))
+			return false;
 		id = ormasDal.GenerateID();
 		if (0 != id && ormasDal.CreateMeasure(id, name, shortName, unit, errorMessage))
 		{
@@ -94,6 +104,7 @@ namespace BusinessLayer{
 	}
 	bool Measure::UpdateMeasure(DataLayer::OrmasDal& ormasDal, std::string mName, std::string mShortName, int mUnit, std::string& errorMessage)
 	{
+		TrimStrings(mName, mShortName);
 		name = mName;
 		shortName = mShortName;
 		if (0 != id && ormasDal.UpdateMeasure(id, name, shortName, mUnit, errorMessage))
@@ -147,10 +158,53 @@ namespace BusinessLayer{
 		}
 		return false;
 	}
+	
 	bool Measure::IsEmpty()
 	{
 		if (0 == id && name == "" && shortName == "" && 0 == unit)
 			return true;
 		return false;
+	}
+
+	void Measure::TrimStrings(std::string& mName, std::string& mShortName)
+	{
+		if (!mName.empty())
+			boost::trim(mName);
+		if (!mShortName.empty())
+			boost::trim(mShortName);
+	}
+
+	bool Measure::IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string mName, std::string mShortName, std::string& errorMessage)
+	{
+		Measure measure;
+		measure.SetName(mName);
+		measure.SetShortName(mShortName);
+		std::string filter = measure.GenerateFilter(ormasDal);
+		std::vector<DataLayer::measuresCollection> measuresVector = ormasDal.GetMeasures(errorMessage, filter);
+		if (!errorMessage.empty())
+			return true;
+		if (0 == measuresVector.size())
+		{
+			return false;
+		}
+		errorMessage = "Measure with this parameters are already exist! Please avoid the duplication!";
+		return true;
+	}
+
+	bool Measure::IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
+	{
+		Measure measure;
+		measure.SetName(name);
+		measure.SetShortName(shortName);
+		std::string filter = measure.GenerateFilter(ormasDal);
+		std::vector<DataLayer::measuresCollection> measuresVector = ormasDal.GetMeasures(errorMessage, filter);
+		if (!errorMessage.empty())
+			return true;
+		if (0 == measuresVector.size())
+		{
+			return false;
+		}
+		errorMessage = "Measure with this parameters are already exist! Please avoid the duplication!";
+		return true;
 	}
 }

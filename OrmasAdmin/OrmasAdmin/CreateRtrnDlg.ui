@@ -99,7 +99,7 @@
     </layout>
    </item>
    <item row="0" column="1" colspan="2">
-    <widget class="QLineEdit" name="userEdit">
+    <widget class="QLineEdit" name="clientEdit">
      <property name="toolTip">
       <string>Enter user ID</string>
      </property>
@@ -116,7 +116,7 @@
     </widget>
    </item>
    <item row="0" column="0">
-    <widget class="QPushButton" name="userBtn">
+    <widget class="QPushButton" name="clientBtn">
      <property name="minimumSize">
       <size>
        <width>200</width>
@@ -124,19 +124,23 @@
       </size>
      </property>
      <property name="text">
-      <string>Select user</string>
+      <string>Select client</string>
      </property>
     </widget>
    </item>
    <item row="2" column="0">
-    <widget class="QPushButton" name="workerBtn">
+    <widget class="QPushButton" name="employeeBtn">
      <property name="text">
-      <string>Select worker</string>
+      <string>Select employee</string>
      </property>
     </widget>
    </item>
    <item row="4" column="1" colspan="2">
-    <widget class="QLineEdit" name="statusEdit"/>
+    <widget class="QLineEdit" name="statusEdit">
+     <property name="readOnly">
+      <bool>true</bool>
+     </property>
+    </widget>
    </item>
    <item row="4" column="0">
     <widget class="QPushButton" name="statusBtn">
@@ -146,7 +150,7 @@
     </widget>
    </item>
    <item row="2" column="1" colspan="2">
-    <widget class="QLineEdit" name="workerEdit">
+    <widget class="QLineEdit" name="employeeEdit">
      <property name="toolTip">
       <string>Enter worker ID</string>
      </property>
@@ -156,7 +160,11 @@
     </widget>
    </item>
    <item row="5" column="1" colspan="2">
-    <widget class="QLineEdit" name="sumEdit"/>
+    <widget class="QLineEdit" name="sumEdit">
+     <property name="readOnly">
+      <bool>true</bool>
+     </property>
+    </widget>
    </item>
    <item row="6" column="0">
     <widget class="QPushButton" name="currencyBtn">
@@ -173,18 +181,27 @@
     </widget>
    </item>
    <item row="6" column="1" colspan="2">
-    <widget class="QLineEdit" name="currencyEdit"/>
+    <widget class="QLineEdit" name="currencyEdit">
+     <property name="readOnly">
+      <bool>false</bool>
+     </property>
+    </widget>
    </item>
   </layout>
  </widget>
  <tabstops>
-  <tabstop>userBtn</tabstop>
-  <tabstop>userEdit</tabstop>
+  <tabstop>clientBtn</tabstop>
+  <tabstop>clientEdit</tabstop>
   <tabstop>dateEdit</tabstop>
-  <tabstop>workerBtn</tabstop>
-  <tabstop>workerEdit</tabstop>
+  <tabstop>employeeBtn</tabstop>
+  <tabstop>employeeEdit</tabstop>
   <tabstop>addProdBtn</tabstop>
   <tabstop>prodCountEdit</tabstop>
+  <tabstop>statusBtn</tabstop>
+  <tabstop>statusEdit</tabstop>
+  <tabstop>sumEdit</tabstop>
+  <tabstop>currencyBtn</tabstop>
+  <tabstop>currencyEdit</tabstop>
   <tabstop>okBtn</tabstop>
   <tabstop>cancelBtn</tabstop>
  </tabstops>

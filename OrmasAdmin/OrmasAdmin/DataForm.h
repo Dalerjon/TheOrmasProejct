@@ -18,7 +18,7 @@ public:
 	void FillTable(std::string& errorMessage, std::string filter = "")
 	{
 		QStringList header = GetTableHeader<T>();
-		QStandardItem *item;
+		//QStandardItem *item;
 		QStandardItemModel *itemModel = new QStandardItemModel(this);
 		itemModel->setHorizontalHeaderLabels(header);
 		tableView->setModel(itemModel);
@@ -51,57 +51,126 @@ private slots:
 	void CloseDataForm();
 	void OpenList(int, int);
 
-	void CrtCompanyDlg();
-	void UdpCompanyDlg();
-	void DelCompanyDlg();
+	void CrtAcsDlg();
+	void UdpAcsDlg();
+	void DelAcsDlg();
 
-	void CrtCurrencyDlg();
-	void UdpCurrencyDlg();
-	void DelCurrencyDlg();
+	void CrtAcsItemDlg();
+	void UdpAcsItemDlg();
+	void DelAcsItemDlg();
 
-	void CrtMeasureDlg();
-	void UdpMeasureDlg();
-	void DelMeasureDlg();
+	void CrtBlcDlg();
+	void UdpBlcDlg();
+	void DelBlcDlg();
+
+	void CrtCltDlg();
+	void UdpCltDlg();
+	void DelCltDlg();
+
+	void CrtCmpDlg();
+	void UdpCmpDlg();
+	void DelCmpDlg();
+
+	void CrtCurDlg();
+	void UdpCurDlg();
+	void DelCurDlg();
+
+	void CrtEmpDlg();
+	void UdpEmpDlg();
+	void DelEmpDlg();
+
+	void CrtLcnDlg();
+	void UdpLcnDlg();
+	void DelLcnDlg();
+
+	void CrtMsrDlg();
+	void UdpMsrDlg();
+	void DelMsrDlg();
 
 	void CrtOrdDlg();
 	void UdpOrdDlg();
 	void DelOrdDlg();
 
+	void CrtOrdListDlg();
+	void UdpOrdListDlg();
+	void DelOrdListDlg();
+
+	void CrtPhotoDlg();
+	void UdpPhotoDlg();
+	void DelPhotoDlg();
+
+	void CrtPmtDlg();
+	void UdpPmtDlg();
+	void DelPmtDlg();
+
+	void CrtPosDlg();
+	void UdpPosDlg();
+	void DelPosDlg();
+
+	void CrtPrcDlg();
+	void UdpPrcDlg();
+	void DelPrcDlg();
+
 	void CrtProdTpDlg();
 	void UdpProdTpDlg();
 	void DelProdTpDlg();
-
-	void CrtProdnDlg();
-	void UdpProdnDlg();
-	void DelProdnDlg();
 
 	void CrtProdDlg();
 	void UdpProdDlg();
 	void DelProdDlg();
 
-	void CrtProdListDlg();
-	void UdpProdListDlg();
-	void DelProdListDlg();
+	void CrtProdnDlg();
+	void UdpProdnDlg();
+	void DelProdnDlg();
 
-	void CrtLocationDlg();
-	void UdpLocationDlg();
-	void DelLocationDlg();
+	void CrtProdnListDlg();
+	void UdpProdnListDlg();
+	void DelProdnListDlg();
 
-	void CrtRtrnDlg();
-	void UdpRtrnDlg();
-	void DelRtrnDlg();
+
+	void CrtRelDlg();
+	void UdpRelDlg();
+	void DelRelDlg();
+
+	void CrtRelTypeDlg();
+	void UdpRelTypeDlg();
+	void DelRelTypeDlg();
 
 	void CrtRoleDlg();
 	void UdpRoleDlg();
 	void DelRoleDlg();
 
-	void CrtStatusDlg();
-	void UdpStatusDlg();
-	void DelStatusDlg();
+	void CrtRtrnDlg();
+	void UdpRtrnDlg();
+	void DelRtrnDlg();
+
+	void CrtRtrnListDlg();
+	void UdpRtrnListDlg();
+	void DelRtrnListDlg();
+
+	void CrtSlrDlg();
+	void UdpSlrDlg();
+	void DelSlrDlg();
+
+	void CrtSlrTypeDlg();
+	void UdpSlrTypeDlg();
+	void DelSlrTypeDlg();
+
+	void CrtStsDlg();
+	void UdpStsDlg();
+	void DelStsDlg();
 
 	void CrtUserDlg();
 	void UdpUserDlg();
 	void DelUserDlg();
+
+	void CrtWOffDlg();
+	void UdpWOffDlg();
+	void DelWOffDlg();
+
+	void CrtWOffListDlg();
+	void UdpWOffListDlg();
+	void DelWOffListDlg();
 
 	void ChangeBtnState();
 	void GetIDValue(QModelIndex index);
@@ -113,14 +182,28 @@ private slots:
 public:
 	BusinessLayer::OrmasBL *dataFormBL;
 	QWidget* parentForm;
+	CreateAcsDlg* createAcsDlg = nullptr;
+	CreateBlcDlg* createBlcDlg = nullptr;
+	CreateCltDlg* createCltDlg = nullptr;
+	CreateEmpDlg* createEmpDlg = nullptr;
+	CreateOrdListDlg* createOrdListDlg = nullptr;
+	CreatePhtDlg* createPhtDlg = nullptr;
+	CreatePmtDlg* createPmtDlg = nullptr;
+	CreatePrcDlg* createPrcDlg = nullptr;
+	CreateProdnListDlg* createProdnListDlg = nullptr;
+	CreateRelDlg* createRelDlg = nullptr;
+	CreateRtrnListDlg* createRtrnListDlg = nullptr;
+	CreateSlrDlg* createSlrDlg = nullptr;
 	CreateUserDlg* createUserDlg = nullptr;
 	CreateProdDlg* createProdDlg = nullptr;
 	CreateProdnDlg* createProdnDlg = nullptr;
-	AddProdDlg* addProdDlg = nullptr;
 	CreateOrdDlg* createOrdDlg = nullptr;
 	CreateRtrnDlg* createRtrnDlg = nullptr;
+	CreateWOffDlg* createWOffDlg = nullptr;
+	CreateWOffListDlg* createWOffListDlg = nullptr;
 	int orderID = 0;
 	int returnID = 0;
 	int productionID = 0;
+	int writeOffID = 0;
 };
 #endif //DATAFORM_H

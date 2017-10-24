@@ -11,25 +11,25 @@ CreateOrdDlg::CreateOrdDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, QWi
 	//setModal(true);
 	dialogBL = ormasBL;
 	order->SetID(dialogBL->GenerateID());
-	QRegExp expr("\\d*");
-	QRegExpValidator v(expr, 0);
-	userEdit->setValidator(&v);
-	workerEdit->setValidator(&v);
-	prodCountEdit->setValidator(&v);
-	userEdit->setValidator(&v);
-	statusEdit->setValidator(&v);
-	currencyEdit->setValidator(&v);
-	sumEdit->setReadOnly(true);
+	vDouble = new QDoubleValidator(0.00, 1000000000.00, 3, this);
+	vInt = new QIntValidator(0, 1000000000, this);
+	clientEdit->setValidator(vInt);
+	employeeEdit->setValidator(vInt);
+	prodCountEdit->setValidator(vInt);
+	clientEdit->setValidator(vInt);
+	statusEdit->setValidator(vInt);
+	currencyEdit->setValidator(vInt);
+	sumEdit->setValidator(vDouble);
 	if (true == updateFlag)
 	{
 		QObject::connect(okBtn, &QPushButton::released, this, &CreateOrdDlg::EditOrder);
 	}
 	else
 	{
-		userEdit->setText("0");
-		workerEdit->setText("0");
+		clientEdit->setText("0");
+		employeeEdit->setText("0");
 		prodCountEdit->setText("0");
-		userEdit->setText("0");
+		clientEdit->setText("0");
 		statusEdit->setText("0");
 		sumEdit->setText("0");
 		currencyEdit->setText("0");
@@ -37,29 +37,35 @@ CreateOrdDlg::CreateOrdDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, QWi
 		QObject::connect(okBtn, &QPushButton::released, this, &CreateOrdDlg::CreateOrder);
 	}
 	QObject::connect(cancelBtn, &QPushButton::released, this, &CreateOrdDlg::Close);
-	QObject::connect(userBtn, &QPushButton::released, this, &CreateOrdDlg::OpenUserDlg);
+	QObject::connect(clientBtn, &QPushButton::released, this, &CreateOrdDlg::OpenCltDlg);
 	QObject::connect(statusBtn, &QPushButton::released, this, &CreateOrdDlg::OpenStsDlg);
-	QObject::connect(workerBtn, &QPushButton::released, this, &CreateOrdDlg::OpenWorkerDlg);
+	QObject::connect(employeeBtn, &QPushButton::released, this, &CreateOrdDlg::OpenEmpDlg);
 	QObject::connect(currencyBtn, &QPushButton::released, this, &CreateOrdDlg::OpenCurDlg);
-	QObject::connect(addProdBtn, &QPushButton::released, this, &CreateOrdDlg::OpenAddProdDlg);
+	QObject::connect(addProdBtn, &QPushButton::released, this, &CreateOrdDlg::OpenOrdListDlg);
 }
 
-void CreateOrdDlg::SetOrderParams(int oUserID, QString oDate, int oWorkerID, int oCount, double oSum, int oStatusID, int oCurrencyID)
+CreateOrdDlg::~CreateOrdDlg()
 {
-	order->SetUserID(oUserID);
+	delete vDouble;
+	delete vInt;
+}
+
+void CreateOrdDlg::SetOrderParams(int oClientID, QString oDate, int oEmployeeID, int oCount, double oSum, int oStatusID, int oCurrencyID)
+{
+	order->SetClientID(oClientID);
 	order->SetDate(oDate.toUtf8().constData());
-	order->SetWorkerID(oWorkerID);
+	order->SetEmployeeID(oEmployeeID);
 	order->SetCount(oCount);
 	order->SetSum(oSum);
 	order->SetStatusID(oStatusID);
 	order->SetCurrencyID(oCurrencyID);
 }
 
-void CreateOrdDlg::FillEditElements(int oUserID, QString oDate, int oWorkerID, int oCount, double oSum, int oStatusID, int oCurrencyID)
+void CreateOrdDlg::FillEditElements(int oClientID, QString oDate, int oemployeeID, int oCount, double oSum, int oStatusID, int oCurrencyID)
 {
-	userEdit->setText(QString::number(oUserID));
-	dateEdit->setDate(QDate::fromString(oDate, "dd.MM.yyyy"));
-	workerEdit->setText(QString::number(oWorkerID));
+	clientEdit->setText(QString::number(oClientID));
+	dateEdit->setDate(QDate::fromString(oDate, "yyyy-MM-dd"));
+	employeeEdit->setText(QString::number(oemployeeID));
 	prodCountEdit->setText(QString::number(oCount));
 	sumEdit->setText(QString::number(oSum));
 	statusEdit->setText(QString::number(oStatusID));
@@ -74,15 +80,15 @@ void CreateOrdDlg::SetID(int ID, QString childName)
 		{
 			if (childName == QString("clientForm"))
 			{
-				userEdit->setText(QString::number(ID));
+				clientEdit->setText(QString::number(ID));
 			}
 			if (childName == QString("statusForm"))
 			{
 				statusEdit->setText(QString::number(ID));
 			}
-			if (childName == QString("workerForm"))
+			if (childName == QString("employeeForm"))
 			{
-				workerEdit->setText(QString::number(ID));
+				employeeEdit->setText(QString::number(ID));
 			}
 			if (childName == QString("currencyForm"))
 			{
@@ -122,7 +128,7 @@ bool CreateOrdDlg::FillDlgElements(QTableView* cTable)
 void CreateOrdDlg::CreateOrder()
 {
 	errorMessage.clear();
-	if (0 != userEdit->text().toInt()  && !dateEdit->text().isEmpty()
+	if (0 != clientEdit->text().toInt()  && !dateEdit->text().isEmpty()
 		&& 0 != prodCountEdit->text().toInt() && 0 != sumEdit->text().toInt()
 		&& 0 != currencyEdit->text().toInt())
 	{
@@ -135,7 +141,7 @@ void CreateOrdDlg::CreateOrder()
 
 		if (statusVector.size() > 0)
 		{
-			SetOrderParams(userEdit->text().toInt(), dateEdit->text(), workerEdit->text().toInt(), prodCountEdit->text().toInt(),
+			SetOrderParams(clientEdit->text().toInt(), dateEdit->text(), employeeEdit->text().toInt(), prodCountEdit->text().toInt(),
 				sumEdit->text().toInt(), statusVector.at(0).GetID(), currencyEdit->text().toInt());
 			dialogBL->StartTransaction(errorMessage);
 			if (dialogBL->CreateOrder(order, errorMessage))
@@ -148,18 +154,12 @@ void CreateOrdDlg::CreateOrder()
 						<< new QStandardItem(statusVector.at(0).GetCode().c_str())
 						<< new QStandardItem(statusVector.at(0).GetName().c_str());
 
-					BusinessLayer::User *user = new BusinessLayer::User();
-					//user->SetID(userEdit->text().toInt());
-					//std::string userFilter = dialogBL->GenerateFilter<BusinessLayer::User>(user);
-					//std::vector<BusinessLayer::UserView> userVector = dialogBL->GetAllDataForClass<BusinessLayer::UserView>(errorMessage, userFilter);
+					BusinessLayer::Client *client = new BusinessLayer::Client();
+					BusinessLayer::Employee *employee = new BusinessLayer::Employee();
 					
-					BusinessLayer::User *worker = new BusinessLayer::User();
-					//worker->SetID(workerEdit->text().toInt());
-					//std::string workerFilter = dialogBL->GenerateFilter<BusinessLayer::User>(worker);
-					//std::vector<BusinessLayer::UserView> workerVector = dialogBL->GetAllDataForClass<BusinessLayer::UserView>(errorMessage, workerFilter);
 					
 					BusinessLayer::Currency *currency = new BusinessLayer::Currency;
-					if (!user->GetUserByID(dialogBL->GetOrmasDal(), order->GetUserID(), errorMessage)
+					if (!client->GetClientByID(dialogBL->GetOrmasDal(), order->GetClientID(), errorMessage)
 						|| !currency->GetCurrencyByID(dialogBL->GetOrmasDal(), order->GetCurrencyID(), errorMessage))
 					{
 						dialogBL->CancelTransaction(errorMessage);
@@ -167,72 +167,76 @@ void CreateOrdDlg::CreateOrder()
 							QString(tr(errorMessage.c_str())),
 							QString(tr("Ok")));
 						errorMessage.clear();
-						delete user;
+						delete client;
 						delete currency;
 						delete status;
 						return;
 					}
 
-					if (order->GetWorkerID() > 0)
+					if (order->GetEmployeeID() > 0)
 					{
-						if (!worker->GetUserByID(dialogBL->GetOrmasDal(), order->GetWorkerID(), errorMessage))
+						if (!employee->GetEmployeeByID(dialogBL->GetOrmasDal(), order->GetEmployeeID(), errorMessage))
 						{
 							dialogBL->CancelTransaction(errorMessage);
 							QMessageBox::information(NULL, QString(tr("Warning")),
 								QString(tr(errorMessage.c_str())),
 								QString(tr("Ok")));
 							errorMessage.clear();
-							delete worker;
+							delete employee;
 							return;
 						}
 					}
 					
 
-					if (0 != order->GetUserID())
+					if (0 != order->GetClientID())
 					{
-						OrderItem << new QStandardItem(user->GetName().c_str())
-							<< new QStandardItem(user->GetPhone().c_str())
-							<< new QStandardItem(user->GetAddress().c_str())
-							<< new QStandardItem(user->GetFirm().c_str());
+						OrderItem << new QStandardItem(client->GetName().c_str())
+							<< new QStandardItem(client->GetSurname().c_str())
+							<< new QStandardItem(client->GetPhone().c_str())
+							<< new QStandardItem(client->GetAddress().c_str())
+							<< new QStandardItem(client->GetFirm().c_str());
 					}
 					else
 					{
 						OrderItem << new QStandardItem("")
+							<< new QStandardItem("")
 							<< new QStandardItem("")
 							<< new QStandardItem("")
 							<< new QStandardItem("");
 					}
-					if (0 != order->GetWorkerID())
+					if (0 != order->GetEmployeeID())
 					{
-						OrderItem << new QStandardItem(worker->GetName().c_str())
-								<< new QStandardItem(worker->GetPhone().c_str());
+						OrderItem << new QStandardItem(employee->GetName().c_str())
+								<< new QStandardItem(employee->GetSurname().c_str())
+								<< new QStandardItem(employee->GetPhone().c_str());
 					}
 					else
 					{
 						OrderItem << new QStandardItem("")
+							<< new QStandardItem("")
 							<< new QStandardItem("");
 					}
 
 					OrderItem << new QStandardItem(QString::number(order->GetCount()))
 						<< new QStandardItem(QString::number(order->GetSum()))
 					    << new QStandardItem(currency->GetShortName().c_str())
-						<< new QStandardItem(QString::number(order->GetWorkerID()))
-						<< new QStandardItem(QString::number(order->GetUserID()))
+						<< new QStandardItem(QString::number(order->GetEmployeeID()))
+						<< new QStandardItem(QString::number(order->GetClientID()))
 						<< new QStandardItem(QString::number(order->GetStatusID()))
 						<< new QStandardItem(QString::number(order->GetCurrencyID()));
 
 					QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
 					itemModel->appendRow(OrderItem);
 					dialogBL->CommitTransaction(errorMessage);
-					delete user;
-					delete worker;
+					delete client;
+					delete employee;
 					delete currency;
 				}
 				else
 				{
 					dialogBL->CancelTransaction(errorMessage);
 					QMessageBox::information(NULL, QString(tr("Warning")),
-						QString(tr("Cannot create this user! Role or location are wrong!")),
+						QString(tr("Cannot create this order! Client, employee or currency are wrong!")),
 						QString(tr("Ok")));
 					errorMessage.clear();
 					delete status;
@@ -271,12 +275,12 @@ void CreateOrdDlg::CreateOrder()
 void CreateOrdDlg::EditOrder()
 {
 	errorMessage.clear();
-	if (0 != userEdit->text().toInt() && !dateEdit->text().isEmpty()
+	if (0 != clientEdit->text().toInt() && !dateEdit->text().isEmpty()
 		&& 0 != prodCountEdit->text().toInt() && 0 != sumEdit->text().toInt()
 		&& 0 != currencyEdit->text().toInt())
 	{
-		if (order->GetUserID() != userEdit->text().toInt() || QString(order->GetDate().c_str()) != dateEdit->text() ||
-			order->GetWorkerID() != workerEdit->text().toInt() || order->GetCount() != prodCountEdit->text().toInt() ||
+		if (order->GetClientID() != clientEdit->text().toInt() || QString(order->GetDate().c_str()) != dateEdit->text() ||
+			order->GetEmployeeID() != employeeEdit->text().toInt() || order->GetCount() != prodCountEdit->text().toInt() ||
 			 order->GetSum() != sumEdit->text().toInt()
 			|| order->GetCurrencyID() != currencyEdit->text().toInt())
 		{
@@ -288,7 +292,7 @@ void CreateOrdDlg::EditOrder()
 
 			if (statusVector.size() > 0)
 			{
-				SetOrderParams(userEdit->text().toInt(), dateEdit->text(), workerEdit->text().toInt(), prodCountEdit->text().toInt(),
+				SetOrderParams(clientEdit->text().toInt(), dateEdit->text(), employeeEdit->text().toInt(), prodCountEdit->text().toInt(),
 					sumEdit->text().toInt(), statusVector.at(0).GetID(), currencyEdit->text().toInt());
 				dialogBL->StartTransaction(errorMessage);
 				if (dialogBL->UpdateOrder(order, errorMessage))
@@ -316,19 +320,12 @@ void CreateOrdDlg::EditOrder()
 						return;
 					}
 										
-					BusinessLayer::User *user = new BusinessLayer::User();
-					//user->SetID(userEdit->text().toInt());
-					//std::string userFilter = dialogBL->GenerateFilter<BusinessLayer::User>(user);
-					//std::vector<BusinessLayer::UserView> userVector = dialogBL->GetAllDataForClass<BusinessLayer::UserView>(errorMessage, userFilter);
-					
-					BusinessLayer::User *worker = new BusinessLayer::User();
-					//worker->SetID(workerEdit->text().toInt());
-					//std::string workerFilter = dialogBL->GenerateFilter<BusinessLayer::User>(worker);
-					//std::vector<BusinessLayer::UserView> workerVector = dialogBL->GetAllDataForClass<BusinessLayer::UserView>(errorMessage, workerFilter);
+					BusinessLayer::Client *client = new BusinessLayer::Client();
+					BusinessLayer::Employee *employee = new BusinessLayer::Employee();
 					
 					BusinessLayer::Currency *currency = new BusinessLayer::Currency();
 
-					if (!user->GetUserByID(dialogBL->GetOrmasDal(),order->GetUserID(),errorMessage)
+					if (!client->GetClientByID(dialogBL->GetOrmasDal(),order->GetClientID(),errorMessage)
 						|| !currency->GetCurrencyByID(dialogBL->GetOrmasDal(), order->GetCurrencyID(), errorMessage))
 					{
 						dialogBL->CancelTransaction(errorMessage);
@@ -336,57 +333,60 @@ void CreateOrdDlg::EditOrder()
 							QString(tr(errorMessage.c_str())),
 							QString(tr("Ok")));
 						errorMessage.clear();
-						delete worker;
+						delete employee;
 						delete currency;
-						delete user;
+						delete client;
 						delete status;
 						return;
 					}
 
-					if (order->GetWorkerID() > 0)
+					if (order->GetEmployeeID() > 0)
 					{
-						if (!worker->GetUserByID(dialogBL->GetOrmasDal(), order->GetWorkerID(), errorMessage))
+						if (!employee->GetEmployeeByID(dialogBL->GetOrmasDal(), order->GetEmployeeID(), errorMessage))
 						{
 							dialogBL->CancelTransaction(errorMessage);
 							QMessageBox::information(NULL, QString(tr("Warning")),
 								QString(tr(errorMessage.c_str())),
 								QString(tr("Ok")));
 							errorMessage.clear();
-							delete worker;
+							delete employee;
 							return;
 						}
 					}
 
-					itemModel->item(mIndex.row(), 4)->setText(user->GetName().c_str());
-					itemModel->item(mIndex.row(), 5)->setText(user->GetPhone().c_str());
-					itemModel->item(mIndex.row(), 6)->setText(user->GetAddress().c_str());
-					itemModel->item(mIndex.row(), 7)->setText(user->GetFirm().c_str());
-					if (order->GetWorkerID() > 0)
+					itemModel->item(mIndex.row(), 4)->setText(client->GetName().c_str());
+					itemModel->item(mIndex.row(), 5)->setText(client->GetSurname().c_str());
+					itemModel->item(mIndex.row(), 6)->setText(client->GetPhone().c_str());
+					itemModel->item(mIndex.row(), 7)->setText(client->GetAddress().c_str());
+					itemModel->item(mIndex.row(), 8)->setText(client->GetFirm().c_str());
+					if (order->GetEmployeeID() > 0)
 					{
-						itemModel->item(mIndex.row(), 8)->setText(worker->GetName().c_str());
-						itemModel->item(mIndex.row(), 9)->setText(worker->GetPhone().c_str());
+						itemModel->item(mIndex.row(), 9)->setText(employee->GetName().c_str());
+						itemModel->item(mIndex.row(), 10)->setText(employee->GetSurname().c_str());
+						itemModel->item(mIndex.row(), 11)->setText(employee->GetPhone().c_str());
 					}
 					else
 					{
-						itemModel->item(mIndex.row(), 8)->setText("");
 						itemModel->item(mIndex.row(), 9)->setText("");
+						itemModel->item(mIndex.row(), 10)->setText("");
+						itemModel->item(mIndex.row(), 11)->setText("");
 					}
 					
-					itemModel->item(mIndex.row(), 9)->setText(QString::number(order->GetCount()));
-					itemModel->item(mIndex.row(), 10)->setText(QString::number(order->GetSum()));
-					itemModel->item(mIndex.row(), 11)->setText(currency->GetShortName().c_str());
-					itemModel->item(mIndex.row(), 12)->setText(QString::number(order->GetWorkerID()));
-					itemModel->item(mIndex.row(), 13)->setText(QString::number(order->GetUserID()));
-					itemModel->item(mIndex.row(), 14)->setText(QString::number(order->GetStatusID()));
-					itemModel->item(mIndex.row(), 14)->setText(QString::number(order->GetCurrencyID()));
+					itemModel->item(mIndex.row(), 12)->setText(QString::number(order->GetCount()));
+					itemModel->item(mIndex.row(), 13)->setText(QString::number(order->GetSum()));
+					itemModel->item(mIndex.row(), 14)->setText(currency->GetShortName().c_str());
+					itemModel->item(mIndex.row(), 15)->setText(QString::number(order->GetEmployeeID()));
+					itemModel->item(mIndex.row(), 16)->setText(QString::number(order->GetClientID()));
+					itemModel->item(mIndex.row(), 17)->setText(QString::number(order->GetStatusID()));
+					itemModel->item(mIndex.row(), 18)->setText(QString::number(order->GetCurrencyID()));
 					
 					emit itemModel->dataChanged(mIndex, mIndex);
 					this->close();
 					
 					dialogBL->CommitTransaction(errorMessage);
 					
-					delete user;
-					delete worker;
+					delete client;
+					delete employee;
 					delete currency;
 					delete status;
 				}
@@ -425,7 +425,7 @@ void CreateOrdDlg::Close()
 	this->close();
 }
 
-void CreateOrdDlg::OpenUserDlg()
+void CreateOrdDlg::OpenCltDlg()
 {
 	this->hide();
 	this->setModal(false);
@@ -435,7 +435,7 @@ void CreateOrdDlg::OpenUserDlg()
 	QString message = tr("Loading...");
 	mainForm->statusBar()->showMessage(message);
 	DataForm *dForm = new DataForm(dialogBL, mainForm);
-	dForm->setWindowTitle(tr("User"));
+	dForm->setWindowTitle(tr("Client"));
 	dForm->hide();
 	dForm->setWindowModality(Qt::WindowModal);
 
@@ -446,7 +446,7 @@ void CreateOrdDlg::OpenUserDlg()
 	if (roleVector.size() == 0)
 	{
 		delete role;
-		QString message = tr("Sorry could not define the role for this user!");
+		QString message = tr("Sorry could not define the role for this client!");
 		mainForm->statusBar()->showMessage(message);
 		QMessageBox::information(NULL, QString(tr("Warning")),
 			QString(message),
@@ -454,14 +454,14 @@ void CreateOrdDlg::OpenUserDlg()
 		errorMessage = "";
 		return;
 	}
-	BusinessLayer::User *user = new BusinessLayer::User();
-	user->SetRoleID(roleVector.at(0).GetID());
-	std::string userFilter = dialogBL->GenerateFilter<BusinessLayer::User>(user);
-	std::vector<BusinessLayer::UserView> userVector = dialogBL->GetAllDataForClass<BusinessLayer::UserView>(errorMessage, userFilter);
-	if (userVector.size() == 0)
+	BusinessLayer::Client *client = new BusinessLayer::Client();
+	client->SetRoleID(roleVector.at(0).GetID());
+	std::string clientFilter = dialogBL->GenerateFilter<BusinessLayer::Client>(client);
+	std::vector<BusinessLayer::ClientView> clientVector = dialogBL->GetAllDataForClass<BusinessLayer::ClientView>(errorMessage, clientFilter);
+	if (clientVector.size() == 0)
 	{
 		delete role;
-		QString message = tr("Sorry could not find user with \"client\" role!");
+		QString message = tr("Sorry could not find client!");
 		mainForm->statusBar()->showMessage(message);
 		QMessageBox::information(NULL, QString(tr("Warning")),
 			QString(message),
@@ -470,12 +470,12 @@ void CreateOrdDlg::OpenUserDlg()
 		return;
 	}
 
-	dForm->FillTable<BusinessLayer::UserView>(errorMessage,userFilter);
+	dForm->FillTable<BusinessLayer::ClientView>(errorMessage,clientFilter);
 	if (errorMessage.empty())
 	{
 		dForm->createOrdDlg = this;
 		dForm->setObjectName("clientForm");
-		dForm->QtConnect<BusinessLayer::UserView>();
+		dForm->QtConnect<BusinessLayer::ClientView>();
 		QMdiSubWindow *clientWindow = new QMdiSubWindow;
 		clientWindow->setWidget(dForm);
 		clientWindow->setAttribute(Qt::WA_DeleteOnClose);
@@ -500,7 +500,7 @@ void CreateOrdDlg::OpenUserDlg()
 	}
 }
 
-void CreateOrdDlg::OpenWorkerDlg()
+void CreateOrdDlg::OpenEmpDlg()
 {
 	this->hide();
 	this->setModal(false);
@@ -510,7 +510,7 @@ void CreateOrdDlg::OpenWorkerDlg()
 	QString message = tr("Loading...");
 	mainForm->statusBar()->showMessage(message);
 	DataForm *dForm = new DataForm(dialogBL, mainForm);
-	dForm->setWindowTitle(tr("User"));
+	dForm->setWindowTitle(tr("Employee"));
 	dForm->hide();
 	dForm->setWindowModality(Qt::WindowModal);
 
@@ -522,7 +522,7 @@ void CreateOrdDlg::OpenWorkerDlg()
 	if (roleVector.size() == 0)
 	{
 		delete role;
-		QString message = tr("Sorry could not define the role for this worker!");
+		QString message = tr("Sorry could not define the role for this employee!");
 		mainForm->statusBar()->showMessage(message);
 		QMessageBox::information(NULL, QString(tr("Warning")),
 			QString(message),
@@ -531,14 +531,14 @@ void CreateOrdDlg::OpenWorkerDlg()
 		return;
 	}
 
-	BusinessLayer::User *user = new BusinessLayer::User();
-	user->SetRoleID(roleVector.at(0).GetID());
-	std::string userFilter = dialogBL->GenerateFilter<BusinessLayer::User>(user);
-	std::vector<BusinessLayer::UserView> userVector = dialogBL->GetAllDataForClass<BusinessLayer::UserView>(errorMessage, userFilter);
-	if (userVector.size() == 0)
+	BusinessLayer::Employee *employee = new BusinessLayer::Employee();
+	employee->SetRoleID(roleVector.at(0).GetID());
+	std::string employeeFilter = dialogBL->GenerateFilter<BusinessLayer::Employee>(employee);
+	std::vector<BusinessLayer::EmployeeView> employeeVector = dialogBL->GetAllDataForClass<BusinessLayer::EmployeeView>(errorMessage, employeeFilter);
+	if (employeeVector.size() == 0)
 	{
 		delete role;
-		QString message = tr("Sorry could not find worker with \"expeditor\" role!");
+		QString message = tr("Sorry could not find employee with \"expeditor\" role!");
 		mainForm->statusBar()->showMessage(message);
 		QMessageBox::information(NULL, QString(tr("Warning")),
 			QString(message),
@@ -547,16 +547,16 @@ void CreateOrdDlg::OpenWorkerDlg()
 		return;
 	}
 
-	dForm->FillTable<BusinessLayer::UserView>(errorMessage, userFilter);
+	dForm->FillTable<BusinessLayer::EmployeeView>(errorMessage, employeeFilter);
 	if (errorMessage.empty())
 	{
 		dForm->createOrdDlg = this;
-		dForm->setObjectName("workerForm");
-		dForm->QtConnect<BusinessLayer::UserView>();
-		QMdiSubWindow *workerWindow = new QMdiSubWindow;
-		workerWindow->setWidget(dForm);
-		workerWindow->setAttribute(Qt::WA_DeleteOnClose);
-		mainForm->mdiArea->addSubWindow(workerWindow);
+		dForm->setObjectName("employeeForm");
+		dForm->QtConnect<BusinessLayer::EmployeeView>();
+		QMdiSubWindow *employeeWindow = new QMdiSubWindow;
+		employeeWindow->setWidget(dForm);
+		employeeWindow->setAttribute(Qt::WA_DeleteOnClose);
+		mainForm->mdiArea->addSubWindow(employeeWindow);
 		dForm->topLevelWidget();
 		dForm->activateWindow();
 		QApplication::setActiveWindow(dForm);
@@ -665,7 +665,7 @@ void CreateOrdDlg::OpenCurDlg()
 
 }
 
-void CreateOrdDlg::OpenAddProdDlg()
+void CreateOrdDlg::OpenOrdListDlg()
 {
 	this->hide();
 	this->setModal(false);
@@ -678,15 +678,15 @@ void CreateOrdDlg::OpenAddProdDlg()
 	dForm->setWindowTitle(tr("Add product"));
 	dForm->hide();
 	dForm->setWindowModality(Qt::WindowModal);
-	BusinessLayer::ProductList *prodList = new BusinessLayer::ProductList();
-	prodList->SetOrderID(order->GetID());
-	std::string prodListFilter = dialogBL->GenerateFilter<BusinessLayer::ProductList>(prodList);
-	dForm->FillTable<BusinessLayer::ProductListView>(errorMessage, prodListFilter);
+	BusinessLayer::OrderList *orderList = new BusinessLayer::OrderList();
+	orderList->SetOrderID(order->GetID());
+	std::string orderListFilter = dialogBL->GenerateFilter<BusinessLayer::OrderList>(orderList);
+	dForm->FillTable<BusinessLayer::OrderListView>(errorMessage, orderListFilter);
 	if (errorMessage.empty())
 	{
 		dForm->createOrdDlg = this;
-		dForm->setObjectName("addProdForm");
-		dForm->QtConnect<BusinessLayer::ProductListView>();
+		dForm->setObjectName("orderListForm");
+		dForm->QtConnect<BusinessLayer::OrderListView>();
 		QMdiSubWindow *returnWindow = new QMdiSubWindow;
 		returnWindow->setWidget(dForm);
 		returnWindow->setAttribute(Qt::WA_DeleteOnClose);

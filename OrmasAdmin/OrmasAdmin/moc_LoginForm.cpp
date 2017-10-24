@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'LoginForm.h'
 **
-** Created by: The Qt Meta Object Compiler version 67 (Qt 5.4.1)
+** Created by: The Qt Meta Object Compiler version 67 (Qt 5.6.2)
 **
 ** WARNING! All changes made in this file will be lost!
 *****************************************************************************/
@@ -12,7 +12,7 @@
 #if !defined(Q_MOC_OUTPUT_REVISION)
 #error "The header file 'LoginForm.h' doesn't include <QObject>."
 #elif Q_MOC_OUTPUT_REVISION != 67
-#error "This file was generated using the moc from 5.4.1. It"
+#error "This file was generated using the moc from 5.6.2. It"
 #error "cannot be used with the include files from this version of Qt."
 #error "(The moc has changed too much.)"
 #endif
@@ -20,11 +20,11 @@
 QT_BEGIN_MOC_NAMESPACE
 struct qt_meta_stringdata_LoginForm_t {
     QByteArrayData data[4];
-    char stringdata[34];
+    char stringdata0[34];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
-    qptrdiff(offsetof(qt_meta_stringdata_LoginForm_t, stringdata) + ofs \
+    qptrdiff(offsetof(qt_meta_stringdata_LoginForm_t, stringdata0) + ofs \
         - idx * sizeof(QByteArrayData)) \
     )
 static const qt_meta_stringdata_LoginForm_t qt_meta_stringdata_LoginForm = {
@@ -67,6 +67,7 @@ void LoginForm::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, v
 {
     if (_c == QMetaObject::InvokeMetaMethod) {
         LoginForm *_t = static_cast<LoginForm *>(_o);
+        Q_UNUSED(_t)
         switch (_id) {
         case 0: _t->CheckCredentials(); break;
         case 1: _t->Close(); break;
@@ -90,7 +91,7 @@ const QMetaObject *LoginForm::metaObject() const
 void *LoginForm::qt_metacast(const char *_clname)
 {
     if (!_clname) return Q_NULLPTR;
-    if (!strcmp(_clname, qt_meta_stringdata_LoginForm.stringdata))
+    if (!strcmp(_clname, qt_meta_stringdata_LoginForm.stringdata0))
         return static_cast<void*>(const_cast< LoginForm*>(this));
     if (!strcmp(_clname, "Ui::LoginDlg"))
         return static_cast< Ui::LoginDlg*>(const_cast< LoginForm*>(this));

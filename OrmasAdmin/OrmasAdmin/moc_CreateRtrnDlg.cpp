@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'CreateRtrnDlg.h'
 **
-** Created by: The Qt Meta Object Compiler version 67 (Qt 5.4.1)
+** Created by: The Qt Meta Object Compiler version 67 (Qt 5.6.2)
 **
 ** WARNING! All changes made in this file will be lost!
 *****************************************************************************/
@@ -12,7 +12,7 @@
 #if !defined(Q_MOC_OUTPUT_REVISION)
 #error "The header file 'CreateRtrnDlg.h' doesn't include <QObject>."
 #elif Q_MOC_OUTPUT_REVISION != 67
-#error "This file was generated using the moc from 5.4.1. It"
+#error "This file was generated using the moc from 5.6.2. It"
 #error "cannot be used with the include files from this version of Qt."
 #error "(The moc has changed too much.)"
 #endif
@@ -20,11 +20,11 @@
 QT_BEGIN_MOC_NAMESPACE
 struct qt_meta_stringdata_CreateRtrnDlg_t {
     QByteArrayData data[14];
-    char stringdata[140];
+    char stringdata0[137];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
-    qptrdiff(offsetof(qt_meta_stringdata_CreateRtrnDlg_t, stringdata) + ofs \
+    qptrdiff(offsetof(qt_meta_stringdata_CreateRtrnDlg_t, stringdata0) + ofs \
         - idx * sizeof(QByteArrayData)) \
     )
 static const qt_meta_stringdata_CreateRtrnDlg_t qt_meta_stringdata_CreateRtrnDlg = {
@@ -35,20 +35,20 @@ QT_MOC_LITERAL(2, 27, 0), // ""
 QT_MOC_LITERAL(3, 28, 10), // "EditReturn"
 QT_MOC_LITERAL(4, 39, 12), // "DeleteReturn"
 QT_MOC_LITERAL(5, 52, 5), // "Close"
-QT_MOC_LITERAL(6, 58, 11), // "OpenUserDlg"
-QT_MOC_LITERAL(7, 70, 13), // "OpenWorkerDlg"
-QT_MOC_LITERAL(8, 84, 10), // "OpenStsDlg"
-QT_MOC_LITERAL(9, 95, 10), // "OpenCurDlg"
-QT_MOC_LITERAL(10, 106, 14), // "OpenAddProdDlg"
-QT_MOC_LITERAL(11, 121, 5), // "SetID"
-QT_MOC_LITERAL(12, 127, 2), // "ID"
-QT_MOC_LITERAL(13, 130, 9) // "childName"
+QT_MOC_LITERAL(6, 58, 10), // "OpenCltDlg"
+QT_MOC_LITERAL(7, 69, 10), // "OpenEmpDlg"
+QT_MOC_LITERAL(8, 80, 10), // "OpenStsDlg"
+QT_MOC_LITERAL(9, 91, 10), // "OpenCurDlg"
+QT_MOC_LITERAL(10, 102, 15), // "OpenRtrnListDlg"
+QT_MOC_LITERAL(11, 118, 5), // "SetID"
+QT_MOC_LITERAL(12, 124, 2), // "ID"
+QT_MOC_LITERAL(13, 127, 9) // "childName"
 
     },
     "CreateRtrnDlg\0CreateReturn\0\0EditReturn\0"
-    "DeleteReturn\0Close\0OpenUserDlg\0"
-    "OpenWorkerDlg\0OpenStsDlg\0OpenCurDlg\0"
-    "OpenAddProdDlg\0SetID\0ID\0childName"
+    "DeleteReturn\0Close\0OpenCltDlg\0OpenEmpDlg\0"
+    "OpenStsDlg\0OpenCurDlg\0OpenRtrnListDlg\0"
+    "SetID\0ID\0childName"
 };
 #undef QT_MOC_LITERAL
 
@@ -96,16 +96,17 @@ void CreateRtrnDlg::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _i
 {
     if (_c == QMetaObject::InvokeMetaMethod) {
         CreateRtrnDlg *_t = static_cast<CreateRtrnDlg *>(_o);
+        Q_UNUSED(_t)
         switch (_id) {
         case 0: _t->CreateReturn(); break;
         case 1: _t->EditReturn(); break;
         case 2: _t->DeleteReturn(); break;
         case 3: _t->Close(); break;
-        case 4: _t->OpenUserDlg(); break;
-        case 5: _t->OpenWorkerDlg(); break;
+        case 4: _t->OpenCltDlg(); break;
+        case 5: _t->OpenEmpDlg(); break;
         case 6: _t->OpenStsDlg(); break;
         case 7: _t->OpenCurDlg(); break;
-        case 8: _t->OpenAddProdDlg(); break;
+        case 8: _t->OpenRtrnListDlg(); break;
         case 9: _t->SetID((*reinterpret_cast< int(*)>(_a[1])),(*reinterpret_cast< QString(*)>(_a[2]))); break;
         default: ;
         }
@@ -126,7 +127,7 @@ const QMetaObject *CreateRtrnDlg::metaObject() const
 void *CreateRtrnDlg::qt_metacast(const char *_clname)
 {
     if (!_clname) return Q_NULLPTR;
-    if (!strcmp(_clname, qt_meta_stringdata_CreateRtrnDlg.stringdata))
+    if (!strcmp(_clname, qt_meta_stringdata_CreateRtrnDlg.stringdata0))
         return static_cast<void*>(const_cast< CreateRtrnDlg*>(this));
     if (!strcmp(_clname, "Ui::CreateReturn"))
         return static_cast< Ui::CreateReturn*>(const_cast< CreateRtrnDlg*>(this));

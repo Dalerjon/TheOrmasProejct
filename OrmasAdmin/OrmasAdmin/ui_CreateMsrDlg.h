@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'CreateMsrDlg.ui'
 **
-** Created by: Qt User Interface Compiler version 5.4.1
+** Created by: Qt User Interface Compiler version 5.6.2
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
 ********************************************************************************/
@@ -121,14 +121,17 @@ public:
         okBtn->setText(QApplication::translate("CreateMeasure", "OK", 0));
         cancelBtn->setText(QApplication::translate("CreateMeasure", "Cencel", 0));
 #ifndef QT_NO_TOOLTIP
-        nameEdit->setToolTip(QApplication::translate("CreateMeasure", "Must not be empty", 0));
+        nameEdit->setToolTip(QApplication::translate("CreateMeasure", "<html><head/><body><p>For example: Kilograms</p></body></html>", 0));
 #endif // QT_NO_TOOLTIP
 #ifndef QT_NO_TOOLTIP
-        shortNameEdit->setToolTip(QApplication::translate("CreateMeasure", "Must not be empty", 0));
+        shortNameEdit->setToolTip(QApplication::translate("CreateMeasure", "<html><head/><body><p>For example: Kg</p></body></html>", 0));
 #endif // QT_NO_TOOLTIP
         nameLb->setText(QApplication::translate("CreateMeasure", "Name:", 0));
         shortNameLb->setText(QApplication::translate("CreateMeasure", "Short name:", 0));
         unitLb->setText(QApplication::translate("CreateMeasure", "Change unit", 0));
+#ifndef QT_NO_TOOLTIP
+        unitEdit->setToolTip(QApplication::translate("CreateMeasure", "<html><head/><body><p>For example: 1000 (1 kilogram = 1000 grams, only if have mo little measure, otherwise = 1)</p></body></html>", 0));
+#endif // QT_NO_TOOLTIP
     } // retranslateUi
 
 };

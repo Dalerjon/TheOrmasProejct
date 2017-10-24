@@ -17,7 +17,7 @@ public:
 	void EditProduction();
 	void DeleteProduction(){};
 	void Close();
-	void OpenAddProdDlg();
+	void OpenProdnListDlg();
 private:
 	BusinessLayer::Production *production = new BusinessLayer::Production();
 	void SetProductionParams(QString, QString, QString, QString);

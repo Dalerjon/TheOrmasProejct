@@ -10,8 +10,8 @@ CreateProdnDlg::CreateProdnDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag,
 {
 	setupUi(this);
 	setModal(true);
-	production->SetID(dialogBL->GenerateID());
 	dialogBL = ormasBL;
+	production->SetID(dialogBL->GenerateID());
 	if (true == updateFlag)
 	{
 		QObject::connect(okBtn, &QPushButton::released, this, &CreateProdnDlg::EditProduction);
@@ -25,7 +25,7 @@ CreateProdnDlg::CreateProdnDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag,
 		QObject::connect(okBtn, &QPushButton::released, this, &CreateProdnDlg::CreateProduction);
 	}
 	QObject::connect(cancelBtn, &QPushButton::released, this, &CreateProdnDlg::Close);
-	QObject::connect(addProdBtn, &QPushButton::released, this, &CreateProdnDlg::OpenAddProdDlg);
+	QObject::connect(addProdBtn, &QPushButton::released, this, &CreateProdnDlg::OpenProdnListDlg);
 }
 
 void CreateProdnDlg::SetProductionParams(QString pProductionDate, QString pExpiryDate, QString pSessionStart, QString pSessionEnd)
@@ -38,8 +38,8 @@ void CreateProdnDlg::SetProductionParams(QString pProductionDate, QString pExpir
 
 void CreateProdnDlg::FillEditElements(QString pProductionDate, QString pExpiryDate, QString pSessionStart, QString pSessionEnd)
 {
-	prdDateEdit->setDate(QDate::fromString(pProductionDate,"dd.MM.yyyy"));
-	expiryDateEdit->setDate(QDate::fromString(pExpiryDate, "dd.MM.yyyy"));
+	prdDateEdit->setDate(QDate::fromString(pProductionDate,"yyyy-MM-dd"));
+	expiryDateEdit->setDate(QDate::fromString(pExpiryDate, "yyyy-MM-dd"));
 	sesStartTimeEdit->setTime(QTime::fromString(pSessionStart, "H:mm"));
 	sesEndTimeEdit->setTime(QTime::fromString(pSessionEnd, "H:mm"));
 }
@@ -161,7 +161,7 @@ void CreateProdnDlg::Close()
 	this->close();
 }
 
-void CreateProdnDlg::OpenAddProdDlg()
+void CreateProdnDlg::OpenProdnListDlg()
 {
 	this->hide();
 	this->setModal(false);
@@ -174,12 +174,12 @@ void CreateProdnDlg::OpenAddProdDlg()
 	dForm->setWindowTitle(tr("Add product"));
 	dForm->hide();
 	dForm->setWindowModality(Qt::WindowModal);
-	dForm->FillTable<BusinessLayer::ProductListView>(errorMessage);
+	dForm->FillTable<BusinessLayer::ProductionListView>(errorMessage);
 	if (errorMessage.empty())
 	{
 		dForm->createProdnDlg = this;
-		dForm->setObjectName("addProdForm");
-		dForm->QtConnect<BusinessLayer::ProductListView>();
+		dForm->setObjectName("createProdnListForm");
+		dForm->QtConnect<BusinessLayer::ProductionListView>();
 		QMdiSubWindow *returnWindow = new QMdiSubWindow;
 		returnWindow->setWidget(dForm);
 		returnWindow->setAttribute(Qt::WA_DeleteOnClose);

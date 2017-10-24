@@ -10,37 +10,36 @@ CreateUserDlg::CreateUserDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, Q
 	setupUi(this);
 	setModal(true);
 	dialogBL = ormasBL;
-	activaredCmbBox->addItem("false");
-	activaredCmbBox->addItem("true");
-	locationEdit->setReadOnly(true);
+	activatedCmbBox->addItem("false");
+	activatedCmbBox->addItem("true");
 	nameEdit->setMaxLength(30);
+	surnameEdit->setMaxLength(50);
 	phoneEdit->setMaxLength(25);
 	addressEdit->setMaxLength(30);
-	firmEdit->setMaxLength(30);
-	firmNumEdit->setMaxLength(5);
 	passwordEdit->setMaxLength(30);
-	QRegExp expr("\\d*");
-	QRegExpValidator v(expr, 0);
-	locationEdit->setValidator(&v);
-	roleEdit->setValidator(&v);
+	emailEdit->setMaxLength(30);
+	//ReqExp
+	vInt = new QIntValidator(0, 1000000000, this);
+	phoneEdit->setValidator(vInt);
+	roleEdit->setValidator(vInt);
+	
 	if (true == updateFlag)
 	{
 		QObject::connect(okBtn, &QPushButton::released, this, &CreateUserDlg::EditUser);
 	}
 	else
 	{
-		locationEdit->setText("0");
 		roleEdit->setText("0");
 		QObject::connect(okBtn, &QPushButton::released, this, &CreateUserDlg::CreateUser);
 	}
 	QObject::connect(cancelBtn, &QPushButton::released, this, &CreateUserDlg::Close);
-	QObject::connect(locationBtn, &QPushButton::released, this, &CreateUserDlg::OpenLcnDlg);
 	QObject::connect(roleBtn, &QPushButton::released, this, &CreateUserDlg::OpenRoleDlg);
 }
 
 CreateUserDlg::~CreateUserDlg()
 {
 	delete user;
+	delete vInt;
 }
 
 void CreateUserDlg::SetID(int ID, QString childName)
@@ -53,68 +52,60 @@ void CreateUserDlg::SetID(int ID, QString childName)
 			{
 				roleEdit->setText(QString::number(ID));
 			}
-			if (childName == QString("locationForm"))
-			{
-				locationEdit->setText(QString::number(ID));
-			}
 		}
 	}
 }
 
-void CreateUserDlg::SetUserParams(QString uName, QString uPhone, QString uAddress, QString uFirm, QString uFirmNumber, 
-	int uRoleID, int uLocationID, QString uPassword, QString uActivated, int id)
+void CreateUserDlg::SetUserParams(QString uEmail, QString uName, QString uSurname, QString uPhone, QString uAddress,
+	int uRoleID, QString uPassword, QString uActivated, int id)
 {
+	user->SetEmail(uEmail.toUtf8().constData());
 	user->SetName(uName.toUtf8().constData());
+	user->SetSurname(uSurname.toUtf8().constData());
 	user->SetPhone(uPhone.toUtf8().constData());
 	user->SetAddress(uAddress.toUtf8().constData());
-	user->SetFirm(uFirm.toUtf8().constData());
-	user->SetFirmNumber(uFirmNumber.toUtf8().constData());
 	user->SetRoleID(uRoleID);
-	user->SetLocationID(uLocationID);
 	user->SetPassword(uPassword.toUtf8().constData());
 	user->SetActivated(uActivated == "true"? true : false);
 	user->SetID(id);
 }
 
-void CreateUserDlg::FillEditElements(QString uName, QString uPhone, QString uAddress, QString uFirm, QString uFirmNumber,
-	int uRoleID, int uLocationID, QString uPassword, QString uActivated)
+void CreateUserDlg::FillEditElements(QString uEmail, QString uName, QString uSurname, QString uPhone, QString uAddress,
+	int uRoleID, QString uPassword, QString uActivated)
 {
+	emailEdit->setText(uEmail);
 	nameEdit->setText(uName);
+	surnameEdit->setText(uSurname);
 	phoneEdit->setText(uPhone);
 	addressEdit->setText(uAddress);
-	firmEdit->setText(uFirm);
-	firmNumEdit->setText(uFirmNumber);
 	roleEdit->setText(QString::number(uRoleID));
-	locationEdit->setText(QString::number(uLocationID));
 	passwordEdit->setText(uPassword);
-	int index = activaredCmbBox->findText(uActivated);
-	activaredCmbBox->setCurrentIndex(index);
+	int index = activatedCmbBox->findText(uActivated);
+	activatedCmbBox->setCurrentIndex(index);
 }
 
-bool CreateUserDlg::FillDlgElements(QTableView* cTable)
+bool CreateUserDlg::FillDlgElements(QTableView* uTable)
 {
-	QModelIndex mIndex = cTable->selectionModel()->currentIndex();
+	QModelIndex mIndex = uTable->selectionModel()->currentIndex();
 	if (mIndex.row() >= 0)
 	{
-		SetUserParams(cTable->model()->data(cTable->model()->index(mIndex.row(), 1)).toString().toUtf8().constData(),
-			cTable->model()->data(cTable->model()->index(mIndex.row(), 2)).toString().toUtf8().constData(),
-			cTable->model()->data(cTable->model()->index(mIndex.row(), 3)).toString().toUtf8().constData(),
-			cTable->model()->data(cTable->model()->index(mIndex.row(), 9)).toString().toUtf8().constData(),
-			cTable->model()->data(cTable->model()->index(mIndex.row(), 10)).toString().toUtf8().constData(),
-			cTable->model()->data(cTable->model()->index(mIndex.row(), 13)).toInt(),
-			cTable->model()->data(cTable->model()->index(mIndex.row(), 14)).toInt(),
-			cTable->model()->data(cTable->model()->index(mIndex.row(), 11)).toString().toUtf8().constData(),
-			cTable->model()->data(cTable->model()->index(mIndex.row(), 12)).toString().toUtf8().constData() == "Yes" ? "true" : "false",
-			cTable->model()->data(cTable->model()->index(mIndex.row(), 0)).toInt());
-		FillEditElements(cTable->model()->data(cTable->model()->index(mIndex.row(), 1)).toString().toUtf8().constData(),
-			cTable->model()->data(cTable->model()->index(mIndex.row(), 2)).toString().toUtf8().constData(),
-			cTable->model()->data(cTable->model()->index(mIndex.row(), 3)).toString().toUtf8().constData(),
-			cTable->model()->data(cTable->model()->index(mIndex.row(), 9)).toString().toUtf8().constData(),
-			cTable->model()->data(cTable->model()->index(mIndex.row(), 10)).toString().toUtf8().constData(),
-			cTable->model()->data(cTable->model()->index(mIndex.row(), 13)).toInt(),
-			cTable->model()->data(cTable->model()->index(mIndex.row(), 14)).toInt(),
-			cTable->model()->data(cTable->model()->index(mIndex.row(), 11)).toString().toUtf8().constData(),
-			cTable->model()->data(cTable->model()->index(mIndex.row(), 12)).toString().toUtf8().constData() == "Yes" ? "true" : "false");
+		SetUserParams(uTable->model()->data(uTable->model()->index(mIndex.row(), 1)).toString().toUtf8().constData(),
+			uTable->model()->data(uTable->model()->index(mIndex.row(), 2)).toString().toUtf8().constData(),
+			uTable->model()->data(uTable->model()->index(mIndex.row(), 3)).toString().toUtf8().constData(),
+			uTable->model()->data(uTable->model()->index(mIndex.row(), 4)).toString().toUtf8().constData(),
+			uTable->model()->data(uTable->model()->index(mIndex.row(), 5)).toString().toUtf8().constData(),
+			uTable->model()->data(uTable->model()->index(mIndex.row(), 9)).toInt(),
+			uTable->model()->data(uTable->model()->index(mIndex.row(), 7)).toString().toUtf8().constData(),
+			uTable->model()->data(uTable->model()->index(mIndex.row(), 8)).toString().toUtf8().constData(),
+			uTable->model()->data(uTable->model()->index(mIndex.row(), 0)).toInt());
+		FillEditElements(uTable->model()->data(uTable->model()->index(mIndex.row(), 1)).toString().toUtf8().constData(),
+			uTable->model()->data(uTable->model()->index(mIndex.row(), 2)).toString().toUtf8().constData(),
+			uTable->model()->data(uTable->model()->index(mIndex.row(), 3)).toString().toUtf8().constData(),
+			uTable->model()->data(uTable->model()->index(mIndex.row(), 4)).toString().toUtf8().constData(),
+			uTable->model()->data(uTable->model()->index(mIndex.row(), 5)).toString().toUtf8().constData(),
+			uTable->model()->data(uTable->model()->index(mIndex.row(), 9)).toInt(),
+			uTable->model()->data(uTable->model()->index(mIndex.row(), 7)).toString().toUtf8().constData(),
+			uTable->model()->data(uTable->model()->index(mIndex.row(), 8)).toString().toUtf8().constData());
 		return true;
 	}
 	else
@@ -126,14 +117,13 @@ bool CreateUserDlg::FillDlgElements(QTableView* cTable)
 void CreateUserDlg::CreateUser()
 {
 	errorMessage.clear();
-	if (!(nameEdit->text().isEmpty() || phoneEdit->text().isEmpty() || addressEdit->text().isEmpty() || firmEdit->text().isEmpty() ||
-		firmNumEdit->text().isEmpty() || passwordEdit->text().isEmpty()	|| activaredCmbBox->currentText().isEmpty()) &&
-		0 != roleEdit->text().toInt() && 0 != locationEdit->text().toInt())
+	if (!(nameEdit->text().isEmpty() || phoneEdit->text().isEmpty() || addressEdit->text().isEmpty() || emailEdit->text().isEmpty() ||
+		surnameEdit->text().isEmpty() || passwordEdit->text().isEmpty()	|| activatedCmbBox->currentText().isEmpty()) &&
+		0 != roleEdit->text().toInt())
 	{
 		DataForm *parentDataForm = (DataForm*)parentWidget();
-		SetUserParams(nameEdit->text(), phoneEdit->text(), addressEdit->text(), firmEdit->text(),
-			firmNumEdit->text(), roleEdit->text().toInt(), locationEdit->text().toInt(), passwordEdit->text(),
-			activaredCmbBox->currentText());
+		SetUserParams(emailEdit->text(), nameEdit->text(), surnameEdit->text(), phoneEdit->text(), addressEdit->text(),
+			roleEdit->text().toInt(), passwordEdit->text(), activatedCmbBox->currentText());
 		dialogBL->StartTransaction(errorMessage);
 		if (dialogBL->CreateUser(user, errorMessage))
 		{
@@ -141,41 +131,27 @@ void CreateUserDlg::CreateUser()
 			//role->SetID(roleEdit->text().toInt());
 			//std::string roleFilter = dialogBL->GenerateFilter<BusinessLayer::Role>(role);
 			//std::vector<BusinessLayer::Role> roleVector = dialogBL->GetAllDataForClass<BusinessLayer::Role>(errorMessage, roleFilter);
-			BusinessLayer::Location *location = new BusinessLayer::Location();
-			//location->SetID(locationEdit->text().toInt());
-			//std::string locationFilter = dialogBL->GenerateFilter<BusinessLayer::Location>(location);
-			//std::vector<BusinessLayer::Location> locationVector = dialogBL->GetAllDataForClass<BusinessLayer::Location>(errorMessage, locationFilter);
-			if (!role->GetRoleByID(dialogBL->GetOrmasDal(),user->GetRoleID(),errorMessage)
-				|| !location->GetLocationByID(dialogBL->GetOrmasDal(), user->GetLocationID(), errorMessage))
+			if (!role->GetRoleByID(dialogBL->GetOrmasDal(),user->GetRoleID(),errorMessage))
 			{
-				dialogBL->CancelTransaction(errorMessage);
 				dialogBL->CancelTransaction(errorMessage);
 				QMessageBox::information(NULL, QString(tr("Warning")),
 					QString(tr(errorMessage.c_str())),
 					QString(tr("Ok")));
 
 				errorMessage.clear();
-				delete location;
 				delete role;
 				return;
 			}
 			QList<QStandardItem*> UserItem;
-			UserItem << new QStandardItem(QString::number(user->GetID())) << new QStandardItem(user->GetName().c_str())
+			UserItem << new QStandardItem(QString::number(user->GetID())) << new QStandardItem(user->GetEmail().c_str())
+				<< new QStandardItem(user->GetName().c_str()) << new QStandardItem(user->GetSurname().c_str())
 				<< new QStandardItem(user->GetPhone().c_str()) << new QStandardItem(user->GetAddress().c_str())
-				<< new QStandardItem(location->GetCountryName().c_str()) 
-				<< new QStandardItem(location->GetCountryCode().c_str())
-				<< new QStandardItem(location->GetRegionName().c_str())
-				<< new QStandardItem(location->GetCityName().c_str())
-				<< new QStandardItem(role->GetName().c_str()) << new QStandardItem(user->GetFirm().c_str())
-				<< new QStandardItem(user->GetFirmNumber().c_str()) << new QStandardItem(user->GetPassword().c_str())
-				<< new QStandardItem(user->GetActivated()?"Yes":"No") << new QStandardItem(QString::number(user->GetRoleID()))
-				<< new QStandardItem(QString::number(user->GetLocationID()));
+				<< new QStandardItem(role->GetName().c_str()) << new QStandardItem(user->GetPassword().c_str())
+				<< new QStandardItem(user->GetActivated() ? "true" : "false") << new QStandardItem(QString::number(user->GetRoleID()));
 			QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
 			itemModel->appendRow(UserItem);
 					
 			this->close();
-			
-			delete location;
 			delete role;
 			dialogBL->CommitTransaction(errorMessage);
 		}
@@ -201,20 +177,18 @@ void CreateUserDlg::CreateUser()
 void CreateUserDlg::EditUser()
 {
 	errorMessage.clear();
-	if (!(nameEdit->text().isEmpty() || phoneEdit->text().isEmpty() || addressEdit->text().isEmpty() || firmEdit->text().isEmpty() ||
-		firmNumEdit->text().isEmpty() || passwordEdit->text().isEmpty() || activaredCmbBox->currentText().isEmpty()) &&
-		0 != roleEdit->text().toInt() && 0 != locationEdit->text().toInt())
+	if (!(nameEdit->text().isEmpty() || phoneEdit->text().isEmpty() || addressEdit->text().isEmpty() || emailEdit->text().isEmpty() ||
+		surnameEdit->text().isEmpty() || passwordEdit->text().isEmpty() || activatedCmbBox->currentText().isEmpty()) &&
+		0 != roleEdit->text().toInt())
 	{
 		if (QString(user->GetName().c_str()) != nameEdit->text() || QString(user->GetAddress().c_str()) != addressEdit->text() ||
-			QString(user->GetPhone().c_str()) != phoneEdit->text() || QString(user->GetFirm().c_str()) != firmEdit->text() ||
-			QString(user->GetFirmNumber().c_str()) != firmNumEdit->text() || user->GetRoleID() != roleEdit->text().toInt() ||
-			user->GetLocationID() != locationEdit->text().toInt() || QString(user->GetPassword().c_str()) != passwordEdit->text() ||
-			QString(user->GetActivated()? "true":"false") != activaredCmbBox->currentText())
+			QString(user->GetPhone().c_str()) != phoneEdit->text() || QString(user->GetSurname().c_str()) != surnameEdit->text() ||
+			QString(user->GetEmail().c_str()) != emailEdit->text() || user->GetRoleID() != roleEdit->text().toInt() ||
+			QString(user->GetPassword().c_str()) != passwordEdit->text() ||	QString(user->GetActivated()? "true":"false") != activatedCmbBox->currentText())
 		{
 			DataForm *parentDataForm = (DataForm*)parentWidget();
-			SetUserParams(nameEdit->text(), phoneEdit->text(), addressEdit->text(), firmEdit->text(),
-				firmNumEdit->text(), roleEdit->text().toInt(), locationEdit->text().toInt(), passwordEdit->text(),
-				activaredCmbBox->currentText(), user->GetID());
+			SetUserParams(emailEdit->text(), nameEdit->text(), surnameEdit->text(), phoneEdit->text(), addressEdit->text(),
+				roleEdit->text().toInt(), passwordEdit->text(), activatedCmbBox->currentText(), user->GetID());
 			dialogBL->StartTransaction(errorMessage);
 			if (dialogBL->UpdateUser(user, errorMessage))
 			{
@@ -222,50 +196,35 @@ void CreateUserDlg::EditUser()
 				QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
 				QModelIndex mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
 				itemModel->item(mIndex.row(), 1)->setText(user->GetName().c_str());
+				itemModel->item(mIndex.row(), 9)->setText(user->GetEmail().c_str());
+				itemModel->item(mIndex.row(), 10)->setText(user->GetSurname().c_str());
 				itemModel->item(mIndex.row(), 2)->setText(user->GetAddress().c_str());
 				itemModel->item(mIndex.row(), 3)->setText(user->GetPhone().c_str());
-				
-				//if location of user is changed, then update location data fields
-				BusinessLayer::Location *location = new BusinessLayer::Location();
-				//location->SetID(locationEdit->text().toInt());
-				//std::string locationFilter = dialogBL->GenerateFilter<BusinessLayer::Location>(location);
-				//std::vector<BusinessLayer::Location> locationVector = dialogBL->GetAllDataForClass<BusinessLayer::Location>(errorMessage, locationFilter);
 				
 				//if role of user is changed, then update location data fields
 				BusinessLayer::Role *role = new BusinessLayer::Role();
 				//role->SetID(roleEdit->text().toInt());
 				//std::string roleFilter = dialogBL->GenerateFilter<BusinessLayer::Role>(role);
 				//std::vector<BusinessLayer::Role> roleVector = dialogBL->GetAllDataForClass<BusinessLayer::Role>(errorMessage, roleFilter);
-				if (!role->GetRoleByID(dialogBL->GetOrmasDal(), user->GetRoleID(), errorMessage)
-					|| !location->GetLocationByID(dialogBL->GetOrmasDal(), user->GetLocationID(), errorMessage))
+				if (!role->GetRoleByID(dialogBL->GetOrmasDal(), user->GetRoleID(), errorMessage))
 				{
-					dialogBL->CancelTransaction(errorMessage);
 					dialogBL->CancelTransaction(errorMessage);
 					QMessageBox::information(NULL, QString(tr("Warning")),
 						QString(tr(errorMessage.c_str())),
 						QString(tr("Ok")));
 
 					errorMessage.clear();
-					delete location;
 					delete role;
 					return;
 				}
-				itemModel->item(mIndex.row(), 4)->setText(location->GetCountryName().c_str());
-				itemModel->item(mIndex.row(), 5)->setText(location->GetCountryCode().c_str());
-				itemModel->item(mIndex.row(), 6)->setText(location->GetRegionName().c_str());
-				itemModel->item(mIndex.row(), 7)->setText(location->GetCityName().c_str());
 				itemModel->item(mIndex.row(), 8)->setText(role->GetName().c_str());
-				itemModel->item(mIndex.row(), 9)->setText(user->GetFirm().c_str());
-				itemModel->item(mIndex.row(), 10)->setText(user->GetFirmNumber().c_str());
 				itemModel->item(mIndex.row(), 11)->setText(passwordEdit->text());
-				itemModel->item(mIndex.row(), 12)->setText(activaredCmbBox->currentText());
+				itemModel->item(mIndex.row(), 12)->setText(user->GetActivated() ? "true" : "false");
 				itemModel->item(mIndex.row(), 13)->setText(QString::number(user->GetRoleID()));
-				itemModel->item(mIndex.row(), 14)->setText(QString::number(user->GetLocationID()));				
 						
 				emit itemModel->dataChanged(mIndex, mIndex);
 				this->close();
 				
-				delete location;
 				delete role;
 				dialogBL->CommitTransaction(errorMessage);
 			}
@@ -294,49 +253,6 @@ void CreateUserDlg::EditUser()
 void CreateUserDlg::Close()
 {
 	this->close();
-}
-
-void CreateUserDlg::OpenLcnDlg()
-{
-	this->hide();
-	this->setModal(false);
-	this->show();
-	DataForm *userParent = (DataForm *)parent();
-	MainForm *mainForm = (MainForm *)userParent->GetParent();
-	QString message = tr("Loading...");
-	mainForm->statusBar()->showMessage(message);
-	DataForm *dForm = new DataForm(dialogBL, mainForm);
-	dForm->setWindowTitle(tr("Locations"));
-	dForm->hide();
-	dForm->setWindowModality(Qt::WindowModal);
-	dForm->FillTable<BusinessLayer::Location>(errorMessage);
-	if (errorMessage.empty())
-	{
-		dForm->createUserDlg = this;
-		dForm->setObjectName("locationForm");
-		dForm->QtConnect<BusinessLayer::Location>();
-		QMdiSubWindow *locationWindow = new QMdiSubWindow;
-		locationWindow->setWidget(dForm);
-		locationWindow->setAttribute(Qt::WA_DeleteOnClose);
-		mainForm->mdiArea->addSubWindow(locationWindow);
-		dForm->topLevelWidget();
-		dForm->activateWindow();
-		QApplication::setActiveWindow(dForm);
-		dForm->show();
-		dForm->raise();
-		QString message = tr("All locations are shown");
-		mainForm->statusBar()->showMessage(message);
-	}
-	else
-	{
-		delete dForm;
-		QString message = tr("End with error!");
-		mainForm->statusBar()->showMessage(message);
-		QMessageBox::information(NULL, QString(tr("Warning")),
-			QString(tr(errorMessage.c_str())),
-			QString(tr("Ok")));
-		errorMessage = "";
-	}
 }
 
 void CreateUserDlg::OpenRoleDlg()

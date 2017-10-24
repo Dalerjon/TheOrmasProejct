@@ -1,0 +1,96 @@
+@import url('mainstyle.css');
+
+#regis-content{
+	background-color:white;
+	margin:auto;
+	margin-top:20px;
+}
+
+#regis-row{
+	margin-top:10px;
+	padding-left:10px;
+}
+#regis-content label{
+	display:inline-block;
+	width:280px;
+}
+
+#regis-content select{
+	display:inline-block;
+	width:304px;
+	height:25px;
+	border-color:#106392;
+	font-size:14px;
+}
+
+#regis-main-label{
+	font-size:24px;
+	width:100px;
+	margin:auto;
+	margin-bottom:30px;
+}
+
+#regis-label{
+	font-size:18px;
+	width:100px;
+}
+
+#message{
+	color:red;
+	width:300px;
+	height:15px;
+	margin-left:300px;
+}
+
+input[type="text"]
+{
+    font-size:14px;
+	display:inline-block;
+	width:300px;
+	height:18px;
+	padding-left: 3px;
+	border: solid 1px;
+	border-color:#106392;
+}
+
+input[type="email"]
+{
+    font-size:14px;
+	display:inline-block;
+	width:300px;
+	height:18px;
+	padding-left: 3px;
+	border: solid 1px;
+	border-color:#106392;
+}
+
+
+input[type="password"]
+{
+    font-size:14px;
+	display:inline-block;
+	width:300px;
+	height:18px;
+	padding-left: 3px;
+	border: solid 1px;
+	border-color:#106392;
+}
+
+#regis-button{
+	width:180px;
+	height:25px;
+	color:white;
+	background-color:#106392;
+	border:0px;
+}
+
+#button-position{
+	margin-left: 410px;
+}
+
+.close-bar
+{
+	height:20px;
+	background-color: #106392;
+	margin-bottom:5px;
+}

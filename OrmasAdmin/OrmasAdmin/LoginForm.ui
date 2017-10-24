@@ -83,6 +83,9 @@
        <height>0</height>
       </size>
      </property>
+     <property name="toolTip">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;At least 6 characters!&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
      <property name="echoMode">
       <enum>QLineEdit::Password</enum>
      </property>
@@ -96,6 +99,9 @@
        <height>0</height>
       </size>
      </property>
+     <property name="toolTip">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;For example: 929999999 or John.Doe@gmail.com&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
     </widget>
    </item>
    <item row="1" column="2">
@@ -107,7 +113,7 @@
       </size>
      </property>
      <property name="text">
-      <string>Passord:</string>
+      <string>Password:</string>
      </property>
     </widget>
    </item>
@@ -120,7 +126,7 @@
       </size>
      </property>
      <property name="text">
-      <string>User name:</string>
+      <string>Phone or email:</string>
      </property>
     </widget>
    </item>

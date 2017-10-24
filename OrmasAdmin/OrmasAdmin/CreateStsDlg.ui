@@ -62,7 +62,7 @@
    <item row="0" column="1">
     <widget class="QLineEdit" name="codeEdit">
      <property name="toolTip">
-      <string>Must not be empty</string>
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;For example: SUCCESS&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
     </widget>
    </item>
@@ -100,14 +100,14 @@
    <item row="1" column="1">
     <widget class="QLineEdit" name="nameEdit">
      <property name="toolTip">
-      <string>Must not be empty</string>
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;For example: success state&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
     </widget>
    </item>
    <item row="2" column="1">
     <widget class="QTextEdit" name="commentTextEdit">
      <property name="toolTip">
-      <string>Can leave it an empty</string>
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Does not mandatory field&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
     </widget>
    </item>

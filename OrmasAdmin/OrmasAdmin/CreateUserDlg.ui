@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>400</width>
-    <height>287</height>
+    <height>258</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -38,40 +38,7 @@
    <property name="bottomMargin">
     <number>11</number>
    </property>
-   <item row="5" column="0">
-    <widget class="QLabel" name="passworLb">
-     <property name="text">
-      <string>Password:</string>
-     </property>
-    </widget>
-   </item>
-   <item row="3" column="1">
-    <widget class="QLineEdit" name="firmEdit"/>
-   </item>
-   <item row="5" column="1">
-    <widget class="QLineEdit" name="passwordEdit"/>
-   </item>
-   <item row="7" column="0">
-    <widget class="QPushButton" name="roleBtn">
-     <property name="text">
-      <string>Select role</string>
-     </property>
-    </widget>
-   </item>
-   <item row="6" column="1">
-    <widget class="QComboBox" name="activaredCmbBox"/>
-   </item>
-   <item row="8" column="0">
-    <widget class="QPushButton" name="locationBtn">
-     <property name="text">
-      <string>Select location</string>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="1">
-    <widget class="QLineEdit" name="addressEdit"/>
-   </item>
-   <item row="9" column="0" colspan="2">
+   <item row="8" column="0" colspan="2">
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
       <spacer name="horizontalSpacer">
@@ -102,20 +69,10 @@
      </item>
     </layout>
    </item>
-   <item row="4" column="0">
-    <widget class="QLabel" name="firmNumLb">
-     <property name="text">
-      <string>Firm number:</string>
-     </property>
-    </widget>
-   </item>
    <item row="0" column="1">
-    <widget class="QLineEdit" name="nameEdit"/>
-   </item>
-   <item row="3" column="0">
-    <widget class="QLabel" name="firmLb">
-     <property name="text">
-      <string>Firm:</string>
+    <widget class="QLineEdit" name="nameEdit">
+     <property name="toolTip">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;For expamle: John&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
     </widget>
    </item>
@@ -139,46 +96,120 @@
      </property>
     </widget>
    </item>
-   <item row="2" column="0">
+   <item row="3" column="0">
     <widget class="QLabel" name="phoneLb">
      <property name="text">
       <string>Phone:</string>
      </property>
     </widget>
    </item>
-   <item row="1" column="0">
+   <item row="2" column="0">
     <widget class="QLabel" name="addressLb">
      <property name="text">
       <string>Address:</string>
      </property>
     </widget>
    </item>
-   <item row="2" column="1">
-    <widget class="QLineEdit" name="phoneEdit"/>
-   </item>
-   <item row="4" column="1">
-    <widget class="QLineEdit" name="firmNumEdit"/>
+   <item row="3" column="1">
+    <widget class="QLineEdit" name="phoneEdit">
+     <property name="toolTip">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;For example: 929999999 (only digits)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+     <property name="inputMethodHints">
+      <set>Qt::ImhNone</set>
+     </property>
+    </widget>
    </item>
    <item row="7" column="1">
-    <widget class="QLineEdit" name="roleEdit"/>
+    <widget class="QLineEdit" name="roleEdit">
+     <property name="inputMethodHints">
+      <set>Qt::ImhDigitsOnly|Qt::ImhPreferNumbers</set>
+     </property>
+     <property name="echoMode">
+      <enum>QLineEdit::Normal</enum>
+     </property>
+     <property name="readOnly">
+      <bool>true</bool>
+     </property>
+    </widget>
    </item>
-   <item row="8" column="1">
-    <widget class="QLineEdit" name="locationEdit"/>
+   <item row="1" column="0">
+    <widget class="QLabel" name="surnameLb">
+     <property name="text">
+      <string>Surname:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1">
+    <widget class="QLineEdit" name="surnameEdit">
+     <property name="toolTip">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;For example: Doe&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+    </widget>
+   </item>
+   <item row="7" column="0">
+    <widget class="QPushButton" name="roleBtn">
+     <property name="text">
+      <string>Select role</string>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="0">
+    <widget class="QLabel" name="passworLb">
+     <property name="text">
+      <string>Password:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="6" column="1">
+    <widget class="QComboBox" name="activatedCmbBox"/>
+   </item>
+   <item row="5" column="1">
+    <widget class="QLineEdit" name="passwordEdit">
+     <property name="toolTip">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;At least 6 characters&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+     <property name="echoMode">
+      <enum>QLineEdit::Password</enum>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="1">
+    <widget class="QLineEdit" name="addressEdit">
+     <property name="toolTip">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;For example: Downing St. 88&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="0">
+    <widget class="QLabel" name="emailLb">
+     <property name="text">
+      <string>Email:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="1">
+    <widget class="QLineEdit" name="emailEdit">
+     <property name="toolTip">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;For example: John.Doe@gmail.com (not a mandatory field)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+     <property name="inputMethodHints">
+      <set>Qt::ImhEmailCharactersOnly</set>
+     </property>
+    </widget>
    </item>
   </layout>
  </widget>
  <tabstops>
   <tabstop>nameEdit</tabstop>
+  <tabstop>surnameEdit</tabstop>
   <tabstop>addressEdit</tabstop>
   <tabstop>phoneEdit</tabstop>
-  <tabstop>firmEdit</tabstop>
-  <tabstop>firmNumEdit</tabstop>
+  <tabstop>emailEdit</tabstop>
   <tabstop>passwordEdit</tabstop>
-  <tabstop>activaredCmbBox</tabstop>
+  <tabstop>activatedCmbBox</tabstop>
   <tabstop>roleBtn</tabstop>
   <tabstop>roleEdit</tabstop>
-  <tabstop>locationBtn</tabstop>
-  <tabstop>locationEdit</tabstop>
   <tabstop>okBtn</tabstop>
   <tabstop>cancelBtn</tabstop>
  </tabstops>

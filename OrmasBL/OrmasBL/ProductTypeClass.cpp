@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "ProductTypeClass.h"
+#include <boost/algorithm/string.hpp>
 
 namespace BusinessLayer
 {
@@ -31,17 +32,24 @@ namespace BusinessLayer
 	}
 	void ProductType::SetName(std::string pName)
 	{
+		if (!pName.empty())
+			boost::trim(pName);
 		name = pName;
 	}
 	void ProductType::SetShortName(std::string pShortName)
 	{
+		if (!pShortName.empty())
+			boost::trim(pShortName);
 		shortName = pShortName;
 	}
 
 	bool ProductType::CreateProductType(DataLayer::OrmasDal& ormasDal, std::string pTypeName, std::string pTypeShortName, 
 		std::string& errorMessage)
 	{
+		if (IsDuplicate(ormasDal, pTypeName, pTypeShortName, errorMessage))
+			return false;
 		id = ormasDal.GenerateID();
+		TrimStrings(pTypeName, pTypeShortName);
 		name = pTypeName;
 		shortName = pTypeShortName;
 		if (0 != id && ormasDal.CreateProductType(id, name, shortName, errorMessage))
@@ -56,6 +64,8 @@ namespace BusinessLayer
 	}
 	bool ProductType::CreateProductType(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
+		if (IsDuplicate(ormasDal, errorMessage))
+			return false;
 		id = ormasDal.GenerateID();
 		if (0 != id &&ormasDal.CreateProductType(id, name, shortName, errorMessage))
 		{
@@ -85,6 +95,7 @@ namespace BusinessLayer
 	bool ProductType::UpdateProductType(DataLayer::OrmasDal& ormasDal, std::string pTypeName, std::string pTypeShortName, 
 		std::string& errorMessage)
 	{
+		TrimStrings(pTypeName, pTypeShortName);
 		name = pTypeName;
 		shortName = pTypeShortName;
 		if (0 != id &&ormasDal.UpdateProductType(id, name, shortName, errorMessage))
@@ -137,10 +148,53 @@ namespace BusinessLayer
 		}
 		return false;
 	}
+	
 	bool ProductType::IsEmpty()
 	{
 		if (0 == id && name == "" && shortName == "")
 			return true;
 		return false;
+	}
+
+	void ProductType::TrimStrings(std::string& pTypeName, std::string& pTypeShortName)
+	{
+		if (!pTypeName.empty())
+			boost::trim(pTypeName);
+		if (!pTypeShortName.empty())
+			boost::trim(pTypeShortName);
+	}
+
+	bool ProductType::IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string pTypeName, std::string pTypeShortName, std::string& errorMessage)
+	{
+		ProductType productType;
+		productType.SetName(pTypeName);
+		productType.SetShortName(pTypeShortName);
+		std::string filter = productType.GenerateFilter(ormasDal);
+		std::vector<DataLayer::productTypeCollection> productTypeVector = ormasDal.GetProductTypes(errorMessage, filter);
+		if (!errorMessage.empty())
+			return true;
+		if (0 == productTypeVector.size())
+		{
+			return false;
+		}
+		errorMessage = "Product type with this parameters are already exist! Please avoid the duplication!";
+		return true;
+	}
+
+	bool ProductType::IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
+	{
+		ProductType productType;
+		productType.SetName(name);
+		productType.SetShortName(shortName);
+		std::string filter = productType.GenerateFilter(ormasDal);
+		std::vector<DataLayer::productTypeCollection> productTypeVector = ormasDal.GetProductTypes(errorMessage, filter);
+		if (!errorMessage.empty())
+			return true;
+		if (0 == productTypeVector.size())
+		{
+			return false;
+		}
+		errorMessage = "Product type with this parameters are already exist! Please avoid the duplication!";
+		return true;
 	}
 }

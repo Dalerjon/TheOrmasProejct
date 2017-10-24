@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'DataForm.ui'
 **
-** Created by: Qt User Interface Compiler version 5.4.1
+** Created by: Qt User Interface Compiler version 5.6.2
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
 ********************************************************************************/
@@ -85,6 +85,10 @@ public:
 
         gridLayout->addLayout(horizontalLayout, 1, 0, 1, 1);
 
+        QWidget::setTabOrder(tableView, createBtn);
+        QWidget::setTabOrder(createBtn, editBtn);
+        QWidget::setTabOrder(editBtn, deleteBtn);
+        QWidget::setTabOrder(deleteBtn, closeBtn);
 
         retranslateUi(DataForm);
 

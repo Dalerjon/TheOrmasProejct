@@ -61,6 +61,8 @@ namespace BusinessLayer
 	bool Production::CreateProduction(DataLayer::OrmasDal& ormasDal, std::string pProductionDate, std::string pExpiryDate,
 		std::string pSessionStart, std::string pSessionEnd, std::string& errorMessage)
 	{
+		if (IsDuplicate(ormasDal, pProductionDate, pExpiryDate, pSessionStart, pSessionEnd, errorMessage))
+			return false;
 		id = ormasDal.GenerateID();
 		productionDate = pProductionDate;
 		expiryDate = pExpiryDate;
@@ -78,6 +80,8 @@ namespace BusinessLayer
 	}
 	bool Production::CreateProduction(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
+		if (IsDuplicate(ormasDal, errorMessage))
+			return false;
 		id = ormasDal.GenerateID();
 		if (0 != id &&ormasDal.CreateProduction(id, productionDate, expiryDate, sessionStart, sessionEnd, errorMessage))
 		{
@@ -164,11 +168,51 @@ namespace BusinessLayer
 		}
 		return false;
 	}
+	
 	bool Production::IsEmpty()
 	{
 		if (0 == id && productionDate == "" && expiryDate == "" && sessionStart == "" && sessionEnd == "")
 			return true;
 		return false;
+	}
+
+	bool Production::IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string pProductionDate, std::string pExpiryDate,
+		std::string pSessionStart, std::string pSessionEnd, std::string& errorMessage)
+	{
+		Production production;
+		production.SetProductionDate(pProductionDate);
+		production.SetExpiryDate(pExpiryDate);
+		production.SetSessionStart(pSessionStart);
+		production.SetSessionEnd(pSessionEnd);
+		std::string filter = production.GenerateFilter(ormasDal);
+		std::vector<DataLayer::productionCollection> productionVector = ormasDal.GetProduction(errorMessage, filter);
+		if (!errorMessage.empty())
+			return true;
+		if (0 == productionVector.size())
+		{
+			return false;
+		}
+		errorMessage = "Production with this parameters are already exist! Please avoid the duplication!";
+		return true;
+	}
+
+	bool Production::IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
+	{
+		Production production;
+		production.SetProductionDate(productionDate);
+		production.SetExpiryDate(expiryDate);
+		production.SetSessionStart(sessionStart);
+		production.SetSessionEnd(sessionEnd);
+		std::string filter = production.GenerateFilter(ormasDal);
+		std::vector<DataLayer::productionCollection> productionVector = ormasDal.GetProduction(errorMessage, filter);
+		if (!errorMessage.empty())
+			return true;
+		if (0 == productionVector.size())
+		{
+			return false;
+		}
+		errorMessage = "Production with this parameters are already exist! Please avoid the duplication!";
+		return true;
 	}
 }
 

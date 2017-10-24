@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'CreateOrdDlg.h'
 **
-** Created by: The Qt Meta Object Compiler version 67 (Qt 5.4.1)
+** Created by: The Qt Meta Object Compiler version 67 (Qt 5.6.2)
 **
 ** WARNING! All changes made in this file will be lost!
 *****************************************************************************/
@@ -12,7 +12,7 @@
 #if !defined(Q_MOC_OUTPUT_REVISION)
 #error "The header file 'CreateOrdDlg.h' doesn't include <QObject>."
 #elif Q_MOC_OUTPUT_REVISION != 67
-#error "This file was generated using the moc from 5.4.1. It"
+#error "This file was generated using the moc from 5.6.2. It"
 #error "cannot be used with the include files from this version of Qt."
 #error "(The moc has changed too much.)"
 #endif
@@ -20,11 +20,11 @@
 QT_BEGIN_MOC_NAMESPACE
 struct qt_meta_stringdata_CreateOrdDlg_t {
     QByteArrayData data[14];
-    char stringdata[136];
+    char stringdata0[132];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
-    qptrdiff(offsetof(qt_meta_stringdata_CreateOrdDlg_t, stringdata) + ofs \
+    qptrdiff(offsetof(qt_meta_stringdata_CreateOrdDlg_t, stringdata0) + ofs \
         - idx * sizeof(QByteArrayData)) \
     )
 static const qt_meta_stringdata_CreateOrdDlg_t qt_meta_stringdata_CreateOrdDlg = {
@@ -35,20 +35,20 @@ QT_MOC_LITERAL(2, 25, 0), // ""
 QT_MOC_LITERAL(3, 26, 9), // "EditOrder"
 QT_MOC_LITERAL(4, 36, 11), // "DeleteOrder"
 QT_MOC_LITERAL(5, 48, 5), // "Close"
-QT_MOC_LITERAL(6, 54, 11), // "OpenUserDlg"
-QT_MOC_LITERAL(7, 66, 13), // "OpenWorkerDlg"
-QT_MOC_LITERAL(8, 80, 10), // "OpenStsDlg"
-QT_MOC_LITERAL(9, 91, 10), // "OpenCurDlg"
-QT_MOC_LITERAL(10, 102, 14), // "OpenAddProdDlg"
-QT_MOC_LITERAL(11, 117, 5), // "SetID"
-QT_MOC_LITERAL(12, 123, 2), // "ID"
-QT_MOC_LITERAL(13, 126, 9) // "childName"
+QT_MOC_LITERAL(6, 54, 10), // "OpenCltDlg"
+QT_MOC_LITERAL(7, 65, 10), // "OpenEmpDlg"
+QT_MOC_LITERAL(8, 76, 10), // "OpenStsDlg"
+QT_MOC_LITERAL(9, 87, 10), // "OpenCurDlg"
+QT_MOC_LITERAL(10, 98, 14), // "OpenOrdListDlg"
+QT_MOC_LITERAL(11, 113, 5), // "SetID"
+QT_MOC_LITERAL(12, 119, 2), // "ID"
+QT_MOC_LITERAL(13, 122, 9) // "childName"
 
     },
     "CreateOrdDlg\0CreateOrder\0\0EditOrder\0"
-    "DeleteOrder\0Close\0OpenUserDlg\0"
-    "OpenWorkerDlg\0OpenStsDlg\0OpenCurDlg\0"
-    "OpenAddProdDlg\0SetID\0ID\0childName"
+    "DeleteOrder\0Close\0OpenCltDlg\0OpenEmpDlg\0"
+    "OpenStsDlg\0OpenCurDlg\0OpenOrdListDlg\0"
+    "SetID\0ID\0childName"
 };
 #undef QT_MOC_LITERAL
 
@@ -96,16 +96,17 @@ void CreateOrdDlg::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id
 {
     if (_c == QMetaObject::InvokeMetaMethod) {
         CreateOrdDlg *_t = static_cast<CreateOrdDlg *>(_o);
+        Q_UNUSED(_t)
         switch (_id) {
         case 0: _t->CreateOrder(); break;
         case 1: _t->EditOrder(); break;
         case 2: _t->DeleteOrder(); break;
         case 3: _t->Close(); break;
-        case 4: _t->OpenUserDlg(); break;
-        case 5: _t->OpenWorkerDlg(); break;
+        case 4: _t->OpenCltDlg(); break;
+        case 5: _t->OpenEmpDlg(); break;
         case 6: _t->OpenStsDlg(); break;
         case 7: _t->OpenCurDlg(); break;
-        case 8: _t->OpenAddProdDlg(); break;
+        case 8: _t->OpenOrdListDlg(); break;
         case 9: _t->SetID((*reinterpret_cast< int(*)>(_a[1])),(*reinterpret_cast< QString(*)>(_a[2]))); break;
         default: ;
         }
@@ -126,7 +127,7 @@ const QMetaObject *CreateOrdDlg::metaObject() const
 void *CreateOrdDlg::qt_metacast(const char *_clname)
 {
     if (!_clname) return Q_NULLPTR;
-    if (!strcmp(_clname, qt_meta_stringdata_CreateOrdDlg.stringdata))
+    if (!strcmp(_clname, qt_meta_stringdata_CreateOrdDlg.stringdata0))
         return static_cast<void*>(const_cast< CreateOrdDlg*>(this));
     if (!strcmp(_clname, "Ui::CreateOrder"))
         return static_cast< Ui::CreateOrder*>(const_cast< CreateOrdDlg*>(this));

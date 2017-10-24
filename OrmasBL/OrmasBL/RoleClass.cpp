@@ -1,13 +1,15 @@
 #include "stdafx.h"
 #include "RoleClass.h"
+#include <boost/algorithm/string.hpp>
 
 namespace BusinessLayer
 {
 	Role::Role(DataLayer::rolesCollection rCollection)
 	{
 		id = std::get<0>(rCollection);
-		name = std::get<1>(rCollection);
-		comment = std::get<2>(rCollection);
+		code = std::get<1>(rCollection);
+		name = std::get<2>(rCollection);
+		comment = std::get<3>(rCollection);
 	}
 
 	int Role::GetID()
@@ -15,6 +17,11 @@ namespace BusinessLayer
 		return id;
 	}
 	
+	std::string Role::GetCode()
+	{
+		return code;
+	}
+
 	std::string Role::GetName()
 	{
 		return name;
@@ -29,21 +36,33 @@ namespace BusinessLayer
 	{
 		id = rID;
 	}
+	void Role::SetCode(std::string rCode)
+	{
+		if (!rCode.empty())
+			boost::trim(rCode);
+		code = boost::to_upper_copy(rCode);
+	}
 	void Role::SetName(std::string rName)
 	{
-		name = rName;
+		if (!rName.empty())
+			boost::trim(rName);
+		name = boost::to_upper_copy(rName);
 	}
 	void Role::SetComment(std::string rComment)
 	{
 		comment = rComment;
 	}
 
-	bool Role::CreateRole(DataLayer::OrmasDal& ormasDal, std::string rName, std::string rComment, std::string& errorMessage)
+	bool Role::CreateRole(DataLayer::OrmasDal& ormasDal, std::string rCode, std::string rName, std::string rComment, std::string& errorMessage)
 	{
+		if (IsDuplicate(ormasDal, rCode, rName, errorMessage))
+			return false;
 		id = ormasDal.GenerateID();
-		name = rName;
+		TrimStrings(rCode, rName);
+		code = boost::to_upper_copy(rCode);
+		name = boost::to_upper_copy(rName);
 		comment = rComment;
-		if (0 != id && ormasDal.CreateRole(id, name, comment, errorMessage))
+		if (0 != id && ormasDal.CreateRole(id, code, name, comment, errorMessage))
 		{
 			return true;
 		}
@@ -55,8 +74,10 @@ namespace BusinessLayer
 	}
 	bool Role::CreateRole(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
+		if (IsDuplicate(ormasDal, errorMessage))
+			return false;
 		id = ormasDal.GenerateID();
-		if (0 != id && ormasDal.CreateRole(id, name, comment, errorMessage))
+		if (0 != id && ormasDal.CreateRole(id, code, name, comment, errorMessage))
 		{
 			return true;
 		}
@@ -81,11 +102,13 @@ namespace BusinessLayer
 		}
 		return false;
 	}
-	bool Role::UpdateRole(DataLayer::OrmasDal& ormasDal, std::string rName, std::string rComment, std::string& errorMessage)
+	bool Role::UpdateRole(DataLayer::OrmasDal& ormasDal, std::string rCode, std::string rName, std::string rComment, std::string& errorMessage)
 	{
-		name = rName;
+		TrimStrings(rCode, rName);
+		code = boost::to_upper_copy(rCode);
+		name = boost::to_upper_copy(rName);
 		comment = rComment;
-		if (0 != id && ormasDal.UpdateRole(id, name, comment, errorMessage))
+		if (0 != id && ormasDal.UpdateRole(id, code, name, comment, errorMessage))
 		{
 			return true;
 		}
@@ -97,7 +120,7 @@ namespace BusinessLayer
 	}
 	bool Role::UpdateRole(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
-		if (0 != id && ormasDal.UpdateRole(id, name, comment, errorMessage))
+		if (0 != id && ormasDal.UpdateRole(id, code, name, comment, errorMessage))
 		{
 			return true;
 		}
@@ -110,9 +133,9 @@ namespace BusinessLayer
 
 	std::string Role::GenerateFilter(DataLayer::OrmasDal& ormasDal)
 	{
-		if (0 != id || !name.empty() || !comment.empty())
+		if (0 != id || !code.empty() || !name.empty() || !comment.empty())
 		{
-			return ormasDal.GetFilterForRole(id, name, comment);
+			return ormasDal.GetFilterForRole(id, code, name, comment);
 		}
 		return "";
 	}
@@ -125,8 +148,9 @@ namespace BusinessLayer
 		if (0 != roleVector.size())
 		{
 			id = std::get<0>(roleVector.at(0));
-			name = std::get<1>(roleVector.at(0));
-			comment = std::get<2>(roleVector.at(0));
+			code = std::get<1>(roleVector.at(0));
+			name = std::get<2>(roleVector.at(0));
+			comment = std::get<3>(roleVector.at(0));
 			return true;
 		}
 		else
@@ -135,10 +159,53 @@ namespace BusinessLayer
 		}
 		return false;
 	}
+	
 	bool Role::IsEmpty()
 	{
-		if(0 == id && name == "" && comment == "")
+		if(0 == id && code == "" && name == "" && comment == "")
 			return true;
 		return false;
+	}
+
+	void Role::TrimStrings(std::string& rCode, std::string& rName)
+	{
+		if (!rCode.empty())
+			boost::trim(rCode);
+		if (!rName.empty())
+			boost::trim(rName);
+	}
+
+	bool Role::IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string rCode, std::string rName, std::string& errorMessage)
+	{
+		Role role;
+		role.SetCode(rCode);
+		role.SetName(rName);
+		std::string filter = role.GenerateFilter(ormasDal);
+		std::vector<DataLayer::rolesCollection> roleVector = ormasDal.GetRoles(errorMessage, filter);
+		if (!errorMessage.empty())
+			return true;
+		if (0 == roleVector.size())
+		{
+			return false;
+		}
+		errorMessage = "Role with this parameters are already exist! Please avoid the duplication!";
+		return true;
+	}
+
+	bool Role::IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
+	{
+		Role role;
+		role.SetCode(code);
+		role.SetName(name);
+		std::string filter = role.GenerateFilter(ormasDal);
+		std::vector<DataLayer::rolesCollection> roleVector = ormasDal.GetRoles(errorMessage, filter);
+		if (!errorMessage.empty())
+			return true;
+		if (0 == roleVector.size())
+		{
+			return false;
+		}
+		errorMessage = "Role with this parameters are already exist! Please avoid the duplication!";
+		return true;
 	}
 }

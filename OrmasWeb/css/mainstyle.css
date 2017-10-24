@@ -1,0 +1,191 @@
+/* css style Cabir */
+@import url('reset.css');
+@import url('typography.css');
+
+html{
+	overflow-y:auto;
+	overflow-x:auto;
+	min-width:400px;
+	min-height:400px;
+}
+body{
+	width:100%;
+	background-color: white;
+	margin:0px;
+}
+
+/* style for header */
+#action-bar{
+	width:auto;
+	height:40px;
+	background-color: #106392;
+	/*background:url('../img/bground.png');*/
+}
+
+#logo{
+	padding-top:12px;
+	margin-left:50px;
+	width:100px;
+	height:18px;
+	float:left;
+}
+
+#logo a{
+	font-family: Iskoola Pota;
+}
+
+#logo a{
+	color:white;
+	size:12px;
+	text-decoration: none !important;
+}
+
+#action-bar-wrap{
+	width:150px;
+	height:25px;
+	position:absolute;
+	right:0%;
+}
+
+#action-bar-content{
+	padding-top:12px;
+}
+
+#action-bar-content a{
+	color:white;
+	size:12px;
+	text-decoration: none !important;
+}
+
+#action-bar-content a:hover{
+	color:#CBE2FF;
+	text-decoration: none !important;
+}
+
+#user-img-div
+{
+	width:20px;
+	height:20px;
+	margin-right:10px;
+	margin-bottom:5px;
+	background: url('../img/user.png') no-repeat;
+	background-size: cover;
+	float:left;
+	margin-top:7px;
+}
+
+/*Content style fro index page*/
+#content{
+	position:relative;
+	width:100%;
+	height: -webkit-calc(100vh - 80px);
+	height: -moz-calc(100vh - 80px);
+	display: flex;
+	justify-content: center;
+	background: url('../img/com_logo.png');
+}
+
+#login{
+	align-self: center;
+	/*background:url('../img/bground.png');*/
+	background-color: #106392;
+	width:380px;
+	height: 180px;
+	padding:10px;
+}
+
+#login-logo{
+	background: url('../img/lock.png') no-repeat;
+	background-size: cover;
+	width:100px;
+	height:85px;
+	float:left;
+	margin: 40px;
+	margin-left: 30px;
+}
+
+#login-content{
+	color: white;
+	width: 200px;
+	height: 135px;
+	margin-left: 180px; 
+	margin-top: 30px;
+}
+
+#message{
+	height:20px;
+	color:white;
+	font-size:14px;
+}
+
+#login-content input{
+	border: 0px;
+	margin-top:7px;
+	padding-left:3px;
+}
+
+#login-content input[type="submit"]{
+	width:100px;
+	height:18px;
+	margin-left: 72px;
+	background-color: white;
+	color:#106392;
+	margin-top:13px;
+}
+
+#login-content p{
+	padding-bottom: 10px;
+}
+
+#v-separator{
+	color: white;
+}
+
+#h-separator-slim{
+	background-color: white;
+	width:180px;
+	margin-left:2px;
+	margin-right:2px;
+	height:1px;
+}
+
+#h-separator-fat{
+	background-color: white;
+	width:180px;
+	margin-left:2px;
+	margin-right:2px;
+	height:3px;
+}
+
+/*ctyle footer*/
+#footter{
+	width:100%;
+	height:40px;
+	background-color: #106392;
+	color:white;
+	
+}
+
+#company{
+	width:300px;
+	float:left;
+	margin-left:40px;
+	padding-top:8px;
+	font-size:14px;
+}
+
+#splitter{
+	width: -webkit-calc(100vw - 580px);
+	width: -moz-calc(100vw - 580px);
+	min-width:20px;
+	margin-left:300px;
+	height:100%;
+}
+
+#designer{
+	width:170px;
+	position:absolute;
+	right:0%;
+	margin-top:8px;
+	font-size:14px;
+}

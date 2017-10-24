@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'CreatePrdTpDlg.ui'
 **
-** Created by: Qt User Interface Compiler version 5.4.1
+** Created by: Qt User Interface Compiler version 5.6.2
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
 ********************************************************************************/
@@ -93,6 +93,9 @@ public:
 
         gridLayout->addWidget(shortNameEdit, 1, 1, 1, 1);
 
+        QWidget::setTabOrder(nameEdit, shortNameEdit);
+        QWidget::setTabOrder(shortNameEdit, okBtn);
+        QWidget::setTabOrder(okBtn, cancelBtn);
 
         retranslateUi(CreateProductType);
 
@@ -105,12 +108,12 @@ public:
         shortNameLb->setText(QApplication::translate("CreateProductType", "Short name", 0));
         nameLb->setText(QApplication::translate("CreateProductType", "Name:", 0));
 #ifndef QT_NO_TOOLTIP
-        nameEdit->setToolTip(QApplication::translate("CreateProductType", "Must not be empty", 0));
+        nameEdit->setToolTip(QApplication::translate("CreateProductType", "<html><head/><body><p>For example: Dairy products</p></body></html>", 0));
 #endif // QT_NO_TOOLTIP
         okBtn->setText(QApplication::translate("CreateProductType", "OK", 0));
         cancelBtn->setText(QApplication::translate("CreateProductType", "Cancel", 0));
 #ifndef QT_NO_TOOLTIP
-        shortNameEdit->setToolTip(QApplication::translate("CreateProductType", "Must not be empty", 0));
+        shortNameEdit->setToolTip(QApplication::translate("CreateProductType", "<html><head/><body><p>For example: Dairy</p></body></html>", 0));
 #endif // QT_NO_TOOLTIP
     } // retranslateUi
 

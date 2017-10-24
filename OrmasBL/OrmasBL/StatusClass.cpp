@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "StatusClass.h"
+#include <boost/algorithm/string.hpp>
 
 namespace BusinessLayer
 {
@@ -37,11 +38,15 @@ namespace BusinessLayer
 	}
 	void Status::SetCode(std::string sCode)
 	{
+		if (!sCode.empty())
+			boost::trim(sCode);
 		code = sCode;
 	}
 	void Status::SetName(std::string sName)
 	{
-		name = sName;
+		if (!sName.empty())
+			boost::trim(sName);
+		name = boost::to_upper_copy(sName);
 	}
 	void Status::SetComment(std::string sComment)
 	{
@@ -52,9 +57,12 @@ namespace BusinessLayer
 	bool Status::CreateStatus(DataLayer::OrmasDal& ormasDal, std::string sCode, std::string sName, std::string sComment, 
 		std::string& errorMessage)
 	{
+		if (IsDuplicate(ormasDal, sCode, sName, errorMessage))
+			return false;
 		id = ormasDal.GenerateID();
+		TrimStrings(sCode, sName);
 		code = sCode;
-		name = sName;
+		name = boost::to_upper_copy(sName);
 		comment = sComment;
 		if (0 != id && ormasDal.CreateStatus(id, code, name, comment, errorMessage))
 		{
@@ -68,6 +76,8 @@ namespace BusinessLayer
 	}
 	bool Status::CreateStatus(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
+		if (IsDuplicate(ormasDal, errorMessage))
+			return false;
 		id = ormasDal.GenerateID();
 		if (0 != id && ormasDal.CreateStatus(id, code, name, comment, errorMessage))
 		{
@@ -98,8 +108,9 @@ namespace BusinessLayer
 	bool Status::UpdateStatus(DataLayer::OrmasDal& ormasDal, std::string sCode, std::string sName, std::string sComment, 
 		std::string& errorMessage)
 	{
+		TrimStrings(sCode, sName);
 		code = sCode;
-		name = sName;
+		name = boost::to_upper_copy(sName);
 		comment = sComment;
 		if (0 != id && ormasDal.UpdateStatus(id, code, name, comment, errorMessage))
 		{
@@ -152,10 +163,53 @@ namespace BusinessLayer
 		}
 		return false;
 	}
+	
 	bool Status::IsEmpty()
 	{
 		if(0 == id && code == "" && name == "" && comment == "")
 			return true;
 		return false;
+	}
+
+	void Status::TrimStrings(std::string& sCode, std::string& sName)
+	{
+		if (!sCode.empty())
+			boost::trim(sCode);
+		if (!sName.empty())
+			boost::trim(sName);
+	}
+
+	bool Status::IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string sCode, std::string sName, std::string& errorMessage)
+	{
+		Status status;
+		status.SetCode(sCode);
+		status.SetName(sName);
+		std::string filter = status.GenerateFilter(ormasDal);
+		std::vector<DataLayer::statusCollection> statusVector = ormasDal.GetStatus(errorMessage, filter);
+		if (!errorMessage.empty())
+			return true;
+		if (0 == statusVector.size())
+		{
+			return false;
+		}
+		errorMessage = "Status with this parameters are already exist! Please avoid the duplication!";
+		return true;
+	}
+
+	bool Status::IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
+	{
+		Status status;
+		status.SetCode(code);
+		status.SetName(name);
+		std::string filter = status.GenerateFilter(ormasDal);
+		std::vector<DataLayer::statusCollection> statusVector = ormasDal.GetStatus(errorMessage, filter);
+		if (!errorMessage.empty())
+			return true;
+		if (0 == statusVector.size())
+		{
+			return false;
+		}
+		errorMessage = "Status with this parameters are already exist! Please avoid the duplication!";
+		return true;
 	}
 }

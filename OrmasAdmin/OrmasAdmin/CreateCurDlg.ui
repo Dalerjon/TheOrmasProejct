@@ -55,7 +55,7 @@
    <item row="1" column="1">
     <widget class="QLineEdit" name="shortNameEdit">
      <property name="toolTip">
-      <string>The length must be equal to 3</string>
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;For example: USD (international short name)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
     </widget>
    </item>
@@ -98,7 +98,11 @@
     </layout>
    </item>
    <item row="3" column="1">
-    <widget class="QLineEdit" name="unitEdit"/>
+    <widget class="QLineEdit" name="unitEdit">
+     <property name="toolTip">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;For example: 100 (1 dollar = 100 cents, if hame more little currency, otherwise =1)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+    </widget>
    </item>
    <item row="0" column="0">
     <widget class="QLabel" name="codeLb">
@@ -116,7 +120,7 @@
    <item row="0" column="1">
     <widget class="QLineEdit" name="codeEdit">
      <property name="toolTip">
-      <string>Only digits. The length must be equal to 3</string>
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;For example: 840 (international currency code)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
      <property name="inputMask">
       <string>000</string>
@@ -126,7 +130,7 @@
    <item row="2" column="1">
     <widget class="QLineEdit" name="nameEdit">
      <property name="toolTip">
-      <string>Must not be empty</string>
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;For example: United States Dollar&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
     </widget>
    </item>
@@ -150,6 +154,7 @@
   <tabstop>shortNameEdit</tabstop>
   <tabstop>nameEdit</tabstop>
   <tabstop>unitEdit</tabstop>
+  <tabstop>mainTradeCmbBox</tabstop>
   <tabstop>okBtn</tabstop>
   <tabstop>cancelBtn</tabstop>
  </tabstops>

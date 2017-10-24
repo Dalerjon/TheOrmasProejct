@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'CreateCurDlg.ui'
 **
-** Created by: Qt User Interface Compiler version 5.4.1
+** Created by: Qt User Interface Compiler version 5.6.2
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
 ********************************************************************************/
@@ -134,7 +134,8 @@ public:
         QWidget::setTabOrder(codeEdit, shortNameEdit);
         QWidget::setTabOrder(shortNameEdit, nameEdit);
         QWidget::setTabOrder(nameEdit, unitEdit);
-        QWidget::setTabOrder(unitEdit, okBtn);
+        QWidget::setTabOrder(unitEdit, mainTradeCmbBox);
+        QWidget::setTabOrder(mainTradeCmbBox, okBtn);
         QWidget::setTabOrder(okBtn, cancelBtn);
 
         retranslateUi(CreateCurrency);
@@ -148,18 +149,21 @@ public:
         shortNameLb->setText(QApplication::translate("CreateCurrency", "Short name:", 0));
         nameLb->setText(QApplication::translate("CreateCurrency", "Name:", 0));
 #ifndef QT_NO_TOOLTIP
-        shortNameEdit->setToolTip(QApplication::translate("CreateCurrency", "The length must be equal to 3", 0));
+        shortNameEdit->setToolTip(QApplication::translate("CreateCurrency", "<html><head/><body><p>For example: USD (international short name)</p></body></html>", 0));
 #endif // QT_NO_TOOLTIP
         unitLb->setText(QApplication::translate("CreateCurrency", "Change unit:", 0));
         okBtn->setText(QApplication::translate("CreateCurrency", "OK", 0));
         cancelBtn->setText(QApplication::translate("CreateCurrency", "Cancel", 0));
+#ifndef QT_NO_TOOLTIP
+        unitEdit->setToolTip(QApplication::translate("CreateCurrency", "<html><head/><body><p>For example: 100 (1 dollar = 100 cents, if hame more little currency, otherwise =1)</p></body></html>", 0));
+#endif // QT_NO_TOOLTIP
         codeLb->setText(QApplication::translate("CreateCurrency", "Code:", 0));
 #ifndef QT_NO_TOOLTIP
-        codeEdit->setToolTip(QApplication::translate("CreateCurrency", "Only digits. The length must be equal to 3", 0));
+        codeEdit->setToolTip(QApplication::translate("CreateCurrency", "<html><head/><body><p>For example: 840 (international currency code)</p></body></html>", 0));
 #endif // QT_NO_TOOLTIP
         codeEdit->setInputMask(QApplication::translate("CreateCurrency", "000", 0));
 #ifndef QT_NO_TOOLTIP
-        nameEdit->setToolTip(QApplication::translate("CreateCurrency", "Must not be empty", 0));
+        nameEdit->setToolTip(QApplication::translate("CreateCurrency", "<html><head/><body><p>For example: United States Dollar</p></body></html>", 0));
 #endif // QT_NO_TOOLTIP
         mainTradeLb->setText(QApplication::translate("CreateCurrency", "Main trade:", 0));
     } // retranslateUi

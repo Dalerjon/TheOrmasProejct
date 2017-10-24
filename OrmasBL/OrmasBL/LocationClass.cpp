@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "LocationClass.h"
+#include <boost/algorithm/string.hpp>
 
 namespace BusinessLayer
 {
@@ -42,25 +43,36 @@ namespace BusinessLayer
 	}
 	void Location::SetCountryName(std::string lCountryName)
 	{
+		if (!lCountryName.empty())
+			boost::trim(lCountryName);
 		countryName = lCountryName;
 	}
 	void Location::SetCountryCode(std::string lCountryCode)
 	{
+		if (!lCountryCode.empty())
+			boost::trim(lCountryCode);
 		countryCode = lCountryCode;
 	}
 	void Location::SetRegionName(std::string lRegionName)
 	{
+		if (!lRegionName.empty())
+			boost::trim(lRegionName);
 		regionName = lRegionName;
 	}
 	void Location::SetCityName(std::string lCityName)
 	{
+		if (!lCityName.empty())
+			boost::trim(lCityName);
 		cityName = lCityName;
 	}
 
 	bool Location::CreateLocation(DataLayer::OrmasDal& ormasDal, std::string lCountryName, std::string lCountryCode,
 		std::string lRegionName, std::string lCityName, std::string& errorMessage)
 	{
+		if (IsDuplicate(ormasDal, lCountryName, lRegionName, lCityName, errorMessage))
+			return false;
 		id = ormasDal.GenerateID();
+		TrimStrings(lCountryName, lCountryCode, lRegionName, lCityName);
 		countryName = lCountryName;
 		countryCode = lCountryCode;
 		regionName = lRegionName;
@@ -77,6 +89,8 @@ namespace BusinessLayer
 	}
 	bool Location::CreateLocation(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
+		if (IsDuplicate(ormasDal, errorMessage))
+			return false;
 		id = ormasDal.GenerateID();
 		if (0 != id && ormasDal.CreateLocation(id, countryName, countryCode, regionName, cityName, errorMessage))
 		{
@@ -108,6 +122,7 @@ namespace BusinessLayer
 	bool Location::UpdateLocation(DataLayer::OrmasDal& ormasDal, std::string lCountryName, std::string lCountryCode,
 		std::string lRegionName, std::string lCityName, std::string& errorMessage)
 	{
+		TrimStrings(lCountryName, lCountryCode, lRegionName, lCityName);
 		countryName = lCountryName;
 		countryCode = lCountryCode;
 		regionName = lRegionName;
@@ -164,10 +179,60 @@ namespace BusinessLayer
 		}
 		return false;
 	}
+	
 	bool Location::IsEmpty()
 	{
 		if (0 == id && countryName == "" &&	countryCode == "" && regionName == "" && cityName == "")
 			return true;
 		return false;
+	}
+	
+	void Location::TrimStrings(std::string& lCountryName, std::string& lCountryCode, std::string& lRegionName, std::string& lCityName)
+	{
+		if (!lCountryName.empty())
+			boost::trim(lCountryName);
+		if (!lCountryCode.empty())
+			boost::trim(lCountryCode);
+		if (!lRegionName.empty())
+			boost::trim(lRegionName);
+		if (!lCityName.empty())
+			boost::trim(lCityName);
+	}
+
+	bool Location::IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string lCountryName, 
+		std::string lRegionName, std::string lCityName, std::string& errorMessage)
+	{
+		Location location;
+		location.SetCountryName(lCountryName);
+		location.SetRegionName(lRegionName);
+		location.SetCityName(lCityName);
+		std::string filter = location.GenerateFilter(ormasDal);
+		std::vector<DataLayer::locationsCollection> locationVector = ormasDal.GetLocations(errorMessage, filter);
+		if (!errorMessage.empty())
+			return true;
+		if (0 == locationVector.size())
+		{
+			return false;
+		}
+		errorMessage = "Location with this parameters are already exist! Please avoid the duplication!";
+		return true;
+	}
+
+	bool Location::IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
+	{
+		Location location;
+		location.SetCountryName(countryName);
+		location.SetRegionName(regionName);
+		location.SetCityName(cityName);
+		std::string filter = location.GenerateFilter(ormasDal);
+		std::vector<DataLayer::locationsCollection> locationVector = ormasDal.GetLocations(errorMessage, filter);
+		if (!errorMessage.empty())
+			return true;
+		if (0 == locationVector.size())
+		{
+			return false;
+		}
+		errorMessage = "Location with this parameters are already exist! Please avoid the duplication!";
+		return true;
 	}
 }

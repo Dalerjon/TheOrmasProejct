@@ -9,7 +9,8 @@ CreateRoleDlg::CreateRoleDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, Q
 {
 	setupUi(this);
 	setModal(true);
-	nameEdit->setMaxLength(20);
+	nameEdit->setMaxLength(50);
+	codeEdit->setMaxLength(20);
 	dialogBL = ormasBL;
 	if (true == updateFlag)
 	{
@@ -23,15 +24,17 @@ CreateRoleDlg::CreateRoleDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, Q
 	QObject::connect(commentTextEdit, &QTextEdit::textChanged, this, &CreateRoleDlg::TextEditChanged);
 }
 
-void CreateRoleDlg::SetRoleParams(QString rName, QString rComment, int id)
+void CreateRoleDlg::SetRoleParams(QString rCode, QString rName, QString rComment, int id)
 {
+	role->SetCode(rCode.toUtf8().constData());
 	role->SetName(rName.toUtf8().constData());
 	role->SetComment(rComment.toUtf8().constData());
 	role->SetID(id);
 }
 
-void CreateRoleDlg::FillEditElements(QString rName, QString rComment)
+void CreateRoleDlg::FillEditElements(QString rCode, QString rName, QString rComment)
 {
+	codeEdit->setText(rCode);
 	nameEdit->setText(rName);
 	commentTextEdit->setText(rComment);
 }
@@ -43,9 +46,11 @@ bool CreateRoleDlg::FillDlgElements(QTableView* rTable)
 	{
 		SetRoleParams(rTable->model()->data(rTable->model()->index(mIndex.row(), 1)).toString().toUtf8().constData(),
 			rTable->model()->data(rTable->model()->index(mIndex.row(), 2)).toString().toUtf8().constData(),
+			rTable->model()->data(rTable->model()->index(mIndex.row(), 3)).toString().toUtf8().constData(),
 			rTable->model()->data(rTable->model()->index(mIndex.row(), 0)).toInt());
 		FillEditElements(rTable->model()->data(rTable->model()->index(mIndex.row(), 1)).toString().toUtf8().constData(),
-			rTable->model()->data(rTable->model()->index(mIndex.row(), 2)).toString().toUtf8().constData());
+			rTable->model()->data(rTable->model()->index(mIndex.row(), 2)).toString().toUtf8().constData(),
+			rTable->model()->data(rTable->model()->index(mIndex.row(), 3)).toString().toUtf8().constData());
 		return true;
 	}
 	else
@@ -57,15 +62,17 @@ bool CreateRoleDlg::FillDlgElements(QTableView* rTable)
 void CreateRoleDlg::CreateRole()
 {
 	errorMessage.clear();
-	if (!(nameEdit->text().isEmpty()))
+	if (!(nameEdit->text().isEmpty() || codeEdit->text().isEmpty()))
 	{
 		DataForm *parentDataForm = (DataForm*)parentWidget();
-		SetRoleParams(nameEdit->text(), commentTextEdit->toPlainText());
+		SetRoleParams(codeEdit->text(), nameEdit->text(), commentTextEdit->toPlainText());
 		dialogBL->StartTransaction(errorMessage);
 		if (dialogBL->CreateRole(role, errorMessage))
 		{
 			QList<QStandardItem*> roleItem;
-			roleItem << new QStandardItem(QString::number(role->GetID())) << new QStandardItem(role->GetName().c_str())
+			roleItem << new QStandardItem(QString::number(role->GetID()))
+				<< new QStandardItem(role->GetCode().c_str())
+				<< new QStandardItem(role->GetName().c_str())
 				<< new QStandardItem(role->GetComment().c_str());
 			QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
 			itemModel->appendRow(roleItem);
@@ -83,7 +90,7 @@ void CreateRoleDlg::CreateRole()
 	else
 	{
 		QMessageBox::information(NULL, QString(tr("Warning")),
-			QString(tr("Please fill the name!")),
+			QString(tr("Please fill the name and code!")),
 			QString(tr("Ok")));
 	}
 	errorMessage.clear();
@@ -92,19 +99,21 @@ void CreateRoleDlg::CreateRole()
 void CreateRoleDlg::EditRole()
 {
 	errorMessage.clear();
-	if (!(nameEdit->text().isEmpty()))
+	if (!(nameEdit->text().isEmpty() || codeEdit->text().isEmpty()))
 	{
-		if (QString(role->GetName().c_str()) != nameEdit->text() || QString(role->GetComment().c_str()) != commentTextEdit->toPlainText())
+		if (QString(role->GetCode().c_str()) != codeEdit->text() || QString(role->GetName().c_str()) != nameEdit->text() ||
+			QString(role->GetComment().c_str()) != commentTextEdit->toPlainText())
 		{
 			DataForm *parentDataForm = (DataForm*)parentWidget();
-			SetRoleParams(nameEdit->text(), commentTextEdit->toPlainText(), role->GetID());
+			SetRoleParams(codeEdit->text(), nameEdit->text(), commentTextEdit->toPlainText(), role->GetID());
 			dialogBL->StartTransaction(errorMessage);
 			if (dialogBL->UpdateRole(role, errorMessage))
 			{
 				QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
 				QModelIndex mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
-				itemModel->item(mIndex.row(), 1)->setText(role->GetName().c_str());
-				itemModel->item(mIndex.row(), 2)->setText(role->GetComment().c_str());
+				itemModel->item(mIndex.row(), 1)->setText(role->GetCode().c_str());
+				itemModel->item(mIndex.row(), 2)->setText(role->GetName().c_str());
+				itemModel->item(mIndex.row(), 3)->setText(role->GetComment().c_str());
 				emit itemModel->dataChanged(mIndex, mIndex);
 				this->close();
 				dialogBL->CommitTransaction(errorMessage);
@@ -125,7 +134,7 @@ void CreateRoleDlg::EditRole()
 	else
 	{
 		QMessageBox::information(NULL, QString(tr("Warning")),
-			QString(tr("Please fill the name!")),
+			QString(tr("Please fill the name and code!")),
 			QString(tr("Ok")));
 	}
 	errorMessage.clear();

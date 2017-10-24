@@ -92,6 +92,13 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>tableView</tabstop>
+  <tabstop>createBtn</tabstop>
+  <tabstop>editBtn</tabstop>
+  <tabstop>deleteBtn</tabstop>
+  <tabstop>closeBtn</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

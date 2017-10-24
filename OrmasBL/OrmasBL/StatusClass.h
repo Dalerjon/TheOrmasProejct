@@ -43,6 +43,10 @@ namespace BusinessLayer
 		std::string GenerateFilter(DataLayer::OrmasDal& ormasDal);
 		bool GetStatusByID(DataLayer::OrmasDal& ormasDal, int sID, std::string& errorMessage);
 		bool IsEmpty();
+	private:
+		void TrimStrings(std::string&, std::string&);
+		bool IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string sCode, std::string sName, std::string& errorMessage);
+		bool IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string& errorMessage);
 	};
 }
 #endif // STATUSCLASS_H

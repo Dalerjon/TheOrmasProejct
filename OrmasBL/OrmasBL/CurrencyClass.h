@@ -49,6 +49,11 @@ namespace BusinessLayer
 		std::string GenerateFilter(DataLayer::OrmasDal& ormasDal);
 		bool GetCurrencyByID(DataLayer::OrmasDal& ormasDal, int cID, std::string& errorMessage);
 		bool IsEmpty();
+		int GetMainTradeCurrencyID(DataLayer::OrmasDal& ormasDal, std::string& errorMessage);
+	private:
+		void TrimStrings(std::string&, std::string&);
+		bool IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string cShortName, std::string cName, std::string& errorMessage);
+		bool IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string& errorMessage);
 	};
 }
 #endif //CURRENCYCLASS_H

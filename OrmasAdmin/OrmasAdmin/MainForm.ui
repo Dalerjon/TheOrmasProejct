@@ -60,36 +60,38 @@
     <property name="title">
      <string>Users</string>
     </property>
-    <addaction name="actionShowAllUser"/>
-    <addaction name="actionCreateUser"/>
-    <addaction name="actionRights"/>
-    <addaction name="actionDeleteUser"/>
+    <addaction name="actionAllUsers"/>
+    <addaction name="actionClients"/>
+    <addaction name="actionEmployees"/>
+    <addaction name="separator"/>
+    <addaction name="actionAccess"/>
+    <addaction name="actionAccessItems"/>
+    <addaction name="actionUserPhoto"/>
+    <addaction name="actionPosition"/>
    </widget>
-   <widget class="QMenu" name="menuProduct">
+   <widget class="QMenu" name="menuProducts">
     <property name="title">
      <string>Products</string>
     </property>
-    <addaction name="actionProductsType"/>
+    <addaction name="actionProductType"/>
     <addaction name="actionProducts"/>
-    <addaction name="actionProductsList"/>
+    <addaction name="actionProductPhoto"/>
    </widget>
-   <widget class="QMenu" name="menuOrder">
+   <widget class="QMenu" name="menuOrders">
     <property name="title">
      <string>Orders</string>
     </property>
-    <addaction name="actionShowAllOrders"/>
-    <addaction name="actionCreateOrder"/>
-    <addaction name="actionDeleteOrder"/>
+    <addaction name="actionOrders"/>
+    <addaction name="actionOrderList"/>
    </widget>
    <widget class="QMenu" name="menuReturns">
     <property name="title">
      <string>Returns</string>
     </property>
-    <addaction name="actionShowAllReturns"/>
-    <addaction name="actionCreateReturn"/>
-    <addaction name="actionDeleteReturn"/>
+    <addaction name="actionReturns"/>
+    <addaction name="actionReturnList"/>
    </widget>
-   <widget class="QMenu" name="menuReference">
+   <widget class="QMenu" name="menuReferences">
     <property name="title">
      <string>Reference</string>
     </property>
@@ -99,6 +101,8 @@
     <addaction name="actionLocation"/>
     <addaction name="actionRoles"/>
     <addaction name="actionStatus"/>
+    <addaction name="actionRelation"/>
+    <addaction name="actionRelationType"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
@@ -106,42 +110,62 @@
     </property>
     <addaction name="actionAbout"/>
    </widget>
-   <widget class="QMenu" name="menuProduction">
+   <widget class="QMenu" name="menuProductions">
     <property name="title">
      <string>Production</string>
     </property>
     <addaction name="actionProduction"/>
+    <addaction name="actionProductionList"/>
+   </widget>
+   <widget class="QMenu" name="menuWriteOffs">
+    <property name="title">
+     <string>Write-offs</string>
+    </property>
+    <addaction name="actionWriteOffs"/>
+    <addaction name="actionWriteOffList"/>
+   </widget>
+   <widget class="QMenu" name="menuAccountings">
+    <property name="title">
+     <string>Accounting</string>
+    </property>
+    <addaction name="actionBalances"/>
+    <addaction name="actionPayments"/>
+    <addaction name="actionPrices"/>
+    <addaction name="actionSalary"/>
+    <addaction name="actionSalaryType"/>
    </widget>
    <addaction name="menuUsers"/>
-   <addaction name="menuProduct"/>
-   <addaction name="menuOrder"/>
+   <addaction name="menuProducts"/>
+   <addaction name="menuOrders"/>
    <addaction name="menuReturns"/>
-   <addaction name="menuProduction"/>
-   <addaction name="menuReference"/>
+   <addaction name="menuWriteOffs"/>
+   <addaction name="menuProductions"/>
+   <addaction name="menuAccountings"/>
+   <addaction name="menuReferences"/>
    <addaction name="menuHelp"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
-  <action name="actionShowAllUser">
+  <action name="actionAllUsers">
    <property name="text">
-    <string>Show all users</string>
+    <string>All users</string>
    </property>
   </action>
-  <action name="actionCreateUser">
+  <action name="actionClients">
    <property name="text">
-    <string>Create user</string>
+    <string>Clients</string>
    </property>
   </action>
-  <action name="actionRights">
+  <action name="actionEmployees">
    <property name="text">
-    <string>Check rights</string>
+    <string>Employees</string>
    </property>
   </action>
-  <action name="actionDeleteUser">
+  <action name="actionAccess">
    <property name="text">
-    <string>Delete user</string>
+    <string>Access</string>
    </property>
   </action>
-  <action name="actionProductsType">
+  <action name="actionProductType">
    <property name="text">
     <string>Products type</string>
    </property>
@@ -151,9 +175,9 @@
     <string>Products</string>
    </property>
   </action>
-  <action name="actionShowAllOrders">
+  <action name="actionOrders">
    <property name="text">
-    <string>Show all orders</string>
+    <string>Oders</string>
    </property>
   </action>
   <action name="actionProductsList">
@@ -161,9 +185,9 @@
     <string>Products list</string>
    </property>
   </action>
-  <action name="actionCreateOrder">
+  <action name="actionOrderList">
    <property name="text">
-    <string>Create order</string>
+    <string>Order details</string>
    </property>
   </action>
   <action name="actionDeleteOrder">
@@ -171,14 +195,14 @@
     <string>Delete order</string>
    </property>
   </action>
-  <action name="actionShowAllReturns">
+  <action name="actionReturns">
    <property name="text">
-    <string>Show all returns</string>
+    <string>Returns</string>
    </property>
   </action>
-  <action name="actionCreateReturn">
+  <action name="actionReturnList">
    <property name="text">
-    <string>Create return</string>
+    <string>Retrun details</string>
    </property>
   </action>
   <action name="actionDeleteReturn">
@@ -223,7 +247,77 @@
   </action>
   <action name="actionProduction">
    <property name="text">
-    <string>Show all products</string>
+    <string>Production</string>
+   </property>
+  </action>
+  <action name="actionAccessItems">
+   <property name="text">
+    <string>Access items</string>
+   </property>
+  </action>
+  <action name="actionPrices">
+   <property name="text">
+    <string>Prices</string>
+   </property>
+  </action>
+  <action name="actionProductionList">
+   <property name="text">
+    <string>Production details</string>
+   </property>
+  </action>
+  <action name="actionWriteOffs">
+   <property name="text">
+    <string>Write-offs</string>
+   </property>
+  </action>
+  <action name="actionWriteOffList">
+   <property name="text">
+    <string>Write-off details</string>
+   </property>
+  </action>
+  <action name="actionUserPhoto">
+   <property name="text">
+    <string>User photo</string>
+   </property>
+  </action>
+  <action name="actionProductPhoto">
+   <property name="text">
+    <string>Product photo</string>
+   </property>
+  </action>
+  <action name="actionPosition">
+   <property name="text">
+    <string>Position</string>
+   </property>
+  </action>
+  <action name="actionRelation">
+   <property name="text">
+    <string>Relation</string>
+   </property>
+  </action>
+  <action name="actionRelationType">
+   <property name="text">
+    <string>Relation types</string>
+   </property>
+  </action>
+  <action name="actionBalances">
+   <property name="text">
+    <string>Balances</string>
+   </property>
+  </action>
+  <action name="actionSalary">
+   <property name="text">
+    <string>Salary</string>
+   </property>
+  </action>
+  <action name="actionSalaryType">
+   <property name="text">
+    <string>Salary type</string>
+   </property>
+  </action>
+  <action name="actionPayments">
+   <property name="text">
+    <string>Payments</string>
    </property>
   </action>
  </widget>

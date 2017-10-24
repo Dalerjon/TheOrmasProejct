@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'CreateStsDlg.ui'
 **
-** Created by: Qt User Interface Compiler version 5.4.1
+** Created by: Qt User Interface Compiler version 5.6.2
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
 ********************************************************************************/
@@ -118,15 +118,15 @@ public:
         nameLb->setText(QApplication::translate("CreateStatus", "Name:", 0));
         commentLb->setText(QApplication::translate("CreateStatus", "Comment:", 0));
 #ifndef QT_NO_TOOLTIP
-        codeEdit->setToolTip(QApplication::translate("CreateStatus", "Must not be empty", 0));
+        codeEdit->setToolTip(QApplication::translate("CreateStatus", "<html><head/><body><p>For example: SUCCESS</p></body></html>", 0));
 #endif // QT_NO_TOOLTIP
         okBtn->setText(QApplication::translate("CreateStatus", "OK", 0));
         cancelBtn->setText(QApplication::translate("CreateStatus", "Cancel", 0));
 #ifndef QT_NO_TOOLTIP
-        nameEdit->setToolTip(QApplication::translate("CreateStatus", "Must not be empty", 0));
+        nameEdit->setToolTip(QApplication::translate("CreateStatus", "<html><head/><body><p>For example: success state</p></body></html>", 0));
 #endif // QT_NO_TOOLTIP
 #ifndef QT_NO_TOOLTIP
-        commentTextEdit->setToolTip(QApplication::translate("CreateStatus", "Can leave it an empty", 0));
+        commentTextEdit->setToolTip(QApplication::translate("CreateStatus", "<html><head/><body><p>Does not mandatory field</p></body></html>", 0));
 #endif // QT_NO_TOOLTIP
     } // retranslateUi
 
