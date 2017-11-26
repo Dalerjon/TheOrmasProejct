@@ -166,6 +166,14 @@ namespace BusinessLayer{
 		return false;
 	}
 
+	void Measure::Clear()
+	{
+		id = 0;
+		name.clear();
+		shortName.clear();
+		unit = 0;
+	}
+
 	void Measure::TrimStrings(std::string& mName, std::string& mShortName)
 	{
 		if (!mName.empty())

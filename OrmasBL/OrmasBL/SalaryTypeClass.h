@@ -2,6 +2,7 @@
 #define SALARYTYPECLASS_H
 
 #include "OrmasDAL.h"
+#include <map>
 
 namespace BusinessLayer
 {
@@ -37,6 +38,8 @@ namespace BusinessLayer
 		std::string GenerateFilter(DataLayer::OrmasDal& ormasDal);
 		bool GetSalaryTypeByID(DataLayer::OrmasDal& ormasDal, int stID, std::string& errorMessage);
 		bool IsEmpty();
+		void Clear();
+		static std::map<std::string, int> GetSalaryTypesAsMap(DataLayer::OrmasDal& ormasDal, std::string& errorMessage);
 	private:
 		void TrimStrings(std::string&, std::string&);
 		bool IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string stCode, std::string stName, std::string& errorMessage);

@@ -63,6 +63,10 @@ public:
     QAction *actionSalary;
     QAction *actionSalaryType;
     QAction *actionPayments;
+    QAction *actionPayroll;
+    QAction *actionWithdrawal;
+    QAction *actionRefund;
+    QAction *actionPayslip;
     QWidget *centrWidget;
     QGridLayout *gridLayout;
     QMdiArea *mdiArea;
@@ -155,6 +159,14 @@ public:
         actionSalaryType->setObjectName(QStringLiteral("actionSalaryType"));
         actionPayments = new QAction(MainWindow);
         actionPayments->setObjectName(QStringLiteral("actionPayments"));
+        actionPayroll = new QAction(MainWindow);
+        actionPayroll->setObjectName(QStringLiteral("actionPayroll"));
+        actionWithdrawal = new QAction(MainWindow);
+        actionWithdrawal->setObjectName(QStringLiteral("actionWithdrawal"));
+        actionRefund = new QAction(MainWindow);
+        actionRefund->setObjectName(QStringLiteral("actionRefund"));
+        actionPayslip = new QAction(MainWindow);
+        actionPayslip->setObjectName(QStringLiteral("actionPayslip"));
         centrWidget = new QWidget(MainWindow);
         centrWidget->setObjectName(QStringLiteral("centrWidget"));
         gridLayout = new QGridLayout(centrWidget);
@@ -233,9 +245,14 @@ public:
         menuWriteOffs->addAction(actionWriteOffList);
         menuAccountings->addAction(actionBalances);
         menuAccountings->addAction(actionPayments);
+        menuAccountings->addAction(actionRefund);
         menuAccountings->addAction(actionPrices);
+        menuAccountings->addSeparator();
         menuAccountings->addAction(actionSalary);
         menuAccountings->addAction(actionSalaryType);
+        menuAccountings->addAction(actionPayroll);
+        menuAccountings->addAction(actionWithdrawal);
+        menuAccountings->addAction(actionPayslip);
 
         retranslateUi(MainWindow);
 
@@ -251,7 +268,7 @@ public:
         actionAccess->setText(QApplication::translate("MainWindow", "Access", 0));
         actionProductType->setText(QApplication::translate("MainWindow", "Products type", 0));
         actionProducts->setText(QApplication::translate("MainWindow", "Products", 0));
-        actionOrders->setText(QApplication::translate("MainWindow", "Oders", 0));
+        actionOrders->setText(QApplication::translate("MainWindow", "Orders", 0));
         actionProductsList->setText(QApplication::translate("MainWindow", "Products list", 0));
         actionOrderList->setText(QApplication::translate("MainWindow", "Order details", 0));
         actionDeleteOrder->setText(QApplication::translate("MainWindow", "Delete order", 0));
@@ -280,6 +297,10 @@ public:
         actionSalary->setText(QApplication::translate("MainWindow", "Salary", 0));
         actionSalaryType->setText(QApplication::translate("MainWindow", "Salary type", 0));
         actionPayments->setText(QApplication::translate("MainWindow", "Payments", 0));
+        actionPayroll->setText(QApplication::translate("MainWindow", "Payroll", 0));
+        actionWithdrawal->setText(QApplication::translate("MainWindow", "Withdrawal", 0));
+        actionRefund->setText(QApplication::translate("MainWindow", "Refund", 0));
+        actionPayslip->setText(QApplication::translate("MainWindow", "Payslip", 0));
         menuUsers->setTitle(QApplication::translate("MainWindow", "Users", 0));
         menuProducts->setTitle(QApplication::translate("MainWindow", "Products", 0));
         menuOrders->setTitle(QApplication::translate("MainWindow", "Orders", 0));

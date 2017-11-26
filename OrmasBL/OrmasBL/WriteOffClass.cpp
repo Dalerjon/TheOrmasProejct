@@ -97,7 +97,6 @@ namespace BusinessLayer
 	{
 		if (IsDuplicate(ormasDal, clID, wDate, wCount, wSum, cID, errorMessage))
 			return false;
-		//id = ormasDal.GenerateID();
 		clientID = clID;
 		date = wDate;
 		employeeID = eID;
@@ -120,7 +119,6 @@ namespace BusinessLayer
 	{
 		if (IsDuplicate(ormasDal, errorMessage))
 			return false;
-		//id = ormasDal.GenerateID();
 		if (0 != id && ormasDal.CreateWriteOff(id, clientID, date, employeeID, count, sum, statusID, currencyID, errorMessage))
 		{
 			return true;
@@ -220,6 +218,18 @@ namespace BusinessLayer
 		if (0 == id && date == "" && 0 == count && 0 == sum && 0 == employeeID && 0 == clientID && 0 == statusID && 0 == currencyID)
 			return false;
 		return true;
+	}
+
+	void WriteOff::Clear()
+	{
+		id = 0;
+		date.clear();
+		count = 0;
+		sum = 0;
+		employeeID = 0;
+		clientID = 0;
+		statusID = 0;
+		currencyID = 0;
 	}
 
 	bool WriteOff::IsDuplicate(DataLayer::OrmasDal& ormasDal, int clID, std::string wDate, int wCount, double wSum,

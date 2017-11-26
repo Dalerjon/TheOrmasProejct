@@ -20,7 +20,7 @@
 QT_BEGIN_MOC_NAMESPACE
 struct qt_meta_stringdata_CreatePhtDlg_t {
     QByteArrayData data[11];
-    char stringdata0[97];
+    char stringdata0[96];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
@@ -33,18 +33,18 @@ QT_MOC_LITERAL(0, 0, 12), // "CreatePhtDlg"
 QT_MOC_LITERAL(1, 13, 11), // "CreatePhoto"
 QT_MOC_LITERAL(2, 25, 0), // ""
 QT_MOC_LITERAL(3, 26, 9), // "EditPhoto"
-QT_MOC_LITERAL(4, 36, 12), // "DeleteStatus"
-QT_MOC_LITERAL(5, 49, 5), // "Close"
-QT_MOC_LITERAL(6, 55, 11), // "OpenUserDlg"
-QT_MOC_LITERAL(7, 67, 10), // "OpenPrdDlg"
-QT_MOC_LITERAL(8, 78, 5), // "SetID"
-QT_MOC_LITERAL(9, 84, 2), // "ID"
-QT_MOC_LITERAL(10, 87, 9) // "childName"
+QT_MOC_LITERAL(4, 36, 11), // "DeletePhoto"
+QT_MOC_LITERAL(5, 48, 5), // "Close"
+QT_MOC_LITERAL(6, 54, 11), // "OpenUserDlg"
+QT_MOC_LITERAL(7, 66, 10), // "OpenPrdDlg"
+QT_MOC_LITERAL(8, 77, 5), // "SetID"
+QT_MOC_LITERAL(9, 83, 2), // "ID"
+QT_MOC_LITERAL(10, 86, 9) // "childName"
 
     },
     "CreatePhtDlg\0CreatePhoto\0\0EditPhoto\0"
-    "DeleteStatus\0Close\0OpenUserDlg\0"
-    "OpenPrdDlg\0SetID\0ID\0childName"
+    "DeletePhoto\0Close\0OpenUserDlg\0OpenPrdDlg\0"
+    "SetID\0ID\0childName"
 };
 #undef QT_MOC_LITERAL
 
@@ -90,7 +90,7 @@ void CreatePhtDlg::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id
         switch (_id) {
         case 0: _t->CreatePhoto(); break;
         case 1: _t->EditPhoto(); break;
-        case 2: _t->DeleteStatus(); break;
+        case 2: _t->DeletePhoto(); break;
         case 3: _t->Close(); break;
         case 4: _t->OpenUserDlg(); break;
         case 5: _t->OpenPrdDlg(); break;

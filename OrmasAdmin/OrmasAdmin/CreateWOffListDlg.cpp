@@ -18,6 +18,7 @@ CreateWOffListDlg::CreateWOffListDlg(BusinessLayer::OrmasBL *ormasBL, bool updat
 	statusEdit->setValidator(vInt);
 	currencyEdit->setValidator(vInt);
 	sumEdit->setValidator(vDouble);
+	sumEdit->setMaxLength(17);
 	if (true == updateFlag)
 	{
 		QObject::connect(addBtn, &QPushButton::released, this, &CreateWOffListDlg::EditProductInList);
@@ -127,7 +128,7 @@ void CreateWOffListDlg::AddProductToList()
 	{
 		DataForm *parentDataForm = (DataForm*)parentWidget();
 		BusinessLayer::Status *status = new BusinessLayer::Status();
-		status->SetName("WriteOffed");
+		status->SetName("WRITEOFFED");
 		std::string statusFilter = dialogBL->GenerateFilter<BusinessLayer::Status>(status);
 		std::vector<BusinessLayer::Status> statusVector = dialogBL->GetAllDataForClass<BusinessLayer::Status>(errorMessage, statusFilter);
 		delete status;
@@ -140,15 +141,7 @@ void CreateWOffListDlg::AddProductToList()
 			return;
 		}
 		BusinessLayer::Product *product = new BusinessLayer::Product();
-		//product->SetID(productEdit->text().toInt());
-		//std::string productFilter = dialogBL->GenerateFilter<BusinessLayer::Product>(product);
-		//std::vector<BusinessLayer::ProductView> productVector = dialogBL->GetAllDataForClass<BusinessLayer::ProductView>(errorMessage, productFilter);
-
 		BusinessLayer::Measure *measure = new BusinessLayer::Measure();
-		//measure->SetID(productVector.at(0).GetMeasureID());
-		//std::string measureFilter = dialogBL->GenerateFilter<BusinessLayer::Measure>(measure);
-		//std::vector<BusinessLayer::Measure> measureVector = dialogBL->GetAllDataForClass<BusinessLayer::Measure>(errorMessage, measureFilter);
-
 		BusinessLayer::Currency *currency = new BusinessLayer::Currency();
 		BusinessLayer::Currency *sumCurrency = new BusinessLayer::Currency();
 
@@ -184,7 +177,6 @@ void CreateWOffListDlg::AddProductToList()
 			countEdit->text().toInt(), (countEdit->text().toInt() * product->GetPrice()),
 			statusVector.at(0).GetID(), product->GetCurrencyID());
 
-		dialogBL->StartTransaction(errorMessage);
 		if (dialogBL->CreateWriteOffList(writeOffList, errorMessage))
 		{
 			QList<QStandardItem*> ProductListItem;
@@ -216,11 +208,9 @@ void CreateWOffListDlg::AddProductToList()
 			delete product;
 			delete currency;
 			this->close();
-			dialogBL->CommitTransaction(errorMessage);
 		}
 		else
 		{
-			dialogBL->CancelTransaction(errorMessage);
 			QMessageBox::information(NULL, QString(tr("Warning")),
 				QString(tr("This product is not valid! Please delete it!")),
 				QString(tr("Ok")));
@@ -245,10 +235,6 @@ void CreateWOffListDlg::EditProductInList()
 			|| statusEdit->text().toInt() != writeOffList->GetStatusID() || currencyEdit->text().toInt() != writeOffList->GetCurrencyID())
 		{
 			BusinessLayer::Product *product = new BusinessLayer::Product();
-			//product->SetID(productEdit->text().toInt());
-			//std::string productFilter = dialogBL->GenerateFilter<BusinessLayer::Product>(product);
-			//std::vector<BusinessLayer::ProductView> productVector = dialogBL->GetAllDataForClass<BusinessLayer::ProductView>(errorMessage, productFilter);
-
 			if (!product->GetProductByID(dialogBL->GetOrmasDal(), productEdit->text().toInt(), errorMessage))
 			{
 				QMessageBox::information(NULL, QString(tr("Warning")),
@@ -266,17 +252,10 @@ void CreateWOffListDlg::EditProductInList()
 			SetWriteOffListParams(writeOffEdit->text().toInt(),
 				productEdit->text().toInt(), countEdit->text().toInt(), sumEdit->text().toDouble(), statusEdit->text().toInt(),
 				writeOffList->GetCurrencyID(), writeOffList->GetID());
-			dialogBL->StartTransaction(errorMessage);
 			if (dialogBL->UpdateWriteOffList(writeOffList, errorMessage))
 			{
 				BusinessLayer::Measure *measure = new BusinessLayer::Measure();
-				//measure->SetID(product->GetMeasureID());
-				//std::string measureFilter = dialogBL->GenerateFilter<BusinessLayer::Measure>(measure);
-				//std::vector<BusinessLayer::Measure> measureVector = dialogBL->GetAllDataForClass<BusinessLayer::Measure>(errorMessage, measureFilter);
 				BusinessLayer::Status *status = new BusinessLayer::Status();
-				//status->SetID(statusEdit->text().toInt());
-				//std::string statusFilter = dialogBL->GenerateFilter<BusinessLayer::Status>(status);
-				//std::vector<BusinessLayer::Status>statusVector = dialogBL->GetAllDataForClass<BusinessLayer::Status>(errorMessage, statusFilter);
 				BusinessLayer::Currency *currency = new BusinessLayer::Currency();
 				BusinessLayer::Currency *sumCurrency = new BusinessLayer::Currency();
 				if (!measure->GetMeasureByID(dialogBL->GetOrmasDal(), product->GetMeasureID(), errorMessage)
@@ -312,16 +291,15 @@ void CreateWOffListDlg::EditProductInList()
 				itemModel->item(mIndex.row(), 13)->setText(QString::number(writeOffList->GetCurrencyID()));
 
 				emit itemModel->dataChanged(mIndex, mIndex);
-				this->close();
+				
 				delete product;
 				delete measure;
 				delete status;
 				delete currency;
-				dialogBL->CommitTransaction(errorMessage);
+				this->close();
 			}
 			else
 			{
-				dialogBL->CancelTransaction(errorMessage);
 				QMessageBox::information(NULL, QString(tr("Warning")),
 					QString(tr(errorMessage.c_str())),
 					QString(tr("Ok")));

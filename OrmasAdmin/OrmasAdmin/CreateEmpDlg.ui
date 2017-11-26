@@ -17,7 +17,7 @@
    </sizepolicy>
   </property>
   <property name="windowTitle">
-   <string>Create/Update Employee</string>
+   <string>Create/Update employee</string>
   </property>
   <property name="locale">
    <locale language="English" country="UnitedStates"/>

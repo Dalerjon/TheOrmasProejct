@@ -251,8 +251,28 @@
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Geterating moc file form CreateWOffListDlg.h...</Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">moc_CreateWOffListDlg.cpp</Outputs>
     </CustomBuild>
+    <CustomBuild Include="CreateWdwDlg.h">
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\moc.exe"  "CreateWdwDlg.h" -o "moc_CreateWdwDlg.cpp"</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Geterating moc file form CreateWdwDlg.h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">moc_CreateWdwDlg.cpp</Outputs>
+    </CustomBuild>
+    <CustomBuild Include="ClcWagesDlg.h">
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\moc.exe"  "ClcWagesDlg.h" -o "moc_ClcWagesDlg.cpp"</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Geterating moc file form ClcWagesDlg.h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">moc_ClcWagesDlg.cpp</Outputs>
+    </CustomBuild>
+    <CustomBuild Include="CreatePspDlg.h">
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\moc.exe"  "CreatePspDlg.h" -o "moc_CreatePspDlg.cpp"</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Geterating moc file form CreatePspDlg.h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">moc_CreatePspDlg.cpp</Outputs>
+    </CustomBuild>
+    <CustomBuild Include="CreateRfdDlg.h">
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\moc.exe"  "CreateRfdDlg.h" -o "moc_CreateRfdDlg.cpp"</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Geterating moc file form CreateRfdDlg.h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">moc_CreateRfdDlg.cpp</Outputs>
+    </CustomBuild>
     <ClInclude Include="ExtraFunctions.h" />
-    <ClInclude Include="ui_AddProdDlg.h" />
+    <ClInclude Include="ui_ClcWagesDlg.h" />
     <ClInclude Include="ui_CreateAcsDlg.h" />
     <ClInclude Include="ui_CreateAcsItemDlg.h" />
     <ClInclude Include="ui_CreateBlcDlg.h" />
@@ -272,8 +292,10 @@
     <ClInclude Include="ui_CreateLcnDlg.h" />
     <ClInclude Include="ui_CreateProdDlg.h" />
     <ClInclude Include="ui_CreateProdnDlg.h" />
+    <ClInclude Include="ui_CreatePspDlg.h" />
     <ClInclude Include="ui_CreateRelDlg.h" />
     <ClInclude Include="ui_CreateRelTypeDlg.h" />
+    <ClInclude Include="ui_CreateRfdDlg.h" />
     <ClInclude Include="ui_CreateRoleDlg.h" />
     <ClInclude Include="ui_CreateRtrnDlg.h" />
     <ClInclude Include="ui_CreateRtrnListDlg.h" />
@@ -281,6 +303,7 @@
     <ClInclude Include="ui_CreateSlrTypeDlg.h" />
     <ClInclude Include="ui_CreateStsDlg.h" />
     <ClInclude Include="ui_CreateUserDlg.h" />
+    <ClInclude Include="ui_CreateWdwDlg.h" />
     <ClInclude Include="ui_CreateWOffDlg.h" />
     <ClInclude Include="ui_CreateWOffListDlg.h" />
     <ClInclude Include="ui_DataForm.h" />
@@ -290,6 +313,7 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="ClcWagesDlg.cpp" />
     <ClCompile Include="CreateAcsDlg.cpp" />
     <ClCompile Include="CreateAcsItemDlg.cpp" />
     <ClCompile Include="CreateBlcDlg.cpp" />
@@ -309,8 +333,10 @@
     <ClCompile Include="CreatePrdTpDlg.cpp" />
     <ClCompile Include="CreateProdDlg.cpp" />
     <ClCompile Include="CreateProdnDlg.cpp" />
+    <ClCompile Include="CreatePspDlg.cpp" />
     <ClCompile Include="CreateRelDlg.cpp" />
     <ClCompile Include="CreateRelTypeDlg.cpp" />
+    <ClCompile Include="CreateRfdDlg.cpp" />
     <ClCompile Include="CreateRoleDlg.cpp" />
     <ClCompile Include="CreateRtrnDlg.cpp" />
     <ClCompile Include="CreateRtrnListDlg.cpp" />
@@ -318,11 +344,15 @@
     <ClCompile Include="CreateSlrTypeDlg.cpp" />
     <ClCompile Include="CreateStsDlg.cpp" />
     <ClCompile Include="CreateUserDlg.cpp" />
+    <ClCompile Include="CreateWdwDlg.cpp" />
     <ClCompile Include="CreateWOffDlg.cpp" />
     <ClCompile Include="CreateWOffListDlg.cpp" />
     <ClCompile Include="DataForm.cpp" />
     <ClCompile Include="LoginForm.cpp" />
     <ClCompile Include="MainForm.cpp" />
+    <ClCompile Include="moc_ClcWagesDlg.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="moc_CreateAcsDlg.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
     </ClCompile>
@@ -380,10 +410,16 @@
     <ClCompile Include="moc_CreateProdnListDlg.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="moc_CreatePspDlg.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="moc_CreateRelDlg.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="moc_CreateRelTypeDlg.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="moc_CreateRfdDlg.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="moc_CreateRoleDlg.cpp">
@@ -405,6 +441,9 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="moc_CreateUserDlg.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="moc_CreateWdwDlg.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="moc_CreateWOffDlg.cpp">
@@ -636,6 +675,44 @@
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\uic.exe"  "CreateWOffListDlg.ui" -o "ui_CreateWOffListDlg.h"</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Generating ui_CreateWOffListDlg.h file...</Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">ui_CreateWOffListDlg.h</Outputs>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="CreateWdwDlg.ui">
+      <FileType>Document</FileType>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\uic.exe"  "CreateWdwDlg.ui" -o "ui_CreateWdwDlg.h"</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Generating ui_CreateWdwDlg.h file...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">ui_CreateWdwDlg.h</Outputs>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="ClcWagesDlg.ui">
+      <FileType>Document</FileType>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\uic.exe"  "ClcWagesDlg.ui" -o "ui_ClcWagesDlg.h"</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Generating ui_ClcWagesDlg.h file...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">ui_ClcWagesDlg.h</Outputs>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="CreatePspDlg.ui">
+      <FileType>Document</FileType>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\uic.exe"  "CreatePspDlg.ui" -o "ui_CreatePspDlg.h"</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Generating ui_CreatePspDlg.h file...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">ui_CreatePspDlg.h</Outputs>
+    </CustomBuild>
+    <CustomBuild Include="CreateRfdDlg.ui">
+      <FileType>Document</FileType>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\uic.exe"  "CreateRfdDlg.ui" -o "ui_CreateRfdDlg.h"</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Generating ui_CreateRfdDlg.h file...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">ui_CreateRfdDlg.h</Outputs>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="..\Resource\OrmasResource.qrc">
+      <FileType>Document</FileType>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\rcc.exe" -binary "$(SolutionDir)Resource\OrmasResource.qrc" -o "OrmasResource.rcc"</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Compiling resources...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">OrmasResource.rcc</Outputs>
     </CustomBuild>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

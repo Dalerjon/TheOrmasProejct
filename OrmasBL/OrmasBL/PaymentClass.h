@@ -46,6 +46,7 @@ namespace BusinessLayer{
 		std::string GenerateFilter(DataLayer::OrmasDal& ormasDal);
 		bool GetPaymentByID(DataLayer::OrmasDal& ormasDal, int pID, std::string& errorMessage);
 		bool IsEmpty();
+		void Clear();
 	private:
 		double currentValue = 0.0;
 		bool IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string pDate, double pValue, int uID, int cID,
@@ -53,7 +54,8 @@ namespace BusinessLayer{
 		bool IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string& errorMessage);
 		bool Replenishment(DataLayer::OrmasDal& ormasDal, int uID, int cID, std::string& errorMessage);
 		bool Replenishment(DataLayer::OrmasDal& ormasDal, int uID, int cID, double previousValue, std::string& errorMessage);
-		double GetCurrenctValue(DataLayer::OrmasDal& ormasDal, int pID, std::string& errorMessage);
+		double GetCurrentValue(DataLayer::OrmasDal& ormasDal, int pID, std::string& errorMessage);
+		bool CancelPayment(DataLayer::OrmasDal& ormasDal, int uID, int cID, std::string& errorMessage);
 	};
 }
 

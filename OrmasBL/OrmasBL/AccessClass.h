@@ -39,6 +39,7 @@ namespace BusinessLayer{
 		std::string GenerateFilter(DataLayer::OrmasDal& ormasDal);
 		bool GetAccessByID(DataLayer::OrmasDal& ormasDal, int aID, std::string& errorMessage);
 		bool IsEmpty();
+		void Clear();
 		bool CheckAccess(DataLayer::OrmasDal* ormasDal, int accessItemID, std::string checkedDivision, std::string checkingItem);
 		bool CheckAccess(DataLayer::OrmasDal* ormasDal, int accessItemID, std::string checkedDivision);
 		std::vector<int> GetRightsList(DataLayer::OrmasDal* ormasDal, User*);

@@ -6,12 +6,12 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>422</width>
-    <height>244</height>
+    <width>379</width>
+    <height>270</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Create/Update Order</string>
+   <string>Create/Update order</string>
   </property>
   <property name="locale">
    <locale language="English" country="UnitedStates"/>
@@ -32,34 +32,38 @@
    <property name="bottomMargin">
     <number>11</number>
    </property>
-   <item row="1" column="1" colspan="2">
-    <widget class="QDateEdit" name="dateEdit">
-     <property name="dateTime">
-      <datetime>
-       <hour>0</hour>
-       <minute>0</minute>
-       <second>0</second>
-       <year>2000</year>
-       <month>1</month>
-       <day>1</day>
-      </datetime>
+   <item row="7" column="1" colspan="2">
+    <widget class="QLineEdit" name="currencyEdit">
+     <property name="readOnly">
+      <bool>true</bool>
      </property>
     </widget>
    </item>
-   <item row="0" column="0">
-    <widget class="QPushButton" name="clientBtn">
-     <property name="minimumSize">
-      <size>
-       <width>200</width>
-       <height>0</height>
-      </size>
-     </property>
+   <item row="6" column="0">
+    <widget class="QLabel" name="sumLb">
      <property name="text">
-      <string>Select client</string>
+      <string>Total amount:</string>
      </property>
     </widget>
    </item>
-   <item row="7" column="0" colspan="3">
+   <item row="1" column="0">
+    <widget class="QLabel" name="dateLb">
+     <property name="text">
+      <string>Order date:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="1" colspan="2">
+    <widget class="QLineEdit" name="employeeEdit">
+     <property name="toolTip">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Enter employee ID&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+     <property name="readOnly">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="8" column="0" colspan="3">
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
       <spacer name="horizontalSpacer">
@@ -93,98 +97,159 @@
    <item row="0" column="1" colspan="2">
     <widget class="QLineEdit" name="clientEdit">
      <property name="toolTip">
-      <string>Enter user ID</string>
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Enter client ID&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
      <property name="readOnly">
       <bool>true</bool>
      </property>
     </widget>
    </item>
-   <item row="1" column="0">
-    <widget class="QLabel" name="dateLb">
-     <property name="text">
-      <string>Date of order:</string>
-     </property>
-    </widget>
+   <item row="1" column="1" colspan="2">
+    <widget class="QDateTimeEdit" name="dateEdit"/>
    </item>
-   <item row="3" column="0">
-    <widget class="QPushButton" name="addProdBtn">
-     <property name="text">
-      <string>Add products</string>
-     </property>
-    </widget>
-   </item>
-   <item row="3" column="2">
-    <widget class="QLineEdit" name="prodCountEdit">
-     <property name="readOnly">
-      <bool>true</bool>
-     </property>
-    </widget>
-   </item>
-   <item row="2" column="0">
-    <widget class="QPushButton" name="employeeBtn">
-     <property name="text">
-      <string>Select employee</string>
-     </property>
-    </widget>
-   </item>
-   <item row="4" column="0">
-    <widget class="QPushButton" name="statusBtn">
-     <property name="text">
-      <string>Change status</string>
-     </property>
-    </widget>
-   </item>
-   <item row="3" column="1">
+   <item row="4" column="1">
     <widget class="QLabel" name="prodCountLb">
      <property name="text">
       <string>Count of products:</string>
      </property>
     </widget>
    </item>
-   <item row="6" column="0">
+   <item row="7" column="0">
     <widget class="QPushButton" name="currencyBtn">
      <property name="text">
       <string>Select currency</string>
      </property>
     </widget>
    </item>
-   <item row="2" column="1" colspan="2">
-    <widget class="QLineEdit" name="employeeEdit">
-     <property name="toolTip">
-      <string>Enter worker ID</string>
+   <item row="0" column="0">
+    <widget class="QPushButton" name="clientBtn">
+     <property name="minimumSize">
+      <size>
+       <width>200</width>
+       <height>0</height>
+      </size>
      </property>
-     <property name="readOnly">
-      <bool>true</bool>
-     </property>
-    </widget>
-   </item>
-   <item row="5" column="1" colspan="2">
-    <widget class="QLineEdit" name="sumEdit">
-     <property name="readOnly">
-      <bool>true</bool>
+     <property name="text">
+      <string>Select client</string>
      </property>
     </widget>
    </item>
-   <item row="4" column="1" colspan="2">
-    <widget class="QLineEdit" name="statusEdit">
+   <item row="4" column="0">
+    <widget class="QPushButton" name="addProdBtn">
+     <property name="text">
+      <string>Add products</string>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="2">
+    <widget class="QLineEdit" name="prodCountEdit">
      <property name="readOnly">
       <bool>true</bool>
      </property>
     </widget>
    </item>
    <item row="6" column="1" colspan="2">
-    <widget class="QLineEdit" name="currencyEdit">
+    <widget class="QLineEdit" name="sumEdit">
      <property name="readOnly">
       <bool>true</bool>
      </property>
     </widget>
    </item>
-   <item row="5" column="0">
-    <widget class="QLabel" name="sumLb">
+   <item row="2" column="0" colspan="3">
+    <widget class="QWidget" name="execDateWidget" native="true">
+     <layout class="QHBoxLayout" name="horizontalLayout_2">
+      <property name="spacing">
+       <number>9</number>
+      </property>
+      <property name="leftMargin">
+       <number>0</number>
+      </property>
+      <property name="topMargin">
+       <number>0</number>
+      </property>
+      <property name="rightMargin">
+       <number>0</number>
+      </property>
+      <property name="bottomMargin">
+       <number>0</number>
+      </property>
+      <item>
+       <widget class="QLabel" name="execDateLb">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>197</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>Execution date:</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QDateTimeEdit" name="execDateEdit"/>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="3" column="0">
+    <widget class="QPushButton" name="employeeBtn">
      <property name="text">
-      <string>Total amount:</string>
+      <string>Select employee</string>
      </property>
+    </widget>
+   </item>
+   <item row="5" column="0" colspan="3">
+    <widget class="QWidget" name="statusWidget" native="true">
+     <layout class="QHBoxLayout" name="horizontalLayout_3">
+      <property name="spacing">
+       <number>9</number>
+      </property>
+      <property name="leftMargin">
+       <number>0</number>
+      </property>
+      <property name="topMargin">
+       <number>0</number>
+      </property>
+      <property name="rightMargin">
+       <number>0</number>
+      </property>
+      <property name="bottomMargin">
+       <number>0</number>
+      </property>
+      <item>
+       <widget class="QPushButton" name="statusBtn">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>197</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>Change status</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLineEdit" name="statusEdit">
+        <property name="readOnly">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+     </layout>
     </widget>
    </item>
   </layout>
@@ -192,13 +257,10 @@
  <tabstops>
   <tabstop>clientBtn</tabstop>
   <tabstop>clientEdit</tabstop>
-  <tabstop>dateEdit</tabstop>
   <tabstop>employeeBtn</tabstop>
   <tabstop>employeeEdit</tabstop>
   <tabstop>addProdBtn</tabstop>
   <tabstop>prodCountEdit</tabstop>
-  <tabstop>statusBtn</tabstop>
-  <tabstop>statusEdit</tabstop>
   <tabstop>sumEdit</tabstop>
   <tabstop>currencyBtn</tabstop>
   <tabstop>currencyEdit</tabstop>

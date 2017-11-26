@@ -15,6 +15,7 @@ CreatePrcDlg::CreatePrcDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, QWi
 	vInt = new QIntValidator(0, 1000000000, this);
 	productEdit->setValidator(vInt);
 	valueEdit->setValidator(vDouble);
+	valueEdit->setMaxLength(17);
 	currencyEdit->setValidator(vInt);
 	if (true == updateFlag)
 	{
@@ -22,6 +23,7 @@ CreatePrcDlg::CreatePrcDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, QWi
 	}
 	else
 	{
+		dateEdit->setDateTime(QDateTime::currentDateTime());
 		QObject::connect(okBtn, &QPushButton::released, this, &CreatePrcDlg::CreatePrice);
 	}
 	QObject::connect(cancelBtn, &QPushButton::released, this, &CreatePrcDlg::Close);
@@ -65,7 +67,7 @@ void CreatePrcDlg::SetPriceParams(QString pDate, double pValue, int pProductID, 
 
 void CreatePrcDlg::FillEditElements(QString pDate, double pValue, int pProductID, int pCurrencyID)
 {
-	dateEdit->setDate(QDate::fromString(pDate, "yyyy-MM-dd"));
+	dateEdit->setDateTime(QDateTime::fromString(pDate, "yyyy.MM.dd hh:mm:ss"));
 	valueEdit->setText(QString::number(pValue));
 	productEdit->setText(QString::number(pProductID));
 	currencyEdit->setText(QString::number(pCurrencyID));
@@ -77,12 +79,12 @@ bool CreatePrcDlg::FillDlgElements(QTableView* pTable)
 	if (mIndex.row() >= 0)
 	{
 		SetPriceParams(pTable->model()->data(pTable->model()->index(mIndex.row(), 1)).toString().toUtf8().constData(),
-			pTable->model()->data(pTable->model()->index(mIndex.row(), 3)).toDouble(),
+			pTable->model()->data(pTable->model()->index(mIndex.row(), 5)).toDouble(),
 			pTable->model()->data(pTable->model()->index(mIndex.row(), 8)).toInt(),
 			pTable->model()->data(pTable->model()->index(mIndex.row(), 7)).toInt(),
 			pTable->model()->data(pTable->model()->index(mIndex.row(), 0)).toInt());
 		FillEditElements(pTable->model()->data(pTable->model()->index(mIndex.row(), 1)).toString().toUtf8().constData(),
-			pTable->model()->data(pTable->model()->index(mIndex.row(), 3)).toDouble(),
+			pTable->model()->data(pTable->model()->index(mIndex.row(), 5)).toDouble(),
 			pTable->model()->data(pTable->model()->index(mIndex.row(), 8)).toInt(),
 			pTable->model()->data(pTable->model()->index(mIndex.row(), 7)).toInt());
 		return true;

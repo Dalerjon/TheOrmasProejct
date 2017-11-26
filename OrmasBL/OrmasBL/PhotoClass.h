@@ -40,6 +40,7 @@ namespace BusinessLayer{
 		std::string GenerateFilter(DataLayer::OrmasDal& ormasDal);
 		bool GetPhotoByID(DataLayer::OrmasDal& ormasDal, int pID, std::string& errorMessage);
 		bool IsEmpty();
+		void Clear();
 	private:
 		void TrimStrings(std::string&);
 		bool IsDuplicate(DataLayer::OrmasDal& ormasDal, int uID, int pID, std::string pSource, std::string& errorMessage);

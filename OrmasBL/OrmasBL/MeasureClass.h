@@ -40,6 +40,7 @@ namespace BusinessLayer
 		std::string GenerateFilter(DataLayer::OrmasDal& ormasDal);
 		bool GetMeasureByID(DataLayer::OrmasDal& ormasDal, int mID, std::string& errorMessage);
 		bool IsEmpty();
+		void Clear();
 	private:
 		void TrimStrings(std::string&, std::string&);
 		bool IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string mName, std::string mShortName, std::string& errorMessage);

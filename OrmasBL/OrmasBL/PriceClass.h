@@ -46,6 +46,7 @@ namespace BusinessLayer{
 		std::string GenerateFilter(DataLayer::OrmasDal& ormasDal);
 		bool GetPriceByID(DataLayer::OrmasDal& ormasDal, int pID, std::string& errorMessage);
 		bool IsEmpty();
+		void Clear();
 	private:
 		bool IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string pDate, double pValue, int cID, int prID,
 			std::string& errorMessage);

@@ -165,6 +165,39 @@
     <ClInclude Include="WriteOffListViewClass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="WithdrawalClass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="WithdrawalViewClass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PayslipClass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RefundClass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PayslipViewClass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RefundViewClass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BalancePaymentRelationClass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BalancePayslipRelationClass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BalanceRefundRelationClass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BalanceWithdrawalRelationClass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PayslipOrderRelationClass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -306,6 +339,39 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="WriteOffListViewClass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="WithdrawalClass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="WithdrawalViewClass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Payslip.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RefundClass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PayslipViewClass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RefundViewClass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="BalancePayslipRelationClass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="BalanceRefundRelationClass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="BalanceWithdrawalRelationClass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="BalancePaymentRelationClass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PayslipOrderRelationClass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

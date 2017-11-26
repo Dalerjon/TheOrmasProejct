@@ -18,6 +18,7 @@ CreateProdnListDlg::CreateProdnListDlg(BusinessLayer::OrmasBL *ormasBL, bool upd
 	statusEdit->setValidator(vInt);
 	currencyEdit->setValidator(vInt);
 	sumEdit->setValidator(vDouble);
+	sumEdit->setMaxLength(17);
 	if (true == updateFlag)
 	{
 		QObject::connect(addBtn, &QPushButton::released, this, &CreateProdnListDlg::EditProductInList);
@@ -126,7 +127,7 @@ void CreateProdnListDlg::AddProductToList()
 	{
 		DataForm *parentDataForm = (DataForm*)parentWidget();
 		BusinessLayer::Status *status = new BusinessLayer::Status();
-		status->SetName("producted");
+		status->SetName("PRODUCED");
 		std::string statusFilter = dialogBL->GenerateFilter<BusinessLayer::Status>(status);
 		std::vector<BusinessLayer::Status> statusVector = dialogBL->GetAllDataForClass<BusinessLayer::Status>(errorMessage, statusFilter);
 		delete status;
@@ -183,7 +184,7 @@ void CreateProdnListDlg::AddProductToList()
 			countEdit->text().toInt(), (countEdit->text().toInt() * product->GetPrice()),
 			statusVector.at(0).GetID(), product->GetCurrencyID());
 
-		dialogBL->StartTransaction(errorMessage);
+		
 		if (dialogBL->CreateProductionList(productionList, errorMessage))
 		{
 			QList<QStandardItem*> ProductListItem;
@@ -215,11 +216,9 @@ void CreateProdnListDlg::AddProductToList()
 			delete product;
 			delete currency;
 			this->close();
-			dialogBL->CommitTransaction(errorMessage);
 		}
 		else
 		{
-			dialogBL->CancelTransaction(errorMessage);
 			QMessageBox::information(NULL, QString(tr("Warning")),
 				QString(tr("This product is not valid! Please delete it!")),
 				QString(tr("Ok")));
@@ -265,7 +264,7 @@ void CreateProdnListDlg::EditProductInList()
 			SetProductionListParams(productionEdit->text().toInt(),
 				productEdit->text().toInt(), countEdit->text().toInt(), sumEdit->text().toDouble(), statusEdit->text().toInt(),
 				productionList->GetCurrencyID(), productionList->GetID());
-			dialogBL->StartTransaction(errorMessage);
+			
 			if (dialogBL->UpdateProductionList(productionList, errorMessage))
 			{
 				BusinessLayer::Measure *measure = new BusinessLayer::Measure();
@@ -316,11 +315,9 @@ void CreateProdnListDlg::EditProductInList()
 				delete measure;
 				delete status;
 				delete currency;
-				dialogBL->CommitTransaction(errorMessage);
 			}
 			else
 			{
-				dialogBL->CancelTransaction(errorMessage);
 				QMessageBox::information(NULL, QString(tr("Warning")),
 					QString(tr(errorMessage.c_str())),
 					QString(tr("Ok")));

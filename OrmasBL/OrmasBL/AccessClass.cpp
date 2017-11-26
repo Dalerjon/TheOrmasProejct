@@ -151,12 +151,20 @@ namespace BusinessLayer{
 		return false;
 	}
 
+	void Access::Clear()
+	{
+		id = 0;
+		roleID = 0;
+		accessItemID = 0;
+	}
+
+
 	bool Access::CheckAccess(DataLayer::OrmasDal* ormasDal, int accessItemID, std::string checkedDivision, std::string checkingItem)
 	{
 		AccessItem accessItem;
 		errorMessage = "";
 		accessItem.GetAccessItemByID(*ormasDal, accessItemID, errorMessage);
-		if (!errorMessage.empty())
+		if (errorMessage.empty())
 		{
 			if (0 == checkedDivision.compare(accessItem.GetDivision()))
 			{
@@ -172,7 +180,7 @@ namespace BusinessLayer{
 		AccessItem accessItem;
 		errorMessage = "";
 		accessItem.GetAccessItemByID(*ormasDal, accessItemID, errorMessage);
-		if (!errorMessage.empty())
+		if (errorMessage.empty())
 		{
 			if (0 == checkedDivision.compare(accessItem.GetDivision()))
 			{

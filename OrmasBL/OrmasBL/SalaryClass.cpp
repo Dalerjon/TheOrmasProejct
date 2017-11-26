@@ -5,7 +5,7 @@ namespace BusinessLayer{
 	Salary::Salary(DataLayer::salariesCollection sCollection)
 	{
 		id = std::get<0>(sCollection);
-		userID = std::get<1>(sCollection);
+		employeeID = std::get<1>(sCollection);
 		value = std::get<2>(sCollection);
 		currencyID = std::get<3>(sCollection);
 		salaryTypeID = std::get<4>(sCollection);
@@ -15,7 +15,7 @@ namespace BusinessLayer{
 	Salary::Salary()
 	{
 		id = 0;
-		userID = 0;
+		employeeID = 0;
 		value = 0.0;
 		currencyID = 0;
 		salaryTypeID = 0;
@@ -28,9 +28,9 @@ namespace BusinessLayer{
 		return id;
 	}
 
-	int Salary::GetUserID()
+	int Salary::GetEmployeeID()
 	{
-		return userID;
+		return employeeID;
 	}
 
 	double Salary::GetValue()
@@ -63,9 +63,9 @@ namespace BusinessLayer{
 		id = sID;
 	}
 
-	void Salary::SetUserID(int uID)
+	void Salary::SetEmployeeID(int eID)
 	{
-		userID = uID;
+		employeeID = eID;
 	}
 	void Salary::SetValue(double bValue)
 	{
@@ -97,13 +97,13 @@ namespace BusinessLayer{
 		if (IsDuplicate(ormasDal, uID, sValue, cID, sDate, errorMessage))
 			return false;
 		id = ormasDal.GenerateID();
-		userID = uID;
+		employeeID = uID;
 		value = sValue;
 		currencyID = cID;
 		salaryTypeID = stID;
 		date = sDate;
 		isBonus = sIsBonus;
-		if (0 != userID && ormasDal.CreateSalary(id, userID, value, currencyID, salaryTypeID, date, isBonus, errorMessage))
+		if (0 != employeeID && ormasDal.CreateSalary(id, employeeID, value, currencyID, salaryTypeID, date, isBonus, errorMessage))
 		{
 			return true;
 		}
@@ -118,7 +118,7 @@ namespace BusinessLayer{
 		if (IsDuplicate(ormasDal, errorMessage))
 			return false;
 		id = ormasDal.GenerateID();
-		if (ormasDal.CreateSalary(id, userID, value, currencyID, salaryTypeID, date, isBonus, errorMessage))
+		if (ormasDal.CreateSalary(id, employeeID, value, currencyID, salaryTypeID, date, isBonus, errorMessage))
 		{
 			return true;
 		}
@@ -130,10 +130,10 @@ namespace BusinessLayer{
 	}
 	bool Salary::DeleteSalary(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
-		if (ormasDal.DeleteSalary(userID, errorMessage))
+		if (ormasDal.DeleteSalary(employeeID, errorMessage))
 		{
 			id = 0;
-			userID = 0;
+			employeeID = 0;
 			value = 0;
 			currencyID = 0;
 			salaryTypeID = 0;
@@ -151,13 +151,13 @@ namespace BusinessLayer{
 	bool Salary::UpdateSalary(DataLayer::OrmasDal &ormasDal, int uID, double sValue, int cID, int stID, std::string sDate,
 		bool sIsBonus, std::string& errorMessage)
 	{
-		userID = uID;
+		employeeID = uID;
 		value = sValue;
 		currencyID = cID;
 		salaryTypeID = stID;
 		date = sDate;
 		isBonus = sIsBonus;
-		if (0 != userID && ormasDal.UpdateSalary(id, userID, value, currencyID, salaryTypeID, date, isBonus, errorMessage))
+		if (0 != employeeID && ormasDal.UpdateSalary(id, employeeID, value, currencyID, salaryTypeID, date, isBonus, errorMessage))
 		{
 			return true;
 		}
@@ -169,7 +169,7 @@ namespace BusinessLayer{
 	}
 	bool Salary::UpdateSalary(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
-		if (ormasDal.UpdateSalary(id, userID, value, currencyID, salaryTypeID, date, isBonus, errorMessage))
+		if (ormasDal.UpdateSalary(id, employeeID, value, currencyID, salaryTypeID, date, isBonus, errorMessage))
 		{
 			return true;
 		}
@@ -182,9 +182,9 @@ namespace BusinessLayer{
 
 	std::string Salary::GenerateFilter(DataLayer::OrmasDal& ormasDal)
 	{
-		if (0 != id || 0 != userID || 0 != value || 0 != currencyID || 0 != salaryTypeID || !date.empty())
+		if (0 != id || 0 != employeeID || 0 != value || 0 != currencyID || 0 != salaryTypeID || !date.empty())
 		{
-			return ormasDal.GetFilterForSalary(id, userID, value, currencyID, salaryTypeID, date, isBonus);
+			return ormasDal.GetFilterForSalary(id, employeeID, value, currencyID, salaryTypeID, date, isBonus);
 		}
 		return "";
 	}
@@ -197,7 +197,7 @@ namespace BusinessLayer{
 		if (0 != salaryVector.size())
 		{
 			id = std::get<0>(salaryVector.at(0));
-			userID = std::get<1>(salaryVector.at(0));
+			employeeID = std::get<1>(salaryVector.at(0));
 			date = std::get<5>(salaryVector.at(0));
 			value = std::get<6>(salaryVector.at(0));
 			currencyID = std::get<9>(salaryVector.at(0));
@@ -214,15 +214,26 @@ namespace BusinessLayer{
 
 	bool Salary::IsEmpty()
 	{
-		if (0 == id  && 0 == userID && 0.0 == value && 0 == currencyID && 0 == salaryTypeID && date.empty() && isBonus == false)
+		if (0 == id  && 0 == employeeID && 0.0 == value && 0 == currencyID && 0 == salaryTypeID && date.empty() && isBonus == false)
 			return true;
 		return false;
+	}
+
+	void Salary::Clear()
+	{
+		id = 0;
+		employeeID = 0;
+		value = 0;
+		currencyID = 0;
+		salaryTypeID = 0;
+		date.clear();
+		isBonus = false;
 	}
 	
 	bool Salary::IsDuplicate(DataLayer::OrmasDal& ormasDal, int uID, double sValue, int cID, std::string sDate, std::string& errorMessage)
 	{
 		Salary salary;
-		salary.SetUserID(uID);
+		salary.SetEmployeeID(uID);
 		salary.SetValue(sValue);
 		salary.SetCurrencyID(cID);
 		salary.SetDate(sDate);
@@ -241,7 +252,7 @@ namespace BusinessLayer{
 	bool Salary::IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
 		Salary salary;
-		salary.SetUserID(userID);
+		salary.SetEmployeeID(employeeID);
 		salary.SetValue(value);
 		salary.SetCurrencyID(currencyID);
 		salary.SetDate(date);

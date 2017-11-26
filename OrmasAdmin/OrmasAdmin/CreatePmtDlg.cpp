@@ -16,13 +16,14 @@ CreatePmtDlg::CreatePmtDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, QWi
 	userEdit->setValidator(vInt);
 	valueEdit->setValidator(vDouble);
 	currencyEdit->setValidator(vInt);
-	
+	valueEdit->setMaxLength(17);
 	if (true == updateFlag)
 	{
 		QObject::connect(okBtn, &QPushButton::released, this, &CreatePmtDlg::EditPayment);
 	}
 	else
 	{
+		dateEdit->setDateTime(QDateTime::currentDateTime());
 		QObject::connect(okBtn, &QPushButton::released, this, &CreatePmtDlg::CreatePayment);
 	}
 	QObject::connect(cancelBtn, &QPushButton::released, this, &CreatePmtDlg::Close);
@@ -65,7 +66,7 @@ void CreatePmtDlg::SetPaymentParams(QString pDate, double pValue, int pUserID, i
 
 void CreatePmtDlg::FillEditElements(QString pDate, double pValue, int pUserID, int pCurrencyID)
 {
-	dateEdit->setDate(QDate::fromString(pDate, "yyyy-MM-dd"));
+	dateEdit->setDateTime(QDateTime::fromString(pDate, "yyyy.MM.dd hh:mm:ss"));
 	valueEdit->setText(QString::number(pValue));
 	userEdit->setText(QString::number(pUserID));
 	currencyEdit->setText(QString::number(pCurrencyID));

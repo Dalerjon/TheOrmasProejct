@@ -86,7 +86,7 @@ public:
 
     void retranslateUi(QDialog *CreatePosition)
     {
-        CreatePosition->setWindowTitle(QApplication::translate("CreatePosition", "Create/Update payment", 0));
+        CreatePosition->setWindowTitle(QApplication::translate("CreatePosition", "Create/Update position", 0));
         positionLb->setText(QApplication::translate("CreatePosition", "Position:", 0));
 #ifndef QT_NO_TOOLTIP
         nameEdit->setToolTip(QApplication::translate("CreatePosition", "<html><head/><body><p>For example: HR</p></body></html>", 0));

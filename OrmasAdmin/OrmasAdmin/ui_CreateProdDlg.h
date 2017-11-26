@@ -190,7 +190,7 @@ public:
 
     void retranslateUi(QDialog *CreateProduct)
     {
-        CreateProduct->setWindowTitle(QApplication::translate("CreateProduct", "Create/Update Product", 0));
+        CreateProduct->setWindowTitle(QApplication::translate("CreateProduct", "Create/Update product", 0));
         prodTypeBtn->setText(QApplication::translate("CreateProduct", "Select product type", 0));
         priceLb->setText(QApplication::translate("CreateProduct", "Price:", 0));
 #ifndef QT_NO_TOOLTIP

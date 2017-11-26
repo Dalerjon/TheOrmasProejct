@@ -164,6 +164,14 @@ namespace BusinessLayer{
 		return false;
 	}
 
+	void Balance::Clear()
+	{
+		id = 0;
+		userID = 0;
+		value = 0.0;
+		currencyID = 0;
+	}
+
 	bool Balance::IsDuplicate(DataLayer::OrmasDal& ormasDal, int uID, int cID, std::string& errorMessage)
 	{
 		Balance balance;

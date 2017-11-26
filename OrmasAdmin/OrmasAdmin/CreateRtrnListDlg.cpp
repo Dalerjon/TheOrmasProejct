@@ -18,6 +18,7 @@ CreateRtrnListDlg::CreateRtrnListDlg(BusinessLayer::OrmasBL *ormasBL, bool updat
 	statusEdit->setValidator(vInt);
 	currencyEdit->setValidator(vInt);
 	sumEdit->setValidator(vDouble);
+	sumEdit->setMaxLength(17);
 	if (true == updateFlag)
 	{
 		QObject::connect(addBtn, &QPushButton::released, this, &CreateRtrnListDlg::EditProductInList);
@@ -126,7 +127,7 @@ void CreateRtrnListDlg::AddProductToList()
 	{
 		DataForm *parentDataForm = (DataForm*)parentWidget();
 		BusinessLayer::Status *status = new BusinessLayer::Status();
-		status->SetName("returned");
+		status->SetName("TO RETURN");
 		std::string statusFilter = dialogBL->GenerateFilter<BusinessLayer::Status>(status);
 		std::vector<BusinessLayer::Status> statusVector = dialogBL->GetAllDataForClass<BusinessLayer::Status>(errorMessage, statusFilter);
 		delete status;
@@ -183,7 +184,6 @@ void CreateRtrnListDlg::AddProductToList()
 			countEdit->text().toInt(), (countEdit->text().toInt() * product->GetPrice()),
 			statusVector.at(0).GetID(), product->GetCurrencyID());
 
-		dialogBL->StartTransaction(errorMessage);
 		if (dialogBL->CreateReturnList(returnList, errorMessage))
 		{
 			QList<QStandardItem*> ProductListItem;
@@ -215,11 +215,9 @@ void CreateRtrnListDlg::AddProductToList()
 			delete product;
 			delete currency;
 			this->close();
-			dialogBL->CommitTransaction(errorMessage);
 		}
 		else
 		{
-			dialogBL->CancelTransaction(errorMessage);
 			QMessageBox::information(NULL, QString(tr("Warning")),
 				QString(tr("This product is not valid! Please delete it!")),
 				QString(tr("Ok")));
@@ -265,7 +263,6 @@ void CreateRtrnListDlg::EditProductInList()
 			SetReturnListParams(returnEdit->text().toInt(),
 				productEdit->text().toInt(), countEdit->text().toInt(), sumEdit->text().toDouble(), statusEdit->text().toInt(),
 				returnList->GetCurrencyID(), returnList->GetID());
-			dialogBL->StartTransaction(errorMessage);
 			if (dialogBL->UpdateReturnList(returnList, errorMessage))
 			{
 				BusinessLayer::Measure *measure = new BusinessLayer::Measure();
@@ -316,11 +313,9 @@ void CreateRtrnListDlg::EditProductInList()
 				delete measure;
 				delete status;
 				delete currency;
-				dialogBL->CommitTransaction(errorMessage);
 			}
 			else
 			{
-				dialogBL->CancelTransaction(errorMessage);
 				QMessageBox::information(NULL, QString(tr("Warning")),
 					QString(tr(errorMessage.c_str())),
 					QString(tr("Ok")));
@@ -444,7 +439,7 @@ void CreateRtrnListDlg::OpenRtrnDlg()
 	QString message = tr("Loading...");
 	mainForm->statusBar()->showMessage(message);
 	DataForm *dForm = new DataForm(dialogBL, mainForm);
-	dForm->setWindowTitle(tr("returns"));
+	dForm->setWindowTitle(tr("Returns"));
 	dForm->hide();
 	dForm->setWindowModality(Qt::WindowModal);
 	dForm->FillTable<BusinessLayer::ReturnView>(errorMessage);

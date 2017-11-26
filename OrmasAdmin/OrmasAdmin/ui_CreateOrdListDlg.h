@@ -171,7 +171,7 @@ public:
 
     void retranslateUi(QDialog *CreateOrdList)
     {
-        CreateOrdList->setWindowTitle(QApplication::translate("CreateOrdList", "Create/Update product in list", 0));
+        CreateOrdList->setWindowTitle(QApplication::translate("CreateOrdList", "Create/Update product in order list", 0));
         countLb->setText(QApplication::translate("CreateOrdList", "Count:", 0));
         productBtn->setText(QApplication::translate("CreateOrdList", "Select product", 0));
         addBtn->setText(QApplication::translate("CreateOrdList", "Add", 0));

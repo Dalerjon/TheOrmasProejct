@@ -61,6 +61,7 @@ namespace BusinessLayer
 		bool CreateOrder(BusinessLayer::Order*, std::string&);
 		bool CreateOrderList(BusinessLayer::OrderList*, std::string&);
 		bool CreatePayment(BusinessLayer::Payment*, std::string&);
+		bool CreatePayslip(BusinessLayer::Payslip*, std::string&);
 		bool CreatePhoto(BusinessLayer::Photo*, std::string&);
 		bool CreatePosition(BusinessLayer::Position*, std::string&);
 		bool CreatePrice(BusinessLayer::Price*, std::string&);
@@ -68,6 +69,7 @@ namespace BusinessLayer
 		bool CreateProduction(BusinessLayer::Production*, std::string&);
 		bool CreateProductionList(BusinessLayer::ProductionList*, std::string&);
 		bool CreateProductType(BusinessLayer::ProductType*, std::string&);
+		bool CreateRefund(BusinessLayer::Refund*, std::string&);
 		bool CreateRelation(BusinessLayer::Relation*, std::string&);
 		bool CreateRelationType(BusinessLayer::RelationType*, std::string&);
 		bool CreateReturn(BusinessLayer::Return*, std::string&);
@@ -77,6 +79,7 @@ namespace BusinessLayer
 		bool CreateSalaryType(BusinessLayer::SalaryType*, std::string&);
 		bool CreateStatus(BusinessLayer::Status*, std::string&);
 		bool CreateUser(BusinessLayer::User*, std::string&);
+		bool CreateWithdrawal(BusinessLayer::Withdrawal*, std::string&);
 		bool CreateWriteOff(BusinessLayer::WriteOff*, std::string&);
 		bool CreateWriteOffList(BusinessLayer::WriteOffList*, std::string&);
 
@@ -92,6 +95,7 @@ namespace BusinessLayer
 		bool DeleteOrder(BusinessLayer::Order*, std::string&);
 		bool DeleteOrderList(BusinessLayer::OrderList*, std::string&);
 		bool DeletePayment(BusinessLayer::Payment*, std::string&);
+		bool DeletePayslip(BusinessLayer::Payslip*, std::string&);
 		bool DeletePhoto(BusinessLayer::Photo*, std::string&);
 		bool DeletePosition(BusinessLayer::Position*, std::string&);
 		bool DeletePrice(BusinessLayer::Price*, std::string&);
@@ -99,6 +103,7 @@ namespace BusinessLayer
 		bool DeleteProduction(BusinessLayer::Production*, std::string&);
 		bool DeleteProductionList(BusinessLayer::ProductionList*, std::string&);
 		bool DeleteProductType(BusinessLayer::ProductType*, std::string&);
+		bool DeleteRefund(BusinessLayer::Refund*, std::string&);
 		bool DeleteRelation(BusinessLayer::Relation*, std::string&);
 		bool DeleteRelationType(BusinessLayer::RelationType*, std::string&);
 		bool DeleteReturn(BusinessLayer::Return*, std::string&);
@@ -108,6 +113,7 @@ namespace BusinessLayer
 		bool DeleteSalaryType(BusinessLayer::SalaryType*, std::string&);
 		bool DeleteStatus(BusinessLayer::Status*, std::string&);
 		bool DeleteUser(BusinessLayer::User*, std::string&);
+		bool DeleteWithdrawal(BusinessLayer::Withdrawal*, std::string&);
 		bool DeleteWriteOff(BusinessLayer::WriteOff*, std::string&);
 		bool DeleteWriteOffList(BusinessLayer::WriteOffList*, std::string&);
 
@@ -123,6 +129,7 @@ namespace BusinessLayer
 		bool UpdateOrder(BusinessLayer::Order*, std::string&);
 		bool UpdateOrderList(BusinessLayer::OrderList*, std::string&);
 		bool UpdatePayment(BusinessLayer::Payment*, std::string&);
+		bool UpdatePayslip(BusinessLayer::Payslip*, std::string&);
 		bool UpdatePhoto(BusinessLayer::Photo*, std::string&);
 		bool UpdatePosition(BusinessLayer::Position*, std::string&);
 		bool UpdatePrice(BusinessLayer::Price*, std::string&);
@@ -130,6 +137,7 @@ namespace BusinessLayer
 		bool UpdateProduction(BusinessLayer::Production*, std::string&);
 		bool UpdateProductionList(BusinessLayer::ProductionList*, std::string&);
 		bool UpdateProductType(BusinessLayer::ProductType*, std::string&);
+		bool UpdateRefund(BusinessLayer::Refund*, std::string&);
 		bool UpdateRelation(BusinessLayer::Relation*, std::string&);
 		bool UpdateRelationType(BusinessLayer::RelationType*, std::string&);
 		bool UpdateReturn(BusinessLayer::Return*, std::string&);
@@ -139,6 +147,7 @@ namespace BusinessLayer
 		bool UpdateSalaryType(BusinessLayer::SalaryType*, std::string&);
 		bool UpdateStatus(BusinessLayer::Status*, std::string&);
 		bool UpdateUser(BusinessLayer::User*, std::string&);
+		bool UpdateWithdrawal(BusinessLayer::Withdrawal*, std::string&);
 		bool UpdateWriteOff(BusinessLayer::WriteOff*, std::string&);
 		bool UpdateWriteOffList(BusinessLayer::WriteOffList*, std::string&);
 	};

@@ -50,6 +50,7 @@ namespace BusinessLayer{
 		bool GetClientByID(DataLayer::OrmasDal& ormasDal, int uID, std::string& errorMessage);
 		bool GetClientByCredentials(DataLayer::OrmasDal& ormasDal, std::string uPhone, std::string uEmail, std::string uPassword);
 		bool IsEmpty();
+		void Clear();
 	private:
 		void TrimStrings(std::string&, std::string&, std::string&, std::string&, std::string&, std::string&, std::string&, std::string&);
 		bool IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string uName, std::string uSurname, std::string uPhone,

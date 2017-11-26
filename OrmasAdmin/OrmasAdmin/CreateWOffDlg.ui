@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Create/Update Write-off</string>
+   <string>Create/Update write-off</string>
   </property>
   <property name="locale">
    <locale language="English" country="UnitedStates"/>
@@ -32,20 +32,6 @@
    <property name="bottomMargin">
     <number>11</number>
    </property>
-   <item row="1" column="1" colspan="2">
-    <widget class="QDateEdit" name="dateEdit">
-     <property name="dateTime">
-      <datetime>
-       <hour>0</hour>
-       <minute>0</minute>
-       <second>0</second>
-       <year>2000</year>
-       <month>1</month>
-       <day>1</day>
-      </datetime>
-     </property>
-    </widget>
-   </item>
    <item row="0" column="0">
     <widget class="QPushButton" name="clientBtn">
      <property name="minimumSize">
@@ -93,7 +79,7 @@
    <item row="0" column="1" colspan="2">
     <widget class="QLineEdit" name="clientEdit">
      <property name="toolTip">
-      <string>Enter user ID</string>
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Enter client ID&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
      <property name="readOnly">
       <bool>true</bool>
@@ -152,7 +138,7 @@
    <item row="2" column="1" colspan="2">
     <widget class="QLineEdit" name="employeeEdit">
      <property name="toolTip">
-      <string>Enter worker ID</string>
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Enter employee ID&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
      <property name="readOnly">
       <bool>true</bool>
@@ -187,12 +173,14 @@
      </property>
     </widget>
    </item>
+   <item row="1" column="1" colspan="2">
+    <widget class="QDateTimeEdit" name="dateEdit"/>
+   </item>
   </layout>
  </widget>
  <tabstops>
   <tabstop>clientBtn</tabstop>
   <tabstop>clientEdit</tabstop>
-  <tabstop>dateEdit</tabstop>
   <tabstop>employeeBtn</tabstop>
   <tabstop>employeeEdit</tabstop>
   <tabstop>addProdBtn</tabstop>

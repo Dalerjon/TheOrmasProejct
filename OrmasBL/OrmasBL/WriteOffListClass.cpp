@@ -182,6 +182,17 @@ namespace BusinessLayer
 		return false;
 	}
 
+	void WriteOffList::Clear()
+	{
+		id = 0;
+		writeOffID = 0;
+		count = 0;
+		sum = 0;
+		productID = 0;
+		statusID = 0;
+		currencyID = 0;
+	}
+
 	bool WriteOffList::IsDuplicate(DataLayer::OrmasDal& ormasDal, int wID, int pID, int wlCount, double wlSum,
 		int cID, std::string& errorMessage)
 	{

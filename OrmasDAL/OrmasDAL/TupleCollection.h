@@ -6,6 +6,14 @@ namespace DataLayer{
 
 	typedef std::tuple<int, int, int> accessesCollection;
 	
+	typedef std::tuple<int, int> balancePaymentCollection;
+
+	typedef std::tuple<int, int> balancePayslipCollection;
+	
+	typedef std::tuple<int, int> balanceRefundCollection;
+	
+	typedef std::tuple<int, int> balanceWithdrawalCollection;
+
 	typedef std::tuple<int, int, double, int> balancesCollection;
 
 	typedef std::tuple<int,std::string, std::string, double, std::string, int, int> balancesViewCollection;
@@ -32,15 +40,21 @@ namespace DataLayer{
 
 	typedef std::tuple<int, int, std::string, double, std::string, double, std::string, int, double, std::string,
 		std::string, int, int, int> orderListViewCollection;
+
+	typedef std::tuple<int, int> payslipOrderCollection;
 	
-	typedef std::tuple<int, int, std::string, int, int, double, int, int> ordersCollection;
+	typedef std::tuple<int, int, std::string, std::string, int, int, double, int, int> ordersCollection;
 	
-	typedef std::tuple<int, std::string, std::string, std::string, std::string, std::string, std::string, std::string, std::string,
+	typedef std::tuple<int, std::string, std::string, std::string, std::string, std::string, std::string, std::string, std::string, std::string,
 		std::string, std::string, std::string, int, double, std::string, int, int, int, int> ordersViewCollection;
 
 	typedef std::tuple<int, std::string, double, int, int> paymentsCollection;
 
 	typedef std::tuple<int, std::string, double, std::string, int, int> paymentsViewCollection;
+
+	typedef std::tuple<int, std::string, double, int, int> payslipsCollection;
+
+	typedef std::tuple<int, std::string, double, std::string, int, int> payslipsViewCollection;
 
 	typedef std::tuple<int, int, int, std::string> photosCollection;
 
@@ -64,6 +78,10 @@ namespace DataLayer{
 	typedef std::tuple<int, std::string, double, std::string, double, std::string, std::string, int, std::string, int, int,
 		int, int> productsViewCollection;
 
+	typedef std::tuple<int, std::string, double, int, int> refundsCollection;
+	
+	typedef std::tuple<int, std::string, double, std::string, int, int> refundsViewCollection;
+
 	typedef std::tuple<int, std::string, std::string> relationTypeCollection;
 
 	typedef std::tuple<int, int, int, int> relationsCollection;
@@ -73,9 +91,9 @@ namespace DataLayer{
 	typedef std::tuple<int, int, std::string, double, std::string, double, std::string, int, double, std::string,
 		std::string, int, int, int> returnListViewCollection;
 	
-	typedef std::tuple<int, int, std::string, int, int, double, int, int> returnsCollection;
+	typedef std::tuple<int, int, std::string, std::string, int, int, double, int, int> returnsCollection;
 	
-	typedef std::tuple<int, std::string, std::string, std::string, std::string, std::string, std::string, std::string, std::string,
+	typedef std::tuple<int, std::string, std::string, std::string, std::string, std::string, std::string, std::string, std::string, std::string,
 		std::string, std::string, std::string, int, double, std::string, int, int, int, int> returnsViewCollection;
 	
 	typedef std::tuple<int, std::string, std::string, std::string> rolesCollection;
@@ -94,6 +112,10 @@ namespace DataLayer{
 	
 	typedef std::tuple<int, std::string, std::string, std::string, std::string, std::string, std::string,
 		std::string, bool, int> usersViewCollection;
+
+	typedef std::tuple<int, std::string, double, int, int> withdrawalsCollection;
+
+	typedef std::tuple<int, std::string, double, std::string, int, int> withdrawalsViewCollection;
 
 	typedef std::tuple<int, int, int, int, double, int, int> writeOffListCollection;
 

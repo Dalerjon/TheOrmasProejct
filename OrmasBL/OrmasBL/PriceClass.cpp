@@ -183,6 +183,15 @@ namespace BusinessLayer{
 		return false;
 	}
 
+	void Price::Clear()
+	{
+		id = 0;
+		date.clear();
+		value = 0;
+		currencyID = 0;
+		productID = 0;
+	}
+
 	bool Price::IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string pDate, double pValue, int cID, int prID,
 		std::string& errorMessage)
 	{

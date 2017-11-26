@@ -20,7 +20,7 @@
 QT_BEGIN_MOC_NAMESPACE
 struct qt_meta_stringdata_CreateSlrDlg_t {
     QByteArrayData data[12];
-    char stringdata0[114];
+    char stringdata0[113];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
@@ -35,18 +35,17 @@ QT_MOC_LITERAL(2, 26, 0), // ""
 QT_MOC_LITERAL(3, 27, 10), // "EditSalary"
 QT_MOC_LITERAL(4, 38, 12), // "DeleteSalary"
 QT_MOC_LITERAL(5, 51, 5), // "Close"
-QT_MOC_LITERAL(6, 57, 11), // "OpenUserDlg"
-QT_MOC_LITERAL(7, 69, 10), // "OpenCurDlg"
-QT_MOC_LITERAL(8, 80, 14), // "OpenSlrTypeDlg"
-QT_MOC_LITERAL(9, 95, 5), // "SetID"
-QT_MOC_LITERAL(10, 101, 2), // "ID"
-QT_MOC_LITERAL(11, 104, 9) // "childName"
+QT_MOC_LITERAL(6, 57, 10), // "OpenEmpDlg"
+QT_MOC_LITERAL(7, 68, 10), // "OpenCurDlg"
+QT_MOC_LITERAL(8, 79, 14), // "OpenSlrTypeDlg"
+QT_MOC_LITERAL(9, 94, 5), // "SetID"
+QT_MOC_LITERAL(10, 100, 2), // "ID"
+QT_MOC_LITERAL(11, 103, 9) // "childName"
 
     },
     "CreateSlrDlg\0CreateSalary\0\0EditSalary\0"
-    "DeleteSalary\0Close\0OpenUserDlg\0"
-    "OpenCurDlg\0OpenSlrTypeDlg\0SetID\0ID\0"
-    "childName"
+    "DeleteSalary\0Close\0OpenEmpDlg\0OpenCurDlg\0"
+    "OpenSlrTypeDlg\0SetID\0ID\0childName"
 };
 #undef QT_MOC_LITERAL
 
@@ -96,7 +95,7 @@ void CreateSlrDlg::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id
         case 1: _t->EditSalary(); break;
         case 2: _t->DeleteSalary(); break;
         case 3: _t->Close(); break;
-        case 4: _t->OpenUserDlg(); break;
+        case 4: _t->OpenEmpDlg(); break;
         case 5: _t->OpenCurDlg(); break;
         case 6: _t->OpenSlrTypeDlg(); break;
         case 7: _t->SetID((*reinterpret_cast< int(*)>(_a[1])),(*reinterpret_cast< QString(*)>(_a[2]))); break;

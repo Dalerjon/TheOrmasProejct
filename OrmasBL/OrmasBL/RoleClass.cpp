@@ -167,6 +167,14 @@ namespace BusinessLayer
 		return false;
 	}
 
+	void Role::Clear()
+	{
+		id = 0;
+		code.clear();
+		name.clear();
+		comment.clear();
+	}
+
 	void Role::TrimStrings(std::string& rCode, std::string& rName)
 	{
 		if (!rCode.empty())

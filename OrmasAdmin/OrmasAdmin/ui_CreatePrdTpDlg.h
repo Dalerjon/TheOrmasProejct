@@ -105,7 +105,7 @@ public:
     void retranslateUi(QDialog *CreateProductType)
     {
         CreateProductType->setWindowTitle(QApplication::translate("CreateProductType", "Create/Update product type", 0));
-        shortNameLb->setText(QApplication::translate("CreateProductType", "Short name", 0));
+        shortNameLb->setText(QApplication::translate("CreateProductType", "Short name:", 0));
         nameLb->setText(QApplication::translate("CreateProductType", "Name:", 0));
 #ifndef QT_NO_TOOLTIP
         nameEdit->setToolTip(QApplication::translate("CreateProductType", "<html><head/><body><p>For example: Dairy products</p></body></html>", 0));

@@ -145,7 +145,7 @@ public:
 
     void retranslateUi(QDialog *CreateCurrency)
     {
-        CreateCurrency->setWindowTitle(QApplication::translate("CreateCurrency", "Create/Update Currency", 0));
+        CreateCurrency->setWindowTitle(QApplication::translate("CreateCurrency", "Create/Update currency", 0));
         shortNameLb->setText(QApplication::translate("CreateCurrency", "Short name:", 0));
         nameLb->setText(QApplication::translate("CreateCurrency", "Name:", 0));
 #ifndef QT_NO_TOOLTIP
@@ -161,7 +161,7 @@ public:
 #ifndef QT_NO_TOOLTIP
         codeEdit->setToolTip(QApplication::translate("CreateCurrency", "<html><head/><body><p>For example: 840 (international currency code)</p></body></html>", 0));
 #endif // QT_NO_TOOLTIP
-        codeEdit->setInputMask(QApplication::translate("CreateCurrency", "000", 0));
+        codeEdit->setInputMask(QString());
 #ifndef QT_NO_TOOLTIP
         nameEdit->setToolTip(QApplication::translate("CreateCurrency", "<html><head/><body><p>For example: United States Dollar</p></body></html>", 0));
 #endif // QT_NO_TOOLTIP

@@ -10,14 +10,17 @@ CreateOrdListDlg::CreateOrdListDlg(BusinessLayer::OrmasBL *ormasBL, bool updateF
 	setupUi(this);
 	//setModal(true);
 	dialogBL = ormasBL;
+	orderID = ((DataForm*)parent)->orderID;
 	vDouble = new QDoubleValidator(0.00, 1000000000.00, 3, this);
 	vInt = new QIntValidator(0, 1000000000, this);
 	productEdit->setValidator(vInt);
 	countEdit->setValidator(vInt);
+	countEdit->setMaxLength(10);
 	orderEdit->setValidator(vInt);
 	statusEdit->setValidator(vInt);
 	currencyEdit->setValidator(vInt);
 	sumEdit->setValidator(vDouble);
+	sumEdit->setMaxLength(17);
 	if (true == updateFlag)
 	{
 		QObject::connect(addBtn, &QPushButton::released, this, &CreateOrdListDlg::EditProductInList);
@@ -126,7 +129,7 @@ void CreateOrdListDlg::AddProductToList()
 	{
 		DataForm *parentDataForm = (DataForm*)parentWidget();
 		BusinessLayer::Status *status = new BusinessLayer::Status();
-		status->SetName("ordered");
+		status->SetName("ORDERED");
 		std::string statusFilter = dialogBL->GenerateFilter<BusinessLayer::Status>(status);
 		std::vector<BusinessLayer::Status> statusVector = dialogBL->GetAllDataForClass<BusinessLayer::Status>(errorMessage, statusFilter);
 		delete status;
@@ -180,7 +183,6 @@ void CreateOrdListDlg::AddProductToList()
 				countEdit->text().toInt(), (countEdit->text().toInt() * product->GetPrice()),
 				statusVector.at(0).GetID(), product->GetCurrencyID());
 		
-		dialogBL->StartTransaction(errorMessage);
 		if (dialogBL->CreateOrderList(orderList, errorMessage))
 		{
 			QList<QStandardItem*> ProductListItem;
@@ -212,11 +214,9 @@ void CreateOrdListDlg::AddProductToList()
 			delete product;
 			delete currency;
 			this->close();
-			dialogBL->CommitTransaction(errorMessage);
 		}
 		else
 		{
-			dialogBL->CancelTransaction(errorMessage);
 			QMessageBox::information(NULL, QString(tr("Warning")),
 				QString(tr("This product is not valid! Please delete it!")),
 				QString(tr("Ok")));
@@ -262,17 +262,10 @@ void CreateOrdListDlg::EditProductInList()
 			SetOrderListParams(orderEdit->text().toInt(),
 				productEdit->text().toInt(), countEdit->text().toInt(), sumEdit->text().toDouble(), statusEdit->text().toInt(),
 				orderList->GetCurrencyID(), orderList->GetID());
-			dialogBL->StartTransaction(errorMessage);
 			if (dialogBL->UpdateOrderList(orderList, errorMessage))
 			{
 				BusinessLayer::Measure *measure = new BusinessLayer::Measure();
-				//measure->SetID(product->GetMeasureID());
-				//std::string measureFilter = dialogBL->GenerateFilter<BusinessLayer::Measure>(measure);
-				//std::vector<BusinessLayer::Measure> measureVector = dialogBL->GetAllDataForClass<BusinessLayer::Measure>(errorMessage, measureFilter);
 				BusinessLayer::Status *status = new BusinessLayer::Status();
-				//status->SetID(statusEdit->text().toInt());
-				//std::string statusFilter = dialogBL->GenerateFilter<BusinessLayer::Status>(status);
-				//std::vector<BusinessLayer::Status>statusVector = dialogBL->GetAllDataForClass<BusinessLayer::Status>(errorMessage, statusFilter);
 				BusinessLayer::Currency *currency = new BusinessLayer::Currency();
 				BusinessLayer::Currency *sumCurrency = new BusinessLayer::Currency();
 				if (!measure->GetMeasureByID(dialogBL->GetOrmasDal(), product->GetMeasureID(), errorMessage)
@@ -312,12 +305,10 @@ void CreateOrdListDlg::EditProductInList()
 				delete product;
 				delete measure;
 				delete status;
-				delete currency;
-				dialogBL->CommitTransaction(errorMessage);
+				delete currency;	
 			}
 			else
 			{
-				dialogBL->CancelTransaction(errorMessage);
 				QMessageBox::information(NULL, QString(tr("Warning")),
 					QString(tr(errorMessage.c_str())),
 					QString(tr("Ok")));

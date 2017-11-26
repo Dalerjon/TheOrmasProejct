@@ -43,13 +43,13 @@ namespace BusinessLayer{
 	{
 		if (!aNameEng.empty())
 			boost::trim(aNameEng);
-		nameEng = boost::to_upper_copy(aNameEng);
+		nameEng = aNameEng;
 	}
 	void AccessItem::SetNameRu(std::string aNameRu)
 	{
 		if (!aNameRu.empty())
 			boost::trim(aNameRu);
-		nameRu = boost::to_upper_copy(aNameRu);
+		nameRu = aNameRu;
 	}
 	void AccessItem::SetDivision(std::string aDivision)
 	{
@@ -64,8 +64,8 @@ namespace BusinessLayer{
 			return false;
 		id = ormasDal.GenerateID();
 		TrimStrings(aNameEng, aNameRu, aDivision);
-		nameEng = boost::to_upper_copy(aNameEng);
-		nameRu = boost::to_upper_copy(aNameRu);
+		nameEng = aNameEng;
+		nameRu = aNameRu;
 		division = boost::to_upper_copy(aDivision);
 		if (0 != id && ormasDal.CreateAccessItem(id, nameEng, nameRu, division, errorMessage))
 		{
@@ -109,8 +109,8 @@ namespace BusinessLayer{
 	bool AccessItem::UpdateAccessItem(DataLayer::OrmasDal &ormasDal, std::string aNameEng, std::string aNameRu, std::string aDivision, std::string& errorMessage)
 	{
 		TrimStrings(aNameEng, aNameRu, aDivision);
-		nameEng = boost::to_upper_copy(aNameEng);
-		nameRu = boost::to_upper_copy(aNameRu);
+		nameEng =aNameEng;
+		nameRu = aNameRu;
 		division = boost::to_upper_copy(aDivision);
 		if (0 != id && ormasDal.UpdateAccessItem(id, nameEng, nameRu, division, errorMessage))
 		{
@@ -169,6 +169,15 @@ namespace BusinessLayer{
 		if (0 == id && nameEng.empty() && nameRu.empty() && division.empty())
 			return true;
 		return false;
+	}
+
+
+	void AccessItem::Clear()
+	{
+		id = 0;
+		nameEng.clear();
+		nameRu.clear();
+		division.clear();
 	}
 
 	void AccessItem::TrimStrings(std::string& aNameEng, std::string& aNameRu, std::string& aDivision)

@@ -46,6 +46,7 @@ namespace BusinessLayer
 		std::string GenerateFilter(DataLayer::OrmasDal& ormasDal);
 		bool GetLocationByID(DataLayer::OrmasDal& ormasDal, int lID, std::string& errorMessage);
 		bool IsEmpty();
+		void Clear();
 	private:
 		void TrimStrings(std::string&, std::string&, std::string&, std::string&);
 		bool IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string lCountryName, 

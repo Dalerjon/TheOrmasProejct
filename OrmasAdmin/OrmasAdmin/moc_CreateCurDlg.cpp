@@ -20,7 +20,7 @@
 QT_BEGIN_MOC_NAMESPACE
 struct qt_meta_stringdata_CreateCurDlg_t {
     QByteArrayData data[6];
-    char stringdata0[61];
+    char stringdata0[63];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
@@ -33,12 +33,12 @@ QT_MOC_LITERAL(0, 0, 12), // "CreateCurDlg"
 QT_MOC_LITERAL(1, 13, 14), // "CreateCurrency"
 QT_MOC_LITERAL(2, 28, 0), // ""
 QT_MOC_LITERAL(3, 29, 12), // "EditCurrency"
-QT_MOC_LITERAL(4, 42, 12), // "DeleteStatus"
-QT_MOC_LITERAL(5, 55, 5) // "Close"
+QT_MOC_LITERAL(4, 42, 14), // "DeleteCurrency"
+QT_MOC_LITERAL(5, 57, 5) // "Close"
 
     },
     "CreateCurDlg\0CreateCurrency\0\0EditCurrency\0"
-    "DeleteStatus\0Close"
+    "DeleteCurrency\0Close"
 };
 #undef QT_MOC_LITERAL
 
@@ -78,7 +78,7 @@ void CreateCurDlg::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id
         switch (_id) {
         case 0: _t->CreateCurrency(); break;
         case 1: _t->EditCurrency(); break;
-        case 2: _t->DeleteStatus(); break;
+        case 2: _t->DeleteCurrency(); break;
         case 3: _t->Close(); break;
         default: ;
         }

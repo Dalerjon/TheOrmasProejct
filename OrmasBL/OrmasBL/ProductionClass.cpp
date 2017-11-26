@@ -63,7 +63,6 @@ namespace BusinessLayer
 	{
 		if (IsDuplicate(ormasDal, pProductionDate, pExpiryDate, pSessionStart, pSessionEnd, errorMessage))
 			return false;
-		id = ormasDal.GenerateID();
 		productionDate = pProductionDate;
 		expiryDate = pExpiryDate;
 		sessionStart = pSessionStart;
@@ -82,7 +81,6 @@ namespace BusinessLayer
 	{
 		if (IsDuplicate(ormasDal, errorMessage))
 			return false;
-		id = ormasDal.GenerateID();
 		if (0 != id &&ormasDal.CreateProduction(id, productionDate, expiryDate, sessionStart, sessionEnd, errorMessage))
 		{
 			return true;
@@ -174,6 +172,15 @@ namespace BusinessLayer
 		if (0 == id && productionDate == "" && expiryDate == "" && sessionStart == "" && sessionEnd == "")
 			return true;
 		return false;
+	}
+
+	void Production::Clear()
+	{
+		id = 0;
+		productionDate.clear();
+		expiryDate.clear();
+		sessionEnd.clear();
+		sessionStart.clear();
 	}
 
 	bool Production::IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string pProductionDate, std::string pExpiryDate,

@@ -60,13 +60,14 @@ namespace BusinessLayer
 		std::string GenerateFilter(DataLayer::OrmasDal& ormasDal);
 		bool GetProductByID(DataLayer::OrmasDal& ormasDal, int pID, std::string& errorMessage);
 		bool IsEmpty();
+		void Clear();
 	private:
 		double oldPrice = 0.0;
 		void TrimStrings(std::string&);
 		bool IsDuplicate(DataLayer::OrmasDal& ormasDal, int cID, std::string pName, double vol, int mID, double price,
 			 int curID, std::string& errorMessage);
 		bool IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string& errorMessage);
-		bool AddPriceData(DataLayer::OrmasDal& ormasDal, int pID, double price, int curID, std::string& errorMessage);
+		bool AddPriceData(DataLayer::OrmasDal& ormasDal, int pID, double pPrice, int curID, std::string& errorMessage);		
 	};
 }
 #endif //PRODUCTCLASS_H

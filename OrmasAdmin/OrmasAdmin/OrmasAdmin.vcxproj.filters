@@ -75,9 +75,6 @@
     <ClInclude Include="ui_CreateProdDlg.h">
       <Filter>Header Files\UI Headers</Filter>
     </ClInclude>
-    <ClInclude Include="ui_AddProdDlg.h">
-      <Filter>Header Files\UI Headers</Filter>
-    </ClInclude>
     <ClInclude Include="ui_CreateProdnDlg.h">
       <Filter>Header Files\UI Headers</Filter>
     </ClInclude>
@@ -139,6 +136,18 @@
       <Filter>Header Files\UI Headers</Filter>
     </ClInclude>
     <ClInclude Include="ui_CreateWOffDlg.h">
+      <Filter>Header Files\UI Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="ui_CreateWdwDlg.h">
+      <Filter>Header Files\UI Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="ui_ClcWagesDlg.h">
+      <Filter>Header Files\UI Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="ui_CreatePspDlg.h">
+      <Filter>Header Files\UI Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="ui_CreateRfdDlg.h">
       <Filter>Header Files\UI Headers</Filter>
     </ClInclude>
   </ItemGroup>
@@ -347,6 +356,30 @@
     <ClCompile Include="moc_CreateWOffListDlg.cpp">
       <Filter>MOC Files</Filter>
     </ClCompile>
+    <ClCompile Include="CreateWdwDlg.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="moc_CreateWdwDlg.cpp">
+      <Filter>MOC Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ClcWagesDlg.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="moc_ClcWagesDlg.cpp">
+      <Filter>MOC Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CreatePspDlg.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="moc_CreatePspDlg.cpp">
+      <Filter>MOC Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CreateRfdDlg.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="moc_CreateRfdDlg.cpp">
+      <Filter>MOC Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="MainForm.ui">
@@ -546,6 +579,33 @@
     </CustomBuild>
     <CustomBuild Include="CreateWOffListDlg.h">
       <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="CreateWdwDlg.ui">
+      <Filter>User Interface</Filter>
+    </CustomBuild>
+    <CustomBuild Include="CreateWdwDlg.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="ClcWagesDlg.ui">
+      <Filter>User Interface</Filter>
+    </CustomBuild>
+    <CustomBuild Include="ClcWagesDlg.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="CreatePspDlg.ui">
+      <Filter>User Interface</Filter>
+    </CustomBuild>
+    <CustomBuild Include="CreateRfdDlg.ui">
+      <Filter>User Interface</Filter>
+    </CustomBuild>
+    <CustomBuild Include="CreatePspDlg.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="CreateRfdDlg.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Resource\OrmasResource.qrc">
+      <Filter>Resource Files</Filter>
     </CustomBuild>
   </ItemGroup>
 </Project>

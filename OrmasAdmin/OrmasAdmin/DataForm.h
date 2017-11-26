@@ -48,7 +48,6 @@ private:
 	void DisableButtons();
 	void EnableButtons();
 private slots:
-	void CloseDataForm();
 	void OpenList(int, int);
 
 	void CrtAcsDlg();
@@ -127,6 +126,9 @@ private slots:
 	void UdpProdnListDlg();
 	void DelProdnListDlg();
 
+	void CrtPspDlg();
+	void UdpPspDlg();
+	void DelPspDlg();
 
 	void CrtRelDlg();
 	void UdpRelDlg();
@@ -139,6 +141,10 @@ private slots:
 	void CrtRoleDlg();
 	void UdpRoleDlg();
 	void DelRoleDlg();
+
+	void CrtRfdDlg();
+	void UdpRfdDlg();
+	void DelRfdDlg();
 
 	void CrtRtrnDlg();
 	void UdpRtrnDlg();
@@ -164,6 +170,10 @@ private slots:
 	void UdpUserDlg();
 	void DelUserDlg();
 
+	void CrtWdwDlg();
+	void UdpWdwDlg();
+	void DelWdwDlg();
+
 	void CrtWOffDlg();
 	void UdpWOffDlg();
 	void DelWOffDlg();
@@ -175,13 +185,17 @@ private slots:
 	void ChangeBtnState();
 	void GetIDValue(QModelIndex index);
 	void OnRowsNumberChanged();
-
+	
+	public slots:
+	void CloseDataForm();
+	
 	signals:
 	void SendID(int ID, QString childName);
 	
 public:
 	BusinessLayer::OrmasBL *dataFormBL;
 	QWidget* parentForm;
+	ClcWagesDlg* clcWagesDlg = nullptr;
 	CreateAcsDlg* createAcsDlg = nullptr;
 	CreateBlcDlg* createBlcDlg = nullptr;
 	CreateCltDlg* createCltDlg = nullptr;
@@ -191,7 +205,9 @@ public:
 	CreatePmtDlg* createPmtDlg = nullptr;
 	CreatePrcDlg* createPrcDlg = nullptr;
 	CreateProdnListDlg* createProdnListDlg = nullptr;
+	CreatePspDlg* createPspDlg = nullptr;
 	CreateRelDlg* createRelDlg = nullptr;
+	CreateRfdDlg* createRfdDlg = nullptr;
 	CreateRtrnListDlg* createRtrnListDlg = nullptr;
 	CreateSlrDlg* createSlrDlg = nullptr;
 	CreateUserDlg* createUserDlg = nullptr;
@@ -199,6 +215,7 @@ public:
 	CreateProdnDlg* createProdnDlg = nullptr;
 	CreateOrdDlg* createOrdDlg = nullptr;
 	CreateRtrnDlg* createRtrnDlg = nullptr;
+	CreateWdwDlg* createWdwDlg = nullptr;
 	CreateWOffDlg* createWOffDlg = nullptr;
 	CreateWOffListDlg* createWOffListDlg = nullptr;
 	int orderID = 0;

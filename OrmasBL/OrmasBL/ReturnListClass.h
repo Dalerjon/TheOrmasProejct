@@ -53,6 +53,7 @@ namespace BusinessLayer
 		std::string GenerateFilter(DataLayer::OrmasDal& ormasDal);
 		bool GetReturnListByID(DataLayer::OrmasDal& ormasDal, int rID, std::string& errorMessage);
 		bool IsEmpty();
+		void Clear();
 	private:
 		bool IsDuplicate(DataLayer::OrmasDal& ormasDal, int rID, int pID, int rlCount, double rlSum,
 			 int cID, std::string& errorMessage);

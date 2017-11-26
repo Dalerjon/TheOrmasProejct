@@ -15,7 +15,7 @@ public:
 	private slots:
 	void CreatePhoto();
 	void EditPhoto();
-	void DeleteStatus(){};
+	void DeletePhoto(){};
 	void Close();
 	void OpenUserDlg();
 	void OpenPrdDlg();

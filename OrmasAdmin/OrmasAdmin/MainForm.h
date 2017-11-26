@@ -4,6 +4,7 @@
 #include "ui_MainForm.h"
 #include "OrmasBL.h"
 #include "DataForm.h"
+#include "ClcWagesDlg.h"
 
 class MainForm : public QMainWindow, public Ui::MainWindow
 {
@@ -43,9 +44,13 @@ private slots :
 
 	void OpenBalanceForm();
 	void OpenPaymentForm();
+	void OpenRefundForm();
 	void OpenPriceForm();
 	void OpenSalaryForm();
 	void OpenSalaryTypeForm();
+	void OpenPayrollForm();
+	void OpenWithdrawalForm();
+	void OpenPayslipForm();
 
 	void OpenCompanyForm();
 	void OpenCurrencyForm();
@@ -57,6 +62,8 @@ private slots :
 	void OpenRelationTypeForm();
 	
 	void OpenAboutForm();
+
+	void CloseChildsByName();
 private:
 	void CreateConnections();
 	BusinessLayer::User *loggedUser = nullptr;

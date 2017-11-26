@@ -170,6 +170,14 @@ namespace BusinessLayer{
 		return false;
 	}
 
+	void Photo::Clear()
+	{
+		id = 0;
+		userID = 0;
+		productID = 0;
+		source.clear();
+	}
+
 	void Photo::TrimStrings(std::string& pSource)
 	{
 		if (!pSource.empty())

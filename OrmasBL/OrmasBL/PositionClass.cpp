@@ -140,6 +140,12 @@ namespace BusinessLayer{
 		return false;
 	}
 
+	void Position::Clear()
+	{
+		id = 0;
+		name.clear();
+	}
+
 	void Position::TrimStrings(std::string& pName)
 	{
 		if (!pName.empty())

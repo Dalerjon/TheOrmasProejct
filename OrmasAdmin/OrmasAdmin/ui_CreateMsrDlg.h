@@ -117,9 +117,9 @@ public:
 
     void retranslateUi(QDialog *CreateMeasure)
     {
-        CreateMeasure->setWindowTitle(QApplication::translate("CreateMeasure", "Create/Update Measure", 0));
+        CreateMeasure->setWindowTitle(QApplication::translate("CreateMeasure", "Create/Update measure", 0));
         okBtn->setText(QApplication::translate("CreateMeasure", "OK", 0));
-        cancelBtn->setText(QApplication::translate("CreateMeasure", "Cencel", 0));
+        cancelBtn->setText(QApplication::translate("CreateMeasure", "Cancel", 0));
 #ifndef QT_NO_TOOLTIP
         nameEdit->setToolTip(QApplication::translate("CreateMeasure", "<html><head/><body><p>For example: Kilograms</p></body></html>", 0));
 #endif // QT_NO_TOOLTIP
@@ -128,7 +128,7 @@ public:
 #endif // QT_NO_TOOLTIP
         nameLb->setText(QApplication::translate("CreateMeasure", "Name:", 0));
         shortNameLb->setText(QApplication::translate("CreateMeasure", "Short name:", 0));
-        unitLb->setText(QApplication::translate("CreateMeasure", "Change unit", 0));
+        unitLb->setText(QApplication::translate("CreateMeasure", "Change unit:", 0));
 #ifndef QT_NO_TOOLTIP
         unitEdit->setToolTip(QApplication::translate("CreateMeasure", "<html><head/><body><p>For example: 1000 (1 kilogram = 1000 grams, only if have mo little measure, otherwise = 1)</p></body></html>", 0));
 #endif // QT_NO_TOOLTIP

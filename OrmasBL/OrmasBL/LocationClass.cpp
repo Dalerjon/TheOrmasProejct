@@ -186,6 +186,15 @@ namespace BusinessLayer
 			return true;
 		return false;
 	}
+
+	void Location::Clear()
+	{
+		id = 0;
+		countryName.clear();
+		countryCode.clear();
+		regionName.clear();
+		cityName.clear();
+	}
 	
 	void Location::TrimStrings(std::string& lCountryName, std::string& lCountryCode, std::string& lRegionName, std::string& lCityName)
 	{

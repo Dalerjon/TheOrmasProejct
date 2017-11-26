@@ -7,23 +7,24 @@ namespace BusinessLayer
 	{
 		id = std::get<0>(rCollection);
 		date = std::get<1>(rCollection);
-		statusCode = std::get<2>(rCollection);
-		statusName = std::get<3>(rCollection);
-		clientName = std::get<4>(rCollection);
-		clientSurname = std::get<5>(rCollection);
-		clientPhone = std::get<6>(rCollection);
-		clientAddres = std::get<7>(rCollection);
-		clientFirm = std::get<8>(rCollection);
-		employeeName = std::get<9>(rCollection);
-		employeeSurname = std::get<10>(rCollection);
-		employeePhone = std::get<11>(rCollection);
-		count = std::get<12>(rCollection);
-		sum = std::get<13>(rCollection);
-		currencyName = std::get<14>(rCollection);
-		employeeID = std::get<15>(rCollection);
-		clientID = std::get<16>(rCollection);
-		statusID = std::get<17>(rCollection);
-		currencyID = std::get<18>(rCollection);
+		executionDate = std::get<2>(rCollection);
+		statusCode = std::get<3>(rCollection);
+		statusName = std::get<4>(rCollection);
+		clientName = std::get<5>(rCollection);
+		clientSurname = std::get<6>(rCollection);
+		clientPhone = std::get<7>(rCollection);
+		clientAddres = std::get<8>(rCollection);
+		clientFirm = std::get<9>(rCollection);
+		employeeName = std::get<10>(rCollection);
+		employeeSurname = std::get<11>(rCollection);
+		employeePhone = std::get<12>(rCollection);
+		count = std::get<13>(rCollection);
+		sum = std::get<14>(rCollection);
+		currencyName = std::get<15>(rCollection);
+		employeeID = std::get<16>(rCollection);
+		clientID = std::get<17>(rCollection);
+		statusID = std::get<18>(rCollection);
+		currencyID = std::get<19>(rCollection);
 	}
 	
 	std::string ReturnView::GetStatusCode()

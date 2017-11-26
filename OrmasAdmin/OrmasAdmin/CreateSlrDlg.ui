@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Create/Update payment</string>
+   <string>Create/Update salary</string>
   </property>
   <property name="locale">
    <locale language="English" country="UnitedStates"/>
@@ -39,9 +39,6 @@
      </property>
     </widget>
    </item>
-   <item row="12" column="2">
-    <widget class="QDateEdit" name="dateEdit"/>
-   </item>
    <item row="12" column="1">
     <widget class="QLabel" name="dateLb">
      <property name="text">
@@ -57,7 +54,7 @@
     </widget>
    </item>
    <item row="1" column="1">
-    <widget class="QPushButton" name="userBtn">
+    <widget class="QPushButton" name="employeeBtn">
      <property name="minimumSize">
       <size>
        <width>150</width>
@@ -65,7 +62,7 @@
       </size>
      </property>
      <property name="text">
-      <string>Select user</string>
+      <string>Select employee</string>
      </property>
     </widget>
    </item>
@@ -77,7 +74,7 @@
     </widget>
    </item>
    <item row="1" column="2">
-    <widget class="QLineEdit" name="userEdit">
+    <widget class="QLineEdit" name="employeeEdit">
      <property name="toolTip">
       <string>Must not be empty</string>
      </property>
@@ -148,17 +145,19 @@
    <item row="13" column="2">
     <widget class="QComboBox" name="bonusCmb"/>
    </item>
+   <item row="12" column="2">
+    <widget class="QDateTimeEdit" name="dateEdit"/>
+   </item>
   </layout>
  </widget>
  <tabstops>
-  <tabstop>userBtn</tabstop>
-  <tabstop>userEdit</tabstop>
+  <tabstop>employeeBtn</tabstop>
+  <tabstop>employeeEdit</tabstop>
   <tabstop>valueEdit</tabstop>
   <tabstop>currencyBtn</tabstop>
   <tabstop>currencyEdit</tabstop>
   <tabstop>slrTypeBtn</tabstop>
   <tabstop>salaryTypeEdit</tabstop>
-  <tabstop>dateEdit</tabstop>
   <tabstop>bonusCmb</tabstop>
   <tabstop>okBtn</tabstop>
   <tabstop>cancelBtn</tabstop>

@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Create/Update product in list</string>
+   <string>Create/Update product in production list</string>
   </property>
   <property name="locale">
    <locale language="English" country="UnitedStates"/>

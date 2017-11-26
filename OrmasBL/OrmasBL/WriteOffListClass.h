@@ -52,6 +52,7 @@ namespace BusinessLayer
 		std::string GenerateFilter(DataLayer::OrmasDal& ormasDal);
 		bool GetWriteOffListByID(DataLayer::OrmasDal& ormasDal, int pID, std::string& errorMessage);
 		bool IsEmpty();
+		void Clear();
 	private:
 		bool IsDuplicate(DataLayer::OrmasDal& ormasDal, int wID, int pID, int wlCount, double wlSum,
 			int cID, std::string& errorMessage);

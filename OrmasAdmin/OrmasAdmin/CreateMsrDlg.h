@@ -8,7 +8,7 @@ class CreateMsrDlg :public QDialog, public Ui::CreateMeasure
 	Q_OBJECT
 public:
 	CreateMsrDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, QWidget *parent = 0);
-	~CreateMsrDlg(){};
+	~CreateMsrDlg();
 	BusinessLayer::OrmasBL *dialogBL;
 	bool FillDlgElements(QTableView*);
 	std::string errorMessage;
@@ -21,5 +21,6 @@ private:
 	BusinessLayer::Measure *measure = new BusinessLayer::Measure();
 	void SetMeasureParams(QString, QString, int, int = 0);
 	void FillEditElements(QString, QString, int);
+	QIntValidator *vInt = nullptr;
 };
 #endif //CREATEMSRDLG_H

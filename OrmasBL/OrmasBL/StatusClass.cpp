@@ -171,6 +171,14 @@ namespace BusinessLayer
 		return false;
 	}
 
+	void Status::Clear()
+	{
+		id = 0;
+		code.clear();
+		name.clear();
+		comment.clear();
+	}
+
 	void Status::TrimStrings(std::string& sCode, std::string& sName)
 	{
 		if (!sCode.empty())
@@ -211,5 +219,19 @@ namespace BusinessLayer
 		}
 		errorMessage = "Status with this parameters are already exist! Please avoid the duplication!";
 		return true;
+	}
+
+	std::map<std::string, int> Status::GetStatusesAsMap(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
+	{
+		std::map<std::string, int> statusMap;
+		std::vector<DataLayer::statusCollection> statusVector = ormasDal.GetStatus(errorMessage);
+		if (statusVector.size() > 0)
+		{
+			for each (auto item in statusVector)
+			{
+				statusMap.insert(std::make_pair(std::get<2>(item), std::get<0>(item)));
+			}
+		}
+		return statusMap;
 	}
 }

@@ -220,6 +220,16 @@ namespace BusinessLayer
 		return false;
 	}
 
+	void Currency::Clear()
+	{
+		id = 0;
+		code = 0;
+		shortName.clear();
+		name.clear();
+		unit = 0;
+		mainTrade = false;
+	}
+
 	void Currency::TrimStrings(std::string& cShortName, std::string& cName)
 	{
 		if (!cShortName.empty())

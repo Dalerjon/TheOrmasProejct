@@ -15,6 +15,7 @@ CreateBlcDlg::CreateBlcDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, QWi
 	vInt = new QIntValidator(0, 1000000000, this);
 	userEdit->setValidator(vInt);
 	valueEdit->setValidator(vDouble);
+	valueEdit->setMaxLength(17);
 	currencyEdit->setValidator(vInt);
 	if (true == updateFlag)
 	{

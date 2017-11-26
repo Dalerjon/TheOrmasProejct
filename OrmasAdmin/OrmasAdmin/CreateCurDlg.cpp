@@ -9,13 +9,13 @@ CreateCurDlg::CreateCurDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, QWi
 {
 	setupUi(this);
 	setModal(true);
-	QRegExp expr("\\d*");
-	QRegExpValidator v(expr, 0);
-	codeEdit->setValidator(&v);
+	vInt = new QIntValidator(0, 1000000000, this);
+	codeEdit->setValidator(vInt);
 	codeEdit->setMaxLength(3);
 	shortNameEdit->setMaxLength(3);
 	nameEdit->setMaxLength(20);
-	unitEdit->setValidator(&v);
+	unitEdit->setValidator(vInt);
+	unitEdit->setMaxLength(10);
 	mainTradeCmbBox->addItem("false");
 	mainTradeCmbBox->addItem("true");
 	dialogBL = ormasBL;
@@ -28,6 +28,11 @@ CreateCurDlg::CreateCurDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, QWi
 		QObject::connect(okBtn, &QPushButton::released, this, &CreateCurDlg::CreateCurrency);
 	}
 	QObject::connect(cancelBtn, &QPushButton::released, this, &CreateCurDlg::Close);
+}
+
+CreateCurDlg::~CreateCurDlg()
+{
+	delete vInt;
 }
 
 void CreateCurDlg::SetCurrencyParams(int cCode, QString cShortName, QString cName, int cUnit, QString cMainTrade, int id)

@@ -19,8 +19,8 @@
 
 QT_BEGIN_MOC_NAMESPACE
 struct qt_meta_stringdata_MainForm_t {
-    QByteArrayData data[34];
-    char stringdata0[553];
+    QByteArrayData data[39];
+    char stringdata0[637];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
@@ -51,18 +51,23 @@ QT_MOC_LITERAL(18, 289, 16), // "OpenWriteOffForm"
 QT_MOC_LITERAL(19, 306, 20), // "OpenWriteOffListForm"
 QT_MOC_LITERAL(20, 327, 15), // "OpenBalanceForm"
 QT_MOC_LITERAL(21, 343, 15), // "OpenPaymentForm"
-QT_MOC_LITERAL(22, 359, 13), // "OpenPriceForm"
-QT_MOC_LITERAL(23, 373, 14), // "OpenSalaryForm"
-QT_MOC_LITERAL(24, 388, 18), // "OpenSalaryTypeForm"
-QT_MOC_LITERAL(25, 407, 15), // "OpenCompanyForm"
-QT_MOC_LITERAL(26, 423, 16), // "OpenCurrencyForm"
-QT_MOC_LITERAL(27, 440, 15), // "OpenMeasureForm"
-QT_MOC_LITERAL(28, 456, 16), // "OpenLocationForm"
-QT_MOC_LITERAL(29, 473, 12), // "OpenRoleForm"
-QT_MOC_LITERAL(30, 486, 14), // "OpenStatusForm"
-QT_MOC_LITERAL(31, 501, 16), // "OpenRelationForm"
-QT_MOC_LITERAL(32, 518, 20), // "OpenRelationTypeForm"
-QT_MOC_LITERAL(33, 539, 13) // "OpenAboutForm"
+QT_MOC_LITERAL(22, 359, 14), // "OpenRefundForm"
+QT_MOC_LITERAL(23, 374, 13), // "OpenPriceForm"
+QT_MOC_LITERAL(24, 388, 14), // "OpenSalaryForm"
+QT_MOC_LITERAL(25, 403, 18), // "OpenSalaryTypeForm"
+QT_MOC_LITERAL(26, 422, 15), // "OpenPayrollForm"
+QT_MOC_LITERAL(27, 438, 18), // "OpenWithdrawalForm"
+QT_MOC_LITERAL(28, 457, 15), // "OpenPayslipForm"
+QT_MOC_LITERAL(29, 473, 15), // "OpenCompanyForm"
+QT_MOC_LITERAL(30, 489, 16), // "OpenCurrencyForm"
+QT_MOC_LITERAL(31, 506, 15), // "OpenMeasureForm"
+QT_MOC_LITERAL(32, 522, 16), // "OpenLocationForm"
+QT_MOC_LITERAL(33, 539, 12), // "OpenRoleForm"
+QT_MOC_LITERAL(34, 552, 14), // "OpenStatusForm"
+QT_MOC_LITERAL(35, 567, 16), // "OpenRelationForm"
+QT_MOC_LITERAL(36, 584, 20), // "OpenRelationTypeForm"
+QT_MOC_LITERAL(37, 605, 13), // "OpenAboutForm"
+QT_MOC_LITERAL(38, 619, 17) // "CloseChildsByName"
 
     },
     "MainForm\0OpenUserForm\0\0OpenClientForm\0"
@@ -75,12 +80,15 @@ QT_MOC_LITERAL(33, 539, 13) // "OpenAboutForm"
     "OpenProductionForm\0OpenProductionListForm\0"
     "OpenWriteOffForm\0OpenWriteOffListForm\0"
     "OpenBalanceForm\0OpenPaymentForm\0"
-    "OpenPriceForm\0OpenSalaryForm\0"
-    "OpenSalaryTypeForm\0OpenCompanyForm\0"
+    "OpenRefundForm\0OpenPriceForm\0"
+    "OpenSalaryForm\0OpenSalaryTypeForm\0"
+    "OpenPayrollForm\0OpenWithdrawalForm\0"
+    "OpenPayslipForm\0OpenCompanyForm\0"
     "OpenCurrencyForm\0OpenMeasureForm\0"
     "OpenLocationForm\0OpenRoleForm\0"
     "OpenStatusForm\0OpenRelationForm\0"
-    "OpenRelationTypeForm\0OpenAboutForm"
+    "OpenRelationTypeForm\0OpenAboutForm\0"
+    "CloseChildsByName"
 };
 #undef QT_MOC_LITERAL
 
@@ -90,7 +98,7 @@ static const uint qt_meta_data_MainForm[] = {
        7,       // revision
        0,       // classname
        0,    0, // classinfo
-      32,   14, // methods
+      37,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -98,40 +106,50 @@ static const uint qt_meta_data_MainForm[] = {
        0,       // signalCount
 
  // slots: name, argc, parameters, tag, flags
-       1,    0,  174,    2, 0x08 /* Private */,
-       3,    0,  175,    2, 0x08 /* Private */,
-       4,    0,  176,    2, 0x08 /* Private */,
-       5,    0,  177,    2, 0x08 /* Private */,
-       6,    0,  178,    2, 0x08 /* Private */,
-       7,    0,  179,    2, 0x08 /* Private */,
-       8,    0,  180,    2, 0x08 /* Private */,
-       9,    0,  181,    2, 0x08 /* Private */,
-      10,    0,  182,    2, 0x08 /* Private */,
-      11,    0,  183,    2, 0x08 /* Private */,
-      12,    0,  184,    2, 0x08 /* Private */,
-      13,    0,  185,    2, 0x08 /* Private */,
-      14,    0,  186,    2, 0x08 /* Private */,
-      15,    0,  187,    2, 0x08 /* Private */,
-      16,    0,  188,    2, 0x08 /* Private */,
-      17,    0,  189,    2, 0x08 /* Private */,
-      18,    0,  190,    2, 0x08 /* Private */,
-      19,    0,  191,    2, 0x08 /* Private */,
-      20,    0,  192,    2, 0x08 /* Private */,
-      21,    0,  193,    2, 0x08 /* Private */,
-      22,    0,  194,    2, 0x08 /* Private */,
-      23,    0,  195,    2, 0x08 /* Private */,
-      24,    0,  196,    2, 0x08 /* Private */,
-      25,    0,  197,    2, 0x08 /* Private */,
-      26,    0,  198,    2, 0x08 /* Private */,
-      27,    0,  199,    2, 0x08 /* Private */,
-      28,    0,  200,    2, 0x08 /* Private */,
-      29,    0,  201,    2, 0x08 /* Private */,
-      30,    0,  202,    2, 0x08 /* Private */,
-      31,    0,  203,    2, 0x08 /* Private */,
-      32,    0,  204,    2, 0x08 /* Private */,
-      33,    0,  205,    2, 0x08 /* Private */,
+       1,    0,  199,    2, 0x08 /* Private */,
+       3,    0,  200,    2, 0x08 /* Private */,
+       4,    0,  201,    2, 0x08 /* Private */,
+       5,    0,  202,    2, 0x08 /* Private */,
+       6,    0,  203,    2, 0x08 /* Private */,
+       7,    0,  204,    2, 0x08 /* Private */,
+       8,    0,  205,    2, 0x08 /* Private */,
+       9,    0,  206,    2, 0x08 /* Private */,
+      10,    0,  207,    2, 0x08 /* Private */,
+      11,    0,  208,    2, 0x08 /* Private */,
+      12,    0,  209,    2, 0x08 /* Private */,
+      13,    0,  210,    2, 0x08 /* Private */,
+      14,    0,  211,    2, 0x08 /* Private */,
+      15,    0,  212,    2, 0x08 /* Private */,
+      16,    0,  213,    2, 0x08 /* Private */,
+      17,    0,  214,    2, 0x08 /* Private */,
+      18,    0,  215,    2, 0x08 /* Private */,
+      19,    0,  216,    2, 0x08 /* Private */,
+      20,    0,  217,    2, 0x08 /* Private */,
+      21,    0,  218,    2, 0x08 /* Private */,
+      22,    0,  219,    2, 0x08 /* Private */,
+      23,    0,  220,    2, 0x08 /* Private */,
+      24,    0,  221,    2, 0x08 /* Private */,
+      25,    0,  222,    2, 0x08 /* Private */,
+      26,    0,  223,    2, 0x08 /* Private */,
+      27,    0,  224,    2, 0x08 /* Private */,
+      28,    0,  225,    2, 0x08 /* Private */,
+      29,    0,  226,    2, 0x08 /* Private */,
+      30,    0,  227,    2, 0x08 /* Private */,
+      31,    0,  228,    2, 0x08 /* Private */,
+      32,    0,  229,    2, 0x08 /* Private */,
+      33,    0,  230,    2, 0x08 /* Private */,
+      34,    0,  231,    2, 0x08 /* Private */,
+      35,    0,  232,    2, 0x08 /* Private */,
+      36,    0,  233,    2, 0x08 /* Private */,
+      37,    0,  234,    2, 0x08 /* Private */,
+      38,    0,  235,    2, 0x08 /* Private */,
 
  // slots: parameters
+    QMetaType::Void,
+    QMetaType::Void,
+    QMetaType::Void,
+    QMetaType::Void,
+    QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void,
@@ -194,18 +212,23 @@ void MainForm::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, vo
         case 17: _t->OpenWriteOffListForm(); break;
         case 18: _t->OpenBalanceForm(); break;
         case 19: _t->OpenPaymentForm(); break;
-        case 20: _t->OpenPriceForm(); break;
-        case 21: _t->OpenSalaryForm(); break;
-        case 22: _t->OpenSalaryTypeForm(); break;
-        case 23: _t->OpenCompanyForm(); break;
-        case 24: _t->OpenCurrencyForm(); break;
-        case 25: _t->OpenMeasureForm(); break;
-        case 26: _t->OpenLocationForm(); break;
-        case 27: _t->OpenRoleForm(); break;
-        case 28: _t->OpenStatusForm(); break;
-        case 29: _t->OpenRelationForm(); break;
-        case 30: _t->OpenRelationTypeForm(); break;
-        case 31: _t->OpenAboutForm(); break;
+        case 20: _t->OpenRefundForm(); break;
+        case 21: _t->OpenPriceForm(); break;
+        case 22: _t->OpenSalaryForm(); break;
+        case 23: _t->OpenSalaryTypeForm(); break;
+        case 24: _t->OpenPayrollForm(); break;
+        case 25: _t->OpenWithdrawalForm(); break;
+        case 26: _t->OpenPayslipForm(); break;
+        case 27: _t->OpenCompanyForm(); break;
+        case 28: _t->OpenCurrencyForm(); break;
+        case 29: _t->OpenMeasureForm(); break;
+        case 30: _t->OpenLocationForm(); break;
+        case 31: _t->OpenRoleForm(); break;
+        case 32: _t->OpenStatusForm(); break;
+        case 33: _t->OpenRelationForm(); break;
+        case 34: _t->OpenRelationTypeForm(); break;
+        case 35: _t->OpenAboutForm(); break;
+        case 36: _t->CloseChildsByName(); break;
         default: ;
         }
     }
@@ -239,13 +262,13 @@ int MainForm::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 32)
+        if (_id < 37)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 32;
+        _id -= 37;
     } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 32)
+        if (_id < 37)
             *reinterpret_cast<int*>(_a[0]) = -1;
-        _id -= 32;
+        _id -= 37;
     }
     return _id;
 }

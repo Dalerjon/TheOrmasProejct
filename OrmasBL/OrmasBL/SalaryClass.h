@@ -7,7 +7,7 @@ namespace BusinessLayer{
 	class Salary{
 	protected:
 		int id = 0;
-		int userID = 0;
+		int employeeID = 0;
 		double value = 0.0;
 		int currencyID = 0;
 		int salaryTypeID = 0;
@@ -15,7 +15,7 @@ namespace BusinessLayer{
 		bool isBonus = false;
 	public:
 		Salary();
-		Salary(int sID,int uID, double sValue, int cID, int stID, std::string sDate, bool sIsBonus) :id(sID), userID(uID), value(sValue),
+		Salary(int sID,int uID, double sValue, int cID, int stID, std::string sDate, bool sIsBonus) :id(sID), employeeID(uID), value(sValue),
 			currencyID(cID), salaryTypeID(stID), date(sDate), isBonus(sIsBonus){};
 		Salary(DataLayer::salariesCollection);
 		~Salary(){};
@@ -23,7 +23,7 @@ namespace BusinessLayer{
 		std::string errorMessage = "";
 		//Salary class Accessors
 		int GetID();
-		int GetUserID();
+		int GetEmployeeID();
 		double GetValue();
 		int GetCurrencyID();
 		int GetSalaryTypeID();
@@ -32,7 +32,7 @@ namespace BusinessLayer{
 
 		//Salary class Mutators
 		void SetID(int);
-		void SetUserID(int);
+		void SetEmployeeID(int);
 		void SetValue(double);
 		void SetCurrencyID(int);
 		void SetSalaryTypeID(int);
@@ -51,6 +51,7 @@ namespace BusinessLayer{
 		std::string GenerateFilter(DataLayer::OrmasDal& ormasDal);
 		bool GetSalaryByID(DataLayer::OrmasDal& ormasDal, int sID, std::string& errorMessage);
 		bool IsEmpty();
+		void Clear();
 	private:
 		bool IsDuplicate(DataLayer::OrmasDal& ormasDal, int uID, double sValue, int cID, std::string sDate, std::string& errorMessage);
 		bool IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string& errorMessage);

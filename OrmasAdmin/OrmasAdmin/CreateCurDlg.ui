@@ -17,7 +17,7 @@
    </sizepolicy>
   </property>
   <property name="windowTitle">
-   <string>Create/Update Currency</string>
+   <string>Create/Update currency</string>
   </property>
   <property name="locale">
    <locale language="English" country="UnitedStates"/>
@@ -123,7 +123,7 @@
       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;For example: 840 (international currency code)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
      <property name="inputMask">
-      <string>000</string>
+      <string/>
      </property>
     </widget>
    </item>

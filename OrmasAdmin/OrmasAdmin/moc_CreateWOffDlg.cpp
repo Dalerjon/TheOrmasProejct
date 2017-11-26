@@ -19,8 +19,8 @@
 
 QT_BEGIN_MOC_NAMESPACE
 struct qt_meta_stringdata_CreateWOffDlg_t {
-    QByteArrayData data[14];
-    char stringdata0[143];
+    QByteArrayData data[15];
+    char stringdata0[161];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
@@ -30,24 +30,25 @@ struct qt_meta_stringdata_CreateWOffDlg_t {
 static const qt_meta_stringdata_CreateWOffDlg_t qt_meta_stringdata_CreateWOffDlg = {
     {
 QT_MOC_LITERAL(0, 0, 13), // "CreateWOffDlg"
-QT_MOC_LITERAL(1, 14, 14), // "CreateWriteOff"
-QT_MOC_LITERAL(2, 29, 0), // ""
-QT_MOC_LITERAL(3, 30, 12), // "EditWriteOff"
-QT_MOC_LITERAL(4, 43, 14), // "DeleteWriteOff"
-QT_MOC_LITERAL(5, 58, 5), // "Close"
-QT_MOC_LITERAL(6, 64, 10), // "OpenCltDlg"
-QT_MOC_LITERAL(7, 75, 10), // "OpenEmpDlg"
-QT_MOC_LITERAL(8, 86, 10), // "OpenStsDlg"
-QT_MOC_LITERAL(9, 97, 10), // "OpenCurDlg"
-QT_MOC_LITERAL(10, 108, 15), // "OpenWOffListDlg"
-QT_MOC_LITERAL(11, 124, 5), // "SetID"
-QT_MOC_LITERAL(12, 130, 2), // "ID"
-QT_MOC_LITERAL(13, 133, 9) // "childName"
+QT_MOC_LITERAL(1, 14, 17), // "CloseCreatedForms"
+QT_MOC_LITERAL(2, 32, 0), // ""
+QT_MOC_LITERAL(3, 33, 14), // "CreateWriteOff"
+QT_MOC_LITERAL(4, 48, 12), // "EditWriteOff"
+QT_MOC_LITERAL(5, 61, 14), // "DeleteWriteOff"
+QT_MOC_LITERAL(6, 76, 5), // "Close"
+QT_MOC_LITERAL(7, 82, 10), // "OpenCltDlg"
+QT_MOC_LITERAL(8, 93, 10), // "OpenEmpDlg"
+QT_MOC_LITERAL(9, 104, 10), // "OpenStsDlg"
+QT_MOC_LITERAL(10, 115, 10), // "OpenCurDlg"
+QT_MOC_LITERAL(11, 126, 15), // "OpenWOffListDlg"
+QT_MOC_LITERAL(12, 142, 5), // "SetID"
+QT_MOC_LITERAL(13, 148, 2), // "ID"
+QT_MOC_LITERAL(14, 151, 9) // "childName"
 
     },
-    "CreateWOffDlg\0CreateWriteOff\0\0"
-    "EditWriteOff\0DeleteWriteOff\0Close\0"
-    "OpenCltDlg\0OpenEmpDlg\0OpenStsDlg\0"
+    "CreateWOffDlg\0CloseCreatedForms\0\0"
+    "CreateWriteOff\0EditWriteOff\0DeleteWriteOff\0"
+    "Close\0OpenCltDlg\0OpenEmpDlg\0OpenStsDlg\0"
     "OpenCurDlg\0OpenWOffListDlg\0SetID\0ID\0"
     "childName"
 };
@@ -59,24 +60,30 @@ static const uint qt_meta_data_CreateWOffDlg[] = {
        7,       // revision
        0,       // classname
        0,    0, // classinfo
-      10,   14, // methods
+      11,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
        0,       // flags
-       0,       // signalCount
+       1,       // signalCount
+
+ // signals: name, argc, parameters, tag, flags
+       1,    0,   69,    2, 0x06 /* Public */,
 
  // slots: name, argc, parameters, tag, flags
-       1,    0,   64,    2, 0x08 /* Private */,
-       3,    0,   65,    2, 0x08 /* Private */,
-       4,    0,   66,    2, 0x08 /* Private */,
-       5,    0,   67,    2, 0x08 /* Private */,
-       6,    0,   68,    2, 0x08 /* Private */,
-       7,    0,   69,    2, 0x08 /* Private */,
-       8,    0,   70,    2, 0x08 /* Private */,
-       9,    0,   71,    2, 0x08 /* Private */,
-      10,    0,   72,    2, 0x08 /* Private */,
-      11,    2,   73,    2, 0x0a /* Public */,
+       3,    0,   70,    2, 0x08 /* Private */,
+       4,    0,   71,    2, 0x08 /* Private */,
+       5,    0,   72,    2, 0x08 /* Private */,
+       6,    0,   73,    2, 0x08 /* Private */,
+       7,    0,   74,    2, 0x08 /* Private */,
+       8,    0,   75,    2, 0x08 /* Private */,
+       9,    0,   76,    2, 0x08 /* Private */,
+      10,    0,   77,    2, 0x08 /* Private */,
+      11,    0,   78,    2, 0x08 /* Private */,
+      12,    2,   79,    2, 0x0a /* Public */,
+
+ // signals: parameters
+    QMetaType::Void,
 
  // slots: parameters
     QMetaType::Void,
@@ -88,7 +95,7 @@ static const uint qt_meta_data_CreateWOffDlg[] = {
     QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void,
-    QMetaType::Void, QMetaType::Int, QMetaType::QString,   12,   13,
+    QMetaType::Void, QMetaType::Int, QMetaType::QString,   13,   14,
 
        0        // eod
 };
@@ -99,17 +106,28 @@ void CreateWOffDlg::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _i
         CreateWOffDlg *_t = static_cast<CreateWOffDlg *>(_o);
         Q_UNUSED(_t)
         switch (_id) {
-        case 0: _t->CreateWriteOff(); break;
-        case 1: _t->EditWriteOff(); break;
-        case 2: _t->DeleteWriteOff(); break;
-        case 3: _t->Close(); break;
-        case 4: _t->OpenCltDlg(); break;
-        case 5: _t->OpenEmpDlg(); break;
-        case 6: _t->OpenStsDlg(); break;
-        case 7: _t->OpenCurDlg(); break;
-        case 8: _t->OpenWOffListDlg(); break;
-        case 9: _t->SetID((*reinterpret_cast< int(*)>(_a[1])),(*reinterpret_cast< QString(*)>(_a[2]))); break;
+        case 0: _t->CloseCreatedForms(); break;
+        case 1: _t->CreateWriteOff(); break;
+        case 2: _t->EditWriteOff(); break;
+        case 3: _t->DeleteWriteOff(); break;
+        case 4: _t->Close(); break;
+        case 5: _t->OpenCltDlg(); break;
+        case 6: _t->OpenEmpDlg(); break;
+        case 7: _t->OpenStsDlg(); break;
+        case 8: _t->OpenCurDlg(); break;
+        case 9: _t->OpenWOffListDlg(); break;
+        case 10: _t->SetID((*reinterpret_cast< int(*)>(_a[1])),(*reinterpret_cast< QString(*)>(_a[2]))); break;
         default: ;
+        }
+    } else if (_c == QMetaObject::IndexOfMethod) {
+        int *result = reinterpret_cast<int *>(_a[0]);
+        void **func = reinterpret_cast<void **>(_a[1]);
+        {
+            typedef void (CreateWOffDlg::*_t)();
+            if (*reinterpret_cast<_t *>(func) == static_cast<_t>(&CreateWOffDlg::CloseCreatedForms)) {
+                *result = 0;
+                return;
+            }
         }
     }
 }
@@ -141,14 +159,20 @@ int CreateWOffDlg::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 10)
+        if (_id < 11)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 10;
+        _id -= 11;
     } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 10)
+        if (_id < 11)
             *reinterpret_cast<int*>(_a[0]) = -1;
-        _id -= 10;
+        _id -= 11;
     }
     return _id;
+}
+
+// SIGNAL 0
+void CreateWOffDlg::CloseCreatedForms()
+{
+    QMetaObject::activate(this, &staticMetaObject, 0, Q_NULLPTR);
 }
 QT_END_MOC_NAMESPACE

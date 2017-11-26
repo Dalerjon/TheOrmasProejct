@@ -12,9 +12,9 @@ CreateMsrDlg::CreateMsrDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, QWi
 	shortNameEdit->setMaxLength(4);
 	nameEdit->setMaxLength(15);
 	dialogBL = ormasBL;
-	QRegExp expr("\\d*");
-	QRegExpValidator v(expr, 0);
-	unitEdit->setValidator(&v);	
+	vInt = new QIntValidator(0, 1000000000, this);
+	unitEdit->setValidator(vInt);
+	unitEdit->setMaxLength(10);
 	if (true == updateFlag)
 	{
 		QObject::connect(okBtn, &QPushButton::released, this, &CreateMsrDlg::EditMeasure);
@@ -25,6 +25,11 @@ CreateMsrDlg::CreateMsrDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, QWi
 		QObject::connect(okBtn, &QPushButton::released, this, &CreateMsrDlg::CreateMeasure);
 	}
 	QObject::connect(cancelBtn, &QPushButton::released, this, &CreateMsrDlg::Close);
+}
+
+CreateMsrDlg::~CreateMsrDlg()
+{
+	delete vInt;
 }
 
 void CreateMsrDlg::SetMeasureParams(QString mName, QString mShortName, int mUnit, int id)

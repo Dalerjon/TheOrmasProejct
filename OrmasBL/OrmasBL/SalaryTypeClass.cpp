@@ -2,6 +2,7 @@
 #include "SalaryTypeClass.h"
 #include <boost/algorithm/string.hpp>
 
+
 namespace BusinessLayer
 {
 	SalaryType::SalaryType(DataLayer::salaryTypeCollection stCollection)
@@ -154,6 +155,13 @@ namespace BusinessLayer
 		return false;
 	}
 
+	void SalaryType::Clear()
+	{
+		id = 0;
+		code.clear();
+		name.clear();
+	}
+
 	void SalaryType::TrimStrings(std::string& stCode, std::string& stName)
 	{
 		if (!stCode.empty())
@@ -194,5 +202,19 @@ namespace BusinessLayer
 		}
 		errorMessage = "Salary type with this parameters are already exist! Please avoid the duplication!";
 		return true;
+	}
+
+	std::map<std::string, int> SalaryType::GetSalaryTypesAsMap(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
+	{
+		std::map<std::string, int> salaryTypeMap;
+		std::vector<DataLayer::salaryTypeCollection> salaryTypeVector = ormasDal.GetSalaryType(errorMessage);
+		if (salaryTypeVector.size() > 0)
+		{
+			for each (auto item in salaryTypeVector)
+			{
+				salaryTypeMap.insert(std::make_pair(std::get<1>(item), std::get<0>(item)));
+			}
+		}
+		return salaryTypeMap;
 	}
 }

@@ -156,6 +156,13 @@ namespace BusinessLayer
 		return false;
 	}
 
+	void ProductType::Clear()
+	{
+		id = 0;
+		name.clear();
+		shortName.clear();
+	}
+
 	void ProductType::TrimStrings(std::string& pTypeName, std::string& pTypeShortName)
 	{
 		if (!pTypeName.empty())

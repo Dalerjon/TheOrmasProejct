@@ -150,6 +150,13 @@ namespace BusinessLayer{
 		return false;
 	}
 
+	void RelationType::Clear()
+	{
+		id = 0;
+		name.clear();
+		comment.clear();
+	}
+
 	void RelationType::TrimStrings(std::string& rtName)
 	{
 		if (!rtName.empty())

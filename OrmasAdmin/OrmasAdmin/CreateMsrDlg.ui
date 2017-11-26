@@ -17,7 +17,7 @@
    </sizepolicy>
   </property>
   <property name="windowTitle">
-   <string>Create/Update Measure</string>
+   <string>Create/Update measure</string>
   </property>
   <property name="locale">
    <locale language="English" country="UnitedStates"/>
@@ -63,7 +63,7 @@
      <item>
       <widget class="QPushButton" name="cancelBtn">
        <property name="text">
-        <string>Cencel</string>
+        <string>Cancel</string>
        </property>
       </widget>
      </item>
@@ -106,7 +106,7 @@
    <item row="2" column="0">
     <widget class="QLabel" name="unitLb">
      <property name="text">
-      <string>Change unit</string>
+      <string>Change unit:</string>
      </property>
     </widget>
    </item>

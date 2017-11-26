@@ -29,6 +29,8 @@ class Ui_LoginDlg
 {
 public:
     QGridLayout *gridLayout;
+    QSpacerItem *verticalSpacer;
+    QLabel *messageLb;
     QHBoxLayout *horizontalLayout;
     QSpacerItem *horizontalSpacer_2;
     QPushButton *okBtn;
@@ -38,24 +40,37 @@ public:
     QLabel *PasswordLb;
     QLabel *UserNameLb;
     QSpacerItem *horizontalSpacer;
-    QLabel *IconLb;
-    QLabel *messageLb;
+    QLabel *iconLb;
 
     void setupUi(QDialog *LoginDlg)
     {
         if (LoginDlg->objectName().isEmpty())
             LoginDlg->setObjectName(QStringLiteral("LoginDlg"));
-        LoginDlg->resize(400, 150);
-        LoginDlg->setMinimumSize(QSize(400, 150));
-        LoginDlg->setMaximumSize(QSize(16777215, 150));
+        LoginDlg->resize(491, 172);
+        QSizePolicy sizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+        sizePolicy.setHorizontalStretch(0);
+        sizePolicy.setVerticalStretch(0);
+        sizePolicy.setHeightForWidth(LoginDlg->sizePolicy().hasHeightForWidth());
+        LoginDlg->setSizePolicy(sizePolicy);
+        LoginDlg->setMinimumSize(QSize(400, 170));
+        LoginDlg->setMaximumSize(QSize(16777215, 172));
         LoginDlg->setLocale(QLocale(QLocale::English, QLocale::UnitedStates));
         LoginDlg->setModal(true);
         gridLayout = new QGridLayout(LoginDlg);
         gridLayout->setObjectName(QStringLiteral("gridLayout"));
-        gridLayout->setContentsMargins(20, 20, 20, 20);
+        gridLayout->setContentsMargins(20, 10, 20, 20);
+        verticalSpacer = new QSpacerItem(20, 30, QSizePolicy::Minimum, QSizePolicy::Fixed);
+
+        gridLayout->addItem(verticalSpacer, 0, 5, 1, 1);
+
+        messageLb = new QLabel(LoginDlg);
+        messageLb->setObjectName(QStringLiteral("messageLb"));
+
+        gridLayout->addWidget(messageLb, 3, 1, 1, 5);
+
         horizontalLayout = new QHBoxLayout();
         horizontalLayout->setObjectName(QStringLiteral("horizontalLayout"));
-        horizontalSpacer_2 = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
+        horizontalSpacer_2 = new QSpacerItem(40, 20, QSizePolicy::Fixed, QSizePolicy::Minimum);
 
         horizontalLayout->addItem(horizontalSpacer_2);
 
@@ -70,47 +85,42 @@ public:
         horizontalLayout->addWidget(cancelBtn);
 
 
-        gridLayout->addLayout(horizontalLayout, 3, 0, 1, 4);
+        gridLayout->addLayout(horizontalLayout, 4, 1, 1, 5);
 
         passwordEdit = new QLineEdit(LoginDlg);
         passwordEdit->setObjectName(QStringLiteral("passwordEdit"));
         passwordEdit->setMinimumSize(QSize(180, 0));
         passwordEdit->setEchoMode(QLineEdit::Password);
 
-        gridLayout->addWidget(passwordEdit, 1, 3, 1, 1);
+        gridLayout->addWidget(passwordEdit, 2, 5, 1, 1);
 
         userEdit = new QLineEdit(LoginDlg);
         userEdit->setObjectName(QStringLiteral("userEdit"));
         userEdit->setMinimumSize(QSize(180, 0));
 
-        gridLayout->addWidget(userEdit, 0, 3, 1, 1);
+        gridLayout->addWidget(userEdit, 1, 5, 1, 1);
 
         PasswordLb = new QLabel(LoginDlg);
         PasswordLb->setObjectName(QStringLiteral("PasswordLb"));
         PasswordLb->setMinimumSize(QSize(70, 0));
 
-        gridLayout->addWidget(PasswordLb, 1, 2, 1, 1);
+        gridLayout->addWidget(PasswordLb, 2, 4, 1, 1);
 
         UserNameLb = new QLabel(LoginDlg);
         UserNameLb->setObjectName(QStringLiteral("UserNameLb"));
         UserNameLb->setMinimumSize(QSize(70, 0));
 
-        gridLayout->addWidget(UserNameLb, 0, 2, 1, 1);
+        gridLayout->addWidget(UserNameLb, 1, 4, 1, 1);
 
         horizontalSpacer = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
 
-        gridLayout->addItem(horizontalSpacer, 0, 1, 2, 1);
+        gridLayout->addItem(horizontalSpacer, 1, 3, 2, 1);
 
-        IconLb = new QLabel(LoginDlg);
-        IconLb->setObjectName(QStringLiteral("IconLb"));
-        IconLb->setMinimumSize(QSize(80, 80));
+        iconLb = new QLabel(LoginDlg);
+        iconLb->setObjectName(QStringLiteral("iconLb"));
+        iconLb->setMinimumSize(QSize(120, 120));
 
-        gridLayout->addWidget(IconLb, 0, 0, 2, 1);
-
-        messageLb = new QLabel(LoginDlg);
-        messageLb->setObjectName(QStringLiteral("messageLb"));
-
-        gridLayout->addWidget(messageLb, 2, 0, 1, 4);
+        gridLayout->addWidget(iconLb, 0, 0, 5, 1);
 
         QWidget::setTabOrder(userEdit, passwordEdit);
         QWidget::setTabOrder(passwordEdit, okBtn);
@@ -124,6 +134,7 @@ public:
     void retranslateUi(QDialog *LoginDlg)
     {
         LoginDlg->setWindowTitle(QApplication::translate("LoginDlg", "Login to Ormas", 0));
+        messageLb->setText(QString());
         okBtn->setText(QApplication::translate("LoginDlg", "OK", 0));
         cancelBtn->setText(QApplication::translate("LoginDlg", "Cancel", 0));
 #ifndef QT_NO_TOOLTIP
@@ -134,8 +145,7 @@ public:
 #endif // QT_NO_TOOLTIP
         PasswordLb->setText(QApplication::translate("LoginDlg", "Password:", 0));
         UserNameLb->setText(QApplication::translate("LoginDlg", "Phone or email:", 0));
-        IconLb->setText(QString());
-        messageLb->setText(QString());
+        iconLb->setText(QString());
     } // retranslateUi
 
 };

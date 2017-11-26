@@ -11,37 +11,59 @@ CreateProdnDlg::CreateProdnDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag,
 	setupUi(this);
 	setModal(true);
 	dialogBL = ormasBL;
-	production->SetID(dialogBL->GenerateID());
+	dialogBL->StartTransaction(errorMessage);
+	QDate currentDate = QDate::currentDate();
+	int day = currentDate.day();
+	int month = currentDate.month();
+	int year = currentDate.year();
+	std::string nextDay;
+	nextDay = std::to_string(year);
+	nextDay += ".";
+	nextDay += std::to_string(month);
+	nextDay += ".";
+	nextDay += std::to_string(day+1);
 	if (true == updateFlag)
 	{
 		QObject::connect(okBtn, &QPushButton::released, this, &CreateProdnDlg::EditProduction);
 	}
 	else
 	{
+		production->SetID(dialogBL->GenerateID());
 		prdDateEdit->setDate(QDate::currentDate());
-		sesStartTimeEdit->setTime(QTime::currentTime());
-		expiryDateEdit->setDate(QDate::currentDate());
-		sesEndTimeEdit->setTime(QTime::currentTime());
+		expiryDateEdit->setDate(QDate::fromString(nextDay.c_str(), "yyyy.MM.dd"));
+		sesStartTimeEdit->setTime(QTime::fromString("00:01","hh:mm"));
+		sesEndTimeEdit->setTime(QTime::fromString("23:59", "hh:mm"));
 		QObject::connect(okBtn, &QPushButton::released, this, &CreateProdnDlg::CreateProduction);
 	}
 	QObject::connect(cancelBtn, &QPushButton::released, this, &CreateProdnDlg::Close);
 	QObject::connect(addProdBtn, &QPushButton::released, this, &CreateProdnDlg::OpenProdnListDlg);
+	QObject::connect(this, SIGNAL(CloseCreatedForms()), ((MainForm*)parent->parentWidget()), SLOT(CloseChildsByName()));
 }
 
-void CreateProdnDlg::SetProductionParams(QString pProductionDate, QString pExpiryDate, QString pSessionStart, QString pSessionEnd)
+CreateProdnDlg::~CreateProdnDlg()
+{
+	dialogBL->CancelTransaction(errorMessage);
+	emit CloseCreatedForms();
+}
+
+
+void CreateProdnDlg::SetProductionParams(QString pProductionDate, QString pExpiryDate, QString pSessionStart, QString pSessionEnd, int id)
 {
 	production->SetProductionDate(pProductionDate.toUtf8().constData());
 	production->SetExpiryDate(pExpiryDate.toUtf8().constData());
 	production->SetSessionStart(pSessionStart.toUtf8().constData());
 	production->SetSessionEnd(pSessionEnd.toUtf8().constData());
+	production->SetID(id);
 }
 
 void CreateProdnDlg::FillEditElements(QString pProductionDate, QString pExpiryDate, QString pSessionStart, QString pSessionEnd)
 {
-	prdDateEdit->setDate(QDate::fromString(pProductionDate,"yyyy-MM-dd"));
-	expiryDateEdit->setDate(QDate::fromString(pExpiryDate, "yyyy-MM-dd"));
-	sesStartTimeEdit->setTime(QTime::fromString(pSessionStart, "H:mm"));
-	sesEndTimeEdit->setTime(QTime::fromString(pSessionEnd, "H:mm"));
+	prdDateEdit->setDate(QDate::fromString(pProductionDate, "yyyy.MM.dd"));
+	expiryDateEdit->setDate(QDate::fromString(pExpiryDate, "yyyy.MM.dd"));
+	std::string temp1 = pSessionStart.toStdString();
+	std::string temp2 = pSessionEnd.toStdString();
+	sesStartTimeEdit->setTime(QTime::fromString(pSessionStart, "hh:mm:ss"));
+	sesEndTimeEdit->setTime(QTime::fromString(pSessionEnd, "hh:mm:ss"));
 }
 
 
@@ -53,7 +75,8 @@ bool CreateProdnDlg::FillDlgElements(QTableView* pTable)
 		SetProductionParams(pTable->model()->data(pTable->model()->index(mIndex.row(), 1)).toString().toUtf8().constData(),
 			pTable->model()->data(pTable->model()->index(mIndex.row(), 2)).toString().toUtf8().constData(),
 			pTable->model()->data(pTable->model()->index(mIndex.row(), 3)).toString().toUtf8().constData(),
-			pTable->model()->data(pTable->model()->index(mIndex.row(), 4)).toString().toUtf8().constData());
+			pTable->model()->data(pTable->model()->index(mIndex.row(), 4)).toString().toUtf8().constData(),
+			pTable->model()->data(pTable->model()->index(mIndex.row(), 0)).toInt());
 		FillEditElements(pTable->model()->data(pTable->model()->index(mIndex.row(), 1)).toString().toUtf8().constData(),
 			pTable->model()->data(pTable->model()->index(mIndex.row(), 2)).toString().toUtf8().constData(),
 			pTable->model()->data(pTable->model()->index(mIndex.row(), 3)).toString().toUtf8().constData(),
@@ -73,8 +96,8 @@ void CreateProdnDlg::CreateProduction()
 		sesEndTimeEdit->text().isEmpty()))
 	{
 		DataForm *parentDataForm = (DataForm*)parentWidget();
-		SetProductionParams(prdDateEdit->text(), expiryDateEdit->text(), sesStartTimeEdit->text(), sesEndTimeEdit->text());
-		dialogBL->StartTransaction(errorMessage);
+		SetProductionParams(prdDateEdit->text(), expiryDateEdit->text(), sesStartTimeEdit->text(), sesEndTimeEdit->text(), production->GetID());
+		
 		if (dialogBL->CreateProduction(production, errorMessage))
 		{
 			QList<QStandardItem*> UserItem;
@@ -119,8 +142,7 @@ void CreateProdnDlg::EditProduction()
 			sesEndTimeEdit->text() != production->GetSessionEnd().c_str())
 		{
 			DataForm *parentDataForm = (DataForm*)parentWidget();
-			SetProductionParams(prdDateEdit->text(), expiryDateEdit->text(), sesStartTimeEdit->text(), sesEndTimeEdit->text());
-			dialogBL->StartTransaction(errorMessage);
+			SetProductionParams(prdDateEdit->text(), expiryDateEdit->text(), sesStartTimeEdit->text(), sesEndTimeEdit->text(), production->GetID());
 			if (dialogBL->UpdateProduction(production, errorMessage))
 			{
 				//updating production data
@@ -158,6 +180,7 @@ void CreateProdnDlg::EditProduction()
 
 void CreateProdnDlg::Close()
 {
+	dialogBL->CancelTransaction(errorMessage);
 	this->close();
 }
 
@@ -173,12 +196,16 @@ void CreateProdnDlg::OpenProdnListDlg()
 	DataForm *dForm = new DataForm(dialogBL, mainForm);
 	dForm->setWindowTitle(tr("Add product"));
 	dForm->hide();
+	dForm->productionID = production->GetID();
+	BusinessLayer::ProductionList pList;
+	pList.SetProductionID(production->GetID());
+	std::string filter = pList.GenerateFilter(dialogBL->GetOrmasDal());
 	dForm->setWindowModality(Qt::WindowModal);
-	dForm->FillTable<BusinessLayer::ProductionListView>(errorMessage);
+	dForm->FillTable<BusinessLayer::ProductionListView>(errorMessage, filter);
 	if (errorMessage.empty())
 	{
 		dForm->createProdnDlg = this;
-		dForm->setObjectName("createProdnListForm");
+		dForm->setObjectName("productionListForm");
 		dForm->QtConnect<BusinessLayer::ProductionListView>();
 		QMdiSubWindow *returnWindow = new QMdiSubWindow;
 		returnWindow->setWidget(dForm);
@@ -191,7 +218,6 @@ void CreateProdnDlg::OpenProdnListDlg()
 		dForm->raise();
 		QString message = tr("All products are shown");
 		mainForm->statusBar()->showMessage(message);
-		dForm->productionID = production->GetID();
 	}
 	else
 	{

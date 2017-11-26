@@ -235,7 +235,7 @@ namespace BusinessLayer
 	bool User::GetUserByCredentials(DataLayer::OrmasDal& ormasDal, std::string uPhoneOrEmail, std::string uPassword)
 	{
 		std::string errorMessage = "";
-		if (!uPhoneOrEmail.empty() && !password.empty())
+		if (!uPhoneOrEmail.empty() && !uPassword.empty())
 		{
 			phone = uPhoneOrEmail;
 			password = uPassword;
@@ -282,6 +282,19 @@ namespace BusinessLayer
 			activated == false && 0 == roleID)
 			return true;
 		return false;
+	}
+
+	void User::Clear()
+	{
+		id = 0;
+		email.clear();
+		name.clear();
+		surname.clear();
+		phone.clear();
+		address.clear();
+		password.clear();
+		activated = false;
+		roleID = 0;
 	}
 
 	void User::TrimStrings(std::string& uEmail, std::string& uName, std::string& uSurname, std::string& uPhone,

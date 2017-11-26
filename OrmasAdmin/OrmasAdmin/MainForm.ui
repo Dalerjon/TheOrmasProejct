@@ -130,9 +130,14 @@
     </property>
     <addaction name="actionBalances"/>
     <addaction name="actionPayments"/>
+    <addaction name="actionRefund"/>
     <addaction name="actionPrices"/>
+    <addaction name="separator"/>
     <addaction name="actionSalary"/>
     <addaction name="actionSalaryType"/>
+    <addaction name="actionPayroll"/>
+    <addaction name="actionWithdrawal"/>
+    <addaction name="actionPayslip"/>
    </widget>
    <addaction name="menuUsers"/>
    <addaction name="menuProducts"/>
@@ -177,7 +182,7 @@
   </action>
   <action name="actionOrders">
    <property name="text">
-    <string>Oders</string>
+    <string>Orders</string>
    </property>
   </action>
   <action name="actionProductsList">
@@ -318,6 +323,26 @@
   <action name="actionPayments">
    <property name="text">
     <string>Payments</string>
+   </property>
+  </action>
+  <action name="actionPayroll">
+   <property name="text">
+    <string>Payroll</string>
+   </property>
+  </action>
+  <action name="actionWithdrawal">
+   <property name="text">
+    <string>Withdrawal</string>
+   </property>
+  </action>
+  <action name="actionRefund">
+   <property name="text">
+    <string>Refund</string>
+   </property>
+  </action>
+  <action name="actionPayslip">
+   <property name="text">
+    <string>Payslip</string>
    </property>
   </action>
  </widget>

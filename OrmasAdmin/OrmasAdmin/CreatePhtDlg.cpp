@@ -196,7 +196,7 @@ void CreatePhtDlg::OpenUserDlg()
 	QString message = tr("Loading...");
 	mainForm->statusBar()->showMessage(message);
 	DataForm *dForm = new DataForm(dialogBL, mainForm);
-	dForm->setWindowTitle(tr("User"));
+	dForm->setWindowTitle(tr("Users"));
 	dForm->hide();
 	dForm->setWindowModality(Qt::WindowModal);
 	dForm->FillTable<BusinessLayer::UserView>(errorMessage);

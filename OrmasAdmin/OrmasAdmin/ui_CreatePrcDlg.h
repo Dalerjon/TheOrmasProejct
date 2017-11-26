@@ -14,7 +14,7 @@
 #include <QtWidgets/QAction>
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QButtonGroup>
-#include <QtWidgets/QDateEdit>
+#include <QtWidgets/QDateTimeEdit>
 #include <QtWidgets/QDialog>
 #include <QtWidgets/QGridLayout>
 #include <QtWidgets/QHBoxLayout>
@@ -35,13 +35,13 @@ public:
     QLineEdit *currencyEdit;
     QLabel *valieLb;
     QLineEdit *valueEdit;
-    QDateEdit *dateEdit;
     QHBoxLayout *horizontalLayout;
     QSpacerItem *horizontalSpacer;
     QPushButton *okBtn;
     QPushButton *cancelBtn;
     QPushButton *productBtn;
     QLineEdit *productEdit;
+    QDateTimeEdit *dateEdit;
 
     void setupUi(QDialog *CreatePrice)
     {
@@ -79,11 +79,6 @@ public:
 
         gridLayout->addWidget(valueEdit, 2, 1, 1, 1);
 
-        dateEdit = new QDateEdit(CreatePrice);
-        dateEdit->setObjectName(QStringLiteral("dateEdit"));
-
-        gridLayout->addWidget(dateEdit, 0, 1, 1, 1);
-
         horizontalLayout = new QHBoxLayout();
         horizontalLayout->setObjectName(QStringLiteral("horizontalLayout"));
         horizontalSpacer = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
@@ -115,7 +110,11 @@ public:
 
         gridLayout->addWidget(productEdit, 6, 1, 1, 1);
 
-        QWidget::setTabOrder(dateEdit, valueEdit);
+        dateEdit = new QDateTimeEdit(CreatePrice);
+        dateEdit->setObjectName(QStringLiteral("dateEdit"));
+
+        gridLayout->addWidget(dateEdit, 0, 1, 1, 1);
+
         QWidget::setTabOrder(valueEdit, currencyBtn);
         QWidget::setTabOrder(currencyBtn, currencyEdit);
         QWidget::setTabOrder(currencyEdit, productBtn);

@@ -62,10 +62,10 @@ void DataForm::GetIDValue(QModelIndex index)
 {
 	int id = GetIDFromTable(tableView, index);
 	emit SendID(id, objectName());
-	if (createUserDlg != nullptr)
+	/*if (createUserDlg != nullptr)
 		createUserDlg = nullptr;
 	if (createProdDlg != nullptr)
-		createProdDlg = nullptr;
+		createProdDlg = nullptr;*/
 	CloseDataForm();
 }
 
@@ -1270,7 +1270,7 @@ void DataForm::DelProdnDlg()
 void DataForm::CrtProdnListDlg()
 {
 	CreateProdnListDlg *craeteProdnListDlg = new CreateProdnListDlg(dataFormBL, false, this);
-	if (0 != orderID)
+	if (0 != productionID)
 	{
 		craeteProdnListDlg->productionID = productionID;
 	}
@@ -1318,6 +1318,57 @@ void DataForm::DelProdnListDlg()
 	{
 		QMessageBox::information(NULL, QString(tr("Warning")),
 			QString(tr("Product with this id does not exist in production list!")),
+			QString(tr("Ok")));
+	}
+}
+
+void DataForm::CrtPspDlg()
+{
+	CreatePspDlg *payslipDlg = new CreatePspDlg(dataFormBL, false, this);
+	payslipDlg->setAttribute(Qt::WA_DeleteOnClose);
+	payslipDlg->setWindowTitle(tr("Create payslip"));
+	payslipDlg->show();
+}
+void DataForm::UdpPspDlg()
+{
+	CreatePspDlg *payslipDlg = new CreatePspDlg(dataFormBL, true, this);
+	payslipDlg->setAttribute(Qt::WA_DeleteOnClose);
+	payslipDlg->setWindowTitle(tr("Update payslip"));
+	if (payslipDlg->FillDlgElements(tableView))
+	{
+		payslipDlg->show();
+	}
+	else
+	{
+		QMessageBox::information(NULL, QString(tr("Warning")),
+			QString(tr("Please select one row at first!")),
+			QString(tr("Ok")));
+	}
+}
+void DataForm::DelPspDlg()
+{
+	std::string errorMessage = "";
+	int id = GetIDFromTable(tableView, errorMessage);
+	BusinessLayer::Payslip payslip;
+	payslip.SetID(id);
+	if (0 != id)
+	{
+		if (dataFormBL->DeletePayslip(&payslip, errorMessage))
+		{
+			tableView->model()->removeRow(tableView->selectionModel()->currentIndex().row());
+			ChangeBtnState();
+		}
+		else
+		{
+			QMessageBox::information(NULL, QString(tr("Warning")),
+				QString(tr(errorMessage.c_str())),
+				QString(tr("Ok")));
+		}
+	}
+	else
+	{
+		QMessageBox::information(NULL, QString(tr("Warning")),
+			QString(tr("Payslip with this id does not exist!")),
 			QString(tr("Ok")));
 	}
 }
@@ -1424,6 +1475,56 @@ void DataForm::DelRelTypeDlg()
 	}
 }
 
+void DataForm::CrtRfdDlg()
+{
+	CreateRfdDlg *refundDlg = new CreateRfdDlg(dataFormBL, false, this);
+	refundDlg->setAttribute(Qt::WA_DeleteOnClose);
+	refundDlg->setWindowTitle(tr("Create refund"));
+	refundDlg->show();
+}
+void DataForm::UdpRfdDlg()
+{
+	CreateRfdDlg *refundDlg = new CreateRfdDlg(dataFormBL, true, this);
+	refundDlg->setAttribute(Qt::WA_DeleteOnClose);
+	refundDlg->setWindowTitle(tr("Update refund"));
+	if (refundDlg->FillDlgElements(tableView))
+	{
+		refundDlg->show();
+	}
+	else
+	{
+		QMessageBox::information(NULL, QString(tr("Warning")),
+			QString(tr("Please select one row at first!")),
+			QString(tr("Ok")));
+	}
+}
+void DataForm::DelRfdDlg()
+{
+	std::string errorMessage = "";
+	int id = GetIDFromTable(tableView, errorMessage);
+	BusinessLayer::Refund refund;
+	refund.SetID(id);
+	if (0 != id)
+	{
+		if (dataFormBL->DeleteRefund(&refund, errorMessage))
+		{
+			tableView->model()->removeRow(tableView->selectionModel()->currentIndex().row());
+			ChangeBtnState();
+		}
+		else
+		{
+			QMessageBox::information(NULL, QString(tr("Warning")),
+				QString(tr(errorMessage.c_str())),
+				QString(tr("Ok")));
+		}
+	}
+	else
+	{
+		QMessageBox::information(NULL, QString(tr("Warning")),
+			QString(tr("Refund with this id does not exist!")),
+			QString(tr("Ok")));
+	}
+}
 
 void DataForm::CrtRoleDlg()
 {
@@ -1531,7 +1632,7 @@ void DataForm::DelRtrnDlg()
 void DataForm::CrtRtrnListDlg()
 {
 	CreateRtrnListDlg *craeteRtrnListDlg = new CreateRtrnListDlg(dataFormBL, false, this);
-	if (0 != orderID)
+	if (0 != returnID)
 	{
 		craeteRtrnListDlg->returnID = returnID;
 	}
@@ -1787,6 +1888,58 @@ void DataForm::DelUserDlg()
 	}
 }
 
+
+void DataForm::CrtWdwDlg()
+{
+	CreateWdwDlg *withdrawalDlg = new CreateWdwDlg(dataFormBL, false, this);
+	withdrawalDlg->setAttribute(Qt::WA_DeleteOnClose);
+	withdrawalDlg->setWindowTitle(tr("Create withdrawal"));
+	withdrawalDlg->show();
+}
+void DataForm::UdpWdwDlg()
+{
+	CreateWdwDlg *withdrawalDlg = new CreateWdwDlg(dataFormBL, true, this);
+	withdrawalDlg->setAttribute(Qt::WA_DeleteOnClose);
+	withdrawalDlg->setWindowTitle(tr("Update withdrawal"));
+	if (withdrawalDlg->FillDlgElements(tableView))
+	{
+		withdrawalDlg->show();
+	}
+	else
+	{
+		QMessageBox::information(NULL, QString(tr("Warning")),
+			QString(tr("Please select one row at first!")),
+			QString(tr("Ok")));
+	}
+}
+void DataForm::DelWdwDlg()
+{
+	std::string errorMessage = "";
+	int id = GetIDFromTable(tableView, errorMessage);
+	BusinessLayer::Withdrawal withdrawal;
+	withdrawal.SetID(id);
+	if (0 != id)
+	{
+		if (dataFormBL->DeleteWithdrawal(&withdrawal, errorMessage))
+		{
+			tableView->model()->removeRow(tableView->selectionModel()->currentIndex().row());
+			ChangeBtnState();
+		}
+		else
+		{
+			QMessageBox::information(NULL, QString(tr("Warning")),
+				QString(tr(errorMessage.c_str())),
+				QString(tr("Ok")));
+		}
+	}
+	else
+	{
+		QMessageBox::information(NULL, QString(tr("Warning")),
+			QString(tr("Withdrawal with this id does not exist!")),
+			QString(tr("Ok")));
+	}
+}
+
 void DataForm::CrtWOffDlg()
 {
 	CreateWOffDlg *writeOffDlg = new CreateWOffDlg(dataFormBL, false, this);
@@ -1842,7 +1995,7 @@ void DataForm::DelWOffDlg()
 void DataForm::CrtWOffListDlg()
 {
 	CreateWOffListDlg *craeteWOffListDlg = new CreateWOffListDlg(dataFormBL, false, this);
-	if (0 != orderID)
+	if (0 != writeOffID)
 	{
 		craeteWOffListDlg->writeOffID = writeOffID;
 	}
@@ -1976,9 +2129,9 @@ template<>
 QStringList DataForm::GetTableHeader<BusinessLayer::OrderView>()
 {
 	QStringList header;
-	header << tr("ID") << tr("Order date") << tr("Status code") << tr("Status name") << tr("Client name") << tr("Client surname") 
+	header << tr("ID") << tr("Order date") << tr("Execution date") << tr("Status code") << tr("Status name") << tr("Client name") << tr("Client surname")
 		<< tr("Client phone") << tr("Client address") << tr("Client firm") << tr("Employee name") << tr("Employee surname") 
-		<< tr("Employee phone") << tr("Product count") << tr("Sum")	<< tr("Currency name") << tr("Employee ID") << tr("User ID") 
+		<< tr("Employee phone") << tr("Product count") << tr("Sum")	<< tr("Currency name") << tr("Employee ID") << tr("Client ID") 
 		<< tr("Status ID") << tr("Currency ID") << tr("Product list");
 	return header;
 }
@@ -2063,6 +2216,15 @@ QStringList DataForm::GetTableHeader<BusinessLayer::ProductionListView>()
 	return header;
 }
 
+
+template<>
+QStringList DataForm::GetTableHeader<BusinessLayer::PayslipView>()
+{
+	QStringList header;
+	header << tr("ID") << tr("Date") << tr("Value") << tr("Currency name") << tr("Salary ID") << tr("Currency ID");
+	return header;
+}
+
 template<>
 QStringList DataForm::GetTableHeader<BusinessLayer::Relation>()
 {
@@ -2083,9 +2245,9 @@ template<>
 QStringList DataForm::GetTableHeader<BusinessLayer::ReturnView>()
 {
 	QStringList header;
-	header << tr("ID") << tr("Return date") << tr("Status code") << tr("Status name") << tr("Client name") << tr("Client surname")
+	header << tr("ID") << tr("Return date") << tr("Execution date") << tr("Status code") << tr("Status name") << tr("Client name") << tr("Client surname")
 		<< tr("Client phone") << tr("Client address") << tr("Client firm") << tr("Employee name") << tr("Employee surname")
-		<< tr("Employee phone") << tr("Product count") << tr("Sum") << tr("Currency name") << tr("Employee ID") << tr("User ID")
+		<< tr("Employee phone") << tr("Product count") << tr("Sum") << tr("Currency name") << tr("Employee ID") << tr("Client ID")
 		<< tr("Status ID") << tr("Currency ID") << tr("Product list");
 	return header;
 }
@@ -2097,6 +2259,14 @@ QStringList DataForm::GetTableHeader<BusinessLayer::ReturnListView>()
 	header << tr("ID") << tr("Return ID") << tr("Product name") << tr("Price")
 		<< tr("Currency name") << tr("Volume") << tr("Measure name") << tr("Count") << tr("Sum") << tr("Sum currency name") << tr("Status name")
 		<< tr("Product ID") << tr("Status ID") << tr("Currency ID");
+	return header;
+}
+
+template<>
+QStringList DataForm::GetTableHeader<BusinessLayer::RefundView>()
+{
+	QStringList header;
+	header << tr("ID") << tr("Date") << tr("Value") << tr("Currency name") << tr("User ID") << tr("Currency ID");
 	return header;
 }
 
@@ -2144,12 +2314,20 @@ QStringList DataForm::GetTableHeader<BusinessLayer::UserView>()
 }
 
 template<>
+QStringList DataForm::GetTableHeader<BusinessLayer::WithdrawalView>()
+{
+	QStringList header;
+	header << tr("ID") << tr("Date") << tr("Value") << tr("Currency name") << tr("User ID") << tr("Currency ID");
+	return header;
+}
+
+template<>
 QStringList DataForm::GetTableHeader<BusinessLayer::WriteOffView>()
 {
 	QStringList header;
 	header << tr("ID") << tr("Write-off date") << tr("Status code") << tr("Status name") << tr("Client name") << tr("Client surname")
 		<< tr("Client phone") << tr("Client address") << tr("Client firm") << tr("Employee name") << tr("Employee surname")
-		<< tr("Employee phone") << tr("Product count") << tr("Sum") << tr("Currency name") << tr("Employee ID") << tr("User ID")
+		<< tr("Employee phone") << tr("Product count") << tr("Sum") << tr("Currency name") << tr("Employee ID") << tr("Client ID")
 		<< tr("Status ID") << tr("Currency ID") << tr("Product list");
 	return header;
 }
@@ -2288,6 +2466,7 @@ QList<QStandardItem*> DataForm::GetDataFromClass<BusinessLayer::OrderView>(Busin
 	QIcon icon;
 	items << new QStandardItem(QString::number(data.GetID())) 
 		<< new QStandardItem(data.GetDate().c_str())
+		<< new QStandardItem(data.GetExecutionDate().c_str())
 		<< new QStandardItem(data.GetStatusCode().c_str()) 
 		<< new QStandardItem(data.GetStatusName().c_str())
 		<< new QStandardItem(data.GetClientName().c_str()) 
@@ -2303,6 +2482,7 @@ QList<QStandardItem*> DataForm::GetDataFromClass<BusinessLayer::OrderView>(Busin
 		<< new QStandardItem(data.GetCurrencyName().c_str()) 
 		<< new QStandardItem(QString::number(data.GetEmployeeID())) 
 		<< new QStandardItem(QString::number(data.GetClientID())) 
+		<< new QStandardItem(QString::number(data.GetStatusID()))
 		<< new QStandardItem(QString::number(data.GetCurrencyID()))
 		<< new QStandardItem(icon,"Detail");
 	return items;
@@ -2437,6 +2617,19 @@ QList<QStandardItem*> DataForm::GetDataFromClass<BusinessLayer::ProductionListVi
 }
 
 template<>
+QList<QStandardItem*> DataForm::GetDataFromClass<BusinessLayer::PayslipView>(BusinessLayer::PayslipView& data)
+{
+	QList<QStandardItem*> items;
+	items << new QStandardItem(QString::number(data.GetID()))
+		<< new QStandardItem(data.GetDate().c_str())
+		<< new QStandardItem(QString::number(data.GetValue()))
+		<< new QStandardItem(data.GetCurrencyName().c_str())
+		<< new QStandardItem(QString::number(data.GetSalaryID()))
+		<< new QStandardItem(QString::number(data.GetCurrencyID()));
+	return items;
+}
+
+template<>
 QList<QStandardItem*> DataForm::GetDataFromClass<BusinessLayer::Relation>(BusinessLayer::Relation& data)
 {
 	QList<QStandardItem*> items;
@@ -2451,6 +2644,19 @@ QList<QStandardItem*> DataForm::GetDataFromClass<BusinessLayer::RelationType>(Bu
 	QList<QStandardItem*> items;
 	items << new QStandardItem(QString::number(data.GetID())) << new QStandardItem(data.GetName().c_str())
 		<< new QStandardItem(data.GetComment().c_str());
+	return items;
+}
+
+template<>
+QList<QStandardItem*> DataForm::GetDataFromClass<BusinessLayer::RefundView>(BusinessLayer::RefundView& data)
+{
+	QList<QStandardItem*> items;
+	items << new QStandardItem(QString::number(data.GetID()))
+		<< new QStandardItem(data.GetDate().c_str())
+		<< new QStandardItem(QString::number(data.GetValue()))
+		<< new QStandardItem(data.GetCurrencyName().c_str())
+		<< new QStandardItem(QString::number(data.GetUserID()))
+		<< new QStandardItem(QString::number(data.GetCurrencyID()));
 	return items;
 }
 
@@ -2472,6 +2678,7 @@ QList<QStandardItem*> DataForm::GetDataFromClass<BusinessLayer::ReturnView>(Busi
 	QIcon icon;
 	items << new QStandardItem(QString::number(data.GetID()))
 		<< new QStandardItem(data.GetDate().c_str())
+		<< new QStandardItem(data.GetExecutionDate().c_str())
 		<< new QStandardItem(data.GetStatusCode().c_str())
 		<< new QStandardItem(data.GetStatusName().c_str())
 		<< new QStandardItem(data.GetClientName().c_str())
@@ -2487,6 +2694,7 @@ QList<QStandardItem*> DataForm::GetDataFromClass<BusinessLayer::ReturnView>(Busi
 		<< new QStandardItem(data.GetCurrencyName().c_str())
 		<< new QStandardItem(QString::number(data.GetEmployeeID()))
 		<< new QStandardItem(QString::number(data.GetClientID()))
+		<< new QStandardItem(QString::number(data.GetStatusID()))
 		<< new QStandardItem(QString::number(data.GetCurrencyID()))
 		<< new QStandardItem(icon, "Detail");
 	return items;
@@ -2518,10 +2726,10 @@ QList<QStandardItem*> DataForm::GetDataFromClass<BusinessLayer::SalaryView>(Busi
 {
 	QList<QStandardItem*> items;
 	items << new QStandardItem(QString::number(data.GetID()))
-		<< new QStandardItem(QString::number(data.GetUserID()))
-		<< new QStandardItem(data.GetUsername().c_str())
-		<< new QStandardItem(data.GetUserSurname().c_str())
-		<< new QStandardItem(data.GetUserPhone().c_str())
+		<< new QStandardItem(QString::number(data.GetEmployeeID()))
+		<< new QStandardItem(data.GetEmployeeName().c_str())
+		<< new QStandardItem(data.GetEmployeeSurname().c_str())
+		<< new QStandardItem(data.GetEmployeePhone().c_str())
 		<< new QStandardItem(data.GetDate().c_str())
 		<< new QStandardItem(QString::number(data.GetValue()))
 		<< new QStandardItem(data.GetCurrencyName().c_str())
@@ -2563,6 +2771,20 @@ QList<QStandardItem*> DataForm::GetDataFromClass<BusinessLayer::UserView>(Busine
 }
 
 template<>
+QList<QStandardItem*> DataForm::GetDataFromClass<BusinessLayer::WithdrawalView>(BusinessLayer::WithdrawalView& data)
+{
+	QList<QStandardItem*> items;
+	items << new QStandardItem(QString::number(data.GetID()))
+		<< new QStandardItem(data.GetDate().c_str())
+		<< new QStandardItem(QString::number(data.GetValue()))
+		<< new QStandardItem(data.GetCurrencyName().c_str())
+		<< new QStandardItem(QString::number(data.GetUserID()))
+		<< new QStandardItem(QString::number(data.GetCurrencyID()));
+	return items;
+}
+
+
+template<>
 QList<QStandardItem*> DataForm::GetDataFromClass<BusinessLayer::WriteOffView>(BusinessLayer::WriteOffView& data)
 {
 	QList<QStandardItem*> items;
@@ -2584,6 +2806,7 @@ QList<QStandardItem*> DataForm::GetDataFromClass<BusinessLayer::WriteOffView>(Bu
 		<< new QStandardItem(data.GetCurrencyName().c_str())
 		<< new QStandardItem(QString::number(data.GetEmployeeID()))
 		<< new QStandardItem(QString::number(data.GetClientID()))
+		<< new QStandardItem(QString::number(data.GetStatusID()))
 		<< new QStandardItem(QString::number(data.GetCurrencyID()))
 		<< new QStandardItem(icon, "Detail");
 	return items;
@@ -2745,10 +2968,20 @@ void DataForm::QtConnect<BusinessLayer::Currency>()
 		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
 		connect(this, SIGNAL(SendID(int, QString)), createPmtDlg, SLOT(SetID(int, QString)));
 	}
+	if (createPspDlg != nullptr)
+	{
+		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
+		connect(this, SIGNAL(SendID(int, QString)), createPspDlg, SLOT(SetID(int, QString)));
+	}
 	if (createPrcDlg != nullptr)
 	{
 		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
 		connect(this, SIGNAL(SendID(int, QString)), createPrcDlg, SLOT(SetID(int, QString)));
+	}
+	if (createRfdDlg != nullptr)
+	{
+		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
+		connect(this, SIGNAL(SendID(int, QString)), createRfdDlg, SLOT(SetID(int, QString)));
 	}
 	if (createSlrDlg != nullptr)
 	{
@@ -2779,6 +3012,11 @@ void DataForm::QtConnect<BusinessLayer::EmployeeView>()
 	{
 		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
 		connect(this, SIGNAL(SendID(int, QString)), createWOffDlg, SLOT(SetID(int, QString)));
+	}
+	if (clcWagesDlg != nullptr)
+	{
+		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
+		connect(this, SIGNAL(SendID(int, QString)), clcWagesDlg, SLOT(SetID(int, QString)));
 	}
 }
 
@@ -2978,6 +3216,16 @@ void DataForm::QtConnect<BusinessLayer::ProductionListView>()
 }
 
 template<>
+void DataForm::QtConnect<BusinessLayer::PayslipView>()
+{
+	connect(createBtn, &QPushButton::released, this, &DataForm::CrtPspDlg);
+	connect(editBtn, &QPushButton::released, this, &DataForm::UdpPspDlg);
+	connect(deleteBtn, &QPushButton::released, this, &DataForm::DelPspDlg);
+	connect(closeBtn, &QPushButton::released, this, &DataForm::CloseDataForm);
+	connect(tableView->selectionModel(), SIGNAL(currentRowChanged(QModelIndex, QModelIndex)), this, SLOT(ChangeBtnState()));
+}
+
+template<>
 void DataForm::QtConnect<BusinessLayer::Relation>()
 {
 	connect(createBtn, &QPushButton::released, this, &DataForm::CrtRelDlg);
@@ -3000,6 +3248,16 @@ void DataForm::QtConnect<BusinessLayer::RelationType>()
 		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
 		connect(this, SIGNAL(SendID(int, QString)), createRelDlg, SLOT(SetID(int, QString)));
 	}
+}
+
+template<>
+void DataForm::QtConnect<BusinessLayer::RefundView>()
+{
+	connect(createBtn, &QPushButton::released, this, &DataForm::CrtRfdDlg);
+	connect(editBtn, &QPushButton::released, this, &DataForm::UdpRfdDlg);
+	connect(deleteBtn, &QPushButton::released, this, &DataForm::DelRfdDlg);
+	connect(closeBtn, &QPushButton::released, this, &DataForm::CloseDataForm);
+	connect(tableView->selectionModel(), SIGNAL(currentRowChanged(QModelIndex, QModelIndex)), this, SLOT(ChangeBtnState()));
 }
 
 template<>
@@ -3087,6 +3345,11 @@ void DataForm::QtConnect<BusinessLayer::SalaryView>()
 	connect(deleteBtn, &QPushButton::released, this, &DataForm::DelSlrDlg);
 	connect(closeBtn, &QPushButton::released, this, &DataForm::CloseDataForm);
 	connect(tableView->selectionModel(), SIGNAL(currentRowChanged(QModelIndex, QModelIndex)), this, SLOT(ChangeBtnState()));
+	if (createPspDlg != nullptr)
+	{
+		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
+		connect(this, SIGNAL(SendID(int, QString)), createPspDlg, SLOT(SetID(int, QString)));
+	}
 }
 
 template<>
@@ -3182,6 +3445,11 @@ void DataForm::QtConnect<BusinessLayer::UserView>()
 		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
 		connect(this, SIGNAL(SendID(int, QString)), createPmtDlg, SLOT(SetID(int, QString)));
 	}
+	if (createRfdDlg != nullptr)
+	{
+		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
+		connect(this, SIGNAL(SendID(int, QString)), createRfdDlg, SLOT(SetID(int, QString)));
+	}
 	if (createRelDlg != nullptr)
 	{
 		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
@@ -3192,6 +3460,16 @@ void DataForm::QtConnect<BusinessLayer::UserView>()
 		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
 		connect(this, SIGNAL(SendID(int, QString)), createSlrDlg, SLOT(SetID(int, QString)));
 	}
+}
+
+template<>
+void DataForm::QtConnect<BusinessLayer::WithdrawalView>()
+{
+	connect(createBtn, &QPushButton::released, this, &DataForm::CrtWdwDlg);
+	connect(editBtn, &QPushButton::released, this, &DataForm::UdpWdwDlg);
+	connect(deleteBtn, &QPushButton::released, this, &DataForm::DelWdwDlg);
+	connect(closeBtn, &QPushButton::released, this, &DataForm::CloseDataForm);
+	connect(tableView->selectionModel(), SIGNAL(currentRowChanged(QModelIndex, QModelIndex)), this, SLOT(ChangeBtnState()));
 }
 
 template<>

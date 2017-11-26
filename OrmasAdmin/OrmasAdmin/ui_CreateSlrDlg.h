@@ -15,7 +15,7 @@
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QButtonGroup>
 #include <QtWidgets/QComboBox>
-#include <QtWidgets/QDateEdit>
+#include <QtWidgets/QDateTimeEdit>
 #include <QtWidgets/QDialog>
 #include <QtWidgets/QGridLayout>
 #include <QtWidgets/QHBoxLayout>
@@ -32,12 +32,11 @@ class Ui_CreateSalary
 public:
     QGridLayout *gridLayout;
     QLineEdit *salaryTypeEdit;
-    QDateEdit *dateEdit;
     QLabel *dateLb;
     QLineEdit *valueEdit;
-    QPushButton *userBtn;
+    QPushButton *employeeBtn;
     QPushButton *slrTypeBtn;
-    QLineEdit *userEdit;
+    QLineEdit *employeeEdit;
     QHBoxLayout *horizontalLayout;
     QSpacerItem *horizontalSpacer;
     QPushButton *okBtn;
@@ -47,6 +46,7 @@ public:
     QLineEdit *currencyEdit;
     QLabel *isBonusLb;
     QComboBox *bonusCmb;
+    QDateTimeEdit *dateEdit;
 
     void setupUi(QDialog *CreateSalary)
     {
@@ -64,11 +64,6 @@ public:
 
         gridLayout->addWidget(salaryTypeEdit, 9, 2, 1, 1);
 
-        dateEdit = new QDateEdit(CreateSalary);
-        dateEdit->setObjectName(QStringLiteral("dateEdit"));
-
-        gridLayout->addWidget(dateEdit, 12, 2, 1, 1);
-
         dateLb = new QLabel(CreateSalary);
         dateLb->setObjectName(QStringLiteral("dateLb"));
 
@@ -79,22 +74,22 @@ public:
 
         gridLayout->addWidget(valueEdit, 5, 2, 1, 1);
 
-        userBtn = new QPushButton(CreateSalary);
-        userBtn->setObjectName(QStringLiteral("userBtn"));
-        userBtn->setMinimumSize(QSize(150, 0));
+        employeeBtn = new QPushButton(CreateSalary);
+        employeeBtn->setObjectName(QStringLiteral("employeeBtn"));
+        employeeBtn->setMinimumSize(QSize(150, 0));
 
-        gridLayout->addWidget(userBtn, 1, 1, 1, 1);
+        gridLayout->addWidget(employeeBtn, 1, 1, 1, 1);
 
         slrTypeBtn = new QPushButton(CreateSalary);
         slrTypeBtn->setObjectName(QStringLiteral("slrTypeBtn"));
 
         gridLayout->addWidget(slrTypeBtn, 9, 1, 1, 1);
 
-        userEdit = new QLineEdit(CreateSalary);
-        userEdit->setObjectName(QStringLiteral("userEdit"));
-        userEdit->setReadOnly(true);
+        employeeEdit = new QLineEdit(CreateSalary);
+        employeeEdit->setObjectName(QStringLiteral("employeeEdit"));
+        employeeEdit->setReadOnly(true);
 
-        gridLayout->addWidget(userEdit, 1, 2, 1, 1);
+        gridLayout->addWidget(employeeEdit, 1, 2, 1, 1);
 
         horizontalLayout = new QHBoxLayout();
         horizontalLayout->setObjectName(QStringLiteral("horizontalLayout"));
@@ -141,14 +136,18 @@ public:
 
         gridLayout->addWidget(bonusCmb, 13, 2, 1, 1);
 
-        QWidget::setTabOrder(userBtn, userEdit);
-        QWidget::setTabOrder(userEdit, valueEdit);
+        dateEdit = new QDateTimeEdit(CreateSalary);
+        dateEdit->setObjectName(QStringLiteral("dateEdit"));
+
+        gridLayout->addWidget(dateEdit, 12, 2, 1, 1);
+
+        QWidget::setTabOrder(employeeBtn, employeeEdit);
+        QWidget::setTabOrder(employeeEdit, valueEdit);
         QWidget::setTabOrder(valueEdit, currencyBtn);
         QWidget::setTabOrder(currencyBtn, currencyEdit);
         QWidget::setTabOrder(currencyEdit, slrTypeBtn);
         QWidget::setTabOrder(slrTypeBtn, salaryTypeEdit);
-        QWidget::setTabOrder(salaryTypeEdit, dateEdit);
-        QWidget::setTabOrder(dateEdit, bonusCmb);
+        QWidget::setTabOrder(salaryTypeEdit, bonusCmb);
         QWidget::setTabOrder(bonusCmb, okBtn);
         QWidget::setTabOrder(okBtn, cancelBtn);
 
@@ -159,15 +158,15 @@ public:
 
     void retranslateUi(QDialog *CreateSalary)
     {
-        CreateSalary->setWindowTitle(QApplication::translate("CreateSalary", "Create/Update payment", 0));
+        CreateSalary->setWindowTitle(QApplication::translate("CreateSalary", "Create/Update salary", 0));
         dateLb->setText(QApplication::translate("CreateSalary", "Date:", 0));
 #ifndef QT_NO_TOOLTIP
         valueEdit->setToolTip(QApplication::translate("CreateSalary", "<html><head/><body><p>For example: 1000 (depends on currency, in that case 1000 USD)</p></body></html>", 0));
 #endif // QT_NO_TOOLTIP
-        userBtn->setText(QApplication::translate("CreateSalary", "Select user", 0));
+        employeeBtn->setText(QApplication::translate("CreateSalary", "Select employee", 0));
         slrTypeBtn->setText(QApplication::translate("CreateSalary", "Select salary type", 0));
 #ifndef QT_NO_TOOLTIP
-        userEdit->setToolTip(QApplication::translate("CreateSalary", "Must not be empty", 0));
+        employeeEdit->setToolTip(QApplication::translate("CreateSalary", "Must not be empty", 0));
 #endif // QT_NO_TOOLTIP
         okBtn->setText(QApplication::translate("CreateSalary", "OK", 0));
         cancelBtn->setText(QApplication::translate("CreateSalary", "Cancel", 0));

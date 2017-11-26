@@ -17,7 +17,7 @@
    </sizepolicy>
   </property>
   <property name="windowTitle">
-   <string>Create/Update Client</string>
+   <string>Create/Update client</string>
   </property>
   <property name="locale">
    <locale language="English" country="UnitedStates"/>

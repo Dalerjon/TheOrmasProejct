@@ -316,6 +316,28 @@ namespace BusinessLayer{
 	}
 
 	template<>
+	std::vector<PayslipView> OrmasBL::GetAllDataForClass<PayslipView>(std::string& errorMessage, std::string filter)
+	{
+		std::vector<PayslipView> vecForPayslip;
+		std::vector<DataLayer::payslipsViewCollection> dataCollection;
+		if (filter.empty())
+		{
+			dataCollection = ormasDal.GetPayslips(errorMessage);
+		}
+		else
+		{
+			dataCollection = ormasDal.GetPayslips(errorMessage, filter);
+		}
+		if (!dataCollection.empty()){
+			for (auto data : dataCollection)
+			{
+				vecForPayslip.push_back(PayslipView(data));
+			}
+		}
+		return vecForPayslip;
+	}
+
+	template<>
 	std::vector<Photo> OrmasBL::GetAllDataForClass<Photo>(std::string& errorMessage, std::string filter)
 	{
 		std::vector<Photo> vecForPhoto;
@@ -470,6 +492,27 @@ namespace BusinessLayer{
 		return vecForProductType;
 	}
 
+	template<>
+	std::vector<RefundView> OrmasBL::GetAllDataForClass<RefundView>(std::string& errorMessage, std::string filter)
+	{
+		std::vector<RefundView> vecForRefund;
+		std::vector<DataLayer::refundsViewCollection> dataCollection;
+		if (filter.empty())
+		{
+			dataCollection = ormasDal.GetRefunds(errorMessage);
+		}
+		else
+		{
+			dataCollection = ormasDal.GetRefunds(errorMessage, filter);
+		}
+		if (!dataCollection.empty()){
+			for (auto data : dataCollection)
+			{
+				vecForRefund.push_back(RefundView(data));
+			}
+		}
+		return vecForRefund;
+	}
 
 	template<>
 	std::vector<Relation> OrmasBL::GetAllDataForClass<Relation>(std::string& errorMessage, std::string filter)
@@ -670,6 +713,28 @@ namespace BusinessLayer{
 		return vecForUser;
 	}
 	
+	template<>
+	std::vector<WithdrawalView> OrmasBL::GetAllDataForClass<WithdrawalView>(std::string& errorMessage, std::string filter)
+	{
+		std::vector<WithdrawalView> vecForWithdrawal;
+		std::vector<DataLayer::withdrawalsViewCollection> dataCollection;
+		if (filter.empty())
+		{
+			dataCollection = ormasDal.GetWithdrawals(errorMessage);
+		}
+		else
+		{
+			dataCollection = ormasDal.GetWithdrawals(errorMessage, filter);
+		}
+		if (!dataCollection.empty()){
+			for (auto data : dataCollection)
+			{
+				vecForWithdrawal.push_back(WithdrawalView(data));
+			}
+		}
+		return vecForWithdrawal;
+	}
+
 	template<>
 	std::vector<WriteOffView> OrmasBL::GetAllDataForClass<WriteOffView>(std::string& errorMessage, std::string filter)
 	{
@@ -1282,7 +1347,7 @@ namespace BusinessLayer{
 	{
 		try
 		{
-			if (!order->GetDate().empty() && 0 != order->GetClientID() && 0 != order->GetCount()
+			if (!order->GetDate().empty() &&  0 != order->GetClientID() && 0 != order->GetCount()
 				&& 0 != order->GetSum() && 0 != order->GetStatusID() && 0 != order->GetCurrencyID())
 			{
 				double roundSum = 0;
@@ -1480,6 +1545,66 @@ namespace BusinessLayer{
 			else
 			{
 				errorMessage = "Error! Payment ID is 0. Some thing goes wrong!";
+			}
+		}
+		catch (...)
+		{
+			errorMessage = "Fatal error! Please contact with application provider.";
+		}
+		return false;
+	}
+
+	bool OrmasBL::CreatePayslip(BusinessLayer::Payslip* payslip, std::string& errorMessage)
+	{
+		try
+		{
+			if (0 != payslip->GetSalaryID() && 0.0 != payslip->GetValue() && 0 != payslip->GetCurrencyID() && !payslip->GetDate().empty())
+			{
+				return payslip->CreatePayslip(ormasDal, errorMessage);
+			}
+			else
+			{
+				errorMessage = "Error! Salary, currency, date and value must not be empty. Please fill up them!";
+			}
+		}
+		catch (...)
+		{
+			errorMessage = "Fatal error! Please contact with application provider.";
+		}
+		return false;
+	}
+
+	bool OrmasBL::UpdatePayslip(BusinessLayer::Payslip* payslip, std::string& errorMessage)
+	{
+		try
+		{
+			if (0 != payslip->GetSalaryID() && 0.0 != payslip->GetValue() && 0 != payslip->GetCurrencyID() && !payslip->GetDate().empty())
+			{
+				return payslip->UpdatePayslip(ormasDal, errorMessage);
+			}
+			else
+			{
+				errorMessage = "Error! Salary, currency, date and value must not be empty. Please fill up them!";
+			}
+		}
+		catch (...)
+		{
+			errorMessage = "Fatal error! Please contact with application provider.";
+		}
+		return false;
+	}
+
+	bool OrmasBL::DeletePayslip(BusinessLayer::Payslip* payslip, std::string& errorMessage)
+	{
+		try
+		{
+			if (0 != payslip->GetID())
+			{
+				return payslip->DeletePayslip(ormasDal, errorMessage);
+			}
+			else
+			{
+				errorMessage = "Error! Payslip ID is 0. Some thing goes wrong!";
 			}
 		}
 		catch (...)
@@ -1966,6 +2091,66 @@ namespace BusinessLayer{
 		return false;
 	}
 
+	bool OrmasBL::CreateRefund(BusinessLayer::Refund* refund, std::string& errorMessage)
+	{
+		try
+		{
+			if (0 != refund->GetUserID() && 0.0 != refund->GetValue() && 0 != refund->GetCurrencyID() && !refund->GetDate().empty())
+			{
+				return refund->CreateRefund(ormasDal, errorMessage);
+			}
+			else
+			{
+				errorMessage = "Error! User, currency, date and value must not be empty. Please fill up them!";
+			}
+		}
+		catch (...)
+		{
+			errorMessage = "Fatal error! Please contact with application provider.";
+		}
+		return false;
+	}
+
+	bool OrmasBL::UpdateRefund(BusinessLayer::Refund* refund, std::string& errorMessage)
+	{
+		try
+		{
+			if (0 != refund->GetUserID() && 0.0 != refund->GetValue() && 0 != refund->GetCurrencyID() && !refund->GetDate().empty())
+			{
+				return refund->UpdateRefund(ormasDal, errorMessage);
+			}
+			else
+			{
+				errorMessage = "Error! User, currency, date and value must not be empty. Please fill up them!";
+			}
+		}
+		catch (...)
+		{
+			errorMessage = "Fatal error! Please contact with application provider.";
+		}
+		return false;
+	}
+
+	bool OrmasBL::DeleteRefund(BusinessLayer::Refund* refund, std::string& errorMessage)
+	{
+		try
+		{
+			if (0 != refund->GetID())
+			{
+				return refund->DeleteRefund(ormasDal, errorMessage);
+			}
+			else
+			{
+				errorMessage = "Error! Refund ID is 0. Some thing goes wrong!";
+			}
+		}
+		catch (...)
+		{
+			errorMessage = "Fatal error! Please contact with application provider.";
+		}
+		return false;
+	}
+
 	bool OrmasBL::CreateRelation(BusinessLayer::Relation* relation, std::string& errorMessage)
 	{
 		try
@@ -2300,7 +2485,7 @@ namespace BusinessLayer{
 	{
 		try
 		{
-			if (0 != salary->GetUserID() && 0.0 != salary->GetValue() && 0 != salary->GetCurrencyID() && 0 != salary->GetSalaryTypeID()
+			if (0 != salary->GetEmployeeID() && 0.0 != salary->GetValue() && 0 != salary->GetCurrencyID() && 0 != salary->GetSalaryTypeID()
 				&& !salary->GetDate().empty())
 			{
 				return salary->CreateSalary(ormasDal, errorMessage);
@@ -2321,7 +2506,7 @@ namespace BusinessLayer{
 	{
 		try
 		{
-			if (0 != salary->GetUserID() && 0.0 != salary->GetValue() && 0 != salary->GetCurrencyID() && 0 != salary->GetSalaryTypeID()
+			if (0 != salary->GetEmployeeID() && 0.0 != salary->GetValue() && 0 != salary->GetCurrencyID() && 0 != salary->GetSalaryTypeID()
 				&& !salary->GetDate().empty())
 			{
 				return salary->UpdateSalary(ormasDal, errorMessage);
@@ -2541,6 +2726,66 @@ namespace BusinessLayer{
 		return false;
 	}
 	
+	bool OrmasBL::CreateWithdrawal(BusinessLayer::Withdrawal* payment, std::string& errorMessage)
+	{
+		try
+		{
+			if (0 != payment->GetUserID() && 0.0 != payment->GetValue() && 0 != payment->GetCurrencyID() && !payment->GetDate().empty())
+			{
+				return payment->CreateWithdrawal(ormasDal, errorMessage);
+			}
+			else
+			{
+				errorMessage = "Error! User, currency, date and value must not be empty. Please fill up them!";
+			}
+		}
+		catch (...)
+		{
+			errorMessage = "Fatal error! Please contact with application provider.";
+		}
+		return false;
+	}
+
+	bool OrmasBL::UpdateWithdrawal(BusinessLayer::Withdrawal* payment, std::string& errorMessage)
+	{
+		try
+		{
+			if (0 != payment->GetUserID() && 0.0 != payment->GetValue() && 0 != payment->GetCurrencyID() && !payment->GetDate().empty())
+			{
+				return payment->UpdateWithdrawal(ormasDal, errorMessage);
+			}
+			else
+			{
+				errorMessage = "Error! User, currency, date and value must not be empty. Please fill up them!";
+			}
+		}
+		catch (...)
+		{
+			errorMessage = "Fatal error! Please contact with application provider.";
+		}
+		return false;
+	}
+
+	bool OrmasBL::DeleteWithdrawal(BusinessLayer::Withdrawal* payment, std::string& errorMessage)
+	{
+		try
+		{
+			if (0 != payment->GetID())
+			{
+				return payment->DeleteWithdrawal(ormasDal, errorMessage);
+			}
+			else
+			{
+				errorMessage = "Error! Payment ID is 0. Some thing goes wrong!";
+			}
+		}
+		catch (...)
+		{
+			errorMessage = "Fatal error! Please contact with application provider.";
+		}
+		return false;
+	}
+
 	bool OrmasBL::CreateWriteOff(BusinessLayer::WriteOff* writeOff, std::string& errorMessage)
 	{
 		try

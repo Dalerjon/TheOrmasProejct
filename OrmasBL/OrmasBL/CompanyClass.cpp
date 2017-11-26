@@ -190,6 +190,15 @@ namespace BusinessLayer{
 		return false;
 	}
 
+	void Company::Clear()
+	{
+		id = 0;
+		name.clear();
+		address.clear();
+		phone.clear();
+		comment.clear();
+	}
+
 	void Company::TrimStrings(std::string& cName, std::string& cAddress, std::string& cPhone)
 	{
 		if (!cName.empty())

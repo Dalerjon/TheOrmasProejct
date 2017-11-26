@@ -84,7 +84,11 @@
     <ClInclude Include="AccessItemClass.h" />
     <ClInclude Include="AllClassHeaders.h" />
     <ClInclude Include="BalanceClass.h" />
+    <ClInclude Include="BalancePaymentRelationClass.h" />
+    <ClInclude Include="BalancePayslipRelationClass.h" />
+    <ClInclude Include="BalanceRefundRelationClass.h" />
     <ClInclude Include="BalanceViewClass.h" />
+    <ClInclude Include="BalanceWithdrawalRelationClass.h" />
     <ClInclude Include="ClientClass.h" />
     <ClInclude Include="ClientViewClass.h" />
     <ClInclude Include="CompanyClass.h" />
@@ -95,10 +99,13 @@
     <ClInclude Include="MeasureClass.h" />
     <ClInclude Include="OrderClass.h" />
     <ClInclude Include="OrderListClass.h" />
+    <ClInclude Include="PayslipOrderRelationClass.h" />
     <ClInclude Include="OrderViewClass.h" />
     <ClInclude Include="OrmasBL.h" />
     <ClInclude Include="PaymentClass.h" />
     <ClInclude Include="PaymentViewClass.h" />
+    <ClInclude Include="PayslipClass.h" />
+    <ClInclude Include="PayslipViewClass.h" />
     <ClInclude Include="PhotoClass.h" />
     <ClInclude Include="PositionClass.h" />
     <ClInclude Include="PriceClass.h" />
@@ -110,6 +117,8 @@
     <ClInclude Include="ProductTypeClass.h" />
     <ClInclude Include="LocationClass.h" />
     <ClInclude Include="ProductViewClass.h" />
+    <ClInclude Include="RefundClass.h" />
+    <ClInclude Include="RefundViewClass.h" />
     <ClInclude Include="RelationClass.h" />
     <ClInclude Include="RelationTypeClass.h" />
     <ClInclude Include="ReturnClass.h" />
@@ -125,6 +134,8 @@
     <ClInclude Include="targetver.h" />
     <ClInclude Include="UserClass.h" />
     <ClInclude Include="UserViewClass.h" />
+    <ClInclude Include="WithdrawalClass.h" />
+    <ClInclude Include="WithdrawalViewClass.h" />
     <ClInclude Include="WriteOffClass.h" />
     <ClInclude Include="WriteOffListClass.h" />
     <ClInclude Include="WriteOffListViewClass.h" />
@@ -134,7 +145,11 @@
     <ClCompile Include="AccessClass.cpp" />
     <ClCompile Include="AccessItemClass.cpp" />
     <ClCompile Include="BalanceClass.cpp" />
+    <ClCompile Include="BalancePaymentRelationClass.cpp" />
+    <ClCompile Include="BalancePayslipRelationClass.cpp" />
+    <ClCompile Include="BalanceRefundRelationClass.cpp" />
     <ClCompile Include="BalanceViewClass.cpp" />
+    <ClCompile Include="BalanceWithdrawalRelationClass.cpp" />
     <ClCompile Include="ClientClass.cpp" />
     <ClCompile Include="ClientViewClass.cpp" />
     <ClCompile Include="CompanyClass.cpp" />
@@ -145,10 +160,13 @@
     <ClCompile Include="OrderClass.cpp" />
     <ClCompile Include="OrderListClass.cpp" />
     <ClCompile Include="OrderListViewClass.cpp" />
+    <ClCompile Include="PayslipOrderRelationClass.cpp" />
     <ClCompile Include="OrderViewClass.cpp" />
     <ClCompile Include="OrmasBL.cpp" />
     <ClCompile Include="PaymentClass.cpp" />
     <ClCompile Include="PaymentViewClass.cpp" />
+    <ClCompile Include="Payslip.cpp" />
+    <ClCompile Include="PayslipViewClass.cpp" />
     <ClCompile Include="PhotoClass.cpp" />
     <ClCompile Include="PositionClass.cpp" />
     <ClCompile Include="PriceClass.cpp" />
@@ -160,6 +178,8 @@
     <ClCompile Include="ProductTypeClass.cpp" />
     <ClCompile Include="LocationClass.cpp" />
     <ClCompile Include="ProductViewClass.cpp" />
+    <ClCompile Include="RefundClass.cpp" />
+    <ClCompile Include="RefundViewClass.cpp" />
     <ClCompile Include="RelationClass.cpp" />
     <ClCompile Include="RelationTypeClass.cpp" />
     <ClCompile Include="ReturnClass.cpp" />
@@ -177,6 +197,8 @@
     </ClCompile>
     <ClCompile Include="UserClass.cpp" />
     <ClCompile Include="UserViewClass.cpp" />
+    <ClCompile Include="WithdrawalClass.cpp" />
+    <ClCompile Include="WithdrawalViewClass.cpp" />
     <ClCompile Include="WriteOffClass.cpp" />
     <ClCompile Include="WriteOffListClass.cpp" />
     <ClCompile Include="WriteOffListViewClass.cpp" />

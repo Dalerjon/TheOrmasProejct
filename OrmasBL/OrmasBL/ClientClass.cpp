@@ -292,6 +292,21 @@ namespace BusinessLayer{
 		return false;
 	}
 
+	void Client::Clear()
+	{
+		id = 0;
+		name.clear();
+		surname.clear();
+		address.clear();
+		phone.clear();
+		firm.clear();
+		firmNumber.clear();
+		password.clear();
+		email.clear();
+		roleID = 0;
+		locationID = 0;
+	}
+
 	void Client::TrimStrings(std::string& uEmail, std::string& uName, std::string& uSurname, std::string& uPhone,
 		std::string& uAddress, std::string& uPassword, std::string& cFirm, std::string& cFirmNumber)
 	{

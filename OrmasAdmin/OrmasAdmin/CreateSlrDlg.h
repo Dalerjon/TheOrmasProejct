@@ -17,7 +17,7 @@ public:
 	void EditSalary();
 	void DeleteSalary(){};
 	void Close();
-	void OpenUserDlg();
+	void OpenEmpDlg();
 	void OpenCurDlg();
 	void OpenSlrTypeDlg();
 	public slots:

@@ -5,10 +5,10 @@ namespace BusinessLayer{
 	SalaryView::SalaryView(DataLayer::salariesViewCollection sCollection)
 	{
 		id = std::get<0>(sCollection);
-		userID = std::get<1>(sCollection);
-		userName = std::get<2>(sCollection);
-		userSurname = std::get<3>(sCollection);
-		userPhone = std::get<4>(sCollection);
+		employeeID = std::get<1>(sCollection);
+		employeeName = std::get<2>(sCollection);
+		employeeSurname = std::get<3>(sCollection);
+		employeePhone = std::get<4>(sCollection);
 		date = std::get<5>(sCollection);
 		value = std::get<6>(sCollection);
 		currencyName = std::get<7>(sCollection);
@@ -18,17 +18,17 @@ namespace BusinessLayer{
 		isBonus = std::get<11>(sCollection);
 	}
 
-	std::string SalaryView::GetUsername()
+	std::string SalaryView::GetEmployeeName()
 	{
-		return userName;
+		return employeeName;
 	}
-	std::string SalaryView::GetUserSurname()
+	std::string SalaryView::GetEmployeeSurname()
 	{
-		return userSurname;
+		return employeeSurname;
 	}
-	std::string SalaryView::GetUserPhone()
+	std::string SalaryView::GetEmployeePhone()
 	{
-		return userPhone;
+		return employeePhone;
 	}
 	std::string SalaryView::GetCurrencyName()
 	{

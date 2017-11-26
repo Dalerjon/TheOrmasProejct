@@ -19,8 +19,8 @@
 
 QT_BEGIN_MOC_NAMESPACE
 struct qt_meta_stringdata_CreateRtrnDlg_t {
-    QByteArrayData data[14];
-    char stringdata0[137];
+    QByteArrayData data[16];
+    char stringdata0[172];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
@@ -30,24 +30,27 @@ struct qt_meta_stringdata_CreateRtrnDlg_t {
 static const qt_meta_stringdata_CreateRtrnDlg_t qt_meta_stringdata_CreateRtrnDlg = {
     {
 QT_MOC_LITERAL(0, 0, 13), // "CreateRtrnDlg"
-QT_MOC_LITERAL(1, 14, 12), // "CreateReturn"
-QT_MOC_LITERAL(2, 27, 0), // ""
-QT_MOC_LITERAL(3, 28, 10), // "EditReturn"
-QT_MOC_LITERAL(4, 39, 12), // "DeleteReturn"
-QT_MOC_LITERAL(5, 52, 5), // "Close"
-QT_MOC_LITERAL(6, 58, 10), // "OpenCltDlg"
-QT_MOC_LITERAL(7, 69, 10), // "OpenEmpDlg"
-QT_MOC_LITERAL(8, 80, 10), // "OpenStsDlg"
-QT_MOC_LITERAL(9, 91, 10), // "OpenCurDlg"
-QT_MOC_LITERAL(10, 102, 15), // "OpenRtrnListDlg"
-QT_MOC_LITERAL(11, 118, 5), // "SetID"
-QT_MOC_LITERAL(12, 124, 2), // "ID"
-QT_MOC_LITERAL(13, 127, 9) // "childName"
+QT_MOC_LITERAL(1, 14, 17), // "CloseCreatedForms"
+QT_MOC_LITERAL(2, 32, 0), // ""
+QT_MOC_LITERAL(3, 33, 12), // "CreateReturn"
+QT_MOC_LITERAL(4, 46, 10), // "EditReturn"
+QT_MOC_LITERAL(5, 57, 12), // "DeleteReturn"
+QT_MOC_LITERAL(6, 70, 5), // "Close"
+QT_MOC_LITERAL(7, 76, 10), // "OpenCltDlg"
+QT_MOC_LITERAL(8, 87, 10), // "OpenEmpDlg"
+QT_MOC_LITERAL(9, 98, 10), // "OpenStsDlg"
+QT_MOC_LITERAL(10, 109, 10), // "OpenCurDlg"
+QT_MOC_LITERAL(11, 120, 15), // "OpenRtrnListDlg"
+QT_MOC_LITERAL(12, 136, 16), // "StatusWasChenged"
+QT_MOC_LITERAL(13, 153, 5), // "SetID"
+QT_MOC_LITERAL(14, 159, 2), // "ID"
+QT_MOC_LITERAL(15, 162, 9) // "childName"
 
     },
-    "CreateRtrnDlg\0CreateReturn\0\0EditReturn\0"
-    "DeleteReturn\0Close\0OpenCltDlg\0OpenEmpDlg\0"
-    "OpenStsDlg\0OpenCurDlg\0OpenRtrnListDlg\0"
+    "CreateRtrnDlg\0CloseCreatedForms\0\0"
+    "CreateReturn\0EditReturn\0DeleteReturn\0"
+    "Close\0OpenCltDlg\0OpenEmpDlg\0OpenStsDlg\0"
+    "OpenCurDlg\0OpenRtrnListDlg\0StatusWasChenged\0"
     "SetID\0ID\0childName"
 };
 #undef QT_MOC_LITERAL
@@ -58,24 +61,31 @@ static const uint qt_meta_data_CreateRtrnDlg[] = {
        7,       // revision
        0,       // classname
        0,    0, // classinfo
-      10,   14, // methods
+      12,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
        0,       // flags
-       0,       // signalCount
+       1,       // signalCount
+
+ // signals: name, argc, parameters, tag, flags
+       1,    0,   74,    2, 0x06 /* Public */,
 
  // slots: name, argc, parameters, tag, flags
-       1,    0,   64,    2, 0x08 /* Private */,
-       3,    0,   65,    2, 0x08 /* Private */,
-       4,    0,   66,    2, 0x08 /* Private */,
-       5,    0,   67,    2, 0x08 /* Private */,
-       6,    0,   68,    2, 0x08 /* Private */,
-       7,    0,   69,    2, 0x08 /* Private */,
-       8,    0,   70,    2, 0x08 /* Private */,
-       9,    0,   71,    2, 0x08 /* Private */,
-      10,    0,   72,    2, 0x08 /* Private */,
-      11,    2,   73,    2, 0x0a /* Public */,
+       3,    0,   75,    2, 0x08 /* Private */,
+       4,    0,   76,    2, 0x08 /* Private */,
+       5,    0,   77,    2, 0x08 /* Private */,
+       6,    0,   78,    2, 0x08 /* Private */,
+       7,    0,   79,    2, 0x08 /* Private */,
+       8,    0,   80,    2, 0x08 /* Private */,
+       9,    0,   81,    2, 0x08 /* Private */,
+      10,    0,   82,    2, 0x08 /* Private */,
+      11,    0,   83,    2, 0x08 /* Private */,
+      12,    0,   84,    2, 0x08 /* Private */,
+      13,    2,   85,    2, 0x0a /* Public */,
+
+ // signals: parameters
+    QMetaType::Void,
 
  // slots: parameters
     QMetaType::Void,
@@ -87,7 +97,8 @@ static const uint qt_meta_data_CreateRtrnDlg[] = {
     QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void,
-    QMetaType::Void, QMetaType::Int, QMetaType::QString,   12,   13,
+    QMetaType::Void,
+    QMetaType::Void, QMetaType::Int, QMetaType::QString,   14,   15,
 
        0        // eod
 };
@@ -98,17 +109,29 @@ void CreateRtrnDlg::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _i
         CreateRtrnDlg *_t = static_cast<CreateRtrnDlg *>(_o);
         Q_UNUSED(_t)
         switch (_id) {
-        case 0: _t->CreateReturn(); break;
-        case 1: _t->EditReturn(); break;
-        case 2: _t->DeleteReturn(); break;
-        case 3: _t->Close(); break;
-        case 4: _t->OpenCltDlg(); break;
-        case 5: _t->OpenEmpDlg(); break;
-        case 6: _t->OpenStsDlg(); break;
-        case 7: _t->OpenCurDlg(); break;
-        case 8: _t->OpenRtrnListDlg(); break;
-        case 9: _t->SetID((*reinterpret_cast< int(*)>(_a[1])),(*reinterpret_cast< QString(*)>(_a[2]))); break;
+        case 0: _t->CloseCreatedForms(); break;
+        case 1: _t->CreateReturn(); break;
+        case 2: _t->EditReturn(); break;
+        case 3: _t->DeleteReturn(); break;
+        case 4: _t->Close(); break;
+        case 5: _t->OpenCltDlg(); break;
+        case 6: _t->OpenEmpDlg(); break;
+        case 7: _t->OpenStsDlg(); break;
+        case 8: _t->OpenCurDlg(); break;
+        case 9: _t->OpenRtrnListDlg(); break;
+        case 10: _t->StatusWasChenged(); break;
+        case 11: _t->SetID((*reinterpret_cast< int(*)>(_a[1])),(*reinterpret_cast< QString(*)>(_a[2]))); break;
         default: ;
+        }
+    } else if (_c == QMetaObject::IndexOfMethod) {
+        int *result = reinterpret_cast<int *>(_a[0]);
+        void **func = reinterpret_cast<void **>(_a[1]);
+        {
+            typedef void (CreateRtrnDlg::*_t)();
+            if (*reinterpret_cast<_t *>(func) == static_cast<_t>(&CreateRtrnDlg::CloseCreatedForms)) {
+                *result = 0;
+                return;
+            }
         }
     }
 }
@@ -140,14 +163,20 @@ int CreateRtrnDlg::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 10)
+        if (_id < 12)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 10;
+        _id -= 12;
     } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 10)
+        if (_id < 12)
             *reinterpret_cast<int*>(_a[0]) = -1;
-        _id -= 10;
+        _id -= 12;
     }
     return _id;
+}
+
+// SIGNAL 0
+void CreateRtrnDlg::CloseCreatedForms()
+{
+    QMetaObject::activate(this, &staticMetaObject, 0, Q_NULLPTR);
 }
 QT_END_MOC_NAMESPACE

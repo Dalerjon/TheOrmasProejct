@@ -36,6 +36,7 @@ namespace BusinessLayer{
 		std::string GenerateFilter(DataLayer::OrmasDal& ormasDal);
 		bool GetRelationTypeByID(DataLayer::OrmasDal& ormasDal, int rtID, std::string& errorMessage);
 		bool IsEmpty();
+		void Clear();
 	private:
 		void TrimStrings(std::string&);
 	};

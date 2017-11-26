@@ -171,7 +171,7 @@ public:
 
     void retranslateUi(QDialog *CreatePrdnList)
     {
-        CreatePrdnList->setWindowTitle(QApplication::translate("CreatePrdnList", "Create/Update product in list", 0));
+        CreatePrdnList->setWindowTitle(QApplication::translate("CreatePrdnList", "Create/Update product in production list", 0));
         countLb->setText(QApplication::translate("CreatePrdnList", "Count:", 0));
         productBtn->setText(QApplication::translate("CreatePrdnList", "Select product", 0));
         addBtn->setText(QApplication::translate("CreatePrdnList", "Add", 0));

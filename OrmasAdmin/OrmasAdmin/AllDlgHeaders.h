@@ -1,6 +1,7 @@
 #ifndef ALLDLGHEADERS_H
 #define ALLDLGHEADERS_H
 
+#include "ClcWagesDlg.h"
 #include "CreateAcsDlg.h"
 #include "CreateAcsItemDlg.h"
 #include "CreateBlcDlg.h"
@@ -20,8 +21,10 @@
 #include "CreateProdDlg.h"
 #include "CreateProdnListDlg.h"
 #include "CreatePrdTpDlg.h"
+#include "CreatePspDlg.h"
 #include "CreateRelDlg.h"
 #include "CreateRelTypeDlg.h"
+#include "CreateRfdDlg.h"
 #include "CreateRoleDlg.h"
 #include "CreateRtrnDlg.h"
 #include "CreateRtrnListDlg.h"
@@ -29,6 +32,7 @@
 #include "CreateSlrTypeDlg.h"
 #include "CreateStsDlg.h"
 #include "CreateUserDlg.h"
+#include "CreateWdwDlg.h"
 #include "CreateWOffDlg.h"
 #include "CreateWOffListDlg.h"
 

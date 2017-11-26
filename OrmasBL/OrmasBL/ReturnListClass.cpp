@@ -81,8 +81,6 @@ namespace BusinessLayer
 	bool ReturnList::CreateReturnList(DataLayer::OrmasDal& ormasDal, int rID, int pID, int rCount, double rSum,
 		int sID, int cID, std::string& errorMessage)
 	{
-		if (IsDuplicate(ormasDal, rID, pID, rCount, rSum, cID, errorMessage))
-			return false;
 		id = ormasDal.GenerateID();
 		returnID = rID;
 		productID = pID;
@@ -98,8 +96,6 @@ namespace BusinessLayer
 	}
 	bool ReturnList::CreateReturnList(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
-		if (IsDuplicate(ormasDal, errorMessage))
-			return false;
 		id = ormasDal.GenerateID();
 		if (0 != id && ormasDal.CreateReturnList(id, returnID, productID, count, sum, statusID, currencyID, errorMessage))
 		{
@@ -184,6 +180,17 @@ namespace BusinessLayer
 		if (0 == id && 0 == returnID && 0 == count && 0 == sum && 0 == productID && 0 == statusID && 0 == currencyID)
 			return true;
 		return false;
+	}
+
+	void ReturnList::Clear()
+	{
+		id = 0;
+		returnID = 0;
+		count = 0;
+		sum = 0;
+		productID = 0;
+		statusID = 0;
+		currencyID = 0;
 	}
 
 	bool ReturnList::IsDuplicate(DataLayer::OrmasDal& ormasDal, int rID, int pID, int rlCount, double rlSum,

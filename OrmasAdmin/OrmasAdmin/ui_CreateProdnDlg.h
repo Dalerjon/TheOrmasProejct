@@ -44,8 +44,8 @@ public:
     QLabel *prodCountLb;
     QTimeEdit *sesEndTimeEdit;
     QTimeEdit *sesStartTimeEdit;
-    QDateEdit *expiryDateEdit;
     QDateEdit *prdDateEdit;
+    QDateEdit *expiryDateEdit;
 
     void setupUi(QDialog *CreateProduction)
     {
@@ -124,18 +124,16 @@ public:
 
         gridLayout->addWidget(sesStartTimeEdit, 2, 1, 1, 2);
 
-        expiryDateEdit = new QDateEdit(CreateProduction);
-        expiryDateEdit->setObjectName(QStringLiteral("expiryDateEdit"));
-
-        gridLayout->addWidget(expiryDateEdit, 1, 1, 1, 2);
-
         prdDateEdit = new QDateEdit(CreateProduction);
         prdDateEdit->setObjectName(QStringLiteral("prdDateEdit"));
 
         gridLayout->addWidget(prdDateEdit, 0, 1, 1, 2);
 
-        QWidget::setTabOrder(prdDateEdit, expiryDateEdit);
-        QWidget::setTabOrder(expiryDateEdit, sesStartTimeEdit);
+        expiryDateEdit = new QDateEdit(CreateProduction);
+        expiryDateEdit->setObjectName(QStringLiteral("expiryDateEdit"));
+
+        gridLayout->addWidget(expiryDateEdit, 1, 1, 1, 2);
+
         QWidget::setTabOrder(sesStartTimeEdit, sesEndTimeEdit);
         QWidget::setTabOrder(sesEndTimeEdit, addProdBtn);
         QWidget::setTabOrder(addProdBtn, prodCountEdit);

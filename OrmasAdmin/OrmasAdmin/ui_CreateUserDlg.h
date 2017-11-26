@@ -190,7 +190,7 @@ public:
 
     void retranslateUi(QDialog *CreateUser)
     {
-        CreateUser->setWindowTitle(QApplication::translate("CreateUser", "Create/Update User", 0));
+        CreateUser->setWindowTitle(QApplication::translate("CreateUser", "Create/Update user", 0));
         okBtn->setText(QApplication::translate("CreateUser", "OK", 0));
         cancelBtn->setText(QApplication::translate("CreateUser", "Cancel", 0));
 #ifndef QT_NO_TOOLTIP

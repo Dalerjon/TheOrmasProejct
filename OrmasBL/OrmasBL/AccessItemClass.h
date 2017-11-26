@@ -41,6 +41,7 @@ namespace BusinessLayer{
 		std::string GenerateFilter(DataLayer::OrmasDal& ormasDal);
 		bool GetAccessItemByID(DataLayer::OrmasDal& ormasDal, int aID, std::string& errorMessage);
 		bool IsEmpty();
+		void Clear();
 	private:
 		void TrimStrings(std::string& , std::string&, std::string&);
 		bool IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string aNameEng, std::string aNameRu, std::string aDivision, std::string& errorMessage);

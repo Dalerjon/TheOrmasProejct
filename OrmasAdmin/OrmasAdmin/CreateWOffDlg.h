@@ -25,9 +25,11 @@ public:
 	void OpenWOffListDlg();
 	public slots:
 	void SetID(int ID, QString childName);
+	signals:
+	void CloseCreatedForms();
 private:
 	BusinessLayer::WriteOff *writeOff = new BusinessLayer::WriteOff();
-	void SetWriteOffParams(int, QString, int, int, double, int, int);
+	void SetWriteOffParams(int, QString, int, int, double, int, int, int=0);
 	void FillEditElements(int, QString, int, int, double, int, int);
 	QDoubleValidator *vDouble = nullptr;
 	QIntValidator *vInt = nullptr;

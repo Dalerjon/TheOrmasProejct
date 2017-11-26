@@ -66,6 +66,7 @@ namespace BusinessLayer
 		bool GetUserByID(DataLayer::OrmasDal& ormasDal, int uID, std::string& errorMessage);
 		bool GetUserByCredentials(DataLayer::OrmasDal& ormasDal, std::string uPhoneOrEmail, std::string uPassword);
 		bool IsEmpty();
+		void Clear();
 		int GetUserAccoutID(DataLayer::OrmasDal& ormasDal, int cID, std::string& errorMessage);
 	};
 }

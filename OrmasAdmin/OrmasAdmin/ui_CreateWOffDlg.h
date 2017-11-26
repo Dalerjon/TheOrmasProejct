@@ -14,7 +14,7 @@
 #include <QtWidgets/QAction>
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QButtonGroup>
-#include <QtWidgets/QDateEdit>
+#include <QtWidgets/QDateTimeEdit>
 #include <QtWidgets/QDialog>
 #include <QtWidgets/QGridLayout>
 #include <QtWidgets/QHBoxLayout>
@@ -30,7 +30,6 @@ class Ui_CreateWriteOff
 {
 public:
     QGridLayout *gridLayout;
-    QDateEdit *dateEdit;
     QPushButton *clientBtn;
     QHBoxLayout *horizontalLayout;
     QSpacerItem *horizontalSpacer;
@@ -49,6 +48,7 @@ public:
     QLineEdit *statusEdit;
     QLineEdit *currencyEdit;
     QLabel *sumLb;
+    QDateTimeEdit *dateEdit;
 
     void setupUi(QDialog *CreateWriteOff)
     {
@@ -60,12 +60,6 @@ public:
         gridLayout = new QGridLayout(CreateWriteOff);
         gridLayout->setObjectName(QStringLiteral("gridLayout"));
         gridLayout->setContentsMargins(11, 11, 11, 11);
-        dateEdit = new QDateEdit(CreateWriteOff);
-        dateEdit->setObjectName(QStringLiteral("dateEdit"));
-        dateEdit->setDateTime(QDateTime(QDate(2000, 1, 1), QTime(0, 0, 0)));
-
-        gridLayout->addWidget(dateEdit, 1, 1, 1, 2);
-
         clientBtn = new QPushButton(CreateWriteOff);
         clientBtn->setObjectName(QStringLiteral("clientBtn"));
         clientBtn->setMinimumSize(QSize(200, 0));
@@ -162,9 +156,13 @@ public:
 
         gridLayout->addWidget(sumLb, 5, 0, 1, 1);
 
+        dateEdit = new QDateTimeEdit(CreateWriteOff);
+        dateEdit->setObjectName(QStringLiteral("dateEdit"));
+
+        gridLayout->addWidget(dateEdit, 1, 1, 1, 2);
+
         QWidget::setTabOrder(clientBtn, clientEdit);
-        QWidget::setTabOrder(clientEdit, dateEdit);
-        QWidget::setTabOrder(dateEdit, employeeBtn);
+        QWidget::setTabOrder(clientEdit, employeeBtn);
         QWidget::setTabOrder(employeeBtn, employeeEdit);
         QWidget::setTabOrder(employeeEdit, addProdBtn);
         QWidget::setTabOrder(addProdBtn, prodCountEdit);
@@ -183,12 +181,12 @@ public:
 
     void retranslateUi(QDialog *CreateWriteOff)
     {
-        CreateWriteOff->setWindowTitle(QApplication::translate("CreateWriteOff", "Create/Update Write-off", 0));
+        CreateWriteOff->setWindowTitle(QApplication::translate("CreateWriteOff", "Create/Update write-off", 0));
         clientBtn->setText(QApplication::translate("CreateWriteOff", "Select client", 0));
         okBtn->setText(QApplication::translate("CreateWriteOff", "OK", 0));
         cancelBtn->setText(QApplication::translate("CreateWriteOff", "Cancel", 0));
 #ifndef QT_NO_TOOLTIP
-        clientEdit->setToolTip(QApplication::translate("CreateWriteOff", "Enter user ID", 0));
+        clientEdit->setToolTip(QApplication::translate("CreateWriteOff", "<html><head/><body><p>Enter client ID</p></body></html>", 0));
 #endif // QT_NO_TOOLTIP
         dateLb->setText(QApplication::translate("CreateWriteOff", "Date of write-off:", 0));
         addProdBtn->setText(QApplication::translate("CreateWriteOff", "Add products", 0));
@@ -197,7 +195,7 @@ public:
         prodCountLb->setText(QApplication::translate("CreateWriteOff", "Count of products:", 0));
         currencyBtn->setText(QApplication::translate("CreateWriteOff", "Select currency", 0));
 #ifndef QT_NO_TOOLTIP
-        employeeEdit->setToolTip(QApplication::translate("CreateWriteOff", "Enter worker ID", 0));
+        employeeEdit->setToolTip(QApplication::translate("CreateWriteOff", "<html><head/><body><p>Enter employee ID</p></body></html>", 0));
 #endif // QT_NO_TOOLTIP
         sumLb->setText(QApplication::translate("CreateWriteOff", "Total amount:", 0));
     } // retranslateUi

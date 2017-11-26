@@ -19,7 +19,9 @@ CreateProdDlg::CreateProdDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, Q
 	shelfLifeEdit->setValidator(vInt);
 	currencyEdit->setValidator(vInt);
 	volumeEdit->setValidator(vDouble);
+	volumeEdit->setMaxLength(17);
 	priceEdit->setValidator(vDouble);
+	priceEdit->setMaxLength(17);
 	nameEdit->setMaxLength(20);
 	
 	if (true == updateFlag)

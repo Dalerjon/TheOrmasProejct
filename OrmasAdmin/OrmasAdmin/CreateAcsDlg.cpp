@@ -156,7 +156,7 @@ void CreateAcsDlg::EditAccess()
 	else
 	{
 		QMessageBox::information(NULL, QString(tr("Warning")),
-			QString(tr("Please role and access item!")),
+			QString(tr("Please enter role and access item!")),
 			QString(tr("Ok")));
 	}
 	errorMessage.clear();

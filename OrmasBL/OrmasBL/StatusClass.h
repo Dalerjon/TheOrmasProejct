@@ -2,6 +2,7 @@
 #define STATUSCLASS_H
 
 #include "OrmasDAL.h"
+#include <map>
 
 namespace BusinessLayer
 {
@@ -43,6 +44,8 @@ namespace BusinessLayer
 		std::string GenerateFilter(DataLayer::OrmasDal& ormasDal);
 		bool GetStatusByID(DataLayer::OrmasDal& ormasDal, int sID, std::string& errorMessage);
 		bool IsEmpty();
+		void Clear();
+		static std::map<std::string, int> GetStatusesAsMap(DataLayer::OrmasDal& ormasDal, std::string& errorMessage);
 	private:
 		void TrimStrings(std::string&, std::string&);
 		bool IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string sCode, std::string sName, std::string& errorMessage);

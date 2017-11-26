@@ -211,7 +211,7 @@ public:
 
     void retranslateUi(QDialog *CreateClient)
     {
-        CreateClient->setWindowTitle(QApplication::translate("CreateClient", "Create/Update Client", 0));
+        CreateClient->setWindowTitle(QApplication::translate("CreateClient", "Create/Update client", 0));
 #ifndef QT_NO_TOOLTIP
         emailEdit->setToolTip(QApplication::translate("CreateClient", "<html><head/><body><p>For example: John.Doe@gmail.com (does not mandatory field)</p></body></html>", 0));
 #endif // QT_NO_TOOLTIP

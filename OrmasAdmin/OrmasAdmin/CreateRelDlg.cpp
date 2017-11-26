@@ -57,17 +57,17 @@ void CreateRelDlg::SetID(int ID, QString childName)
 	}
 }
 
-void CreateRelDlg::SetRelationParams(int rUserID, int rUser2ID, int rRelTypeID, int id)
+void CreateRelDlg::SetRelationParams(int rUser1ID, int rUser2ID, int rRelTypeID, int id)
 {
-	relation->SetUser1ID(rUserID);
+	relation->SetUser1ID(rUser1ID);
 	relation->SetUser2ID(rUser2ID);
 	relation->SetRelationTypeID(rRelTypeID);
 	relation->SetID(id);
 }
 
-void CreateRelDlg::FillEditElements(int rUserID, int rUser2ID, int rRelTypeID)
+void CreateRelDlg::FillEditElements(int rUser1ID, int rUser2ID, int rRelTypeID)
 {
-	user1Edit->setText(QString::number(rUserID));
+	user1Edit->setText(QString::number(rUser1ID));
 	user2Edit->setText(QString::number(rUser2ID));
 	relTypeEdit->setText(QString::number(rRelTypeID));
 }

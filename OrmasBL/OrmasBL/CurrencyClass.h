@@ -49,6 +49,7 @@ namespace BusinessLayer
 		std::string GenerateFilter(DataLayer::OrmasDal& ormasDal);
 		bool GetCurrencyByID(DataLayer::OrmasDal& ormasDal, int cID, std::string& errorMessage);
 		bool IsEmpty();
+		void Clear();
 		int GetMainTradeCurrencyID(DataLayer::OrmasDal& ormasDal, std::string& errorMessage);
 	private:
 		void TrimStrings(std::string&, std::string&);

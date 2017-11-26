@@ -159,4 +159,12 @@ namespace BusinessLayer{
 			return true;
 		return false;
 	}
+
+	void Relation::Clear()
+	{
+		id = 0;
+		user1ID = 0;
+		user2ID = 0;
+		relationTypeID = 0;
+	}
 }

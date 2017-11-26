@@ -81,8 +81,6 @@ namespace BusinessLayer
 	bool ProductionList::CreateProductionList(DataLayer::OrmasDal& ormasDal, int prID, int pID, int prCount, double prSum,
 		int sID, int cID, std::string& errorMessage)
 	{
-		if (IsDuplicate(ormasDal, prID, pID, prCount, prSum, cID, errorMessage))
-			return false;
 		id = ormasDal.GenerateID();
 		productionID = prID;
 		productID = pID;
@@ -98,8 +96,6 @@ namespace BusinessLayer
 	}
 	bool ProductionList::CreateProductionList(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
-		if (IsDuplicate(ormasDal, errorMessage))
-			return false;
 		id = ormasDal.GenerateID();
 		if (0 != id && ormasDal.CreateProductionList(id, productionID, productID, count, sum, statusID, currencyID, errorMessage))
 		{
@@ -184,6 +180,17 @@ namespace BusinessLayer
 		if (0 == id && 0 == productionID && 0 == count && 0 == sum && 0 == productID && 0 == statusID && 0 == currencyID)
 			return true;
 		return false;
+	}
+
+	void ProductionList::Clear()
+	{
+		id = 0;
+		productionID = 0;
+		count = 0;
+		sum = 0;
+		productID = 0;
+		statusID = 0;
+		currencyID = 0;
 	}
 
 	bool ProductionList::IsDuplicate(DataLayer::OrmasDal& ormasDal, int prID, int pID, int plCount, double plSum,

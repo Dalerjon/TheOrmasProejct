@@ -6,9 +6,9 @@
 namespace BusinessLayer{
 	class SalaryView : public Salary
 	{
-		std::string userName = "";
-		std::string userSurname = "";
-		std::string userPhone = "";
+		std::string employeeName = "";
+		std::string employeeSurname = "";
+		std::string employeePhone = "";
 		std::string currencyName = "";
 		std::string salaryTypeName = "";
 	public:
@@ -17,9 +17,9 @@ namespace BusinessLayer{
 		~SalaryView(){};
 
 		// BalanceView class Accessors
-		std::string GetUsername();
-		std::string GetUserSurname();
-		std::string GetUserPhone();
+		std::string GetEmployeeName();
+		std::string GetEmployeeSurname();
+		std::string GetEmployeePhone();
 		std::string GetCurrencyName();
 		std::string GetSalaryTypeName();
 

@@ -119,7 +119,8 @@ namespace BusinessLayer
 		currencyID = currID;
 		if (0 != id && ormasDal.CreateProduct(id, companyID, name, volume, measureID, price, productTypeID, shelfLife, currencyID, errorMessage))
 		{
-			return true;
+			if(AddPriceData(ormasDal, id, price, currencyID, errorMessage))
+				return true;
 		}
 		return false;
 	}
@@ -130,7 +131,8 @@ namespace BusinessLayer
 		id = ormasDal.GenerateID();
 		if (0 != id && ormasDal.CreateProduct(id, companyID, name, volume, measureID, price, productTypeID, shelfLife, currencyID, errorMessage))
 		{
-			return true;
+			if (AddPriceData(ormasDal, id, price, currencyID, errorMessage))
+				return true;
 		}
 		return false;
 	}
@@ -164,7 +166,12 @@ namespace BusinessLayer
 		currencyID = pCurrencyID;
 		if (0 != id && ormasDal.UpdateProduct(id, companyID, name, volume, measureID, price, productTypeID, shelfLife, currencyID, errorMessage))
 		{
-			return true;
+			if (AddPriceData(ormasDal, id, price, currencyID, errorMessage))
+				return true;
+		}
+		if (errorMessage.empty())
+		{
+			errorMessage = "Warning! ID is 0, or some unexpected error. Please contact with provider.";
 		}
 		return false;
 	}
@@ -172,7 +179,12 @@ namespace BusinessLayer
 	{
 		if (0 != id && ormasDal.UpdateProduct(id, companyID, name, volume, measureID, price, productTypeID, shelfLife, currencyID, errorMessage))
 		{
-			return true;
+			if (AddPriceData(ormasDal, id, price, currencyID, errorMessage))
+				return true;
+		}
+		if (errorMessage.empty())
+		{
+			errorMessage = "Warning! ID is 0, or some unexpected error. Please contact with provider.";
 		}
 		return false;
 	}
@@ -218,6 +230,19 @@ namespace BusinessLayer
 			&& 0 == measureID && 0 == productTypeID && 0 == currencyID)
 			return true;
 		return false;
+	}
+
+	void Product::Clear()
+	{
+		id = 0;
+		name.clear();
+		price = 0;
+		volume = 0;
+		shelfLife = 0;
+		companyID = 0;
+		measureID = 0;
+		productTypeID = 0;
+		currencyID = 0;
 	}
 
 	void Product::TrimStrings(std::string& pName)
@@ -269,14 +294,15 @@ namespace BusinessLayer
 		return true;
 	}
 
-	bool Product::AddPriceData(DataLayer::OrmasDal& ormasDal, int pID, double price, int curID, std::string& errorMessage)
+	bool Product::AddPriceData(DataLayer::OrmasDal& ormasDal, int pID, double pPrice, int curID, std::string& errorMessage)
 	{
 		Price pri;
-		//To do: impliment this function
-		/*price.SetDate();
-		price.SetValue(price);
-		price.SetCurrencyID(curID);
-		price.SetProductID(pID);*/
+		pri.SetDate(ormasDal.GetSystemDateTime());
+		pri.SetValue(pPrice);
+		pri.SetCurrencyID(curID);
+		pri.SetProductID(pID);
+		if (pri.CreatePrice(ormasDal, errorMessage))
+			return true;
 		return false;
 	}
 }

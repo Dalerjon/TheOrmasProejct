@@ -295,6 +295,20 @@ namespace BusinessLayer{
 		return false;
 	}
 	
+	void Employee::Clear()
+	{
+		id = 0;
+		name.clear();
+		address.clear();
+		phone.clear();
+		birthDate.clear();
+		hireDate.clear();
+		password.clear();
+		email.clear();
+		roleID = 0;
+		positionID = 0;
+	}
+
 	void Employee::TrimStrings(std::string& uEmail, std::string& uName, std::string& uSurname, std::string& uPhone,
 		std::string& uAddress, std::string& uPassword, std::string& eBirthDate, std::string& eHireDate)
 	{

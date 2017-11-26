@@ -14,7 +14,7 @@
 #include <QtWidgets/QAction>
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QButtonGroup>
-#include <QtWidgets/QDateEdit>
+#include <QtWidgets/QDateTimeEdit>
 #include <QtWidgets/QDialog>
 #include <QtWidgets/QGridLayout>
 #include <QtWidgets/QHBoxLayout>
@@ -40,8 +40,8 @@ public:
     QLabel *valieLb;
     QPushButton *currencyBtn;
     QLabel *dateLb;
-    QDateEdit *dateEdit;
     QPushButton *userBtn;
+    QDateTimeEdit *dateEdit;
 
     void setupUi(QDialog *CreatePayment)
     {
@@ -104,18 +104,17 @@ public:
 
         gridLayout->addWidget(dateLb, 0, 0, 1, 1);
 
-        dateEdit = new QDateEdit(CreatePayment);
-        dateEdit->setObjectName(QStringLiteral("dateEdit"));
-
-        gridLayout->addWidget(dateEdit, 0, 1, 1, 1);
-
         userBtn = new QPushButton(CreatePayment);
         userBtn->setObjectName(QStringLiteral("userBtn"));
         userBtn->setMinimumSize(QSize(150, 0));
 
         gridLayout->addWidget(userBtn, 4, 0, 1, 1);
 
-        QWidget::setTabOrder(dateEdit, valueEdit);
+        dateEdit = new QDateTimeEdit(CreatePayment);
+        dateEdit->setObjectName(QStringLiteral("dateEdit"));
+
+        gridLayout->addWidget(dateEdit, 0, 1, 1, 1);
+
         QWidget::setTabOrder(valueEdit, userBtn);
         QWidget::setTabOrder(userBtn, userEdit);
         QWidget::setTabOrder(userEdit, currencyBtn);
@@ -139,7 +138,7 @@ public:
 #endif // QT_NO_TOOLTIP
         okBtn->setText(QApplication::translate("CreatePayment", "OK", 0));
         cancelBtn->setText(QApplication::translate("CreatePayment", "Cancel", 0));
-        valieLb->setText(QApplication::translate("CreatePayment", "Value:", 0));
+        valieLb->setText(QApplication::translate("CreatePayment", "Sum:", 0));
         currencyBtn->setText(QApplication::translate("CreatePayment", "Select currency", 0));
         dateLb->setText(QApplication::translate("CreatePayment", "Date:", 0));
         userBtn->setText(QApplication::translate("CreatePayment", "Select user", 0));

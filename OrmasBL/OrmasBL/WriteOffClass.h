@@ -19,7 +19,7 @@ namespace BusinessLayer
 	public:
 		WriteOff(int wID, int clID, std::string wDate, int eID, int wCount, double wSum, int sID, int cID) :id(wID),
 			clientID(clID), date(wDate), employeeID(eID), count(wCount), sum(wSum), statusID(sID), currencyID(cID){};
-		WriteOff(DataLayer::ordersCollection);
+		WriteOff(DataLayer::writeOffsCollection);
 		WriteOff(){};
 		~WriteOff(){};
 
@@ -56,6 +56,7 @@ namespace BusinessLayer
 		std::string GenerateFilter(DataLayer::OrmasDal& ormasDal);
 		bool GetWriteOffByID(DataLayer::OrmasDal& ormasDal, int oID, std::string& errorMessage);
 		bool IsEmpty();
+		void Clear();
 	private:
 		bool IsDuplicate(DataLayer::OrmasDal& ormasDal, int clID, std::string wDate, int wCount, double wSum,
 			 int cID, std::string& errorMessage);

@@ -40,6 +40,7 @@ namespace BusinessLayer{
 		std::string GenerateFilter(DataLayer::OrmasDal& ormasDal);
 		bool GetBalanceByID(DataLayer::OrmasDal& ormasDal, int bID, std::string& errorMessage);
 		bool IsEmpty();
+		void Clear();
 	private:
 		bool IsDuplicate(DataLayer::OrmasDal& ormasDal, int uID, int cID, std::string& errorMessage);
 		bool IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string& errorMessage);

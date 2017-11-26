@@ -231,7 +231,7 @@ public:
 
     void retranslateUi(QDialog *CreateEmployee)
     {
-        CreateEmployee->setWindowTitle(QApplication::translate("CreateEmployee", "Create/Update Employee", 0));
+        CreateEmployee->setWindowTitle(QApplication::translate("CreateEmployee", "Create/Update employee", 0));
 #ifndef QT_NO_TOOLTIP
         birthDateEdit->setToolTip(QApplication::translate("CreateEmployee", "<html><head/><body><p>Enter your birth date:</p></body></html>", 0));
 #endif // QT_NO_TOOLTIP

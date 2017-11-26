@@ -23,13 +23,17 @@ public:
 	void OpenStsDlg();
 	void OpenCurDlg();
 	void OpenOrdListDlg();
+	void StatusWasChenged();
 	public slots:
 	void SetID(int ID, QString childName);
+	signals:
+	void CloseCreatedForms();
 private:
 	BusinessLayer::Order *order = new BusinessLayer::Order();
-	void SetOrderParams(int, QString, int, int, double, int, int);
-	void FillEditElements(int, QString, int, int, double, int, int);
+	void SetOrderParams(int, QString, QString, int, int, double, int, int,int=0);
+	void FillEditElements(int, QString, QString, int, int, double, int, int);
 	QDoubleValidator *vDouble = nullptr;
 	QIntValidator *vInt = nullptr;
+	std::map<std::string, int> statusMap;
 };
 #endif //CREATEORDDLG_H

@@ -116,7 +116,7 @@ public:
 
     void retranslateUi(QDialog *CreatePhoto)
     {
-        CreatePhoto->setWindowTitle(QApplication::translate("CreatePhoto", "Create/Update payment", 0));
+        CreatePhoto->setWindowTitle(QApplication::translate("CreatePhoto", "Create/Update photo", 0));
 #ifndef QT_NO_TOOLTIP
         userEdit->setToolTip(QString());
 #endif // QT_NO_TOOLTIP
