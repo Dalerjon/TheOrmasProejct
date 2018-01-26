@@ -67,6 +67,15 @@ public:
     QAction *actionWithdrawal;
     QAction *actionRefund;
     QAction *actionPayslip;
+    QAction *actionOrderRaws;
+    QAction *actionReceiptRaws;
+    QAction *actionTransports;
+    QAction *actionReceiptProducts;
+    QAction *actionConsumptionRaws;
+    QAction *actionWriteOffRaws;
+    QAction *actionConsumptionProducts;
+    QAction *actionStock;
+    QAction *actionInventorization;
     QWidget *centrWidget;
     QGridLayout *gridLayout;
     QMdiArea *mdiArea;
@@ -80,6 +89,7 @@ public:
     QMenu *menuProductions;
     QMenu *menuWriteOffs;
     QMenu *menuAccountings;
+    QMenu *menuStock;
     QStatusBar *statusbar;
 
     void setupUi(QMainWindow *MainWindow)
@@ -167,6 +177,24 @@ public:
         actionRefund->setObjectName(QStringLiteral("actionRefund"));
         actionPayslip = new QAction(MainWindow);
         actionPayslip->setObjectName(QStringLiteral("actionPayslip"));
+        actionOrderRaws = new QAction(MainWindow);
+        actionOrderRaws->setObjectName(QStringLiteral("actionOrderRaws"));
+        actionReceiptRaws = new QAction(MainWindow);
+        actionReceiptRaws->setObjectName(QStringLiteral("actionReceiptRaws"));
+        actionTransports = new QAction(MainWindow);
+        actionTransports->setObjectName(QStringLiteral("actionTransports"));
+        actionReceiptProducts = new QAction(MainWindow);
+        actionReceiptProducts->setObjectName(QStringLiteral("actionReceiptProducts"));
+        actionConsumptionRaws = new QAction(MainWindow);
+        actionConsumptionRaws->setObjectName(QStringLiteral("actionConsumptionRaws"));
+        actionWriteOffRaws = new QAction(MainWindow);
+        actionWriteOffRaws->setObjectName(QStringLiteral("actionWriteOffRaws"));
+        actionConsumptionProducts = new QAction(MainWindow);
+        actionConsumptionProducts->setObjectName(QStringLiteral("actionConsumptionProducts"));
+        actionStock = new QAction(MainWindow);
+        actionStock->setObjectName(QStringLiteral("actionStock"));
+        actionInventorization = new QAction(MainWindow);
+        actionInventorization->setObjectName(QStringLiteral("actionInventorization"));
         centrWidget = new QWidget(MainWindow);
         centrWidget->setObjectName(QStringLiteral("centrWidget"));
         gridLayout = new QGridLayout(centrWidget);
@@ -201,6 +229,8 @@ public:
         menuWriteOffs->setObjectName(QStringLiteral("menuWriteOffs"));
         menuAccountings = new QMenu(menuBar);
         menuAccountings->setObjectName(QStringLiteral("menuAccountings"));
+        menuStock = new QMenu(menuBar);
+        menuStock->setObjectName(QStringLiteral("menuStock"));
         MainWindow->setMenuBar(menuBar);
         statusbar = new QStatusBar(MainWindow);
         statusbar->setObjectName(QStringLiteral("statusbar"));
@@ -213,6 +243,7 @@ public:
         menuBar->addAction(menuWriteOffs->menuAction());
         menuBar->addAction(menuProductions->menuAction());
         menuBar->addAction(menuAccountings->menuAction());
+        menuBar->addAction(menuStock->menuAction());
         menuBar->addAction(menuReferences->menuAction());
         menuBar->addAction(menuHelp->menuAction());
         menuUsers->addAction(actionAllUsers);
@@ -253,6 +284,15 @@ public:
         menuAccountings->addAction(actionPayroll);
         menuAccountings->addAction(actionWithdrawal);
         menuAccountings->addAction(actionPayslip);
+        menuStock->addAction(actionStock);
+        menuStock->addAction(actionOrderRaws);
+        menuStock->addAction(actionReceiptRaws);
+        menuStock->addAction(actionConsumptionRaws);
+        menuStock->addAction(actionWriteOffRaws);
+        menuStock->addAction(actionTransports);
+        menuStock->addAction(actionReceiptProducts);
+        menuStock->addAction(actionConsumptionProducts);
+        menuStock->addAction(actionInventorization);
 
         retranslateUi(MainWindow);
 
@@ -301,6 +341,15 @@ public:
         actionWithdrawal->setText(QApplication::translate("MainWindow", "Withdrawal", 0));
         actionRefund->setText(QApplication::translate("MainWindow", "Refund", 0));
         actionPayslip->setText(QApplication::translate("MainWindow", "Payslip", 0));
+        actionOrderRaws->setText(QApplication::translate("MainWindow", "Order raw materials", 0));
+        actionReceiptRaws->setText(QApplication::translate("MainWindow", "Receipt raw materials", 0));
+        actionTransports->setText(QApplication::translate("MainWindow", "Transports", 0));
+        actionReceiptProducts->setText(QApplication::translate("MainWindow", "Receipt products", 0));
+        actionConsumptionRaws->setText(QApplication::translate("MainWindow", "Consumption raw materials", 0));
+        actionWriteOffRaws->setText(QApplication::translate("MainWindow", "Write-off raw materials", 0));
+        actionConsumptionProducts->setText(QApplication::translate("MainWindow", "Consumption products", 0));
+        actionStock->setText(QApplication::translate("MainWindow", "Stock", 0));
+        actionInventorization->setText(QApplication::translate("MainWindow", "Inventorization", 0));
         menuUsers->setTitle(QApplication::translate("MainWindow", "Users", 0));
         menuProducts->setTitle(QApplication::translate("MainWindow", "Products", 0));
         menuOrders->setTitle(QApplication::translate("MainWindow", "Orders", 0));
@@ -310,6 +359,7 @@ public:
         menuProductions->setTitle(QApplication::translate("MainWindow", "Production", 0));
         menuWriteOffs->setTitle(QApplication::translate("MainWindow", "Write-offs", 0));
         menuAccountings->setTitle(QApplication::translate("MainWindow", "Accounting", 0));
+        menuStock->setTitle(QApplication::translate("MainWindow", "Stock", 0));
     } // retranslateUi
 
 };

@@ -1,0 +1,63 @@
+#ifndef INVENTORIZATIONLISTCLASS_H
+#define INVENTORIZATIONLISTCLASS_H
+#include "OrmasDAL.h"
+
+namespace BusinessLayer
+{
+	class InventorizationList
+	{
+	protected:
+		int id = 0;
+		int inventorizationID = 0;
+		int productID = 0;
+		int count = 0;
+		double sum = 0;
+		int statusID = 0;
+		int currencyID = 0;
+	public:
+		InventorizationList(int ilID, int iID, int pID, int ilCount, double ilSum, int sID, int cID) :id(ilID), inventorizationID(iID),
+			productID(pID),	count(ilCount), sum(ilSum), statusID(sID), currencyID(cID){};
+		InventorizationList(DataLayer::inventorizationListCollection);
+		InventorizationList(){};
+		~InventorizationList(){};
+
+		//InventorizationList class Accessors
+		int GetID();
+		int GetInventorizationID();
+		int GetProductID();
+		int GetCount();
+		double GetSum();
+		int GetStatusID();
+		int GetCurrencyID();
+
+		//InventorizationList class Mutators
+		void SetID(int);
+		void SetInventorizationID(int);
+		void SetProductID(int);
+		void SetCount(int);
+		void SetSum(double);
+		void SetStatusID(int);
+		void SetCurrencyID(int);
+
+		//Create, delete, update methods
+		bool CreateInventorizationList(DataLayer::OrmasDal& ormasDal, std::string& errorMessage);
+		bool UpdateInventorizationList(DataLayer::OrmasDal& ormasDal, std::string& errorMessage);
+		bool DeleteInventorizationList(DataLayer::OrmasDal& ormasDal, std::string& errorMessage);
+		bool DeleteListByInventorizationID(DataLayer::OrmasDal& ormasDal, int iID, std::string& errorMessage);
+		bool CreateInventorizationList(DataLayer::OrmasDal& ormasDal, int iID, int pID, int ilCount, double ilSum,
+			int sID, int cID, std::string& errorMessage);
+		bool UpdateInventorizationList(DataLayer::OrmasDal& ormasDal, int iID, int pID, int ilCount, double ilSum,
+			int sID, int cID, std::string& errorMessage);
+
+		//Generate filter string for class
+		std::string GenerateFilter(DataLayer::OrmasDal& ormasDal);
+		bool GetInventorizationListByID(DataLayer::OrmasDal& ormasDal, int iID, std::string& errorMessage);
+		bool IsEmpty();
+		void Clear();
+	private:
+		bool IsDuplicate(DataLayer::OrmasDal& ormasDal, int iID, int pID, int ilCount, double ilSum,
+			int cID, std::string& errorMessage);
+		bool IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string& errorMessage);
+	};
+}
+#endif

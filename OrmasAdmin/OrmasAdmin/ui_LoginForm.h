@@ -89,26 +89,26 @@ public:
 
         passwordEdit = new QLineEdit(LoginDlg);
         passwordEdit->setObjectName(QStringLiteral("passwordEdit"));
-        passwordEdit->setMinimumSize(QSize(180, 0));
+        passwordEdit->setMinimumSize(QSize(170, 0));
         passwordEdit->setEchoMode(QLineEdit::Password);
 
         gridLayout->addWidget(passwordEdit, 2, 5, 1, 1);
 
         userEdit = new QLineEdit(LoginDlg);
         userEdit->setObjectName(QStringLiteral("userEdit"));
-        userEdit->setMinimumSize(QSize(180, 0));
+        userEdit->setMinimumSize(QSize(170, 0));
 
         gridLayout->addWidget(userEdit, 1, 5, 1, 1);
 
         PasswordLb = new QLabel(LoginDlg);
         PasswordLb->setObjectName(QStringLiteral("PasswordLb"));
-        PasswordLb->setMinimumSize(QSize(70, 0));
+        PasswordLb->setMinimumSize(QSize(100, 0));
 
         gridLayout->addWidget(PasswordLb, 2, 4, 1, 1);
 
         UserNameLb = new QLabel(LoginDlg);
         UserNameLb->setObjectName(QStringLiteral("UserNameLb"));
-        UserNameLb->setMinimumSize(QSize(70, 0));
+        UserNameLb->setMinimumSize(QSize(100, 0));
 
         gridLayout->addWidget(UserNameLb, 1, 4, 1, 1);
 
@@ -144,7 +144,7 @@ public:
         userEdit->setToolTip(QApplication::translate("LoginDlg", "<html><head/><body><p>For example: 929999999 or John.Doe@gmail.com</p></body></html>", 0));
 #endif // QT_NO_TOOLTIP
         PasswordLb->setText(QApplication::translate("LoginDlg", "Password:", 0));
-        UserNameLb->setText(QApplication::translate("LoginDlg", "Phone or email:", 0));
+        UserNameLb->setText(QApplication::translate("LoginDlg", "Phone number:", 0));
         iconLb->setText(QString());
     } // retranslateUi
 

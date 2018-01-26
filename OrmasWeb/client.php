@@ -1,40 +1,43 @@
-<?php
-require_once ('header.php');
-?>
-		<div id= "content">
-			<div id="menu">
-				<div id="menu-tab">
-					<div id="menu-header"><h1>Заказы</h1></div>
-					<div id="h-separator-slim"></div>
-					<div id="menu-item"><a href="client.php">Мои последние заказы</a></div>
-					<div id="menu-item"><a href="client.php">Создать заказ</a></div>
-					<div id="menu-item"><a href="client.php">Удалить заказ по ID</a></div>
-					<div id="menu-item"><a href="client.php">Обновить заказ по ID</a></div>
+			<div id="items">
+				<div class = "pannel-block">
+					<div class="pannel" id="create-order">
+						<div id="order-img"></div>
+						<label class= "for-pannel">Создать заказ</label>
+					</div>
+					<div class="pannel" id="create-return">
+						<div id="return-img"></div>
+						<label class= "for-pannel">Создать возврат</label>
+					
+					</div>
 				</div>
-				<div id="menu-tab">
-					<div id="menu-header"><h1>Возвраты</h1></div>
-					<div id="h-separator-slim"></div>
-					<div id="menu-item"><a href="client.php">Посмотреть все возвраты</a></div>
-					<div id="menu-item"><a href="client.php">Создать возврат</a></div>
-					<div id="menu-item"><a href="client.php">Удалить возврат</a></div>
-					<div id="menu-item"><a href="client.php">Обновить возврат по ID</a></div>
+				<div class = "pannel-block">
+					<div class="pannel" id="show-list">
+						<div id="list-img"></div>
+						<label class= "for-pannel">Список</label>
+					</div>
+					<div class="pannel" id="search-element">
+						<div id="find-img"></div>
+						<label class= "for-pannel">Поиск по ID</label>
+					
+					</div>
+				</div>
+				<div class = "pannel-block">
+					<div class="pannel" id="balance">
+						<div id="balance-img"></div>
+						<label class= "for-pannel">Мой баланс</label>
+					
+					</div>
+					<div class="pannel" id="expeditor">
+						<div id="expeditor-img"></div>
+						<label class= "for-pannel">Экспедитор</label>
+					
+					</div>
+				</div>
+				<div class = "pannel-block">
+					<div class="pannel" id="price">
+						<div id="price-img"></div>
+						<label class= "for-pannel">Цены</label>
+					
+					</div>
 				</div>
 			</div>
-			<div id="work-panel">
-				<?php
-					if(empty($_GET) || $_GET['action'] == "all_orders")
-					{
-						echo("<div id=\"view\">
-						<table id =\"main-table\">
-							<>
-						</table>
-						</div>
-						<div id=\"commands\">
-						</div>");
-					}
-				?>
-			</div>
-		</div>
-<?php
-	require_once('footter.php')
-?>

@@ -93,14 +93,28 @@ namespace BusinessLayer
 	}
 	bool Production::DeleteProduction(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
-		productionDate.clear();
-		expiryDate.clear();
-		sessionStart.clear();
-		sessionEnd.clear();
-		if (ormasDal.DeleteProductType(id, errorMessage))
+		if (!ormasDal.StartTransaction(errorMessage))
+			return false;
+		if (ormasDal.DeleteProduction(id, errorMessage))
 		{
-			id = 0;
-			return true;
+			if (ormasDal.DeleteListByProductionID(id, errorMessage))
+			{
+				id = 0;
+				productionDate.clear();
+				expiryDate.clear();
+				sessionStart.clear();
+				sessionEnd.clear();
+				ormasDal.CommitTransaction(errorMessage);
+				return true;
+			}
+			else
+			{
+				ormasDal.CancelTransaction(errorMessage);
+			}
+		}
+		else
+		{
+			ormasDal.CancelTransaction(errorMessage);
 		}
 		if (errorMessage.empty())
 		{

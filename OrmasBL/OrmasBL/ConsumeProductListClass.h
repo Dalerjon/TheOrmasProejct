@@ -1,0 +1,63 @@
+#ifndef CONSUMEPRODUCTLISTCLASS_H
+#define CONSUMEPRODUCTLISTCLASS_H
+#include "OrmasDAL.h"
+
+namespace BusinessLayer
+{
+	class ConsumeProductList
+	{
+	protected:
+		int id = 0;
+		int consumeProductID = 0;
+		int productID = 0;
+		int count = 0;
+		double sum = 0;
+		int statusID = 0;
+		int currencyID = 0;
+	public:
+		ConsumeProductList(int clID, int cpID, int pID, int clCount, double clSum, int sID, int cID) :id(clID), consumeProductID(cpID),
+			productID(pID),	count(clCount), sum(clSum), statusID(sID), currencyID(cID){};
+		ConsumeProductList(DataLayer::consumeProductListCollection);
+		ConsumeProductList(){};
+		~ConsumeProductList(){};
+
+		//ConsumeProductList class Accessors
+		int GetID();
+		int GetConsumeProductID();
+		int GetProductID();
+		int GetCount();
+		double GetSum();
+		int GetStatusID();
+		int GetCurrencyID();
+
+		//ConsumeProductList class Mutators
+		void SetID(int);
+		void SetConsumeProductID(int);
+		void SetProductID(int);
+		void SetCount(int);
+		void SetSum(double);
+		void SetStatusID(int);
+		void SetCurrencyID(int);
+
+		//Create, delete, update methods
+		bool CreateConsumeProductList(DataLayer::OrmasDal& ormasDal, std::string& errorMessage);
+		bool UpdateConsumeProductList(DataLayer::OrmasDal& ormasDal, std::string& errorMessage);
+		bool DeleteConsumeProductList(DataLayer::OrmasDal& ormasDal, std::string& errorMessage);
+		bool DeleteListByConsumeProductID(DataLayer::OrmasDal& ormasDal, int cID, std::string& errorMessage);
+		bool CreateConsumeProductList(DataLayer::OrmasDal& ormasDal, int cpID, int pID, int clCount, double clSum,
+			int sID, int cID, std::string& errorMessage);
+		bool UpdateConsumeProductList(DataLayer::OrmasDal& ormasDal, int cpID, int pID, int clCount, double clSum,
+			int sID, int cID, std::string& errorMessage);
+
+		//Generate filter string for class
+		std::string GenerateFilter(DataLayer::OrmasDal& ormasDal);
+		bool GetConsumeProductListByID(DataLayer::OrmasDal& ormasDal, int cID, std::string& errorMessage);
+		bool IsEmpty();
+		void Clear();
+	private:
+		bool IsDuplicate(DataLayer::OrmasDal& ormasDal, int cpID, int pID, int clCount, double clSum,
+			int cID, std::string& errorMessage);
+		bool IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string& errorMessage);
+	};
+}
+#endif

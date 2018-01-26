@@ -122,19 +122,26 @@ namespace BusinessLayer
 		sum = rSum;
 		statusID = sID;
 		currencyID = cID;
+		ormasDal.StartTransaction(errorMessage);
 		if (0 != id && ormasDal.CreateReturn(id, clientID, date, executionDate, employeeID, count, sum, statusID, currencyID, errorMessage))
 		{
 			if (statusID == statusMap.find("EXECUTED")->second)
 			{
-				if (!BalanceRefund(ormasDal, clientID, sum, currencyID, executionDate, errorMessage))
+				if (!BalanceRefund(ormasDal, clientID, sum, currencyID, executionDate, errorMessage) ||
+					!ChangesAtStock(ormasDal, id, errorMessage))
+				{
+					ormasDal.CancelTransaction(errorMessage);
 					return false;
+				}				
 			}
+			ormasDal.CommitTransaction(errorMessage);
 			return true;
 		}
 		if (errorMessage.empty())
 		{
 			errorMessage = "Warning! ID is 0, or some unexpected error. Please contact with provider.";
 		}
+		ormasDal.CancelTransaction(errorMessage);
 		return false;
 	}
 	bool Return::CreateReturn(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
@@ -144,33 +151,58 @@ namespace BusinessLayer
 		std::map<std::string, int> statusMap = BusinessLayer::Status::GetStatusesAsMap(ormasDal, errorMessage);
 		if (0 == statusMap.size())
 			return false;
+		ormasDal.StartTransaction(errorMessage);
 		if (0 != id && ormasDal.CreateReturn(id, clientID, date, executionDate, employeeID, count, sum, statusID, currencyID, errorMessage))
 		{
 			if (statusID == statusMap.find("EXECUTED")->second)
 			{
-				if (!BalanceRefund(ormasDal, clientID, sum, currencyID, executionDate, errorMessage))
+				if (!BalanceRefund(ormasDal, clientID, sum, currencyID, executionDate, errorMessage) ||
+					!ChangesAtStock(ormasDal, id, errorMessage))
+				{
+					ormasDal.CancelTransaction(errorMessage);
 					return false;
+				}
 			}
+			ormasDal.CommitTransaction(errorMessage);
 			return true;
 		}
 		if (errorMessage.empty())
 		{
 			errorMessage = "Warning! ID is 0, or some unexpected error. Please contact with provider.";
 		}
+		ormasDal.CancelTransaction(errorMessage);
 		return false;
 	}
 	bool Return::DeleteReturn(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
-		clientID = 0;
-		date.clear();
-		executionDate.clear();
-		employeeID = 0;
-		count = 0;
-		sum = 0;
+		if (!ormasDal.StartTransaction(errorMessage))
+			return false;
 		if (ormasDal.DeleteReturn(id, errorMessage))
 		{
-			id = 0;
-			return true;
+			if (ormasDal.DeleteListByReturnID(id, errorMessage))
+			{
+				id = 0;
+				clientID = 0;
+				date.clear();
+				executionDate.clear();
+				employeeID = 0;
+				count = 0;
+				sum = 0;
+				ormasDal.CommitTransaction(errorMessage);
+				return true;
+			}
+			else
+			{
+				ormasDal.CancelTransaction(errorMessage);
+			}
+		}
+		else
+		{
+			ormasDal.CancelTransaction(errorMessage);
+		}
+		if (errorMessage.empty())
+		{
+			errorMessage = "Warning! ID is 0, or some unexpected error. Please contact with provider.";
 		}
 		return false;
 	}
@@ -189,25 +221,38 @@ namespace BusinessLayer
 		statusID = sID;
 		currencyID = cID;
 		previousSum = GetCurrentSum(ormasDal, id, errorMessage);
+		previousCount = GetCurrentCount(ormasDal, id, errorMessage);
 		previousStatusID = GetCurrentStatusID(ormasDal, id, errorMessage);
+		ormasDal.StartTransaction(errorMessage);
 		if (0 != id && ormasDal.UpdateReturn(id, clientID, date, executionDate, employeeID, count, sum, statusID, currencyID, errorMessage))
 		{
 			if (statusID == statusMap.find("EXECUTED")->second && previousStatusID != statusMap.find("EXECUTED")->second)
 			{
-				if (!BalanceRefund(ormasDal, clientID, sum, currencyID, executionDate, errorMessage))
+				if (!BalanceRefund(ormasDal, clientID, sum, currencyID, executionDate, errorMessage) ||
+					ChangesAtStock(ormasDal, id, errorMessage))
+				{
+					ormasDal.CancelTransaction(errorMessage);
 					return false;
+				}
+				
 			}
 			if (statusID == statusMap.find("EXECUTED")->second && previousStatusID == statusMap.find("EXECUTED")->second && previousSum != sum)
 			{
-				if (!BalanceRefund(ormasDal, clientID, sum, previousSum, currencyID, executionDate, errorMessage))
+				if (!BalanceRefund(ormasDal, clientID, sum, previousSum, currencyID, executionDate, errorMessage) ||
+					ChangesAtStock(ormasDal, id, previousSum, previousCount, errorMessage))
+				{
+					ormasDal.CancelTransaction(errorMessage);
 					return false;
+				}
 			}
+			ormasDal.CancelTransaction(errorMessage);
 			return true;
 		}
 		if (errorMessage.empty())
 		{
 			errorMessage = "Warning! ID is 0, or some unexpected error. Please contact with provider.";
 		}
+		ormasDal.CancelTransaction(errorMessage);
 		return false;
 	}
 	bool Return::UpdateReturn(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
@@ -216,25 +261,38 @@ namespace BusinessLayer
 		if (0 == statusMap.size())
 			return false;
 		previousSum = GetCurrentSum(ormasDal, id, errorMessage);
+		previousCount = GetCurrentCount(ormasDal, id, errorMessage);
 		previousStatusID = GetCurrentStatusID(ormasDal, id, errorMessage);
+		ormasDal.StartTransaction(errorMessage);
 		if (0 != id && ormasDal.UpdateReturn(id, clientID, date, executionDate, employeeID, count, sum, statusID, currencyID, errorMessage))
 		{
 			if (statusID == statusMap.find("EXECUTED")->second && previousStatusID != statusMap.find("EXECUTED")->second)
 			{
-				if (!BalanceRefund(ormasDal, clientID, sum, currencyID, executionDate, errorMessage))
+				if (!BalanceRefund(ormasDal, clientID, sum, currencyID, executionDate, errorMessage) ||
+					ChangesAtStock(ormasDal, id, errorMessage))
+				{
+					ormasDal.CancelTransaction(errorMessage);
 					return false;
+				}
+
 			}
 			if (statusID == statusMap.find("EXECUTED")->second && previousStatusID == statusMap.find("EXECUTED")->second && previousSum != sum)
 			{
-				if (!BalanceRefund(ormasDal, clientID, sum, previousSum, currencyID, executionDate, errorMessage))
+				if (!BalanceRefund(ormasDal, clientID, sum, previousSum, currencyID, executionDate, errorMessage) ||
+					ChangesAtStock(ormasDal, id, previousSum, previousCount, errorMessage))
+				{
+					ormasDal.CancelTransaction(errorMessage);
 					return false;
+				}
 			}
+			ormasDal.CancelTransaction(errorMessage);
 			return true;
 		}
 		if (errorMessage.empty())
 		{
 			errorMessage = "Warning! ID is 0, or some unexpected error. Please contact with provider.";
 		}
+		ormasDal.CancelTransaction(errorMessage);
 		return false;
 	}
 
@@ -373,6 +431,15 @@ namespace BusinessLayer
 		ret.GetReturnByID(ormasDal, rID, errorMessage);
 		if (errorMessage.empty())
 			return ret.GetSum();
+		return 0;
+	}
+
+	int Return::GetCurrentCount(DataLayer::OrmasDal& ormasDal, int rID, std::string& errorMessage)
+	{
+		Return ret;
+		ret.GetReturnByID(ormasDal, rID, errorMessage);
+		if (errorMessage.empty())
+			return ret.GetCount();
 		return 0;
 	}
 

@@ -1,5 +1,4 @@
 <?php
-	session_start();
 	require_once 'logsql.php';
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -20,16 +19,16 @@
 			</div>
 			<div id="action-bar-wrap">
 				<?php 
-					if(!empty($_SESSION['login']) and !empty($_SESSION['password']) and !empty($_SESSION['role']))
+					if(!empty($_SESSION['name']) and !empty($_SESSION['surname']) and !empty($_SESSION['password']) and !empty($_SESSION['role_id']))
 					{
 						echo"<div id='user-img-div'></div>";
 					}
 				?>
 				<div id="action-bar-content">
 					<?php
-						if(!empty($_SESSION['login']) and !empty($_SESSION['password']) and !empty($_SESSION['role']))
+						if(!empty($_SESSION['name']) and !empty($_SESSION['surname']) and !empty($_SESSION['password']) and !empty($_SESSION['role_id']))
 						{	
-							echo("<a href='user.php'>".$_SESSION['login']."</a>");
+							echo("<a href='user.php'>".$_SESSION['name']." ".$_SESSION['surname']."</a>");
 						}
 						else
 						{

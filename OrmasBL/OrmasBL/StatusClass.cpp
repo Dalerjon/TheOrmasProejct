@@ -164,6 +164,28 @@ namespace BusinessLayer
 		return false;
 	}
 	
+	bool Status::GetStatusByName(DataLayer::OrmasDal& ormasDal, std::string sName, std::string& errorMessage)
+	{
+		if (!sName.empty())
+			boost::trim(sName);
+		name = boost::to_upper_copy(sName);
+		std::string filter = GenerateFilter(ormasDal);
+		std::vector<DataLayer::statusCollection> statusVector = ormasDal.GetStatus(errorMessage, filter);
+		if (0 != statusVector.size())
+		{
+			id = std::get<0>(statusVector.at(0));
+			code = std::get<1>(statusVector.at(0));
+			name = std::get<2>(statusVector.at(0));
+			comment = std::get<3>(statusVector.at(0));
+			return true;
+		}
+		else
+		{
+			errorMessage = "Cannot find status with this name";
+		}
+		return false;
+	}
+
 	bool Status::IsEmpty()
 	{
 		if(0 == id && code == "" && name == "" && comment == "")

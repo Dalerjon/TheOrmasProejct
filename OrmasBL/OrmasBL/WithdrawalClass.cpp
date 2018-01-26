@@ -2,6 +2,7 @@
 #include "WithdrawalClass.h"
 #include "UserClass.h"
 #include "BalanceClass.h"
+#include "BalanceWithdrawalRelationClass.h"
 
 namespace BusinessLayer{
 	Withdrawal::Withdrawal(DataLayer::withdrawalsCollection wCollection)
@@ -78,16 +79,20 @@ namespace BusinessLayer{
 		value = wValue;
 		userID = uID;
 		currencyID = cID;
-
+		ormasDal.StartTransaction(errorMessage);
 		if (0 != id && ormasDal.CreateWithdrawal(id, date, value, userID, currencyID, errorMessage))
 		{
 			if (Credit(ormasDal, userID, currencyID, errorMessage))
+			{
+				ormasDal.CommitTransaction(errorMessage);
 				return true;
+			}
 		}
 		if (errorMessage.empty())
 		{
 			errorMessage = "Warning! ID is 0, or some unexpected error. Please contact with provider.";
 		}
+		ormasDal.CancelTransaction(errorMessage);
 		return false;
 	}
 	bool Withdrawal::CreateWithdrawal(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
@@ -95,15 +100,20 @@ namespace BusinessLayer{
 		if (IsDuplicate(ormasDal, errorMessage))
 			return false;
 		id = ormasDal.GenerateID();
+		ormasDal.StartTransaction(errorMessage);
 		if (0 != id && ormasDal.CreateWithdrawal(id, date, value, userID, currencyID, errorMessage))
 		{
 			if (Credit(ormasDal, userID, currencyID, errorMessage))
+			{
+				ormasDal.CommitTransaction(errorMessage);
 				return true;
+			}
 		}
 		if (errorMessage.empty())
 		{
 			errorMessage = "Warning! ID is 0, or some unexpected error. Please contact with provider.";
 		}
+		ormasDal.CancelTransaction(errorMessage);
 		return false;
 	}
 	bool Withdrawal::DeleteWithdrawal(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
@@ -133,10 +143,12 @@ namespace BusinessLayer{
 		userID = uID;
 		currencyID = cID;
 		currentValue = GetCurrentValue(ormasDal, id, errorMessage);
+		ormasDal.StartTransaction(errorMessage);
 		if (0 != id && ormasDal.UpdateWithdrawal(id, date, value, userID, currencyID, errorMessage))
 		{
 			if (Credit(ormasDal, userID, currencyID, currentValue, errorMessage))
 			{
+				ormasDal.CommitTransaction(errorMessage);
 				currentValue = 0.0;
 				return true;
 			}
@@ -145,15 +157,18 @@ namespace BusinessLayer{
 		{
 			errorMessage = "Warning! ID is 0, or some unexpected error. Please contact with provider.";
 		}
+		ormasDal.CancelTransaction(errorMessage);
 		return false;
 	}
 	bool Withdrawal::UpdateWithdrawal(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
 		currentValue = GetCurrentValue(ormasDal, id, errorMessage);
+		ormasDal.StartTransaction(errorMessage);
 		if (0 != id && ormasDal.UpdateWithdrawal(id, date, value, userID, currencyID, errorMessage))
 		{
 			if (Credit(ormasDal, userID, currencyID, currentValue, errorMessage))
 			{
+				ormasDal.CommitTransaction(errorMessage);
 				currentValue = 0.0;
 				return true;
 			}
@@ -162,6 +177,7 @@ namespace BusinessLayer{
 		{
 			errorMessage = "Warning! ID is 0, or some unexpected error. Please contact with provider.";
 		}
+		ormasDal.CancelTransaction(errorMessage);
 		return false;
 	}
 
@@ -257,13 +273,15 @@ namespace BusinessLayer{
 		int balanceID = user.GetUserAccoutID(ormasDal, cID, errorMessage);
 		if (0 != balanceID && errorMessage.empty())
 		{
+			BalanceWithdrawalRelation bwRelation;
 			Balance balance;
-			balance.GetBalanceByID(ormasDal, balanceID, errorMessage);
-			if (errorMessage.empty())
+			if (balance.GetBalanceByID(ormasDal, balanceID, errorMessage))
 			{
+				bwRelation.SetBalanceID(balanceID);
+				bwRelation.SetWithdrawalID(id);
 				balance.SetValue(balance.GetValue() - value);
-				balance.UpdateBalance(ormasDal, errorMessage);
-				return true;
+				if (balance.UpdateBalance(ormasDal, errorMessage) && bwRelation.CreateBalanceWithdrawalRelation(ormasDal, errorMessage))
+					return true;
 			}
 		}
 		return false;
@@ -277,12 +295,11 @@ namespace BusinessLayer{
 		if (0 != balanceID && errorMessage.empty())
 		{
 			Balance balance;
-			balance.GetBalanceByID(ormasDal, balanceID, errorMessage);
-			if (errorMessage.empty())
+			if (balance.GetBalanceByID(ormasDal, balanceID, errorMessage))
 			{
 				balance.SetValue(balance.GetValue() - (value - currentValue));
-				balance.UpdateBalance(ormasDal, errorMessage);
-				return true;
+				if(balance.UpdateBalance(ormasDal, errorMessage))
+					return true;
 			}
 		}
 		return false;
@@ -291,8 +308,7 @@ namespace BusinessLayer{
 	double Withdrawal::GetCurrentValue(DataLayer::OrmasDal& ormasDal, int pID, std::string& errorMessage)
 	{
 		Withdrawal withdrawal;
-		withdrawal.GetWithdrawalByID(ormasDal, pID, errorMessage);
-		if (errorMessage.empty())
+		if (withdrawal.GetWithdrawalByID(ormasDal, pID, errorMessage))
 			return withdrawal.GetValue();
 		return 0;
 	}
@@ -304,13 +320,15 @@ namespace BusinessLayer{
 		int balanceID = user.GetUserAccoutID(ormasDal, cID, errorMessage);
 		if (0 != balanceID && errorMessage.empty())
 		{
+			BalanceWithdrawalRelation bwRelation;
 			Balance balance;
-			balance.GetBalanceByID(ormasDal, balanceID, errorMessage);
-			if (errorMessage.empty())
+			if (balance.GetBalanceByID(ormasDal, balanceID, errorMessage))
 			{
+				bwRelation.SetBalanceID(balanceID);
+				bwRelation.SetWithdrawalID(id);
 				balance.SetValue(balance.GetValue() + value);
-				balance.UpdateBalance(ormasDal, errorMessage);
-				return true;
+				if (balance.UpdateBalance(ormasDal, errorMessage) && bwRelation.DeleteBalanceWithdrawalRelation(ormasDal, errorMessage))
+					return true;
 			}
 		}
 		return false;

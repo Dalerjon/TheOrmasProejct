@@ -52,6 +52,16 @@ private slots :
 	void OpenWithdrawalForm();
 	void OpenPayslipForm();
 
+	void OpenStockForm();
+	void OpenOrderRawForm();
+	void OpenReceiptRawForm();
+	void OpenConsumeRawForm();
+	void OpenWriteOffRawForm();
+	void OpenTransportForm();
+	void OpenReceiptProductForm();
+	void OpenConsumeProductForm();
+	void OpenInventorizationForm();
+
 	void OpenCompanyForm();
 	void OpenCurrencyForm();
 	void OpenMeasureForm();

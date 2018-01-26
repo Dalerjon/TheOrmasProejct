@@ -1,0 +1,253 @@
+#include "stdafx.h"
+#include "TransportListClass.h"
+
+namespace BusinessLayer
+{
+	TransportList::TransportList(DataLayer::transportListCollection tListCollection)
+	{
+		id = std::get<0>(tListCollection);
+		transportID = std::get<1>(tListCollection);
+		productID = std::get<2>(tListCollection);
+		count = std::get<3>(tListCollection);
+		sum = std::get<4>(tListCollection);
+		statusID = std::get<5>(tListCollection);
+		currencyID = std::get<6>(tListCollection);
+	}
+
+	int TransportList::GetID()
+	{
+		return id;
+	}
+
+	int TransportList::GetTransportID()
+	{
+		return transportID;
+	}
+
+	int TransportList::GetProductID()
+	{
+		return productID;
+	}
+
+	int TransportList::GetCount()
+	{
+		return count;
+	}
+
+	double TransportList::GetSum()
+	{
+		return sum;
+	}
+
+	int TransportList::GetStatusID()
+	{
+		return statusID;
+	}
+
+	int TransportList::GetCurrencyID()
+	{
+		return currencyID;
+	}
+
+	void TransportList::SetID(int tID)
+	{
+		id = tID;
+	}
+	void TransportList::SetTransportID(int tTransportID)
+	{
+		transportID = tTransportID;
+	}
+	void TransportList::SetProductID(int tProductID)
+	{
+		productID = tProductID;
+	}
+	void TransportList::SetCount(int tCount)
+	{
+		count = tCount;
+	}
+	void TransportList::SetSum(double tSum)
+	{
+		sum = tSum;
+	}
+	void TransportList::SetStatusID(int tStatusID)
+	{
+		statusID = tStatusID;
+	}
+	void TransportList::SetCurrencyID(int tCurrencyID)
+	{
+		currencyID = tCurrencyID;
+	}
+
+	bool TransportList::CreateTransportList(DataLayer::OrmasDal& ormasDal, int tID, int pID, int tlCount, double tlSum,
+		int sID, int cID, std::string& errorMessage)
+	{
+		id = ormasDal.GenerateID();
+		transportID = tID;
+		productID = pID;
+		count = tlCount;
+		sum = tlSum;
+		statusID = sID;
+		currencyID = cID;
+		if (0 != id && ormasDal.CreateTransportList(id, transportID, productID, count, sum, statusID, currencyID, errorMessage))
+		{
+			return true;
+		}
+		return false;
+	}
+	bool TransportList::CreateTransportList(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
+	{
+		id = ormasDal.GenerateID();
+		if (0 != id && ormasDal.CreateTransportList(id, transportID, productID, count, sum, statusID, currencyID, errorMessage))
+		{
+			return true;
+		}
+		return false;
+	}
+	bool TransportList::DeleteTransportList(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
+	{
+		if (ormasDal.DeleteItemInTransportList(id, errorMessage))
+		{
+			id = 0;
+			transportID = 0;
+			productID = 0;
+			count = 0;
+			sum = 0;
+			statusID = 0;
+			currencyID = 0;
+			return true;
+		}
+		return false;
+	}
+	bool TransportList::DeleteListByTransportID(DataLayer::OrmasDal& ormasDal, int tID, std::string& errorMessage)
+	{
+		transportID = tID;
+		if (ormasDal.DeleteListByTransportID(transportID, errorMessage))
+		{
+			id = 0;
+			transportID = 0;
+			productID = 0;
+			count = 0;
+			sum = 0;
+			statusID = 0;
+			currencyID = 0;
+			return true;
+		}
+		return false;
+	}
+
+	bool TransportList::UpdateTransportList(DataLayer::OrmasDal& ormasDal, int tID, int pID, int tlCount, double tlSum,
+		int sID, int cID, std::string& errorMessage)
+	{
+		id = ormasDal.GenerateID();
+		transportID = tID;
+		productID = pID;
+		count = tlCount;
+		sum = tlSum;
+		statusID = sID;
+		currencyID = cID;
+		if (0 != id && ormasDal.UpdateTransportList(id, transportID, productID, count, sum, statusID, currencyID, errorMessage))
+		{
+			return true;
+		}
+		return false;
+	}
+	bool TransportList::UpdateTransportList(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
+	{
+		if (0 != id && ormasDal.UpdateTransportList(id, transportID, productID, count, sum, statusID, currencyID, errorMessage))
+		{
+			return true;
+		}
+		return false;
+	}
+
+	std::string TransportList::GenerateFilter(DataLayer::OrmasDal& ormasDal)
+	{
+		if (0 != id || 0 != transportID || 0 != productID || 0 != count || 0 != sum || 0 != statusID)
+		{
+			return ormasDal.GetFilterForTransportList(id, transportID, productID, count, sum, statusID, currencyID);
+		}
+		return "";
+	}
+
+	bool TransportList::GetTransportListByID(DataLayer::OrmasDal& ormasDal, int tID, std::string& errorMessage)
+	{
+		id = tID;
+		std::string filter = GenerateFilter(ormasDal);
+		std::vector<DataLayer::transportListViewCollection> transportListVector = ormasDal.GetTransportList(errorMessage, filter);
+		if (0 != transportListVector.size())
+		{
+			id = std::get<0>(transportListVector.at(0));
+			transportID = std::get<1>(transportListVector.at(0));
+			count = std::get<7>(transportListVector.at(0));
+			sum = std::get<8>(transportListVector.at(0));
+			productID = std::get<11>(transportListVector.at(0));
+			statusID = std::get<12>(transportListVector.at(0));
+			currencyID = std::get<13>(transportListVector.at(0));
+			return true;
+		}
+		else
+		{
+			errorMessage = "Cannot find ttansport list with this id";
+		}
+		return false;
+	}
+
+	bool TransportList::IsEmpty()
+	{
+		if (0 == id && 0 == transportID && 0 == count && 0 == sum && 0 == productID && 0 == statusID && 0 == currencyID)
+			return true;
+		return false;
+	}
+
+	void TransportList::Clear()
+	{
+		id = 0;
+		transportID = 0;
+		count = 0;
+		sum = 0;
+		productID = 0;
+		statusID = 0;
+		currencyID = 0;
+	}
+
+	bool TransportList::IsDuplicate(DataLayer::OrmasDal& ormasDal, int tID, int pID, int tlCount, double tlSum,
+		int cID, std::string& errorMessage)
+	{
+		TransportList transportList;
+		transportList.SetTransportID(tID);
+		transportList.SetProductID(pID);
+		transportList.SetCount(tlCount);
+		transportList.SetSum(tlSum);
+		transportList.SetCurrencyID(cID);
+		std::string filter = transportList.GenerateFilter(ormasDal);
+		std::vector<DataLayer::transportListViewCollection> transportListVector = ormasDal.GetTransportList(errorMessage, filter);
+		if (!errorMessage.empty())
+			return true;
+		if (0 == transportListVector.size())
+		{
+			return false;
+		}
+		errorMessage = "Transport list with this parameters are already exist! Please avoid the duplication!";
+		return true;
+	}
+
+	bool TransportList::IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
+	{
+		TransportList transportList;
+		transportList.SetTransportID(transportID);
+		transportList.SetProductID(productID);
+		transportList.SetCount(count);
+		transportList.SetSum(sum);
+		transportList.SetCurrencyID(currencyID);
+		std::string filter = transportList.GenerateFilter(ormasDal);
+		std::vector<DataLayer::transportListViewCollection> transportListVector = ormasDal.GetTransportList(errorMessage, filter);
+		if (!errorMessage.empty())
+			return true;
+		if (0 == transportListVector.size())
+		{
+			return false;
+		}
+		errorMessage = "Transport list with this parameters are already exist! Please avoid the duplication!";
+		return true;
+	}
+}

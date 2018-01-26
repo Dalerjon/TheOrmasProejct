@@ -44,6 +44,7 @@ namespace BusinessLayer
 		bool CreateReturnList(DataLayer::OrmasDal& ormasDal, std::string& errorMessage);
 		bool UpdateReturnList(DataLayer::OrmasDal& ormasDal, std::string& errorMessage);
 		bool DeleteReturnList(DataLayer::OrmasDal& ormasDal, std::string& errorMessage);
+		bool DeleteListByReturnID(DataLayer::OrmasDal& ormasDal, int oID, std::string& errorMessage);
 		bool CreateReturnList(DataLayer::OrmasDal& ormasDal, int rID, int pID, int rlCount, double rlSum,
 			int sID, int cID, std::string& errorMessage);
 		bool UpdateReturnList(DataLayer::OrmasDal& ormasDal, int rID, int pID, int rlCount, double rlSum,

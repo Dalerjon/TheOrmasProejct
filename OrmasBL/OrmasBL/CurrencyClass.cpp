@@ -141,11 +141,16 @@ namespace BusinessLayer
 	bool Currency::UpdateCurrency(DataLayer::OrmasDal& ormasDal, int cCode, std::string cShortName, std::string cName, int cUnit,
 		bool cMainTrade, std::string& errorMessage)
 	{
-		if (0 < GetMainTradeCurrencyID(ormasDal, errorMessage) && cMainTrade == true)
+		int mainTradeID = 0;
+		mainTradeID = GetMainTradeCurrencyID(ormasDal, errorMessage);
+		if (mainTradeID != id)
 		{
-			errorMessage = "System already have the main trade currency! Please delete or update it first, \
-						   					 before adding a new currency which will be a main trade currency!";
-			return false;
+			if (0 < mainTradeID && cMainTrade == true)
+			{
+				errorMessage = "System already have the main trade currency! Please delete or update it first, \
+							   						   	before adding a new currency which will be a main trade currency!";
+				return false;
+			}
 		}
 		TrimStrings(cShortName, cName);
 		code = cCode;
@@ -165,11 +170,16 @@ namespace BusinessLayer
 	}
 	bool Currency::UpdateCurrency(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
-		if (0 < GetMainTradeCurrencyID(ormasDal, errorMessage) && mainTrade == true)
+		int mainTradeID = 0;
+		mainTradeID = GetMainTradeCurrencyID(ormasDal, errorMessage);
+		if (mainTradeID != id)
 		{
-			errorMessage = "System already have the main trade currency! Please delete or update it first, \
-						   						   		 before adding a new currency which will be a main trade currency!";
-			return false;
+			if (0 < mainTradeID && mainTrade == true)
+			{
+				errorMessage = "System already have the main trade currency! Please delete or update it first, \
+							   							 before adding a new currency which will be a main trade currency!";
+				return false;
+			}
 		}
 		if (0 != id && ormasDal.UpdateCurrency(id, code, shortName, name, unit, mainTrade, errorMessage))
 		{

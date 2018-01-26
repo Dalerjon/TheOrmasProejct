@@ -207,10 +207,10 @@ void CreateProdnDlg::OpenProdnListDlg()
 		dForm->createProdnDlg = this;
 		dForm->setObjectName("productionListForm");
 		dForm->QtConnect<BusinessLayer::ProductionListView>();
-		QMdiSubWindow *returnWindow = new QMdiSubWindow;
-		returnWindow->setWidget(dForm);
-		returnWindow->setAttribute(Qt::WA_DeleteOnClose);
-		mainForm->mdiArea->addSubWindow(returnWindow);
+		QMdiSubWindow *productionListWindow = new QMdiSubWindow;
+		productionListWindow->setWidget(dForm);
+		productionListWindow->setAttribute(Qt::WA_DeleteOnClose);
+		mainForm->mdiArea->addSubWindow(productionListWindow);
 		dForm->topLevelWidget();
 		dForm->activateWindow();
 		QApplication::setActiveWindow(dForm);

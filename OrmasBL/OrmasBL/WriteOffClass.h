@@ -58,9 +58,15 @@ namespace BusinessLayer
 		bool IsEmpty();
 		void Clear();
 	private:
+		double prevSum = 0;
+		int prevCount = 0;
 		bool IsDuplicate(DataLayer::OrmasDal& ormasDal, int clID, std::string wDate, int wCount, double wSum,
 			 int cID, std::string& errorMessage);
 		bool IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string& errorMessage);
+		bool ChangesAtStock(DataLayer::OrmasDal& ormasDal, int wID, std::string& errorMessage);
+		bool ChangesAtStock(DataLayer::OrmasDal& ormasDal, int wID, double pSum, int pCount, std::string& errorMessage);
+		double GetCurrentSum(DataLayer::OrmasDal& ormasDal, int wID, std::string& errorMessage);
+		int GetCurrentCount(DataLayer::OrmasDal& ormasDal, int wID, std::string& errorMessage);
 	};
 }
 #endif //WRITEOFFCLASS_H

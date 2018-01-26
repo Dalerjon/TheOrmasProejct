@@ -118,10 +118,25 @@ namespace BusinessLayer
 		}
 		return false;
 	}
+	bool ReturnList::DeleteListByReturnID(DataLayer::OrmasDal& ormasDal, int rID, std::string& errorMessage)
+	{
+		returnID = rID;
+		if (ormasDal.DeleteListByReturnID(id, errorMessage))
+		{
+			id = 0;
+			returnID = 0;
+			productID = 0;
+			count = 0;
+			sum = 0;
+			statusID = 0;
+			currencyID = 0;
+			return true;
+		}
+		return false;
+	}
 	bool ReturnList::UpdateReturnList(DataLayer::OrmasDal& ormasDal, int rID, int pID, int rCount, double rSum,
 		int sID, int cID, std::string& errorMessage)
 	{
-		id = ormasDal.GenerateID();
 		returnID = rID;
 		productID = pID;
 		count = rCount;

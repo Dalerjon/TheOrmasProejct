@@ -248,10 +248,10 @@ void CreatePhtDlg::OpenPrdDlg()
 		dForm->createPhtDlg = this;
 		dForm->setObjectName("productForm");
 		dForm->QtConnect<BusinessLayer::ProductView>();
-		QMdiSubWindow *returnWindow = new QMdiSubWindow;
-		returnWindow->setWidget(dForm);
-		returnWindow->setAttribute(Qt::WA_DeleteOnClose);
-		mainForm->mdiArea->addSubWindow(returnWindow);
+		QMdiSubWindow *productWindow = new QMdiSubWindow;
+		productWindow->setWidget(dForm);
+		productWindow->setAttribute(Qt::WA_DeleteOnClose);
+		mainForm->mdiArea->addSubWindow(productWindow);
 		dForm->topLevelWidget();
 		dForm->activateWindow();
 		QApplication::setActiveWindow(dForm);

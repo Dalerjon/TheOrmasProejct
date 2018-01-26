@@ -69,6 +69,22 @@ private slots:
 	void CrtCmpDlg();
 	void UdpCmpDlg();
 	void DelCmpDlg();
+	
+	void CrtConPDlg();
+	void UdpConPDlg();
+	void DelConPDlg();
+
+	void CrtConPListDlg();
+	void UdpConPListDlg();
+	void DelConPListDlg();
+
+	void CrtConRDlg();
+	void UdpConRDlg();
+	void DelConRDlg();
+
+	void CrtConRListDlg();
+	void UdpConRListDlg();
+	void DelConRListDlg();
 
 	void CrtCurDlg();
 	void UdpCurDlg();
@@ -77,6 +93,14 @@ private slots:
 	void CrtEmpDlg();
 	void UdpEmpDlg();
 	void DelEmpDlg();
+
+	void CrtInvDlg();
+	void UdpInvDlg();
+	void DelInvDlg();
+
+	void CrtInvListDlg();
+	void UdpInvListDlg();
+	void DelInvListDlg();
 
 	void CrtLcnDlg();
 	void UdpLcnDlg();
@@ -93,6 +117,14 @@ private slots:
 	void CrtOrdListDlg();
 	void UdpOrdListDlg();
 	void DelOrdListDlg();
+
+	void CrtOrdRDlg();
+	void UdpOrdRDlg();
+	void DelOrdRDlg();
+
+	void CrtOrdRListDlg();
+	void UdpOrdRListDlg();
+	void DelOrdRListDlg();
 
 	void CrtPhotoDlg();
 	void UdpPhotoDlg();
@@ -142,6 +174,22 @@ private slots:
 	void UdpRoleDlg();
 	void DelRoleDlg();
 
+	void CrtRcpPDlg();
+	void UdpRcpPDlg();
+	void DelRcpPDlg();
+
+	void CrtRcpPListDlg();
+	void UdpRcpPListDlg();
+	void DelRcpPListDlg();
+
+	void CrtRcpRDlg();
+	void UdpRcpRDlg();
+	void DelRcpRDlg();
+
+	void CrtRcpRListDlg();
+	void UdpRcpRListDlg();
+	void DelRcpRListDlg();
+
 	void CrtRfdDlg();
 	void UdpRfdDlg();
 	void DelRfdDlg();
@@ -166,6 +214,18 @@ private slots:
 	void UdpStsDlg();
 	void DelStsDlg();
 
+	void CrtStockDlg();
+	void UdpStockDlg();
+	void DelStockDlg();
+
+	void CrtTrsDlg();
+	void UdpTrsDlg();
+	void DelTrsDlg();
+
+	void CrtTrsListDlg();
+	void UdpTrsListDlg();
+	void DelTrsListDlg();
+
 	void CrtUserDlg();
 	void UdpUserDlg();
 	void DelUserDlg();
@@ -181,6 +241,14 @@ private slots:
 	void CrtWOffListDlg();
 	void UdpWOffListDlg();
 	void DelWOffListDlg();
+
+	void CrtWOffRDlg();
+	void UdpWOffRDlg();
+	void DelWOffRDlg();
+
+	void CrtWOffRListDlg();
+	void UdpWOffRListDlg();
+	void DelWOffRListDlg();
 
 	void ChangeBtnState();
 	void GetIDValue(QModelIndex index);
@@ -199,28 +267,54 @@ public:
 	CreateAcsDlg* createAcsDlg = nullptr;
 	CreateBlcDlg* createBlcDlg = nullptr;
 	CreateCltDlg* createCltDlg = nullptr;
+	CreateConPDlg* createConPDlg = nullptr;
+	CreateConPListDlg* createConPListDlg = nullptr;
+	CreateConRDlg* createConRDlg = nullptr;
+	CreateConRListDlg* createConRListDlg = nullptr;
 	CreateEmpDlg* createEmpDlg = nullptr;
+	CreateInvDlg* createInvDlg = nullptr;
+	CreateInvListDlg* createInvListDlg = nullptr;
+	CreateOrdDlg* createOrdDlg = nullptr;
 	CreateOrdListDlg* createOrdListDlg = nullptr;
+	CreateOrdRDlg* createOrdRDlg = nullptr;
+	CreateOrdRListDlg* createOrdRListDlg = nullptr;
 	CreatePhtDlg* createPhtDlg = nullptr;
 	CreatePmtDlg* createPmtDlg = nullptr;
 	CreatePrcDlg* createPrcDlg = nullptr;
 	CreateProdnListDlg* createProdnListDlg = nullptr;
 	CreatePspDlg* createPspDlg = nullptr;
 	CreateRelDlg* createRelDlg = nullptr;
+	CreateRcpPDlg* createRcpPDlg = nullptr;
+	CreateRcpPListDlg* createRcpPListDlg = nullptr;
+	CreateRcpRDlg* createRcpRDlg = nullptr;
+	CreateRcpRListDlg* createRcpRListDlg = nullptr;
 	CreateRfdDlg* createRfdDlg = nullptr;
 	CreateRtrnListDlg* createRtrnListDlg = nullptr;
 	CreateSlrDlg* createSlrDlg = nullptr;
+	CreateStockDlg* createStockDlg = nullptr;
+	CreateTrsDlg* createTrsDlg = nullptr;
+	CreateTrsListDlg* createTrsListDlg = nullptr;
 	CreateUserDlg* createUserDlg = nullptr;
 	CreateProdDlg* createProdDlg = nullptr;
 	CreateProdnDlg* createProdnDlg = nullptr;
-	CreateOrdDlg* createOrdDlg = nullptr;
 	CreateRtrnDlg* createRtrnDlg = nullptr;
 	CreateWdwDlg* createWdwDlg = nullptr;
 	CreateWOffDlg* createWOffDlg = nullptr;
 	CreateWOffListDlg* createWOffListDlg = nullptr;
+	CreateWOffRDlg* createWOffRDlg = nullptr;
+	CreateWOffRListDlg* createWOffRListDlg = nullptr;
+	
 	int orderID = 0;
 	int returnID = 0;
 	int productionID = 0;
 	int writeOffID = 0;
+	int consumeProductID = 0;
+	int consumeRawID = 0;
+	int inventorizationID = 0;
+	int orderRawID = 0;
+	int receiptProductID = 0; 
+	int receiptRawID = 0;
+	int transportID = 0;
+	int writeOffRawID = 0;
 };
 #endif //DATAFORM_H

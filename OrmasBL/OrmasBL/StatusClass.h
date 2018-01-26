@@ -43,6 +43,7 @@ namespace BusinessLayer
 		//Generate filter string for class
 		std::string GenerateFilter(DataLayer::OrmasDal& ormasDal);
 		bool GetStatusByID(DataLayer::OrmasDal& ormasDal, int sID, std::string& errorMessage);
+		bool GetStatusByName(DataLayer::OrmasDal& ormasDal, std::string sName, std::string& errorMessage);
 		bool IsEmpty();
 		void Clear();
 		static std::map<std::string, int> GetStatusesAsMap(DataLayer::OrmasDal& ormasDal, std::string& errorMessage);

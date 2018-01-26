@@ -41,6 +41,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
+    <TargetName>$(ProjectName)D</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -68,6 +69,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;ORMASBL_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>..\..\includes\boost 1.61;..\..\includes\OrmasDal;..\..\includes\libpq;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -92,13 +94,29 @@
     <ClInclude Include="ClientClass.h" />
     <ClInclude Include="ClientViewClass.h" />
     <ClInclude Include="CompanyClass.h" />
+    <ClInclude Include="ConsumeProductClass.h" />
+    <ClInclude Include="ConsumeProductListClass.h" />
+    <ClInclude Include="ConsumeProductListViewClass.h" />
+    <ClInclude Include="ConsumeProductViewClass.h" />
+    <ClInclude Include="ConsumeRawClass.h" />
+    <ClInclude Include="ConsumeRawListClass.h" />
+    <ClInclude Include="ConsumeRawListViewClass.h" />
+    <ClInclude Include="ConsumeRawViewClass.h" />
     <ClInclude Include="CurrencyClass.h" />
     <ClInclude Include="EmployeeClass.h" />
     <ClInclude Include="EmployeeViewClass.h" />
+    <ClInclude Include="InventorizationClass.h" />
+    <ClInclude Include="InventorizationListClass.h" />
+    <ClInclude Include="InventorizationListViewClass.h" />
+    <ClInclude Include="InventorizationViewClass.h" />
     <ClInclude Include="OrderListViewClass.h" />
     <ClInclude Include="MeasureClass.h" />
     <ClInclude Include="OrderClass.h" />
     <ClInclude Include="OrderListClass.h" />
+    <ClInclude Include="OrderRawClass.h" />
+    <ClInclude Include="OrderRawListClass.h" />
+    <ClInclude Include="OrderRawListViewClass.h" />
+    <ClInclude Include="OrderRawViewClass.h" />
     <ClInclude Include="PayslipOrderRelationClass.h" />
     <ClInclude Include="OrderViewClass.h" />
     <ClInclude Include="OrmasBL.h" />
@@ -117,6 +135,14 @@
     <ClInclude Include="ProductTypeClass.h" />
     <ClInclude Include="LocationClass.h" />
     <ClInclude Include="ProductViewClass.h" />
+    <ClInclude Include="ReceiptProductClass.h" />
+    <ClInclude Include="ReceiptProductListClass.h" />
+    <ClInclude Include="ReceiptProductListViewClass.h" />
+    <ClInclude Include="ReceiptProductViewClass.h" />
+    <ClInclude Include="ReceiptRawClass.h" />
+    <ClInclude Include="ReceiptRawListClass.h" />
+    <ClInclude Include="ReceiptRawListViewClass.h" />
+    <ClInclude Include="ReceiptRawViewClass.h" />
     <ClInclude Include="RefundClass.h" />
     <ClInclude Include="RefundViewClass.h" />
     <ClInclude Include="RelationClass.h" />
@@ -131,7 +157,13 @@
     <ClInclude Include="SalaryViewClass.h" />
     <ClInclude Include="StatusClass.h" />
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="StockClass.h" />
+    <ClInclude Include="StockViewClass.h" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="TransportClass.h" />
+    <ClInclude Include="TransportListClass.h" />
+    <ClInclude Include="TransportListViewClass.h" />
+    <ClInclude Include="TransportViewClass.h" />
     <ClInclude Include="UserClass.h" />
     <ClInclude Include="UserViewClass.h" />
     <ClInclude Include="WithdrawalClass.h" />
@@ -139,6 +171,10 @@
     <ClInclude Include="WriteOffClass.h" />
     <ClInclude Include="WriteOffListClass.h" />
     <ClInclude Include="WriteOffListViewClass.h" />
+    <ClInclude Include="WriteOffRawClass.h" />
+    <ClInclude Include="WriteOffRawListClass.h" />
+    <ClInclude Include="WriteOffRawListViewClass.h" />
+    <ClInclude Include="WriteOffRawViewClass.h" />
     <ClInclude Include="WriteOffViewClass.h" />
   </ItemGroup>
   <ItemGroup>
@@ -153,13 +189,29 @@
     <ClCompile Include="ClientClass.cpp" />
     <ClCompile Include="ClientViewClass.cpp" />
     <ClCompile Include="CompanyClass.cpp" />
+    <ClCompile Include="ConsumeProductClass.cpp" />
+    <ClCompile Include="ConsumeProductListClass.cpp" />
+    <ClCompile Include="ConsumeProductListViewClass.cpp" />
+    <ClCompile Include="ConsumeProductViewClass.cpp" />
+    <ClCompile Include="ConsumeRawClass.cpp" />
+    <ClCompile Include="ConsumeRawListClass.cpp" />
+    <ClCompile Include="ConsumeRawListViewClass.cpp" />
+    <ClCompile Include="ConsumeRawViewClass.cpp" />
     <ClCompile Include="CurrencyClass.cpp" />
     <ClCompile Include="EmployeeClass.cpp" />
     <ClCompile Include="EmployeeViewClass.cpp" />
+    <ClCompile Include="InventorizationClass.cpp" />
+    <ClCompile Include="InventorizationListClass.cpp" />
+    <ClCompile Include="InventorizationListViewClass.cpp" />
+    <ClCompile Include="InventorizationViewClass.cpp" />
     <ClCompile Include="MeasureClass.cpp" />
     <ClCompile Include="OrderClass.cpp" />
     <ClCompile Include="OrderListClass.cpp" />
     <ClCompile Include="OrderListViewClass.cpp" />
+    <ClCompile Include="OrderRawClass.cpp" />
+    <ClCompile Include="OrderRawListClass.cpp" />
+    <ClCompile Include="OrderRawListViewClass.cpp" />
+    <ClCompile Include="OrderRawViewClass.cpp" />
     <ClCompile Include="PayslipOrderRelationClass.cpp" />
     <ClCompile Include="OrderViewClass.cpp" />
     <ClCompile Include="OrmasBL.cpp" />
@@ -178,6 +230,14 @@
     <ClCompile Include="ProductTypeClass.cpp" />
     <ClCompile Include="LocationClass.cpp" />
     <ClCompile Include="ProductViewClass.cpp" />
+    <ClCompile Include="ReceiptProductClass.cpp" />
+    <ClCompile Include="ReceiptProductListClass.cpp" />
+    <ClCompile Include="ReceiptProductListViewClass.cpp" />
+    <ClCompile Include="ReceiptProductViewClass.cpp" />
+    <ClCompile Include="ReceiptRawClass.cpp" />
+    <ClCompile Include="ReceiptRawListClass.cpp" />
+    <ClCompile Include="ReceiptRawListViewClass.cpp" />
+    <ClCompile Include="ReceiptRawtViewClass.cpp" />
     <ClCompile Include="RefundClass.cpp" />
     <ClCompile Include="RefundViewClass.cpp" />
     <ClCompile Include="RelationClass.cpp" />
@@ -195,6 +255,12 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="StockClass.cpp" />
+    <ClCompile Include="StockViewClass.cpp" />
+    <ClCompile Include="TransportClass.cpp" />
+    <ClCompile Include="TransportListClass.cpp" />
+    <ClCompile Include="TransportListViewClass.cpp" />
+    <ClCompile Include="TransportViewClass.cpp" />
     <ClCompile Include="UserClass.cpp" />
     <ClCompile Include="UserViewClass.cpp" />
     <ClCompile Include="WithdrawalClass.cpp" />
@@ -202,6 +268,10 @@
     <ClCompile Include="WriteOffClass.cpp" />
     <ClCompile Include="WriteOffListClass.cpp" />
     <ClCompile Include="WriteOffListViewClass.cpp" />
+    <ClCompile Include="WriteOffRawClass.cpp" />
+    <ClCompile Include="WriteOffRawListClass.cpp" />
+    <ClCompile Include="WriteOffRawListViewClass.cpp" />
+    <ClCompile Include="WriteOffRawViewClass.cpp" />
     <ClCompile Include="WriteOffViewClass.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

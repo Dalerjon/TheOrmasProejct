@@ -1,21 +1,43 @@
-<?php
-	session_start();
-	require_once 'logsql.php';
-?>
-<?php
-	$query_exp = "SELECT relation_id, relation_type, user_id_1, user_id_2, FROM \"OrmasSchema\".relations_view WHERE user_2=".$_SESSION['id'];
-	$result_exp = pg_query($query_exp);
-	$row_exp = pg_fetch_array($result_exp);
-	$query = "SELECT * FROM \"OrmasSchema\".users_view WHERE user_id=".$row_exp['2'];
-	$result = pg_query($query_exp);
-	$row = pg_fetch_array($result_exp);
-	if(empty($row['0'])
-	{
-		echo "<div id= 'error-div'> У Вас пока нет экспедитора, ждите скоро он будет назначан.</div>"
-	}
-	else
-	{
-		
-	}
-	echo $string_out;
-?>
+	<div id="items">
+				<div class = "pannel-block">
+					<div class="pannel" id="create-order">
+						<div id="order-img"></div>
+						<label class= "for-pannel">Создать заказ</label>
+					</div>
+					<div class="pannel" id="create-return">
+						<div id="return-img"></div>
+						<label class= "for-pannel">Создать возврат</label>
+					
+					</div>
+				</div>
+				<div class = "pannel-block">
+					<div class="pannel" id="show-list">
+						<div id="list-img"></div>
+						<label class= "for-pannel">Список</label>
+					</div>
+					<div class="pannel" id="search-element">
+						<div id="find-img"></div>
+						<label class= "for-pannel">Поиск по ID</label>
+					
+					</div>
+				</div>
+				<div class = "pannel-block">
+					<div class="pannel" id="balance">
+						<div id="balance-img"></div>
+						<label class= "for-pannel">Мой баланс</label>
+					
+					</div>
+					<div class="pannel" id="expeditor">
+						<div id="expeditor-img"></div>
+						<label class= "for-pannel">Экспедитор</label>
+					
+					</div>
+				</div>
+				<div class = "pannel-block">
+					<div class="pannel" id="price">
+						<div id="price-img"></div>
+						<label class= "for-pannel">Цены</label>
+					
+					</div>
+				</div>
+			</div>

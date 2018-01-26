@@ -104,16 +104,32 @@ namespace BusinessLayer
 		return false;
 	}
 	bool ProductionList::DeleteProductionList(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
-	{
-		productionID = 0;
-		productID = 0;
-		count = 0;
-		sum = 0;
-		statusID = 0;
-		currencyID = 0;
+	{		
 		if (ormasDal.DeleteItemInProductionList(id, errorMessage))
 		{
 			id = 0;
+			productionID = 0;
+			productID = 0;
+			count = 0;
+			sum = 0;
+			statusID = 0;
+			currencyID = 0;
+			return true;
+		}
+		return false;
+	}
+	bool ProductionList::DeleteListByProductionID(DataLayer::OrmasDal& ormasDal, int pID, std::string& errorMessage)
+	{
+		productionID = pID;
+		if (ormasDal.DeleteListByOrderID(productionID, errorMessage))
+		{
+			id = 0;
+			productionID = 0;
+			productID = 0;
+			count = 0;
+			sum = 0;
+			statusID = 0;
+			currencyID = 0;
 			return true;
 		}
 		return false;
@@ -121,7 +137,6 @@ namespace BusinessLayer
 	bool ProductionList::UpdateProductionList(DataLayer::OrmasDal& ormasDal, int prID, int pID, int prCount, double prSum,
 		int sID, int cID, std::string& errorMessage)
 	{
-		id = ormasDal.GenerateID();
 		productionID = prID;
 		productID = pID;
 		count = prCount;

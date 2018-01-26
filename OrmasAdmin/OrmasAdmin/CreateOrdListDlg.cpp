@@ -185,17 +185,17 @@ void CreateOrdListDlg::AddProductToList()
 		
 		if (dialogBL->CreateOrderList(orderList, errorMessage))
 		{
-			QList<QStandardItem*> ProductListItem;
-			ProductListItem << new QStandardItem(QString::number(orderList->GetID()));
+			QList<QStandardItem*> productListItem;
+			productListItem << new QStandardItem(QString::number(orderList->GetID()));
 			if (0 != orderID)
 			{
-				ProductListItem << new QStandardItem(QString::number(orderID));
+				productListItem << new QStandardItem(QString::number(orderID));
 			}
 			else
 			{
-				ProductListItem << new QStandardItem(QString::number(0));
+				productListItem << new QStandardItem(QString::number(0));
 			}
-			ProductListItem << new QStandardItem(product->GetName().c_str())
+			productListItem << new QStandardItem(product->GetName().c_str())
 				<< new QStandardItem(QString::number(product->GetPrice()))
 				<< new QStandardItem(currency->GetShortName().c_str())
 				<< new QStandardItem(QString::number(product->GetVolume()))
@@ -208,7 +208,7 @@ void CreateOrdListDlg::AddProductToList()
 				<< new QStandardItem(QString::number(orderList->GetStatusID()))
 				<< new QStandardItem(QString::number(orderList->GetCurrencyID()));
 			QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
-			itemModel->appendRow(ProductListItem);
+			itemModel->appendRow(productListItem);
 
 			delete measure;
 			delete product;
@@ -486,10 +486,10 @@ void CreateOrdListDlg::OpenCurDlg()
 		dForm->createOrdListDlg = this;
 		dForm->setObjectName("currencyForm");
 		dForm->QtConnect<BusinessLayer::Currency>();
-		QMdiSubWindow *returnWindow = new QMdiSubWindow;
-		returnWindow->setWidget(dForm);
-		returnWindow->setAttribute(Qt::WA_DeleteOnClose);
-		mainForm->mdiArea->addSubWindow(returnWindow);
+		QMdiSubWindow *currencyWindow = new QMdiSubWindow;
+		currencyWindow->setWidget(dForm);
+		currencyWindow->setAttribute(Qt::WA_DeleteOnClose);
+		mainForm->mdiArea->addSubWindow(currencyWindow);
 		dForm->topLevelWidget();
 		dForm->activateWindow();
 		QApplication::setActiveWindow(dForm);

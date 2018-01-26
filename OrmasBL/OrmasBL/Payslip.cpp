@@ -3,6 +3,7 @@
 #include "UserClass.h"
 #include "SalaryClass.h"
 #include "BalanceClass.h"
+#include "BalancePayslipRelationClass.h"
 
 namespace BusinessLayer{
 	Payslip::Payslip(DataLayer::payslipsCollection pCollection)
@@ -79,16 +80,20 @@ namespace BusinessLayer{
 		value = pValue;
 		salaryID = sID;
 		currencyID = cID;
-
+		ormasDal.StartTransaction(errorMessage);
 		if (0 != id && ormasDal.CreatePayslip(id, date, value, salaryID, currencyID, errorMessage))
 		{
 			if (Replenishment(ormasDal, salaryID, currencyID, errorMessage))
+			{
+				ormasDal.CommitTransaction(errorMessage);
 				return true;
+			}
 		}
 		if (errorMessage.empty())
 		{
 			errorMessage = "Warning! ID is 0, or some unexpected error. Please contact with provider.";
 		}
+		ormasDal.CancelTransaction(errorMessage);
 		return false;
 	}
 	bool Payslip::CreatePayslip(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
@@ -96,15 +101,20 @@ namespace BusinessLayer{
 		if (IsDuplicate(ormasDal, errorMessage))
 			return false;
 		id = ormasDal.GenerateID();
+		ormasDal.StartTransaction(errorMessage);
 		if (0 != id && ormasDal.CreatePayslip(id, date, value, salaryID, currencyID, errorMessage))
 		{
 			if (Replenishment(ormasDal, salaryID, currencyID, errorMessage))
+			{
+				ormasDal.CommitTransaction(errorMessage);
 				return true;
+			}
 		}
 		if (errorMessage.empty())
 		{
 			errorMessage = "Warning! ID is 0, or some unexpected error. Please contact with provider.";
 		}
+		ormasDal.CancelTransaction(errorMessage);
 		return false;
 	}
 	bool Payslip::DeletePayslip(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
@@ -134,10 +144,12 @@ namespace BusinessLayer{
 		salaryID = sID;
 		currencyID = cID;
 		currentValue = GetCurrentValue(ormasDal, id, errorMessage);
+		ormasDal.StartTransaction(errorMessage);
 		if (0 != id && ormasDal.UpdatePayslip(id, date, value, salaryID, currencyID, errorMessage))
 		{
 			if (Replenishment(ormasDal, salaryID, currencyID, currentValue, errorMessage))
 			{
+				ormasDal.CommitTransaction(errorMessage);
 				currentValue = 0.0;
 				return true;
 			}
@@ -146,15 +158,18 @@ namespace BusinessLayer{
 		{
 			errorMessage = "Warning! ID is 0, or some unexpected error. Please contact with provider.";
 		}
+		ormasDal.CancelTransaction(errorMessage);
 		return false;
 	}
 	bool Payslip::UpdatePayslip(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
 		currentValue = GetCurrentValue(ormasDal, id, errorMessage);
+		ormasDal.StartTransaction(errorMessage);
 		if (0 != id && ormasDal.UpdatePayslip(id, date, value, salaryID, currencyID, errorMessage))
 		{
 			if (Replenishment(ormasDal, salaryID, currencyID, currentValue, errorMessage))
 			{
+				ormasDal.CommitTransaction(errorMessage);
 				currentValue = 0.0;
 				return true;
 			}
@@ -163,6 +178,7 @@ namespace BusinessLayer{
 		{
 			errorMessage = "Warning! ID is 0, or some unexpected error. Please contact with provider.";
 		}
+		ormasDal.CancelTransaction(errorMessage);
 		return false;
 	}
 
@@ -255,27 +271,27 @@ namespace BusinessLayer{
 	{
 		errorMessage = "";
 		Salary salary;
-		salary.GetSalaryByID(ormasDal, sID, errorMessage);
-		if (!errorMessage.empty())
+		if (!salary.GetSalaryByID(ormasDal, sID, errorMessage))
 		{
 			return false;
 		}
 		User user;
-		user.GetUserByID(ormasDal, salary.GetEmployeeID(), errorMessage);
-		if (!errorMessage.empty())
+		if (user.GetUserByID(ormasDal, salary.GetEmployeeID(), errorMessage))
 		{
 			return false;
 		}
 		int balanceID = user.GetUserAccoutID(ormasDal, cID, errorMessage);
 		if (0 != balanceID && errorMessage.empty())
 		{
+			BalancePayslipRelation bpRelation;
 			Balance balance;
-			balance.GetBalanceByID(ormasDal, balanceID, errorMessage);
-			if (errorMessage.empty())
+			if (balance.GetBalanceByID(ormasDal, balanceID, errorMessage))
 			{
 				balance.SetValue(balance.GetValue() + value);
-				balance.UpdateBalance(ormasDal, errorMessage);
-				return true;
+				bpRelation.SetBalanceID(balanceID);
+				bpRelation.SetPayslipID(id);
+				if (balance.UpdateBalance(ormasDal, errorMessage) && bpRelation.CreateBalancePayslipRelation(ormasDal, errorMessage))
+					return true;
 			}
 		}
 		return false;
@@ -285,14 +301,12 @@ namespace BusinessLayer{
 	{
 		errorMessage = "";
 		Salary salary;
-		salary.GetSalaryByID(ormasDal, sID, errorMessage);
-		if (!errorMessage.empty())
+		if (!salary.GetSalaryByID(ormasDal, sID, errorMessage))
 		{
 			return false;
 		}
 		User user;
-		user.GetUserByID(ormasDal, salary.GetEmployeeID(), errorMessage);
-		if (!errorMessage.empty())
+		if (!user.GetUserByID(ormasDal, salary.GetEmployeeID(), errorMessage))
 		{
 			return false;
 		}
@@ -300,12 +314,11 @@ namespace BusinessLayer{
 		if (0 != balanceID && errorMessage.empty())
 		{
 			Balance balance;
-			balance.GetBalanceByID(ormasDal, balanceID, errorMessage);
-			if (errorMessage.empty())
+			if (balance.GetBalanceByID(ormasDal, balanceID, errorMessage))
 			{
 				balance.SetValue(balance.GetValue() + (currentValue - value));
-				balance.UpdateBalance(ormasDal, errorMessage);
-				return true;
+				if(balance.UpdateBalance(ormasDal, errorMessage))
+					return true;
 			}
 		}
 		return false;
@@ -314,8 +327,7 @@ namespace BusinessLayer{
 	double Payslip::GetCurrentValue(DataLayer::OrmasDal& ormasDal, int pID, std::string& errorMessage)
 	{
 		Payslip Payslip;
-		Payslip.GetPayslipByID(ormasDal, pID, errorMessage);
-		if (errorMessage.empty())
+		if (Payslip.GetPayslipByID(ormasDal, pID, errorMessage))
 			return Payslip.GetValue();
 		return 0;
 	}
@@ -324,27 +336,27 @@ namespace BusinessLayer{
 	{
 		errorMessage = "";
 		Salary salary;
-		salary.GetSalaryByID(ormasDal, sID, errorMessage);
-		if (!errorMessage.empty())
+		if (!salary.GetSalaryByID(ormasDal, sID, errorMessage))
 		{
 			return false;
 		}
 		User user;
-		user.GetUserByID(ormasDal, salary.GetEmployeeID(), errorMessage);
-		if (!errorMessage.empty())
+		if (!user.GetUserByID(ormasDal, salary.GetEmployeeID(), errorMessage))
 		{
 			return false;
 		}
 		int balanceID = user.GetUserAccoutID(ormasDal, cID, errorMessage);
 		if (0 != balanceID && errorMessage.empty())
 		{
+			BalancePayslipRelation bpRelation;
 			Balance balance;
-			balance.GetBalanceByID(ormasDal, balanceID, errorMessage);
-			if (errorMessage.empty())
+			if (balance.GetBalanceByID(ormasDal, balanceID, errorMessage))
 			{
+				bpRelation.SetBalanceID(balanceID);
+				bpRelation.SetPayslipID(id);
 				balance.SetValue(balance.GetValue() - value);
-				balance.UpdateBalance(ormasDal, errorMessage);
-				return true;
+				if (balance.UpdateBalance(ormasDal, errorMessage) && bpRelation.DeleteBalancePayslipRelation(ormasDal, errorMessage))
+					return true;
 			}
 		}
 		return false;

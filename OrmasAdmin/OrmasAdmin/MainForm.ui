@@ -139,6 +139,20 @@
     <addaction name="actionWithdrawal"/>
     <addaction name="actionPayslip"/>
    </widget>
+   <widget class="QMenu" name="menuStock">
+    <property name="title">
+     <string>Stock</string>
+    </property>
+    <addaction name="actionStock"/>
+    <addaction name="actionOrderRaws"/>
+    <addaction name="actionReceiptRaws"/>
+    <addaction name="actionConsumptionRaws"/>
+    <addaction name="actionWriteOffRaws"/>
+    <addaction name="actionTransports"/>
+    <addaction name="actionReceiptProducts"/>
+    <addaction name="actionConsumptionProducts"/>
+    <addaction name="actionInventorization"/>
+   </widget>
    <addaction name="menuUsers"/>
    <addaction name="menuProducts"/>
    <addaction name="menuOrders"/>
@@ -146,6 +160,7 @@
    <addaction name="menuWriteOffs"/>
    <addaction name="menuProductions"/>
    <addaction name="menuAccountings"/>
+   <addaction name="menuStock"/>
    <addaction name="menuReferences"/>
    <addaction name="menuHelp"/>
   </widget>
@@ -343,6 +358,51 @@
   <action name="actionPayslip">
    <property name="text">
     <string>Payslip</string>
+   </property>
+  </action>
+  <action name="actionOrderRaws">
+   <property name="text">
+    <string>Order raw materials</string>
+   </property>
+  </action>
+  <action name="actionReceiptRaws">
+   <property name="text">
+    <string>Receipt raw materials</string>
+   </property>
+  </action>
+  <action name="actionTransports">
+   <property name="text">
+    <string>Transports</string>
+   </property>
+  </action>
+  <action name="actionReceiptProducts">
+   <property name="text">
+    <string>Receipt products</string>
+   </property>
+  </action>
+  <action name="actionConsumptionRaws">
+   <property name="text">
+    <string>Consumption raw materials</string>
+   </property>
+  </action>
+  <action name="actionWriteOffRaws">
+   <property name="text">
+    <string>Write-off raw materials</string>
+   </property>
+  </action>
+  <action name="actionConsumptionProducts">
+   <property name="text">
+    <string>Consumption products</string>
+   </property>
+  </action>
+  <action name="actionStock">
+   <property name="text">
+    <string>Stock</string>
+   </property>
+  </action>
+  <action name="actionInventorization">
+   <property name="text">
+    <string>Inventorization</string>
    </property>
   </action>
  </widget>

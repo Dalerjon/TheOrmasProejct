@@ -1,4 +1,5 @@
 <?php
+	session_start();
 	$PageTitle="Регистрация";
 	function customPageHeader()
 	{
@@ -11,7 +12,24 @@
 		echo ("<script type='text/javascript' src='js/jquery-3.2.1.min.js'></script>");
 		echo ("<script type='text/javascript' src='js/registration.js'></script>");
 	}	
-	require_once ('header.php');	
+	require_once ('header.php');
+	if(!$_SESSION['role_id_client'] or !$_SESSION['role_id_expeditor'])
+	{
+		$query = "SELECT * FROM \"OrmasSchema\".roles_view";
+		$result = pg_query($query);
+		for($i = 0 ; $i < pg_num_rows($result); $i++)
+		{
+			$role_row = pg_fetch_array($result, null, PGSQL_BOTH);
+			if($role_row['role_name'] == "CLIENT")
+			{
+				$_SESSION['role_id_client']=$role_row['role_id']; 
+			}
+			if($role_row['role_name'] == "EXPEDITOR")
+			{
+				$_SESSION['role_id_expeditor']=$role_row['role_id']; 
+			}
+		}
+	}
 ?> 
 
 <?php
@@ -23,7 +41,7 @@
 	$message_password="";
 	if(isset($_POST['name']) && isset($_POST['surname']) && isset($_POST['email']) && isset($_POST['phone']) && isset($_POST['address']) && isset($_POST['firm']) && isset($_POST['password']))
 	{
-		if(($_POST['name'] == '') || ($_POST['surname'] == '') || ($_POST['email'] == '') || ($_POST['phone'] == '') || ($_POST['address']  == '') || ($_POST['firm'] == '') || ($_POST['password'] == ''))
+		if(($_POST['name'] == '') || ($_POST['surname'] == '') || ($_POST['phone'] == '') || ($_POST['address']  == '') || ($_POST['firm'] == '') || ($_POST['password'] == ''))
 		{
 			unset($_POST['name']);
 			unset($_POST['surname']);
@@ -31,6 +49,7 @@
 			unset($_POST['phone']);
 			unset($_POST['address']);
 			unset($_POST['firm']);
+			unset($_POST['number']);
 			unset($_POST['password']);
 		}
 		else
@@ -40,27 +59,53 @@
 			$id_row = pg_fetch_array($id_result, null, PGSQL_BOTH);
 			if(!empty($id_row[0]))
 			{
-				$role_result = pg_query("SELECT * FROM \"OrmasSchema\".roles_view WHERE role_name='CLIENT'");
-				$role_row = pg_fetch_array($role_result, null, PGSQL_BOTH);
-				if(!empty($role_row[0]))
+				$start_transaction = pg_query("BEGIN");
+				if($start_transaction)
 				{
-					$role_id = $role_row['role_id'];
-				}
-				else
-				{
-					$role_id =0;
-				}			
-				$id = $id_row[0];
-				$insert_result = pg_query("INSERT INTO \"OrmasSchema\".users(user_id, user_name, user_phone, user_address, firm, firm_number, role_id,
-				location_id, password, activated) VALUES($id,'$_POST[name]','$_POST[phone]','$_POST[address]', '$_POST[firm]',
-				'$_POST[number]', $role_id, $_POST[location], '$_POST[password]', 'f')");
-				if($insert_result)
-				{
-					header("location:index.php?id=$id");
-				}
-				else
-				{
-					//error
+					$generated_id = $id_row[0];
+					$insert_user_result = pg_query("INSERT INTO \"OrmasSchema\".users(user_id, user_email, user_name, user_surname, user_phone, user_address,
+					role_id, password, activated) VALUES($generated_id,'$_POST[email]', '$_POST[name]', '$_POST[surname]','$_POST[phone]','$_POST[address]', 
+					$_SESSION[role_id_client], '$_POST[password]', 'f')");
+					if($insert_user_result)
+					{
+						$insert_client_result = pg_query("INSERT INTO \"OrmasSchema\".clients(user_id, firm, firm_number, location_id) 
+						VALUES($generated_id,'$_POST[firm]', '$_POST[number]', '$_POST[location]')");
+						if($insert_client_result)
+						{
+							$id_for_balance = pg_query("SELECT nextval('\"OrmasSchema\".id_seq')");
+							$id_balance = pg_fetch_array($id_for_balance, null, PGSQL_BOTH);
+							$currency_result = pg_query("SELECT * FROM \"OrmasSchema\".currencies_view WHERE currency_main_trade='t'");
+							$currency_row = pg_fetch_array($currency_result, null, PGSQL_BOTH);
+							if(!empty($id_balance[0]) && $currency_row)
+							{
+								$insert_balance_result = pg_query("INSERT INTO \"OrmasSchema\".balances(balance_id, user_id, balance_value, currency_id) 
+								VALUES($id_balance[0], $generated_id, 0, $currency_row[0])");
+								if($insert_balance_result)
+								{
+									pg_query("COMMIT;");
+									header("location:index.php?id=$generated_id");
+								}
+								else
+								{
+									pg_query("ROLLBACK;");
+								}
+							}
+							else
+							{
+								pg_query("ROLLBACK;");
+							}
+						}
+						else
+						{
+							echo "cannot insert user!";
+							pg_query("ROLLBACK;");
+						}
+						
+					}
+					else
+					{
+						echo "cannot insert user!";
+					}
 				}
 			}
 			else
@@ -74,17 +119,20 @@
 <div id = "content">
 	<div id="regis-content">
 		<form action="registration.php" method="post">
+				<div id="for_error_messages">
+					
+				</div>
 				<div class='close-bar'>
 				</div>
 				<div id="regis-main-label">Регистрация</div>
 				<div id="regis-row">
 					<label id="regis-label">Имя:</label>
-					<input name="name" type="text"/>
+					<input name="name" type="text" required/>
 					<div id="message"><label ></label></div>
 				</div>
 				<div id="regis-row">
 					<label id="regis-label">Фамилия:</label>
-					<input name="suurname" type="text"/>
+					<input name="surname" type="text" required/>
 					<div id="message"><label ></label></div>
 				</div>
 				<div id="regis-row">
@@ -94,17 +142,17 @@
 				</div>
 				<div id="regis-row">
 					<label id="regis-label">Номер телефона:</label>
-					<input name="phone" type="text"/>
+					<input name="phone" type="text" required/>
 					<div id="message"><label ></label></div>
 				</div>
 				<div id="regis-row">
 					<label id="regis-label">Адрес:</label>
-					<input name="address"  type="text"/>
+					<input name="address"  type="text" required/>
 					<div id="message"><label ></label></div>
 				</div id="regis-row">
 				<div id="regis-row">
 					<label id="regis-label">Название фирмы(магазина):</label>
-					<input name="firm" id="firm" type="text"/>
+					<input name="firm" id="firm" type="text" required/>
 					<div id="message"><label ></label></div>
 				</div id="regis-row">
 				<div id="regis-row">
@@ -132,7 +180,7 @@
 				</div>
 				<div id="regis-row">
 					<label id="regis-label">Пароль:</label>
-					<input name="password" type="password"/>
+					<input name="password" type="password" required/>
 					<div id="message"><label ></label></div>
 				</div>
 				<div id="regis-row">

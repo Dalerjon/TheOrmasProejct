@@ -102,6 +102,7 @@ public:
 
         passwordEdit = new QLineEdit(CreateClient);
         passwordEdit->setObjectName(QStringLiteral("passwordEdit"));
+        passwordEdit->setEchoMode(QLineEdit::Password);
 
         gridLayout->addWidget(passwordEdit, 7, 1, 1, 1);
 

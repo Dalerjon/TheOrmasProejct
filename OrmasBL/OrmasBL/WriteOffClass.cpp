@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "WriteOffClass.h"
+#include "StockClass.h"
 
 namespace BusinessLayer
 {
@@ -104,14 +105,20 @@ namespace BusinessLayer
 		sum = wSum;
 		statusID = sID;
 		currencyID = cID;
+		ormasDal.StartTransaction(errorMessage);
 		if (0 != id && ormasDal.CreateWriteOff(id, clientID, date, employeeID, count, sum, statusID, currencyID, errorMessage))
 		{
-			return true;
+			if (ChangesAtStock(ormasDal, id, errorMessage))
+			{
+				ormasDal.CommitTransaction(errorMessage);
+				return true;
+			}
 		}
 		if (errorMessage.empty())
 		{
 			errorMessage = "Warning! ID is 0, or some unexpected error. Please contact with provider.";
 		}
+		ormasDal.CancelTransaction(errorMessage);
 		return false;
 	}
 
@@ -119,28 +126,48 @@ namespace BusinessLayer
 	{
 		if (IsDuplicate(ormasDal, errorMessage))
 			return false;
+		ormasDal.StartTransaction(errorMessage);
 		if (0 != id && ormasDal.CreateWriteOff(id, clientID, date, employeeID, count, sum, statusID, currencyID, errorMessage))
 		{
-			return true;
+			if (ChangesAtStock(ormasDal, id, errorMessage))
+			{
+				ormasDal.CommitTransaction(errorMessage);
+				return true;
+			}
 		}
 		if (errorMessage.empty())
 		{
 			errorMessage = "Warning! ID is 0, or some unexpected error. Please contact with provider.";
 		}
+		ormasDal.CancelTransaction(errorMessage);
 		return false;
 	}
 	bool WriteOff::DeleteWriteOff(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
-		clientID = 0;
-		date.clear();
-		employeeID = 0;
-		count = 0;
-		sum = 0;
-		statusID = 0;
+		if (!ormasDal.StartTransaction(errorMessage))
+			return false;
 		if (ormasDal.DeleteWriteOff(id, errorMessage))
 		{
-			id = 0;
-			return true;
+			if (ormasDal.DeleteListByWriteOffID(id, errorMessage))
+			{
+				id = 0;
+				clientID = 0;
+				date.clear();
+				employeeID = 0;
+				count = 0;
+				sum = 0;
+				statusID = 0;
+				ormasDal.CommitTransaction(errorMessage);
+				return true;
+			}
+			else
+			{
+				ormasDal.CancelTransaction(errorMessage);
+			}
+		}
+		else
+		{
+			ormasDal.CancelTransaction(errorMessage);
 		}
 		if (errorMessage.empty())
 		{
@@ -158,26 +185,42 @@ namespace BusinessLayer
 		sum = wSum;
 		statusID = sID;
 		currencyID = cID;
+		prevSum = GetCurrentSum(ormasDal, id, errorMessage);
+		prevCount = GetCurrentCount(ormasDal, id, errorMessage);
+		ormasDal.StartTransaction(errorMessage);
 		if (0 != id && ormasDal.UpdateWriteOff(id, clientID, date, employeeID, count, sum, statusID, currencyID, errorMessage))
 		{
-			return true;
+			if (ChangesAtStock(ormasDal, id, prevSum, prevCount, errorMessage))
+			{
+				ormasDal.CommitTransaction(errorMessage);
+				return true;
+			}
 		}
 		if (errorMessage.empty())
 		{
 			errorMessage = "Warning! ID is 0, or some unexpected error. Please contact with provider.";
 		}
+		ormasDal.CancelTransaction(errorMessage);
 		return false;
 	}
 	bool WriteOff::UpdateWriteOff(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
+		prevSum = GetCurrentSum(ormasDal, id, errorMessage);
+		prevCount = GetCurrentCount(ormasDal, id, errorMessage);
+		ormasDal.StartTransaction(errorMessage);
 		if (0 != id && ormasDal.UpdateWriteOff(id, clientID, date, employeeID, count, sum, statusID, currencyID, errorMessage))
 		{
-			return true;
+			if (ChangesAtStock(ormasDal, id, prevSum, prevCount, errorMessage))
+			{
+				ormasDal.CommitTransaction(errorMessage);
+				return true;
+			}
 		}
 		if (errorMessage.empty())
 		{
 			errorMessage = "Warning! ID is 0, or some unexpected error. Please contact with provider.";
 		}
+		ormasDal.CancelTransaction(errorMessage);
 		return false;
 	}
 
@@ -271,5 +314,33 @@ namespace BusinessLayer
 		}
 		errorMessage = "Write-off with this parameters are already exist! Please avoid the duplication!";
 		return true;
+	}
+
+	bool WriteOff::ChangesAtStock(DataLayer::OrmasDal& ormasDal, int wID, std::string& errorMessage)
+	{
+		Stock stock;
+		return stock.ChangingByWriteOff(ormasDal, wID, errorMessage);
+	}
+
+	bool WriteOff::ChangesAtStock(DataLayer::OrmasDal& ormasDal, int wID, double pSum, int pCount, std::string& errorMessage)
+	{
+		Stock stock;
+		return stock.ChangingByWriteOff(ormasDal, wID, pSum, pCount, errorMessage);
+	}
+
+	double WriteOff::GetCurrentSum(DataLayer::OrmasDal& ormasDal, int wID, std::string& errorMessage)
+	{
+		WriteOff wProduct;
+		if (wProduct.GetWriteOffByID(ormasDal, wID, errorMessage))
+			return wProduct.GetSum();
+		return 0;
+	}
+
+	int WriteOff::GetCurrentCount(DataLayer::OrmasDal& ormasDal, int wID, std::string& errorMessage)
+	{
+		WriteOff wProduct;
+		if (wProduct.GetWriteOffByID(ormasDal, wID, errorMessage))
+			return wProduct.GetCount();
+		return 0;
 	}
 }

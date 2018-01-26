@@ -105,23 +105,39 @@ namespace BusinessLayer
 	}
 	bool OrderList::DeleteOrderList(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
-		orderID = 0;
-		productID = 0;
-		count = 0;
-		sum = 0;
-		statusID = 0;
-		currencyID = 0;
 		if (ormasDal.DeleteItemInOrderList(id, errorMessage))
 		{
 			id = 0;
+			orderID = 0;
+			productID = 0;
+			count = 0;
+			sum = 0;
+			statusID = 0;
+			currencyID = 0;
 			return true;
 		}
 		return false;
 	}
+	bool OrderList::DeleteListByOrderID(DataLayer::OrmasDal& ormasDal, int oID, std::string& errorMessage)
+	{
+		orderID = oID;
+		if (ormasDal.DeleteListByOrderID(orderID, errorMessage))
+		{
+			id = 0;
+			orderID = 0;
+			productID = 0;
+			count = 0;
+			sum = 0;
+			statusID = 0;
+			currencyID = 0;
+			return true;
+		}
+		return false;
+	}
+
 	bool OrderList::UpdateOrderList(DataLayer::OrmasDal& ormasDal, int oID, int pID, int olCount, double olSum,
 		int sID, int cID, std::string& errorMessage)
 	{
-		id = ormasDal.GenerateID();
 		orderID = oID;
 		productID = pID;
 		count = olCount;

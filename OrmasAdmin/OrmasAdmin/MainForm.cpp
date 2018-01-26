@@ -114,6 +114,15 @@ void MainForm::SetAllMenuInvisible()
 	actionPayslip->setVisible(false);
 	actionRefund->setVisible(false);
 	actionWithdrawal->setVisible(false);
+	actionOrderRaws->setVisible(false);
+	actionReceiptRaws->setVisible(false);
+	actionTransports->setVisible(false);
+	actionReceiptProducts->setVisible(false);
+	actionConsumptionRaws->setVisible(false);
+	actionWriteOffRaws->setVisible(false);
+	actionConsumptionProducts->setVisible(false);
+	actionStock->setVisible(false);
+	actionInventorization->setVisible(false);
 }
 
 void MainForm::SetAllMenuVisible()
@@ -166,6 +175,15 @@ void MainForm::SetAllMenuVisible()
 	actionPayslip->setVisible(true);
 	actionRefund->setVisible(true);
 	actionWithdrawal->setVisible(true);
+	actionOrderRaws->setVisible(true);
+	actionReceiptRaws->setVisible(true);
+	actionTransports->setVisible(true);
+	actionReceiptProducts->setVisible(true);
+	actionConsumptionRaws->setVisible(true);
+	actionWriteOffRaws->setVisible(true);
+	actionConsumptionProducts->setVisible(true);
+	actionStock->setVisible(true);
+	actionInventorization->setVisible(true);
 }
 
 MainForm::~MainForm()
@@ -176,14 +194,30 @@ MainForm::~MainForm()
 
 void MainForm::CloseChildsByName()
 {
+	if (0 != this->findChild<QWidget*>("consumeProductListForm"))
+		((DataForm*)this->findChild<QWidget*>("consumeProductListForm"))->CloseDataForm();
+	if (0 != this->findChild<QWidget*>("consumeRawListForm"))
+		((DataForm*)this->findChild<QWidget*>("consumeRawListForm"))->CloseDataForm();
+	if (0 != this->findChild<QWidget*>("inventorizationListForm"))
+		((DataForm*)this->findChild<QWidget*>("inventorizationListForm"))->CloseDataForm();
 	if (0 != this->findChild<QWidget*>("orderListForm"))
 		((DataForm*)this->findChild<QWidget*>("orderListForm"))->CloseDataForm();
+	if (0 != this->findChild<QWidget*>("orderRawListForm"))
+		((DataForm*)this->findChild<QWidget*>("orderRawListForm"))->CloseDataForm();
+	if (0 != this->findChild<QWidget*>("receiptProductListForm"))
+		((DataForm*)this->findChild<QWidget*>("receiptProductListForm"))->CloseDataForm();
+	if (0 != this->findChild<QWidget*>("receiptRawListForm"))
+		((DataForm*)this->findChild<QWidget*>("receiptRawListForm"))->CloseDataForm();
 	if (0 != this->findChild<QWidget*>("returnListForm"))
 		((DataForm*)this->findChild<QWidget*>("returnListForm"))->CloseDataForm();
+	if (0 != this->findChild<QWidget*>("transportListForm"))
+		((DataForm*)this->findChild<QWidget*>("transportListForm"))->CloseDataForm();
 	if (0 != this->findChild<QWidget*>("productionListForm"))
 		((DataForm*)this->findChild<QWidget*>("productionListForm"))->CloseDataForm();
 	if (0 != this->findChild<QWidget*>("writeOffListForm"))
 		((DataForm*)this->findChild<QWidget*>("writeOffListForm"))->CloseDataForm();
+	if (0 != this->findChild<QWidget*>("writeOffRawListForm"))
+		((DataForm*)this->findChild<QWidget*>("writeOffRawListForm"))->CloseDataForm();
 }
 
 void MainForm::CreateConnections()
@@ -224,6 +258,16 @@ void MainForm::CreateConnections()
 	QObject::connect(actionPayroll, &QAction::triggered, this, &MainForm::OpenPayrollForm);
 	QObject::connect(actionWithdrawal, &QAction::triggered, this, &MainForm::OpenWithdrawalForm);
 	QObject::connect(actionPayslip, &QAction::triggered, this, &MainForm::OpenPayslipForm);
+	
+	QObject::connect(actionStock, &QAction::triggered, this, &MainForm::OpenStockForm);
+	QObject::connect(actionOrderRaws, &QAction::triggered, this, &MainForm::OpenOrderRawForm);
+	QObject::connect(actionReceiptRaws, &QAction::triggered, this, &MainForm::OpenReceiptRawForm);
+	QObject::connect(actionConsumptionRaws, &QAction::triggered, this, &MainForm::OpenConsumeRawForm);
+	QObject::connect(actionWriteOffRaws, &QAction::triggered, this, &MainForm::OpenWriteOffRawForm);
+	QObject::connect(actionTransports, &QAction::triggered, this, &MainForm::OpenTransportForm);
+	QObject::connect(actionReceiptProducts, &QAction::triggered, this, &MainForm::OpenReceiptProductForm);
+	QObject::connect(actionConsumptionProducts, &QAction::triggered, this, &MainForm::OpenConsumeProductForm);
+	QObject::connect(actionInventorization, &QAction::triggered, this, &MainForm::OpenInventorizationForm);
 	
 	QObject::connect(actionCompany, &QAction::triggered, this, &MainForm::OpenCompanyForm);
 	QObject::connect(actionCurrency, &QAction::triggered, this, &MainForm::OpenCurrencyForm);
@@ -1423,6 +1467,410 @@ void MainForm::OpenPayslipForm()
 
 }
 
+void MainForm::OpenStockForm()
+{
+	QString message = tr("Loading...");
+	statusBar()->showMessage(message);
+	QWidget* checkedWidget = IsWindowExist(mdiArea->subWindowList(), QString("stockForm"));
+	if (checkedWidget == nullptr)
+	{
+		DataForm *dForm = new DataForm(oBL, this);
+		dForm->setWindowTitle(tr("Stock"));
+		dForm->FillTable<BusinessLayer::StockView>(errorMessage);
+		if (errorMessage.empty())
+		{
+			dForm->setObjectName("stockForm");
+			dForm->QtConnect<BusinessLayer::StockView>();
+			QMdiSubWindow *stockWindow = new QMdiSubWindow;
+			stockWindow->setWidget(dForm);
+			stockWindow->setAttribute(Qt::WA_DeleteOnClose);
+			mdiArea->addSubWindow(stockWindow);
+			dForm->show();
+			dForm->topLevelWidget();
+			dForm->activateWindow();
+			QString message = tr("All products are shown in the stock");
+			statusBar()->showMessage(message);
+		}
+		else
+		{
+			delete dForm;
+			QString message = tr("End with error!");
+			statusBar()->showMessage(message);
+			QMessageBox::information(NULL, QString(tr("Warning")),
+				QString(tr(errorMessage.c_str())),
+				QString(tr("Ok")));
+			errorMessage = "";
+		}
+	}
+	else
+	{
+		checkedWidget->topLevelWidget();
+		checkedWidget->activateWindow();
+		QString message = tr("All products are shown in the stock");
+		statusBar()->showMessage(message);
+	}
+
+}
+
+void MainForm::OpenOrderRawForm()
+{
+	QString message = tr("Loading...");
+	statusBar()->showMessage(message);
+	QWidget* checkedWidget = IsWindowExist(mdiArea->subWindowList(), QString("orderRawForm"));
+	if (checkedWidget == nullptr)
+	{
+		DataForm *dForm = new DataForm(oBL, this);
+		dForm->setWindowTitle(tr("Order raw"));
+		dForm->FillTable<BusinessLayer::OrderRawView>(errorMessage);
+		if (errorMessage.empty())
+		{
+			dForm->setObjectName("orderRawForm");
+			dForm->QtConnect<BusinessLayer::OrderRawView>();
+			QMdiSubWindow *orderRawWindow = new QMdiSubWindow;
+			orderRawWindow->setWidget(dForm);
+			orderRawWindow->setAttribute(Qt::WA_DeleteOnClose);
+			mdiArea->addSubWindow(orderRawWindow);
+			dForm->show();
+			dForm->topLevelWidget();
+			dForm->activateWindow();
+			QString message = tr("All raws are shown in orders");
+			statusBar()->showMessage(message);
+		}
+		else
+		{
+			delete dForm;
+			QString message = tr("End with error!");
+			statusBar()->showMessage(message);
+			QMessageBox::information(NULL, QString(tr("Warning")),
+				QString(tr(errorMessage.c_str())),
+				QString(tr("Ok")));
+			errorMessage = "";
+		}
+	}
+	else
+	{
+		checkedWidget->topLevelWidget();
+		checkedWidget->activateWindow();
+		QString message = tr("All raws are shown in orders");
+		statusBar()->showMessage(message);
+	}
+
+}
+
+void MainForm::OpenReceiptRawForm()
+{
+	QString message = tr("Loading...");
+	statusBar()->showMessage(message);
+	QWidget* checkedWidget = IsWindowExist(mdiArea->subWindowList(), QString("receiptRawForm"));
+	if (checkedWidget == nullptr)
+	{
+		DataForm *dForm = new DataForm(oBL, this);
+		dForm->setWindowTitle(tr("Receipt raw"));
+		dForm->FillTable<BusinessLayer::ReceiptRawView>(errorMessage);
+		if (errorMessage.empty())
+		{
+			dForm->setObjectName("receiptRawForm");
+			dForm->QtConnect<BusinessLayer::ReceiptRawView>();
+			QMdiSubWindow *receiptRawWindow = new QMdiSubWindow;
+			receiptRawWindow->setWidget(dForm);
+			receiptRawWindow->setAttribute(Qt::WA_DeleteOnClose);
+			mdiArea->addSubWindow(receiptRawWindow);
+			dForm->show();
+			dForm->topLevelWidget();
+			dForm->activateWindow();
+			QString message = tr("All raws are shown in receipt");
+			statusBar()->showMessage(message);
+		}
+		else
+		{
+			delete dForm;
+			QString message = tr("End with error!");
+			statusBar()->showMessage(message);
+			QMessageBox::information(NULL, QString(tr("Warning")),
+				QString(tr(errorMessage.c_str())),
+				QString(tr("Ok")));
+			errorMessage = "";
+		}
+	}
+	else
+	{
+		checkedWidget->topLevelWidget();
+		checkedWidget->activateWindow();
+		QString message = tr("All raws are shown in receipt");
+		statusBar()->showMessage(message);
+	}
+
+}
+
+void MainForm::OpenConsumeRawForm()
+{
+	QString message = tr("Loading...");
+	statusBar()->showMessage(message);
+	QWidget* checkedWidget = IsWindowExist(mdiArea->subWindowList(), QString("consumeRawForm"));
+	if (checkedWidget == nullptr)
+	{
+		DataForm *dForm = new DataForm(oBL, this);
+		dForm->setWindowTitle(tr("Consume raw"));
+		dForm->FillTable<BusinessLayer::ConsumeRawView>(errorMessage);
+		if (errorMessage.empty())
+		{
+			dForm->setObjectName("consumeRawForm");
+			dForm->QtConnect<BusinessLayer::ConsumeRawView>();
+			QMdiSubWindow *consumeRawWindow = new QMdiSubWindow;
+			consumeRawWindow->setWidget(dForm);
+			consumeRawWindow->setAttribute(Qt::WA_DeleteOnClose);
+			mdiArea->addSubWindow(consumeRawWindow);
+			dForm->show();
+			dForm->topLevelWidget();
+			dForm->activateWindow();
+			QString message = tr("All raws are shown in consume");
+			statusBar()->showMessage(message);
+		}
+		else
+		{
+			delete dForm;
+			QString message = tr("End with error!");
+			statusBar()->showMessage(message);
+			QMessageBox::information(NULL, QString(tr("Warning")),
+				QString(tr(errorMessage.c_str())),
+				QString(tr("Ok")));
+			errorMessage = "";
+		}
+	}
+	else
+	{
+		checkedWidget->topLevelWidget();
+		checkedWidget->activateWindow();
+		QString message = tr("All raws are shown in consume");
+		statusBar()->showMessage(message);
+	}
+
+}
+
+void MainForm::OpenWriteOffRawForm()
+{
+	QString message = tr("Loading...");
+	statusBar()->showMessage(message);
+	QWidget* checkedWidget = IsWindowExist(mdiArea->subWindowList(), QString("writeOffRawForm"));
+	if (checkedWidget == nullptr)
+	{
+		DataForm *dForm = new DataForm(oBL, this);
+		dForm->setWindowTitle(tr("Write-off raw"));
+		dForm->FillTable<BusinessLayer::WriteOffRawView>(errorMessage);
+		if (errorMessage.empty())
+		{
+			dForm->setObjectName("writeOffRawForm");
+			dForm->QtConnect<BusinessLayer::WriteOffRawView>();
+			QMdiSubWindow *writeOffRawWindow = new QMdiSubWindow;
+			writeOffRawWindow->setWidget(dForm);
+			writeOffRawWindow->setAttribute(Qt::WA_DeleteOnClose);
+			mdiArea->addSubWindow(writeOffRawWindow);
+			dForm->show();
+			dForm->topLevelWidget();
+			dForm->activateWindow();
+			QString message = tr("All raw are shown in write-off");
+			statusBar()->showMessage(message);
+		}
+		else
+		{
+			delete dForm;
+			QString message = tr("End with error!");
+			statusBar()->showMessage(message);
+			QMessageBox::information(NULL, QString(tr("Warning")),
+				QString(tr(errorMessage.c_str())),
+				QString(tr("Ok")));
+			errorMessage = "";
+		}
+	}
+	else
+	{
+		checkedWidget->topLevelWidget();
+		checkedWidget->activateWindow();
+		QString message = tr("All raw are shown in write-off");
+		statusBar()->showMessage(message);
+	}
+
+}
+
+void MainForm::OpenTransportForm()
+{
+	QString message = tr("Loading...");
+	statusBar()->showMessage(message);
+	QWidget* checkedWidget = IsWindowExist(mdiArea->subWindowList(), QString("transportForm"));
+	if (checkedWidget == nullptr)
+	{
+		DataForm *dForm = new DataForm(oBL, this);
+		dForm->setWindowTitle(tr("Transports"));
+		dForm->FillTable<BusinessLayer::TransportView>(errorMessage);
+		if (errorMessage.empty())
+		{
+			dForm->setObjectName("transportForm");
+			dForm->QtConnect<BusinessLayer::TransportView>();
+			QMdiSubWindow *transportWindow = new QMdiSubWindow;
+			transportWindow->setWidget(dForm);
+			transportWindow->setAttribute(Qt::WA_DeleteOnClose);
+			mdiArea->addSubWindow(transportWindow);
+			dForm->show();
+			dForm->topLevelWidget();
+			dForm->activateWindow();
+			QString message = tr("All transports are shown");
+			statusBar()->showMessage(message);
+		}
+		else
+		{
+			delete dForm;
+			QString message = tr("End with error!");
+			statusBar()->showMessage(message);
+			QMessageBox::information(NULL, QString(tr("Warning")),
+				QString(tr(errorMessage.c_str())),
+				QString(tr("Ok")));
+			errorMessage = "";
+		}
+	}
+	else
+	{
+		checkedWidget->topLevelWidget();
+		checkedWidget->activateWindow();
+		QString message = tr("All transports are shown");
+		statusBar()->showMessage(message);
+	}
+
+}
+
+
+void MainForm::OpenReceiptProductForm()
+{
+	QString message = tr("Loading...");
+	statusBar()->showMessage(message);
+	QWidget* checkedWidget = IsWindowExist(mdiArea->subWindowList(), QString("receiptProductForm"));
+	if (checkedWidget == nullptr)
+	{
+		DataForm *dForm = new DataForm(oBL, this);
+		dForm->setWindowTitle(tr("Receipt product"));
+		dForm->FillTable<BusinessLayer::ReceiptProductView>(errorMessage);
+		if (errorMessage.empty())
+		{
+			dForm->setObjectName("receiptProductForm");
+			dForm->QtConnect<BusinessLayer::ReceiptProductView>();
+			QMdiSubWindow *receiptProductWindow = new QMdiSubWindow;
+			receiptProductWindow->setWidget(dForm);
+			receiptProductWindow->setAttribute(Qt::WA_DeleteOnClose);
+			mdiArea->addSubWindow(receiptProductWindow);
+			dForm->show();
+			dForm->topLevelWidget();
+			dForm->activateWindow();
+			QString message = tr("All products are shown in receipt");
+			statusBar()->showMessage(message);
+		}
+		else
+		{
+			delete dForm;
+			QString message = tr("End with error!");
+			statusBar()->showMessage(message);
+			QMessageBox::information(NULL, QString(tr("Warning")),
+				QString(tr(errorMessage.c_str())),
+				QString(tr("Ok")));
+			errorMessage = "";
+		}
+	}
+	else
+	{
+		checkedWidget->topLevelWidget();
+		checkedWidget->activateWindow();
+		QString message = tr("All products are shown in receipt");
+		statusBar()->showMessage(message);
+	}
+}
+
+void MainForm::OpenConsumeProductForm()
+{
+	QString message = tr("Loading...");
+	statusBar()->showMessage(message);
+	QWidget* checkedWidget = IsWindowExist(mdiArea->subWindowList(), QString("consumeProductForm"));
+	if (checkedWidget == nullptr)
+	{
+		DataForm *dForm = new DataForm(oBL, this);
+		dForm->setWindowTitle(tr("Consume product"));
+		dForm->FillTable<BusinessLayer::ConsumeProductView>(errorMessage);
+		if (errorMessage.empty())
+		{
+			dForm->setObjectName("consumeProductForm");
+			dForm->QtConnect<BusinessLayer::ConsumeProductView>();
+			QMdiSubWindow *consumeProductWindow = new QMdiSubWindow;
+			consumeProductWindow->setWidget(dForm);
+			consumeProductWindow->setAttribute(Qt::WA_DeleteOnClose);
+			mdiArea->addSubWindow(consumeProductWindow);
+			dForm->show();
+			dForm->topLevelWidget();
+			dForm->activateWindow();
+			QString message = tr("All products are shown in consume");
+			statusBar()->showMessage(message);
+		}
+		else
+		{
+			delete dForm;
+			QString message = tr("End with error!");
+			statusBar()->showMessage(message);
+			QMessageBox::information(NULL, QString(tr("Warning")),
+				QString(tr(errorMessage.c_str())),
+				QString(tr("Ok")));
+			errorMessage = "";
+		}
+	}
+	else
+	{
+		checkedWidget->topLevelWidget();
+		checkedWidget->activateWindow();
+		QString message = tr("All products are shown in consume");
+		statusBar()->showMessage(message);
+	}
+
+}
+
+void MainForm::OpenInventorizationForm()
+{
+	QString message = tr("Loading...");
+	statusBar()->showMessage(message);
+	QWidget* checkedWidget = IsWindowExist(mdiArea->subWindowList(), QString("inventorizationForm"));
+	if (checkedWidget == nullptr)
+	{
+		DataForm *dForm = new DataForm(oBL, this);
+		dForm->setWindowTitle(tr("Inventorization"));
+		dForm->FillTable<BusinessLayer::InventorizationView>(errorMessage);
+		if (errorMessage.empty())
+		{
+			dForm->setObjectName("inventorizationForm");
+			dForm->QtConnect<BusinessLayer::InventorizationView>();
+			QMdiSubWindow *inventorizationWindow = new QMdiSubWindow;
+			inventorizationWindow->setWidget(dForm);
+			inventorizationWindow->setAttribute(Qt::WA_DeleteOnClose);
+			mdiArea->addSubWindow(inventorizationWindow);
+			dForm->show();
+			dForm->topLevelWidget();
+			dForm->activateWindow();
+			QString message = tr("All inventorizations are shown");
+			statusBar()->showMessage(message);
+		}
+		else
+		{
+			delete dForm;
+			QString message = tr("End with error!");
+			statusBar()->showMessage(message);
+			QMessageBox::information(NULL, QString(tr("Warning")),
+				QString(tr(errorMessage.c_str())),
+				QString(tr("Ok")));
+			errorMessage = "";
+		}
+	}
+	else
+	{
+		checkedWidget->topLevelWidget();
+		checkedWidget->activateWindow();
+		QString message = tr("All inventorizations are shown");
+		statusBar()->showMessage(message);
+	}
+
+}
 
 
 void MainForm::OpenCompanyForm()

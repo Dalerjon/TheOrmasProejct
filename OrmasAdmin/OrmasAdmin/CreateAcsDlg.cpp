@@ -231,10 +231,10 @@ void CreateAcsDlg::OpenAcsItemDlg()
 		dForm->createAcsDlg = this;
 		dForm->setObjectName("accessItemForm");
 		dForm->QtConnect<BusinessLayer::AccessItem>();
-		QMdiSubWindow *returnWindow = new QMdiSubWindow;
-		returnWindow->setWidget(dForm);
-		returnWindow->setAttribute(Qt::WA_DeleteOnClose);
-		mainForm->mdiArea->addSubWindow(returnWindow);
+		QMdiSubWindow *acsItemWindow = new QMdiSubWindow;
+		acsItemWindow->setWidget(dForm);
+		acsItemWindow->setAttribute(Qt::WA_DeleteOnClose);
+		mainForm->mdiArea->addSubWindow(acsItemWindow);
 		dForm->topLevelWidget();
 		dForm->activateWindow();
 		QApplication::setActiveWindow(dForm);

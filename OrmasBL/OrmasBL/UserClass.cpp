@@ -118,6 +118,8 @@ namespace BusinessLayer
 	{
 		if (IsDuplicate(ormasDal, uName, uSurname, uPhone, uAddress, uRoleID, errorMessage))
 			return false;
+		if (!IsUnique(ormasDal, uPhone, errorMessage))
+			return false;
 		id = ormasDal.GenerateID();
 		TrimStrings(uEmail, uName, uSurname, uPhone, uAddress, uPassword);
 		email = uEmail;
@@ -139,11 +141,14 @@ namespace BusinessLayer
 	{
 		if (IsDuplicate(ormasDal, errorMessage))
 			return false;
+		if (!IsUnique(ormasDal, errorMessage))
+			return false;
 		id = ormasDal.GenerateID();
 		if (0 != id && ormasDal.CreateUser(id, email, name, surname, phone, address, roleID, password, activated, errorMessage))
 		{
-			CreateAccount(ormasDal, errorMessage);
-			return true;
+			if (CreateAccount(ormasDal, errorMessage))
+				return true;
+			return false;
 		}
 		if (errorMessage.empty())
 		{
@@ -170,6 +175,8 @@ namespace BusinessLayer
 	bool User::UpdateUser(DataLayer::OrmasDal& ormasDal, std::string uEmail, std::string uName, std::string uSurname,
 		std::string uPhone, std::string uAddress, int uRoleID, std::string uPassword, bool uActivated, std::string& errorMessage)
 	{
+		if (!IsUnique(ormasDal, uPhone, errorMessage))
+			return false;
 		TrimStrings(uEmail, uName, uSurname, uPhone, uAddress, uPassword);
 		email = uEmail;
 		name = uName;
@@ -187,6 +194,8 @@ namespace BusinessLayer
 	}
 	bool User::UpdateUser(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
+		if (!IsUnique(ormasDal, phone, errorMessage))
+			return false;
 		if (0 != id && ormasDal.UpdateUser(id, email, name, surname, phone, address, roleID, password, activated, errorMessage))
 		{
 			return true;
@@ -232,44 +241,26 @@ namespace BusinessLayer
 		return false;
 	}
 	
-	bool User::GetUserByCredentials(DataLayer::OrmasDal& ormasDal, std::string uPhoneOrEmail, std::string uPassword)
+	bool User::GetUserByCredentials(DataLayer::OrmasDal& ormasDal, std::string uPhone, std::string uPassword)
 	{
 		std::string errorMessage = "";
-		if (!uPhoneOrEmail.empty() && !uPassword.empty())
+		if (!uPhone.empty() && !uPassword.empty())
 		{
-			phone = uPhoneOrEmail;
+			phone = uPhone;
 			password = uPassword;
-			std::string filter1 = GenerateFilter(ormasDal);
-			std::vector<DataLayer::usersViewCollection> userVector1 = ormasDal.GetUsers(errorMessage, filter1);
-			if (0 != userVector1.size())
+			std::string filter = GenerateFilter(ormasDal);
+			std::vector<DataLayer::usersViewCollection> userVector = ormasDal.GetUsers(errorMessage, filter);
+			if (0 != userVector.size())
 			{
-				id = std::get<0>(userVector1.at(0));
-				email = std::get<1>(userVector1.at(0));
-				name = std::get<2>(userVector1.at(0));
-				surname = std::get<3>(userVector1.at(0));
-				phone = std::get<4>(userVector1.at(0));
-				address = std::get<5>(userVector1.at(0));
-				password = std::get<7>(userVector1.at(0));
-				activated = std::get<8>(userVector1.at(0));
-				roleID = std::get<9>(userVector1.at(0));
-				return true;
-			}
-			
-			phone = "";
-			email = uPhoneOrEmail;
-			std::string filter2 = GenerateFilter(ormasDal);
-			std::vector<DataLayer::usersViewCollection> userVector2 = ormasDal.GetUsers(errorMessage, filter2);
-			if (0 != userVector2.size())
-			{
-				id = std::get<0>(userVector2.at(0));
-				email = std::get<1>(userVector2.at(0));
-				name = std::get<2>(userVector2.at(0));
-				surname = std::get<3>(userVector2.at(0));
-				phone = std::get<4>(userVector2.at(0));
-				address = std::get<5>(userVector2.at(0));
-				password = std::get<7>(userVector2.at(0));
-				activated = std::get<8>(userVector2.at(0));
-				roleID = std::get<9>(userVector2.at(0));
+				id = std::get<0>(userVector.at(0));
+				email = std::get<1>(userVector.at(0));
+				name = std::get<2>(userVector.at(0));
+				surname = std::get<3>(userVector.at(0));
+				phone = std::get<4>(userVector.at(0));
+				address = std::get<5>(userVector.at(0));
+				password = std::get<7>(userVector.at(0));
+				activated = std::get<8>(userVector.at(0));
+				roleID = std::get<9>(userVector.at(0));
 				return true;
 			}
 		}
@@ -355,7 +346,39 @@ namespace BusinessLayer
 		return true;
 	}
 
-	void User::CreateAccount(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
+	bool User::IsUnique(DataLayer::OrmasDal& ormasDal, std::string uPhone, std::string& errorMessage)
+	{
+		User user;
+		user.SetPhone(uPhone);
+		std::string filter = user.GenerateFilter(ormasDal);
+		std::vector<DataLayer::usersViewCollection> userVector = ormasDal.GetUsers(errorMessage, filter);
+		if (!errorMessage.empty())
+			return false;
+		if (0 == userVector.size())
+		{
+			return true;
+		}
+		errorMessage = "User with these phone already exist";
+		return false;
+	}
+
+	bool User::IsUnique(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
+	{
+		User user;
+		user.SetPhone(phone);
+		std::string filter = user.GenerateFilter(ormasDal);
+		std::vector<DataLayer::usersViewCollection> userVector = ormasDal.GetUsers(errorMessage, filter);
+		if (!errorMessage.empty())
+			return false;
+		if (0 == userVector.size())
+		{
+			return true;
+		}
+		errorMessage = "User with these phone already exist";
+		return false;
+	}
+
+	bool User::CreateAccount(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
 		Currency currency;
 		int currID = currency.GetMainTradeCurrencyID(ormasDal, errorMessage);
@@ -365,8 +388,10 @@ namespace BusinessLayer
 			balance.SetUserID(id);
 			balance.SetCurrencyID(currID);
 			balance.SetValue(0);
-			balance.CreateBalance(ormasDal, errorMessage);
+			if (balance.CreateBalance(ormasDal, errorMessage))
+				return true;
 		}
+		return false;
 	}
 
 	int User::GetUserAccoutID(DataLayer::OrmasDal& ormasDal, int cID, std::string& errorMessage)

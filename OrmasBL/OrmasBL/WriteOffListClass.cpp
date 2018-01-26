@@ -118,10 +118,26 @@ namespace BusinessLayer
 		}
 		return false;
 	}
+	bool WriteOffList::DeleteListByWriteOffID(DataLayer::OrmasDal& ormasDal, int wID, std::string& errorMessage)
+	{
+		writeOffID = wID;
+		if (ormasDal.DeleteListByOrderID(writeOffID, errorMessage))
+		{
+			id = 0;
+			writeOffID = 0;
+			productID = 0;
+			count = 0;
+			sum = 0;
+			statusID = 0;
+			currencyID = 0;
+			return true;
+		}
+		return false;
+	}
+
 	bool WriteOffList::UpdateWriteOffList(DataLayer::OrmasDal& ormasDal, int wID, int pID, int wCount, double wSum,
 		int sID, int cID, std::string& errorMessage)
 	{
-		id = ormasDal.GenerateID();
 		writeOffID = wID;
 		productID = pID;
 		count = wCount;

@@ -495,10 +495,10 @@ void CreateProdnListDlg::OpenCurDlg()
 		dForm->createProdnListDlg = this;
 		dForm->setObjectName("currencyForm");
 		dForm->QtConnect<BusinessLayer::Currency>();
-		QMdiSubWindow *returnWindow = new QMdiSubWindow;
-		returnWindow->setWidget(dForm);
-		returnWindow->setAttribute(Qt::WA_DeleteOnClose);
-		mainForm->mdiArea->addSubWindow(returnWindow);
+		QMdiSubWindow *currencyWindow = new QMdiSubWindow;
+		currencyWindow->setWidget(dForm);
+		currencyWindow->setAttribute(Qt::WA_DeleteOnClose);
+		mainForm->mdiArea->addSubWindow(currencyWindow);
 		dForm->topLevelWidget();
 		dForm->activateWindow();
 		QApplication::setActiveWindow(dForm);

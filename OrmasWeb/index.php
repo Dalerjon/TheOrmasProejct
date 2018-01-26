@@ -1,4 +1,5 @@
 ﻿<?php
+	session_start();
 	$PageTitle="Ormas";
 	function customPageHeader()
 	{
@@ -9,15 +10,30 @@
 		echo ("<meta name='robots' content='all' />");
 		echo ("<LINK rel='stylesheet' media='screen' type='text/css' title='Style' href='css/mainstyle.css'>");
 	}	
-	require_once ('header.php');	
+	require_once ('header.php');
+	$query = "SELECT * FROM \"OrmasSchema\".roles_view";
+	$result = pg_query($query);
+	for($i = 0 ; $i < pg_num_rows($result); $i++)
+	{
+		$role_row = pg_fetch_array($result, null, PGSQL_BOTH);
+		if($role_row['role_name'] == "CLIENT")
+		{
+			$_SESSION['role_id_client']=$role_row['role_id']; 
+		}
+		if($role_row['role_name'] == "EXPEDITOR")
+		{
+			$_SESSION['role_id_expeditor']=$role_row['role_id']; 
+		}
+	}
 ?> 
 
 
 <?php
-if(!empty($_SESSION['phonmail']) and !empty($_SESSION['id']) and !empty($_SESSION['role']))
+if(!empty($_SESSION['name']) and !empty($_SESSION['surname']) and !empty($_SESSION['id']) and !empty($_SESSION['role']))
     {
-        $login    = $_SESSION['phonmail'];
-		$role = $_SESSION['role'];
+        $name    = $_SESSION['name'];
+		$surname    = $_SESSION['surname'];
+		$role_id = $_SESSION['role_id'];
 		$id = $_SESSION['id'];
 	}
 	 $message="";
@@ -38,45 +54,46 @@ if(!empty($_SESSION['phonmail']) and !empty($_SESSION['id']) and !empty($_SESSIO
 	}
 ?>
 <?php
-if (isset($_POST['phonmail']) && isset($_POST['password'])) 
+if (isset($_POST['phone']) && isset($_POST['password'])) 
 { 
-	$login = $_POST['phonmail']; 
+	$phone = $_POST['phone']; 
     $password=$_POST['password'];
    
-	if ($login == '' && $password =='')
-	{unset($login); unset($password); }
-	if (empty($login) or empty($password))
+	if ($phone == '' && $password =='')
+	{unset($phone); unset($password); }
+	if (empty($phone) or empty($password))
     {    
 		$message="Вы ввели не всю информацию!";
     }
     else
 	{
-		$login = stripslashes($login);
-		$login = htmlspecialchars($login);
+		$phone = stripslashes($phone);
+		$phone = htmlspecialchars($phone);
 		$password = stripslashes($password);
 		$password = htmlspecialchars($password);
 		//удаляем лишние пробелы
-		$login = trim($login);
+		$phone = trim($phone);
 		$password = trim($password);
-
-		$query = "SELECT * FROM \"OrmasSchema\".users_view WHERE phone='$login' OR email='$login'";
+		$query = "SELECT * FROM \"OrmasSchema\".users_view WHERE user_phone='$phone'";
 		$result = pg_query($query); //извлекаем из базы все данные о пользователе с введенным логином
 	
 		$user_row = pg_fetch_array($result, null, PGSQL_BOTH);
 	
-		if (empty($user_row[1]))
+		if (!$result)
 		{  
 			$message="Введённый Вами номер телефона, e-mail или пароль неверный.";
 		}
 		else 
 		{
-      		if ($user_row['password']==$password) 
+			if ($user_row['password']==$password) 
 			{
    		 		if($user_row['activated'] == 't')
 				{
-					$_SESSION['login']=$user_row['user_name']; 
+					$_SESSION['name']=$user_row['user_name']; 
+					$_SESSION['surname']=$user_row['user_surname']; 
 					$_SESSION['id']=$user_row['user_id'];
-					$_SESSION['role']=$role_row['role_name'];
+					$_SESSION['role_id']=$user_row['role_id'];
+					$_SESSION['password']=$user_row['password'];
 					header("location:menu.php");
 				}
 				else
@@ -99,8 +116,8 @@ if (isset($_POST['phonmail']) && isset($_POST['password']))
 		<div id="login-content">
 			<form action="index.php" method="post">
 				<p>
-					<label>E-mail или номер тел.:<br></label>
-					<input name="phonmail" type="text" placeholder="Например: 927771122"> 
+					<label>Номер телефона:<br></label>
+					<input name="phone" type="text" placeholder="Например: 927771122"> 
 				</p>
 				<p>
 					<label>Пароль:<br></label>

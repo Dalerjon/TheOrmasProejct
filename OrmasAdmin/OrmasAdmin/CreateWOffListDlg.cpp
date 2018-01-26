@@ -128,7 +128,7 @@ void CreateWOffListDlg::AddProductToList()
 	{
 		DataForm *parentDataForm = (DataForm*)parentWidget();
 		BusinessLayer::Status *status = new BusinessLayer::Status();
-		status->SetName("WRITEOFFED");
+		status->SetName("WRITE-OFFED");
 		std::string statusFilter = dialogBL->GenerateFilter<BusinessLayer::Status>(status);
 		std::vector<BusinessLayer::Status> statusVector = dialogBL->GetAllDataForClass<BusinessLayer::Status>(errorMessage, statusFilter);
 		delete status;
@@ -432,10 +432,10 @@ void CreateWOffListDlg::OpenWOffDlg()
 		dForm->createWOffListDlg = this;
 		dForm->setObjectName("WriteOffForm");
 		dForm->QtConnect<BusinessLayer::WriteOffView>();
-		QMdiSubWindow *WriteOffWindow = new QMdiSubWindow;
-		WriteOffWindow->setWidget(dForm);
-		WriteOffWindow->setAttribute(Qt::WA_DeleteOnClose);
-		mainForm->mdiArea->addSubWindow(WriteOffWindow);
+		QMdiSubWindow* writeOffWindow = new QMdiSubWindow;
+		writeOffWindow->setWidget(dForm);
+		writeOffWindow->setAttribute(Qt::WA_DeleteOnClose);
+		mainForm->mdiArea->addSubWindow(writeOffWindow);
 		dForm->topLevelWidget();
 		dForm->activateWindow();
 		QApplication::setActiveWindow(dForm);
@@ -477,10 +477,10 @@ void CreateWOffListDlg::OpenCurDlg()
 		dForm->createWOffListDlg = this;
 		dForm->setObjectName("currencyForm");
 		dForm->QtConnect<BusinessLayer::Currency>();
-		QMdiSubWindow *WriteOffWindow = new QMdiSubWindow;
-		WriteOffWindow->setWidget(dForm);
-		WriteOffWindow->setAttribute(Qt::WA_DeleteOnClose);
-		mainForm->mdiArea->addSubWindow(WriteOffWindow);
+		QMdiSubWindow* currencyWindow = new QMdiSubWindow;
+		currencyWindow->setWidget(dForm);
+		currencyWindow->setAttribute(Qt::WA_DeleteOnClose);
+		mainForm->mdiArea->addSubWindow(currencyWindow);
 		dForm->topLevelWidget();
 		dForm->activateWindow();
 		QApplication::setActiveWindow(dForm);

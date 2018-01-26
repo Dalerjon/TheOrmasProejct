@@ -43,6 +43,7 @@ namespace BusinessLayer
 		bool CreateWriteOffList(DataLayer::OrmasDal& ormasDal, std::string& errorMessage);
 		bool UpdateWriteOffList(DataLayer::OrmasDal& ormasDal, std::string& errorMessage);
 		bool DeleteWriteOffList(DataLayer::OrmasDal& ormasDal, std::string& errorMessage);
+		bool DeleteListByWriteOffID(DataLayer::OrmasDal& ormasDal, int wID, std::string& errorMessage);
 		bool CreateWriteOffList(DataLayer::OrmasDal& ormasDal, int wID, int pID, int wlCount, double wlSum,
 			int sID, int cID, std::string& errorMessage);
 		bool UpdateWriteOffList(DataLayer::OrmasDal& ormasDal, int wID, int pID, int wlCount, double wlSum,

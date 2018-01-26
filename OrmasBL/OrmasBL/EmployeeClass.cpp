@@ -59,6 +59,8 @@ namespace BusinessLayer{
 	{
 		if (IsDuplicate(ormasDal, uName, uSurname, uPhone, uRoleID, eBirthDate, errorMessage))
 			return false;
+		if (!IsUnique(ormasDal, uPhone, errorMessage))
+			return false;
 		id = ormasDal.GenerateID();
 		TrimStrings(uEmail, uName, uSurname, uPhone, uAddress, uPassword, eBirthDate, eHireDate);
 		userID = id;
@@ -74,19 +76,13 @@ namespace BusinessLayer{
 		positionID = pID;
 		birthDate = eBirthDate;
 		hireDate = eHireDate;
-		ormasDal.StartTransaction(errorMessage);
-		if (!errorMessage.empty())
-			return false;
 		if (0 != id && ormasDal.CreateUser(id, email, name, surname, phone, address, roleID, password, activated, errorMessage))
 		{
 			if (ormasDal.CreateEmployee(userID, positionID, birthDate, hireDate, errorMessage))
 			{
-				ormasDal.CommitTransaction(errorMessage);
-				if (!errorMessage.empty())
-				{
-					return false;
-				}
-				return true;
+				if (CreateAccount(ormasDal, errorMessage))
+					return true;
+				return false;
 			}
 			ormasDal.CancelTransaction(errorMessage);
 			return false;
@@ -98,21 +94,17 @@ namespace BusinessLayer{
 	{
 		if (IsDuplicate(ormasDal, errorMessage))
 			return false;
+		if (!IsUnique(ormasDal, phone, errorMessage))
+			return false;
 		id = ormasDal.GenerateID();
 		userID = id;
-		ormasDal.StartTransaction(errorMessage);
-		if (!errorMessage.empty())
-			return false;
 		if (0 != id && ormasDal.CreateUser(id, email, name, surname, phone, address, roleID, password, activated, errorMessage))
 		{
 			if (ormasDal.CreateEmployee(userID, positionID, birthDate, hireDate, errorMessage))
 			{
-				ormasDal.CommitTransaction(errorMessage);
-				if (!errorMessage.empty())
-				{
-					return false;
-				}
-				return true;
+				if (CreateAccount(ormasDal, errorMessage))
+					return true;
+				return false;
 			}
 			ormasDal.CancelTransaction(errorMessage);
 			return false;
@@ -157,6 +149,8 @@ namespace BusinessLayer{
 		std::string uAddress, int uRoleID, std::string uPassword, bool uActivated, int pID, std::string eBirthDate,
 		std::string eHireDate, std::string& errorMessage)
 	{
+		if (!IsUnique(ormasDal, uPhone, errorMessage))
+			return false;
 		TrimStrings(uEmail, uName, uSurname, uPhone, uAddress, uPassword, eBirthDate, eHireDate);
 		email = uEmail;
 		name = uName;
@@ -193,6 +187,8 @@ namespace BusinessLayer{
 	}
 	bool Employee::UpdateEmployee(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
+		if (!IsUnique(ormasDal, phone, errorMessage))
+			return false;
 		ormasDal.StartTransaction(errorMessage);
 		userID = id;
 		if (!errorMessage.empty())

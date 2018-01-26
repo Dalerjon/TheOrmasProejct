@@ -44,6 +44,7 @@ namespace BusinessLayer
 		bool CreateProductionList(DataLayer::OrmasDal& ormasDal, std::string& errorMessage);
 		bool UpdateProductionList(DataLayer::OrmasDal& ormasDal, std::string& errorMessage);
 		bool DeleteProductionList(DataLayer::OrmasDal& ormasDal, std::string& errorMessage);
+		bool DeleteListByProductionID(DataLayer::OrmasDal& ormasDal, int pID, std::string& errorMessage);
 		bool CreateProductionList(DataLayer::OrmasDal& ormasDal, int prID, int pID, int plCount, double plSum,
 			int sID, int cID, std::string& errorMessage);
 		bool UpdateProductionList(DataLayer::OrmasDal& ormasDal, int prID, int pID, int plCount, double plSum,

@@ -2,6 +2,7 @@
 #include "RefundClass.h"
 #include "UserClass.h"
 #include "BalanceClass.h"
+#include "BalanceRefundRelationClass.h"
 
 namespace BusinessLayer{
 	Refund::Refund(DataLayer::refundsCollection rCollection)
@@ -78,16 +79,20 @@ namespace BusinessLayer{
 		value = pValue;
 		userID = uID;
 		currencyID = cID;
-
+		ormasDal.StartTransaction(errorMessage);
 		if (0 != id && ormasDal.CreateRefund(id, date, value, userID, currencyID, errorMessage))
 		{
 			if (Replenishment(ormasDal, userID, currencyID, errorMessage))
+			{
+				ormasDal.CommitTransaction(errorMessage);
 				return true;
+			}
 		}
 		if (errorMessage.empty())
 		{
 			errorMessage = "Warning! ID is 0, or some unexpected error. Please contact with provider.";
 		}
+		ormasDal.CancelTransaction(errorMessage);
 		return false;
 	}
 	bool Refund::CreateRefund(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
@@ -95,25 +100,32 @@ namespace BusinessLayer{
 		if (IsDuplicate(ormasDal, errorMessage))
 			return false;
 		id = ormasDal.GenerateID();
+		ormasDal.StartTransaction(errorMessage);
 		if (0 != id && ormasDal.CreateRefund(id, date, value, userID, currencyID, errorMessage))
 		{
 			if (Replenishment(ormasDal, userID, currencyID, errorMessage))
+			{
+				ormasDal.CommitTransaction(errorMessage);
 				return true;
+			}
 		}
 		if (errorMessage.empty())
 		{
 			errorMessage = "Warning! ID is 0, or some unexpected error. Please contact with provider.";
 		}
+		ormasDal.CancelTransaction(errorMessage);
 		return false;
 	}
 	bool Refund::DeleteRefund(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
 		if (!this->GetRefundByID(ormasDal, id, errorMessage))
 			return false;
+		ormasDal.StartTransaction(errorMessage);
 		if (ormasDal.DeleteRefund(id, errorMessage))
 		{
 			if (CancelRefund(ormasDal, userID, currencyID, errorMessage))
 			{
+				ormasDal.CommitTransaction(errorMessage);
 				Clear();
 				return true;
 			}	
@@ -122,6 +134,7 @@ namespace BusinessLayer{
 		{
 			errorMessage = "Unexpected error. Please contact with application provider.";
 		}
+		ormasDal.CancelTransaction(errorMessage);
 		return false;
 	}
 
@@ -133,10 +146,12 @@ namespace BusinessLayer{
 		userID = uID;
 		currencyID = cID;
 		currentValue = GetCurrentValue(ormasDal, id, errorMessage);
+		ormasDal.StartTransaction(errorMessage);
 		if (0 != id && ormasDal.UpdateRefund(id, date, value, userID, currencyID, errorMessage))
 		{
 			if (Replenishment(ormasDal, userID, currencyID, currentValue, errorMessage))
 			{
+				ormasDal.CommitTransaction(errorMessage);
 				currentValue = 0.0;
 				return true;
 			}
@@ -145,15 +160,18 @@ namespace BusinessLayer{
 		{
 			errorMessage = "Warning! ID is 0, or some unexpected error. Please contact with provider.";
 		}
+		ormasDal.CancelTransaction(errorMessage);
 		return false;
 	}
 	bool Refund::UpdateRefund(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
 		currentValue = GetCurrentValue(ormasDal, id, errorMessage);
+		ormasDal.StartTransaction(errorMessage);
 		if (0 != id && ormasDal.UpdateRefund(id, date, value, userID, currencyID, errorMessage))
 		{
 			if (Replenishment(ormasDal, userID, currencyID, currentValue, errorMessage))
 			{
+				ormasDal.CommitTransaction(errorMessage);
 				currentValue = 0.0;
 				return true;
 			}
@@ -162,6 +180,7 @@ namespace BusinessLayer{
 		{
 			errorMessage = "Warning! ID is 0, or some unexpected error. Please contact with provider.";
 		}
+		ormasDal.CancelTransaction(errorMessage);
 		return false;
 	}
 
@@ -257,13 +276,15 @@ namespace BusinessLayer{
 		int balanceID = user.GetUserAccoutID(ormasDal, cID, errorMessage);
 		if (0 != balanceID && errorMessage.empty())
 		{
+			BalanceRefundRelation brRelation;
 			Balance balance;
-			balance.GetBalanceByID(ormasDal, balanceID, errorMessage);
-			if (errorMessage.empty())
+			if (balance.GetBalanceByID(ormasDal, balanceID, errorMessage))
 			{
+				brRelation.SetBalanceID(balanceID);
+				brRelation.SetRefundID(id);
 				balance.SetValue(balance.GetValue() + value);
-				balance.UpdateBalance(ormasDal, errorMessage);
-				return true;
+				if (balance.UpdateBalance(ormasDal, errorMessage) && brRelation.CreateBalanceRefundRelation(ormasDal, errorMessage))
+					return true;
 			}
 		}
 		return false;
@@ -277,12 +298,11 @@ namespace BusinessLayer{
 		if (0 != balanceID && errorMessage.empty())
 		{
 			Balance balance;
-			balance.GetBalanceByID(ormasDal, balanceID, errorMessage);
-			if (errorMessage.empty())
+			if (balance.GetBalanceByID(ormasDal, balanceID, errorMessage))
 			{
 				balance.SetValue(balance.GetValue() + (currentValue - value));
-				balance.UpdateBalance(ormasDal, errorMessage);
-				return true;
+				if(balance.UpdateBalance(ormasDal, errorMessage))
+					return true;
 			}
 		}
 		return false;
@@ -291,8 +311,7 @@ namespace BusinessLayer{
 	double Refund::GetCurrentValue(DataLayer::OrmasDal& ormasDal, int pID, std::string& errorMessage)
 	{
 		Refund Refund;
-		Refund.GetRefundByID(ormasDal, pID, errorMessage);
-		if (errorMessage.empty())
+		if (Refund.GetRefundByID(ormasDal, pID, errorMessage))
 			return Refund.GetValue();
 		return 0;
 	}
@@ -304,13 +323,15 @@ namespace BusinessLayer{
 		int balanceID = user.GetUserAccoutID(ormasDal, cID, errorMessage);
 		if (0 != balanceID && errorMessage.empty())
 		{
+			BalanceRefundRelation brRelation;
 			Balance balance;
-			balance.GetBalanceByID(ormasDal, balanceID, errorMessage);
-			if (errorMessage.empty())
+			if (balance.GetBalanceByID(ormasDal, balanceID, errorMessage))
 			{
+				brRelation.SetBalanceID(balanceID);
+				brRelation.SetRefundID(id);
 				balance.SetValue(balance.GetValue() - value);
-				balance.UpdateBalance(ormasDal, errorMessage);
-				return true;
+				if (balance.UpdateBalance(ormasDal, errorMessage) && brRelation.DeleteBalanceRefundRelation(ormasDal, errorMessage))
+					return true;
 			}
 		}
 		return false;

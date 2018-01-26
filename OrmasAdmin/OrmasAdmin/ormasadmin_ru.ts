@@ -407,72 +407,72 @@
         <translation>Минимум 6 символов</translation>
     </message>
     <message>
-        <location filename="CreateCltDlg.ui" line="95"/>
+        <location filename="CreateCltDlg.ui" line="98"/>
         <source>Name:</source>
         <translation>Имя:</translation>
     </message>
     <message>
-        <location filename="CreateCltDlg.ui" line="102"/>
+        <location filename="CreateCltDlg.ui" line="105"/>
         <source>Phone:</source>
         <translation>Телефон:</translation>
     </message>
     <message>
-        <location filename="CreateCltDlg.ui" line="116"/>
+        <location filename="CreateCltDlg.ui" line="119"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;For example: Doe&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>Например: Дое</translation>
     </message>
     <message>
-        <location filename="CreateCltDlg.ui" line="123"/>
+        <location filename="CreateCltDlg.ui" line="126"/>
         <source>Email:</source>
         <translation>Email:</translation>
     </message>
     <message>
-        <location filename="CreateCltDlg.ui" line="130"/>
+        <location filename="CreateCltDlg.ui" line="133"/>
         <source>Activated:</source>
         <translation>Активирован:</translation>
     </message>
     <message>
-        <location filename="CreateCltDlg.ui" line="137"/>
+        <location filename="CreateCltDlg.ui" line="140"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;For example: John&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>Например: Джон</translation>
     </message>
     <message>
-        <location filename="CreateCltDlg.ui" line="144"/>
+        <location filename="CreateCltDlg.ui" line="147"/>
         <source>Firm:</source>
         <translation>Название фирмы:</translation>
     </message>
     <message>
-        <location filename="CreateCltDlg.ui" line="151"/>
+        <location filename="CreateCltDlg.ui" line="154"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;For example: 5 (does not mandatory field)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>Например: 5 (можно оставить пустым)</translation>
     </message>
     <message>
-        <location filename="CreateCltDlg.ui" line="158"/>
+        <location filename="CreateCltDlg.ui" line="161"/>
         <source>Address:</source>
         <translation>Адрес:</translation>
     </message>
     <message>
-        <location filename="CreateCltDlg.ui" line="165"/>
+        <location filename="CreateCltDlg.ui" line="168"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;For example: 929999999 (only digits)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>Например: 929999999</translation>
     </message>
     <message>
-        <location filename="CreateCltDlg.ui" line="172"/>
+        <location filename="CreateCltDlg.ui" line="175"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;For example: Downing St. 88&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>Например: ул. Мира 88</translation>
     </message>
     <message>
-        <location filename="CreateCltDlg.ui" line="179"/>
+        <location filename="CreateCltDlg.ui" line="182"/>
         <source>Firm number:</source>
         <translation>Номер фирмы:</translation>
     </message>
     <message>
-        <location filename="CreateCltDlg.ui" line="201"/>
+        <location filename="CreateCltDlg.ui" line="204"/>
         <source>OK</source>
         <translation>ОК</translation>
     </message>
     <message>
-        <location filename="CreateCltDlg.ui" line="208"/>
+        <location filename="CreateCltDlg.ui" line="211"/>
         <source>Cancel</source>
         <translation>Отмена</translation>
     </message>
@@ -2268,7 +2268,7 @@
     <message>
         <location filename="CreateProdDlg.ui" line="51"/>
         <source>Select product type</source>
-        <translation>Выберите продукт</translation>
+        <translation>Выберите тип продукта</translation>
     </message>
     <message>
         <location filename="CreateProdDlg.ui" line="58"/>
@@ -5103,18 +5103,24 @@
     </message>
     <message>
         <location filename="LoginForm.ui" line="161"/>
-        <source>Phone or email:</source>
-        <translation>Телефон или email:</translation>
+        <source>Phone number:</source>
+        <oldsource>Phone or email:</oldsource>
+        <translation>Номер телефона:</translation>
     </message>
 </context>
 <context>
     <name>LoginForm</name>
     <message>
+        <location filename="LoginForm.cpp" line="26"/>
+        <source>Please fill up phone and password fields!</source>
+        <translation>Пожалуйста, заполните все поля: название, номер телефона и пароль!</translation>
+    </message>
+    <message>
         <location filename="LoginForm.cpp" line="35"/>
         <location filename="LoginForm.cpp" line="43"/>
         <location filename="LoginForm.cpp" line="53"/>
-        <source>Wrong email or password!</source>
-        <oldsource>Wrong username or password!</oldsource>
+        <source>Wrong phone or password!</source>
+        <oldsource>Wrong email or password!</oldsource>
         <translation>Не правильный email или номер!</translation>
     </message>
 </context>
@@ -5681,6 +5687,7 @@
     </message>
     <message>
         <location filename="MainForm.ui" line="82"/>
+        <location filename="MainForm.ui" line="185"/>
         <source>Orders</source>
         <translation>Заказы</translation>
     </message>
@@ -5741,11 +5748,6 @@
         <location filename="MainForm.ui" line="175"/>
         <source>Products type</source>
         <translation>Тип продуктов</translation>
-    </message>
-    <message>
-        <location filename="MainForm.ui" line="185"/>
-        <source>Oders</source>
-        <translation></translation>
     </message>
     <message>
         <location filename="MainForm.ui" line="190"/>
@@ -5891,6 +5893,636 @@
         <location filename="MainForm.ui" line="345"/>
         <source>Payslip</source>
         <translation>Расчетная ведомость</translation>
+    </message>
+</context>
+<context>
+    <name>QObject</name>
+    <message>
+        <location filename="DataForm.cpp" line="2055"/>
+        <location filename="DataForm.cpp" line="2062"/>
+        <location filename="DataForm.cpp" line="2070"/>
+        <location filename="DataForm.cpp" line="2079"/>
+        <location filename="DataForm.cpp" line="2090"/>
+        <location filename="DataForm.cpp" line="2098"/>
+        <location filename="DataForm.cpp" line="2107"/>
+        <location filename="DataForm.cpp" line="2118"/>
+        <location filename="DataForm.cpp" line="2128"/>
+        <location filename="DataForm.cpp" line="2136"/>
+        <location filename="DataForm.cpp" line="2149"/>
+        <location filename="DataForm.cpp" line="2160"/>
+        <location filename="DataForm.cpp" line="2168"/>
+        <location filename="DataForm.cpp" line="2177"/>
+        <location filename="DataForm.cpp" line="2186"/>
+        <location filename="DataForm.cpp" line="2195"/>
+        <location filename="DataForm.cpp" line="2203"/>
+        <location filename="DataForm.cpp" line="2213"/>
+        <location filename="DataForm.cpp" line="2222"/>
+        <location filename="DataForm.cpp" line="2234"/>
+        <location filename="DataForm.cpp" line="2243"/>
+        <location filename="DataForm.cpp" line="2251"/>
+        <location filename="DataForm.cpp" line="2259"/>
+        <location filename="DataForm.cpp" line="2272"/>
+        <location filename="DataForm.cpp" line="2283"/>
+        <location filename="DataForm.cpp" line="2292"/>
+        <location filename="DataForm.cpp" line="2300"/>
+        <location filename="DataForm.cpp" line="2308"/>
+        <location filename="DataForm.cpp" line="2318"/>
+        <location filename="DataForm.cpp" line="2326"/>
+        <location filename="DataForm.cpp" line="2335"/>
+        <location filename="DataForm.cpp" line="2344"/>
+        <location filename="DataForm.cpp" line="2356"/>
+        <source>ID</source>
+        <translation>ID</translation>
+    </message>
+    <message>
+        <location filename="DataForm.cpp" line="2055"/>
+        <location filename="DataForm.cpp" line="2082"/>
+        <location filename="DataForm.cpp" line="2110"/>
+        <location filename="DataForm.cpp" line="2327"/>
+        <source>Role ID</source>
+        <translation>ID роли</translation>
+    </message>
+    <message>
+        <location filename="DataForm.cpp" line="2055"/>
+        <source>Access item ID</source>
+        <translation>ID путкта доступа</translation>
+    </message>
+    <message>
+        <location filename="DataForm.cpp" line="2062"/>
+        <source>Item english name</source>
+        <translation>Имя на английском</translation>
+    </message>
+    <message>
+        <location filename="DataForm.cpp" line="2062"/>
+        <source>Item russian name</source>
+        <translation>Имя на русском</translation>
+    </message>
+    <message>
+        <location filename="DataForm.cpp" line="2062"/>
+        <source>Division</source>
+        <translation>Классификация</translation>
+    </message>
+    <message>
+        <location filename="DataForm.cpp" line="2070"/>
+        <source>User name</source>
+        <translation>Имя</translation>
+    </message>
+    <message>
+        <location filename="DataForm.cpp" line="2070"/>
+        <source>User surname</source>
+        <translation>Фамилия</translation>
+    </message>
+    <message>
+        <location filename="DataForm.cpp" line="2070"/>
+        <location filename="DataForm.cpp" line="2168"/>
+        <location filename="DataForm.cpp" line="2187"/>
+        <location filename="DataForm.cpp" line="2234"/>
+        <location filename="DataForm.cpp" line="2283"/>
+        <location filename="DataForm.cpp" line="2309"/>
+        <location filename="DataForm.cpp" line="2335"/>
+        <source>Value</source>
+        <translation>Значение</translation>
+    </message>
+    <message>
+        <location filename="DataForm.cpp" line="2071"/>
+        <location filename="DataForm.cpp" line="2139"/>
+        <location filename="DataForm.cpp" line="2150"/>
+        <location filename="DataForm.cpp" line="2168"/>
+        <location filename="DataForm.cpp" line="2187"/>
+        <location filename="DataForm.cpp" line="2203"/>
+        <location filename="DataForm.cpp" line="2223"/>
+        <location filename="DataForm.cpp" line="2234"/>
+        <location filename="DataForm.cpp" line="2263"/>
+        <location filename="DataForm.cpp" line="2273"/>
+        <location filename="DataForm.cpp" line="2283"/>
+        <location filename="DataForm.cpp" line="2309"/>
+        <location filename="DataForm.cpp" line="2335"/>
+        <location filename="DataForm.cpp" line="2347"/>
+        <location filename="DataForm.cpp" line="2357"/>
+        <source>Currency name</source>
+        <translation>Валюта</translation>
+    </message>
+    <message>
+        <location filename="DataForm.cpp" line="2071"/>
+        <location filename="DataForm.cpp" line="2160"/>
+        <location filename="DataForm.cpp" line="2168"/>
+        <location filename="DataForm.cpp" line="2283"/>
+        <location filename="DataForm.cpp" line="2308"/>
+        <location filename="DataForm.cpp" line="2336"/>
+        <source>User ID</source>
+        <translation>ID пользователя</translation>
+    </message>
+    <message>
+        <location filename="DataForm.cpp" line="2071"/>
+        <location filename="DataForm.cpp" line="2140"/>
+        <location filename="DataForm.cpp" line="2152"/>
+        <location filename="DataForm.cpp" line="2169"/>
+        <location filename="DataForm.cpp" line="2187"/>
+        <location filename="DataForm.cpp" line="2205"/>
+        <location filename="DataForm.cpp" line="2225"/>
+        <location filename="DataForm.cpp" line="2235"/>
+        <location filename="DataForm.cpp" line="2264"/>
+        <location filename="DataForm.cpp" line="2275"/>
+        <location filename="DataForm.cpp" line="2284"/>
+        <location filename="DataForm.cpp" line="2310"/>
+        <location filename="DataForm.cpp" line="2336"/>
+        <location filename="DataForm.cpp" line="2348"/>
+        <location filename="DataForm.cpp" line="2359"/>
+        <source>Currency ID</source>
+        <translation>ID валюты</translation>
+    </message>
+    <message>
+        <location filename="DataForm.cpp" line="2079"/>
+        <location filename="DataForm.cpp" line="2090"/>
+        <location filename="DataForm.cpp" line="2098"/>
+        <location filename="DataForm.cpp" line="2107"/>
+        <location filename="DataForm.cpp" line="2128"/>
+        <location filename="DataForm.cpp" line="2177"/>
+        <location filename="DataForm.cpp" line="2195"/>
+        <location filename="DataForm.cpp" line="2203"/>
+        <location filename="DataForm.cpp" line="2251"/>
+        <location filename="DataForm.cpp" line="2292"/>
+        <location filename="DataForm.cpp" line="2300"/>
+        <location filename="DataForm.cpp" line="2318"/>
+        <location filename="DataForm.cpp" line="2326"/>
+        <source>Name</source>
+        <translation>Название</translation>
+    </message>
+    <message>
+        <location filename="DataForm.cpp" line="2079"/>
+        <location filename="DataForm.cpp" line="2107"/>
+        <location filename="DataForm.cpp" line="2326"/>
+        <source>Surname</source>
+        <translation>Фамилия</translation>
+    </message>
+    <message>
+        <location filename="DataForm.cpp" line="2079"/>
+        <location filename="DataForm.cpp" line="2090"/>
+        <location filename="DataForm.cpp" line="2108"/>
+        <location filename="DataForm.cpp" line="2326"/>
+        <source>Phone</source>
+        <translation>Телефон</translation>
+    </message>
+    <message>
+        <location filename="DataForm.cpp" line="2079"/>
+        <location filename="DataForm.cpp" line="2118"/>
+        <source>Country name</source>
+        <translation>Страна</translation>
+    </message>
+    <message>
+        <location filename="DataForm.cpp" line="2080"/>
+        <location filename="DataForm.cpp" line="2119"/>
+        <source>Region name</source>
+        <translation>Регион</translation>
+    </message>
+    <message>
+        <location filename="DataForm.cpp" line="2080"/>
+        <location filename="DataForm.cpp" line="2119"/>
+        <source>City name</source>
+        <translation>Город</translation>
+    </message>
+    <message>
+        <location filename="DataForm.cpp" line="2080"/>
+        <location filename="DataForm.cpp" line="2090"/>
+        <location filename="DataForm.cpp" line="2108"/>
+        <location filename="DataForm.cpp" line="2327"/>
+        <source>Address</source>
+        <translation>Адрес</translation>
+    </message>
+    <message>
+        <location filename="DataForm.cpp" line="2080"/>
+        <source>Firm</source>
+        <translation>Название фирмы</translation>
+    </message>
+    <message>
+        <location filename="DataForm.cpp" line="2081"/>
+        <source>Firm number</source>
+        <translation>Номер фирмы</translation>
+    </message>
+    <message>
+        <location filename="DataForm.cpp" line="2081"/>
+        <location filename="DataForm.cpp" line="2108"/>
+        <location filename="DataForm.cpp" line="2327"/>
+        <source>Role name</source>
+        <translation>Роль</translation>
+    </message>
+    <message>
+        <location filename="DataForm.cpp" line="2081"/>
+        <location filename="DataForm.cpp" line="2109"/>
+        <location filename="DataForm.cpp" line="2327"/>
+        <source>Password</source>
+        <translation>Пароль</translation>
+    </message>
+    <message>
+        <location filename="DataForm.cpp" line="2081"/>
+        <location filename="DataForm.cpp" line="2109"/>
+        <location filename="DataForm.cpp" line="2326"/>
+        <source>Email</source>
+        <translation>Email</translation>
+    </message>
+    <message>
+        <location filename="DataForm.cpp" line="2082"/>
+        <location filename="DataForm.cpp" line="2110"/>
+        <location filename="DataForm.cpp" line="2327"/>
+        <source>Avtivated</source>
+        <translation>Активирован</translation>
+    </message>
+    <message>
+        <location filename="DataForm.cpp" line="2082"/>
+        <source>Location ID</source>
+        <translation>ID локации</translation>
+    </message>
+    <message>
+        <location filename="DataForm.cpp" line="2090"/>
+        <location filename="DataForm.cpp" line="2251"/>
+        <location filename="DataForm.cpp" line="2292"/>
+        <location filename="DataForm.cpp" line="2318"/>
+        <source>Comment</source>
+        <translation>Коментарий</translation>
+    </message>
+    <message>
+        <location filename="DataForm.cpp" line="2098"/>
+        <location filename="DataForm.cpp" line="2292"/>
+        <location filename="DataForm.cpp" line="2300"/>
+        <location filename="DataForm.cpp" line="2318"/>
+        <source>Code</source>
+        <translation>Код</translation>
+    </message>
+    <message>
+        <location filename="DataForm.cpp" line="2098"/>
+        <location filename="DataForm.cpp" line="2128"/>
+        <location filename="DataForm.cpp" line="2195"/>
+        <source>Short name</source>
+        <translation>Короткое название</translation>
+    </message>
+    <message>
+        <location filename="DataForm.cpp" line="2099"/>
+        <location filename="DataForm.cpp" line="2128"/>
+        <source>Change unit</source>
+        <translation>Обменная единица</translation>
+    </message>
+    <message>
+        <location filename="DataForm.cpp" line="2099"/>
+        <source>Main trade currency</source>
+        <translation>Оснавная валюта</translation>
+    </message>
+    <message>
+        <location filename="DataForm.cpp" line="2107"/>
+        <source>Position name</source>
+        <translation>Должность</translation>
+    </message>
+    <message>
+        <location filename="DataForm.cpp" line="2108"/>
+        <source>Birth date</source>
+        <translation>Дата рождения</translation>
+    </message>
+    <message>
+        <location filename="DataForm.cpp" line="2109"/>
+        <source>Hire date</source>
+        <translation>Дата найма</translation>
+    </message>
+    <message>
+        <location filename="DataForm.cpp" line="2110"/>
+        <source>Position ID</source>
+        <translation>ID должности</translation>
+    </message>
+    <message>
+        <location filename="DataForm.cpp" line="2118"/>
+        <source>Country code</source>
+        <translation>Код страны</translation>
+    </message>
+    <message>
+        <location filename="DataForm.cpp" line="2136"/>
+        <source>Order date</source>
+        <translation>Дата заказа</translation>
+    </message>
+    <message>
+        <location filename="DataForm.cpp" line="2136"/>
+        <location filename="DataForm.cpp" line="2259"/>
+        <source>Execution date</source>
+        <translation>Дата исполнения</translation>
+    </message>
+    <message>
+        <location filename="DataForm.cpp" line="2136"/>
+        <location filename="DataForm.cpp" line="2259"/>
+        <location filename="DataForm.cpp" line="2344"/>
+        <source>Status code</source>
+        <translation>Код статуса</translation>
+    </message>
+    <message>
+        <location filename="DataForm.cpp" line="2137"/>
+        <location filename="DataForm.cpp" line="2151"/>
+        <location filename="DataForm.cpp" line="2224"/>
+        <location filename="DataForm.cpp" line="2260"/>
+        <location filename="DataForm.cpp" line="2274"/>
+        <location filename="DataForm.cpp" line="2344"/>
+        <location filename="DataForm.cpp" line="2358"/>
+        <source>Status name</source>
+        <translation>Статус</translation>
+    </message>
+    <message>
+        <location filename="DataForm.cpp" line="2137"/>
+        <location filename="DataForm.cpp" line="2260"/>
+        <location filename="DataForm.cpp" line="2345"/>
+        <source>Client name</source>
+        <translation>Имя клиента</translation>
+    </message>
+    <message>
+        <location filename="DataForm.cpp" line="2137"/>
+        <location filename="DataForm.cpp" line="2260"/>
+        <location filename="DataForm.cpp" line="2345"/>
+        <source>Client surname</source>
+        <translation>Фамилия клиента</translation>
+    </message>
+    <message>
+        <location filename="DataForm.cpp" line="2137"/>
+        <location filename="DataForm.cpp" line="2261"/>
+        <location filename="DataForm.cpp" line="2345"/>
+        <source>Client phone</source>
+        <translation>Номер клиента</translation>
+    </message>
+    <message>
+        <location filename="DataForm.cpp" line="2138"/>
+        <location filename="DataForm.cpp" line="2261"/>
+        <location filename="DataForm.cpp" line="2345"/>
+        <source>Client address</source>
+        <translation>Адрес клиета</translation>
+    </message>
+    <message>
+        <location filename="DataForm.cpp" line="2138"/>
+        <location filename="DataForm.cpp" line="2261"/>
+        <location filename="DataForm.cpp" line="2346"/>
+        <source>Client firm</source>
+        <translation>Фирма клиента</translation>
+    </message>
+    <message>
+        <location filename="DataForm.cpp" line="2138"/>
+        <location filename="DataForm.cpp" line="2261"/>
+        <location filename="DataForm.cpp" line="2308"/>
+        <location filename="DataForm.cpp" line="2346"/>
+        <source>Employee name</source>
+        <translation>Имя сотрудника</translation>
+    </message>
+    <message>
+        <location filename="DataForm.cpp" line="2138"/>
+        <location filename="DataForm.cpp" line="2262"/>
+        <location filename="DataForm.cpp" line="2308"/>
+        <location filename="DataForm.cpp" line="2346"/>
+        <source>Employee surname</source>
+        <translation>Фамилия сотрудника</translation>
+    </message>
+    <message>
+        <location filename="DataForm.cpp" line="2139"/>
+        <location filename="DataForm.cpp" line="2262"/>
+        <location filename="DataForm.cpp" line="2309"/>
+        <location filename="DataForm.cpp" line="2346"/>
+        <source>Employee phone</source>
+        <translation>Телефон сотрудника</translation>
+    </message>
+    <message>
+        <location filename="DataForm.cpp" line="2139"/>
+        <location filename="DataForm.cpp" line="2262"/>
+        <location filename="DataForm.cpp" line="2347"/>
+        <source>Product count</source>
+        <translation>Количесто продуктов</translation>
+    </message>
+    <message>
+        <location filename="DataForm.cpp" line="2139"/>
+        <location filename="DataForm.cpp" line="2151"/>
+        <location filename="DataForm.cpp" line="2224"/>
+        <location filename="DataForm.cpp" line="2262"/>
+        <location filename="DataForm.cpp" line="2274"/>
+        <location filename="DataForm.cpp" line="2347"/>
+        <location filename="DataForm.cpp" line="2357"/>
+        <source>Sum</source>
+        <translation>Сумма</translation>
+    </message>
+    <message>
+        <location filename="DataForm.cpp" line="2140"/>
+        <location filename="DataForm.cpp" line="2263"/>
+        <location filename="DataForm.cpp" line="2347"/>
+        <source>Employee ID</source>
+        <translation>ID сотрудника</translation>
+    </message>
+    <message>
+        <location filename="DataForm.cpp" line="2140"/>
+        <location filename="DataForm.cpp" line="2263"/>
+        <location filename="DataForm.cpp" line="2348"/>
+        <source>Client ID</source>
+        <translation>ID клиента</translation>
+    </message>
+    <message>
+        <location filename="DataForm.cpp" line="2140"/>
+        <location filename="DataForm.cpp" line="2152"/>
+        <location filename="DataForm.cpp" line="2225"/>
+        <location filename="DataForm.cpp" line="2264"/>
+        <location filename="DataForm.cpp" line="2275"/>
+        <location filename="DataForm.cpp" line="2348"/>
+        <location filename="DataForm.cpp" line="2358"/>
+        <source>Status ID</source>
+        <translation>ID статуса</translation>
+    </message>
+    <message>
+        <location filename="DataForm.cpp" line="2141"/>
+        <location filename="DataForm.cpp" line="2214"/>
+        <location filename="DataForm.cpp" line="2264"/>
+        <location filename="DataForm.cpp" line="2348"/>
+        <source>Product list</source>
+        <translation>Список продуктов</translation>
+    </message>
+    <message>
+        <location filename="DataForm.cpp" line="2149"/>
+        <source>Order ID</source>
+        <translation>ID заказа</translation>
+    </message>
+    <message>
+        <location filename="DataForm.cpp" line="2149"/>
+        <location filename="DataForm.cpp" line="2186"/>
+        <location filename="DataForm.cpp" line="2222"/>
+        <location filename="DataForm.cpp" line="2272"/>
+        <location filename="DataForm.cpp" line="2356"/>
+        <source>Product name</source>
+        <translation>Название продукта</translation>
+    </message>
+    <message>
+        <location filename="DataForm.cpp" line="2149"/>
+        <location filename="DataForm.cpp" line="2203"/>
+        <location filename="DataForm.cpp" line="2222"/>
+        <location filename="DataForm.cpp" line="2272"/>
+        <location filename="DataForm.cpp" line="2356"/>
+        <source>Price</source>
+        <translation>Цена</translation>
+    </message>
+    <message>
+        <location filename="DataForm.cpp" line="2150"/>
+        <location filename="DataForm.cpp" line="2186"/>
+        <location filename="DataForm.cpp" line="2203"/>
+        <location filename="DataForm.cpp" line="2223"/>
+        <location filename="DataForm.cpp" line="2273"/>
+        <location filename="DataForm.cpp" line="2357"/>
+        <source>Volume</source>
+        <translation>Объем/Количество</translation>
+    </message>
+    <message>
+        <location filename="DataForm.cpp" line="2150"/>
+        <location filename="DataForm.cpp" line="2186"/>
+        <location filename="DataForm.cpp" line="2204"/>
+        <location filename="DataForm.cpp" line="2223"/>
+        <location filename="DataForm.cpp" line="2273"/>
+        <location filename="DataForm.cpp" line="2357"/>
+        <source>Measure name</source>
+        <translation>Название меры</translation>
+    </message>
+    <message>
+        <location filename="DataForm.cpp" line="2150"/>
+        <location filename="DataForm.cpp" line="2223"/>
+        <location filename="DataForm.cpp" line="2273"/>
+        <location filename="DataForm.cpp" line="2357"/>
+        <source>Count</source>
+        <translation>Количество</translation>
+    </message>
+    <message>
+        <location filename="DataForm.cpp" line="2151"/>
+        <location filename="DataForm.cpp" line="2224"/>
+        <location filename="DataForm.cpp" line="2274"/>
+        <location filename="DataForm.cpp" line="2358"/>
+        <source>Sum currency name</source>
+        <translation>Валюта суммы</translation>
+    </message>
+    <message>
+        <location filename="DataForm.cpp" line="2152"/>
+        <location filename="DataForm.cpp" line="2160"/>
+        <location filename="DataForm.cpp" line="2187"/>
+        <location filename="DataForm.cpp" line="2225"/>
+        <location filename="DataForm.cpp" line="2275"/>
+        <location filename="DataForm.cpp" line="2358"/>
+        <source>Product ID</source>
+        <translation>ID продукта</translation>
+    </message>
+    <message>
+        <location filename="DataForm.cpp" line="2160"/>
+        <source>Source</source>
+        <translation>Источник</translation>
+    </message>
+    <message>
+        <location filename="DataForm.cpp" line="2168"/>
+        <location filename="DataForm.cpp" line="2186"/>
+        <location filename="DataForm.cpp" line="2234"/>
+        <location filename="DataForm.cpp" line="2283"/>
+        <location filename="DataForm.cpp" line="2309"/>
+        <location filename="DataForm.cpp" line="2335"/>
+        <source>Date</source>
+        <translation>Дата</translation>
+    </message>
+    <message>
+        <location filename="DataForm.cpp" line="2204"/>
+        <source>Product type name</source>
+        <translation>Наименование типа продуктов</translation>
+    </message>
+    <message>
+        <location filename="DataForm.cpp" line="2204"/>
+        <source>Shelf life</source>
+        <translation>Срок годности(в днях)</translation>
+    </message>
+    <message>
+        <location filename="DataForm.cpp" line="2204"/>
+        <source>Company name</source>
+        <translation>Наименование компании</translation>
+    </message>
+    <message>
+        <location filename="DataForm.cpp" line="2205"/>
+        <source>Company ID</source>
+        <translation>ID компании</translation>
+    </message>
+    <message>
+        <location filename="DataForm.cpp" line="2205"/>
+        <source>Measure ID</source>
+        <translation>ID меры</translation>
+    </message>
+    <message>
+        <location filename="DataForm.cpp" line="2205"/>
+        <source>Product type ID</source>
+        <translation>ID типа продуктов</translation>
+    </message>
+    <message>
+        <location filename="DataForm.cpp" line="2213"/>
+        <source>Production Date</source>
+        <translation>Дата начала</translation>
+    </message>
+    <message>
+        <location filename="DataForm.cpp" line="2213"/>
+        <source>Expiry Date</source>
+        <translation>Дата окончания</translation>
+    </message>
+    <message>
+        <location filename="DataForm.cpp" line="2213"/>
+        <source>Session start</source>
+        <translation>Старт сессии</translation>
+    </message>
+    <message>
+        <location filename="DataForm.cpp" line="2214"/>
+        <source>Session end</source>
+        <translation>Конец сессии</translation>
+    </message>
+    <message>
+        <location filename="DataForm.cpp" line="2222"/>
+        <source>Production ID</source>
+        <translation>ID производства</translation>
+    </message>
+    <message>
+        <location filename="DataForm.cpp" line="2235"/>
+        <source>Salary ID</source>
+        <translation>ID зарплаты</translation>
+    </message>
+    <message>
+        <location filename="DataForm.cpp" line="2243"/>
+        <source>User 1</source>
+        <translation>Пользователь 1</translation>
+    </message>
+    <message>
+        <location filename="DataForm.cpp" line="2243"/>
+        <source>User 2</source>
+        <translation>Пользователь 2</translation>
+    </message>
+    <message>
+        <location filename="DataForm.cpp" line="2243"/>
+        <source>Relation type</source>
+        <translation>Тип зависимостей</translation>
+    </message>
+    <message>
+        <location filename="DataForm.cpp" line="2259"/>
+        <source>Return date</source>
+        <translation>Дата возврата</translation>
+    </message>
+    <message>
+        <location filename="DataForm.cpp" line="2272"/>
+        <source>Return ID</source>
+        <translation>ID возврата</translation>
+    </message>
+    <message>
+        <location filename="DataForm.cpp" line="2310"/>
+        <source>Salary type name</source>
+        <translation>Название типа зарплаты</translation>
+    </message>
+    <message>
+        <location filename="DataForm.cpp" line="2310"/>
+        <source>Salary type ID</source>
+        <translation>ID типа зарплаты</translation>
+    </message>
+    <message>
+        <location filename="DataForm.cpp" line="2310"/>
+        <source>Is bonus?</source>
+        <translation>Бонус?</translation>
+    </message>
+    <message>
+        <location filename="DataForm.cpp" line="2344"/>
+        <source>Write-off date</source>
+        <translation>Дата списания</translation>
+    </message>
+    <message>
+        <location filename="DataForm.cpp" line="2356"/>
+        <source>Write-off ID</source>
+        <translation>ID списания</translation>
     </message>
 </context>
 </TS>

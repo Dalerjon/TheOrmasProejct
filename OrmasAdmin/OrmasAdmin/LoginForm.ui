@@ -111,7 +111,7 @@
     <widget class="QLineEdit" name="passwordEdit">
      <property name="minimumSize">
       <size>
-       <width>180</width>
+       <width>170</width>
        <height>0</height>
       </size>
      </property>
@@ -127,7 +127,7 @@
     <widget class="QLineEdit" name="userEdit">
      <property name="minimumSize">
       <size>
-       <width>180</width>
+       <width>170</width>
        <height>0</height>
       </size>
      </property>
@@ -140,7 +140,7 @@
     <widget class="QLabel" name="PasswordLb">
      <property name="minimumSize">
       <size>
-       <width>70</width>
+       <width>100</width>
        <height>0</height>
       </size>
      </property>
@@ -153,12 +153,12 @@
     <widget class="QLabel" name="UserNameLb">
      <property name="minimumSize">
       <size>
-       <width>70</width>
+       <width>100</width>
        <height>0</height>
       </size>
      </property>
      <property name="text">
-      <string>Phone or email:</string>
+      <string>Phone number:</string>
      </property>
     </widget>
    </item>

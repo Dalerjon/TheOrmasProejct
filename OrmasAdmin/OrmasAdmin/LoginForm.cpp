@@ -23,7 +23,7 @@ void LoginForm::CheckCredentials()
 	std::string errorMessage = "";
 	if (userEdit->text().isEmpty() && passwordEdit->text().isEmpty())
 	{
-		messageLb->setText("Please fill up email and password fields!");
+		messageLb->setText(tr("Please fill up phone and password fields!"));
 	}
 	if (loggedUser->GetUserByCredentials(oBL->GetOrmasDal(), userEdit->text().toUtf8().constData(), passwordEdit->text().toUtf8().constData()))
 	{
@@ -32,7 +32,7 @@ void LoginForm::CheckCredentials()
 		{
 			userEdit->setText("");
 			passwordEdit->setText("");
-			messageLb->setText(tr("Wrong email or password!"));
+			messageLb->setText(tr("Wrong phone or password!"));
 			loggedUser->Clear();
 			return;
 		}
@@ -40,7 +40,7 @@ void LoginForm::CheckCredentials()
 		{
 			userEdit->setText("");
 			passwordEdit->setText("");
-			messageLb->setText(tr("Wrong email or password!"));
+			messageLb->setText(tr("Wrong phone or password!"));
 			loggedUser->Clear();
 			return;
 		}
@@ -50,7 +50,7 @@ void LoginForm::CheckCredentials()
 	{
 		userEdit->setText("");
 		passwordEdit->setText("");
-		messageLb->setText(tr("Wrong email or password!"));
+		messageLb->setText(tr("Wrong phone or password!"));
 		loggedUser->Clear();
 	}
 }

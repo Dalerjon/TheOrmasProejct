@@ -16,7 +16,6 @@ CreateOrdDlg::CreateOrdDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, QWi
 	clientEdit->setValidator(vInt);
 	employeeEdit->setValidator(vInt);
 	prodCountEdit->setValidator(vInt);
-	clientEdit->setValidator(vInt);
 	statusEdit->setValidator(vInt);
 	currencyEdit->setValidator(vInt);
 	sumEdit->setValidator(vDouble);
@@ -34,7 +33,6 @@ CreateOrdDlg::CreateOrdDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, QWi
 		clientEdit->setText("0");
 		employeeEdit->setText("0");
 		prodCountEdit->setText("0");
-		clientEdit->setText("0");
 		statusEdit->setText("0");
 		sumEdit->setText("0");
 		currencyEdit->setText("0");
@@ -72,12 +70,12 @@ void CreateOrdDlg::SetOrderParams(int oClientID, QString oDate, QString oExecDat
 	order->SetID(id);
 }
 
-void CreateOrdDlg::FillEditElements(int oClientID, QString oDate, QString oExecDate, int oemployeeID, int oCount, double oSum, int oStatusID, int oCurrencyID)
+void CreateOrdDlg::FillEditElements(int oClientID, QString oDate, QString oExecDate, int oEmployeeID, int oCount, double oSum, int oStatusID, int oCurrencyID)
 {
 	clientEdit->setText(QString::number(oClientID));
 	dateEdit->setDateTime(QDateTime::fromString(oDate, "yyyy.MM.dd hh:mm:ss"));
 	execDateEdit->setDateTime(QDateTime::fromString(oExecDate, "yyyy.MM.dd hh:mm:ss"));
-	employeeEdit->setText(QString::number(oemployeeID));
+	employeeEdit->setText(QString::number(oEmployeeID));
 	prodCountEdit->setText(QString::number(oCount));
 	sumEdit->setText(QString::number(oSum));
 	statusEdit->setText(QString::number(oStatusID));
@@ -164,8 +162,8 @@ void CreateOrdDlg::CreateOrder()
 				delete status;
 				return;
 			}
-			QList<QStandardItem*> OrderItem;
-				OrderItem << new QStandardItem(QString::number(order->GetID()))
+			QList<QStandardItem*> orderItem;
+			orderItem << new QStandardItem(QString::number(order->GetID()))
 					<< new QStandardItem(order->GetDate().c_str())
 					<< new QStandardItem(order->GetExecutionDate().c_str())
 					<< new QStandardItem(status->GetCode().c_str())
@@ -205,7 +203,7 @@ void CreateOrdDlg::CreateOrder()
 			
 			if (0 != order->GetClientID())
 			{
-				OrderItem << new QStandardItem(client->GetName().c_str())
+				orderItem << new QStandardItem(client->GetName().c_str())
 					<< new QStandardItem(client->GetSurname().c_str())
 					<< new QStandardItem(client->GetPhone().c_str())
 					<< new QStandardItem(client->GetAddress().c_str())
@@ -213,7 +211,7 @@ void CreateOrdDlg::CreateOrder()
 			}
 			else
 			{
-				OrderItem << new QStandardItem("")
+				orderItem << new QStandardItem("")
 					<< new QStandardItem("")
 					<< new QStandardItem("")
 					<< new QStandardItem("")
@@ -221,18 +219,18 @@ void CreateOrdDlg::CreateOrder()
 			}
 			if (0 != order->GetEmployeeID())
 			{
-				OrderItem << new QStandardItem(employee->GetName().c_str())
+				orderItem << new QStandardItem(employee->GetName().c_str())
 					<< new QStandardItem(employee->GetSurname().c_str())
 					<< new QStandardItem(employee->GetPhone().c_str());
 			}
 			else
 			{
-				OrderItem << new QStandardItem("")
+				orderItem << new QStandardItem("")
 					<< new QStandardItem("")
 					<< new QStandardItem("");
 			}
 
-			OrderItem << new QStandardItem(QString::number(order->GetCount()))
+			orderItem << new QStandardItem(QString::number(order->GetCount()))
 				<< new QStandardItem(QString::number(order->GetSum()))
 			    << new QStandardItem(currency->GetShortName().c_str())
 				<< new QStandardItem(QString::number(order->GetEmployeeID()))
@@ -241,7 +239,7 @@ void CreateOrdDlg::CreateOrder()
 				<< new QStandardItem(QString::number(order->GetCurrencyID()));
 			
 			QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
-			itemModel->appendRow(OrderItem);
+			itemModel->appendRow(orderItem);
 			dialogBL->CommitTransaction(errorMessage);
 			delete client;
 			delete employee;
@@ -606,10 +604,10 @@ void CreateOrdDlg::OpenCurDlg()
 		dForm->createOrdDlg = this;
 		dForm->setObjectName("currencyForm");
 		dForm->QtConnect<BusinessLayer::Currency>();
-		QMdiSubWindow *returnWindow = new QMdiSubWindow;
-		returnWindow->setWidget(dForm);
-		returnWindow->setAttribute(Qt::WA_DeleteOnClose);
-		mainForm->mdiArea->addSubWindow(returnWindow);
+		QMdiSubWindow *currencyWindow = new QMdiSubWindow;
+		currencyWindow->setWidget(dForm);
+		currencyWindow->setAttribute(Qt::WA_DeleteOnClose);
+		mainForm->mdiArea->addSubWindow(currencyWindow);
 		dForm->topLevelWidget();
 		dForm->activateWindow();
 		QApplication::setActiveWindow(dForm);
@@ -654,10 +652,10 @@ void CreateOrdDlg::OpenOrdListDlg()
 		dForm->createOrdDlg = this;
 		dForm->setObjectName("orderListForm");
 		dForm->QtConnect<BusinessLayer::OrderListView>();
-		QMdiSubWindow *returnWindow = new QMdiSubWindow;
-		returnWindow->setWidget(dForm);
-		returnWindow->setAttribute(Qt::WA_DeleteOnClose);
-		mainForm->mdiArea->addSubWindow(returnWindow);
+		QMdiSubWindow *orderListWindow = new QMdiSubWindow;
+		orderListWindow->setWidget(dForm);
+		orderListWindow->setAttribute(Qt::WA_DeleteOnClose);
+		mainForm->mdiArea->addSubWindow(orderListWindow);
 		dForm->topLevelWidget();
 		dForm->activateWindow();
 		QApplication::setActiveWindow(dForm);
