@@ -89,11 +89,9 @@ namespace BusinessLayer
 	}
 	bool Role::DeleteRole(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
-		name.clear();
-		comment.clear();
 		if (ormasDal.DeleteRole(id, errorMessage))
 		{
-			id = 0;
+			Clear();
 			return true;
 		}
 		if (errorMessage.empty())

@@ -111,12 +111,7 @@ namespace BusinessLayer
 	{
 		if (ormasDal.DeleteStock(id, errorMessage))
 		{
-			id = 0;
-			productID = 0;
-			count = 0;
-			sum = 0;
-			statusID = 0;
-			currencyID = 0;
+			Clear();
 			return true;
 		}
 		return false;

@@ -14,6 +14,7 @@
 #include <QtWidgets/QAction>
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QButtonGroup>
+#include <QtWidgets/QComboBox>
 #include <QtWidgets/QDateTimeEdit>
 #include <QtWidgets/QDialog>
 #include <QtWidgets/QGridLayout>
@@ -31,126 +32,112 @@ class Ui_CreateConsumeProduct
 {
 public:
     QGridLayout *gridLayout;
-    QLineEdit *currencyEdit;
-    QLabel *sumLb;
-    QLabel *dateLb;
-    QLineEdit *stockEmployeeEdit;
+    QPushButton *stockEmployeeBtn;
+    QLabel *empStockSurnamePh;
+    QLabel *empStockNameLb;
+    QLabel *empNameLb;
+    QLabel *empSurnamePh;
+    QPushButton *employeeBtn;
+    QLabel *prodCountLb;
+    QLineEdit *prodCountEdit;
+    QWidget *execDateWidget;
+    QHBoxLayout *horizontalLayout_2;
+    QLabel *execDateLb;
+    QSpacerItem *horizontalSpacer_2;
+    QDateTimeEdit *execDateEdit;
     QHBoxLayout *horizontalLayout;
     QSpacerItem *horizontalSpacer;
     QPushButton *okBtn;
     QPushButton *cancelBtn;
-    QLineEdit *employeeEdit;
     QDateTimeEdit *dateEdit;
-    QLabel *prodCountLb;
-    QPushButton *currencyBtn;
-    QPushButton *employeeBtn;
+    QLabel *empPhonePh;
     QPushButton *addProdBtn;
-    QLineEdit *prodCountEdit;
+    QLineEdit *stockEmployeeEdit;
+    QLineEdit *employeeEdit;
+    QLabel *sumLb;
+    QComboBox *currencyCmb;
+    QLabel *empNamePh;
+    QLabel *empStockNamePh;
+    QLabel *empStockSurnameLb;
+    QLabel *empStockPhoneLb;
+    QLabel *empStockPhonePh;
+    QLabel *empPhoneLb;
+    QLabel *dateLb;
+    QLabel *empSurnameLb;
     QLineEdit *sumEdit;
-    QWidget *execDateWidget;
-    QHBoxLayout *horizontalLayout_2;
-    QLabel *execDateLb;
-    QDateTimeEdit *execDateEdit;
-    QPushButton *stockEmployeeBtn;
     QWidget *statusWidget;
     QHBoxLayout *horizontalLayout_3;
     QPushButton *statusBtn;
     QLineEdit *statusEdit;
+    QLabel *statusLb;
+    QLabel *statusPh;
+    QLabel *currencyLb;
 
     void setupUi(QDialog *CreateConsumeProduct)
     {
         if (CreateConsumeProduct->objectName().isEmpty())
             CreateConsumeProduct->setObjectName(QStringLiteral("CreateConsumeProduct"));
-        CreateConsumeProduct->resize(379, 270);
+        CreateConsumeProduct->resize(631, 319);
         CreateConsumeProduct->setLocale(QLocale(QLocale::English, QLocale::UnitedStates));
         CreateConsumeProduct->setModal(false);
         gridLayout = new QGridLayout(CreateConsumeProduct);
         gridLayout->setObjectName(QStringLiteral("gridLayout"));
         gridLayout->setContentsMargins(11, 11, 11, 11);
-        currencyEdit = new QLineEdit(CreateConsumeProduct);
-        currencyEdit->setObjectName(QStringLiteral("currencyEdit"));
-        currencyEdit->setReadOnly(true);
+        stockEmployeeBtn = new QPushButton(CreateConsumeProduct);
+        stockEmployeeBtn->setObjectName(QStringLiteral("stockEmployeeBtn"));
 
-        gridLayout->addWidget(currencyEdit, 7, 1, 1, 2);
+        gridLayout->addWidget(stockEmployeeBtn, 4, 0, 1, 2);
 
-        sumLb = new QLabel(CreateConsumeProduct);
-        sumLb->setObjectName(QStringLiteral("sumLb"));
+        empStockSurnamePh = new QLabel(CreateConsumeProduct);
+        empStockSurnamePh->setObjectName(QStringLiteral("empStockSurnamePh"));
+        empStockSurnamePh->setMinimumSize(QSize(100, 0));
+        QFont font;
+        font.setFamily(QStringLiteral("Times New Roman"));
+        font.setPointSize(12);
+        font.setBold(true);
+        font.setItalic(true);
+        font.setWeight(75);
+        empStockSurnamePh->setFont(font);
 
-        gridLayout->addWidget(sumLb, 6, 0, 1, 1);
+        gridLayout->addWidget(empStockSurnamePh, 5, 3, 1, 1);
 
-        dateLb = new QLabel(CreateConsumeProduct);
-        dateLb->setObjectName(QStringLiteral("dateLb"));
+        empStockNameLb = new QLabel(CreateConsumeProduct);
+        empStockNameLb->setObjectName(QStringLiteral("empStockNameLb"));
+        empStockNameLb->setMinimumSize(QSize(50, 0));
+        empStockNameLb->setMaximumSize(QSize(50, 16777215));
 
-        gridLayout->addWidget(dateLb, 1, 0, 1, 1);
+        gridLayout->addWidget(empStockNameLb, 5, 0, 1, 1);
 
-        stockEmployeeEdit = new QLineEdit(CreateConsumeProduct);
-        stockEmployeeEdit->setObjectName(QStringLiteral("stockEmployeeEdit"));
-        stockEmployeeEdit->setReadOnly(true);
+        empNameLb = new QLabel(CreateConsumeProduct);
+        empNameLb->setObjectName(QStringLiteral("empNameLb"));
+        empNameLb->setMinimumSize(QSize(50, 0));
+        empNameLb->setMaximumSize(QSize(50, 16777215));
 
-        gridLayout->addWidget(stockEmployeeEdit, 3, 1, 1, 2);
+        gridLayout->addWidget(empNameLb, 1, 0, 1, 1);
 
-        horizontalLayout = new QHBoxLayout();
-        horizontalLayout->setObjectName(QStringLiteral("horizontalLayout"));
-        horizontalSpacer = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
+        empSurnamePh = new QLabel(CreateConsumeProduct);
+        empSurnamePh->setObjectName(QStringLiteral("empSurnamePh"));
+        empSurnamePh->setMinimumSize(QSize(100, 0));
+        empSurnamePh->setFont(font);
 
-        horizontalLayout->addItem(horizontalSpacer);
-
-        okBtn = new QPushButton(CreateConsumeProduct);
-        okBtn->setObjectName(QStringLiteral("okBtn"));
-
-        horizontalLayout->addWidget(okBtn);
-
-        cancelBtn = new QPushButton(CreateConsumeProduct);
-        cancelBtn->setObjectName(QStringLiteral("cancelBtn"));
-
-        horizontalLayout->addWidget(cancelBtn);
-
-
-        gridLayout->addLayout(horizontalLayout, 8, 0, 1, 3);
-
-        employeeEdit = new QLineEdit(CreateConsumeProduct);
-        employeeEdit->setObjectName(QStringLiteral("employeeEdit"));
-        employeeEdit->setReadOnly(true);
-
-        gridLayout->addWidget(employeeEdit, 0, 1, 1, 2);
-
-        dateEdit = new QDateTimeEdit(CreateConsumeProduct);
-        dateEdit->setObjectName(QStringLiteral("dateEdit"));
-
-        gridLayout->addWidget(dateEdit, 1, 1, 1, 2);
-
-        prodCountLb = new QLabel(CreateConsumeProduct);
-        prodCountLb->setObjectName(QStringLiteral("prodCountLb"));
-
-        gridLayout->addWidget(prodCountLb, 4, 1, 1, 1);
-
-        currencyBtn = new QPushButton(CreateConsumeProduct);
-        currencyBtn->setObjectName(QStringLiteral("currencyBtn"));
-
-        gridLayout->addWidget(currencyBtn, 7, 0, 1, 1);
+        gridLayout->addWidget(empSurnamePh, 1, 3, 1, 1);
 
         employeeBtn = new QPushButton(CreateConsumeProduct);
         employeeBtn->setObjectName(QStringLiteral("employeeBtn"));
         employeeBtn->setMinimumSize(QSize(200, 0));
 
-        gridLayout->addWidget(employeeBtn, 0, 0, 1, 1);
+        gridLayout->addWidget(employeeBtn, 0, 0, 1, 2);
 
-        addProdBtn = new QPushButton(CreateConsumeProduct);
-        addProdBtn->setObjectName(QStringLiteral("addProdBtn"));
+        prodCountLb = new QLabel(CreateConsumeProduct);
+        prodCountLb->setObjectName(QStringLiteral("prodCountLb"));
 
-        gridLayout->addWidget(addProdBtn, 4, 0, 1, 1);
+        gridLayout->addWidget(prodCountLb, 6, 2, 1, 1);
 
         prodCountEdit = new QLineEdit(CreateConsumeProduct);
         prodCountEdit->setObjectName(QStringLiteral("prodCountEdit"));
         prodCountEdit->setReadOnly(true);
 
-        gridLayout->addWidget(prodCountEdit, 4, 2, 1, 1);
-
-        sumEdit = new QLineEdit(CreateConsumeProduct);
-        sumEdit->setObjectName(QStringLiteral("sumEdit"));
-        sumEdit->setReadOnly(true);
-
-        gridLayout->addWidget(sumEdit, 6, 1, 1, 2);
+        gridLayout->addWidget(prodCountEdit, 6, 3, 1, 1);
 
         execDateWidget = new QWidget(CreateConsumeProduct);
         execDateWidget->setObjectName(QStringLiteral("execDateWidget"));
@@ -169,18 +156,132 @@ public:
 
         horizontalLayout_2->addWidget(execDateLb);
 
+        horizontalSpacer_2 = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
+
+        horizontalLayout_2->addItem(horizontalSpacer_2);
+
         execDateEdit = new QDateTimeEdit(execDateWidget);
         execDateEdit->setObjectName(QStringLiteral("execDateEdit"));
+        execDateEdit->setMinimumSize(QSize(127, 0));
 
         horizontalLayout_2->addWidget(execDateEdit);
 
 
-        gridLayout->addWidget(execDateWidget, 2, 0, 1, 3);
+        gridLayout->addWidget(execDateWidget, 3, 0, 1, 4);
 
-        stockEmployeeBtn = new QPushButton(CreateConsumeProduct);
-        stockEmployeeBtn->setObjectName(QStringLiteral("stockEmployeeBtn"));
+        horizontalLayout = new QHBoxLayout();
+        horizontalLayout->setObjectName(QStringLiteral("horizontalLayout"));
+        horizontalSpacer = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
 
-        gridLayout->addWidget(stockEmployeeBtn, 3, 0, 1, 1);
+        horizontalLayout->addItem(horizontalSpacer);
+
+        okBtn = new QPushButton(CreateConsumeProduct);
+        okBtn->setObjectName(QStringLiteral("okBtn"));
+
+        horizontalLayout->addWidget(okBtn);
+
+        cancelBtn = new QPushButton(CreateConsumeProduct);
+        cancelBtn->setObjectName(QStringLiteral("cancelBtn"));
+
+        horizontalLayout->addWidget(cancelBtn);
+
+
+        gridLayout->addLayout(horizontalLayout, 10, 0, 1, 6);
+
+        dateEdit = new QDateTimeEdit(CreateConsumeProduct);
+        dateEdit->setObjectName(QStringLiteral("dateEdit"));
+
+        gridLayout->addWidget(dateEdit, 2, 3, 1, 1);
+
+        empPhonePh = new QLabel(CreateConsumeProduct);
+        empPhonePh->setObjectName(QStringLiteral("empPhonePh"));
+        empPhonePh->setMinimumSize(QSize(100, 0));
+        empPhonePh->setFont(font);
+
+        gridLayout->addWidget(empPhonePh, 1, 5, 1, 1);
+
+        addProdBtn = new QPushButton(CreateConsumeProduct);
+        addProdBtn->setObjectName(QStringLiteral("addProdBtn"));
+
+        gridLayout->addWidget(addProdBtn, 6, 0, 1, 2);
+
+        stockEmployeeEdit = new QLineEdit(CreateConsumeProduct);
+        stockEmployeeEdit->setObjectName(QStringLiteral("stockEmployeeEdit"));
+        stockEmployeeEdit->setReadOnly(true);
+
+        gridLayout->addWidget(stockEmployeeEdit, 4, 2, 1, 2);
+
+        employeeEdit = new QLineEdit(CreateConsumeProduct);
+        employeeEdit->setObjectName(QStringLiteral("employeeEdit"));
+        employeeEdit->setReadOnly(true);
+
+        gridLayout->addWidget(employeeEdit, 0, 2, 1, 2);
+
+        sumLb = new QLabel(CreateConsumeProduct);
+        sumLb->setObjectName(QStringLiteral("sumLb"));
+
+        gridLayout->addWidget(sumLb, 8, 0, 1, 2);
+
+        currencyCmb = new QComboBox(CreateConsumeProduct);
+        currencyCmb->setObjectName(QStringLiteral("currencyCmb"));
+
+        gridLayout->addWidget(currencyCmb, 9, 2, 1, 1);
+
+        empNamePh = new QLabel(CreateConsumeProduct);
+        empNamePh->setObjectName(QStringLiteral("empNamePh"));
+        empNamePh->setMinimumSize(QSize(100, 0));
+        empNamePh->setFont(font);
+
+        gridLayout->addWidget(empNamePh, 1, 1, 1, 1);
+
+        empStockNamePh = new QLabel(CreateConsumeProduct);
+        empStockNamePh->setObjectName(QStringLiteral("empStockNamePh"));
+        empStockNamePh->setMinimumSize(QSize(100, 0));
+        empStockNamePh->setFont(font);
+
+        gridLayout->addWidget(empStockNamePh, 5, 1, 1, 1);
+
+        empStockSurnameLb = new QLabel(CreateConsumeProduct);
+        empStockSurnameLb->setObjectName(QStringLiteral("empStockSurnameLb"));
+        empStockSurnameLb->setMinimumSize(QSize(50, 0));
+        empStockSurnameLb->setMaximumSize(QSize(50, 16777215));
+
+        gridLayout->addWidget(empStockSurnameLb, 5, 2, 1, 1);
+
+        empStockPhoneLb = new QLabel(CreateConsumeProduct);
+        empStockPhoneLb->setObjectName(QStringLiteral("empStockPhoneLb"));
+
+        gridLayout->addWidget(empStockPhoneLb, 5, 4, 1, 1);
+
+        empStockPhonePh = new QLabel(CreateConsumeProduct);
+        empStockPhonePh->setObjectName(QStringLiteral("empStockPhonePh"));
+        empStockPhonePh->setMinimumSize(QSize(100, 0));
+        empStockPhonePh->setFont(font);
+
+        gridLayout->addWidget(empStockPhonePh, 5, 5, 1, 1);
+
+        empPhoneLb = new QLabel(CreateConsumeProduct);
+        empPhoneLb->setObjectName(QStringLiteral("empPhoneLb"));
+
+        gridLayout->addWidget(empPhoneLb, 1, 4, 1, 1);
+
+        dateLb = new QLabel(CreateConsumeProduct);
+        dateLb->setObjectName(QStringLiteral("dateLb"));
+
+        gridLayout->addWidget(dateLb, 2, 0, 1, 2);
+
+        empSurnameLb = new QLabel(CreateConsumeProduct);
+        empSurnameLb->setObjectName(QStringLiteral("empSurnameLb"));
+        empSurnameLb->setMinimumSize(QSize(50, 0));
+        empSurnameLb->setMaximumSize(QSize(50, 16777215));
+
+        gridLayout->addWidget(empSurnameLb, 1, 2, 1, 1);
+
+        sumEdit = new QLineEdit(CreateConsumeProduct);
+        sumEdit->setObjectName(QStringLiteral("sumEdit"));
+        sumEdit->setReadOnly(true);
+
+        gridLayout->addWidget(sumEdit, 8, 2, 1, 1);
 
         statusWidget = new QWidget(CreateConsumeProduct);
         statusWidget->setObjectName(QStringLiteral("statusWidget"));
@@ -205,18 +306,29 @@ public:
 
         horizontalLayout_3->addWidget(statusEdit);
 
+        statusLb = new QLabel(statusWidget);
+        statusLb->setObjectName(QStringLiteral("statusLb"));
 
-        gridLayout->addWidget(statusWidget, 5, 0, 1, 3);
+        horizontalLayout_3->addWidget(statusLb);
 
-        QWidget::setTabOrder(employeeBtn, employeeEdit);
-        QWidget::setTabOrder(employeeEdit, stockEmployeeBtn);
-        QWidget::setTabOrder(stockEmployeeBtn, stockEmployeeEdit);
-        QWidget::setTabOrder(stockEmployeeEdit, addProdBtn);
-        QWidget::setTabOrder(addProdBtn, prodCountEdit);
-        QWidget::setTabOrder(prodCountEdit, sumEdit);
-        QWidget::setTabOrder(sumEdit, currencyBtn);
-        QWidget::setTabOrder(currencyBtn, currencyEdit);
-        QWidget::setTabOrder(currencyEdit, okBtn);
+        statusPh = new QLabel(statusWidget);
+        statusPh->setObjectName(QStringLiteral("statusPh"));
+        statusPh->setMinimumSize(QSize(120, 0));
+        statusPh->setFont(font);
+
+        horizontalLayout_3->addWidget(statusPh);
+
+
+        gridLayout->addWidget(statusWidget, 7, 0, 1, 6);
+
+        currencyLb = new QLabel(CreateConsumeProduct);
+        currencyLb->setObjectName(QStringLiteral("currencyLb"));
+
+        gridLayout->addWidget(currencyLb, 9, 0, 1, 2);
+
+        QWidget::setTabOrder(employeeBtn, stockEmployeeBtn);
+        QWidget::setTabOrder(stockEmployeeBtn, addProdBtn);
+        QWidget::setTabOrder(addProdBtn, okBtn);
         QWidget::setTabOrder(okBtn, cancelBtn);
 
         retranslateUi(CreateConsumeProduct);
@@ -227,23 +339,37 @@ public:
     void retranslateUi(QDialog *CreateConsumeProduct)
     {
         CreateConsumeProduct->setWindowTitle(QApplication::translate("CreateConsumeProduct", "Create/Update consume product", 0));
-        sumLb->setText(QApplication::translate("CreateConsumeProduct", "Total amount:", 0));
-        dateLb->setText(QApplication::translate("CreateConsumeProduct", "Consume product date:", 0));
+        stockEmployeeBtn->setText(QApplication::translate("CreateConsumeProduct", "Select stock employee", 0));
+        empStockSurnamePh->setText(QString());
+        empStockNameLb->setText(QApplication::translate("CreateConsumeProduct", "Name:", 0));
+        empNameLb->setText(QApplication::translate("CreateConsumeProduct", "Name:", 0));
+        empSurnamePh->setText(QString());
+        employeeBtn->setText(QApplication::translate("CreateConsumeProduct", "Select employee", 0));
+        prodCountLb->setText(QApplication::translate("CreateConsumeProduct", "Count of products:", 0));
+        execDateLb->setText(QApplication::translate("CreateConsumeProduct", "Execution date:", 0));
+        okBtn->setText(QApplication::translate("CreateConsumeProduct", "OK", 0));
+        cancelBtn->setText(QApplication::translate("CreateConsumeProduct", "Cancel", 0));
+        empPhonePh->setText(QString());
+        addProdBtn->setText(QApplication::translate("CreateConsumeProduct", "Add products", 0));
 #ifndef QT_NO_TOOLTIP
         stockEmployeeEdit->setToolTip(QApplication::translate("CreateConsumeProduct", "<html><head/><body><p>Enter employee ID</p></body></html>", 0));
 #endif // QT_NO_TOOLTIP
-        okBtn->setText(QApplication::translate("CreateConsumeProduct", "OK", 0));
-        cancelBtn->setText(QApplication::translate("CreateConsumeProduct", "Cancel", 0));
 #ifndef QT_NO_TOOLTIP
         employeeEdit->setToolTip(QApplication::translate("CreateConsumeProduct", "<html><head/><body><p>Enter client ID</p></body></html>", 0));
 #endif // QT_NO_TOOLTIP
-        prodCountLb->setText(QApplication::translate("CreateConsumeProduct", "Count of products:", 0));
-        currencyBtn->setText(QApplication::translate("CreateConsumeProduct", "Select currency", 0));
-        employeeBtn->setText(QApplication::translate("CreateConsumeProduct", "Select employee", 0));
-        addProdBtn->setText(QApplication::translate("CreateConsumeProduct", "Add products", 0));
-        execDateLb->setText(QApplication::translate("CreateConsumeProduct", "Execution date:", 0));
-        stockEmployeeBtn->setText(QApplication::translate("CreateConsumeProduct", "Select stock employee", 0));
+        sumLb->setText(QApplication::translate("CreateConsumeProduct", "Total amount:", 0));
+        empNamePh->setText(QString());
+        empStockNamePh->setText(QString());
+        empStockSurnameLb->setText(QApplication::translate("CreateConsumeProduct", "Surname:", 0));
+        empStockPhoneLb->setText(QApplication::translate("CreateConsumeProduct", "Phone:", 0));
+        empStockPhonePh->setText(QString());
+        empPhoneLb->setText(QApplication::translate("CreateConsumeProduct", "Phone:", 0));
+        dateLb->setText(QApplication::translate("CreateConsumeProduct", "Consume product date:", 0));
+        empSurnameLb->setText(QApplication::translate("CreateConsumeProduct", "Surname:", 0));
         statusBtn->setText(QApplication::translate("CreateConsumeProduct", "Change status", 0));
+        statusLb->setText(QApplication::translate("CreateConsumeProduct", "Status name:", 0));
+        statusPh->setText(QString());
+        currencyLb->setText(QApplication::translate("CreateConsumeProduct", "Select currency:", 0));
     } // retranslateUi
 
 };

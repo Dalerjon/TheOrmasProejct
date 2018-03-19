@@ -16,7 +16,6 @@ CreateBlcDlg::CreateBlcDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, QWi
 	userEdit->setValidator(vInt);
 	valueEdit->setValidator(vDouble);
 	valueEdit->setMaxLength(17);
-	currencyEdit->setValidator(vInt);
 	if (true == updateFlag)
 	{
 		QObject::connect(okBtn, &QPushButton::released, this, &CreateBlcDlg::EditBalance);
@@ -27,7 +26,7 @@ CreateBlcDlg::CreateBlcDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, QWi
 	}
 	QObject::connect(cancelBtn, &QPushButton::released, this, &CreateBlcDlg::Close);
 	QObject::connect(userBtn, &QPushButton::released, this, &CreateBlcDlg::OpenUserDlg);
-	QObject::connect(currencyBtn, &QPushButton::released, this, &CreateBlcDlg::OpenCurDlg);
+	InitComboBox();
 }
 
 CreateBlcDlg::~CreateBlcDlg()
@@ -45,28 +44,37 @@ void CreateBlcDlg::SetID(int ID, QString childName)
 			if (childName == QString("userForm"))
 			{
 				userEdit->setText(QString::number(ID));
-			}
-			if (childName == QString("currencyForm"))
-			{
-				currencyEdit->setText(QString::number(ID));
+				BusinessLayer::User user;
+				if (user.GetUserByID(dialogBL->GetOrmasDal(), ID, errorMessage))
+				{
+					namePh->setText(user.GetName().c_str());
+					surnamePh->setText(user.GetSurname().c_str());
+					phonePh->setText(user.GetPhone().c_str());
+				}
 			}
 		}
 	}
 }
 
-void CreateBlcDlg::SetBalanceParams(int bUserID, double bValue, int bCurrencyID, int id)
+void CreateBlcDlg::SetBalanceParams(int bUserID, int bAccountID, int id)
 {
 	balance->SetUserID(bUserID);
-	balance->SetValue(bValue);
-	balance->SetCurrencyID(bCurrencyID);
+	balance->SetAccountID(bAccountID);
 	balance->SetID(id);
 }
 
-void CreateBlcDlg::FillEditElements(int bUserID, double bValue, int bCurrencyID)
+void CreateBlcDlg::FillEditElements(int bUserID, int bAccountID)
 {
 	userEdit->setText(QString::number(bUserID));
 	valueEdit->setText(QString::number(bValue));
-	currencyEdit->setText(QString::number(bCurrencyID));
+	currencyCmb->setCurrentIndex(currencyCmb->findData(QVariant(bCurrencyID)));
+	BusinessLayer::User user;
+	if (user.GetUserByID(dialogBL->GetOrmasDal(), bUserID, errorMessage))
+	{
+		namePh->setText(user.GetName().c_str());
+		surnamePh->setText(user.GetSurname().c_str());
+		phonePh->setText(user.GetPhone().c_str());
+	}
 }
 
 bool CreateBlcDlg::FillDlgElements(QTableView* bTable)
@@ -92,10 +100,10 @@ bool CreateBlcDlg::FillDlgElements(QTableView* bTable)
 void CreateBlcDlg::CreateBalance()
 {
 	errorMessage.clear();
-	if (0 != userEdit->text().toInt() && 0 != currencyEdit->text().toInt())
+	if (0 != userEdit->text().toInt() && !currencyCmb->currentText().isEmpty())
 	{
 		DataForm *parentDataForm = (DataForm*)parentWidget();
-		SetBalanceParams(userEdit->text().toInt(), valueEdit->text().toDouble(), currencyEdit->text().toInt());
+		SetBalanceParams(userEdit->text().toInt(), valueEdit->text().toDouble(), currencyCmb->currentData().toInt());
 		dialogBL->StartTransaction(errorMessage);
 		if (dialogBL->CreateBalance(balance, errorMessage))
 		{
@@ -134,10 +142,11 @@ void CreateBlcDlg::CreateBalance()
 
 			QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
 			itemModel->appendRow(balanceItem);
-			this->close();
+			
 			dialogBL->CommitTransaction(errorMessage);
 			delete user;
 			delete currency;
+			this->close();
 		}
 		else
 		{
@@ -161,13 +170,13 @@ void CreateBlcDlg::CreateBalance()
 void CreateBlcDlg::EditBalance()
 {
 	errorMessage.clear();
-	if (0 != userEdit->text().toInt() && 0 != currencyEdit->text().toInt())
+	if (0 != userEdit->text().toInt() && !currencyCmb->currentText().isEmpty())
 	{
 		if (balance->GetUserID() != userEdit->text().toInt() || balance->GetValue() != valueEdit->text().toDouble()
-			|| balance->GetCurrencyID() != currencyEdit->text().toInt())
+			|| balance->GetCurrencyID() != currencyCmb->currentData().toInt())
 		{
 			DataForm *parentDataForm = (DataForm*)parentWidget();
-			SetBalanceParams(userEdit->text().toInt(), valueEdit->text().toDouble(), currencyEdit->text().toInt(), balance->GetID());
+			SetBalanceParams(userEdit->text().toInt(), valueEdit->text().toDouble(), currencyCmb->currentData().toInt(), balance->GetID());
 			dialogBL->StartTransaction(errorMessage);
 			if (dialogBL->UpdateBalance(balance, errorMessage))
 			{
@@ -204,10 +213,11 @@ void CreateBlcDlg::EditBalance()
 				itemModel->item(mIndex.row(), 5)->setText(QString::number(balance->GetUserID()));
 				itemModel->item(mIndex.row(), 6)->setText(QString::number(balance->GetCurrencyID()));
 				emit itemModel->dataChanged(mIndex, mIndex);
-				this->close();
+				
 				dialogBL->CommitTransaction(errorMessage);
 				delete user;
 				delete currency;
+				this->close();
 			}
 			else
 			{
@@ -279,46 +289,14 @@ void CreateBlcDlg::OpenUserDlg()
 	}
 }
 
-void CreateBlcDlg::OpenCurDlg()
+void CreateBlcDlg::InitComboBox()
 {
-	this->hide();
-	this->setModal(false);
-	this->show();
-	DataForm *productParent = (DataForm *)parent();
-	MainForm *mainForm = (MainForm *)productParent->GetParent();
-	QString message = tr("Loading...");
-	mainForm->statusBar()->showMessage(message);
-	DataForm *dForm = new DataForm(dialogBL, mainForm);
-	dForm->setWindowTitle(tr("Currencies"));
-	dForm->hide();
-	dForm->setWindowModality(Qt::WindowModal);
-	dForm->FillTable<BusinessLayer::Currency>(errorMessage);
-	if (errorMessage.empty())
+	std::vector<BusinessLayer::Currency> curVector = dialogBL->GetAllDataForClass<BusinessLayer::Currency>(errorMessage);
+	if (!curVector.empty())
 	{
-		dForm->createBlcDlg = this;
-		dForm->setObjectName("currencyForm");
-		dForm->QtConnect<BusinessLayer::Currency>();
-		QMdiSubWindow *currencyWindow = new QMdiSubWindow;
-		currencyWindow->setWidget(dForm);
-		currencyWindow->setAttribute(Qt::WA_DeleteOnClose);
-		mainForm->mdiArea->addSubWindow(currencyWindow);
-		dForm->topLevelWidget();
-		dForm->activateWindow();
-		QApplication::setActiveWindow(dForm);
-		dForm->show();
-		dForm->raise();
-		QString message = tr("All currency are shown");
-		mainForm->statusBar()->showMessage(message);
+		for (unsigned int i = 0; i < curVector.size(); i++)
+		{
+			currencyCmb->addItem(curVector[i].GetShortName().c_str(), QVariant(curVector[i].GetID()));
+		}
 	}
-	else
-	{
-		delete dForm;
-		QString message = tr("End with error!");
-		mainForm->statusBar()->showMessage(message);
-		QMessageBox::information(NULL, QString(tr("Warning")),
-			QString(tr(errorMessage.c_str())),
-			QString(tr("Ok")));
-		errorMessage = "";
-	}
-
 }

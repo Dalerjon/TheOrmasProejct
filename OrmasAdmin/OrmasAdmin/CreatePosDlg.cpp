@@ -64,8 +64,9 @@ void CreatePosDlg::CreatePosition()
 			PositionItem << new QStandardItem(QString::number(position->GetID())) << new QStandardItem(position->GetName().c_str());
 			QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
 			itemModel->appendRow(PositionItem);
-			this->close();
+			
 			dialogBL->CommitTransaction(errorMessage);
+			this->close();
 		}
 		else
 		{
@@ -100,8 +101,9 @@ void CreatePosDlg::EditPosition()
 				QModelIndex mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
 				itemModel->item(mIndex.row(), 1)->setText(position->GetName().c_str());
 				emit itemModel->dataChanged(mIndex, mIndex);
-				this->close();
+				
 				dialogBL->CommitTransaction(errorMessage);
+				this->close();
 			}
 			else
 			{

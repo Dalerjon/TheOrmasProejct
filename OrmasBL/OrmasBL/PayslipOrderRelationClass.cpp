@@ -68,8 +68,7 @@ namespace BusinessLayer{
 	{
 		if (ormasDal.DeletePayslipOrder(payslipID, orderID, errorMessage))
 		{
-			orderID = 0;
-			payslipID = 0;
+			Clear();
 			return true;
 		}
 		if (errorMessage.empty())

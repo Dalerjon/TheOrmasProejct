@@ -15,7 +15,6 @@ CreateRfdDlg::CreateRfdDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, QWi
 	vInt = new QIntValidator(0, 1000000000, this);
 	userEdit->setValidator(vInt);
 	valueEdit->setValidator(vDouble);
-	currencyEdit->setValidator(vInt);
 	valueEdit->setMaxLength(17);
 	if (true == updateFlag)
 	{
@@ -28,7 +27,7 @@ CreateRfdDlg::CreateRfdDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, QWi
 	}
 	QObject::connect(cancelBtn, &QPushButton::released, this, &CreateRfdDlg::Close);
 	QObject::connect(userBtn, &QPushButton::released, this, &CreateRfdDlg::OpenUserDlg);
-	QObject::connect(currencyBtn, &QPushButton::released, this, &CreateRfdDlg::OpenCurDlg);
+	InitComboBox();
 }
 
 CreateRfdDlg::~CreateRfdDlg()
@@ -47,9 +46,12 @@ void CreateRfdDlg::SetID(int ID, QString childName)
 			{
 				userEdit->setText(QString::number(ID));
 			}
-			if (childName == QString("currencyForm"))
+			BusinessLayer::User user;
+			if (user.GetUserByID(dialogBL->GetOrmasDal(), ID, errorMessage))
 			{
-				currencyEdit->setText(QString::number(ID));
+				namePh->setText(user.GetName().c_str());
+				surnamePh->setText(user.GetSurname().c_str());
+				phonePh->setText(user.GetPhone().c_str());
 			}
 		}
 	}
@@ -57,11 +59,11 @@ void CreateRfdDlg::SetID(int ID, QString childName)
 
 void CreateRfdDlg::SetRefundParams(QString pDate, double pValue, int pUserID, int pCurrencyID, int id)
 {
-	Refund->SetDate(pDate.toUtf8().constData());
-	Refund->SetValue(pValue);
-	Refund->SetUserID(pUserID);
-	Refund->SetCurrencyID(pCurrencyID);
-	Refund->SetID(id);
+	refund->SetDate(pDate.toUtf8().constData());
+	refund->SetValue(pValue);
+	refund->SetUserID(pUserID);
+	refund->SetCurrencyID(pCurrencyID);
+	refund->SetID(id);
 }
 
 void CreateRfdDlg::FillEditElements(QString pDate, double pValue, int pUserID, int pCurrencyID)
@@ -69,7 +71,14 @@ void CreateRfdDlg::FillEditElements(QString pDate, double pValue, int pUserID, i
 	dateEdit->setDateTime(QDateTime::fromString(pDate, "yyyy.MM.dd hh:mm:ss"));
 	valueEdit->setText(QString::number(pValue));
 	userEdit->setText(QString::number(pUserID));
-	currencyEdit->setText(QString::number(pCurrencyID));
+	currencyCmb->setCurrentIndex(currencyCmb->findData(QVariant(pCurrencyID)));
+	BusinessLayer::User user;
+	if (user.GetUserByID(dialogBL->GetOrmasDal(), pUserID, errorMessage))
+	{
+		namePh->setText(user.GetName().c_str());
+		surnamePh->setText(user.GetSurname().c_str());
+		phonePh->setText(user.GetPhone().c_str());
+	}
 }
 
 bool CreateRfdDlg::FillDlgElements(QTableView* pTable)
@@ -97,16 +106,16 @@ bool CreateRfdDlg::FillDlgElements(QTableView* pTable)
 void CreateRfdDlg::CreateRefund()
 {
 	errorMessage.clear();
-	if (0 != userEdit->text().toInt() && 0.0 != valueEdit->text().toDouble() && 0 != currencyEdit->text().toInt()
+	if (0 != userEdit->text().toInt() && 0.0 != valueEdit->text().toDouble() && !currencyCmb->currentText().isEmpty()
 		&& !dateEdit->text().isEmpty())
 	{
 		DataForm *parentDataForm = (DataForm*)parentWidget();
-		SetRefundParams(dateEdit->text(), valueEdit->text().toDouble(), userEdit->text().toInt(), currencyEdit->text().toInt());
+		SetRefundParams(dateEdit->text(), valueEdit->text().toDouble(), userEdit->text().toInt(), currencyCmb->currentData().toInt());
 		dialogBL->StartTransaction(errorMessage);
-		if (dialogBL->CreateRefund(Refund, errorMessage))
+		if (dialogBL->CreateRefund(refund, errorMessage))
 		{
 			BusinessLayer::Currency *currency = new BusinessLayer::Currency;
-			if (!currency->GetCurrencyByID(dialogBL->GetOrmasDal(), Refund->GetCurrencyID(), errorMessage))
+			if (!currency->GetCurrencyByID(dialogBL->GetOrmasDal(), refund->GetCurrencyID(), errorMessage))
 			{
 				dialogBL->CancelTransaction(errorMessage);
 				QMessageBox::information(NULL, QString(tr("Warning")),
@@ -116,18 +125,19 @@ void CreateRfdDlg::CreateRefund()
 				delete currency;
 				return;
 			}
-			QList<QStandardItem*> RefundItem;
-			RefundItem << new QStandardItem(QString::number(Refund->GetID()))
-				<< new QStandardItem(Refund->GetDate().c_str())
-				<< new QStandardItem(QString::number(Refund->GetValue()))
+			QList<QStandardItem*> refundItem;
+			refundItem << new QStandardItem(QString::number(refund->GetID()))
+				<< new QStandardItem(refund->GetDate().c_str())
+				<< new QStandardItem(QString::number(refund->GetValue()))
 				<< new QStandardItem(currency->GetShortName().c_str())
-				<< new QStandardItem(QString::number(Refund->GetUserID()))
-				<< new QStandardItem(QString::number(Refund->GetCurrencyID()));
+				<< new QStandardItem(QString::number(refund->GetUserID()))
+				<< new QStandardItem(QString::number(refund->GetCurrencyID()));
 			QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
-			itemModel->appendRow(RefundItem);
-			this->close();
+			itemModel->appendRow(refundItem);
+			
 			dialogBL->CommitTransaction(errorMessage);
 			delete currency;
+			this->close();
 		}
 		else
 		{
@@ -152,19 +162,19 @@ void CreateRfdDlg::CreateRefund()
 void CreateRfdDlg::EditRefund()
 {
 	errorMessage.clear();
-	if (0 != userEdit->text().toInt() && 0.0 != valueEdit->text().toDouble() && 0 != currencyEdit->text().toInt()
+	if (0 != userEdit->text().toInt() && 0.0 != valueEdit->text().toDouble() && !currencyCmb->currentText().isEmpty()
 		&& !dateEdit->text().isEmpty())
 	{
-		if (QString(Refund->GetDate().c_str()) != dateEdit->text() || Refund->GetUserID() != userEdit->text().toInt()
-			|| Refund->GetValue() != valueEdit->text().toDouble() || Refund->GetCurrencyID() != currencyEdit->text().toInt())
+		if (QString(refund->GetDate().c_str()) != dateEdit->text() || refund->GetUserID() != userEdit->text().toInt()
+			|| refund->GetValue() != valueEdit->text().toDouble() || refund->GetCurrencyID() != currencyCmb->currentData().toInt())
 		{
 			DataForm *parentDataForm = (DataForm*)parentWidget();
-			SetRefundParams(dateEdit->text(), valueEdit->text().toDouble(), userEdit->text().toInt(), currencyEdit->text().toInt(), Refund->GetID());
+			SetRefundParams(dateEdit->text(), valueEdit->text().toDouble(), userEdit->text().toInt(), currencyCmb->currentData().toInt(), refund->GetID());
 			dialogBL->StartTransaction(errorMessage);
-			if (dialogBL->UpdateRefund(Refund, errorMessage))
+			if (dialogBL->UpdateRefund(refund, errorMessage))
 			{
 				BusinessLayer::Currency *currency = new BusinessLayer::Currency;
-				if (!currency->GetCurrencyByID(dialogBL->GetOrmasDal(), Refund->GetCurrencyID(), errorMessage))
+				if (!currency->GetCurrencyByID(dialogBL->GetOrmasDal(), refund->GetCurrencyID(), errorMessage))
 				{
 					dialogBL->CancelTransaction(errorMessage);
 					QMessageBox::information(NULL, QString(tr("Warning")),
@@ -176,15 +186,16 @@ void CreateRfdDlg::EditRefund()
 				}
 				QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
 				QModelIndex mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
-				itemModel->item(mIndex.row(), 1)->setText(Refund->GetDate().c_str());
-				itemModel->item(mIndex.row(), 2)->setText(QString::number(Refund->GetValue()));
+				itemModel->item(mIndex.row(), 1)->setText(refund->GetDate().c_str());
+				itemModel->item(mIndex.row(), 2)->setText(QString::number(refund->GetValue()));
 				itemModel->item(mIndex.row(), 3)->setText(currency->GetShortName().c_str());
-				itemModel->item(mIndex.row(), 4)->setText(QString::number(Refund->GetUserID()));
-				itemModel->item(mIndex.row(), 5)->setText(QString::number(Refund->GetCurrencyID()));
+				itemModel->item(mIndex.row(), 4)->setText(QString::number(refund->GetUserID()));
+				itemModel->item(mIndex.row(), 5)->setText(QString::number(refund->GetCurrencyID()));
 				emit itemModel->dataChanged(mIndex, mIndex);
-				this->close();
+				
 				dialogBL->CommitTransaction(errorMessage);
 				delete currency;
+				this->close();
 			}
 			else
 			{
@@ -257,46 +268,14 @@ void CreateRfdDlg::OpenUserDlg()
 	}
 }
 
-void CreateRfdDlg::OpenCurDlg()
+void CreateBlcDlg::InitComboBox()
 {
-	this->hide();
-	this->setModal(false);
-	this->show();
-	DataForm *productParent = (DataForm *)parent();
-	MainForm *mainForm = (MainForm *)productParent->GetParent();
-	QString message = tr("Loading...");
-	mainForm->statusBar()->showMessage(message);
-	DataForm *dForm = new DataForm(dialogBL, mainForm);
-	dForm->setWindowTitle(tr("Currencies"));
-	dForm->hide();
-	dForm->setWindowModality(Qt::WindowModal);
-	dForm->FillTable<BusinessLayer::Currency>(errorMessage);
-	if (errorMessage.empty())
+	std::vector<BusinessLayer::Currency> curVector = dialogBL->GetAllDataForClass<BusinessLayer::Currency>(errorMessage);
+	if (!curVector.empty())
 	{
-		dForm->createRfdDlg = this;
-		dForm->setObjectName("currencyForm");
-		dForm->QtConnect<BusinessLayer::Currency>();
-		QMdiSubWindow *currencyWindow = new QMdiSubWindow;
-		currencyWindow->setWidget(dForm);
-		currencyWindow->setAttribute(Qt::WA_DeleteOnClose);
-		mainForm->mdiArea->addSubWindow(currencyWindow);
-		dForm->topLevelWidget();
-		dForm->activateWindow();
-		QApplication::setActiveWindow(dForm);
-		dForm->show();
-		dForm->raise();
-		QString message = tr("All currency are shown");
-		mainForm->statusBar()->showMessage(message);
+		for (unsigned int i = 0; i < curVector.size(); i++)
+		{
+			currencyCmb->addItem(curVector[i].GetShortName().c_str(), QVariant(curVector[i].GetID()));
+		}
 	}
-	else
-	{
-		delete dForm;
-		QString message = tr("End with error!");
-		mainForm->statusBar()->showMessage(message);
-		QMessageBox::information(NULL, QString(tr("Warning")),
-			QString(tr(errorMessage.c_str())),
-			QString(tr("Ok")));
-		errorMessage = "";
-	}
-
 }

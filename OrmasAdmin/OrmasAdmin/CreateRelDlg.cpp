@@ -14,7 +14,6 @@ CreateRelDlg::CreateRelDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, QWi
 	vInt = new QIntValidator(0, 1000000000, this);
 	user1Edit->setValidator(vInt);
 	user2Edit->setValidator(vInt);
-	relTypeEdit->setValidator(vInt);
 	if (true == updateFlag)
 	{
 		QObject::connect(okBtn, &QPushButton::released, this, &CreateRelDlg::EditRelation);
@@ -26,7 +25,7 @@ CreateRelDlg::CreateRelDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, QWi
 	QObject::connect(cancelBtn, &QPushButton::released, this, &CreateRelDlg::Close);
 	QObject::connect(user1Btn, &QPushButton::released, this, &CreateRelDlg::OpenUser1Dlg);
 	QObject::connect(user2Btn, &QPushButton::released, this, &CreateRelDlg::OpenUser2Dlg);
-	QObject::connect(relTypeBtn, &QPushButton::released, this, &CreateRelDlg::OpenRelTypeDlg);
+	InitComboBox();
 }
 
 CreateRelDlg::~CreateRelDlg()
@@ -44,14 +43,24 @@ void CreateRelDlg::SetID(int ID, QString childName)
 			if (childName == QString("user1Form"))
 			{
 				user1Edit->setText(QString::number(ID));
+				BusinessLayer::User user1;
+				if (user1.GetUserByID(dialogBL->GetOrmasDal(), ID, errorMessage))
+				{
+					user1NamePh->setText(user1.GetName().c_str());
+					user1SurnamePh->setText(user1.GetSurname().c_str());
+					user1PhonePh->setText(user1.GetPhone().c_str());
+				}
 			}
 			if (childName == QString("user2Form"))
 			{
 				user2Edit->setText(QString::number(ID));
-			}
-			if (childName == QString("relTypeForm"))
-			{
-				relTypeEdit->setText(QString::number(ID));
+				BusinessLayer::User user2;
+				if (user2.GetUserByID(dialogBL->GetOrmasDal(), ID, errorMessage))
+				{
+					user2NamePh->setText(user2.GetName().c_str());
+					user2SurnamePh->setText(user2.GetSurname().c_str());
+					user2PhonePh->setText(user2.GetPhone().c_str());
+				}
 			}
 		}
 	}
@@ -69,7 +78,21 @@ void CreateRelDlg::FillEditElements(int rUser1ID, int rUser2ID, int rRelTypeID)
 {
 	user1Edit->setText(QString::number(rUser1ID));
 	user2Edit->setText(QString::number(rUser2ID));
-	relTypeEdit->setText(QString::number(rRelTypeID));
+	relTypeCmb->setCurrentIndex(relTypeCmb->findData(QVariant(rRelTypeID)));
+	BusinessLayer::User user1;
+	if (user1.GetUserByID(dialogBL->GetOrmasDal(), rUser1ID, errorMessage))
+	{
+		user1NamePh->setText(user1.GetName().c_str());
+		user1SurnamePh->setText(user1.GetSurname().c_str());
+		user1PhonePh->setText(user1.GetPhone().c_str());
+	}
+	BusinessLayer::User user2;
+	if (user2.GetUserByID(dialogBL->GetOrmasDal(), rUser2ID, errorMessage))
+	{
+		user2NamePh->setText(user2.GetName().c_str());
+		user2SurnamePh->setText(user2.GetSurname().c_str());
+		user2PhonePh->setText(user2.GetPhone().c_str());
+	}
 }
 
 bool CreateRelDlg::FillDlgElements(QTableView* bTable)
@@ -77,13 +100,13 @@ bool CreateRelDlg::FillDlgElements(QTableView* bTable)
 	QModelIndex mIndex = bTable->selectionModel()->currentIndex();
 	if (mIndex.row() >= 0)
 	{
-		SetRelationParams(bTable->model()->data(bTable->model()->index(mIndex.row(), 1)).toInt(),
-			bTable->model()->data(bTable->model()->index(mIndex.row(), 2)).toInt(),
-			bTable->model()->data(bTable->model()->index(mIndex.row(), 3)).toInt(),
+		SetRelationParams(bTable->model()->data(bTable->model()->index(mIndex.row(), 8)).toInt(),
+			bTable->model()->data(bTable->model()->index(mIndex.row(), 9)).toInt(),
+			bTable->model()->data(bTable->model()->index(mIndex.row(), 10)).toInt(),
 			bTable->model()->data(bTable->model()->index(mIndex.row(), 0)).toInt());
-		FillEditElements(bTable->model()->data(bTable->model()->index(mIndex.row(), 1)).toInt(),
-			bTable->model()->data(bTable->model()->index(mIndex.row(), 2)).toInt(),
-			bTable->model()->data(bTable->model()->index(mIndex.row(), 3)).toInt());
+		FillEditElements(bTable->model()->data(bTable->model()->index(mIndex.row(), 8)).toInt(),
+			bTable->model()->data(bTable->model()->index(mIndex.row(), 8)).toInt(),
+			bTable->model()->data(bTable->model()->index(mIndex.row(), 10)).toInt());
 		return true;
 	}
 	else
@@ -95,20 +118,53 @@ bool CreateRelDlg::FillDlgElements(QTableView* bTable)
 void CreateRelDlg::CreateRelation()
 {
 	errorMessage.clear();
-	if (0 != user1Edit->text().toInt() || 0 != user2Edit->text().toInt() || 0 != relTypeEdit->text().toInt())
+	if (0 != user1Edit->text().toInt() || 0 != user2Edit->text().toInt() || !relTypeCmb->currentText().isEmpty())
 	{
 		DataForm *parentDataForm = (DataForm*)parentWidget();
-		SetRelationParams(user1Edit->text().toInt(), user2Edit->text().toInt(), relTypeEdit->text().toInt());
+		SetRelationParams(user1Edit->text().toInt(), user2Edit->text().toInt(), relTypeCmb->currentData().toInt());
 		dialogBL->StartTransaction(errorMessage);
 		if (dialogBL->CreateRelation(relation, errorMessage))
 		{
+			BusinessLayer::User *user1 = new BusinessLayer::User();
+			BusinessLayer::User *user2 = new BusinessLayer::User();
+			BusinessLayer::RelationType *rType = new BusinessLayer::RelationType();
+			if (!user1->GetUserByID(dialogBL->GetOrmasDal(), relation->GetUser1ID(), errorMessage)
+				|| !user2->GetUserByID(dialogBL->GetOrmasDal(), relation->GetUser2ID(), errorMessage)
+				|| !rType->GetRelationTypeByID(dialogBL->GetOrmasDal(), relation->GetRelationTypeID(), errorMessage))
+			{
+					dialogBL->CancelTransaction(errorMessage);
+					dialogBL->CancelTransaction(errorMessage);
+					QMessageBox::information(NULL, QString(tr("Warning")),
+						QString(tr(errorMessage.c_str())),
+						QString(tr("Ok")));
+
+					errorMessage.clear();
+					delete user1;
+					delete user2;
+					delete rType;
+					return;
+			}
 			QList<QStandardItem*> relationItem;
-			relationItem << new QStandardItem(QString::number(relation->GetID())) << new QStandardItem(QString::number(relation->GetUser1ID()))
-				<< new QStandardItem(QString::number(relation->GetUser2ID())) << new QStandardItem(QString::number(relation->GetRelationTypeID()));
+			relationItem << new QStandardItem(QString::number(relation->GetID())) 
+				<< new QStandardItem(user1->GetName().c_str())
+				<< new QStandardItem(user1->GetSurname().c_str())
+				<< new QStandardItem(user1->GetPhone().c_str())
+				<< new QStandardItem(rType->GetName().c_str())
+				<< new QStandardItem(user2->GetName().c_str())
+				<< new QStandardItem(user2->GetSurname().c_str())
+				<< new QStandardItem(user2->GetPhone().c_str())
+				<< new QStandardItem(QString::number(relation->GetUser1ID()))
+				<< new QStandardItem(QString::number(relation->GetUser2ID())) 
+				<< new QStandardItem(QString::number(relation->GetRelationTypeID()));
 			QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
 			itemModel->appendRow(relationItem);
-			this->close();
+			
 			dialogBL->CommitTransaction(errorMessage);
+
+			delete user1;
+			delete user2;
+			delete rType;
+			this->close();
 		}
 		else
 		{
@@ -132,18 +188,44 @@ void CreateRelDlg::CreateRelation()
 void CreateRelDlg::EditRelation()
 {
 	errorMessage.clear();
-	if(0 != user1Edit->text().toInt() || 0 != user2Edit->text().toInt() || 0 != relTypeEdit->text().toInt())
+	if (0 != user1Edit->text().toInt() || 0 != user2Edit->text().toInt() || !relTypeCmb->currentText().isEmpty())
 	{
 		if (relation->GetUser1ID() != user1Edit->text().toInt() || relation->GetUser2ID() != user2Edit->text().toInt()
-			|| relation->GetRelationTypeID() != relTypeEdit->text().toInt())
+			|| relation->GetRelationTypeID() != relTypeCmb->currentData().toInt())
 		{
 			DataForm *parentDataForm = (DataForm*)parentWidget();
-			SetRelationParams(user1Edit->text().toInt(), user2Edit->text().toInt(), relTypeEdit->text().toInt(), relation->GetID());
+			SetRelationParams(user1Edit->text().toInt(), user2Edit->text().toInt(), relTypeCmb->currentData().toInt(), relation->GetID());
 			dialogBL->StartTransaction(errorMessage);
 			if (dialogBL->UpdateRelation(relation, errorMessage))
 			{
+				BusinessLayer::User *user1 = new BusinessLayer::User();
+				BusinessLayer::User *user2 = new BusinessLayer::User();
+				BusinessLayer::RelationType *rType = new BusinessLayer::RelationType();
+				if (!user1->GetUserByID(dialogBL->GetOrmasDal(), relation->GetUser1ID(), errorMessage)
+					|| !user2->GetUserByID(dialogBL->GetOrmasDal(), relation->GetUser2ID(), errorMessage)
+					|| !rType->GetRelationTypeByID(dialogBL->GetOrmasDal(), relation->GetRelationTypeID(), errorMessage))
+				{
+					dialogBL->CancelTransaction(errorMessage);
+					dialogBL->CancelTransaction(errorMessage);
+					QMessageBox::information(NULL, QString(tr("Warning")),
+						QString(tr(errorMessage.c_str())),
+						QString(tr("Ok")));
+
+					errorMessage.clear();
+					delete user1;
+					delete user2;
+					delete rType;
+					return;
+				}
 				QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
 				QModelIndex mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
+				itemModel->item(mIndex.row(), 1)->setText(user1->GetName().c_str());
+				itemModel->item(mIndex.row(), 1)->setText(user1->GetSurname().c_str());
+				itemModel->item(mIndex.row(), 1)->setText(user1->GetPhone().c_str());
+				itemModel->item(mIndex.row(), 1)->setText(rType->GetName().c_str());
+				itemModel->item(mIndex.row(), 1)->setText(user2->GetName().c_str());
+				itemModel->item(mIndex.row(), 1)->setText(user2->GetSurname().c_str());
+				itemModel->item(mIndex.row(), 1)->setText(user2->GetPhone().c_str());
 				itemModel->item(mIndex.row(), 1)->setText(QString::number(relation->GetUser1ID()));
 				itemModel->item(mIndex.row(), 2)->setText(QString::number(relation->GetUser1ID()));
 				itemModel->item(mIndex.row(), 3)->setText(QString::number(relation->GetRelationTypeID()));
@@ -264,46 +346,14 @@ void CreateRelDlg::OpenUser2Dlg()
 	}
 }
 
-void CreateRelDlg::OpenRelTypeDlg()
+void CreateRelDlg::InitComboBox()
 {
-	this->hide();
-	this->setModal(false);
-	this->show();
-	DataForm *productParent = (DataForm *)parent();
-	MainForm *mainForm = (MainForm *)productParent->GetParent();
-	QString message = tr("Loading...");
-	mainForm->statusBar()->showMessage(message);
-	DataForm *dForm = new DataForm(dialogBL, mainForm);
-	dForm->setWindowTitle(tr("Relation types"));
-	dForm->hide();
-	dForm->setWindowModality(Qt::WindowModal);
-	dForm->FillTable<BusinessLayer::RelationType>(errorMessage);
-	if (errorMessage.empty())
+	std::vector<BusinessLayer::RelationType> relTypeVector = dialogBL->GetAllDataForClass<BusinessLayer::RelationType>(errorMessage);
+	if (!relTypeVector.empty())
 	{
-		dForm->createRelDlg = this;
-		dForm->setObjectName("relTypeForm");
-		dForm->QtConnect<BusinessLayer::RelationType>();
-		QMdiSubWindow *relTypeWindow = new QMdiSubWindow;
-		relTypeWindow->setWidget(dForm);
-		relTypeWindow->setAttribute(Qt::WA_DeleteOnClose);
-		mainForm->mdiArea->addSubWindow(relTypeWindow);
-		dForm->topLevelWidget();
-		dForm->activateWindow();
-		QApplication::setActiveWindow(dForm);
-		dForm->show();
-		dForm->raise();
-		QString message = tr("All relation types are shown");
-		mainForm->statusBar()->showMessage(message);
+		for (unsigned int i = 0; i < relTypeVector.size(); i++)
+		{
+			relTypeCmb->addItem(relTypeVector[i].GetName().c_str(), QVariant(relTypeVector[i].GetID()));
+		}
 	}
-	else
-	{
-		delete dForm;
-		QString message = tr("End with error!");
-		mainForm->statusBar()->showMessage(message);
-		QMessageBox::information(NULL, QString(tr("Warning")),
-			QString(tr(errorMessage.c_str())),
-			QString(tr("Ok")));
-		errorMessage = "";
-	}
-
 }

@@ -8,11 +8,10 @@ namespace BusinessLayer{
 	protected:	
 		int id = 0;
 		int userID = 0;
-		double value = 0.0;
-		int currencyID = 0;
+		int accountID = 0;
 	public:
 		Balance();
-		Balance(int bID, int uID, double bValue, int cID) :id(bID),userID(uID),value(bValue),currencyID(cID){};
+		Balance(int bID, int uID, int aID) :id(bID),userID(uID),accountID(aID){};
 		Balance(DataLayer::balancesCollection);
 		~Balance(){};
 
@@ -20,21 +19,19 @@ namespace BusinessLayer{
 		//Balance class Accessors
 		int GetID();
 		int GetUserID();
-		double GetValue();
-		int GetCurrencyID();
+		int GetAccountID();
 
 		//Balance class Mutators
 		void SetID(int);
 		void SetUserID(int);
-		void SetValue(double);
-		void SetCurrencyID(int);
+		void SetAccountID(int);
 
 		// Create, delete and update balance
 		bool CreateBalance(DataLayer::OrmasDal &ormasDal, std::string& errorMessage);
 		bool UpdateBalance(DataLayer::OrmasDal &ormasDal, std::string& errorMessage);
 		bool DeleteBalance(DataLayer::OrmasDal &ormasDal, std::string& errorMessage);
-		bool CreateBalance(DataLayer::OrmasDal &ormasDal, int uID, double bValue, int cID, std::string& errorMessage);
-		bool UpdateBalance(DataLayer::OrmasDal &ormasDal, int uID, double bValue, int cID, std::string& errorMessage);
+		bool CreateBalance(DataLayer::OrmasDal &ormasDal, int uID, int aID, std::string& errorMessage);
+		bool UpdateBalance(DataLayer::OrmasDal &ormasDal, int uID, int aID, std::string& errorMessage);
 
 		//Generate filter string for class
 		std::string GenerateFilter(DataLayer::OrmasDal& ormasDal);
@@ -42,7 +39,7 @@ namespace BusinessLayer{
 		bool IsEmpty();
 		void Clear();
 	private:
-		bool IsDuplicate(DataLayer::OrmasDal& ormasDal, int uID, int cID, std::string& errorMessage);
+		bool IsDuplicate(DataLayer::OrmasDal& ormasDal, int uID, int aID, std::string& errorMessage);
 		bool IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string& errorMessage);
 	};
 }

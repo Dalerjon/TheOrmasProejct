@@ -17,7 +17,6 @@ CreateConPDlg::CreateConPDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, Q
 	stockEmployeeEdit->setValidator(vInt);
 	prodCountEdit->setValidator(vInt);
 	statusEdit->setValidator(vInt);
-	currencyEdit->setValidator(vInt);
 	sumEdit->setValidator(vDouble);
 	sumEdit->setMaxLength(17);
 	dialogBL->StartTransaction(errorMessage);
@@ -35,7 +34,6 @@ CreateConPDlg::CreateConPDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, Q
 		prodCountEdit->setText("0");
 		statusEdit->setText("0");
 		sumEdit->setText("0");
-		currencyEdit->setText("0");
 		dateEdit->setDateTime(QDateTime::currentDateTime());
 		QObject::connect(okBtn, &QPushButton::released, this, &CreateConPDlg::CreateConsumeProduct);
 	}
@@ -43,10 +41,10 @@ CreateConPDlg::CreateConPDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, Q
 	QObject::connect(employeeBtn, &QPushButton::released, this, &CreateConPDlg::OpenEmpDlg);
 	QObject::connect(statusBtn, &QPushButton::released, this, &CreateConPDlg::OpenStsDlg);
 	QObject::connect(stockEmployeeBtn, &QPushButton::released, this, &CreateConPDlg::OpenSkEmpDlg);
-	QObject::connect(currencyBtn, &QPushButton::released, this, &CreateConPDlg::OpenCurDlg);
 	QObject::connect(addProdBtn, &QPushButton::released, this, &CreateConPDlg::OpenConPListDlg);
 	QObject::connect(statusEdit, &QLineEdit::textChanged, this, &CreateConPDlg::StatusWasChenged);
 	QObject::connect(this, SIGNAL(CloseCreatedForms()), ((MainForm*)((DataForm*)parent)->GetParent()), SLOT(CloseChildsByName()));
+	InitComboBox();
 }
 
 CreateConPDlg::~CreateConPDlg()
@@ -81,7 +79,26 @@ void CreateConPDlg::FillEditElements(int cEmployeeID, QString cDate, QString cEx
 	prodCountEdit->setText(QString::number(cCount));
 	sumEdit->setText(QString::number(cSum));
 	statusEdit->setText(QString::number(cStatusID));
-	currencyEdit->setText(QString::number(cCurrencyID));
+	currencyCmb->setCurrentIndex(currencyCmb->findData(QVariant(cCurrencyID)));
+	BusinessLayer::User user1;
+	if (user1.GetUserByID(dialogBL->GetOrmasDal(), cEmployeeID, errorMessage))
+	{
+		empNamePh->setText(user1.GetName().c_str());
+		empSurnamePh->setText(user1.GetSurname().c_str());
+		empPhonePh->setText(user1.GetPhone().c_str());
+	}
+	BusinessLayer::User user2;
+	if (user2.GetUserByID(dialogBL->GetOrmasDal(), cStockEmployeeID, errorMessage))
+	{
+		empStockNamePh->setText(user2.GetName().c_str());
+		empStockSurnamePh->setText(user2.GetSurname().c_str());
+		empStockPhonePh->setText(user2.GetPhone().c_str());
+	}
+	BusinessLayer::Status status;
+	if (status.GetStatusByID(dialogBL->GetOrmasDal(), cStatusID, errorMessage))
+	{
+		statusPh->setText(status.GetName().c_str());
+	}
 }
 
 void CreateConPDlg::SetID(int ID, QString childName)
@@ -90,21 +107,36 @@ void CreateConPDlg::SetID(int ID, QString childName)
 	{
 		if (0 != childName.length())
 		{
-			if (childName == QString("clientForm"))
+			if (childName == QString("employeeForm"))
 			{
 				employeeEdit->setText(QString::number(ID));
+				BusinessLayer::User user;
+				if (user.GetUserByID(dialogBL->GetOrmasDal(), ID, errorMessage))
+				{
+					empNamePh->setText(user.GetName().c_str());
+					empSurnamePh->setText(user.GetSurname().c_str());
+					empPhonePh->setText(user.GetPhone().c_str());
+				}
 			}
 			if (childName == QString("statusForm"))
 			{
 				statusEdit->setText(QString::number(ID));
+				BusinessLayer::Status status;
+				if (status.GetStatusByID(dialogBL->GetOrmasDal(), ID, errorMessage))
+				{
+					statusPh->setText(status.GetName().c_str());
+				}
 			}
-			if (childName == QString("employeeForm"))
+			if (childName == QString("employeeStockForm"))
 			{
 				stockEmployeeEdit->setText(QString::number(ID));
-			}
-			if (childName == QString("currencyForm"))
-			{
-				currencyEdit->setText(QString::number(ID));
+				BusinessLayer::User user;
+				if (user.GetUserByID(dialogBL->GetOrmasDal(), ID, errorMessage))
+				{
+					empStockNamePh->setText(user.GetName().c_str());
+					empStockSurnamePh->setText(user.GetSurname().c_str());
+					empStockPhonePh->setText(user.GetPhone().c_str());
+				}
 			}
 		}
 	}
@@ -145,11 +177,11 @@ void CreateConPDlg::CreateConsumeProduct()
 	errorMessage.clear();
 	if (0 != stockEmployeeEdit->text().toInt() && !dateEdit->text().isEmpty()
 		&& 0 != prodCountEdit->text().toInt() && 0 != sumEdit->text().toInt()
-		&& 0 != statusEdit->text().toInt() && 0 != currencyEdit->text().toInt())
+		&& 0 != statusEdit->text().toInt() && !currencyCmb->currentText().isEmpty())
 	{
 		DataForm *parentDataForm = (DataForm*)parentWidget();
 		SetConsumeProductParams(employeeEdit->text().toInt(), dateEdit->text(), execDateEdit->text(), stockEmployeeEdit->text().toInt(), prodCountEdit->text().toInt(),
-			sumEdit->text().toInt(), statusEdit->text().toInt(), currencyEdit->text().toInt(), consumeProduct->GetID());
+			sumEdit->text().toInt(), statusEdit->text().toInt(), currencyCmb->currentData().toInt(), consumeProduct->GetID());
 
 		if (dialogBL->CreateConsumeProduct(consumeProduct, errorMessage))
 		{
@@ -294,17 +326,17 @@ void CreateConPDlg::EditConsumeProduct()
 	errorMessage.clear();
 	if (0 != stockEmployeeEdit->text().toInt() && !dateEdit->text().isEmpty()
 		&& 0 != prodCountEdit->text().toInt() && 0 != sumEdit->text().toInt()
-		&& 0 != statusEdit->text().toInt() && 0 != currencyEdit->text().toInt())
+		&& 0 != statusEdit->text().toInt() && !currencyCmb->currentText().isEmpty())
 	{
 		if (consumeProduct->GetStockEmployeeID() != stockEmployeeEdit->text().toInt() || QString(consumeProduct->GetDate().c_str()) != dateEdit->text() ||
 			QString(consumeProduct->GetExecutionDate().c_str()) != execDateEdit->text() ||
 			consumeProduct->GetEmployeeID() != employeeEdit->text().toInt() || consumeProduct->GetCount() != prodCountEdit->text().toInt() ||
 			consumeProduct->GetSum() != sumEdit->text().toInt()
-			|| consumeProduct->GetCurrencyID() != currencyEdit->text().toInt())
+			|| consumeProduct->GetCurrencyID() != currencyCmb->currentData().toInt())
 		{
 			DataForm *parentDataForm = (DataForm*)parentWidget();
 			SetConsumeProductParams(employeeEdit->text().toInt(), dateEdit->text(), execDateEdit->text(), stockEmployeeEdit->text().toInt(), prodCountEdit->text().toInt(),
-				sumEdit->text().toInt(), statusEdit->text().toInt(), currencyEdit->text().toInt(), consumeProduct->GetID());
+				sumEdit->text().toInt(), statusEdit->text().toInt(), currencyCmb->currentData().toInt(), consumeProduct->GetID());
 
 			if (dialogBL->UpdateConsumeProduct(consumeProduct, errorMessage))
 			{
@@ -645,49 +677,6 @@ void CreateConPDlg::OpenStsDlg()
 	}
 }
 
-void CreateConPDlg::OpenCurDlg()
-{
-	this->hide();
-	this->setModal(false);
-	this->show();
-	DataForm *productParent = (DataForm *)parent();
-	MainForm *mainForm = (MainForm *)productParent->GetParent();
-	QString message = tr("Loading...");
-	mainForm->statusBar()->showMessage(message);
-	DataForm *dForm = new DataForm(dialogBL, mainForm);
-	dForm->setWindowTitle(tr("Currencies"));
-	dForm->hide();
-	dForm->setWindowModality(Qt::WindowModal);
-	dForm->FillTable<BusinessLayer::Currency>(errorMessage);
-	if (errorMessage.empty())
-	{
-		dForm->createConPDlg = this;
-		dForm->setObjectName("currencyForm");
-		dForm->QtConnect<BusinessLayer::Currency>();
-		QMdiSubWindow *currencyWindow = new QMdiSubWindow;
-		currencyWindow->setWidget(dForm);
-		currencyWindow->setAttribute(Qt::WA_DeleteOnClose);
-		mainForm->mdiArea->addSubWindow(currencyWindow);
-		dForm->topLevelWidget();
-		dForm->activateWindow();
-		QApplication::setActiveWindow(dForm);
-		dForm->show();
-		dForm->raise();
-		QString message = tr("All currency are shown");
-		mainForm->statusBar()->showMessage(message);
-	}
-	else
-	{
-		delete dForm;
-		QString message = tr("End with error!");
-		mainForm->statusBar()->showMessage(message);
-		QMessageBox::information(NULL, QString(tr("Warning")),
-			QString(tr(errorMessage.c_str())),
-			QString(tr("Ok")));
-		errorMessage = "";
-	}
-
-}
 
 void CreateConPDlg::OpenConPListDlg()
 {
@@ -747,4 +736,17 @@ void CreateConPDlg::StatusWasChenged()
 		execDateEdit->setDateTime(QDateTime::currentDateTime());
 	}
 }
+
+void CreateConPDlg::InitComboBox()
+{
+	std::vector<BusinessLayer::Currency> curVector = dialogBL->GetAllDataForClass<BusinessLayer::Currency>(errorMessage);
+	if (!curVector.empty())
+	{
+		for (unsigned int i = 0; i < curVector.size(); i++)
+		{
+			currencyCmb->addItem(curVector[i].GetShortName().c_str(), QVariant(curVector[i].GetID()));
+		}
+	}
+}
+
 

@@ -277,7 +277,7 @@ namespace BusinessLayer{
 			Balance balance;
 			if (balance.GetBalanceByID(ormasDal, balanceID, errorMessage))
 			{
-				balance.SetValue(balance.GetValue() + value);
+				//balance.SetValue(balance.GetValue() + value);
 				bpRelation.SetBalanceID(balanceID);
 				bpRelation.SetPaymentID(id);
 				if (balance.UpdateBalance(ormasDal, errorMessage) && bpRelation.CreateBalancePaymentRelation(ormasDal, errorMessage))
@@ -297,7 +297,7 @@ namespace BusinessLayer{
 			Balance balance;
 			if (balance.GetBalanceByID(ormasDal, balanceID, errorMessage))
 			{
-				balance.SetValue(balance.GetValue() + (currentValue-value));
+				//balance.SetValue(balance.GetValue() + (currentValue-value));
 				if (balance.UpdateBalance(ormasDal, errorMessage))
 					return true;
 			}
@@ -324,7 +324,7 @@ namespace BusinessLayer{
 			Balance balance;
 			if (balance.GetBalanceByID(ormasDal, balanceID, errorMessage))
 			{
-				balance.SetValue(balance.GetValue() - value);
+				//balance.SetValue(balance.GetValue() - value);
 				bpRelation.SetBalanceID(balanceID);
 				bpRelation.SetPaymentID(id);
 				if (balance.UpdateBalance(ormasDal, errorMessage) && bpRelation.DeleteBalancePaymentRelation(ormasDal, errorMessage))

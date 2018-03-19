@@ -1,5 +1,5 @@
 #ifndef BALANCEREFUNDRELATIONCLASS_H
-#define BALANCEREFUNDRElATIONCLASS_H
+#define BALANCEREFUNDRELATIONCLASS_H
 #include "OrmasDAL.h"
 
 namespace BusinessLayer{

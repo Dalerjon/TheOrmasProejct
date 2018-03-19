@@ -18,15 +18,15 @@ public:
 	void DeletePayslip(){};
 	void Close();
 	void OpenSlrDlg();
-	void OpenCurDlg();
 	public slots:
 	void SetID(int ID, QString childName);
 private:
-	BusinessLayer::Payslip *Payslip = new BusinessLayer::Payslip();
+	BusinessLayer::Payslip *payslip = new BusinessLayer::Payslip();
 	void SetPayslipParams(QString, double, int, int, int = 0);
 	void FillEditElements(QString, double, int, int);
 	QDoubleValidator *vDouble = nullptr;
 	QIntValidator *vInt = nullptr;
+	void InitComboBox();
 };
 
 #endif //CREATEPspDLG_H

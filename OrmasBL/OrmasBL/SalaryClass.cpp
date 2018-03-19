@@ -132,13 +132,7 @@ namespace BusinessLayer{
 	{
 		if (ormasDal.DeleteSalary(employeeID, errorMessage))
 		{
-			id = 0;
-			employeeID = 0;
-			value = 0;
-			currencyID = 0;
-			salaryTypeID = 0;
-			date = "";
-			isBonus = false;
+			Clear();
 			return true;
 		}
 		if (errorMessage.empty())

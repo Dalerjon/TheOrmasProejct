@@ -76,8 +76,9 @@ void CreateRoleDlg::CreateRole()
 				<< new QStandardItem(role->GetComment().c_str());
 			QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
 			itemModel->appendRow(roleItem);
-			this->close();
+			
 			dialogBL->CommitTransaction(errorMessage);
+			this->close();
 		}
 		else
 		{
@@ -115,8 +116,9 @@ void CreateRoleDlg::EditRole()
 				itemModel->item(mIndex.row(), 2)->setText(role->GetName().c_str());
 				itemModel->item(mIndex.row(), 3)->setText(role->GetComment().c_str());
 				emit itemModel->dataChanged(mIndex, mIndex);
-				this->close();
+				
 				dialogBL->CommitTransaction(errorMessage);
+				this->close();
 			}
 			else
 			{

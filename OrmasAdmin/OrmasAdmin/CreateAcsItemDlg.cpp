@@ -75,8 +75,9 @@ void CreateAcsItemDlg::CreateAccessItem()
 				<< new QStandardItem(accessItem->GetNameRu().c_str()) << new QStandardItem(accessItem->GetDivision().c_str());
 			QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
 			itemModel->appendRow(accessListItem);
-			this->close();
+			
 			dialogBL->CommitTransaction(errorMessage);
+			this->close();
 		}
 		else
 		{
@@ -116,8 +117,9 @@ void CreateAcsItemDlg::EditAccessItem()
 				itemModel->item(mIndex.row(), 2)->setText(accessItem->GetNameRu().c_str());
 				itemModel->item(mIndex.row(), 3)->setText(accessItem->GetDivision().c_str());
 				emit itemModel->dataChanged(mIndex, mIndex);
-				this->close();
+				
 				dialogBL->CommitTransaction(errorMessage);
+				this->close();
 			}
 			else
 			{

@@ -70,11 +70,11 @@ bool CreateAcsDlg::FillDlgElements(QTableView* aTable)
 	QModelIndex mIndex = aTable->selectionModel()->currentIndex();
 	if (mIndex.row() >= 0)
 	{
-		SetAccessParams(aTable->model()->data(aTable->model()->index(mIndex.row(), 1)).toInt(),
-			aTable->model()->data(aTable->model()->index(mIndex.row(), 2)).toInt(),
+		SetAccessParams(aTable->model()->data(aTable->model()->index(mIndex.row(), 5)).toInt(),
+			aTable->model()->data(aTable->model()->index(mIndex.row(), 6)).toInt(),
 			aTable->model()->data(aTable->model()->index(mIndex.row(), 0)).toInt());
-		FillEditElements(aTable->model()->data(aTable->model()->index(mIndex.row(), 1)).toInt(),
-			aTable->model()->data(aTable->model()->index(mIndex.row(), 2)).toInt());
+		FillEditElements(aTable->model()->data(aTable->model()->index(mIndex.row(), 5)).toInt(),
+			aTable->model()->data(aTable->model()->index(mIndex.row(), 6)).toInt());
 		return true;
 	}
 	else
@@ -93,13 +93,37 @@ void CreateAcsDlg::CreateAccess()
 		dialogBL->StartTransaction(errorMessage);
 		if (dialogBL->CreateAccess(access, errorMessage))
 		{
+			BusinessLayer::Role *role = new BusinessLayer::Role();
+			BusinessLayer::AccessItem *acItem = new BusinessLayer::AccessItem();
+			if (!role->GetRoleByID(dialogBL->GetOrmasDal(), access->GetRoleID(), errorMessage)
+				|| !acItem->GetAccessItemByID(dialogBL->GetOrmasDal(), access->GetAccessItemID(), errorMessage))
+			{
+				dialogBL->CancelTransaction(errorMessage);
+				dialogBL->CancelTransaction(errorMessage);
+				QMessageBox::information(NULL, QString(tr("Warning")),
+					QString(tr(errorMessage.c_str())),
+					QString(tr("Ok")));
+
+				errorMessage.clear();
+				delete role;
+				delete acItem;
+				return;
+			}
 			QList<QStandardItem*> accessItem;
-			accessItem << new QStandardItem(QString::number(access->GetID())) << new QStandardItem(QString::number(access->GetRoleID()))
+			accessItem << new QStandardItem(QString::number(access->GetID())) 
+				<< new QStandardItem(role->GetName().c_str())
+				<< new QStandardItem(acItem->GetNameEng().c_str())
+				<< new QStandardItem(acItem->GetNameRu().c_str())
+				<< new QStandardItem(acItem->GetDivision().c_str())
+				<< new QStandardItem(QString::number(access->GetRoleID()))
 				<< new QStandardItem(QString::number(access->GetAccessItemID()));
 			QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
 			itemModel->appendRow(accessItem);
-			this->close();
 			dialogBL->CommitTransaction(errorMessage);
+
+			delete role;
+			delete acItem;
+			this->close();
 		}
 		else
 		{
@@ -132,13 +156,37 @@ void CreateAcsDlg::EditAccess()
 			dialogBL->StartTransaction(errorMessage);
 			if (dialogBL->UpdateAccess(access, errorMessage))
 			{
+				BusinessLayer::Role *role = new BusinessLayer::Role();
+				BusinessLayer::AccessItem *acItem = new BusinessLayer::AccessItem();
+				if (!role->GetRoleByID(dialogBL->GetOrmasDal(), access->GetRoleID(), errorMessage)
+					|| !acItem->GetAccessItemByID(dialogBL->GetOrmasDal(), access->GetAccessItemID(), errorMessage))
+				{
+					dialogBL->CancelTransaction(errorMessage);
+					dialogBL->CancelTransaction(errorMessage);
+					QMessageBox::information(NULL, QString(tr("Warning")),
+						QString(tr(errorMessage.c_str())),
+						QString(tr("Ok")));
+
+					errorMessage.clear();
+					delete role;
+					delete acItem;
+					return;
+				}
+
 				QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
 				QModelIndex mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
-				itemModel->item(mIndex.row(), 1)->setText(QString::number(access->GetRoleID()));
-				itemModel->item(mIndex.row(), 2)->setText(QString::number(access->GetAccessItemID()));
+				itemModel->item(mIndex.row(), 1)->setText(role->GetName().c_str());
+				itemModel->item(mIndex.row(), 2)->setText(acItem->GetNameEng().c_str());
+				itemModel->item(mIndex.row(), 3)->setText(acItem->GetNameRu().c_str());
+				itemModel->item(mIndex.row(), 4)->setText(acItem->GetDivision().c_str());
+				itemModel->item(mIndex.row(), 5)->setText(QString::number(access->GetRoleID()));
+				itemModel->item(mIndex.row(), 6)->setText(QString::number(access->GetAccessItemID()));
 				emit itemModel->dataChanged(mIndex, mIndex);
-				this->close();
+				
 				dialogBL->CommitTransaction(errorMessage);
+				delete role;
+				delete acItem;
+				this->close();
 			}
 			else
 			{

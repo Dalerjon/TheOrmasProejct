@@ -124,12 +124,9 @@ namespace BusinessLayer
 	}
 	bool Currency::DeleteCurrency(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
-		code = 0;
-		shortName.clear();
-		name.clear();
 		if (ormasDal.DeleteCurrency(id, errorMessage))
 		{
-			id = 0;
+			Clear();
 			return true;
 		}
 		if (errorMessage.empty())

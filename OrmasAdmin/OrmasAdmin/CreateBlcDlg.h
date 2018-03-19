@@ -19,15 +19,15 @@ public:
 	void DeleteBalance(){};
 	void Close();
 	void OpenUserDlg();
-	void OpenCurDlg();
 	public slots:
 	void SetID(int ID, QString childName);
 private:
 	BusinessLayer::Balance *balance = new BusinessLayer::Balance();
-	void SetBalanceParams(int, double, int, int = 0);
-	void FillEditElements(int, double, int);
+	void SetBalanceParams(int, int, int = 0);
+	void FillEditElements(int, int);
 	QDoubleValidator *vDouble = nullptr;
 	QIntValidator *vInt = nullptr;
+	void InitComboBox();
 };
 
 #endif //CREATEBLCDLG_H

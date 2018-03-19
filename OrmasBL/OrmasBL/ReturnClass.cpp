@@ -4,6 +4,7 @@
 #include "BalanceClass.h"
 #include "RefundClass.h"
 #include "StatusClass.h"
+#include "StockClass.h"
 
 namespace BusinessLayer
 {
@@ -181,13 +182,7 @@ namespace BusinessLayer
 		{
 			if (ormasDal.DeleteListByReturnID(id, errorMessage))
 			{
-				id = 0;
-				clientID = 0;
-				date.clear();
-				executionDate.clear();
-				employeeID = 0;
-				count = 0;
-				sum = 0;
+				Clear();
 				ormasDal.CommitTransaction(errorMessage);
 				return true;
 			}
@@ -443,7 +438,19 @@ namespace BusinessLayer
 		return 0;
 	}
 
-	double Return::GetCurrentStatusID(DataLayer::OrmasDal& ormasDal, int rID, std::string& errorMessage)
+	bool Return::ChangesAtStock(DataLayer::OrmasDal& ormasDal, int rID, std::string& errorMessage)
+	{
+		Stock stock;
+		return stock.ChangingByReceiptProduct(ormasDal, rID, errorMessage);
+	}
+
+	bool Return::ChangesAtStock(DataLayer::OrmasDal& ormasDal, int rID, double rSum, int rCount, std::string& errorMessage)
+	{
+		Stock stock;
+		return stock.ChangingByReceiptProduct(ormasDal, rID, rSum, rCount, errorMessage);
+	}
+
+	int Return::GetCurrentStatusID(DataLayer::OrmasDal& ormasDal, int rID, std::string& errorMessage)
 	{
 		Return ret;
 		ret.GetReturnByID(ormasDal, rID, errorMessage);

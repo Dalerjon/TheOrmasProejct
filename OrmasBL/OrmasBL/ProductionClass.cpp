@@ -99,11 +99,7 @@ namespace BusinessLayer
 		{
 			if (ormasDal.DeleteListByProductionID(id, errorMessage))
 			{
-				id = 0;
-				productionDate.clear();
-				expiryDate.clear();
-				sessionStart.clear();
-				sessionEnd.clear();
+				Clear();
 				ormasDal.CommitTransaction(errorMessage);
 				return true;
 			}

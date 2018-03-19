@@ -174,14 +174,7 @@ namespace BusinessLayer
 		{			
 			if (ormasDal.DeleteListByOrderID(id, errorMessage))
 			{
-				id = 0;
-				clientID = 0;
-				date.clear();
-				executionDate.clear();
-				employeeID = 0;
-				count = 0;
-				sum = 0;
-				statusID = 0;
+				Clear();
 				ormasDal.CommitTransaction(errorMessage);
 				return true;
 			}

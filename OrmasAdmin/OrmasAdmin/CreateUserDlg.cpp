@@ -51,6 +51,11 @@ void CreateUserDlg::SetID(int ID, QString childName)
 			if (childName == QString("roleForm"))
 			{
 				roleEdit->setText(QString::number(ID));
+				BusinessLayer::Role role;
+				if (role.GetRoleByID(dialogBL->GetOrmasDal(), ID, errorMessage))
+				{
+					roleNamePh->setText(role.GetName().c_str());
+				}
 			}
 		}
 	}
@@ -82,6 +87,11 @@ void CreateUserDlg::FillEditElements(QString uEmail, QString uName, QString uSur
 	passwordEdit->setText(uPassword);
 	int index = activatedCmbBox->findText(uActivated);
 	activatedCmbBox->setCurrentIndex(index);
+	BusinessLayer::Role role;
+	if (role.GetRoleByID(dialogBL->GetOrmasDal(), uRoleID, errorMessage))
+	{
+		roleNamePh->setText(role.GetName().c_str());
+	}
 }
 
 bool CreateUserDlg::FillDlgElements(QTableView* uTable)
@@ -128,9 +138,6 @@ void CreateUserDlg::CreateUser()
 		if (dialogBL->CreateUser(user, errorMessage))
 		{
 			BusinessLayer::Role *role = new BusinessLayer::Role();
-			//role->SetID(roleEdit->text().toInt());
-			//std::string roleFilter = dialogBL->GenerateFilter<BusinessLayer::Role>(role);
-			//std::vector<BusinessLayer::Role> roleVector = dialogBL->GetAllDataForClass<BusinessLayer::Role>(errorMessage, roleFilter);
 			if (!role->GetRoleByID(dialogBL->GetOrmasDal(),user->GetRoleID(),errorMessage))
 			{
 				dialogBL->CancelTransaction(errorMessage);
@@ -151,9 +158,10 @@ void CreateUserDlg::CreateUser()
 			QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
 			itemModel->appendRow(UserItem);
 					
-			this->close();
+			
 			delete role;
 			dialogBL->CommitTransaction(errorMessage);
+			this->close();
 		}
 		else
 		{
@@ -203,9 +211,6 @@ void CreateUserDlg::EditUser()
 				
 				//if role of user is changed, then update location data fields
 				BusinessLayer::Role *role = new BusinessLayer::Role();
-				//role->SetID(roleEdit->text().toInt());
-				//std::string roleFilter = dialogBL->GenerateFilter<BusinessLayer::Role>(role);
-				//std::vector<BusinessLayer::Role> roleVector = dialogBL->GetAllDataForClass<BusinessLayer::Role>(errorMessage, roleFilter);
 				if (!role->GetRoleByID(dialogBL->GetOrmasDal(), user->GetRoleID(), errorMessage))
 				{
 					dialogBL->CancelTransaction(errorMessage);
@@ -223,10 +228,11 @@ void CreateUserDlg::EditUser()
 				itemModel->item(mIndex.row(), 13)->setText(QString::number(user->GetRoleID()));
 						
 				emit itemModel->dataChanged(mIndex, mIndex);
-				this->close();
+				
 				
 				delete role;
 				dialogBL->CommitTransaction(errorMessage);
+				this->close();
 			}
 			else
 			{

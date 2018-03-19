@@ -158,13 +158,7 @@ namespace BusinessLayer
 		{
 			if (ormasDal.DeleteListByWriteOffRawID(id, errorMessage))
 			{
-				id = 0;
-				employeeID = 0;
-				date.clear();
-				stockEmployeeID = 0;
-				count = 0;
-				sum = 0;
-				statusID = 0;
+				Clear();
 				ormasDal.CommitTransaction(errorMessage);
 				return true;
 			}

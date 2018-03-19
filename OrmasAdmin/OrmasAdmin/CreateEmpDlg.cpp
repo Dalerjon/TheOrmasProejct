@@ -52,10 +52,20 @@ void CreateEmpDlg::SetID(int ID, QString childName)
 			if (childName == QString("roleForm"))
 			{
 				roleEdit->setText(QString::number(ID));
+				BusinessLayer::Role role;
+				if (role.GetRoleByID(dialogBL->GetOrmasDal(), ID, errorMessage))
+				{
+					roleNamePh->setText(role.GetName().c_str());
+				}
 			}
 			if (childName == QString("positionForm"))
 			{
 				positionEdit->setText(QString::number(ID));
+				BusinessLayer::Position position;
+				if (position.GetPositionByID(dialogBL->GetOrmasDal(), ID, errorMessage))
+				{
+					positionNamePh->setText(position.GetName().c_str());
+				}
 			}
 		}
 	}
@@ -93,6 +103,16 @@ void CreateEmpDlg::FillEditElements(QString eEmail, QString eName, QString eSurn
 	positionEdit->setText(QString::number(ePositionID));
 	birthDateEdit->setDate(QDate::fromString(eBirthDate, "yyyy-MM-dd"));
 	hireDateEdit->setDate(QDate::fromString(eHireNumber, "yyyy-MM-dd"));
+	BusinessLayer::Role role;
+	if (role.GetRoleByID(dialogBL->GetOrmasDal(), eRoleID, errorMessage))
+	{
+		roleNamePh->setText(role.GetName().c_str());
+	}
+	BusinessLayer::Position position;
+	if (position.GetPositionByID(dialogBL->GetOrmasDal(), ePositionID, errorMessage))
+	{
+		positionNamePh->setText(position.GetName().c_str());
+	}
 }
 
 bool CreateEmpDlg::FillDlgElements(QTableView* eTable)
@@ -174,13 +194,7 @@ void CreateEmpDlg::CreateEmployee()
 		if (dialogBL->CreateEmployee(employee, errorMessage))
 		{
 			BusinessLayer::Role *role = new BusinessLayer::Role();
-			//role->SetID(roleEdit->text().toInt());
-			//std::string roleFilter = dialogBL->GenerateFilter<BusinessLayer::Role>(role);
-			//std::vector<BusinessLayer::Role> roleVector = dialogBL->GetAllDataForClass<BusinessLayer::Role>(errorMessage, roleFilter);
 			BusinessLayer::Position *position = new BusinessLayer::Position();
-			//location->SetID(locationEdit->text().toInt());
-			//std::string locationFilter = dialogBL->GenerateFilter<BusinessLayer::Location>(location);
-			//std::vector<BusinessLayer::Location> locationVector = dialogBL->GetAllDataForClass<BusinessLayer::Location>(errorMessage, locationFilter);
 			if (!role->GetRoleByID(dialogBL->GetOrmasDal(), employee->GetRoleID(), errorMessage)
 				|| !position->GetPositionByID(dialogBL->GetOrmasDal(), employee->GetPositionID(), errorMessage))
 			{
@@ -213,11 +227,10 @@ void CreateEmpDlg::CreateEmployee()
 			QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
 			itemModel->appendRow(EmployeeItem);
 
-			this->close();
-
 			delete position;
 			delete role;
 			dialogBL->CommitTransaction(errorMessage);
+			this->close();
 		}
 		else
 		{
@@ -327,11 +340,12 @@ void CreateEmpDlg::EditEmployee()
 				itemModel->item(mIndex.row(), 13)->setText(QString::number(employee->GetPositionID()));
 
 				emit itemModel->dataChanged(mIndex, mIndex);
-				this->close();
-
+				
 				delete position;
 				delete role;
 				dialogBL->CommitTransaction(errorMessage);
+				this->close();
+
 			}
 			else
 			{

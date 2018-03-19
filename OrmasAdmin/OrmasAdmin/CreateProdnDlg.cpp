@@ -108,8 +108,9 @@ void CreateProdnDlg::CreateProduction()
 				<< new QStandardItem(production->GetSessionEnd().c_str());
 			QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
 			itemModel->appendRow(UserItem);
-			this->close();
+			
 			dialogBL->CommitTransaction(errorMessage);
+			this->close();
 		}
 		else
 		{
@@ -153,8 +154,9 @@ void CreateProdnDlg::EditProduction()
 				itemModel->item(mIndex.row(), 3)->setText(production->GetSessionStart().c_str());
 				itemModel->item(mIndex.row(), 4)->setText(production->GetSessionEnd().c_str());
 				emit itemModel->dataChanged(mIndex, mIndex);
-				this->close();
+				
 				dialogBL->CommitTransaction(errorMessage);
+				this->close();
 			}
 			else
 			{

@@ -82,8 +82,9 @@ void CreateMsrDlg::CreateMeasure()
 				<< new QStandardItem(measure->GetShortName().c_str()) << new QStandardItem(QString::number(measure->GetUnit()));
 			QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
 			itemModel->appendRow(measureItem);
-			this->close();
+			
 			dialogBL->CommitTransaction(errorMessage);
+			this->close();
 		}
 		else
 		{
@@ -121,8 +122,9 @@ void CreateMsrDlg::EditMeasure()
 				itemModel->item(mIndex.row(), 2)->setText(shortNameEdit->text());
 				itemModel->item(mIndex.row(), 3)->setText(QString::number(unitEdit->text().toInt()));
 				emit itemModel->dataChanged(mIndex, mIndex);
-				this->close();
+				
 				dialogBL->CommitTransaction(errorMessage);
+				this->close();
 			}
 			else
 			{

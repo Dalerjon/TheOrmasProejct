@@ -6,14 +6,12 @@ namespace BusinessLayer{
 	{
 		id = std::get<0>(balCollection);
 		userID = std::get<1>(balCollection);
-		value = std::get<2>(balCollection);
-		currencyID = std::get<3>(balCollection);
+		accountID = std::get<2>(balCollection);
 	}
 	Balance::Balance()
 	{
 		userID = 0;
-		value = 0.0;
-		currencyID = 0;
+		accountID = 0;
 	}
 	int Balance::GetID()
 	{
@@ -25,14 +23,9 @@ namespace BusinessLayer{
 		return userID;
 	}
 
-	double Balance::GetValue()
+	int Balance::GetAccountID()
 	{
-		return value;
-	}
-
-	int Balance::GetCurrencyID()
-	{
-		return currencyID;
+		return accountID;
 	}
 
 	void Balance::SetID(int cID)
@@ -43,25 +36,20 @@ namespace BusinessLayer{
 	{
 		userID = uID;
 	}
-	void Balance::SetValue(double bValue)
+	void Balance::SetAccountID(int cID)
 	{
-		value = bValue;
-	}
-	void Balance::SetCurrencyID(int cID)
-	{
-		currencyID = cID;
+		accountID = cID;
 	}
 
-	bool Balance::CreateBalance(DataLayer::OrmasDal &ormasDal, int uID, double bValue, int cID, std::string& errorMessage)
+	bool Balance::CreateBalance(DataLayer::OrmasDal &ormasDal, int uID,  int aID, std::string& errorMessage)
 	{
 		id = ormasDal.GenerateID();
-		if (IsDuplicate(ormasDal, uID, cID, errorMessage))
+		if (IsDuplicate(ormasDal, uID, aID, errorMessage))
 			return false;
 		userID = uID;
-		value = bValue;
-		currencyID = cID;
+		accountID = aID;
 
-		if (0 != id && ormasDal.CreateBalance(id, userID, value, currencyID, errorMessage))
+		if (0 != id && ormasDal.CreateBalance(id, userID, accountID, errorMessage))
 		{
 			return true;
 		}
@@ -76,7 +64,7 @@ namespace BusinessLayer{
 		if (IsDuplicate(ormasDal, errorMessage))
 			return false;
 		id = ormasDal.GenerateID();
-		if (0 != id && ormasDal.CreateBalance(id, userID, value, currencyID, errorMessage))
+		if (0 != id && ormasDal.CreateBalance(id, userID, accountID, errorMessage))
 		{
 			return true;
 		}
@@ -90,7 +78,7 @@ namespace BusinessLayer{
 	{
 		if (ormasDal.DeleteBalance(id, errorMessage))
 		{
-			id = 0;
+			Clear();
 			return true;
 		}
 		if (errorMessage.empty())
@@ -100,12 +88,11 @@ namespace BusinessLayer{
 		return false;
 	}
 
-	bool Balance::UpdateBalance(DataLayer::OrmasDal &ormasDal, int uID, double bValue, int cID, std::string& errorMessage)
+	bool Balance::UpdateBalance(DataLayer::OrmasDal &ormasDal, int uID, int aID, std::string& errorMessage)
 	{
 		userID = uID;
-		value = bValue;
-		currencyID = cID;
-		if (0 != id && ormasDal.UpdateBalance(id, userID, value, currencyID, errorMessage))
+		accountID = aID;
+		if (0 != id && ormasDal.UpdateBalance(id, userID, accountID, errorMessage))
 		{
 			return true;
 		}
@@ -117,7 +104,7 @@ namespace BusinessLayer{
 	}
 	bool Balance::UpdateBalance(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
-		if (0 != id && ormasDal.UpdateBalance(id, userID, value, currencyID, errorMessage))
+		if (0 != id && ormasDal.UpdateBalance(id, userID, accountID, errorMessage))
 		{
 			return true;
 		}
@@ -130,9 +117,9 @@ namespace BusinessLayer{
 
 	std::string Balance::GenerateFilter(DataLayer::OrmasDal& ormasDal)
 	{
-		if (0 != id || 0 != userID || 0!=value || 0!=currencyID)
+		if (0 != id || 0 != userID || 0 != accountID)
 		{
-			return ormasDal.GetFilterForBalance(id, userID, value, currencyID);
+			return ormasDal.GetFilterForBalance(id, userID, accountID);
 		}
 		return "";
 	}
@@ -146,20 +133,19 @@ namespace BusinessLayer{
 		{
 			id = std::get<0>(balanceVector.at(0));
 			userID = std::get<5>(balanceVector.at(0));
-			value = std::get<3>(balanceVector.at(0));
-			currencyID = std::get<6>(balanceVector.at(0));
+			accountID = std::get<6>(balanceVector.at(0));
 			return true;
 		}
 		else
 		{
-			errorMessage = "Cannot find Balance with this id";
+			errorMessage = "Cannot find balance with this id";
 		}
 		return false;
 	}
 
 	bool Balance::IsEmpty()
 	{
-		if (0 == id && 0 == userID && 0.0 == value && 0 == currencyID)
+		if (0 == id && 0 == userID && 0 == accountID)
 			return true;
 		return false;
 	}
@@ -168,15 +154,14 @@ namespace BusinessLayer{
 	{
 		id = 0;
 		userID = 0;
-		value = 0.0;
-		currencyID = 0;
+		accountID = 0;
 	}
 
-	bool Balance::IsDuplicate(DataLayer::OrmasDal& ormasDal, int uID, int cID, std::string& errorMessage)
+	bool Balance::IsDuplicate(DataLayer::OrmasDal& ormasDal, int uID, int aID, std::string& errorMessage)
 	{
 		Balance balance;
 		balance.SetUserID(uID);
-		balance.SetCurrencyID(cID);
+		balance.SetAccountID(aID);
 		std::string filter = balance.GenerateFilter(ormasDal);
 		std::vector<DataLayer::balancesViewCollection> balanceVector = ormasDal.GetBalances(errorMessage, filter);
 		if (!errorMessage.empty())
@@ -193,7 +178,7 @@ namespace BusinessLayer{
 	{
 		Balance balance;
 		balance.SetUserID(userID);
-		balance.SetCurrencyID(currencyID);
+		balance.SetAccountID(accountID);
 		std::string filter = balance.GenerateFilter(ormasDal);
 		std::vector<DataLayer::balancesViewCollection> balanceVector = ormasDal.GetBalances(errorMessage, filter);
 		if (!errorMessage.empty())

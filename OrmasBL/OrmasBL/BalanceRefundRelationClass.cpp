@@ -68,8 +68,7 @@ namespace BusinessLayer{
 	{
 		if (ormasDal.DeleteBalanceRefund(balanceID, refundID, errorMessage))
 		{
-			balanceID = 0;
-			refundID = 0;
+			Clear();
 			return true;
 		}
 		if (errorMessage.empty())

@@ -56,10 +56,28 @@ void CreatePhtDlg::SetID(int ID, QString childName)
 			if (childName == QString("userForm"))
 			{
 				userEdit->setText(QString::number(ID));
+				BusinessLayer::User user;
+				if (user.GetUserByID(dialogBL->GetOrmasDal(), ID, errorMessage))
+				{
+					namePh->setText(user.GetName().c_str());
+					surnamePh->setText(user.GetSurname().c_str());
+					phonePh->setText(user.GetPhone().c_str());
+				}
 			}
 			if (childName == QString("productForm"))
 			{
 				productEdit->setText(QString::number(ID));
+				BusinessLayer::Product product;
+				if (product.GetProductByID(dialogBL->GetOrmasDal(), ID, errorMessage))
+				{
+					prodNamePh->setText(product.GetName().c_str());
+					volumePh->setText(QString::number(product.GetVolume()));
+					BusinessLayer::Measure measure;
+					if (measure.GetMeasureByID(dialogBL->GetOrmasDal(), product.GetMeasureID(), errorMessage))
+					{
+						measurePh->setText(measure.GetShortName().c_str());
+					}
+				}
 			}
 		}
 	}
@@ -76,7 +94,25 @@ void CreatePhtDlg::SetPhotoParams(int pUserID, int pProduct, QString pSource, in
 void CreatePhtDlg::FillEditElements(int pUserID, int pProduct, QString pSource)
 {
 	userEdit->setText(QString::number(pUserID));
+	BusinessLayer::User user;
+	if (user.GetUserByID(dialogBL->GetOrmasDal(), pUserID, errorMessage))
+	{
+		namePh->setText(user.GetName().c_str());
+		surnamePh->setText(user.GetSurname().c_str());
+		phonePh->setText(user.GetPhone().c_str());
+	}
 	productEdit->setText(QString::number(pProduct));
+	BusinessLayer::Product product;
+	if (product.GetProductByID(dialogBL->GetOrmasDal(), pProduct, errorMessage))
+	{
+		prodNamePh->setText(product.GetName().c_str());
+		volumePh->setText(QString::number(product.GetVolume()));
+		BusinessLayer::Measure measure;
+		if (measure.GetMeasureByID(dialogBL->GetOrmasDal(), product.GetMeasureID(), errorMessage))
+		{
+			measurePh->setText(measure.GetShortName().c_str());
+		}
+	}
 	sourceEdit->setText(pSource);
 }
 
@@ -115,8 +151,9 @@ void CreatePhtDlg::CreatePhoto()
 				<< new QStandardItem(QString::number(photo->GetProductID())) << new QStandardItem(photo->GetSource().c_str());
 			QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
 			itemModel->appendRow(photoItem);
-			this->close();
+			
 			dialogBL->CommitTransaction(errorMessage);
+			this->close();
 		}
 		else
 		{
@@ -156,8 +193,9 @@ void CreatePhtDlg::EditPhoto()
 				itemModel->item(mIndex.row(), 2)->setText(QString::number(photo->GetProductID()));
 				itemModel->item(mIndex.row(), 3)->setText(photo->GetSource().c_str());
 				emit itemModel->dataChanged(mIndex, mIndex);
-				this->close();
+				
 				dialogBL->CommitTransaction(errorMessage);
+				this->close();
 			}
 			else
 			{

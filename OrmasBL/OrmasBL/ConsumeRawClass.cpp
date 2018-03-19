@@ -169,14 +169,7 @@ namespace BusinessLayer
 		{
 			if (ormasDal.DeleteListByConsumeRawID(id, errorMessage))
 			{
-				id = 0;
-				employeeID = 0;
-				date.clear();
-				executionDate.clear();
-				stockEmployeeID = 0;
-				count = 0;
-				sum = 0;
-				statusID = 0;
+				Clear();
 				ormasDal.CommitTransaction(errorMessage);
 				return true;
 			}
@@ -358,7 +351,7 @@ namespace BusinessLayer
 	bool ConsumeRaw::ChangesAtStock(DataLayer::OrmasDal& ormasDal, int crID, double pSum, int pCount, std::string& errorMessage)
 	{
 		Stock stock;
-		return stock.ChangingByConsumeRaw(ormasDal, crID, pSum, pSum, errorMessage);
+		return stock.ChangingByConsumeRaw(ormasDal, crID, pSum, pCount, errorMessage);
 	}
 
 	double ConsumeRaw::GetCurrentSum(DataLayer::OrmasDal& ormasDal, int crID, std::string& errorMessage)

@@ -21,7 +21,6 @@ public:
 	void OpenCltDlg();
 	void OpenEmpDlg();
 	void OpenStsDlg();
-	void OpenCurDlg();
 	void OpenWOffListDlg();
 	public slots:
 	void SetID(int ID, QString childName);
@@ -33,5 +32,6 @@ private:
 	void FillEditElements(int, QString, int, int, double, int, int);
 	QDoubleValidator *vDouble = nullptr;
 	QIntValidator *vInt = nullptr;
+	void InitComboBox();
 };
 #endif //CREATEWOFFDLG_H

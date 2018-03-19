@@ -77,7 +77,7 @@ namespace BusinessLayer{
 	{
 		if (ormasDal.DeleteRelationType(id, errorMessage))
 		{
-			id = 0;
+			Clear();
 			return true;
 		}
 		if (errorMessage.empty())

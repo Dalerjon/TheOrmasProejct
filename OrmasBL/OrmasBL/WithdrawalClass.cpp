@@ -279,7 +279,7 @@ namespace BusinessLayer{
 			{
 				bwRelation.SetBalanceID(balanceID);
 				bwRelation.SetWithdrawalID(id);
-				balance.SetValue(balance.GetValue() - value);
+				//balance.SetValue(balance.GetValue() - value);
 				if (balance.UpdateBalance(ormasDal, errorMessage) && bwRelation.CreateBalanceWithdrawalRelation(ormasDal, errorMessage))
 					return true;
 			}
@@ -297,7 +297,7 @@ namespace BusinessLayer{
 			Balance balance;
 			if (balance.GetBalanceByID(ormasDal, balanceID, errorMessage))
 			{
-				balance.SetValue(balance.GetValue() - (value - currentValue));
+				//balance.SetValue(balance.GetValue() - (value - currentValue));
 				if(balance.UpdateBalance(ormasDal, errorMessage))
 					return true;
 			}
@@ -326,7 +326,7 @@ namespace BusinessLayer{
 			{
 				bwRelation.SetBalanceID(balanceID);
 				bwRelation.SetWithdrawalID(id);
-				balance.SetValue(balance.GetValue() + value);
+				//balance.SetValue(balance.GetValue() + value);
 				if (balance.UpdateBalance(ormasDal, errorMessage) && bwRelation.DeleteBalanceWithdrawalRelation(ormasDal, errorMessage))
 					return true;
 			}

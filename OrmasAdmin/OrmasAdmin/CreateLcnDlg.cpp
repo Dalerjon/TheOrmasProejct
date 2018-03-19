@@ -81,8 +81,9 @@ void CreateLcnDlg::CreateLocation()
 				<< new QStandardItem(location->GetCityName().c_str());
 			QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
 			itemModel->appendRow(LocationItem);
-			this->close();
+			
 			dialogBL->CommitTransaction(errorMessage);
+			this->close();
 		}
 		else
 		{
@@ -125,8 +126,9 @@ void CreateLcnDlg::EditLocation()
 				itemModel->item(mIndex.row(), 3)->setText(location->GetRegionName().c_str());
 				itemModel->item(mIndex.row(), 4)->setText(location->GetCityName().c_str());
 				emit itemModel->dataChanged(mIndex, mIndex);
-				this->close();
+				
 				dialogBL->CommitTransaction(errorMessage);
+				this->close();
 			}
 			else
 			{

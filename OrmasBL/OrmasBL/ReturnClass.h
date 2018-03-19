@@ -64,17 +64,17 @@ namespace BusinessLayer
 		void Clear();
 	private:
 		double previousSum = 0.0;
-		double previousCount = 0.0;
-		double previousStatusID = 0;
+		int previousCount = 0;
+		int previousStatusID = 0;
 		bool IsDuplicate(DataLayer::OrmasDal& ormasDal, int clID, std::string oDate,  int oCount, double oSum,
 			 int cID, std::string& errorMessage);
 		bool IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string& errorMessage);
 		bool BalanceRefund(DataLayer::OrmasDal& ormasDal, int clID, double rSum, int cID, std::string rExecDate, std::string& errorMessage);
 		bool BalanceRefund(DataLayer::OrmasDal& ormasDal, int clID, double rSum, double prevSum, int cID, std::string rExecDate, std::string& errorMessage);
-		bool ChangesAtStock(DataLayer::OrmasDal& ormasDal, int cpID, std::string& errorMessage);
-		bool ChangesAtStock(DataLayer::OrmasDal& ormasDal, int cpID, double pSum, double pCount, std::string& errorMessage);
+		bool ChangesAtStock(DataLayer::OrmasDal& ormasDal, int rID, std::string& errorMessage);
+		bool ChangesAtStock(DataLayer::OrmasDal& ormasDal, int rID, double rSum, int rCount, std::string& errorMessage);
 		double GetCurrentSum(DataLayer::OrmasDal& ormasDal, int rID, std::string& errorMessage);
-		double GetCurrentStatusID(DataLayer::OrmasDal& ormasDal, int rID, std::string& errorMessage);
+		int GetCurrentStatusID(DataLayer::OrmasDal& ormasDal, int rID, std::string& errorMessage);
 		int GetCurrentCount(DataLayer::OrmasDal& ormasDal, int rID, std::string& errorMessage);
 	};
 }

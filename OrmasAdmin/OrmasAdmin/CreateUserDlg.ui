@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>400</width>
-    <height>258</height>
+    <height>284</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -38,7 +38,38 @@
    <property name="bottomMargin">
     <number>11</number>
    </property>
-   <item row="8" column="0" colspan="2">
+   <item row="5" column="1">
+    <widget class="QLineEdit" name="passwordEdit">
+     <property name="toolTip">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;At least 6 characters&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+     <property name="echoMode">
+      <enum>QLineEdit::Password</enum>
+     </property>
+    </widget>
+   </item>
+   <item row="6" column="0">
+    <widget class="QLabel" name="activatedLb">
+     <property name="text">
+      <string>Activated:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="1">
+    <widget class="QLineEdit" name="addressEdit">
+     <property name="toolTip">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;For example: Downing St. 88&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="0">
+    <widget class="QLabel" name="phoneLb">
+     <property name="text">
+      <string>Phone:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="9" column="0" colspan="2">
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
       <spacer name="horizontalSpacer">
@@ -76,12 +107,8 @@
      </property>
     </widget>
    </item>
-   <item row="6" column="0">
-    <widget class="QLabel" name="activatedLb">
-     <property name="text">
-      <string>Activated:</string>
-     </property>
-    </widget>
+   <item row="6" column="1">
+    <widget class="QComboBox" name="activatedCmbBox"/>
    </item>
    <item row="0" column="0">
     <widget class="QLabel" name="nameLb">
@@ -96,20 +123,6 @@
      </property>
     </widget>
    </item>
-   <item row="3" column="0">
-    <widget class="QLabel" name="phoneLb">
-     <property name="text">
-      <string>Phone:</string>
-     </property>
-    </widget>
-   </item>
-   <item row="2" column="0">
-    <widget class="QLabel" name="addressLb">
-     <property name="text">
-      <string>Address:</string>
-     </property>
-    </widget>
-   </item>
    <item row="3" column="1">
     <widget class="QLineEdit" name="phoneEdit">
      <property name="toolTip">
@@ -117,6 +130,13 @@
      </property>
      <property name="inputMethodHints">
       <set>Qt::ImhNone</set>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="0">
+    <widget class="QLabel" name="addressLb">
+     <property name="text">
+      <string>Address:</string>
      </property>
     </widget>
    </item>
@@ -161,26 +181,6 @@
      </property>
     </widget>
    </item>
-   <item row="6" column="1">
-    <widget class="QComboBox" name="activatedCmbBox"/>
-   </item>
-   <item row="5" column="1">
-    <widget class="QLineEdit" name="passwordEdit">
-     <property name="toolTip">
-      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;At least 6 characters&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-     </property>
-     <property name="echoMode">
-      <enum>QLineEdit::Password</enum>
-     </property>
-    </widget>
-   </item>
-   <item row="2" column="1">
-    <widget class="QLineEdit" name="addressEdit">
-     <property name="toolTip">
-      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;For example: Downing St. 88&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-     </property>
-    </widget>
-   </item>
    <item row="4" column="0">
     <widget class="QLabel" name="emailLb">
      <property name="text">
@@ -195,6 +195,29 @@
      </property>
      <property name="inputMethodHints">
       <set>Qt::ImhEmailCharactersOnly</set>
+     </property>
+    </widget>
+   </item>
+   <item row="8" column="0">
+    <widget class="QLabel" name="roleNameLb">
+     <property name="text">
+      <string>Role name:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="8" column="1">
+    <widget class="QLabel" name="roleNamePh">
+     <property name="font">
+      <font>
+       <family>Times New Roman</family>
+       <pointsize>12</pointsize>
+       <weight>75</weight>
+       <italic>true</italic>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="text">
+      <string/>
      </property>
     </widget>
    </item>

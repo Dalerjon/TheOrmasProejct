@@ -81,8 +81,9 @@ void CreateCmpDlg::CreateCompany()
 				<< new QStandardItem(company->GetComment().c_str());
 			QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
 			itemModel->appendRow(companyItem);
-			this->close();
+			
 			dialogBL->CommitTransaction(errorMessage);
+			this->close();
 		}
 		else
 		{
@@ -124,8 +125,9 @@ void CreateCmpDlg::EditCompany()
 				itemModel->item(mIndex.row(), 3)->setText(company->GetPhone().c_str());
 				itemModel->item(mIndex.row(), 4)->setText(company->GetComment().c_str());
 				emit itemModel->dataChanged(mIndex, mIndex);
-				this->close();
+				
 				dialogBL->CommitTransaction(errorMessage);
+				this->close();
 			}
 			else
 			{

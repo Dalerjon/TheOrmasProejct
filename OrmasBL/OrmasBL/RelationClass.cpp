@@ -86,7 +86,7 @@ namespace BusinessLayer{
 	{
 		if (ormasDal.DeleteRelation(id, errorMessage))
 		{
-			id = 0;
+			Clear();
 			return true;
 		}
 		if (errorMessage.empty())
@@ -137,13 +137,13 @@ namespace BusinessLayer{
 	{
 		id = bID;
 		std::string filter = GenerateFilter(ormasDal);
-		std::vector<DataLayer::relationsCollection> relationVector = ormasDal.GetRelations(errorMessage, filter);
+		std::vector<DataLayer::relationsViewCollection> relationVector = ormasDal.GetRelations(errorMessage, filter);
 		if (0 != relationVector.size())
 		{
 			id = std::get<0>(relationVector.at(0));
-			user1ID = std::get<1>(relationVector.at(0));
-			user2ID = std::get<2>(relationVector.at(0));
-			relationTypeID = std::get<3>(relationVector.at(0));
+			user1ID = std::get<8>(relationVector.at(0));
+			user2ID = std::get<9>(relationVector.at(0));
+			relationTypeID = std::get<10>(relationVector.at(0));
 			return true;
 		}
 		else

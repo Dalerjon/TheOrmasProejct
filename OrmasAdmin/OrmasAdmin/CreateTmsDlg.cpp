@@ -1,0 +1,304 @@
+#include "stdafx.h"
+#include "CreateTmsDlg.h"
+#include <QMessageBox>
+#include "MainForm.h"
+#include "DataForm.h"
+#include "ExtraFunctions.h"
+
+
+CreateTmsDlg::CreateTmsDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, QWidget *parent) :QDialog(parent)
+{
+	setupUi(this);
+	setModal(true);
+	dialogBL = ormasBL;
+	vDouble = new QDoubleValidator(0.00, 1000000000.00, 3, this);
+	vInt = new QIntValidator(0, 1000000000, this);
+	salaryEdit->setValidator(vInt);
+	workedTimeEdit->setValidator(vDouble);
+	workedTimeEdit->setMaxLength(4);
+	if (true == updateFlag)
+	{
+		QObject::connect(okBtn, &QPushButton::released, this, &CreateTmsDlg::EditTimesheet);
+	}
+	else
+	{
+		dateEdit->setDateTime(QDateTime::currentDateTime());
+		QObject::connect(okBtn, &QPushButton::released, this, &CreateTmsDlg::CreateTimesheet);
+	}
+	QObject::connect(cancelBtn, &QPushButton::released, this, &CreateTmsDlg::Close);
+	QObject::connect(salaryBtn, &QPushButton::released, this, &CreateTmsDlg::OpenSlrDlg);
+}
+
+CreateTmsDlg::~CreateTmsDlg()
+{
+	delete vInt;
+	delete vDouble;
+}
+
+void CreateTmsDlg::SetID(int ID, QString childName)
+{
+	if (0 != ID)
+	{
+		if (0 != childName.length())
+		{
+			if (childName == QString("salaryForm"))
+			{
+				salaryEdit->setText(QString::number(ID));
+				BusinessLayer::Salary salary;
+				if (salary.GetSalaryByID(dialogBL->GetOrmasDal(), ID, errorMessage))
+				{
+					BusinessLayer::User user;
+					if (user.GetUserByID(dialogBL->GetOrmasDal(), salary.GetEmployeeID(), errorMessage))
+					{
+						namePh->setText(user.GetName().c_str());
+						surnamePh->setText(user.GetSurname().c_str());
+						phonePh->setText(user.GetPhone().c_str());
+					}
+				}
+			}
+		}
+	}
+}
+
+void CreateTmsDlg::SetTimesheetParams(int sID, double tWorkedTime, QString tDate, int id)
+{
+	timesheet->SetSalaryID(sID);
+	timesheet->SetWorkedTime(tWorkedTime);
+	timesheet->SetDate(tDate.toUtf8().constData());
+	timesheet->SetID(id);
+}
+
+void CreateTmsDlg::FillEditElements(int sID, double tWorkedTime, QString tDate)
+{
+	salaryEdit->setText(QString::number(sID));
+	workedTimeEdit->setText(QString::number(tWorkedTime));
+	dateEdit->setDate(QDate::fromString(tDate, "yyyy.MM.dd"));
+	BusinessLayer::Salary salary;
+	if (salary.GetSalaryByID(dialogBL->GetOrmasDal(), sID, errorMessage))
+	{
+		BusinessLayer::User user;
+		if (user.GetUserByID(dialogBL->GetOrmasDal(), salary.GetEmployeeID(), errorMessage))
+		{
+			namePh->setText(user.GetName().c_str());
+			surnamePh->setText(user.GetSurname().c_str());
+			phonePh->setText(user.GetPhone().c_str());
+		}
+	}
+}
+
+bool CreateTmsDlg::FillDlgElements(QTableView* pTable)
+{
+	QModelIndex mIndex = pTable->selectionModel()->currentIndex();
+	if (mIndex.row() >= 0)
+	{
+		SetTimesheetParams(pTable->model()->data(pTable->model()->index(mIndex.row(), 6)).toInt(),
+			pTable->model()->data(pTable->model()->index(mIndex.row(), 5)).toDouble(),
+			pTable->model()->data(pTable->model()->index(mIndex.row(), 4)).toString().toUtf8().constData(),
+			pTable->model()->data(pTable->model()->index(mIndex.row(), 0)).toInt());
+		FillEditElements(pTable->model()->data(pTable->model()->index(mIndex.row(), 6)).toInt(),
+			pTable->model()->data(pTable->model()->index(mIndex.row(), 5)).toDouble(),
+			pTable->model()->data(pTable->model()->index(mIndex.row(), 4)).toString().toUtf8().constData());
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
+void CreateTmsDlg::CreateTimesheet()
+{
+	errorMessage.clear();
+	if (0 != salaryEdit->text().toInt() && 0.0 != workedTimeEdit->text().toDouble() && !dateEdit->text().isEmpty())
+	{
+		DataForm *parentDataForm = (DataForm*)parentWidget();
+		SetTimesheetParams(salaryEdit->text().toInt(), workedTimeEdit->text().toDouble(), dateEdit->text());
+		dialogBL->StartTransaction(errorMessage);
+		if (dialogBL->CreateTimesheet(timesheet, errorMessage))
+		{
+			BusinessLayer::Salary *salary = new BusinessLayer::Salary;
+			BusinessLayer::User *employee = new BusinessLayer::User;
+			if (!salary->GetSalaryByID(dialogBL->GetOrmasDal(), timesheet->GetSalaryID(), errorMessage))
+			{
+				dialogBL->CancelTransaction(errorMessage);
+				QMessageBox::information(NULL, QString(tr("Warning")),
+					QString(tr(errorMessage.c_str())),
+					QString(tr("Ok")));
+				errorMessage.clear();
+				delete salary;
+				return;
+			}
+
+			if (!employee->GetUserByID(dialogBL->GetOrmasDal(), salary->GetEmployeeID(), errorMessage))
+			{
+				dialogBL->CancelTransaction(errorMessage);
+				QMessageBox::information(NULL, QString(tr("Warning")),
+					QString(tr(errorMessage.c_str())),
+					QString(tr("Ok")));
+				errorMessage.clear();
+				delete employee;
+				return;
+			}
+
+
+			QList<QStandardItem*> timesheetItem;
+			timesheetItem << new QStandardItem(QString::number(timesheet->GetID()))
+				<< new QStandardItem(employee->GetName().c_str())
+				<< new QStandardItem(employee->GetSurname().c_str())
+				<< new QStandardItem(employee->GetPhone().c_str())
+				<< new QStandardItem(timesheet->GetDate().c_str())
+				<< new QStandardItem(QString::number(timesheet->GetWorkedTime()))
+				<< new QStandardItem(QString::number(timesheet->GetSalaryID()));
+			QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
+			itemModel->appendRow(timesheetItem);
+	
+			dialogBL->CommitTransaction(errorMessage);
+
+			delete salary;
+			delete employee;
+			this->close();
+		}
+		else
+		{
+			dialogBL->CancelTransaction(errorMessage);
+			QMessageBox::information(NULL, QString(tr("Warning")),
+				QString(tr(errorMessage.c_str())),
+				QString(tr("Ok")));
+
+			errorMessage.clear();
+		}
+
+	}
+	else
+	{
+		QMessageBox::information(NULL, QString(tr("Warning")),
+			QString(tr("Please fill user, value, date and currency!")),
+			QString(tr("Ok")));
+	}
+	errorMessage.clear();
+}
+
+void CreateTmsDlg::EditTimesheet()
+{
+	errorMessage.clear();
+	if (0 != salaryEdit->text().toInt() && 0.0 != workedTimeEdit->text().toDouble() && !dateEdit->text().isEmpty())
+	{
+		if (QString(timesheet->GetDate().c_str()) != dateEdit->text() || timesheet->GetSalaryID() != salaryEdit->text().toInt()
+			|| timesheet->GetWorkedTime() != workedTimeEdit->text().toDouble())
+		{
+			DataForm *parentDataForm = (DataForm*)parentWidget();
+			SetTimesheetParams(salaryEdit->text().toInt(), workedTimeEdit->text().toDouble(), dateEdit->text(), timesheet->GetID());
+			dialogBL->StartTransaction(errorMessage);
+			if (dialogBL->UpdateTimesheet(timesheet, errorMessage))
+			{
+				BusinessLayer::Salary *salary = new BusinessLayer::Salary;
+				BusinessLayer::User *employee = new BusinessLayer::User;
+				if (!salary->GetSalaryByID(dialogBL->GetOrmasDal(), timesheet->GetSalaryID(), errorMessage))
+				{
+					dialogBL->CancelTransaction(errorMessage);
+					QMessageBox::information(NULL, QString(tr("Warning")),
+						QString(tr(errorMessage.c_str())),
+						QString(tr("Ok")));
+					errorMessage.clear();
+					delete salary;
+					return;
+				}
+
+				if (!employee->GetUserByID(dialogBL->GetOrmasDal(), salary->GetEmployeeID(), errorMessage))
+				{
+					dialogBL->CancelTransaction(errorMessage);
+					QMessageBox::information(NULL, QString(tr("Warning")),
+						QString(tr(errorMessage.c_str())),
+						QString(tr("Ok")));
+					errorMessage.clear();
+					delete employee;
+					return;
+				}
+
+				QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
+				QModelIndex mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
+				itemModel->item(mIndex.row(), 1)->setText(employee->GetName().c_str());
+				itemModel->item(mIndex.row(), 1)->setText(employee->GetSurname().c_str());
+				itemModel->item(mIndex.row(), 1)->setText(employee->GetPhone().c_str());
+				itemModel->item(mIndex.row(), 1)->setText(timesheet->GetDate().c_str());
+				itemModel->item(mIndex.row(), 2)->setText(QString::number(timesheet->GetWorkedTime()));
+				itemModel->item(mIndex.row(), 5)->setText(QString::number(timesheet->GetSalaryID()));
+				emit itemModel->dataChanged(mIndex, mIndex);
+				
+				dialogBL->CommitTransaction(errorMessage);
+
+				delete employee;
+				delete salary;
+				this->close();
+			}
+			else
+			{
+				dialogBL->CancelTransaction(errorMessage);
+				QMessageBox::information(NULL, QString(tr("Warning")),
+					QString(tr(errorMessage.c_str())),
+					QString(tr("Ok")));
+			}
+
+		}
+		else
+		{
+			this->close();
+		}
+	}
+	else
+	{
+		QMessageBox::information(NULL, QString(tr("Warning")),
+			QString(tr("Please fill user, value and currency!")),
+			QString(tr("Ok")));
+	}
+	errorMessage.clear();
+}
+
+void CreateTmsDlg::Close()
+{
+	this->close();
+}
+
+void CreateTmsDlg::OpenSlrDlg()
+{
+	this->hide();
+	this->setModal(false);
+	this->show();
+	DataForm *userParent = (DataForm *)parent();
+	MainForm *mainForm = (MainForm *)userParent->GetParent();
+	QString message = tr("Loading...");
+	mainForm->statusBar()->showMessage(message);
+	DataForm *dForm = new DataForm(dialogBL, mainForm);
+	dForm->setWindowTitle(tr("Salaries"));
+	dForm->hide();
+	dForm->setWindowModality(Qt::WindowModal);
+	dForm->FillTable<BusinessLayer::SalaryView>(errorMessage);
+	if (errorMessage.empty())
+	{
+		dForm->createTmsDlg = this;
+		dForm->setObjectName("salaryForm");
+		dForm->QtConnect<BusinessLayer::SalaryView>();
+		QMdiSubWindow *salaryWindow = new QMdiSubWindow;
+		salaryWindow->setWidget(dForm);
+		salaryWindow->setAttribute(Qt::WA_DeleteOnClose);
+		mainForm->mdiArea->addSubWindow(salaryWindow);
+		dForm->topLevelWidget();
+		dForm->activateWindow();
+		QApplication::setActiveWindow(dForm);
+		dForm->show();
+		dForm->raise();
+		QString message = tr("All salaries are shown");
+		mainForm->statusBar()->showMessage(message);
+	}
+	else
+	{
+		delete dForm;
+		QString message = tr("End with error!");
+		mainForm->statusBar()->showMessage(message);
+		QMessageBox::information(NULL, QString(tr("Warning")),
+			QString(tr(errorMessage.c_str())),
+			QString(tr("Ok")));
+		errorMessage = "";
+	}
+}
+

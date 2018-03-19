@@ -18,7 +18,6 @@ CreateSlrDlg::CreateSlrDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, QWi
 	employeeEdit->setValidator(vInt);
 	valueEdit->setValidator(vDouble);
 	valueEdit->setMaxLength(17);
-	currencyEdit->setValidator(vInt);
 	if (true == updateFlag)
 	{
 		QObject::connect(okBtn, &QPushButton::released, this, &CreateSlrDlg::EditSalary);
@@ -30,8 +29,8 @@ CreateSlrDlg::CreateSlrDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, QWi
 	}
 	QObject::connect(cancelBtn, &QPushButton::released, this, &CreateSlrDlg::Close);
 	QObject::connect(employeeBtn, &QPushButton::released, this, &CreateSlrDlg::OpenEmpDlg);
-	QObject::connect(currencyBtn, &QPushButton::released, this, &CreateSlrDlg::OpenCurDlg);
 	QObject::connect(slrTypeBtn, &QPushButton::released, this, &CreateSlrDlg::OpenSlrTypeDlg);
+	InitComboBox();
 }
 
 CreateSlrDlg::~CreateSlrDlg()
@@ -50,14 +49,22 @@ void CreateSlrDlg::SetID(int ID, QString childName)
 			if (childName == QString("employeeForm"))
 			{
 				employeeEdit->setText(QString::number(ID));
-			}
-			if (childName == QString("currencyForm"))
-			{
-				currencyEdit->setText(QString::number(ID));
+				BusinessLayer::User user;
+				if (user.GetUserByID(dialogBL->GetOrmasDal(), ID, errorMessage))
+				{
+					namePh->setText(user.GetName().c_str());
+					surnamePh->setText(user.GetSurname().c_str());
+					phonePh->setText(user.GetPhone().c_str());
+				}
 			}
 			if (childName == QString("slrTypeForm"))
 			{
 				salaryTypeEdit->setText(QString::number(ID));
+				BusinessLayer::SalaryType salaryType;
+				if (salaryType.GetSalaryTypeByID(dialogBL->GetOrmasDal(), ID, errorMessage))
+				{
+					salaryTypeNamePh->setText(salaryType.GetName().c_str());
+				}
 			}
 		}
 	}
@@ -78,11 +85,23 @@ void CreateSlrDlg::FillEditElements(int sEmployeeID, double sValue, int sCurrenc
 {
 	employeeEdit->setText(QString::number(sEmployeeID));
 	valueEdit->setText(QString::number(sValue));
-	currencyEdit->setText(QString::number(sCurrencyID));
 	salaryTypeEdit->setText(QString::number(sSalaryTypeID));
 	dateEdit->setDate(QDate::fromString(sDate, "dd.MM.yyyy"));
 	int index = bonusCmb->findText(sBonus);
 	bonusCmb->setCurrentIndex(index);
+	currencyCmb->setCurrentIndex(currencyCmb->findData(QVariant(sCurrencyID)));
+	BusinessLayer::User user;
+	if (user.GetUserByID(dialogBL->GetOrmasDal(), sEmployeeID, errorMessage))
+	{
+		namePh->setText(user.GetName().c_str());
+		surnamePh->setText(user.GetSurname().c_str());
+		phonePh->setText(user.GetPhone().c_str());
+	}
+	BusinessLayer::SalaryType salaryType;
+	if (salaryType.GetSalaryTypeByID(dialogBL->GetOrmasDal(), sSalaryTypeID, errorMessage))
+	{
+		salaryTypeNamePh->setText(salaryType.GetName().c_str());
+	}
 }
 
 bool CreateSlrDlg::FillDlgElements(QTableView* sTable)
@@ -114,11 +133,11 @@ bool CreateSlrDlg::FillDlgElements(QTableView* sTable)
 void CreateSlrDlg::CreateSalary()
 {
 	errorMessage.clear();
-	if (!(0 != employeeEdit->text().toInt() || 0.0 != valueEdit->text().toDouble() || 0 != currencyEdit->text().toInt()
+	if (!(0 != employeeEdit->text().toInt() || 0.0 != valueEdit->text().toDouble() || !currencyCmb->currentText().isEmpty()
 		|| dateEdit->text().isEmpty()) || 0 != salaryTypeEdit->text().toInt() || bonusCmb->currentText().isEmpty())
 	{
 		DataForm *parentDataForm = (DataForm*)parentWidget();
-		SetSalaryParams(employeeEdit->text().toInt(), valueEdit->text().toDouble(), currencyEdit->text().toInt(), salaryTypeEdit->text().toInt(), dateEdit->text(), bonusCmb->currentText());
+		SetSalaryParams(employeeEdit->text().toInt(), valueEdit->text().toDouble(), currencyCmb->currentData().toInt(), salaryTypeEdit->text().toInt(), dateEdit->text(), bonusCmb->currentText());
 		dialogBL->StartTransaction(errorMessage);
 		if (dialogBL->CreateSalary(salary, errorMessage))
 		{
@@ -155,11 +174,12 @@ void CreateSlrDlg::CreateSalary()
 				<< new QStandardItem(salary->GetIsBonus() ? "true" : "false");
 			QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
 			itemModel->appendRow(salaryItem);
-			this->close();
+			
 			dialogBL->CommitTransaction(errorMessage);
 			delete employee;
 			delete currency;
 			delete salaryType;
+			this->close();
 		}
 		else
 		{
@@ -183,14 +203,14 @@ void CreateSlrDlg::CreateSalary()
 void CreateSlrDlg::EditSalary()
 {
 	errorMessage.clear();
-	if (!(0 != employeeEdit->text().toInt() || 0.0 != valueEdit->text().toDouble() || 0 != currencyEdit->text().toInt()
+	if (!(0 != employeeEdit->text().toInt() || 0.0 != valueEdit->text().toDouble() || !currencyCmb->currentText().isEmpty()
 		|| dateEdit->text().isEmpty()) || 0 != salaryTypeEdit->text().toInt() || bonusCmb->currentText().isEmpty())
 	{
 		if (QString(salary->GetDate().c_str()) != dateEdit->text() || salary->GetEmployeeID() != employeeEdit->text().toInt()
-			|| salary->GetValue() != valueEdit->text().toDouble() || salary->GetCurrencyID() != currencyEdit->text().toInt())
+			|| salary->GetValue() != valueEdit->text().toDouble() || salary->GetCurrencyID() != currencyCmb->currentData().toInt())
 		{
 			DataForm *parentDataForm = (DataForm*)parentWidget();
-			SetSalaryParams(employeeEdit->text().toInt(), valueEdit->text().toDouble(), currencyEdit->text().toInt(), salaryTypeEdit->text().toInt(), dateEdit->text(), bonusCmb->currentText(), salary->GetID());
+			SetSalaryParams(employeeEdit->text().toInt(), valueEdit->text().toDouble(), currencyCmb->currentData().toInt(), salaryTypeEdit->text().toInt(), dateEdit->text(), bonusCmb->currentText(), salary->GetID());
 			dialogBL->StartTransaction(errorMessage);
 			if (dialogBL->UpdateSalary(salary, errorMessage))
 			{
@@ -226,11 +246,12 @@ void CreateSlrDlg::EditSalary()
 				itemModel->item(mIndex.row(), 10)->setText(QString::number(salary->GetSalaryTypeID()));
 				itemModel->item(mIndex.row(), 11)->setText(salary->GetIsBonus() ? "true" : "false");
 				emit itemModel->dataChanged(mIndex, mIndex);
-				this->close();
+				
 				dialogBL->CommitTransaction(errorMessage);
 				delete employee;
 				delete currency;
 				delete salaryType;
+				this->close();
 			}
 			else
 			{
@@ -302,51 +323,6 @@ void CreateSlrDlg::OpenEmpDlg()
 	}
 }
 
-
-void CreateSlrDlg::OpenCurDlg()
-{
-	this->hide();
-	this->setModal(false);
-	this->show();
-	DataForm *productParent = (DataForm *)parent();
-	MainForm *mainForm = (MainForm *)productParent->GetParent();
-	QString message = tr("Loading...");
-	mainForm->statusBar()->showMessage(message);
-	DataForm *dForm = new DataForm(dialogBL, mainForm);
-	dForm->setWindowTitle(tr("Currencies"));
-	dForm->hide();
-	dForm->setWindowModality(Qt::WindowModal);
-	dForm->FillTable<BusinessLayer::Currency>(errorMessage);
-	if (errorMessage.empty())
-	{
-		dForm->createSlrDlg = this;
-		dForm->setObjectName("currencyForm");
-		dForm->QtConnect<BusinessLayer::Currency>();
-		QMdiSubWindow *currencyWindow = new QMdiSubWindow;
-		currencyWindow->setWidget(dForm);
-		currencyWindow->setAttribute(Qt::WA_DeleteOnClose);
-		mainForm->mdiArea->addSubWindow(currencyWindow);
-		dForm->topLevelWidget();
-		dForm->activateWindow();
-		QApplication::setActiveWindow(dForm);
-		dForm->show();
-		dForm->raise();
-		QString message = tr("All currency are shown");
-		mainForm->statusBar()->showMessage(message);
-	}
-	else
-	{
-		delete dForm;
-		QString message = tr("End with error!");
-		mainForm->statusBar()->showMessage(message);
-		QMessageBox::information(NULL, QString(tr("Warning")),
-			QString(tr(errorMessage.c_str())),
-			QString(tr("Ok")));
-		errorMessage = "";
-	}
-
-}
-
 void CreateSlrDlg::OpenSlrTypeDlg()
 {
 	this->hide();
@@ -388,5 +364,16 @@ void CreateSlrDlg::OpenSlrTypeDlg()
 			QString(tr("Ok")));
 		errorMessage = "";
 	}
+}
 
+void CreateSlrDlg::InitComboBox()
+{
+	std::vector<BusinessLayer::Currency> curVector = dialogBL->GetAllDataForClass<BusinessLayer::Currency>(errorMessage);
+	if (!curVector.empty())
+	{
+		for (unsigned int i = 0; i < curVector.size(); i++)
+		{
+			currencyCmb->addItem(curVector[i].GetShortName().c_str(), QVariant(curVector[i].GetID()));
+		}
+	}
 }

@@ -18,15 +18,15 @@ public:
 	void DeleteRefund(){};
 	void Close();
 	void OpenUserDlg();
-	void OpenCurDlg();
 	public slots:
 	void SetID(int ID, QString childName);
 private:
-	BusinessLayer::Refund *Refund = new BusinessLayer::Refund();
+	BusinessLayer::Refund *refund = new BusinessLayer::Refund();
 	void SetRefundParams(QString, double, int, int, int = 0);
 	void FillEditElements(QString, double, int, int);
 	QDoubleValidator *vDouble = nullptr;
 	QIntValidator *vInt = nullptr;
+	void InitComboBox();
 };
 
 #endif //CREATERfdDLG_H

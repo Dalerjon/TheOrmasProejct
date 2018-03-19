@@ -22,6 +22,7 @@ CreateCltDlg::CreateCltDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, QWi
 	firmNumEdit->setMaxLength(10);
 	passwordEdit->setMaxLength(30);
 	vInt = new QIntValidator(0, 1000000000, this);
+	roleNamePh->setText("CLIENT");
 	locationEdit->setValidator(vInt);
 
 	if (true == updateFlag)
@@ -89,6 +90,7 @@ void CreateCltDlg::FillEditElements(QString cEmail, QString cName, QString cSurn
 	firmEdit->setText(cFirm);
 	firmNumEdit->setText(cFirmNumber);
 	locationEdit->setText(QString::number(cLocationID));
+	roleNamePh->setText("CLIENT");
 }
 
 bool CreateCltDlg::FillDlgElements(QTableView* cTable)
@@ -157,13 +159,9 @@ void CreateCltDlg::CreateClient()
 		if (dialogBL->CreateClient(client, errorMessage))
 		{
 			BusinessLayer::Location *location = new BusinessLayer::Location();
-			//location->SetID(locationEdit->text().toInt());
-			//std::string locationFilter = dialogBL->GenerateFilter<BusinessLayer::Location>(location);
-			//std::vector<BusinessLayer::Location> locationVector = dialogBL->GetAllDataForClass<BusinessLayer::Location>(errorMessage, locationFilter);
 			if (roleVector.size() < 1
 				|| !location->GetLocationByID(dialogBL->GetOrmasDal(), client->GetLocationID(), errorMessage))
 			{
-				dialogBL->CancelTransaction(errorMessage);
 				dialogBL->CancelTransaction(errorMessage);
 				QMessageBox::information(NULL, QString(tr("Warning")),
 					QString(tr(errorMessage.c_str())),
@@ -193,12 +191,12 @@ void CreateCltDlg::CreateClient()
 				<< new QStandardItem(QString::number(client->GetLocationID()));
 			QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
 			itemModel->appendRow(clientItem);
-
-			this->close();
-
+			
 			delete location;
 			delete role;
 			dialogBL->CommitTransaction(errorMessage);
+
+			this->close();
 		}
 		else
 		{
@@ -291,11 +289,12 @@ void CreateCltDlg::EditClient()
 				itemModel->item(mIndex.row(), 15)->setText(QString::number(client->GetLocationID()));
 
 				emit itemModel->dataChanged(mIndex, mIndex);
-				this->close();
+				
 
 				delete location;
 				delete role;
 				dialogBL->CommitTransaction(errorMessage);
+				this->close();
 			}
 			else
 			{

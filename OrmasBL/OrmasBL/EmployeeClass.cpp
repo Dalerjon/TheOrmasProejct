@@ -114,18 +114,6 @@ namespace BusinessLayer{
 	}
 	bool Employee::DeleteEmployee(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
-		email = "";
-		name = "";
-		surname = "";
-		phone = "";
-		address = "";
-		roleID = 0;
-		password = "";
-		activated = false;
-		userID = 0;
-		positionID = 0;
-		birthDate = "";
-		hireDate = "";
 		ormasDal.StartTransaction(errorMessage);
 		if (!errorMessage.empty())
 			return false;
@@ -138,7 +126,7 @@ namespace BusinessLayer{
 				{
 					return false;
 				}
-				id = 0;
+				Clear();
 				return true;
 			}
 		}

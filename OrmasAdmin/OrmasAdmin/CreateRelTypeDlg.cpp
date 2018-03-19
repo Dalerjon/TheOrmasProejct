@@ -70,8 +70,9 @@ void CreateRelTypeDlg::CreateRelationType()
 				<< new QStandardItem(relationType->GetComment().c_str());
 			QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
 			itemModel->appendRow(relationTypeItem);
-			this->close();
+			
 			dialogBL->CommitTransaction(errorMessage);
+			this->close();
 		}
 		else
 		{
@@ -107,8 +108,9 @@ void CreateRelTypeDlg::EditRelationType()
 				itemModel->item(mIndex.row(), 1)->setText(relationType->GetName().c_str());
 				itemModel->item(mIndex.row(), 2)->setText(relationType->GetComment().c_str());
 				emit itemModel->dataChanged(mIndex, mIndex);
-				this->close();
+				
 				dialogBL->CommitTransaction(errorMessage);
+				this->close();
 			}
 			else
 			{

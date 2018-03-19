@@ -201,6 +201,60 @@
     <ClInclude Include="ui_CreateWOffRDlg.h">
       <Filter>Header Files\UI Headers</Filter>
     </ClInclude>
+    <ClInclude Include="ui_CreateSpecDlg.h">
+      <Filter>Header Files\UI Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="ui_CreateSpecListDlg.h">
+      <Filter>Header Files\UI Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="ui_CreateTmsDlg.h">
+      <Filter>Header Files\UI Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="ui_CreateJbpDlg.h">
+      <Filter>Header Files\UI Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="ui_CreateJbsDlg.h">
+      <Filter>Header Files\UI Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="ui_CreatePcrDlg.h">
+      <Filter>Header Files\UI Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="ui_CreateAccDlg.h">
+      <Filter>Header Files\UI Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="ui_CreateAccTpDlg.h">
+      <Filter>Header Files\UI Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="ui_CreateCOADlg.h">
+      <Filter>Header Files\UI Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="ui_CreateEtrDlg.h">
+      <Filter>Header Files\UI Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="ui_CreateNetCDlg.h">
+      <Filter>Header Files\UI Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="ui_CreatePPlanDlg.h">
+      <Filter>Header Files\UI Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="ui_CreatePPlanListDlg.h">
+      <Filter>Header Files\UI Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="ui_CreatePurDlg.h">
+      <Filter>Header Files\UI Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="ui_CreateSplDlg.h">
+      <Filter>Header Files\UI Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="ui_CreateSplListDlg.h">
+      <Filter>Header Files\UI Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="ui_GenerateAccDlg.h">
+      <Filter>Header Files\UI Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="ui_GenerateOneAccDlg.h">
+      <Filter>Header Files\UI Headers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -533,6 +587,114 @@
     <ClCompile Include="moc_CreateRcpRListDlg.cpp">
       <Filter>MOC Files</Filter>
     </ClCompile>
+    <ClCompile Include="moc_CreateJbpDlg.cpp">
+      <Filter>MOC Files</Filter>
+    </ClCompile>
+    <ClCompile Include="moc_CreateJbsDlg.cpp">
+      <Filter>MOC Files</Filter>
+    </ClCompile>
+    <ClCompile Include="moc_CreatePcrDlg.cpp">
+      <Filter>MOC Files</Filter>
+    </ClCompile>
+    <ClCompile Include="moc_CreateSpecDlg.cpp">
+      <Filter>MOC Files</Filter>
+    </ClCompile>
+    <ClCompile Include="moc_CreateSpecListDlg.cpp">
+      <Filter>MOC Files</Filter>
+    </ClCompile>
+    <ClCompile Include="moc_CreateTmsDlg.cpp">
+      <Filter>MOC Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CreateJbpDlg.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CreatePcrDlg.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CreateSpecDlg.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CreateSpecListDlg.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CreateTmsDlg.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CreateAccTpDlg.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CreateCOADlg.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CreateEtrDlg.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CreateNetCDlg.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CreatePPlanDlg.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CreatePPlanListDlg.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CreatePurDlg.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CreateSplDlg.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CreateSplListDlg.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GenerateAccDlg.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GenerateOneAccDlg.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CreateAccDlg.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="moc_GenerateOneAccDlg.cpp">
+      <Filter>MOC Files</Filter>
+    </ClCompile>
+    <ClCompile Include="moc_CreateAccDlg.cpp">
+      <Filter>MOC Files</Filter>
+    </ClCompile>
+    <ClCompile Include="moc_CreateAccTpDlg.cpp">
+      <Filter>MOC Files</Filter>
+    </ClCompile>
+    <ClCompile Include="moc_CreateCOADlg.cpp">
+      <Filter>MOC Files</Filter>
+    </ClCompile>
+    <ClCompile Include="moc_CreateEtrDlg.cpp">
+      <Filter>MOC Files</Filter>
+    </ClCompile>
+    <ClCompile Include="moc_CreateNetCDlg.cpp">
+      <Filter>MOC Files</Filter>
+    </ClCompile>
+    <ClCompile Include="moc_CreatePPlanDlg.cpp">
+      <Filter>MOC Files</Filter>
+    </ClCompile>
+    <ClCompile Include="moc_CreatePPlanListDlg.cpp">
+      <Filter>MOC Files</Filter>
+    </ClCompile>
+    <ClCompile Include="moc_CreatePurDlg.cpp">
+      <Filter>MOC Files</Filter>
+    </ClCompile>
+    <ClCompile Include="moc_CreateSplDlg.cpp">
+      <Filter>MOC Files</Filter>
+    </ClCompile>
+    <ClCompile Include="moc_CreateSplListDlg.cpp">
+      <Filter>MOC Files</Filter>
+    </ClCompile>
+    <ClCompile Include="moc_GenerateAccDlg.cpp">
+      <Filter>MOC Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CreateJbsDlg.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="MainForm.ui">
@@ -861,6 +1023,114 @@
     </CustomBuild>
     <CustomBuild Include="CreateWOffRListDlg.ui">
       <Filter>User Interface</Filter>
+    </CustomBuild>
+    <CustomBuild Include="CreateJbpDlg.ui">
+      <Filter>User Interface</Filter>
+    </CustomBuild>
+    <CustomBuild Include="CreateJbsDlg.ui">
+      <Filter>User Interface</Filter>
+    </CustomBuild>
+    <CustomBuild Include="CreatePcrDlg.ui">
+      <Filter>User Interface</Filter>
+    </CustomBuild>
+    <CustomBuild Include="CreateSpecDlg.ui">
+      <Filter>User Interface</Filter>
+    </CustomBuild>
+    <CustomBuild Include="CreateSpecListDlg.ui">
+      <Filter>User Interface</Filter>
+    </CustomBuild>
+    <CustomBuild Include="CreateTmsDlg.ui">
+      <Filter>User Interface</Filter>
+    </CustomBuild>
+    <CustomBuild Include="CreateJbpDlg.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="CreateJbsDlg.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="CreatePcrDlg.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="CreateSpecDlg.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="CreateSpecListDlg.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="CreateTmsDlg.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="CreateAccDlg.ui">
+      <Filter>User Interface</Filter>
+    </CustomBuild>
+    <CustomBuild Include="CreateAccTpDlg.ui">
+      <Filter>User Interface</Filter>
+    </CustomBuild>
+    <CustomBuild Include="CreateCOADlg.ui">
+      <Filter>User Interface</Filter>
+    </CustomBuild>
+    <CustomBuild Include="CreateEtrDlg.ui">
+      <Filter>User Interface</Filter>
+    </CustomBuild>
+    <CustomBuild Include="CreateNetCDlg.ui">
+      <Filter>User Interface</Filter>
+    </CustomBuild>
+    <CustomBuild Include="CreatePPlanDlg.ui">
+      <Filter>User Interface</Filter>
+    </CustomBuild>
+    <CustomBuild Include="CreatePPlanListDlg.ui">
+      <Filter>User Interface</Filter>
+    </CustomBuild>
+    <CustomBuild Include="CreatePurDlg.ui">
+      <Filter>User Interface</Filter>
+    </CustomBuild>
+    <CustomBuild Include="CreateSplDlg.ui">
+      <Filter>User Interface</Filter>
+    </CustomBuild>
+    <CustomBuild Include="CreateSplListDlg.ui">
+      <Filter>User Interface</Filter>
+    </CustomBuild>
+    <CustomBuild Include="GenerateAccDlg.ui">
+      <Filter>User Interface</Filter>
+    </CustomBuild>
+    <CustomBuild Include="GenerateOneAccDlg.ui">
+      <Filter>User Interface</Filter>
+    </CustomBuild>
+    <CustomBuild Include="CreateAccDlg.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="CreateAccTpDlg.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="CreateCOADlg.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="CreateEtrDlg.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="CreateNetCDlg.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="CreatePPlanDlg.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="CreatePPlanListDlg.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="CreatePurDlg.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="CreateSplDlg.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="CreateSplListDlg.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="GenerateAccDlg.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="GenerateOneAccDlg.h">
+      <Filter>Header Files</Filter>
     </CustomBuild>
   </ItemGroup>
 </Project>

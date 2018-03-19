@@ -104,13 +104,9 @@ namespace BusinessLayer
 	}
 	bool Location::DeleteLocation(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
-		countryName.clear();
-		countryCode.clear();
-		regionName.clear();
-		cityName.clear();
 		if (ormasDal.DeleteLocation(id, errorMessage))
 		{
-			id = 0;
+			Clear();
 			return true;
 		}
 		if (errorMessage.empty())

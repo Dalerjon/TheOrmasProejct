@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>430</width>
-    <height>267</height>
+    <width>636</width>
+    <height>284</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -38,42 +38,48 @@
    <property name="bottomMargin">
     <number>11</number>
    </property>
-   <item row="3" column="1">
-    <widget class="QLineEdit" name="measureEdit">
+   <item row="0" column="0">
+    <widget class="QPushButton" name="companyBtn">
+     <property name="minimumSize">
+      <size>
+       <width>200</width>
+       <height>0</height>
+      </size>
+     </property>
+     <property name="text">
+      <string>Select company</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="1">
+    <widget class="QLineEdit" name="companyEdit">
      <property name="readOnly">
       <bool>true</bool>
      </property>
     </widget>
    </item>
-   <item row="6" column="0">
-    <widget class="QPushButton" name="prodTypeBtn">
-     <property name="text">
-      <string>Select product type</string>
+   <item row="8" column="1">
+    <widget class="QLineEdit" name="shelfLifeEdit">
+     <property name="toolTip">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;For example: 4 (in days, in that case 4 days)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
     </widget>
    </item>
-   <item row="4" column="0">
-    <widget class="QLabel" name="priceLb">
+   <item row="3" column="0">
+    <widget class="QLabel" name="volumeLb">
      <property name="text">
-      <string>Price:</string>
+      <string>Volume:</string>
      </property>
     </widget>
    </item>
    <item row="2" column="1">
-    <widget class="QLineEdit" name="volumeEdit">
+    <widget class="QLineEdit" name="nameEdit">
      <property name="toolTip">
-      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;For example: 1 (depending on measure, in that case = 1 liter)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;For example: Milk&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
     </widget>
    </item>
-   <item row="7" column="0">
-    <widget class="QLabel" name="shelfLifeLb">
-     <property name="text">
-      <string>Shelf life(in days):</string>
-     </property>
-    </widget>
-   </item>
-   <item row="8" column="0" colspan="2">
+   <item row="9" column="0" colspan="2">
     <layout class="QHBoxLayout" name="horizontalLayout_2">
      <item>
       <spacer name="horizontalSpacer">
@@ -104,86 +110,118 @@
      </item>
     </layout>
    </item>
-   <item row="0" column="1">
-    <widget class="QLineEdit" name="companyEdit">
-     <property name="readOnly">
-      <bool>true</bool>
-     </property>
-    </widget>
-   </item>
-   <item row="2" column="0">
-    <widget class="QLabel" name="volumeLb">
+   <item row="6" column="0">
+    <widget class="QLabel" name="currencyLb">
      <property name="text">
-      <string>Volume:</string>
+      <string>Select currency:</string>
      </property>
     </widget>
    </item>
-   <item row="7" column="1">
-    <widget class="QLineEdit" name="shelfLifeEdit">
+   <item row="3" column="1">
+    <widget class="QLineEdit" name="volumeEdit">
      <property name="toolTip">
-      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;For example: 4 (in days, in that case 4 days)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;For example: 1 (depending on measure, in that case = 1 liter)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+    </widget>
+   </item>
+   <item row="8" column="0">
+    <widget class="QLabel" name="shelfLifeLb">
+     <property name="text">
+      <string>Shelf life(in days):</string>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="0">
+    <widget class="QLabel" name="priceLb">
+     <property name="text">
+      <string>Price:</string>
      </property>
     </widget>
    </item>
    <item row="4" column="1">
-    <widget class="QLineEdit" name="priceEdit">
-     <property name="toolTip">
-      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;For example: 3.5 (depending on currency, in that case 3.5 USD)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    <widget class="QComboBox" name="measureCmb">
+     <property name="maximumSize">
+      <size>
+       <width>150</width>
+       <height>16777215</height>
+      </size>
      </property>
     </widget>
    </item>
    <item row="1" column="0">
+    <widget class="QLabel" name="companyNameLb">
+     <property name="text">
+      <string>Company name:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="6" column="1">
+    <widget class="QComboBox" name="currencyCmb">
+     <property name="maximumSize">
+      <size>
+       <width>150</width>
+       <height>16777215</height>
+      </size>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="0">
+    <widget class="QLabel" name="measureLb">
+     <property name="text">
+      <string>Select measure:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1">
+    <widget class="QLabel" name="companyNamePh">
+     <property name="font">
+      <font>
+       <family>Times New Roman</family>
+       <pointsize>12</pointsize>
+       <weight>75</weight>
+       <italic>true</italic>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
+   </item>
+   <item row="7" column="0">
+    <widget class="QLabel" name="prodTypeLb">
+     <property name="text">
+      <string>Select product type:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="7" column="1">
+    <widget class="QComboBox" name="prodTypeCmb">
+     <property name="minimumSize">
+      <size>
+       <width>150</width>
+       <height>0</height>
+      </size>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>150</width>
+       <height>16777215</height>
+      </size>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="0">
     <widget class="QLabel" name="nameLb">
      <property name="text">
       <string>Product name:</string>
      </property>
     </widget>
    </item>
-   <item row="3" column="0">
-    <widget class="QPushButton" name="measureBtn">
-     <property name="text">
-      <string>Select measure</string>
-     </property>
-    </widget>
-   </item>
-   <item row="6" column="1">
-    <widget class="QLineEdit" name="prodTypeEdit">
-     <property name="readOnly">
-      <bool>true</bool>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="0">
-    <widget class="QPushButton" name="companyBtn">
-     <property name="minimumSize">
-      <size>
-       <width>200</width>
-       <height>0</height>
-      </size>
-     </property>
-     <property name="text">
-      <string>Select company</string>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="1">
-    <widget class="QLineEdit" name="nameEdit">
-     <property name="toolTip">
-      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;For example: Milk&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-     </property>
-    </widget>
-   </item>
-   <item row="5" column="0">
-    <widget class="QPushButton" name="currencyBtn">
-     <property name="text">
-      <string>Select currency</string>
-     </property>
-    </widget>
-   </item>
    <item row="5" column="1">
-    <widget class="QLineEdit" name="currencyEdit">
-     <property name="readOnly">
-      <bool>true</bool>
+    <widget class="QLineEdit" name="priceEdit">
+     <property name="toolTip">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;For example: 3.5 (depending on currency, in that case 3.5 USD)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
     </widget>
    </item>
@@ -194,13 +232,7 @@
   <tabstop>companyEdit</tabstop>
   <tabstop>nameEdit</tabstop>
   <tabstop>volumeEdit</tabstop>
-  <tabstop>measureBtn</tabstop>
-  <tabstop>measureEdit</tabstop>
   <tabstop>priceEdit</tabstop>
-  <tabstop>currencyBtn</tabstop>
-  <tabstop>currencyEdit</tabstop>
-  <tabstop>prodTypeBtn</tabstop>
-  <tabstop>prodTypeEdit</tabstop>
   <tabstop>shelfLifeEdit</tabstop>
   <tabstop>okBtn</tabstop>
   <tabstop>cancelBtn</tabstop>

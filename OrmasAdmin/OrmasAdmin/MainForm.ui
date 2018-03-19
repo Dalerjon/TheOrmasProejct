@@ -63,6 +63,7 @@
     <addaction name="actionAllUsers"/>
     <addaction name="actionClients"/>
     <addaction name="actionEmployees"/>
+    <addaction name="actionPurveyors"/>
     <addaction name="separator"/>
     <addaction name="actionAccess"/>
     <addaction name="actionAccessItems"/>
@@ -76,6 +77,8 @@
     <addaction name="actionProductType"/>
     <addaction name="actionProducts"/>
     <addaction name="actionProductPhoto"/>
+    <addaction name="actionSpecifications"/>
+    <addaction name="actionSpecificationList"/>
    </widget>
    <widget class="QMenu" name="menuOrders">
     <property name="title">
@@ -116,6 +119,14 @@
     </property>
     <addaction name="actionProduction"/>
     <addaction name="actionProductionList"/>
+    <addaction name="actionJobprice"/>
+    <addaction name="actionJobsheet"/>
+    <addaction name="actionPercentRate"/>
+    <addaction name="actionTimesheet"/>
+    <addaction name="actionProductionPlan"/>
+    <addaction name="actionProductionPlanList"/>
+    <addaction name="actionSpoilage"/>
+    <addaction name="actionSpoilageList"/>
    </widget>
    <widget class="QMenu" name="menuWriteOffs">
     <property name="title">
@@ -131,6 +142,7 @@
     <addaction name="actionBalances"/>
     <addaction name="actionPayments"/>
     <addaction name="actionRefund"/>
+    <addaction name="actionNetCost"/>
     <addaction name="actionPrices"/>
     <addaction name="separator"/>
     <addaction name="actionSalary"/>
@@ -138,6 +150,14 @@
     <addaction name="actionPayroll"/>
     <addaction name="actionWithdrawal"/>
     <addaction name="actionPayslip"/>
+    <addaction name="separator"/>
+    <addaction name="actionAccounts"/>
+    <addaction name="actionAccountType"/>
+    <addaction name="actionChartOfAccounts"/>
+    <addaction name="actionCompanyAccounts"/>
+    <addaction name="actionEntry"/>
+    <addaction name="actionGenerateAccounts"/>
+    <addaction name="actionGenerateOneAccount"/>
    </widget>
    <widget class="QMenu" name="menuStock">
     <property name="title">
@@ -403,6 +423,101 @@
   <action name="actionInventorization">
    <property name="text">
     <string>Inventorization</string>
+   </property>
+  </action>
+  <action name="actionSpecifications">
+   <property name="text">
+    <string>Specification</string>
+   </property>
+  </action>
+  <action name="actionSpecificationList">
+   <property name="text">
+    <string>Specification details</string>
+   </property>
+  </action>
+  <action name="actionJobprice">
+   <property name="text">
+    <string>Jobprice</string>
+   </property>
+  </action>
+  <action name="actionJobsheet">
+   <property name="text">
+    <string>Jobsheet</string>
+   </property>
+  </action>
+  <action name="actionPercentRate">
+   <property name="text">
+    <string>Percent rate</string>
+   </property>
+  </action>
+  <action name="actionTimesheet">
+   <property name="text">
+    <string>Timesheet</string>
+   </property>
+  </action>
+  <action name="actionAccounts">
+   <property name="text">
+    <string>Accounts</string>
+   </property>
+  </action>
+  <action name="actionAccountType">
+   <property name="text">
+    <string>Account type</string>
+   </property>
+  </action>
+  <action name="actionChartOfAccounts">
+   <property name="text">
+    <string>Chart of Accounts</string>
+   </property>
+  </action>
+  <action name="actionCompanyAccounts">
+   <property name="text">
+    <string>Company accouts</string>
+   </property>
+  </action>
+  <action name="actionEntry">
+   <property name="text">
+    <string>Entry</string>
+   </property>
+  </action>
+  <action name="actionNetCost">
+   <property name="text">
+    <string>Net cost</string>
+   </property>
+  </action>
+  <action name="actionProductionPlan">
+   <property name="text">
+    <string>Production plan</string>
+   </property>
+  </action>
+  <action name="actionProductionPlanList">
+   <property name="text">
+    <string>Production plan details</string>
+   </property>
+  </action>
+  <action name="actionSpoilage">
+   <property name="text">
+    <string>Spoilage</string>
+   </property>
+  </action>
+  <action name="actionSpoilageList">
+   <property name="text">
+    <string>Spoilage details</string>
+   </property>
+  </action>
+  <action name="actionPurveyors">
+   <property name="text">
+    <string>Purveyors</string>
+   </property>
+  </action>
+  <action name="actionGenerateAccounts">
+   <property name="text">
+    <string>Generate accounts</string>
+   </property>
+  </action>
+  <action name="actionGenerateOneAccount">
+   <property name="text">
+    <string>Generate one account</string>
    </property>
   </action>
  </widget>

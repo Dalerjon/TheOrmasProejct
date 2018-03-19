@@ -17,7 +17,6 @@ CreateInvDlg::CreateInvDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, QWi
 	stockEmployeeEdit->setValidator(vInt);
 	prodCountEdit->setValidator(vInt);
 	statusEdit->setValidator(vInt);
-	currencyEdit->setValidator(vInt);
 	sumEdit->setValidator(vDouble);
 	sumEdit->setMaxLength(17);
 	dialogBL->StartTransaction(errorMessage);
@@ -35,7 +34,6 @@ CreateInvDlg::CreateInvDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, QWi
 		prodCountEdit->setText("0");
 		statusEdit->setText("0");
 		sumEdit->setText("0");
-		currencyEdit->setText("0");
 		dateEdit->setDateTime(QDateTime::currentDateTime());
 		QObject::connect(okBtn, &QPushButton::released, this, &CreateInvDlg::CreateInventorization);
 	}
@@ -43,10 +41,10 @@ CreateInvDlg::CreateInvDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, QWi
 	QObject::connect(employeeBtn, &QPushButton::released, this, &CreateInvDlg::OpenEmpDlg);
 	QObject::connect(statusBtn, &QPushButton::released, this, &CreateInvDlg::OpenStsDlg);
 	QObject::connect(stockEmployeeBtn, &QPushButton::released, this, &CreateInvDlg::OpenSkEmpDlg);
-	QObject::connect(currencyBtn, &QPushButton::released, this, &CreateInvDlg::OpenCurDlg);
 	QObject::connect(addProdBtn, &QPushButton::released, this, &CreateInvDlg::OpenInvListDlg);
 	QObject::connect(statusEdit, &QLineEdit::textChanged, this, &CreateInvDlg::StatusWasChenged);
 	QObject::connect(this, SIGNAL(CloseCreatedForms()), ((MainForm*)((DataForm*)parent)->GetParent()), SLOT(CloseChildsByName()));
+	InitComboBox();
 }
 
 CreateInvDlg::~CreateInvDlg()
@@ -81,7 +79,26 @@ void CreateInvDlg::FillEditElements(int iEmployeeID, QString iDate, QString iExe
 	prodCountEdit->setText(QString::number(iCount));
 	sumEdit->setText(QString::number(iSum));
 	statusEdit->setText(QString::number(iStatusID));
-	currencyEdit->setText(QString::number(iCurrencyID));
+	currencyCmb->setCurrentIndex(currencyCmb->findData(QVariant(iCurrencyID)));
+	BusinessLayer::User user1;
+	if (user1.GetUserByID(dialogBL->GetOrmasDal(), iEmployeeID, errorMessage))
+	{
+		empNamePh->setText(user1.GetName().c_str());
+		empSurnamePh->setText(user1.GetSurname().c_str());
+		empPhonePh->setText(user1.GetPhone().c_str());
+	}
+	BusinessLayer::User user2;
+	if (user2.GetUserByID(dialogBL->GetOrmasDal(), iStockEmployeeID, errorMessage))
+	{
+		empStockNamePh->setText(user2.GetName().c_str());
+		empStockSurnamePh->setText(user2.GetSurname().c_str());
+		empStockPhonePh->setText(user2.GetPhone().c_str());
+	}
+	BusinessLayer::Status status;
+	if (status.GetStatusByID(dialogBL->GetOrmasDal(), iStatusID, errorMessage))
+	{
+		statusPh->setText(status.GetName().c_str());
+	}
 }
 
 void CreateInvDlg::SetID(int ID, QString childName)
@@ -90,21 +107,36 @@ void CreateInvDlg::SetID(int ID, QString childName)
 	{
 		if (0 != childName.length())
 		{
-			if (childName == QString("clientForm"))
+			if (childName == QString("employeeForm"))
 			{
 				employeeEdit->setText(QString::number(ID));
+				BusinessLayer::User user;
+				if (user.GetUserByID(dialogBL->GetOrmasDal(), ID, errorMessage))
+				{
+					empNamePh->setText(user.GetName().c_str());
+					empSurnamePh->setText(user.GetSurname().c_str());
+					empPhonePh->setText(user.GetPhone().c_str());
+				}
 			}
 			if (childName == QString("statusForm"))
 			{
 				statusEdit->setText(QString::number(ID));
+				BusinessLayer::Status status;
+				if (status.GetStatusByID(dialogBL->GetOrmasDal(), ID, errorMessage))
+				{
+					statusPh->setText(status.GetName().c_str());
+				}
 			}
-			if (childName == QString("employeeForm"))
+			if (childName == QString("employeeStockForm"))
 			{
 				stockEmployeeEdit->setText(QString::number(ID));
-			}
-			if (childName == QString("currencyForm"))
-			{
-				currencyEdit->setText(QString::number(ID));
+				BusinessLayer::User user;
+				if (user.GetUserByID(dialogBL->GetOrmasDal(), ID, errorMessage))
+				{
+					empStockNamePh->setText(user.GetName().c_str());
+					empStockSurnamePh->setText(user.GetSurname().c_str());
+					empStockPhonePh->setText(user.GetPhone().c_str());
+				}
 			}
 		}
 	}
@@ -145,11 +177,11 @@ void CreateInvDlg::CreateInventorization()
 	errorMessage.clear();
 	if (0 != stockEmployeeEdit->text().toInt() && !dateEdit->text().isEmpty()
 		&& 0 != prodCountEdit->text().toInt() && 0 != sumEdit->text().toInt()
-		&& 0 != statusEdit->text().toInt() && 0 != currencyEdit->text().toInt())
+		&& 0 != statusEdit->text().toInt() && !currencyCmb->currentText().isEmpty())
 	{
 		DataForm *parentDataForm = (DataForm*)parentWidget();
 		SetInventorizationParams(employeeEdit->text().toInt(), dateEdit->text(), execDateEdit->text(), stockEmployeeEdit->text().toInt(), prodCountEdit->text().toInt(),
-			sumEdit->text().toInt(), statusEdit->text().toInt(), currencyEdit->text().toInt(), inventorization->GetID());
+			sumEdit->text().toInt(), statusEdit->text().toInt(), currencyCmb->currentData().toInt(), inventorization->GetID());
 
 		if (dialogBL->CreateInventorization(inventorization, errorMessage))
 		{
@@ -294,17 +326,17 @@ void CreateInvDlg::EditInventorization()
 	errorMessage.clear();
 	if (0 != stockEmployeeEdit->text().toInt() && !dateEdit->text().isEmpty()
 		&& 0 != prodCountEdit->text().toInt() && 0 != sumEdit->text().toInt()
-		&& 0 != statusEdit->text().toInt() && 0 != currencyEdit->text().toInt())
+		&& 0 != statusEdit->text().toInt() && !currencyCmb->currentText().isEmpty())
 	{
 		if (inventorization->GetStockEmployeeID() != stockEmployeeEdit->text().toInt() || QString(inventorization->GetDate().c_str()) != dateEdit->text() ||
 			QString(inventorization->GetExecutionDate().c_str()) != execDateEdit->text() ||
 			inventorization->GetEmployeeID() != employeeEdit->text().toInt() || inventorization->GetCount() != prodCountEdit->text().toInt() ||
 			inventorization->GetSum() != sumEdit->text().toInt()
-			|| inventorization->GetCurrencyID() != currencyEdit->text().toInt())
+			|| inventorization->GetCurrencyID() != currencyCmb->currentData().toInt())
 		{
 			DataForm *parentDataForm = (DataForm*)parentWidget();
 			SetInventorizationParams(employeeEdit->text().toInt(), dateEdit->text(), execDateEdit->text(), stockEmployeeEdit->text().toInt(), prodCountEdit->text().toInt(),
-				sumEdit->text().toInt(), statusEdit->text().toInt(), currencyEdit->text().toInt(), inventorization->GetID());
+				sumEdit->text().toInt(), statusEdit->text().toInt(), currencyCmb->currentData().toInt(), inventorization->GetID());
 
 			if (dialogBL->UpdateInventorization(inventorization, errorMessage))
 			{
@@ -645,49 +677,6 @@ void CreateInvDlg::OpenStsDlg()
 	}
 }
 
-void CreateInvDlg::OpenCurDlg()
-{
-	this->hide();
-	this->setModal(false);
-	this->show();
-	DataForm *productParent = (DataForm *)parent();
-	MainForm *mainForm = (MainForm *)productParent->GetParent();
-	QString message = tr("Loading...");
-	mainForm->statusBar()->showMessage(message);
-	DataForm *dForm = new DataForm(dialogBL, mainForm);
-	dForm->setWindowTitle(tr("Currencies"));
-	dForm->hide();
-	dForm->setWindowModality(Qt::WindowModal);
-	dForm->FillTable<BusinessLayer::Currency>(errorMessage);
-	if (errorMessage.empty())
-	{
-		dForm->createInvDlg = this;
-		dForm->setObjectName("currencyForm");
-		dForm->QtConnect<BusinessLayer::Currency>();
-		QMdiSubWindow *currencyWindow = new QMdiSubWindow;
-		currencyWindow->setWidget(dForm);
-		currencyWindow->setAttribute(Qt::WA_DeleteOnClose);
-		mainForm->mdiArea->addSubWindow(currencyWindow);
-		dForm->topLevelWidget();
-		dForm->activateWindow();
-		QApplication::setActiveWindow(dForm);
-		dForm->show();
-		dForm->raise();
-		QString message = tr("All currency are shown");
-		mainForm->statusBar()->showMessage(message);
-	}
-	else
-	{
-		delete dForm;
-		QString message = tr("End with error!");
-		mainForm->statusBar()->showMessage(message);
-		QMessageBox::information(NULL, QString(tr("Warning")),
-			QString(tr(errorMessage.c_str())),
-			QString(tr("Ok")));
-		errorMessage = "";
-	}
-
-}
 
 void CreateInvDlg::OpenInvListDlg()
 {
@@ -748,3 +737,14 @@ void CreateInvDlg::StatusWasChenged()
 	}
 }
 
+void CreateInvDlg::InitComboBox()
+{
+	std::vector<BusinessLayer::Currency> curVector = dialogBL->GetAllDataForClass<BusinessLayer::Currency>(errorMessage);
+	if (!curVector.empty())
+	{
+		for (unsigned int i = 0; i < curVector.size(); i++)
+		{
+			currencyCmb->addItem(curVector[i].GetShortName().c_str(), QVariant(curVector[i].GetID()));
+		}
+	}
+}

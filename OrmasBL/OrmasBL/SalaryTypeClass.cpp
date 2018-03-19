@@ -79,11 +79,9 @@ namespace BusinessLayer
 	}
 	bool SalaryType::DeleteSalaryType(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
-		code.clear();
-		name.clear();
 		if (ormasDal.DeleteSalaryType(id, errorMessage))
 		{
-			id = 0;
+			Clear();
 			return true;
 		}
 		if (errorMessage.empty())

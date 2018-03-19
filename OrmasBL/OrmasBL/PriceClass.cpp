@@ -7,8 +7,9 @@ namespace BusinessLayer{
 		id = std::get<0>(pCollection);
 		date = std::get<1>(pCollection);
 		value = std::get<2>(pCollection);
-		currencyID = std::get<4>(pCollection);
-		productID = std::get<3>(pCollection);
+		currencyID = std::get<3>(pCollection);
+		productID = std::get<4>(pCollection);
+		isOutdated = std::get<5>(pCollection);
 	}
 	Price::Price()
 	{
@@ -16,6 +17,7 @@ namespace BusinessLayer{
 		value = 0.0;
 		currencyID = 0;
 		productID = 0;
+		isOutdated = true;
 	}
 	int Price::GetID()
 	{
@@ -40,6 +42,11 @@ namespace BusinessLayer{
 	int Price::GetProductID()
 	{
 		return productID;
+	}
+
+	bool Price::GetIsOutdated()
+	{
+		return isOutdated;
 	}
 
 	void Price::SetID(int pID)
@@ -67,7 +74,12 @@ namespace BusinessLayer{
 		productID = prID;
 	}
 
-	bool Price::CreatePrice(DataLayer::OrmasDal &ormasDal, std::string pDate, double pValue, int cID, int prID,
+	void Price::SetIsOutdated(bool prIsOutdated)
+	{
+		isOutdated = prIsOutdated;
+	}
+
+	bool Price::CreatePrice(DataLayer::OrmasDal &ormasDal, std::string pDate, double pValue, int cID, int prID, bool pIsOutdated,
 		std::string& errorMessage)
 	{
 		if (IsDuplicate(ormasDal, pDate, pValue, cID, prID, errorMessage))
@@ -77,7 +89,8 @@ namespace BusinessLayer{
 		value = pValue;
 		currencyID = cID;
 		productID = prID;
-		if (0 != id && ormasDal.CreatePrice(id, date, value, currencyID, productID, errorMessage))
+		isOutdated = pIsOutdated;
+		if (0 != id && ormasDal.CreatePrice(id, date, value, currencyID, productID, isOutdated, errorMessage))
 		{
 			return true;
 		}
@@ -92,7 +105,7 @@ namespace BusinessLayer{
 		if (IsDuplicate(ormasDal, errorMessage))
 			return false;
 		id = ormasDal.GenerateID();
-		if (0 != id && ormasDal.CreatePrice(id, date, value, currencyID, productID, errorMessage))
+		if (0 != id && ormasDal.CreatePrice(id, date, value, currencyID, productID, isOutdated, errorMessage))
 		{
 			return true;
 		}
@@ -106,7 +119,7 @@ namespace BusinessLayer{
 	{
 		if (ormasDal.DeletePrice(id, errorMessage))
 		{
-			id = 0;
+			Clear();
 			return true;
 		}
 		if (errorMessage.empty())
@@ -116,14 +129,15 @@ namespace BusinessLayer{
 		return false;
 	}
 
-	bool Price::UpdatePrice(DataLayer::OrmasDal &ormasDal, std::string pDate, double pValue, int cID, int prID,
+	bool Price::UpdatePrice(DataLayer::OrmasDal &ormasDal, std::string pDate, double pValue, int cID, int prID, bool pIsOutdated,
 		std::string& errorMessage)
 	{
 		date = pDate;
 		value = pValue;
 		currencyID = cID;
 		productID = prID;
-		if (0 != id && ormasDal.UpdatePrice(id, date, value, currencyID, productID, errorMessage))
+		isOutdated = pIsOutdated;
+		if (0 != id && ormasDal.UpdatePrice(id, date, value, currencyID, productID, isOutdated, errorMessage))
 		{
 			return true;
 		}
@@ -135,7 +149,7 @@ namespace BusinessLayer{
 	}
 	bool Price::UpdatePrice(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
-		if (0 != id && ormasDal.UpdatePrice(id, date, value, currencyID, productID, errorMessage))
+		if (0 != id && ormasDal.UpdatePrice(id, date, value, currencyID, productID, isOutdated, errorMessage))
 		{
 			return true;
 		}
@@ -148,9 +162,9 @@ namespace BusinessLayer{
 
 	std::string Price::GenerateFilter(DataLayer::OrmasDal& ormasDal)
 	{
-		if (0 != id || date.empty() || 0 != productID || 0 != currencyID || 0 != value)
+		if (0 != id || date.empty() || 0 != productID || 0 != currencyID || 0 != value || (isOutdated == true || isOutdated == false))
 		{
-			return ormasDal.GetFilterForPrice(id, date, value, currencyID, productID);
+			return ormasDal.GetFilterForPrice(id, date, value, currencyID, productID, isOutdated);
 		}
 		return "";
 	}
@@ -167,18 +181,19 @@ namespace BusinessLayer{
 			value = std::get<5>(priceVector.at(0));
 			currencyID = std::get<7>(priceVector.at(0));
 			productID = std::get<8>(priceVector.at(0));
+			isOutdated = std::get<9>(priceVector.at(0));
 			return true;
 		}
 		else
 		{
-			errorMessage = "Cannot find Price with this id";
+			errorMessage = "Cannot find price with this id";
 		}
 		return false;
 	}
 
 	bool Price::IsEmpty()
 	{
-		if (0 == id && date.empty() && 0.0 == value && 0 == currencyID && 0 == productID)
+		if (0 == id && date.empty() && 0.0 == value && 0 == currencyID && 0 == productID && isOutdated == true)
 			return true;
 		return false;
 	}
@@ -190,6 +205,7 @@ namespace BusinessLayer{
 		value = 0;
 		currencyID = 0;
 		productID = 0;
+		isOutdated = true;
 	}
 
 	bool Price::IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string pDate, double pValue, int cID, int prID,

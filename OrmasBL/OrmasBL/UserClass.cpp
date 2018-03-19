@@ -158,16 +158,9 @@ namespace BusinessLayer
 	}
 	bool User::DeleteUser(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
-		email.clear();
-		name.clear();
-		surname.clear();
-		phone.clear();
-		address.clear();
-		roleID = 0;
-		password.clear();
 		if (ormasDal.DeleteUser(id, errorMessage))
 		{
-			id = 0;
+			Clear();
 			return true;
 		}
 		return false;
@@ -386,8 +379,8 @@ namespace BusinessLayer
 		{
 			Balance balance;
 			balance.SetUserID(id);
-			balance.SetCurrencyID(currID);
-			balance.SetValue(0);
+			//balance.SetCurrencyID(currID);
+			//balance.SetValue(0);
 			if (balance.CreateBalance(ormasDal, errorMessage))
 				return true;
 		}
@@ -398,7 +391,7 @@ namespace BusinessLayer
 	{
 		Balance balance;
 		balance.SetUserID(id);
-		balance.SetCurrencyID(cID);
+		//balance.SetCurrencyID(cID);
 		std::string filter = balance.GenerateFilter(ormasDal);
 		std::vector<DataLayer::balancesViewCollection> balanceVector = ormasDal.GetBalances(errorMessage, filter);
 		if (0 < balanceVector.size())

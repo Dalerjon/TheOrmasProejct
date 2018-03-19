@@ -15,7 +15,6 @@ CreatePmtDlg::CreatePmtDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, QWi
 	vInt = new QIntValidator(0, 1000000000, this);
 	userEdit->setValidator(vInt);
 	valueEdit->setValidator(vDouble);
-	currencyEdit->setValidator(vInt);
 	valueEdit->setMaxLength(17);
 	if (true == updateFlag)
 	{
@@ -28,7 +27,7 @@ CreatePmtDlg::CreatePmtDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, QWi
 	}
 	QObject::connect(cancelBtn, &QPushButton::released, this, &CreatePmtDlg::Close);
 	QObject::connect(userBtn, &QPushButton::released, this, &CreatePmtDlg::OpenUserDlg);
-	QObject::connect(currencyBtn, &QPushButton::released, this, &CreatePmtDlg::OpenCurDlg);
+	InitComboBox();
 }
 
 CreatePmtDlg::~CreatePmtDlg()
@@ -46,10 +45,13 @@ void CreatePmtDlg::SetID(int ID, QString childName)
 			if (childName == QString("userForm"))
 			{
 				userEdit->setText(QString::number(ID));
-			}
-			if (childName == QString("currencyForm"))
-			{
-				currencyEdit->setText(QString::number(ID));
+				BusinessLayer::User user;
+				if (user.GetUserByID(dialogBL->GetOrmasDal(), ID, errorMessage))
+				{
+					namePh->setText(user.GetName().c_str());
+					surnamePh->setText(user.GetSurname().c_str());
+					phonePh->setText(user.GetPhone().c_str());
+				}
 			}
 		}
 	}
@@ -69,7 +71,14 @@ void CreatePmtDlg::FillEditElements(QString pDate, double pValue, int pUserID, i
 	dateEdit->setDateTime(QDateTime::fromString(pDate, "yyyy.MM.dd hh:mm:ss"));
 	valueEdit->setText(QString::number(pValue));
 	userEdit->setText(QString::number(pUserID));
-	currencyEdit->setText(QString::number(pCurrencyID));
+	currencyCmb->setCurrentIndex(currencyCmb->findData(QVariant(pCurrencyID)));
+	BusinessLayer::User user;
+	if (user.GetUserByID(dialogBL->GetOrmasDal(), pUserID, errorMessage))
+	{
+		namePh->setText(user.GetName().c_str());
+		surnamePh->setText(user.GetSurname().c_str());
+		phonePh->setText(user.GetPhone().c_str());
+	}
 }
 
 bool CreatePmtDlg::FillDlgElements(QTableView* pTable)
@@ -97,11 +106,11 @@ bool CreatePmtDlg::FillDlgElements(QTableView* pTable)
 void CreatePmtDlg::CreatePayment()
 {
 	errorMessage.clear();
-	if (0 != userEdit->text().toInt() && 0.0 != valueEdit->text().toDouble() && 0 != currencyEdit->text().toInt() 
+	if (0 != userEdit->text().toInt() && 0.0 != valueEdit->text().toDouble() && !currencyCmb->currentText().isEmpty()
 		&& !dateEdit->text().isEmpty())
 	{
 		DataForm *parentDataForm = (DataForm*)parentWidget();
-		SetPaymentParams(dateEdit->text(), valueEdit->text().toDouble(), userEdit->text().toInt(), currencyEdit->text().toInt());
+		SetPaymentParams(dateEdit->text(), valueEdit->text().toDouble(), userEdit->text().toInt(), currencyCmb->currentData().toInt());
 		dialogBL->StartTransaction(errorMessage);
 		if (dialogBL->CreatePayment(payment, errorMessage))
 		{
@@ -125,9 +134,10 @@ void CreatePmtDlg::CreatePayment()
 				<< new QStandardItem(QString::number(payment->GetCurrencyID()));
 			QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
 			itemModel->appendRow(paymentItem);
-			this->close();
+			
 			dialogBL->CommitTransaction(errorMessage);
 			delete currency;
+			this->close();
 		}
 		else
 		{
@@ -152,14 +162,14 @@ void CreatePmtDlg::CreatePayment()
 void CreatePmtDlg::EditPayment()
 {
 	errorMessage.clear();
-	if (0 != userEdit->text().toInt() && 0.0 != valueEdit->text().toDouble() && 0 != currencyEdit->text().toInt()
+	if (0 != userEdit->text().toInt() && 0.0 != valueEdit->text().toDouble() && !currencyCmb->currentText().isEmpty()
 		&& !dateEdit->text().isEmpty())
 	{
 		if (QString(payment->GetDate().c_str()) != dateEdit->text() || payment->GetUserID() != userEdit->text().toInt() 
-			|| payment->GetValue() != valueEdit->text().toDouble() || payment->GetCurrencyID() != currencyEdit->text().toInt())
+			|| payment->GetValue() != valueEdit->text().toDouble() || payment->GetCurrencyID() != currencyCmb->currentData().toInt())
 		{
 			DataForm *parentDataForm = (DataForm*)parentWidget();
-			SetPaymentParams(dateEdit->text(), valueEdit->text().toDouble(), userEdit->text().toInt(), currencyEdit->text().toInt(), payment->GetID());
+			SetPaymentParams(dateEdit->text(), valueEdit->text().toDouble(), userEdit->text().toInt(), currencyCmb->currentData().toInt(), payment->GetID());
 			dialogBL->StartTransaction(errorMessage);
 			if (dialogBL->UpdatePayment(payment, errorMessage))
 			{
@@ -182,9 +192,10 @@ void CreatePmtDlg::EditPayment()
 				itemModel->item(mIndex.row(), 4)->setText(QString::number(payment->GetUserID()));
 				itemModel->item(mIndex.row(), 5)->setText(QString::number(payment->GetCurrencyID()));
 				emit itemModel->dataChanged(mIndex, mIndex);
-				this->close();
+				
 				dialogBL->CommitTransaction(errorMessage);
 				delete currency;
+				this->close();
 			}
 			else
 			{
@@ -257,46 +268,14 @@ void CreatePmtDlg::OpenUserDlg()
 	}
 }
 
-void CreatePmtDlg::OpenCurDlg()
+void CreatePmtDlg::InitComboBox()
 {
-	this->hide();
-	this->setModal(false);
-	this->show();
-	DataForm *productParent = (DataForm *)parent();
-	MainForm *mainForm = (MainForm *)productParent->GetParent();
-	QString message = tr("Loading...");
-	mainForm->statusBar()->showMessage(message);
-	DataForm *dForm = new DataForm(dialogBL, mainForm);
-	dForm->setWindowTitle(tr("Currencies"));
-	dForm->hide();
-	dForm->setWindowModality(Qt::WindowModal);
-	dForm->FillTable<BusinessLayer::Currency>(errorMessage);
-	if (errorMessage.empty())
+	std::vector<BusinessLayer::Currency> curVector = dialogBL->GetAllDataForClass<BusinessLayer::Currency>(errorMessage);
+	if (!curVector.empty())
 	{
-		dForm->createPmtDlg = this;
-		dForm->setObjectName("currencyForm");
-		dForm->QtConnect<BusinessLayer::Currency>();
-		QMdiSubWindow *currencyWindow = new QMdiSubWindow;
-		currencyWindow->setWidget(dForm);
-		currencyWindow->setAttribute(Qt::WA_DeleteOnClose);
-		mainForm->mdiArea->addSubWindow(currencyWindow);
-		dForm->topLevelWidget();
-		dForm->activateWindow();
-		QApplication::setActiveWindow(dForm);
-		dForm->show();
-		dForm->raise();
-		QString message = tr("All currency are shown");
-		mainForm->statusBar()->showMessage(message);
+		for (unsigned int i = 0; i < curVector.size(); i++)
+		{
+			currencyCmb->addItem(curVector[i].GetShortName().c_str(), QVariant(curVector[i].GetID()));
+		}
 	}
-	else
-	{
-		delete dForm;
-		QString message = tr("End with error!");
-		mainForm->statusBar()->showMessage(message);
-		QMessageBox::information(NULL, QString(tr("Warning")),
-			QString(tr(errorMessage.c_str())),
-			QString(tr("Ok")));
-		errorMessage = "";
-	}
-
 }

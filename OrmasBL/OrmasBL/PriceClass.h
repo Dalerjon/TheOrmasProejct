@@ -11,10 +11,11 @@ namespace BusinessLayer{
 		double value = 0.0;
 		int currencyID = 0;
 		int productID = 0;
+		bool isOutdated = true;
 	public:
 		Price();
-		Price(int pID, std::string pDate, double pValue, int cID, int prID) :id(pID), date(pDate), value(pValue), currencyID(cID),
-			productID(prID){};
+		Price(int pID, std::string pDate, double pValue, int cID, int prID, bool pIsOutdated) :id(pID), date(pDate), value(pValue), 
+			currencyID(cID), productID(prID), isOutdated(pIsOutdated){};
 		Price(DataLayer::pricesCollection);
 		~Price(){};
 
@@ -25,6 +26,7 @@ namespace BusinessLayer{
 		double GetValue();
 		int GetCurrencyID();
 		int GetProductID();
+		bool GetIsOutdated();
 
 		//Price class Mutators
 		void SetID(int);
@@ -32,15 +34,16 @@ namespace BusinessLayer{
 		void SetValue(double);
 		void SetCurrencyID(int);
 		void SetProductID(int);
+		void SetIsOutdated(bool);
 
 		// Create, delete and update Price
 		bool CreatePrice(DataLayer::OrmasDal &ormasDal, std::string& errorMessage);
 		bool UpdatePrice(DataLayer::OrmasDal &ormasDal, std::string& errorMessage);
 		bool DeletePrice(DataLayer::OrmasDal &ormasDal, std::string& errorMessage);
 		bool CreatePrice(DataLayer::OrmasDal &ormasDal, std::string pDate, double pValue, int cID, int prID,
-			std::string& errorMessage);
+			bool pIsOutdated, std::string& errorMessage);
 		bool UpdatePrice(DataLayer::OrmasDal &ormasDal, std::string pDate, double pValue, int cID, int prID,
-			std::string& errorMessage);
+			bool pIsOutdated, std::string& errorMessage);
 
 		//Generate filter string for class
 		std::string GenerateFilter(DataLayer::OrmasDal& ormasDal);
@@ -54,4 +57,4 @@ namespace BusinessLayer{
 	};
 }
 
-#endif PRICECLASS_H
+#endif //PRICECLASS_H

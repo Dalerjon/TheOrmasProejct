@@ -69,8 +69,9 @@ void CreatePrdTpDlg::CreateProductType()
 				<< new QStandardItem(prodType->GetShortName().c_str());
 			QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
 			itemModel->appendRow(prodTypeItem);
-			this->close();
+			
 			dialogBL->CommitTransaction(errorMessage);
+			this->close();
 		}
 		else
 		{
@@ -106,8 +107,9 @@ void CreatePrdTpDlg::EditProductType()
 				itemModel->item(mIndex.row(), 1)->setText(prodType->GetName().c_str());
 				itemModel->item(mIndex.row(), 2)->setText(prodType->GetShortName().c_str());
 				emit itemModel->dataChanged(mIndex, mIndex);
-				this->close();
+				
 				dialogBL->CommitTransaction(errorMessage);
+				this->close();
 			}
 			else
 			{

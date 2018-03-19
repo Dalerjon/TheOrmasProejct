@@ -19,8 +19,8 @@
 
 QT_BEGIN_MOC_NAMESPACE
 struct qt_meta_stringdata_CreateSlrDlg_t {
-    QByteArrayData data[12];
-    char stringdata0[113];
+    QByteArrayData data[11];
+    char stringdata0[102];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
@@ -36,15 +36,14 @@ QT_MOC_LITERAL(3, 27, 10), // "EditSalary"
 QT_MOC_LITERAL(4, 38, 12), // "DeleteSalary"
 QT_MOC_LITERAL(5, 51, 5), // "Close"
 QT_MOC_LITERAL(6, 57, 10), // "OpenEmpDlg"
-QT_MOC_LITERAL(7, 68, 10), // "OpenCurDlg"
-QT_MOC_LITERAL(8, 79, 14), // "OpenSlrTypeDlg"
-QT_MOC_LITERAL(9, 94, 5), // "SetID"
-QT_MOC_LITERAL(10, 100, 2), // "ID"
-QT_MOC_LITERAL(11, 103, 9) // "childName"
+QT_MOC_LITERAL(7, 68, 14), // "OpenSlrTypeDlg"
+QT_MOC_LITERAL(8, 83, 5), // "SetID"
+QT_MOC_LITERAL(9, 89, 2), // "ID"
+QT_MOC_LITERAL(10, 92, 9) // "childName"
 
     },
     "CreateSlrDlg\0CreateSalary\0\0EditSalary\0"
-    "DeleteSalary\0Close\0OpenEmpDlg\0OpenCurDlg\0"
+    "DeleteSalary\0Close\0OpenEmpDlg\0"
     "OpenSlrTypeDlg\0SetID\0ID\0childName"
 };
 #undef QT_MOC_LITERAL
@@ -55,7 +54,7 @@ static const uint qt_meta_data_CreateSlrDlg[] = {
        7,       // revision
        0,       // classname
        0,    0, // classinfo
-       8,   14, // methods
+       7,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -63,14 +62,13 @@ static const uint qt_meta_data_CreateSlrDlg[] = {
        0,       // signalCount
 
  // slots: name, argc, parameters, tag, flags
-       1,    0,   54,    2, 0x08 /* Private */,
-       3,    0,   55,    2, 0x08 /* Private */,
-       4,    0,   56,    2, 0x08 /* Private */,
-       5,    0,   57,    2, 0x08 /* Private */,
-       6,    0,   58,    2, 0x08 /* Private */,
-       7,    0,   59,    2, 0x08 /* Private */,
-       8,    0,   60,    2, 0x08 /* Private */,
-       9,    2,   61,    2, 0x0a /* Public */,
+       1,    0,   49,    2, 0x08 /* Private */,
+       3,    0,   50,    2, 0x08 /* Private */,
+       4,    0,   51,    2, 0x08 /* Private */,
+       5,    0,   52,    2, 0x08 /* Private */,
+       6,    0,   53,    2, 0x08 /* Private */,
+       7,    0,   54,    2, 0x08 /* Private */,
+       8,    2,   55,    2, 0x0a /* Public */,
 
  // slots: parameters
     QMetaType::Void,
@@ -79,8 +77,7 @@ static const uint qt_meta_data_CreateSlrDlg[] = {
     QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void,
-    QMetaType::Void,
-    QMetaType::Void, QMetaType::Int, QMetaType::QString,   10,   11,
+    QMetaType::Void, QMetaType::Int, QMetaType::QString,    9,   10,
 
        0        // eod
 };
@@ -96,9 +93,8 @@ void CreateSlrDlg::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id
         case 2: _t->DeleteSalary(); break;
         case 3: _t->Close(); break;
         case 4: _t->OpenEmpDlg(); break;
-        case 5: _t->OpenCurDlg(); break;
-        case 6: _t->OpenSlrTypeDlg(); break;
-        case 7: _t->SetID((*reinterpret_cast< int(*)>(_a[1])),(*reinterpret_cast< QString(*)>(_a[2]))); break;
+        case 5: _t->OpenSlrTypeDlg(); break;
+        case 6: _t->SetID((*reinterpret_cast< int(*)>(_a[1])),(*reinterpret_cast< QString(*)>(_a[2]))); break;
         default: ;
         }
     }
@@ -131,13 +127,13 @@ int CreateSlrDlg::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 8)
+        if (_id < 7)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 8;
+        _id -= 7;
     } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 8)
+        if (_id < 7)
             *reinterpret_cast<int*>(_a[0]) = -1;
-        _id -= 8;
+        _id -= 7;
     }
     return _id;
 }

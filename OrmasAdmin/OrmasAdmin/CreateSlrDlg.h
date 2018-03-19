@@ -18,7 +18,6 @@ public:
 	void DeleteSalary(){};
 	void Close();
 	void OpenEmpDlg();
-	void OpenCurDlg();
 	void OpenSlrTypeDlg();
 	public slots:
 	void SetID(int ID, QString childName);
@@ -28,6 +27,7 @@ private:
 	void FillEditElements(int, double, int, int, QString, QString);
 	QDoubleValidator *vDouble = nullptr;
 	QIntValidator *vInt = nullptr;
+	void InitComboBox();
 };
 
 #endif //CREATESLRDLG_H

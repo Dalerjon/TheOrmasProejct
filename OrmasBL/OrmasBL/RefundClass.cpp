@@ -282,7 +282,7 @@ namespace BusinessLayer{
 			{
 				brRelation.SetBalanceID(balanceID);
 				brRelation.SetRefundID(id);
-				balance.SetValue(balance.GetValue() + value);
+				//balance.SetValue(balance.GetValue() + value);
 				if (balance.UpdateBalance(ormasDal, errorMessage) && brRelation.CreateBalanceRefundRelation(ormasDal, errorMessage))
 					return true;
 			}
@@ -300,7 +300,7 @@ namespace BusinessLayer{
 			Balance balance;
 			if (balance.GetBalanceByID(ormasDal, balanceID, errorMessage))
 			{
-				balance.SetValue(balance.GetValue() + (currentValue - value));
+				//balance.SetValue(balance.GetValue() + (currentValue - value));
 				if(balance.UpdateBalance(ormasDal, errorMessage))
 					return true;
 			}
@@ -329,7 +329,7 @@ namespace BusinessLayer{
 			{
 				brRelation.SetBalanceID(balanceID);
 				brRelation.SetRefundID(id);
-				balance.SetValue(balance.GetValue() - value);
+				//.SetValue(balance.GetValue() - value);
 				if (balance.UpdateBalance(ormasDal, errorMessage) && brRelation.DeleteBalanceRefundRelation(ormasDal, errorMessage))
 					return true;
 			}

@@ -74,8 +74,9 @@ void CreateStsDlg::CreateStatus()
 				<< new QStandardItem(status->GetName().c_str()) << new QStandardItem(status->GetComment().c_str());
 			QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
 			itemModel->appendRow(statusItem);
-			this->close();
+			
 			dialogBL->CommitTransaction(errorMessage);
+			this->close();
 		}
 		else
 		{
@@ -113,8 +114,9 @@ void CreateStsDlg::EditStatus()
 				itemModel->item(mIndex.row(), 2)->setText(status->GetName().c_str());
 				itemModel->item(mIndex.row(), 3)->setText(status->GetComment().c_str());
 				emit itemModel->dataChanged(mIndex, mIndex);
-				this->close();
+				
 				dialogBL->CommitTransaction(errorMessage);
+				this->close();
 			}
 			else
 			{

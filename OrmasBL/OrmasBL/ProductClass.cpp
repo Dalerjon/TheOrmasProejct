@@ -138,16 +138,9 @@ namespace BusinessLayer
 	}
 	bool Product::DeleteProduct(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
-		companyID = 0;
-		name.clear();
-		volume = 0.0;;
-		measureID = 0;
-		price =  0.0;
-		productTypeID = 0;
-		shelfLife = 0;
 		if (ormasDal.DeleteProduct(id, errorMessage))
 		{
-			id = 0;
+			Clear();
 			return true;
 		}
 		return false;

@@ -79,7 +79,7 @@ namespace BusinessLayer{
 	{
 		if (ormasDal.DeleteAccess(id, errorMessage))
 		{
-			id = 0;
+			Clear();
 			return true;
 		}
 		if (errorMessage.empty())
@@ -129,12 +129,12 @@ namespace BusinessLayer{
 	{
 		id = bID;
 		std::string filter = GenerateFilter(ormasDal);
-		std::vector<DataLayer::accessesCollection> accessVector = ormasDal.GetAccesses(errorMessage, filter);
+		std::vector<DataLayer::accessesViewCollection> accessVector = ormasDal.GetAccesses(errorMessage, filter);
 		if (0 != accessVector.size())
 		{
 			id = std::get<0>(accessVector.at(0));
-			roleID = std::get<1>(accessVector.at(0));
-			accessItemID = std::get<2>(accessVector.at(0));
+			roleID = std::get<5>(accessVector.at(0));
+			accessItemID = std::get<6>(accessVector.at(0));
 			return true;
 		}
 		else
@@ -195,12 +195,12 @@ namespace BusinessLayer{
 		std::vector<int> accessItemIDVector;
 		SetRoleID(loggedUser->GetRoleID());
 		std::string filter = GenerateFilter(*ormasDal);
-		std::vector<DataLayer::accessesCollection> accessVector = ormasDal->GetAccesses(errorMessage, filter);
+		std::vector<DataLayer::accessesViewCollection> accessVector = ormasDal->GetAccesses(errorMessage, filter);
 		if (0 != accessVector.size())
 		{
 			for each (auto item in accessVector)
 			{
-				accessItemIDVector.push_back(std::get<2>(item));
+				accessItemIDVector.push_back(std::get<6>(item));
 			}
 		}
 		return accessItemIDVector;
@@ -212,7 +212,7 @@ namespace BusinessLayer{
 		access.SetRoleID(rID);
 		access.SetAccessItemID(aiID);
 		std::string filter = access.GenerateFilter(ormasDal);
-		std::vector<DataLayer::accessesCollection> accessVector = ormasDal.GetAccesses(errorMessage, filter);
+		std::vector<DataLayer::accessesViewCollection> accessVector = ormasDal.GetAccesses(errorMessage, filter);
 		if (!errorMessage.empty())
 			return true;
 		if (0 == accessVector.size())
@@ -229,7 +229,7 @@ namespace BusinessLayer{
 		access.SetRoleID(roleID);
 		access.SetAccessItemID(accessItemID);
 		std::string filter = access.GenerateFilter(ormasDal);
-		std::vector<DataLayer::accessesCollection> accessVector = ormasDal.GetAccesses(errorMessage, filter);
+		std::vector<DataLayer::accessesViewCollection> accessVector = ormasDal.GetAccesses(errorMessage, filter);
 		if (!errorMessage.empty())
 			return true;
 		if (0 == accessVector.size())

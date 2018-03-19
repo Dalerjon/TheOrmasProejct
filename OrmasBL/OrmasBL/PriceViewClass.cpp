@@ -13,6 +13,7 @@ namespace BusinessLayer{
 		currencyName = std::get<6>(pCollection);
 		currencyID = std::get<7>(pCollection);
 		productID = std::get<8>(pCollection);
+		isOutdated = std::get<9>(pCollection);
 	}
 
 	std::string PriceView::GetProductName()

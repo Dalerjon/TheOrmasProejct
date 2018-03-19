@@ -112,18 +112,6 @@ namespace BusinessLayer{
 	}
 	bool Client::DeleteClient(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
-		email = "";
-		name = "";
-		surname = "";
-		phone = "";
-		address = "";
-		roleID = 0;
-		password = "";
-		activated = false;
-		userID = 0;
-		firm = "";
-		firmNumber = "";
-		locationID = 0;
 		ormasDal.StartTransaction(errorMessage);
 		if (!errorMessage.empty())
 			return false;
@@ -136,7 +124,7 @@ namespace BusinessLayer{
 				{
 					return false;
 				}
-				id = 0;
+				Clear();
 				return true;
 			}
 		}

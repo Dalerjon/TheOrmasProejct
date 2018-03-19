@@ -18,9 +18,6 @@ public:
 	void DeleteProduct(){};
 	void Close();
 	void OpenCmpDlg();
-	void OpenMsrDlg();
-	void OpenPrdTpDlg();
-	void OpenCurDlg();
 	public slots:
 	void SetID(int ID, QString childName);
 private:
@@ -29,5 +26,6 @@ private:
 	void FillEditElements(int, QString, double, int, double, int, int, int);
 	QDoubleValidator *vDouble = nullptr;
 	QIntValidator *vInt = nullptr;
+	void InitComboBox();
 };
 #endif //CREATEPRODDLG_H

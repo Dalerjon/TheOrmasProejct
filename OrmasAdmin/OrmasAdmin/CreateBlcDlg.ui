@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>131</height>
+    <width>550</width>
+    <height>186</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -32,30 +32,40 @@
    <property name="bottomMargin">
     <number>11</number>
    </property>
-   <item row="0" column="0">
-    <widget class="QPushButton" name="userBtn">
+   <item row="1" column="3">
+    <widget class="QLabel" name="surnameLb">
      <property name="minimumSize">
       <size>
-       <width>150</width>
+       <width>50</width>
        <height>0</height>
       </size>
      </property>
+     <property name="maximumSize">
+      <size>
+       <width>50</width>
+       <height>16777215</height>
+      </size>
+     </property>
      <property name="text">
-      <string>Select user</string>
+      <string>Surname:</string>
      </property>
     </widget>
    </item>
-   <item row="0" column="1">
-    <widget class="QLineEdit" name="userEdit">
+   <item row="2" column="3">
+    <widget class="QLineEdit" name="valueEdit">
      <property name="toolTip">
-      <string>Must not be empty</string>
-     </property>
-     <property name="readOnly">
-      <bool>true</bool>
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;For example: 1000 (depends on currency, for that case 1000 USD)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
     </widget>
    </item>
-   <item row="3" column="0" colspan="2">
+   <item row="2" column="0">
+    <widget class="QLabel" name="valieLb">
+     <property name="text">
+      <string>Value:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="0" colspan="7">
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
       <spacer name="horizontalSpacer">
@@ -86,33 +96,130 @@
      </item>
     </layout>
    </item>
-   <item row="2" column="1">
-    <widget class="QLineEdit" name="currencyEdit">
+   <item row="1" column="0">
+    <widget class="QLabel" name="nameLb">
+     <property name="minimumSize">
+      <size>
+       <width>50</width>
+       <height>0</height>
+      </size>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>50</width>
+       <height>16777215</height>
+      </size>
+     </property>
+     <property name="text">
+      <string>Name:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="4">
+    <widget class="QLabel" name="surnamePh">
+     <property name="minimumSize">
+      <size>
+       <width>100</width>
+       <height>0</height>
+      </size>
+     </property>
+     <property name="font">
+      <font>
+       <family>Times New Roman</family>
+       <pointsize>12</pointsize>
+       <weight>75</weight>
+       <italic>true</italic>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="5">
+    <widget class="QLabel" name="phoneLb">
+     <property name="text">
+      <string>Phone:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="6">
+    <widget class="QLabel" name="phonePh">
+     <property name="minimumSize">
+      <size>
+       <width>100</width>
+       <height>0</height>
+      </size>
+     </property>
+     <property name="font">
+      <font>
+       <family>Times New Roman</family>
+       <pointsize>12</pointsize>
+       <weight>75</weight>
+       <italic>true</italic>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="3">
+    <widget class="QLineEdit" name="userEdit">
+     <property name="toolTip">
+      <string>Must not be empty</string>
+     </property>
      <property name="readOnly">
       <bool>true</bool>
      </property>
     </widget>
    </item>
-   <item row="2" column="0">
-    <widget class="QPushButton" name="currencyBtn">
+   <item row="1" column="2">
+    <widget class="QLabel" name="namePh">
+     <property name="minimumSize">
+      <size>
+       <width>100</width>
+       <height>0</height>
+      </size>
+     </property>
+     <property name="font">
+      <font>
+       <family>Times New Roman</family>
+       <pointsize>12</pointsize>
+       <weight>75</weight>
+       <italic>true</italic>
+       <bold>true</bold>
+      </font>
+     </property>
      <property name="text">
-      <string>Select currency</string>
+      <string/>
      </property>
     </widget>
    </item>
-   <item row="1" column="0">
-    <widget class="QLabel" name="valieLb">
+   <item row="0" column="0" colspan="3">
+    <widget class="QPushButton" name="userBtn">
+     <property name="minimumSize">
+      <size>
+       <width>150</width>
+       <height>0</height>
+      </size>
+     </property>
      <property name="text">
-      <string>Value:</string>
+      <string>Select user</string>
      </property>
     </widget>
    </item>
-   <item row="1" column="1">
-    <widget class="QLineEdit" name="valueEdit">
-     <property name="toolTip">
-      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;For example: 1000 (depends on currency, for that case 1000 USD)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   <item row="3" column="0" colspan="3">
+    <widget class="QLabel" name="currencyLb">
+     <property name="text">
+      <string>Select currency:</string>
      </property>
     </widget>
+   </item>
+   <item row="3" column="3" colspan="3">
+    <widget class="QComboBox" name="currencyCmb"/>
    </item>
   </layout>
  </widget>
@@ -120,8 +227,7 @@
   <tabstop>userBtn</tabstop>
   <tabstop>userEdit</tabstop>
   <tabstop>valueEdit</tabstop>
-  <tabstop>currencyBtn</tabstop>
-  <tabstop>currencyEdit</tabstop>
+  <tabstop>currencyCmb</tabstop>
   <tabstop>okBtn</tabstop>
   <tabstop>cancelBtn</tabstop>
  </tabstops>

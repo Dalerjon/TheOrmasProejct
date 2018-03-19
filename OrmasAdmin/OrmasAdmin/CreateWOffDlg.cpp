@@ -18,7 +18,6 @@ CreateWOffDlg::CreateWOffDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, Q
 	prodCountEdit->setValidator(vInt);
 	clientEdit->setValidator(vInt);
 	statusEdit->setValidator(vInt);
-	currencyEdit->setValidator(vInt);
 	sumEdit->setValidator(vDouble);
 	sumEdit->setMaxLength(17);
 	if (true == updateFlag)
@@ -34,7 +33,6 @@ CreateWOffDlg::CreateWOffDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, Q
 		clientEdit->setText("0");
 		statusEdit->setText("0");
 		sumEdit->setText("0");
-		currencyEdit->setText("0");
 		dateEdit->setDateTime(QDateTime::currentDateTime());
 		QObject::connect(okBtn, &QPushButton::released, this, &CreateWOffDlg::CreateWriteOff);
 	}
@@ -42,9 +40,9 @@ CreateWOffDlg::CreateWOffDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, Q
 	QObject::connect(clientBtn, &QPushButton::released, this, &CreateWOffDlg::OpenCltDlg);
 	QObject::connect(statusBtn, &QPushButton::released, this, &CreateWOffDlg::OpenStsDlg);
 	QObject::connect(employeeBtn, &QPushButton::released, this, &CreateWOffDlg::OpenEmpDlg);
-	QObject::connect(currencyBtn, &QPushButton::released, this, &CreateWOffDlg::OpenCurDlg);
 	QObject::connect(addProdBtn, &QPushButton::released, this, &CreateWOffDlg::OpenWOffListDlg);
 	QObject::connect(this, SIGNAL(CloseCreatedForms()), ((MainForm*)((DataForm*)parent)->GetParent()), SLOT(CloseChildsByName()));
+	InitComboBox();
 }
 
 CreateWOffDlg::~CreateWOffDlg()
@@ -75,7 +73,26 @@ void CreateWOffDlg::FillEditElements(int wClientID, QString wDate, int wEmployee
 	prodCountEdit->setText(QString::number(wCount));
 	sumEdit->setText(QString::number(wSum));
 	statusEdit->setText(QString::number(wStatusID));
-	currencyEdit->setText(QString::number(wCurrencyID));
+	currencyCmb->setCurrentIndex(currencyCmb->findData(QVariant(wCurrencyID)));
+	BusinessLayer::User employee;
+	if (employee.GetUserByID(dialogBL->GetOrmasDal(), wEmployeeID, errorMessage))
+	{
+		empNamePh->setText(employee.GetName().c_str());
+		empSurnamePh->setText(employee.GetSurname().c_str());
+		empPhonePh->setText(employee.GetPhone().c_str());
+	}
+	BusinessLayer::User client;
+	if (client.GetUserByID(dialogBL->GetOrmasDal(), wClientID, errorMessage))
+	{
+		clNamePh->setText(client.GetName().c_str());
+		clSurnamePh->setText(client.GetSurname().c_str());
+		clPhonePh->setText(client.GetPhone().c_str());
+	}
+	BusinessLayer::Status status;
+	if (status.GetStatusByID(dialogBL->GetOrmasDal(), wStatusID, errorMessage))
+	{
+		statusPh->setText(status.GetName().c_str());
+	}
 }
 
 void CreateWOffDlg::SetID(int ID, QString childName)
@@ -87,18 +104,33 @@ void CreateWOffDlg::SetID(int ID, QString childName)
 			if (childName == QString("clientForm"))
 			{
 				clientEdit->setText(QString::number(ID));
+				BusinessLayer::User client;
+				if (client.GetUserByID(dialogBL->GetOrmasDal(), ID, errorMessage))
+				{
+					clNamePh->setText(client.GetName().c_str());
+					clSurnamePh->setText(client.GetSurname().c_str());
+					clPhonePh->setText(client.GetPhone().c_str());
+				}
 			}
 			if (childName == QString("statusForm"))
 			{
 				statusEdit->setText(QString::number(ID));
+				BusinessLayer::Status status;
+				if (status.GetStatusByID(dialogBL->GetOrmasDal(), ID, errorMessage))
+				{
+					statusPh->setText(status.GetName().c_str());
+				}
 			}
 			if (childName == QString("employeeForm"))
 			{
 				employeeEdit->setText(QString::number(ID));
-			}
-			if (childName == QString("currencyForm"))
-			{
-				currencyEdit->setText(QString::number(ID));
+				BusinessLayer::User employee;
+				if (employee.GetUserByID(dialogBL->GetOrmasDal(), ID, errorMessage))
+				{
+					empNamePh->setText(employee.GetName().c_str());
+					empSurnamePh->setText(employee.GetSurname().c_str());
+					empPhonePh->setText(employee.GetPhone().c_str());
+				}
 			}
 		}
 	}
@@ -137,12 +169,12 @@ void CreateWOffDlg::CreateWriteOff()
 	errorMessage.clear();
 	if (0 != clientEdit->text().toInt() && !dateEdit->text().isEmpty()
 		&& 0 != prodCountEdit->text().toInt() && 0 != sumEdit->text().toInt()
-		&& 0 != statusEdit->text().toInt() && 0 != currencyEdit->text().toInt())
+		&& 0 != statusEdit->text().toInt() && !currencyCmb->currentText().isEmpty())
 	{
 		DataForm *parentDataForm = (DataForm*)parentWidget();
 
 		SetWriteOffParams(clientEdit->text().toInt(), dateEdit->text(), employeeEdit->text().toInt(), prodCountEdit->text().toInt(),
-			sumEdit->text().toInt(), statusEdit->text().toInt(), currencyEdit->text().toInt(), writeOff->GetID());
+			sumEdit->text().toInt(), statusEdit->text().toInt(), currencyCmb->currentData().toInt(), writeOff->GetID());
 		
 		if (dialogBL->CreateWriteOff(writeOff, errorMessage))
 		{
@@ -256,16 +288,15 @@ void CreateWOffDlg::EditWriteOff()
 	errorMessage.clear();
 	if (0 != clientEdit->text().toInt() && !dateEdit->text().isEmpty()
 		&& 0 != prodCountEdit->text().toInt() && 0 != sumEdit->text().toInt()
-		&& 0 != statusEdit->text().toInt() && 0 != currencyEdit->text().toInt())
+		&& 0 != statusEdit->text().toInt() && !currencyCmb->currentText().isEmpty())
 	{
 		if (writeOff->GetClientID() != clientEdit->text().toInt() || QString(writeOff->GetDate().c_str()) != dateEdit->text() ||
 			writeOff->GetEmployeeID() != employeeEdit->text().toInt() || writeOff->GetCount() != prodCountEdit->text().toInt() ||
-			writeOff->GetSum() != sumEdit->text().toInt()
-			|| writeOff->GetCurrencyID() != currencyEdit->text().toInt())
+			writeOff->GetSum() != sumEdit->text().toInt() || writeOff->GetCurrencyID() != currencyCmb->currentData().toInt())
 		{
 			DataForm *parentDataForm = (DataForm*)parentWidget();
 			SetWriteOffParams(clientEdit->text().toInt(), dateEdit->text(), employeeEdit->text().toInt(), prodCountEdit->text().toInt(),
-				sumEdit->text().toInt(), statusEdit->text().toInt(), currencyEdit->text().toInt(), writeOff->GetID());
+				sumEdit->text().toInt(), statusEdit->text().toInt(), currencyCmb->currentData().toInt(), writeOff->GetID());
 
 			if (dialogBL->UpdateWriteOff(writeOff, errorMessage))
 			{
@@ -353,7 +384,7 @@ void CreateWOffDlg::EditWriteOff()
 				itemModel->item(mIndex.row(), 18)->setText(QString::number(writeOff->GetCurrencyID()));
 
 				emit itemModel->dataChanged(mIndex, mIndex);
-				this->close();
+				
 
 				dialogBL->CommitTransaction(errorMessage);
 
@@ -361,6 +392,7 @@ void CreateWOffDlg::EditWriteOff()
 				delete employee;
 				delete currency;
 				delete status;
+				this->close();
 			}
 			else
 			{
@@ -586,50 +618,6 @@ void CreateWOffDlg::OpenStsDlg()
 	}
 }
 
-void CreateWOffDlg::OpenCurDlg()
-{
-	this->hide();
-	this->setModal(false);
-	this->show();
-	DataForm *productParent = (DataForm *)parent();
-	MainForm *mainForm = (MainForm *)productParent->GetParent();
-	QString message = tr("Loading...");
-	mainForm->statusBar()->showMessage(message);
-	DataForm *dForm = new DataForm(dialogBL, mainForm);
-	dForm->setWindowTitle(tr("Currencies"));
-	dForm->hide();
-	dForm->setWindowModality(Qt::WindowModal);
-	dForm->FillTable<BusinessLayer::Currency>(errorMessage);
-	if (errorMessage.empty())
-	{
-		dForm->createWOffDlg = this;
-		dForm->setObjectName("currencyForm");
-		dForm->QtConnect<BusinessLayer::Currency>();
-		QMdiSubWindow *currencyWindow = new QMdiSubWindow;
-		currencyWindow->setWidget(dForm);
-		currencyWindow->setAttribute(Qt::WA_DeleteOnClose);
-		mainForm->mdiArea->addSubWindow(currencyWindow);
-		dForm->topLevelWidget();
-		dForm->activateWindow();
-		QApplication::setActiveWindow(dForm);
-		dForm->show();
-		dForm->raise();
-		QString message = tr("All currency are shown");
-		mainForm->statusBar()->showMessage(message);
-	}
-	else
-	{
-		delete dForm;
-		QString message = tr("End with error!");
-		mainForm->statusBar()->showMessage(message);
-		QMessageBox::information(NULL, QString(tr("Warning")),
-			QString(tr(errorMessage.c_str())),
-			QString(tr("Ok")));
-		errorMessage = "";
-	}
-
-}
-
 void CreateWOffDlg::OpenWOffListDlg()
 {
 	this->hide();
@@ -679,3 +667,14 @@ void CreateWOffDlg::OpenWOffListDlg()
 
 }
 
+void CreateWOffDlg::InitComboBox()
+{
+	std::vector<BusinessLayer::Currency> curVector = dialogBL->GetAllDataForClass<BusinessLayer::Currency>(errorMessage);
+	if (!curVector.empty())
+	{
+		for (unsigned int i = 0; i < curVector.size(); i++)
+		{
+			currencyCmb->addItem(curVector[i].GetShortName().c_str(), QVariant(curVector[i].GetID()));
+		}
+	}
+}

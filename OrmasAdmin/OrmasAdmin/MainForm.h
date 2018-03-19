@@ -5,6 +5,8 @@
 #include "OrmasBL.h"
 #include "DataForm.h"
 #include "ClcWagesDlg.h"
+#include "GenerateAccDlg.h"
+#include "GenerateOneAccDlg.h"
 
 class MainForm : public QMainWindow, public Ui::MainWindow
 {
@@ -21,6 +23,7 @@ private slots :
 	void OpenUserForm();
 	void OpenClientForm();
 	void OpenEmployeeForm();
+	void OpenPurveyorForm();
 	void OpenAccessForm();
 	void OpenAccessItemForm();
 	void OpenUserPhotoForm(); 
@@ -29,6 +32,8 @@ private slots :
 	void OpenProductForm();
 	void OpenProductTypeForm();
 	void OpenProductPhotoForm();
+	void OpenSpecificationForm();
+	void OpenSpecificationListForm();
 
 	void OpenOrderForm();	
 	void OpenOrderListForm();
@@ -38,6 +43,14 @@ private slots :
 
 	void OpenProductionForm();
 	void OpenProductionListForm();
+	void OpenJobpriceForm();
+	void OpenJobsheetForm();
+	void OpenPercentRateForm();
+	void OpenTimesheetForm();
+	void OpenProductionPlanForm();
+	void OpenProductionPlanListForm();
+	void OpenSpoilageForm();
+	void OpenSpoilageListForm();
 
 	void OpenWriteOffForm();
 	void OpenWriteOffListForm();
@@ -46,11 +59,19 @@ private slots :
 	void OpenPaymentForm();
 	void OpenRefundForm();
 	void OpenPriceForm();
+	void OpenNetCostForm();
 	void OpenSalaryForm();
 	void OpenSalaryTypeForm();
 	void OpenPayrollForm();
 	void OpenWithdrawalForm();
 	void OpenPayslipForm();
+	void OpenAccountForm();
+	void OpenAccountTypeForm();
+	void OpenChartOfAccountsForm();
+	void OpenCompanyAccountForm();
+	void OpenEntryForm();
+	void GenerateAccountsForm();
+	void GenerateOneAccountForm();
 
 	void OpenStockForm();
 	void OpenOrderRawForm();

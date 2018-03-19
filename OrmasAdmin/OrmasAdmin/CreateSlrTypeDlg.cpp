@@ -69,8 +69,9 @@ void CreateSlrTypeDlg::CreateSalaryType()
 				<< new QStandardItem(salaryType->GetName().c_str());
 			QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
 			itemModel->appendRow(salaryTypeItem);
-			this->close();
+			
 			dialogBL->CommitTransaction(errorMessage);
+			this->close();
 		}
 		else
 		{
@@ -106,8 +107,9 @@ void CreateSlrTypeDlg::EditSalaryType()
 				itemModel->item(mIndex.row(), 1)->setText(salaryType->GetCode().c_str());
 				itemModel->item(mIndex.row(), 2)->setText(salaryType->GetName().c_str());
 				emit itemModel->dataChanged(mIndex, mIndex);
-				this->close();
+				
 				dialogBL->CommitTransaction(errorMessage);
+				this->close();
 			}
 			else
 			{

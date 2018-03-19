@@ -21,7 +21,6 @@ public:
 	void OpenEmpDlg();
 	void OpenSkEmpDlg();
 	void OpenStsDlg();
-	void OpenCurDlg();
 	void OpenInvListDlg();
 	void StatusWasChenged();
 	public slots:
@@ -35,5 +34,6 @@ private:
 	QDoubleValidator *vDouble = nullptr;
 	QIntValidator *vInt = nullptr;
 	std::map<std::string, int> statusMap;
+	void InitComboBox();
 };
 #endif //CREATEINVDLG_H

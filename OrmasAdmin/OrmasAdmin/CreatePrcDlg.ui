@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>157</height>
+    <width>618</width>
+    <height>210</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -32,24 +32,73 @@
    <property name="bottomMargin">
     <number>11</number>
    </property>
-   <item row="5" column="0">
-    <widget class="QPushButton" name="currencyBtn">
+   <item row="7" column="3">
+    <widget class="QLabel" name="volumePh">
+     <property name="minimumSize">
+      <size>
+       <width>100</width>
+       <height>0</height>
+      </size>
+     </property>
+     <property name="font">
+      <font>
+       <family>Times New Roman</family>
+       <pointsize>12</pointsize>
+       <weight>75</weight>
+       <italic>true</italic>
+       <bold>true</bold>
+      </font>
+     </property>
      <property name="text">
-      <string>Select currency</string>
+      <string/>
      </property>
     </widget>
    </item>
-   <item row="0" column="0">
-    <widget class="QLabel" name="dateLb">
+   <item row="7" column="4">
+    <widget class="QLabel" name="measureLb">
      <property name="text">
-      <string>Date:</string>
+      <string>Measure:</string>
      </property>
     </widget>
    </item>
-   <item row="5" column="1">
-    <widget class="QLineEdit" name="currencyEdit">
-     <property name="readOnly">
-      <bool>true</bool>
+   <item row="7" column="1">
+    <widget class="QLabel" name="prodNamePh">
+     <property name="minimumSize">
+      <size>
+       <width>100</width>
+       <height>0</height>
+      </size>
+     </property>
+     <property name="font">
+      <font>
+       <family>Times New Roman</family>
+       <pointsize>12</pointsize>
+       <weight>75</weight>
+       <italic>true</italic>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
+   </item>
+   <item row="7" column="2">
+    <widget class="QLabel" name="volumeLb">
+     <property name="minimumSize">
+      <size>
+       <width>70</width>
+       <height>0</height>
+      </size>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>70</width>
+       <height>16777215</height>
+      </size>
+     </property>
+     <property name="text">
+      <string>Volume:</string>
      </property>
     </widget>
    </item>
@@ -60,14 +109,62 @@
      </property>
     </widget>
    </item>
-   <item row="2" column="1">
-    <widget class="QLineEdit" name="valueEdit">
-     <property name="toolTip">
-      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;For example: 1000 (depends on currency, in that case 1000 USD)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   <item row="0" column="0">
+    <widget class="QLabel" name="dateLb">
+     <property name="text">
+      <string>Date:</string>
      </property>
     </widget>
    </item>
-   <item row="8" column="0" colspan="2">
+   <item row="5" column="0">
+    <widget class="QLabel" name="currencyLb">
+     <property name="text">
+      <string>Select currency:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="7" column="5">
+    <widget class="QLabel" name="measurePh">
+     <property name="minimumSize">
+      <size>
+       <width>100</width>
+       <height>0</height>
+      </size>
+     </property>
+     <property name="font">
+      <font>
+       <family>Times New Roman</family>
+       <pointsize>12</pointsize>
+       <weight>75</weight>
+       <italic>true</italic>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
+   </item>
+   <item row="7" column="0">
+    <widget class="QLabel" name="prodNameLb">
+     <property name="minimumSize">
+      <size>
+       <width>70</width>
+       <height>0</height>
+      </size>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>70</width>
+       <height>16777215</height>
+      </size>
+     </property>
+     <property name="text">
+      <string>Product name:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="9" column="0" colspan="6">
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
       <spacer name="horizontalSpacer">
@@ -98,7 +195,17 @@
      </item>
     </layout>
    </item>
-   <item row="6" column="0">
+   <item row="2" column="2" colspan="2">
+    <widget class="QLineEdit" name="valueEdit">
+     <property name="toolTip">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;For example: 1000 (depends on currency, in that case 1000 USD)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="2" colspan="2">
+    <widget class="QComboBox" name="currencyCmb"/>
+   </item>
+   <item row="6" column="0" colspan="2">
     <widget class="QPushButton" name="productBtn">
      <property name="minimumSize">
       <size>
@@ -111,7 +218,10 @@
      </property>
     </widget>
    </item>
-   <item row="6" column="1">
+   <item row="0" column="2" colspan="2">
+    <widget class="QDateTimeEdit" name="dateEdit"/>
+   </item>
+   <item row="6" column="2" colspan="2">
     <widget class="QLineEdit" name="productEdit">
      <property name="toolTip">
       <string>Must not be empty</string>
@@ -121,17 +231,20 @@
      </property>
     </widget>
    </item>
-   <item row="0" column="1">
-    <widget class="QDateTimeEdit" name="dateEdit"/>
+   <item row="8" column="0" colspan="2">
+    <widget class="QLabel" name="isOutdatedLb">
+     <property name="text">
+      <string>Is out of date?</string>
+     </property>
+    </widget>
+   </item>
+   <item row="8" column="2" colspan="2">
+    <widget class="QComboBox" name="isOutdatedCmb"/>
    </item>
   </layout>
  </widget>
  <tabstops>
-  <tabstop>valueEdit</tabstop>
-  <tabstop>currencyBtn</tabstop>
-  <tabstop>currencyEdit</tabstop>
   <tabstop>productBtn</tabstop>
-  <tabstop>productEdit</tabstop>
   <tabstop>okBtn</tabstop>
   <tabstop>cancelBtn</tabstop>
  </tabstops>

@@ -14,10 +14,7 @@ CreateProdDlg::CreateProdDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, Q
 	vDouble = new QDoubleValidator(0.00, 1000000000.00, 3, this);
 	vInt = new QIntValidator(0, 1000000000, this);
 	companyEdit->setValidator(vInt);
-	measureEdit->setValidator(vInt);
-	prodTypeEdit->setValidator(vInt);
 	shelfLifeEdit->setValidator(vInt);
-	currencyEdit->setValidator(vInt);
 	volumeEdit->setValidator(vDouble);
 	volumeEdit->setMaxLength(17);
 	priceEdit->setValidator(vDouble);
@@ -31,19 +28,14 @@ CreateProdDlg::CreateProdDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, Q
 	else
 	{
 		companyEdit->setText("0");
-		measureEdit->setText("0");
-		prodTypeEdit->setText("0");
 		shelfLifeEdit->setText("0");
-		currencyEdit->setText("0");
 		priceEdit->setText("0");
 		volumeEdit->setText("0");
 		QObject::connect(okBtn, &QPushButton::released, this, &CreateProdDlg::CreateProduct);
 	}
 	QObject::connect(cancelBtn, &QPushButton::released, this, &CreateProdDlg::Close);
 	QObject::connect(companyBtn, &QPushButton::released, this, &CreateProdDlg::OpenCmpDlg);
-	QObject::connect(measureBtn, &QPushButton::released, this, &CreateProdDlg::OpenMsrDlg);
-	QObject::connect(prodTypeBtn, &QPushButton::released, this, &CreateProdDlg::OpenPrdTpDlg);
-	QObject::connect(currencyBtn, &QPushButton::released, this, &CreateProdDlg::OpenCurDlg);
+	InitComboBox();
 }
 
 CreateProdDlg::~CreateProdDlg()
@@ -61,18 +53,11 @@ void CreateProdDlg::SetID(int ID, QString childName)
 			if (childName == QString("companyForm"))
 			{
 				companyEdit->setText(QString::number(ID));
-			}
-			if (childName == QString("measureForm"))
-			{
-				measureEdit->setText(QString::number(ID));
-			}
-			if (childName == QString("prodTypeForm"))
-			{
-				prodTypeEdit->setText(QString::number(ID));
-			}
-			if (childName == QString("currencyForm"))
-			{
-				currencyEdit->setText(QString::number(ID));
+				BusinessLayer::Company company;
+				if (company.GetCompanyByID(dialogBL->GetOrmasDal(), ID, errorMessage))
+				{
+					companyNamePh->setText(company.GetName().c_str());
+				}
 			}
 		}
 	}
@@ -92,17 +77,22 @@ void CreateProdDlg::SetProductParams(int pCountryID, QString pProductName, doubl
 	product->SetID(id);
 }
 
-void CreateProdDlg::FillEditElements(int pCountryID, QString pProductName, double pVolume, int pMeasureID, double pPrice,
+void CreateProdDlg::FillEditElements(int pCompanyID, QString pProductName, double pVolume, int pMeasureID, double pPrice,
 	int pProductTypeID, int pShelfLife, int pCurrencyID)
 {
-	companyEdit->setText(QString::number(pCountryID));
+	companyEdit->setText(QString::number(pCompanyID));
 	nameEdit->setText(pProductName);
 	volumeEdit->setText(QString::number(pVolume));
-	measureEdit->setText(QString::number(pMeasureID));
 	priceEdit->setText(QString::number(pPrice));
-	prodTypeEdit->setText(QString::number(pProductTypeID));
+	prodTypeCmb->setCurrentIndex(prodTypeCmb->findData(QVariant(pProductTypeID)));
 	shelfLifeEdit->setText(QString::number(pShelfLife));
-	currencyEdit->setText(QString::number(pCurrencyID));
+	currencyCmb->setCurrentIndex(currencyCmb->findData(QVariant(pCurrencyID)));
+	measureCmb->setCurrentIndex(measureCmb->findData(QVariant(pMeasureID)));
+	BusinessLayer::Company company;
+	if (company.GetCompanyByID(dialogBL->GetOrmasDal(), pCompanyID, errorMessage))
+	{
+		companyNamePh->setText(company.GetName().c_str());
+	}
 }
 
 bool CreateProdDlg::FillDlgElements(QTableView* pTable)
@@ -139,12 +129,12 @@ void CreateProdDlg::CreateProduct()
 {
 	errorMessage.clear();
 	if (0 != companyEdit->text().toInt() && !nameEdit->text().isEmpty() && 0 != volumeEdit->text().toInt()
-		&& 0 != measureEdit->text().toInt() && 0 != priceEdit->text()
-		&& 0 != prodTypeEdit->text().toInt() && 0 != shelfLifeEdit->text().toInt() && 0 != currencyEdit->text().toInt())
+		&& !measureCmb->currentText().isEmpty() && 0 != priceEdit->text()
+		&& !prodTypeCmb->currentText().isEmpty() && 0 != shelfLifeEdit->text().toInt() && !currencyCmb->currentText().isEmpty())
 	{
 		DataForm *parentDataForm = (DataForm*)parentWidget();
-		SetProductParams(companyEdit->text().toInt(), nameEdit->text(), volumeEdit->text().toDouble(), measureEdit->text().toInt(),
-			priceEdit->text().toDouble(), prodTypeEdit->text().toInt(), shelfLifeEdit->text().toInt(), currencyEdit->text().toInt());
+		SetProductParams(companyEdit->text().toInt(), nameEdit->text(), volumeEdit->text().toDouble(), measureCmb->currentData().toInt(),
+			priceEdit->text().toDouble(), prodTypeCmb->currentData().toInt(), shelfLifeEdit->text().toInt(), currencyCmb->currentData().toInt());
 		dialogBL->StartTransaction(errorMessage);
 		if (dialogBL->CreateProduct(product, errorMessage))
 		{
@@ -217,17 +207,17 @@ void CreateProdDlg::EditProduct()
 {
 	errorMessage.clear();
 	if (0 != companyEdit->text().toInt() && !nameEdit->text().isEmpty() && 0 != volumeEdit->text().toInt()
-		&& 0 != measureEdit->text().toInt() && 0 != priceEdit->text()
-		&& 0 != prodTypeEdit->text().toInt() && 0 != shelfLifeEdit->text().toInt() && 0 != currencyEdit->text().toInt())
+		&& !measureCmb->currentText().isEmpty() && 0 != priceEdit->text()
+		&& !prodTypeCmb->currentText().isEmpty() && 0 != shelfLifeEdit->text().toInt() && !currencyCmb->currentText().isEmpty())
 	{
 		if (product->GetCompanyID() != companyEdit->text().toInt() || QString(product->GetName().c_str()) != nameEdit->text() || 
-			product->GetVolume() != volumeEdit->text().toDouble() || product->GetMeasureID() != measureEdit->text().toInt() ||
-			product->GetPrice() != priceEdit->text().toDouble() || product->GetProductTypeID() != prodTypeEdit->text().toInt() ||
-			product->GetShelfLife() != shelfLifeEdit->text().toInt() || product->GetCurrencyID() != currencyEdit->text().toInt())
+			product->GetVolume() != volumeEdit->text().toDouble() || product->GetMeasureID() != measureCmb->currentData().toInt() ||
+			product->GetPrice() != priceEdit->text().toDouble() || product->GetProductTypeID() != prodTypeCmb->currentData().toInt() ||
+			product->GetShelfLife() != shelfLifeEdit->text().toInt() || product->GetCurrencyID() != currencyCmb->currentData().toInt())
 			{
 			DataForm *parentDataForm = (DataForm*)parentWidget();
-			SetProductParams(companyEdit->text().toInt(), nameEdit->text(), volumeEdit->text().toDouble(), measureEdit->text().toInt(),
-				priceEdit->text().toDouble(), prodTypeEdit->text().toInt(), shelfLifeEdit->text().toInt(), currencyEdit->text().toInt(), 
+			SetProductParams(companyEdit->text().toInt(), nameEdit->text(), volumeEdit->text().toDouble(), measureCmb->currentData().toInt(),
+				priceEdit->text().toDouble(), prodTypeCmb->currentData().toInt(), shelfLifeEdit->text().toInt(), currencyCmb->currentData().toInt(),
 				product->GetID());
 			dialogBL->StartTransaction(errorMessage);
 			if (dialogBL->UpdateProduct(product, errorMessage))
@@ -271,13 +261,14 @@ void CreateProdDlg::EditProduct()
 				itemModel->item(mIndex.row(), 12)->setText(QString::number(product->GetCurrencyID()));
 				
 				emit itemModel->dataChanged(mIndex, mIndex);
-				this->close();
+				
 				dialogBL->CommitTransaction(errorMessage);
 
 				delete company;
 				delete measure;
 				delete prodType;
 				delete currency;
+				this->close();
 			}
 			else
 			{
@@ -349,134 +340,30 @@ void CreateProdDlg::OpenCmpDlg()
 	}
 }
 
-void CreateProdDlg::OpenMsrDlg()
+void CreateProdDlg::InitComboBox()
 {
-	this->hide();
-	this->setModal(false);
-	this->show();
-	DataForm *productParent = (DataForm *)parent();
-	MainForm *mainForm = (MainForm *)productParent->GetParent();
-	QString message = tr("Loading...");
-	mainForm->statusBar()->showMessage(message);
-	DataForm *dForm = new DataForm(dialogBL, mainForm);
-	dForm->setWindowTitle(tr("Measures"));
-	dForm->hide();
-	dForm->setWindowModality(Qt::WindowModal);
-	dForm->FillTable<BusinessLayer::Measure>(errorMessage);
-	if (errorMessage.empty())
+	std::vector<BusinessLayer::Currency> curVector = dialogBL->GetAllDataForClass<BusinessLayer::Currency>(errorMessage);
+	if (!curVector.empty())
 	{
-		dForm->createProdDlg = this;
-		dForm->setObjectName("measureForm");
-		dForm->QtConnect<BusinessLayer::Measure>();
-		QMdiSubWindow *measureWindow = new QMdiSubWindow;
-		measureWindow->setWidget(dForm);
-		measureWindow->setAttribute(Qt::WA_DeleteOnClose);
-		mainForm->mdiArea->addSubWindow(measureWindow);
-		dForm->topLevelWidget();
-		dForm->activateWindow();
-		QApplication::setActiveWindow(dForm);
-		dForm->show();
-		dForm->raise();
-		QString message = tr("All measures are shown");
-		mainForm->statusBar()->showMessage(message);
+		for (unsigned int i = 0; i < curVector.size(); i++)
+		{
+			currencyCmb->addItem(curVector[i].GetShortName().c_str(), QVariant(curVector[i].GetID()));
+		}
 	}
-	else
+	std::vector<BusinessLayer::Measure> meaVector = dialogBL->GetAllDataForClass<BusinessLayer::Measure>(errorMessage);
+	if (!meaVector.empty())
 	{
-		delete dForm;
-		QString message = tr("End with error!");
-		mainForm->statusBar()->showMessage(message);
-		QMessageBox::information(NULL, QString(tr("Warning")),
-			QString(tr(errorMessage.c_str())),
-			QString(tr("Ok")));
-		errorMessage = "";
+		for (unsigned int i = 0; i < meaVector.size(); i++)
+		{
+			measureCmb->addItem(meaVector[i].GetShortName().c_str(), QVariant(meaVector[i].GetID()));
+		}
 	}
-
-}
-
-void CreateProdDlg::OpenPrdTpDlg()
-{
-	this->hide();
-	this->setModal(false);
-	this->show();
-	DataForm *productParent = (DataForm *)parent();
-	MainForm *mainForm = (MainForm *)productParent->GetParent();
-	QString message = tr("Loading...");
-	mainForm->statusBar()->showMessage(message);
-	DataForm *dForm = new DataForm(dialogBL, mainForm);
-	dForm->setWindowTitle(tr("Product types"));
-	dForm->hide();
-	dForm->setWindowModality(Qt::WindowModal);
-	dForm->FillTable<BusinessLayer::ProductType>(errorMessage);
-	if (errorMessage.empty())
+	std::vector<BusinessLayer::ProductType> ptVector = dialogBL->GetAllDataForClass<BusinessLayer::ProductType>(errorMessage);
+	if (!ptVector.empty())
 	{
-		dForm->createProdDlg = this;
-		dForm->setObjectName("prodTypeForm");
-		dForm->QtConnect<BusinessLayer::ProductType>();
-		QMdiSubWindow *prodTypeWindow = new QMdiSubWindow;
-		prodTypeWindow->setWidget(dForm);
-		prodTypeWindow->setAttribute(Qt::WA_DeleteOnClose);
-		mainForm->mdiArea->addSubWindow(prodTypeWindow);
-		dForm->topLevelWidget();
-		dForm->activateWindow();
-		QApplication::setActiveWindow(dForm);
-		dForm->show();
-		dForm->raise();
-		QString message = tr("All product types are shown");
-		mainForm->statusBar()->showMessage(message);
+		for (unsigned int i = 0; i < ptVector.size(); i++)
+		{
+			prodTypeCmb->addItem(ptVector[i].GetShortName().c_str(), QVariant(ptVector[i].GetID()));
+		}
 	}
-	else
-	{
-		delete dForm;
-		QString message = tr("End with error!");
-		mainForm->statusBar()->showMessage(message);
-		QMessageBox::information(NULL, QString(tr("Warning")),
-			QString(tr(errorMessage.c_str())),
-			QString(tr("Ok")));
-		errorMessage = "";
-	}
-
-}
-
-void CreateProdDlg::OpenCurDlg()
-{
-	this->hide();
-	this->setModal(false);
-	this->show();
-	DataForm *productParent = (DataForm *)parent();
-	MainForm *mainForm = (MainForm *)productParent->GetParent();
-	QString message = tr("Loading...");
-	mainForm->statusBar()->showMessage(message);
-	DataForm *dForm = new DataForm(dialogBL, mainForm);
-	dForm->setWindowTitle(tr("Currencies"));
-	dForm->hide();
-	dForm->setWindowModality(Qt::WindowModal);
-	dForm->FillTable<BusinessLayer::Currency>(errorMessage);
-	if (errorMessage.empty())
-	{
-		dForm->createProdDlg = this;
-		dForm->setObjectName("currencyForm");
-		dForm->QtConnect<BusinessLayer::Currency>();
-		QMdiSubWindow *currencyWindow = new QMdiSubWindow;
-		currencyWindow->setWidget(dForm);
-		currencyWindow->setAttribute(Qt::WA_DeleteOnClose);
-		mainForm->mdiArea->addSubWindow(currencyWindow);
-		dForm->topLevelWidget();
-		dForm->activateWindow();
-		QApplication::setActiveWindow(dForm);
-		dForm->show();
-		dForm->raise();
-		QString message = tr("All currency are shown");
-		mainForm->statusBar()->showMessage(message);
-	}
-	else
-	{
-		delete dForm;
-		QString message = tr("End with error!");
-		mainForm->statusBar()->showMessage(message);
-		QMessageBox::information(NULL, QString(tr("Warning")),
-			QString(tr(errorMessage.c_str())),
-			QString(tr("Ok")));
-		errorMessage = "";
-	}
-
 }

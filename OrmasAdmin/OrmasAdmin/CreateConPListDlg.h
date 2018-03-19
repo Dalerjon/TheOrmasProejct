@@ -21,7 +21,6 @@ public:
 	void OpenConPDlg();
 	void OpenProdDlg();
 	void OpenStsDlg();
-	void OpenCurDlg();
 	public slots:
 	void SetID(int ID, QString childName);
 private:
@@ -30,5 +29,6 @@ private:
 	void FillEditElements(int, int, int, double, int, int);
 	QDoubleValidator *vDouble = nullptr;
 	QIntValidator *vInt = nullptr;
+	void InitComboBox();
 };
 #endif //CREATEORDLITDLG_H

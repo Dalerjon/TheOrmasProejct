@@ -156,14 +156,7 @@ namespace BusinessLayer
 		{
 			if (ormasDal.DeleteListByTransportID(id, errorMessage))
 			{
-				id = 0;
-				employeeID = 0;
-				date.clear();
-				executionDate.clear();
-				stockEmployeeID = 0;
-				count = 0;
-				sum = 0;
-				statusID = 0;
+				Clear();
 				ormasDal.CommitTransaction(errorMessage);
 				return true;
 			}

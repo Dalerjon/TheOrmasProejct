@@ -19,7 +19,6 @@ CreateRtrnDlg::CreateRtrnDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, Q
 	prodCountEdit->setValidator(vInt);
 	clientEdit->setValidator(vInt);
 	statusEdit->setValidator(vInt);
-	currencyEdit->setValidator(vInt);
 	sumEdit->setValidator(vDouble);
 	sumEdit->setMaxLength(17);
 	if (true == updateFlag)
@@ -37,7 +36,6 @@ CreateRtrnDlg::CreateRtrnDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, Q
 		clientEdit->setText("0");
 		statusEdit->setText("0");
 		sumEdit->setText("0");
-		currencyEdit->setText("0");
 		dateEdit->setDateTime(QDateTime::currentDateTime());
 		QObject::connect(okBtn, &QPushButton::released, this, &CreateRtrnDlg::CreateReturn);
 	}
@@ -45,10 +43,10 @@ CreateRtrnDlg::CreateRtrnDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, Q
 	QObject::connect(clientBtn, &QPushButton::released, this, &CreateRtrnDlg::OpenCltDlg);
 	QObject::connect(statusBtn, &QPushButton::released, this, &CreateRtrnDlg::OpenStsDlg);
 	QObject::connect(employeeBtn, &QPushButton::released, this, &CreateRtrnDlg::OpenEmpDlg);
-	QObject::connect(currencyBtn, &QPushButton::released, this, &CreateRtrnDlg::OpenCurDlg);
 	QObject::connect(addProdBtn, &QPushButton::released, this, &CreateRtrnDlg::OpenRtrnListDlg);
 	QObject::connect(statusEdit, &QLineEdit::textChanged, this, &CreateRtrnDlg::StatusWasChenged);
 	QObject::connect(this, SIGNAL(CloseCreatedForms()), ((MainForm*)((DataForm*)parent)->GetParent()), SLOT(CloseChildsByName()));
+	InitComboBox();
 }
 
 CreateRtrnDlg::~CreateRtrnDlg()
@@ -81,7 +79,26 @@ void CreateRtrnDlg::FillEditElements(int rClientID, QString rDate, QString rExec
 	prodCountEdit->setText(QString::number(rCount));
 	sumEdit->setText(QString::number(rSum));
 	statusEdit->setText(QString::number(rStatusID));
-	currencyEdit->setText(QString::number(rCurrencyID));
+	currencyCmb->setCurrentIndex(currencyCmb->findData(QVariant(rCurrencyID)));
+	BusinessLayer::User user1;
+	if (user1.GetUserByID(dialogBL->GetOrmasDal(), rClientID, errorMessage))
+	{
+		clNamePh->setText(user1.GetName().c_str());
+		clSurnamePh->setText(user1.GetSurname().c_str());
+		clPhonePh->setText(user1.GetPhone().c_str());
+	}
+	BusinessLayer::User user2;
+	if (user2.GetUserByID(dialogBL->GetOrmasDal(), rEmployeeID, errorMessage))
+	{
+		empNamePh->setText(user2.GetName().c_str());
+		empSurnamePh->setText(user2.GetSurname().c_str());
+		empPhonePh->setText(user2.GetPhone().c_str());
+	}
+	BusinessLayer::Status status;
+	if (status.GetStatusByID(dialogBL->GetOrmasDal(), rStatusID, errorMessage))
+	{
+		statusPh->setText(status.GetName().c_str());
+	}
 }
 
 void CreateRtrnDlg::SetID(int ID, QString childName)
@@ -93,18 +110,33 @@ void CreateRtrnDlg::SetID(int ID, QString childName)
 			if (childName == QString("clientForm"))
 			{
 				clientEdit->setText(QString::number(ID));
+				BusinessLayer::User user;
+				if (user.GetUserByID(dialogBL->GetOrmasDal(), ID, errorMessage))
+				{
+					clNamePh->setText(user.GetName().c_str());
+					clSurnamePh->setText(user.GetSurname().c_str());
+					clPhonePh->setText(user.GetPhone().c_str());
+				}
 			}
 			if (childName == QString("statusForm"))
 			{
 				statusEdit->setText(QString::number(ID));
+				BusinessLayer::Status status;
+				if (status.GetStatusByID(dialogBL->GetOrmasDal(), ID, errorMessage))
+				{
+					statusPh->setText(status.GetName().c_str());
+				}
 			}
 			if (childName == QString("employeeForm"))
 			{
 				employeeEdit->setText(QString::number(ID));
-			}
-			if (childName == QString("currencyForm"))
-			{
-				currencyEdit->setText(QString::number(ID));
+				BusinessLayer::User user;
+				if (user.GetUserByID(dialogBL->GetOrmasDal(), ID, errorMessage))
+				{
+					empNamePh->setText(user.GetName().c_str());
+					empSurnamePh->setText(user.GetSurname().c_str());
+					empPhonePh->setText(user.GetPhone().c_str());
+				}
 			}
 		}
 	}
@@ -145,11 +177,11 @@ void CreateRtrnDlg::CreateReturn()
 	errorMessage.clear();
 	if (0 != clientEdit->text().toInt() && !dateEdit->text().isEmpty()
 		&& 0 != prodCountEdit->text().toInt() && 0 != sumEdit->text().toInt()
-		&& 0 != statusEdit->text().toInt() && 0 != currencyEdit->text().toInt())
+		&& 0 != statusEdit->text().toInt() && !currencyCmb->currentText().isEmpty())
 	{
 		DataForm *parentDataForm = (DataForm*)parentWidget();
 		SetReturnParams(clientEdit->text().toInt(), dateEdit->text(), execDateEdit->text(), employeeEdit->text().toInt(), prodCountEdit->text().toInt(),
-			sumEdit->text().toInt(), statusEdit->text().toInt(), currencyEdit->text().toInt(), ret->GetID());
+			sumEdit->text().toInt(), statusEdit->text().toInt(), currencyCmb->currentData().toInt(), ret->GetID());
 		if (dialogBL->CreateReturn(ret, errorMessage))
 		{
 
@@ -272,17 +304,17 @@ void CreateRtrnDlg::EditReturn()
 	errorMessage.clear();
 	if (0 != clientEdit->text().toInt() && !dateEdit->text().isEmpty()
 		&& 0 != prodCountEdit->text().toInt() && 0 != sumEdit->text().toInt()
-		&& 0 != statusEdit->text().toInt() && 0 != currencyEdit->text().toInt())
+		&& 0 != statusEdit->text().toInt() && !currencyCmb->currentText().isEmpty())
 	{
 		if (ret->GetClientID() != clientEdit->text().toInt() || QString(ret->GetDate().c_str()) != dateEdit->text() ||
 			QString(ret->GetExecutionDate().c_str()) != execDateEdit->text() ||
 			ret->GetEmployeeID() != employeeEdit->text().toInt() || ret->GetCount() != prodCountEdit->text().toInt() ||
 			ret->GetSum() != sumEdit->text().toInt()
-			|| ret->GetCurrencyID() != currencyEdit->text().toInt())
+			|| ret->GetCurrencyID() != currencyCmb->currentData().toInt())
 		{
 			DataForm *parentDataForm = (DataForm*)parentWidget();
 			SetReturnParams(clientEdit->text().toInt(), dateEdit->text(), execDateEdit->text(), employeeEdit->text().toInt(), prodCountEdit->text().toInt(),
-				sumEdit->text().toInt(), statusEdit->text().toInt(), currencyEdit->text().toInt(), ret->GetID());
+				sumEdit->text().toInt(), statusEdit->text().toInt(), currencyCmb->currentData().toInt(), ret->GetID());
 			
 			if (dialogBL->UpdateReturn(ret, errorMessage))
 			{
@@ -585,50 +617,6 @@ void CreateRtrnDlg::OpenStsDlg()
 	}
 }
 
-void CreateRtrnDlg::OpenCurDlg()
-{
-	this->hide();
-	this->setModal(false);
-	this->show();
-	DataForm *productParent = (DataForm *)parent();
-	MainForm *mainForm = (MainForm *)productParent->GetParent();
-	QString message = tr("Loading...");
-	mainForm->statusBar()->showMessage(message);
-	DataForm *dForm = new DataForm(dialogBL, mainForm);
-	dForm->setWindowTitle(tr("Currencies"));
-	dForm->hide();
-	dForm->setWindowModality(Qt::WindowModal);
-	dForm->FillTable<BusinessLayer::Currency>(errorMessage);
-	if (errorMessage.empty())
-	{
-		dForm->createRtrnDlg = this;
-		dForm->setObjectName("currencyForm");
-		dForm->QtConnect<BusinessLayer::Currency>();
-		QMdiSubWindow *currnecyWindow = new QMdiSubWindow;
-		currnecyWindow->setWidget(dForm);
-		currnecyWindow->setAttribute(Qt::WA_DeleteOnClose);
-		mainForm->mdiArea->addSubWindow(currnecyWindow);
-		dForm->topLevelWidget();
-		dForm->activateWindow();
-		QApplication::setActiveWindow(dForm);
-		dForm->show();
-		dForm->raise();
-		QString message = tr("All currency are shown");
-		mainForm->statusBar()->showMessage(message);
-	}
-	else
-	{
-		delete dForm;
-		QString message = tr("End with error!");
-		mainForm->statusBar()->showMessage(message);
-		QMessageBox::information(NULL, QString(tr("Warning")),
-			QString(tr(errorMessage.c_str())),
-			QString(tr("Ok")));
-		errorMessage = "";
-	}
-
-}
-
 void CreateRtrnDlg::OpenRtrnListDlg()
 {
 	this->hide();
@@ -685,5 +673,17 @@ void CreateRtrnDlg::StatusWasChenged()
 	{
 		execDateWidget->setVisible(true);
 		execDateEdit->setDateTime(QDateTime::currentDateTime());
+	}
+}
+
+void CreateRtrnDlg::InitComboBox()
+{
+	std::vector<BusinessLayer::Currency> curVector = dialogBL->GetAllDataForClass<BusinessLayer::Currency>(errorMessage);
+	if (!curVector.empty())
+	{
+		for (unsigned int i = 0; i < curVector.size(); i++)
+		{
+			currencyCmb->addItem(curVector[i].GetShortName().c_str(), QVariant(curVector[i].GetID()));
+		}
 	}
 }

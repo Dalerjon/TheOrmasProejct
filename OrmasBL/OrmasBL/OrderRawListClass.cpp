@@ -107,13 +107,7 @@ namespace BusinessLayer
 	{
 		if (ormasDal.DeleteItemInOrderRawList(id, errorMessage))
 		{
-			id = 0;
-			orderRawID = 0;
-			productID = 0;
-			count = 0;
-			sum = 0;
-			statusID = 0;
-			currencyID = 0;
+			Clear();
 			return true;
 		}
 		return false;
@@ -123,13 +117,7 @@ namespace BusinessLayer
 		orderRawID = oID;
 		if (ormasDal.DeleteListByOrderRawID(orderRawID, errorMessage))
 		{
-			id = 0;
-			orderRawID = 0;
-			productID = 0;
-			count = 0;
-			sum = 0;
-			statusID = 0;
-			currencyID = 0;
+			Clear();
 			return true;
 		}
 		return false;

@@ -112,7 +112,7 @@ namespace BusinessLayer{
 	{
 		if (ormasDal.DeleteCompany(id, errorMessage))
 		{
-			id = 0;
+			Clear();
 			return true;
 		}
 		if (errorMessage.empty())

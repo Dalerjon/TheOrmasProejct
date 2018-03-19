@@ -16,7 +16,8 @@ CreatePrcDlg::CreatePrcDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, QWi
 	productEdit->setValidator(vInt);
 	valueEdit->setValidator(vDouble);
 	valueEdit->setMaxLength(17);
-	currencyEdit->setValidator(vInt);
+	isOutdatedCmb->addItem("false");
+	isOutdatedCmb->addItem("true");
 	if (true == updateFlag)
 	{
 		QObject::connect(okBtn, &QPushButton::released, this, &CreatePrcDlg::EditPrice);
@@ -28,7 +29,7 @@ CreatePrcDlg::CreatePrcDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, QWi
 	}
 	QObject::connect(cancelBtn, &QPushButton::released, this, &CreatePrcDlg::Close);
 	QObject::connect(productBtn, &QPushButton::released, this, &CreatePrcDlg::OpenPrdDlg);
-	QObject::connect(currencyBtn, &QPushButton::released, this, &CreatePrcDlg::OpenCurDlg);
+	InitComboBox();
 }
 
 CreatePrcDlg::~CreatePrcDlg()
@@ -47,30 +48,51 @@ void CreatePrcDlg::SetID(int ID, QString childName)
 			if (childName == QString("productForm"))
 			{
 				productEdit->setText(QString::number(ID));
-			}
-			if (childName == QString("currencyForm"))
-			{
-				currencyEdit->setText(QString::number(ID));
+				BusinessLayer::Product product;
+				if (product.GetProductByID(dialogBL->GetOrmasDal(), ID, errorMessage))
+				{
+					prodNamePh->setText(product.GetName().c_str());
+					volumePh->setText(QString::number(product.GetVolume()));
+					BusinessLayer::Measure measure;
+					if (measure.GetMeasureByID(dialogBL->GetOrmasDal(), product.GetMeasureID(), errorMessage))
+					{
+						measurePh->setText(measure.GetShortName().c_str());
+					}
+				}
 			}
 		}
 	}
 }
 
-void CreatePrcDlg::SetPriceParams(QString pDate, double pValue, int pProductID, int pCurrencyID, int id)
+void CreatePrcDlg::SetPriceParams(QString pDate, double pValue, int pProductID, int pCurrencyID, QString pIsOutdated, int id)
 {
 	price->SetDate(pDate.toUtf8().constData());
 	price->SetValue(pValue);
 	price->SetProductID(pProductID);
 	price->SetCurrencyID(pCurrencyID);
+	price->SetIsOutdated(pIsOutdated == "true" ? true : false);
 	price->SetID(id);
 }
 
-void CreatePrcDlg::FillEditElements(QString pDate, double pValue, int pProductID, int pCurrencyID)
+void CreatePrcDlg::FillEditElements(QString pDate, double pValue, int pProductID, int pCurrencyID, QString pIsOutdated)
 {
 	dateEdit->setDateTime(QDateTime::fromString(pDate, "yyyy.MM.dd hh:mm:ss"));
 	valueEdit->setText(QString::number(pValue));
 	productEdit->setText(QString::number(pProductID));
-	currencyEdit->setText(QString::number(pCurrencyID));
+	int index = isOutdatedCmb->findText(pIsOutdated);
+	isOutdatedCmb->setCurrentIndex(index);
+	currencyCmb->setCurrentIndex(currencyCmb->findData(QVariant(pCurrencyID)));
+	BusinessLayer::Product product;
+	if (product.GetProductByID(dialogBL->GetOrmasDal(), pProductID, errorMessage))
+	{
+		prodNamePh->setText(product.GetName().c_str());
+		volumePh->setText(QString::number(product.GetVolume()));
+		BusinessLayer::Measure measure;
+		if (measure.GetMeasureByID(dialogBL->GetOrmasDal(), product.GetMeasureID(), errorMessage))
+		{
+			measurePh->setText(measure.GetShortName().c_str());
+		}
+	}
 }
 
 bool CreatePrcDlg::FillDlgElements(QTableView* pTable)
@@ -82,11 +104,13 @@ bool CreatePrcDlg::FillDlgElements(QTableView* pTable)
 			pTable->model()->data(pTable->model()->index(mIndex.row(), 5)).toDouble(),
 			pTable->model()->data(pTable->model()->index(mIndex.row(), 8)).toInt(),
 			pTable->model()->data(pTable->model()->index(mIndex.row(), 7)).toInt(),
+			pTable->model()->data(pTable->model()->index(mIndex.row(), 9)).toString().toUtf8().constData(),
 			pTable->model()->data(pTable->model()->index(mIndex.row(), 0)).toInt());
 		FillEditElements(pTable->model()->data(pTable->model()->index(mIndex.row(), 1)).toString().toUtf8().constData(),
 			pTable->model()->data(pTable->model()->index(mIndex.row(), 5)).toDouble(),
 			pTable->model()->data(pTable->model()->index(mIndex.row(), 8)).toInt(),
-			pTable->model()->data(pTable->model()->index(mIndex.row(), 7)).toInt());
+			pTable->model()->data(pTable->model()->index(mIndex.row(), 7)).toInt(),
+			pTable->model()->data(pTable->model()->index(mIndex.row(), 9)).toString().toUtf8().constData());
 		return true;
 	}
 	else
@@ -98,11 +122,12 @@ bool CreatePrcDlg::FillDlgElements(QTableView* pTable)
 void CreatePrcDlg::CreatePrice()
 {
 	errorMessage.clear();
-	if (0 != productEdit->text().toInt() && 0.0 != valueEdit->text().toDouble() && 0 != currencyEdit->text().toInt()
+	if (0 != productEdit->text().toInt() && 0.0 != valueEdit->text().toDouble() && !currencyCmb->currentText().isEmpty()
 		&& !dateEdit->text().isEmpty())
 	{
 		DataForm *parentDataForm = (DataForm*)parentWidget();
-		SetPriceParams(dateEdit->text(), valueEdit->text().toDouble(), productEdit->text().toInt(), currencyEdit->text().toInt());
+		SetPriceParams(dateEdit->text(), valueEdit->text().toDouble(), productEdit->text().toInt(), 
+			currencyCmb->currentData().toInt(), isOutdatedCmb->currentText());
 		dialogBL->StartTransaction(errorMessage);
 		if (dialogBL->CreatePrice(price, errorMessage))
 		{
@@ -140,14 +165,16 @@ void CreatePrcDlg::CreatePrice()
 				<< new QStandardItem(QString::number(price->GetValue()))
 				<< new QStandardItem(currency->GetShortName().c_str())
 				<< new QStandardItem(QString::number(price->GetCurrencyID()))
-				<< new QStandardItem(QString::number(price->GetProductID()));
+				<< new QStandardItem(QString::number(price->GetProductID()))
+				<< new QStandardItem(price->GetIsOutdated() ? "true" : "false");;
 			QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
 			itemModel->appendRow(PriceItem);
-			this->close();
+			
 			dialogBL->CommitTransaction(errorMessage);
 			delete product;
 			delete currency;
 			delete measure;
+			this->close();
 		}
 		else
 		{
@@ -171,14 +198,16 @@ void CreatePrcDlg::CreatePrice()
 void CreatePrcDlg::EditPrice()
 {
 	errorMessage.clear();
-	if (0 != productEdit->text().toInt() && 0.0 != valueEdit->text().toDouble() && 0 != currencyEdit->text().toInt()
+	if (0 != productEdit->text().toInt() && 0.0 != valueEdit->text().toDouble() && !currencyCmb->currentText().isEmpty()
 		&& !dateEdit->text().isEmpty())
 	{
 		if (QString(price->GetDate().c_str()) != dateEdit->text() || price->GetProductID() != productEdit->text().toInt()
-			|| price->GetValue() != valueEdit->text().toDouble() || price->GetCurrencyID() != currencyEdit->text().toInt())
+			|| price->GetValue() != valueEdit->text().toDouble() || price->GetCurrencyID() != currencyCmb->currentData().toInt()
+			|| QString(price->GetIsOutdated() ? "true" : "false") != isOutdatedCmb->currentText())
 		{
 			DataForm *parentDataForm = (DataForm*)parentWidget();
-			SetPriceParams(dateEdit->text(), valueEdit->text().toDouble(), productEdit->text().toInt(), currencyEdit->text().toInt(), price->GetID());
+			SetPriceParams(dateEdit->text(), valueEdit->text().toDouble(), productEdit->text().toInt(), 
+				currencyCmb->currentData().toInt(), isOutdatedCmb->currentText(), price->GetID());
 			dialogBL->StartTransaction(errorMessage);
 			if (dialogBL->UpdatePrice(price, errorMessage))
 			{
@@ -217,12 +246,14 @@ void CreatePrcDlg::EditPrice()
 				itemModel->item(mIndex.row(), 6)->setText(currency->GetShortName().c_str());
 				itemModel->item(mIndex.row(), 7)->setText(QString::number(price->GetCurrencyID()));
 				itemModel->item(mIndex.row(), 8)->setText(QString::number(price->GetProductID()));
+				itemModel->item(mIndex.row(), 9)->setText(price->GetIsOutdated() ? "true" : "false");
 				emit itemModel->dataChanged(mIndex, mIndex);
-				this->close();
+				
 				dialogBL->CommitTransaction(errorMessage);
 				delete product;
 				delete currency;
 				delete measure;
+				this->close();
 			}
 			else
 			{
@@ -294,46 +325,14 @@ void CreatePrcDlg::OpenPrdDlg()
 	}
 }
 
-void CreatePrcDlg::OpenCurDlg()
+void CreatePrcDlg::InitComboBox()
 {
-	this->hide();
-	this->setModal(false);
-	this->show();
-	DataForm *productParent = (DataForm *)parent();
-	MainForm *mainForm = (MainForm *)productParent->GetParent();
-	QString message = tr("Loading...");
-	mainForm->statusBar()->showMessage(message);
-	DataForm *dForm = new DataForm(dialogBL, mainForm);
-	dForm->setWindowTitle(tr("Currencies"));
-	dForm->hide();
-	dForm->setWindowModality(Qt::WindowModal);
-	dForm->FillTable<BusinessLayer::Currency>(errorMessage);
-	if (errorMessage.empty())
+	std::vector<BusinessLayer::Currency> curVector = dialogBL->GetAllDataForClass<BusinessLayer::Currency>(errorMessage);
+	if (!curVector.empty())
 	{
-		dForm->createPrcDlg = this;
-		dForm->setObjectName("currencyForm");
-		dForm->QtConnect<BusinessLayer::Currency>();
-		QMdiSubWindow *currencyWindow = new QMdiSubWindow;
-		currencyWindow->setWidget(dForm);
-		currencyWindow->setAttribute(Qt::WA_DeleteOnClose);
-		mainForm->mdiArea->addSubWindow(currencyWindow);
-		dForm->topLevelWidget();
-		dForm->activateWindow();
-		QApplication::setActiveWindow(dForm);
-		dForm->show();
-		dForm->raise();
-		QString message = tr("All currency are shown");
-		mainForm->statusBar()->showMessage(message);
+		for (unsigned int i = 0; i < curVector.size(); i++)
+		{
+			currencyCmb->addItem(curVector[i].GetShortName().c_str(), QVariant(curVector[i].GetID()));
+		}
 	}
-	else
-	{
-		delete dForm;
-		QString message = tr("End with error!");
-		mainForm->statusBar()->showMessage(message);
-		QMessageBox::information(NULL, QString(tr("Warning")),
-			QString(tr(errorMessage.c_str())),
-			QString(tr("Ok")));
-		errorMessage = "";
-	}
-
 }

@@ -18,7 +18,6 @@ public:
 	void DeleteWithdrawal(){};
 	void Close();
 	void OpenEmployeeDlg();
-	void OpenCurDlg();
 	public slots:
 	void SetID(int ID, QString childName);
 private:
@@ -27,6 +26,7 @@ private:
 	void FillEditElements(QString, double, int, int);
 	QDoubleValidator *vDouble = nullptr;
 	QIntValidator *vInt = nullptr;
+	void InitComboBox();
 };
 
 #endif //CREATEWDWDLG_H

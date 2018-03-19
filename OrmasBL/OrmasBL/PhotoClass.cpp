@@ -95,7 +95,7 @@ namespace BusinessLayer{
 	{
 		if (ormasDal.DeletePhoto(id, errorMessage))
 		{
-			id = 0;
+			Clear();
 			return true;
 		}
 		if (errorMessage.empty())

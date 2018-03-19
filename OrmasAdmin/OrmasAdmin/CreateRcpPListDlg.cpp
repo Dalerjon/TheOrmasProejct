@@ -18,7 +18,6 @@ CreateRcpPListDlg::CreateRcpPListDlg(BusinessLayer::OrmasBL *ormasBL, bool updat
 	countEdit->setMaxLength(10);
 	receiptProductEdit->setValidator(vInt);
 	statusEdit->setValidator(vInt);
-	currencyEdit->setValidator(vInt);
 	sumEdit->setValidator(vDouble);
 	sumEdit->setMaxLength(17);
 	if (true == updateFlag)
@@ -32,7 +31,6 @@ CreateRcpPListDlg::CreateRcpPListDlg(BusinessLayer::OrmasBL *ormasBL, bool updat
 		countEdit->setText("0");
 		productEdit->setText("0");
 		sumEdit->setText("0");
-		currencyEdit->setText("0");
 		editSectionWgt->hide();
 		QObject::connect(addBtn, &QPushButton::released, this, &CreateRcpPListDlg::AddProductToList);
 	}
@@ -40,7 +38,7 @@ CreateRcpPListDlg::CreateRcpPListDlg(BusinessLayer::OrmasBL *ormasBL, bool updat
 	QObject::connect(receiptProductBtn, &QPushButton::released, this, &CreateRcpPListDlg::OpenRcpPDlg);
 	QObject::connect(productBtn, &QPushButton::released, this, &CreateRcpPListDlg::OpenProdDlg);
 	QObject::connect(statusBtn, &QPushButton::released, this, &CreateRcpPListDlg::OpenStsDlg);
-	QObject::connect(currencyBtn, &QPushButton::released, this, &CreateRcpPListDlg::OpenCurDlg);
+	InitComboBox();
 }
 
 CreateRcpPListDlg::~CreateRcpPListDlg()
@@ -58,6 +56,17 @@ void CreateRcpPListDlg::SetID(int ID, QString childName)
 			if (childName == QString("productForm"))
 			{
 				productEdit->setText(QString::number(ID));
+				BusinessLayer::Product product;
+				if (product.GetProductByID(dialogBL->GetOrmasDal(), ID, errorMessage))
+				{
+					prodNamePh->setText(product.GetName().c_str());
+					volumePh->setText(QString::number(product.GetVolume()));
+					BusinessLayer::Measure measure;
+					if (measure.GetMeasureByID(dialogBL->GetOrmasDal(), product.GetMeasureID(), errorMessage))
+					{
+						measurePh->setText(measure.GetName().c_str());
+					}
+				}
 			}
 			if (childName == QString("receiptProductForm"))
 			{
@@ -66,10 +75,11 @@ void CreateRcpPListDlg::SetID(int ID, QString childName)
 			if (childName == QString("statusForm"))
 			{
 				statusEdit->setText(QString::number(ID));
-			}
-			if (childName == QString("currencyForm"))
-			{
-				currencyEdit->setText(QString::number(ID));
+				BusinessLayer::Status status;
+				if (status.GetStatusByID(dialogBL->GetOrmasDal(), ID, errorMessage))
+				{
+					statusPh->setText(status.GetName().c_str());
+				}
 			}
 		}
 	}
@@ -93,7 +103,23 @@ void CreateRcpPListDlg::FillEditElements(int rReceiptProductID, int rProductID, 
 	countEdit->setText(QString::number(rCount));
 	sumEdit->setText(QString::number(rSum));
 	statusEdit->setText(QString::number(rStatusID));
-	currencyEdit->setText(QString::number(rCurrencyID));
+	currencyCmb->setCurrentIndex(currencyCmb->findData(QVariant(rCurrencyID)));
+	BusinessLayer::Product product;
+	if (product.GetProductByID(dialogBL->GetOrmasDal(), rProductID, errorMessage))
+	{
+		prodNamePh->setText(product.GetName().c_str());
+		volumePh->setText(QString::number(product.GetVolume()));
+		BusinessLayer::Measure measure;
+		if (measure.GetMeasureByID(dialogBL->GetOrmasDal(), product.GetMeasureID(), errorMessage))
+		{
+			measurePh->setText(measure.GetName().c_str());
+		}
+	}
+	BusinessLayer::Status status;
+	if (status.GetStatusByID(dialogBL->GetOrmasDal(), rStatusID, errorMessage))
+	{
+		statusPh->setText(status.GetName().c_str());
+	}
 }
 
 bool CreateRcpPListDlg::FillDlgElements(QTableView* oTable)
@@ -142,12 +168,7 @@ void CreateRcpPListDlg::AddProductToList()
 			return;
 		}
 		BusinessLayer::Product *product = new BusinessLayer::Product();
-		//product->SetID(productEdit->text().toInt());
-		//std::string productFilter = dialogBL->GenerateFilter<BusinessLayer::Product>(product);
-		//std::vector<BusinessLayer::ProductView> productVector = dialogBL->GetAllDataForClass<BusinessLayer::ProductView>(errorMessage, productFilter);
-
 		BusinessLayer::Measure *measure = new BusinessLayer::Measure();
-
 		BusinessLayer::Currency *currency = new BusinessLayer::Currency();
 		BusinessLayer::Currency *sumCurrency = new BusinessLayer::Currency();
 
@@ -238,13 +259,9 @@ void CreateRcpPListDlg::EditProductInList()
 	{
 		if (productEdit->text().toInt() != receiptProductList->GetProductID() || countEdit->text().toInt() != receiptProductList->GetCount()
 			|| receiptProductEdit->text().toInt() != receiptProductList->GetReceiptProductID() || sumEdit->text().toInt() != receiptProductList->GetSum()
-			|| statusEdit->text().toInt() != receiptProductList->GetStatusID() || currencyEdit->text().toInt() != receiptProductList->GetCurrencyID())
+			|| statusEdit->text().toInt() != receiptProductList->GetStatusID() || currencyCmb->currentData().toInt() != receiptProductList->GetCurrencyID())
 		{
 			BusinessLayer::Product *product = new BusinessLayer::Product();
-			//product->SetID(productEdit->text().toInt());
-			//std::string productFilter = dialogBL->GenerateFilter<BusinessLayer::Product>(product);
-			//std::vector<BusinessLayer::ProductView> productVector = dialogBL->GetAllDataForClass<BusinessLayer::ProductView>(errorMessage, productFilter);
-
 			if (!product->GetProductByID(dialogBL->GetOrmasDal(), productEdit->text().toInt(), errorMessage))
 			{
 				QMessageBox::information(NULL, QString(tr("Warning")),
@@ -270,7 +287,7 @@ void CreateRcpPListDlg::EditProductInList()
 				BusinessLayer::Currency *sumCurrency = new BusinessLayer::Currency();
 				if (!measure->GetMeasureByID(dialogBL->GetOrmasDal(), product->GetMeasureID(), errorMessage)
 					|| !currency->GetCurrencyByID(dialogBL->GetOrmasDal(), product->GetCurrencyID(), errorMessage)
-					|| !sumCurrency->GetCurrencyByID(dialogBL->GetOrmasDal(), currencyEdit->text().toInt(), errorMessage)
+					|| !sumCurrency->GetCurrencyByID(dialogBL->GetOrmasDal(), currencyCmb->currentData().toInt(), errorMessage)
 					|| !status->GetStatusByID(dialogBL->GetOrmasDal(), statusEdit->text().toInt(), errorMessage))
 				{
 					QMessageBox::information(NULL, QString(tr("Warning")),
@@ -467,46 +484,14 @@ void CreateRcpPListDlg::OpenRcpPDlg()
 }
 
 
-void CreateRcpPListDlg::OpenCurDlg()
+void CreateRcpPListDlg::InitComboBox()
 {
-	this->hide();
-	this->setModal(false);
-	this->show();
-	DataForm *productParent = (DataForm *)parent();
-	MainForm *mainForm = (MainForm *)productParent->GetParent();
-	QString message = tr("Loading...");
-	mainForm->statusBar()->showMessage(message);
-	DataForm *dForm = new DataForm(dialogBL, mainForm);
-	dForm->setWindowTitle(tr("Currencies"));
-	dForm->hide();
-	dForm->setWindowModality(Qt::WindowModal);
-	dForm->FillTable<BusinessLayer::Currency>(errorMessage);
-	if (errorMessage.empty())
+	std::vector<BusinessLayer::Currency> curVector = dialogBL->GetAllDataForClass<BusinessLayer::Currency>(errorMessage);
+	if (!curVector.empty())
 	{
-		dForm->createRcpPListDlg = this;
-		dForm->setObjectName("currencyForm");
-		dForm->QtConnect<BusinessLayer::Currency>();
-		QMdiSubWindow *currencyWindow = new QMdiSubWindow;
-		currencyWindow->setWidget(dForm);
-		currencyWindow->setAttribute(Qt::WA_DeleteOnClose);
-		mainForm->mdiArea->addSubWindow(currencyWindow);
-		dForm->topLevelWidget();
-		dForm->activateWindow();
-		QApplication::setActiveWindow(dForm);
-		dForm->show();
-		dForm->raise();
-		QString message = tr("All currency are shown");
-		mainForm->statusBar()->showMessage(message);
+		for (unsigned int i = 0; i < curVector.size(); i++)
+		{
+			currencyCmb->addItem(curVector[i].GetShortName().c_str(), QVariant(curVector[i].GetID()));
+		}
 	}
-	else
-	{
-		delete dForm;
-		QString message = tr("End with error!");
-		mainForm->statusBar()->showMessage(message);
-		QMessageBox::information(NULL, QString(tr("Warning")),
-			QString(tr(errorMessage.c_str())),
-			QString(tr("Ok")));
-		errorMessage = "";
-	}
-
 }

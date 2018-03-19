@@ -19,8 +19,8 @@
 
 QT_BEGIN_MOC_NAMESPACE
 struct qt_meta_stringdata_CreateOrdListDlg_t {
-    QByteArrayData data[13];
-    char stringdata0[137];
+    QByteArrayData data[12];
+    char stringdata0[126];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
@@ -38,16 +38,15 @@ QT_MOC_LITERAL(5, 67, 5), // "Close"
 QT_MOC_LITERAL(6, 73, 10), // "OpenOrdDlg"
 QT_MOC_LITERAL(7, 84, 11), // "OpenProdDlg"
 QT_MOC_LITERAL(8, 96, 10), // "OpenStsDlg"
-QT_MOC_LITERAL(9, 107, 10), // "OpenCurDlg"
-QT_MOC_LITERAL(10, 118, 5), // "SetID"
-QT_MOC_LITERAL(11, 124, 2), // "ID"
-QT_MOC_LITERAL(12, 127, 9) // "childName"
+QT_MOC_LITERAL(9, 107, 5), // "SetID"
+QT_MOC_LITERAL(10, 113, 2), // "ID"
+QT_MOC_LITERAL(11, 116, 9) // "childName"
 
     },
     "CreateOrdListDlg\0AddProductToList\0\0"
     "EditProductInList\0DeleteProduct\0Close\0"
     "OpenOrdDlg\0OpenProdDlg\0OpenStsDlg\0"
-    "OpenCurDlg\0SetID\0ID\0childName"
+    "SetID\0ID\0childName"
 };
 #undef QT_MOC_LITERAL
 
@@ -57,7 +56,7 @@ static const uint qt_meta_data_CreateOrdListDlg[] = {
        7,       // revision
        0,       // classname
        0,    0, // classinfo
-       9,   14, // methods
+       8,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -65,15 +64,14 @@ static const uint qt_meta_data_CreateOrdListDlg[] = {
        0,       // signalCount
 
  // slots: name, argc, parameters, tag, flags
-       1,    0,   59,    2, 0x08 /* Private */,
-       3,    0,   60,    2, 0x08 /* Private */,
-       4,    0,   61,    2, 0x08 /* Private */,
-       5,    0,   62,    2, 0x08 /* Private */,
-       6,    0,   63,    2, 0x08 /* Private */,
-       7,    0,   64,    2, 0x08 /* Private */,
-       8,    0,   65,    2, 0x08 /* Private */,
-       9,    0,   66,    2, 0x08 /* Private */,
-      10,    2,   67,    2, 0x0a /* Public */,
+       1,    0,   54,    2, 0x08 /* Private */,
+       3,    0,   55,    2, 0x08 /* Private */,
+       4,    0,   56,    2, 0x08 /* Private */,
+       5,    0,   57,    2, 0x08 /* Private */,
+       6,    0,   58,    2, 0x08 /* Private */,
+       7,    0,   59,    2, 0x08 /* Private */,
+       8,    0,   60,    2, 0x08 /* Private */,
+       9,    2,   61,    2, 0x0a /* Public */,
 
  // slots: parameters
     QMetaType::Void,
@@ -83,8 +81,7 @@ static const uint qt_meta_data_CreateOrdListDlg[] = {
     QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void,
-    QMetaType::Void,
-    QMetaType::Void, QMetaType::Int, QMetaType::QString,   11,   12,
+    QMetaType::Void, QMetaType::Int, QMetaType::QString,   10,   11,
 
        0        // eod
 };
@@ -102,8 +99,7 @@ void CreateOrdListDlg::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int
         case 4: _t->OpenOrdDlg(); break;
         case 5: _t->OpenProdDlg(); break;
         case 6: _t->OpenStsDlg(); break;
-        case 7: _t->OpenCurDlg(); break;
-        case 8: _t->SetID((*reinterpret_cast< int(*)>(_a[1])),(*reinterpret_cast< QString(*)>(_a[2]))); break;
+        case 7: _t->SetID((*reinterpret_cast< int(*)>(_a[1])),(*reinterpret_cast< QString(*)>(_a[2]))); break;
         default: ;
         }
     }
@@ -136,13 +132,13 @@ int CreateOrdListDlg::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 9)
+        if (_id < 8)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 9;
+        _id -= 8;
     } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 9)
+        if (_id < 8)
             *reinterpret_cast<int*>(_a[0]) = -1;
-        _id -= 9;
+        _id -= 8;
     }
     return _id;
 }

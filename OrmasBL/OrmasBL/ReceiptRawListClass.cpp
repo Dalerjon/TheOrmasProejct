@@ -107,13 +107,7 @@ namespace BusinessLayer
 	{
 		if (ormasDal.DeleteItemInReceiptRawList(id, errorMessage))
 		{
-			id = 0;
-			receiptRawID = 0;
-			productID = 0;
-			count = 0;
-			sum = 0;
-			statusID = 0;
-			currencyID = 0;
+			Clear();
 			return true;
 		}
 		return false;
@@ -123,13 +117,7 @@ namespace BusinessLayer
 		receiptRawID = oID;
 		if (ormasDal.DeleteListByReceiptRawID(receiptRawID, errorMessage))
 		{
-			id = 0;
-			receiptRawID = 0;
-			productID = 0;
-			count = 0;
-			sum = 0;
-			statusID = 0;
-			currencyID = 0;
+			Clear();
 			return true;
 		}
 		return false;

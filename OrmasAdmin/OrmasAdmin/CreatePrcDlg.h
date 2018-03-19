@@ -18,15 +18,15 @@ public:
 	void DeletePrice(){};
 	void Close();
 	void OpenPrdDlg();
-	void OpenCurDlg();
 	public slots:
 	void SetID(int ID, QString childName);
 private:
 	BusinessLayer::Price *price = new BusinessLayer::Price();
-	void SetPriceParams(QString, double, int, int, int = 0);
-	void FillEditElements(QString, double, int, int);
+	void SetPriceParams(QString, double, int, int, QString, int = 0);
+	void FillEditElements(QString, double, int, int, QString);
 	QDoubleValidator *vDouble = nullptr;
 	QIntValidator *vInt = nullptr;
+	void InitComboBox();
 };
 
 #endif //CREATEPRCDLG_H

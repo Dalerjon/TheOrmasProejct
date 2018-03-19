@@ -69,7 +69,7 @@ namespace BusinessLayer{
 	{
 		if (ormasDal.DeletePosition(id, errorMessage))
 		{
-			id = 0;
+			Clear();
 			return true;
 		}
 		if (errorMessage.empty())

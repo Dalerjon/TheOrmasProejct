@@ -89,11 +89,9 @@ namespace BusinessLayer{
 	}
 	bool Measure::DeleteMeasure(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
-		name.clear();
-		shortName.clear();
 		if (ormasDal.DeleteMeasure(id, errorMessage))
 		{
-			id = 0;
+			Clear();
 			return true;
 		}
 		if (errorMessage.empty())

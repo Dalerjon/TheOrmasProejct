@@ -96,7 +96,7 @@ namespace BusinessLayer{
 	{
 		if (ormasDal.DeleteAccessItem(id, errorMessage))
 		{
-			id = 0;
+			Clear();
 			return true;
 		}
 		if (errorMessage.empty())

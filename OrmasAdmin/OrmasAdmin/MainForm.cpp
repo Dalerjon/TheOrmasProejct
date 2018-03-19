@@ -79,6 +79,7 @@ void MainForm::SetAllMenuInvisible()
 	actionAllUsers->setVisible(false);
 	actionClients->setVisible(false);
 	actionEmployees->setVisible(false);
+	actionPurveyors->setVisible(false);
 	actionAccess->setVisible(false);
 	actionProductType->setVisible(false);
 	actionProducts->setVisible(false);
@@ -97,8 +98,11 @@ void MainForm::SetAllMenuInvisible()
 	actionStatus->setVisible(false);
 	actionProduction->setVisible(false);
 	actionAccessItems->setVisible(false);
-	actionPrices->setVisible(false);
 	actionProductionList->setVisible(false);
+	actionProductionPlan->setVisible(false);
+	actionProductionPlanList->setVisible(false);
+	actionSpoilage->setVisible(false);
+	actionSpoilageList->setVisible(false);
 	actionWriteOffs->setVisible(false);
 	actionWriteOffList->setVisible(false);
 	actionUserPhoto->setVisible(false);
@@ -112,8 +116,17 @@ void MainForm::SetAllMenuInvisible()
 	actionPayments->setVisible(false);
 	actionPayroll->setVisible(false);
 	actionPayslip->setVisible(false);
+	actionPrices->setVisible(false);
+	actionNetCost->setVisible(false);
 	actionRefund->setVisible(false);
 	actionWithdrawal->setVisible(false);
+	actionAccounts->setVisible(false);
+	actionAccountType->setVisible(false);
+	actionChartOfAccounts->setVisible(false);
+	actionCompanyAccounts->setVisible(false);
+	actionEntry->setVisible(false);
+	actionGenerateOneAccount->setVisible(false);
+	actionGenerateAccounts->setVisible(false);
 	actionOrderRaws->setVisible(false);
 	actionReceiptRaws->setVisible(false);
 	actionTransports->setVisible(false);
@@ -123,6 +136,12 @@ void MainForm::SetAllMenuInvisible()
 	actionConsumptionProducts->setVisible(false);
 	actionStock->setVisible(false);
 	actionInventorization->setVisible(false);
+	actionSpecifications->setVisible(false);
+	actionSpecificationList->setVisible(false);
+	actionJobprice->setVisible(false);
+	actionJobsheet->setVisible(false);	
+	actionPercentRate->setVisible(false);
+	actionTimesheet->setVisible(false);
 }
 
 void MainForm::SetAllMenuVisible()
@@ -139,6 +158,7 @@ void MainForm::SetAllMenuVisible()
 	actionAllUsers->setVisible(true);
 	actionClients->setVisible(true);
 	actionEmployees->setVisible(true);
+	actionPurveyors->setVisible(true);
 	actionAccess->setVisible(true);
 	actionProductType->setVisible(true);
 	actionProducts->setVisible(true);
@@ -157,8 +177,11 @@ void MainForm::SetAllMenuVisible()
 	actionStatus->setVisible(true);
 	actionProduction->setVisible(true);
 	actionAccessItems->setVisible(true);
-	actionPrices->setVisible(true);
 	actionProductionList->setVisible(true);
+	actionProductionPlan->setVisible(true);
+	actionProductionPlanList->setVisible(true);
+	actionSpoilage->setVisible(true);
+	actionSpoilageList->setVisible(true);
 	actionWriteOffs->setVisible(true);
 	actionWriteOffList->setVisible(true);
 	actionUserPhoto->setVisible(true);
@@ -170,11 +193,19 @@ void MainForm::SetAllMenuVisible()
 	actionSalary->setVisible(true);
 	actionSalaryType->setVisible(true);
 	actionPayments->setVisible(true);
-	actionAbout->setVisible(true);
 	actionPayroll->setVisible(true);
 	actionPayslip->setVisible(true);
+	actionPrices->setVisible(true);
+	actionNetCost->setVisible(true);
 	actionRefund->setVisible(true);
 	actionWithdrawal->setVisible(true);
+	actionAccounts->setVisible(true);
+	actionAccountType->setVisible(true);
+	actionChartOfAccounts->setVisible(true);
+	actionCompanyAccounts->setVisible(true);
+	actionEntry->setVisible(true);
+	actionGenerateAccounts->setVisible(true);
+	actionGenerateOneAccount->setVisible(true);
 	actionOrderRaws->setVisible(true);
 	actionReceiptRaws->setVisible(true);
 	actionTransports->setVisible(true);
@@ -184,6 +215,12 @@ void MainForm::SetAllMenuVisible()
 	actionConsumptionProducts->setVisible(true);
 	actionStock->setVisible(true);
 	actionInventorization->setVisible(true);
+	actionSpecifications->setVisible(true);
+	actionSpecificationList->setVisible(true);
+	actionJobprice->setVisible(true);
+	actionJobsheet->setVisible(true);
+	actionPercentRate->setVisible(true);
+	actionTimesheet->setVisible(true);
 }
 
 MainForm::~MainForm()
@@ -204,12 +241,18 @@ void MainForm::CloseChildsByName()
 		((DataForm*)this->findChild<QWidget*>("orderListForm"))->CloseDataForm();
 	if (0 != this->findChild<QWidget*>("orderRawListForm"))
 		((DataForm*)this->findChild<QWidget*>("orderRawListForm"))->CloseDataForm();
+	if (0 != this->findChild<QWidget*>("productionPlanListForm"))
+		((DataForm*)this->findChild<QWidget*>("productionPlanListForm"))->CloseDataForm();
 	if (0 != this->findChild<QWidget*>("receiptProductListForm"))
 		((DataForm*)this->findChild<QWidget*>("receiptProductListForm"))->CloseDataForm();
 	if (0 != this->findChild<QWidget*>("receiptRawListForm"))
 		((DataForm*)this->findChild<QWidget*>("receiptRawListForm"))->CloseDataForm();
 	if (0 != this->findChild<QWidget*>("returnListForm"))
 		((DataForm*)this->findChild<QWidget*>("returnListForm"))->CloseDataForm();
+	if (0 != this->findChild<QWidget*>("specificationListForm"))
+		((DataForm*)this->findChild<QWidget*>("specificationListForm"))->CloseDataForm();
+	if (0 != this->findChild<QWidget*>("spoilageListForm"))
+		((DataForm*)this->findChild<QWidget*>("spoilageListForm"))->CloseDataForm();
 	if (0 != this->findChild<QWidget*>("transportListForm"))
 		((DataForm*)this->findChild<QWidget*>("transportListForm"))->CloseDataForm();
 	if (0 != this->findChild<QWidget*>("productionListForm"))
@@ -225,6 +268,7 @@ void MainForm::CreateConnections()
 	QObject::connect(actionAllUsers, &QAction::triggered, this, &MainForm::OpenUserForm);
 	QObject::connect(actionClients, &QAction::triggered, this, &MainForm::OpenClientForm);
 	QObject::connect(actionEmployees, &QAction::triggered, this, &MainForm::OpenEmployeeForm);
+	QObject::connect(actionPurveyors, &QAction::triggered, this, &MainForm::OpenPurveyorForm);
 	QObject::connect(actionAccess, &QAction::triggered, this, &MainForm::OpenAccessForm);
 	QObject::connect(actionAccessItems, &QAction::triggered, this, &MainForm::OpenAccessItemForm);
 	QObject::connect(actionUserPhoto, &QAction::triggered, this, &MainForm::OpenUserPhotoForm);
@@ -234,6 +278,8 @@ void MainForm::CreateConnections()
 	QObject::connect(actionProductType, &QAction::triggered, this, &MainForm::OpenProductTypeForm);
 	QObject::connect(actionProducts, &QAction::triggered, this, &MainForm::OpenProductForm);
 	QObject::connect(actionProductPhoto, &QAction::triggered, this, &MainForm::OpenProductPhotoForm);
+	QObject::connect(actionSpecifications, &QAction::triggered, this, &MainForm::OpenSpecificationForm);
+	QObject::connect(actionSpecificationList, &QAction::triggered, this, &MainForm::OpenSpecificationListForm);
 	
 
 	QObject::connect(actionOrders, &QAction::triggered, this, &MainForm::OpenOrderForm);
@@ -244,6 +290,14 @@ void MainForm::CreateConnections()
 
 	QObject::connect(actionProduction, &QAction::triggered, this, &MainForm::OpenProductionForm);
 	QObject::connect(actionProductionList, &QAction::triggered, this, &MainForm::OpenProductionListForm);
+	QObject::connect(actionJobprice, &QAction::triggered, this, &MainForm::OpenJobpriceForm);
+	QObject::connect(actionJobsheet, &QAction::triggered, this, &MainForm::OpenJobsheetForm);
+	QObject::connect(actionPercentRate, &QAction::triggered, this, &MainForm::OpenPercentRateForm);
+	QObject::connect(actionTimesheet, &QAction::triggered, this, &MainForm::OpenTimesheetForm);
+	QObject::connect(actionProductionPlan, &QAction::triggered, this, &MainForm::OpenProductionPlanForm);
+	QObject::connect(actionProductionPlanList, &QAction::triggered, this, &MainForm::OpenProductionPlanListForm);
+	QObject::connect(actionSpoilage, &QAction::triggered, this, &MainForm::OpenSpoilageForm);
+	QObject::connect(actionSpoilageList, &QAction::triggered, this, &MainForm::OpenSpoilageListForm);
 
 	QObject::connect(actionWriteOffs, &QAction::triggered, this, &MainForm::OpenWriteOffForm);
 	QObject::connect(actionWriteOffList, &QAction::triggered, this, &MainForm::OpenWriteOffListForm);
@@ -253,11 +307,19 @@ void MainForm::CreateConnections()
 	QObject::connect(actionPayments, &QAction::triggered, this, &MainForm::OpenPaymentForm);
 	QObject::connect(actionRefund, &QAction::triggered, this, &MainForm::OpenRefundForm);
 	QObject::connect(actionPrices, &QAction::triggered, this, &MainForm::OpenPriceForm);
+	QObject::connect(actionNetCost, &QAction::triggered, this, &MainForm::OpenNetCostForm);
 	QObject::connect(actionSalary, &QAction::triggered, this, &MainForm::OpenSalaryForm);
 	QObject::connect(actionSalaryType, &QAction::triggered, this, &MainForm::OpenSalaryTypeForm);
 	QObject::connect(actionPayroll, &QAction::triggered, this, &MainForm::OpenPayrollForm);
 	QObject::connect(actionWithdrawal, &QAction::triggered, this, &MainForm::OpenWithdrawalForm);
 	QObject::connect(actionPayslip, &QAction::triggered, this, &MainForm::OpenPayslipForm);
+	QObject::connect(actionAccounts, &QAction::triggered, this, &MainForm::OpenAccountForm);
+	QObject::connect(actionAccountType, &QAction::triggered, this, &MainForm::OpenAccountTypeForm);
+	QObject::connect(actionChartOfAccounts, &QAction::triggered, this, &MainForm::OpenChartOfAccountsForm);
+	QObject::connect(actionCompanyAccounts, &QAction::triggered, this, &MainForm::OpenCompanyAccountForm);
+	QObject::connect(actionEntry, &QAction::triggered, this, &MainForm::OpenEntryForm);
+	QObject::connect(actionGenerateAccounts, &QAction::triggered, this, &MainForm::GenerateAccountsForm);
+	QObject::connect(actionGenerateOneAccount, &QAction::triggered, this, &MainForm::GenerateOneAccountForm);
 	
 	QObject::connect(actionStock, &QAction::triggered, this, &MainForm::OpenStockForm);
 	QObject::connect(actionOrderRaws, &QAction::triggered, this, &MainForm::OpenOrderRawForm);
@@ -421,6 +483,51 @@ void MainForm::OpenEmployeeForm()
 	}
 }
 
+void MainForm::OpenPurveyorForm()
+{
+	QString message = tr("Loading...");
+	statusBar()->showMessage(message);
+	QWidget* checkedWidget = IsWindowExist(mdiArea->subWindowList(), QString("purveyorForm"));
+	if (checkedWidget == nullptr)
+	{
+		errorMessage = "";
+		DataForm *dForm = new DataForm(oBL, this);
+		dForm->setWindowTitle(tr("Purveyors"));
+		dForm->FillTable<BusinessLayer::PurveyorView>(errorMessage);
+		if (errorMessage.empty())
+		{
+			dForm->QtConnect<BusinessLayer::PurveyorView>();
+			dForm->setObjectName("purveyorForm");
+			QMdiSubWindow *purveyorWindow = new QMdiSubWindow;
+			purveyorWindow->setWidget(dForm);
+			purveyorWindow->setAttribute(Qt::WA_DeleteOnClose);
+			mdiArea->addSubWindow(purveyorWindow);
+			dForm->show();
+			dForm->topLevelWidget();
+			dForm->activateWindow();
+			QString message = tr("All purveyors are shown");
+			statusBar()->showMessage(message);
+		}
+		else
+		{
+			delete dForm;
+			QString message = tr("End with error!");
+			statusBar()->showMessage(message);
+			QMessageBox::information(NULL, QString(tr("Warning")),
+				QString(tr(errorMessage.c_str())),
+				QString(tr("Ok")));
+			errorMessage = "";
+		}
+	}
+	else
+	{
+		checkedWidget->topLevelWidget();
+		checkedWidget->activateWindow();
+		QString message = tr("All purveyors are shown");
+		statusBar()->showMessage(message);
+	}
+}
+
 void MainForm::OpenAccessForm()
 {
 	QString message = tr("Loading...");
@@ -431,10 +538,10 @@ void MainForm::OpenAccessForm()
 		errorMessage = "";
 		DataForm *dForm = new DataForm(oBL, this);
 		dForm->setWindowTitle(tr("Accesses"));
-		dForm->FillTable<BusinessLayer::Access>(errorMessage);
+		dForm->FillTable<BusinessLayer::AccessView>(errorMessage);
 		if (errorMessage.empty())
 		{
-			dForm->QtConnect<BusinessLayer::Access>();
+			dForm->QtConnect<BusinessLayer::AccessView>();
 			dForm->setObjectName("accessForm");
 			QMdiSubWindow *accessWindow = new QMdiSubWindow;
 			accessWindow->setWidget(dForm);
@@ -731,6 +838,94 @@ void MainForm::OpenProductPhotoForm()
 		checkedWidget->topLevelWidget();
 		checkedWidget->activateWindow();
 		QString message = tr("All product photos are shown");
+		statusBar()->showMessage(message);
+	}
+
+}
+void MainForm::OpenSpecificationForm()
+{
+	QString message = tr("Loading...");
+	statusBar()->showMessage(message);
+	QWidget* checkedWidget = IsWindowExist(mdiArea->subWindowList(), QString("specificationForm"));
+	if (checkedWidget == nullptr)
+	{
+		DataForm *dForm = new DataForm(oBL, this);
+		dForm->setWindowTitle(tr("Specifications"));
+		dForm->FillTable<BusinessLayer::SpecificationView>(errorMessage);
+		if (errorMessage.empty())
+		{
+			dForm->QtConnect<BusinessLayer::SpecificationView>();
+			dForm->setObjectName("specificationForm");
+			QMdiSubWindow *specWindow = new QMdiSubWindow;
+			specWindow->setWidget(dForm);
+			specWindow->setAttribute(Qt::WA_DeleteOnClose);
+			mdiArea->addSubWindow(specWindow);
+			dForm->show();
+			dForm->topLevelWidget();
+			dForm->activateWindow();
+			QString message = tr("All specifications are shown");
+			statusBar()->showMessage(message);
+		}
+		else
+		{
+			delete dForm;
+			QString message = tr("End with error!");
+			statusBar()->showMessage(message);
+			QMessageBox::information(NULL, QString(tr("Warning")),
+				QString(tr(errorMessage.c_str())),
+				QString(tr("Ok")));
+			errorMessage = "";
+		}
+	}
+	else
+	{
+		checkedWidget->topLevelWidget();
+		checkedWidget->activateWindow();
+		QString message = tr("All specifications are shown");
+		statusBar()->showMessage(message);
+	}
+
+}
+void MainForm::OpenSpecificationListForm()
+{
+	QString message = tr("Loading...");
+	statusBar()->showMessage(message);
+	QWidget* checkedWidget = IsWindowExist(mdiArea->subWindowList(), QString("specificationListForm"));
+	if (checkedWidget == nullptr)
+	{
+		DataForm *dForm = new DataForm(oBL, this);
+		dForm->setWindowTitle(tr("Spesicfication list"));
+		dForm->FillTable<BusinessLayer::SpecificationListView>(errorMessage);
+		if (errorMessage.empty())
+		{
+			dForm->QtConnect<BusinessLayer::SpecificationListView>();
+			dForm->setObjectName("specificationListForm");
+			QMdiSubWindow *specListWindow = new QMdiSubWindow;
+			specListWindow->setWidget(dForm);
+			specListWindow->setAttribute(Qt::WA_DeleteOnClose);
+			mdiArea->addSubWindow(specListWindow);
+			dForm->show();
+			dForm->topLevelWidget();
+			dForm->activateWindow();
+			QString message = tr("All products in the specification list are shown");
+			statusBar()->showMessage(message);
+		}
+		else
+		{
+			delete dForm;
+			QString message = tr("End with error!");
+			statusBar()->showMessage(message);
+			QMessageBox::information(NULL, QString(tr("Warning")),
+				QString(tr(errorMessage.c_str())),
+				QString(tr("Ok")));
+			errorMessage = "";
+		}
+	}
+	else
+	{
+		checkedWidget->topLevelWidget();
+		checkedWidget->activateWindow();
+		QString message = tr("All products in the specification list are shown");
 		statusBar()->showMessage(message);
 	}
 
@@ -1097,6 +1292,365 @@ void MainForm::OpenProductionListForm()
 
 }
 
+void MainForm::OpenJobpriceForm()
+{
+	QString message = tr("Loading...");
+	statusBar()->showMessage(message);
+	QWidget* checkedWidget = IsWindowExist(mdiArea->subWindowList(), QString("jobpriceForm"));
+	if (checkedWidget == nullptr)
+	{
+		DataForm *dForm = new DataForm(oBL, this);
+		dForm->setWindowTitle(tr("Jobprice"));
+		dForm->FillTable<BusinessLayer::JobpriceView>(errorMessage);
+		if (errorMessage.empty())
+		{
+			dForm->QtConnect<BusinessLayer::JobpriceView>();
+			dForm->setObjectName("jobpriceForm");
+			QMdiSubWindow *jobpriceWindow = new QMdiSubWindow;
+			jobpriceWindow->setWidget(dForm);
+			jobpriceWindow->setAttribute(Qt::WA_DeleteOnClose);
+			mdiArea->addSubWindow(jobpriceWindow);
+			dForm->show();
+			dForm->topLevelWidget();
+			dForm->activateWindow();
+			QString message = tr("All jobprices are shown");
+			statusBar()->showMessage(message);
+		}
+		else
+		{
+			delete dForm;
+			QString message = tr("End with error!");
+			statusBar()->showMessage(message);
+			QMessageBox::information(NULL, QString(tr("Warning")),
+				QString(tr(errorMessage.c_str())),
+				QString(tr("Ok")));
+			errorMessage = "";
+		}
+	}
+	else
+	{
+		checkedWidget->topLevelWidget();
+		checkedWidget->activateWindow();
+		QString message = tr("All jobprices are shown");
+		statusBar()->showMessage(message);
+	}
+
+}
+
+void MainForm::OpenJobsheetForm()
+{
+	QString message = tr("Loading...");
+	statusBar()->showMessage(message);
+	QWidget* checkedWidget = IsWindowExist(mdiArea->subWindowList(), QString("jobsheetForm"));
+	if (checkedWidget == nullptr)
+	{
+		DataForm *dForm = new DataForm(oBL, this);
+		dForm->setWindowTitle(tr("Jobsheet"));
+		dForm->FillTable<BusinessLayer::JobsheetView>(errorMessage);
+		if (errorMessage.empty())
+		{
+			dForm->QtConnect<BusinessLayer::JobsheetView>();
+			dForm->setObjectName("jobsheetForm");
+			QMdiSubWindow *jobsheetWindow = new QMdiSubWindow;
+			jobsheetWindow->setWidget(dForm);
+			jobsheetWindow->setAttribute(Qt::WA_DeleteOnClose);
+			mdiArea->addSubWindow(jobsheetWindow);
+			dForm->show();
+			dForm->topLevelWidget();
+			dForm->activateWindow();
+			QString message = tr("All jobsheets are shown");
+			statusBar()->showMessage(message);
+		}
+		else
+		{
+			delete dForm;
+			QString message = tr("End with error!");
+			statusBar()->showMessage(message);
+			QMessageBox::information(NULL, QString(tr("Warning")),
+				QString(tr(errorMessage.c_str())),
+				QString(tr("Ok")));
+			errorMessage = "";
+		}
+	}
+	else
+	{
+		checkedWidget->topLevelWidget();
+		checkedWidget->activateWindow();
+		QString message = tr("All jobsheets are shown");
+		statusBar()->showMessage(message);
+	}
+
+}
+
+void MainForm::OpenPercentRateForm()
+{
+	QString message = tr("Loading...");
+	statusBar()->showMessage(message);
+	QWidget* checkedWidget = IsWindowExist(mdiArea->subWindowList(), QString("percentRateForm"));
+	if (checkedWidget == nullptr)
+	{
+		DataForm *dForm = new DataForm(oBL, this);
+		dForm->setWindowTitle(tr("Percent rate"));
+		dForm->FillTable<BusinessLayer::PercentRate>(errorMessage);
+		if (errorMessage.empty())
+		{
+			dForm->QtConnect<BusinessLayer::PercentRate>();
+			dForm->setObjectName("percentRateForm");
+			QMdiSubWindow *percentRateWindow = new QMdiSubWindow;
+			percentRateWindow->setWidget(dForm);
+			percentRateWindow->setAttribute(Qt::WA_DeleteOnClose);
+			mdiArea->addSubWindow(percentRateWindow);
+			dForm->show();
+			dForm->topLevelWidget();
+			dForm->activateWindow();
+			QString message = tr("All percent rates are shown");
+			statusBar()->showMessage(message);
+		}
+		else
+		{
+			delete dForm;
+			QString message = tr("End with error!");
+			statusBar()->showMessage(message);
+			QMessageBox::information(NULL, QString(tr("Warning")),
+				QString(tr(errorMessage.c_str())),
+				QString(tr("Ok")));
+			errorMessage = "";
+		}
+	}
+	else
+	{
+		checkedWidget->topLevelWidget();
+		checkedWidget->activateWindow();
+		QString message = tr("All percent rates are shown");
+		statusBar()->showMessage(message);
+	}
+
+}
+
+void MainForm::OpenTimesheetForm()
+{
+	QString message = tr("Loading...");
+	statusBar()->showMessage(message);
+	QWidget* checkedWidget = IsWindowExist(mdiArea->subWindowList(), QString("timesheetForm"));
+	if (checkedWidget == nullptr)
+	{
+		DataForm *dForm = new DataForm(oBL, this);
+		dForm->setWindowTitle(tr("Timesheet"));
+		dForm->FillTable<BusinessLayer::TimesheetView>(errorMessage);
+		if (errorMessage.empty())
+		{
+			dForm->QtConnect<BusinessLayer::TimesheetView>();
+			dForm->setObjectName("timesheetForm");
+			QMdiSubWindow *timesheetWindow = new QMdiSubWindow;
+			timesheetWindow->setWidget(dForm);
+			timesheetWindow->setAttribute(Qt::WA_DeleteOnClose);
+			mdiArea->addSubWindow(timesheetWindow);
+			dForm->show();
+			dForm->topLevelWidget();
+			dForm->activateWindow();
+			QString message = tr("All timesheets are shown");
+			statusBar()->showMessage(message);
+		}
+		else
+		{
+			delete dForm;
+			QString message = tr("End with error!");
+			statusBar()->showMessage(message);
+			QMessageBox::information(NULL, QString(tr("Warning")),
+				QString(tr(errorMessage.c_str())),
+				QString(tr("Ok")));
+			errorMessage = "";
+		}
+	}
+	else
+	{
+		checkedWidget->topLevelWidget();
+		checkedWidget->activateWindow();
+		QString message = tr("All timesheets are shown");
+		statusBar()->showMessage(message);
+	}
+
+}
+
+void MainForm::OpenProductionPlanForm()
+{
+	QString message = tr("Loading...");
+	statusBar()->showMessage(message);
+	QWidget* checkedWidget = IsWindowExist(mdiArea->subWindowList(), QString("productionPlanForm"));
+	if (checkedWidget == nullptr)
+	{
+		DataForm *dForm = new DataForm(oBL, this);
+		dForm->setWindowTitle(tr("Production plan"));
+		dForm->FillTable<BusinessLayer::ProductionPlanView>(errorMessage);
+		if (errorMessage.empty())
+		{
+			dForm->QtConnect<BusinessLayer::ProductionPlanView>();
+			dForm->setObjectName("productionPlanForm");
+			QMdiSubWindow *productionPlanWindow = new QMdiSubWindow;
+			productionPlanWindow->setWidget(dForm);
+			productionPlanWindow->setAttribute(Qt::WA_DeleteOnClose);
+			mdiArea->addSubWindow(productionPlanWindow);
+			dForm->show();
+			dForm->topLevelWidget();
+			dForm->activateWindow();
+			QString message = tr("All production plans are shown");
+			statusBar()->showMessage(message);
+		}
+		else
+		{
+			delete dForm;
+			QString message = tr("End with error!");
+			statusBar()->showMessage(message);
+			QMessageBox::information(NULL, QString(tr("Warning")),
+				QString(tr(errorMessage.c_str())),
+				QString(tr("Ok")));
+			errorMessage = "";
+		}
+	}
+	else
+	{
+		checkedWidget->topLevelWidget();
+		checkedWidget->activateWindow();
+		QString message = tr("All production plan are shown");
+		statusBar()->showMessage(message);
+	}
+
+}
+
+void MainForm::OpenProductionPlanListForm()
+{
+	QString message = tr("Loading...");
+	statusBar()->showMessage(message);
+	QWidget* checkedWidget = IsWindowExist(mdiArea->subWindowList(), QString("productionPlanListForm"));
+	if (checkedWidget == nullptr)
+	{
+		DataForm *dForm = new DataForm(oBL, this);
+		dForm->setWindowTitle(tr("Products in production plan list"));
+		dForm->FillTable<BusinessLayer::ProductionPlanListView>(errorMessage);
+		if (errorMessage.empty())
+		{
+			dForm->QtConnect<BusinessLayer::ProductionPlanListView>();
+			dForm->setObjectName("productionPlanListForm");
+			QMdiSubWindow *productionPlanListWindow = new QMdiSubWindow;
+			productionPlanListWindow->setWidget(dForm);
+			productionPlanListWindow->setAttribute(Qt::WA_DeleteOnClose);
+			mdiArea->addSubWindow(productionPlanListWindow);
+			dForm->show();
+			dForm->topLevelWidget();
+			dForm->activateWindow();
+			QString message = tr("All products in production plan list are shown");
+			statusBar()->showMessage(message);
+		}
+		else
+		{
+			delete dForm;
+			QString message = tr("End with error!");
+			statusBar()->showMessage(message);
+			QMessageBox::information(NULL, QString(tr("Warning")),
+				QString(tr(errorMessage.c_str())),
+				QString(tr("Ok")));
+			errorMessage = "";
+		}
+	}
+	else
+	{
+		checkedWidget->topLevelWidget();
+		checkedWidget->activateWindow();
+		QString message = tr("All products in production plan list are shown");
+		statusBar()->showMessage(message);
+	}
+
+}
+
+void MainForm::OpenSpoilageForm()
+{
+	QString message = tr("Loading...");
+	statusBar()->showMessage(message);
+	QWidget* checkedWidget = IsWindowExist(mdiArea->subWindowList(), QString("spoilageForm"));
+	if (checkedWidget == nullptr)
+	{
+		DataForm *dForm = new DataForm(oBL, this);
+		dForm->setWindowTitle(tr("Spoilage"));
+		dForm->FillTable<BusinessLayer::SpoilageView>(errorMessage);
+		if (errorMessage.empty())
+		{
+			dForm->QtConnect<BusinessLayer::SpoilageView>();
+			dForm->setObjectName("spoilageForm");
+			QMdiSubWindow *spoilageWindow = new QMdiSubWindow;
+			spoilageWindow->setWidget(dForm);
+			spoilageWindow->setAttribute(Qt::WA_DeleteOnClose);
+			mdiArea->addSubWindow(spoilageWindow);
+			dForm->show();
+			dForm->topLevelWidget();
+			dForm->activateWindow();
+			QString message = tr("All spoilage are shown");
+			statusBar()->showMessage(message);
+		}
+		else
+		{
+			delete dForm;
+			QString message = tr("End with error!");
+			statusBar()->showMessage(message);
+			QMessageBox::information(NULL, QString(tr("Warning")),
+				QString(tr(errorMessage.c_str())),
+				QString(tr("Ok")));
+			errorMessage = "";
+		}
+	}
+	else
+	{
+		checkedWidget->topLevelWidget();
+		checkedWidget->activateWindow();
+		QString message = tr("All spoilage are shown");
+		statusBar()->showMessage(message);
+	}
+
+}
+
+void MainForm::OpenSpoilageListForm()
+{
+	QString message = tr("Loading...");
+	statusBar()->showMessage(message);
+	QWidget* checkedWidget = IsWindowExist(mdiArea->subWindowList(), QString("spoilageListForm"));
+	if (checkedWidget == nullptr)
+	{
+		DataForm *dForm = new DataForm(oBL, this);
+		dForm->setWindowTitle(tr("Products in spoilage list"));
+		dForm->FillTable<BusinessLayer::SpoilageListView>(errorMessage);
+		if (errorMessage.empty())
+		{
+			dForm->QtConnect<BusinessLayer::SpoilageListView>();
+			dForm->setObjectName("spoilageListForm");
+			QMdiSubWindow *spoilageListWindow = new QMdiSubWindow;
+			spoilageListWindow->setWidget(dForm);
+			spoilageListWindow->setAttribute(Qt::WA_DeleteOnClose);
+			mdiArea->addSubWindow(spoilageListWindow);
+			dForm->show();
+			dForm->topLevelWidget();
+			dForm->activateWindow();
+			QString message = tr("All products in spoilage list are shown");
+			statusBar()->showMessage(message);
+		}
+		else
+		{
+			delete dForm;
+			QString message = tr("End with error!");
+			statusBar()->showMessage(message);
+			QMessageBox::information(NULL, QString(tr("Warning")),
+				QString(tr(errorMessage.c_str())),
+				QString(tr("Ok")));
+			errorMessage = "";
+		}
+	}
+	else
+	{
+		checkedWidget->topLevelWidget();
+		checkedWidget->activateWindow();
+		QString message = tr("All products in spoilage list are shown");
+		statusBar()->showMessage(message);
+	}
+
+}
 
 void MainForm::OpenBalanceForm()
 {
@@ -1277,6 +1831,52 @@ void MainForm::OpenPriceForm()
 	}
 
 }
+
+void MainForm::OpenNetCostForm()
+{
+	QString message = tr("Loading...");
+	statusBar()->showMessage(message);
+	QWidget* checkedWidget = IsWindowExist(mdiArea->subWindowList(), QString("netCostForm"));
+	if (checkedWidget == nullptr)
+	{
+		DataForm *dForm = new DataForm(oBL, this);
+		dForm->setWindowTitle(tr("Net cost"));
+		dForm->FillTable<BusinessLayer::NetCostView>(errorMessage);
+		if (errorMessage.empty())
+		{
+			dForm->setObjectName("netCostForm");
+			dForm->QtConnect<BusinessLayer::NetCostView>();
+			QMdiSubWindow *netCostWindow = new QMdiSubWindow;
+			netCostWindow->setWidget(dForm);
+			netCostWindow->setAttribute(Qt::WA_DeleteOnClose);
+			mdiArea->addSubWindow(netCostWindow);
+			dForm->show();
+			dForm->topLevelWidget();
+			dForm->activateWindow();
+			QString message = tr("All net cost are shown");
+			statusBar()->showMessage(message);
+		}
+		else
+		{
+			delete dForm;
+			QString message = tr("End with error!");
+			statusBar()->showMessage(message);
+			QMessageBox::information(NULL, QString(tr("Warning")),
+				QString(tr(errorMessage.c_str())),
+				QString(tr("Ok")));
+			errorMessage = "";
+		}
+	}
+	else
+	{
+		checkedWidget->topLevelWidget();
+		checkedWidget->activateWindow();
+		QString message = tr("All net cost are shown");
+		statusBar()->showMessage(message);
+	}
+
+}
+
 
 void MainForm::OpenSalaryForm()
 {
@@ -1465,6 +2065,246 @@ void MainForm::OpenPayslipForm()
 		statusBar()->showMessage(message);
 	}
 
+}
+
+void MainForm::OpenAccountForm()
+{
+	QString message = tr("Loading...");
+	statusBar()->showMessage(message);
+	QWidget* checkedWidget = IsWindowExist(mdiArea->subWindowList(), QString("accountForm"));
+	if (checkedWidget == nullptr)
+	{
+		DataForm *dForm = new DataForm(oBL, this);
+		dForm->setWindowTitle(tr("Accounts"));
+		dForm->FillTable<BusinessLayer::AccountView>(errorMessage);
+		if (errorMessage.empty())
+		{
+			dForm->setObjectName("accountForm");
+			dForm->QtConnect<BusinessLayer::AccountView>();
+			QMdiSubWindow *accountWindow = new QMdiSubWindow;
+			accountWindow->setWidget(dForm);
+			accountWindow->setAttribute(Qt::WA_DeleteOnClose);
+			mdiArea->addSubWindow(accountWindow);
+			dForm->show();
+			dForm->topLevelWidget();
+			dForm->activateWindow();
+			QString message = tr("All accounts are shown");
+			statusBar()->showMessage(message);
+		}
+		else
+		{
+			delete dForm;
+			QString message = tr("End with error!");
+			statusBar()->showMessage(message);
+			QMessageBox::information(NULL, QString(tr("Warning")),
+				QString(tr(errorMessage.c_str())),
+				QString(tr("Ok")));
+			errorMessage = "";
+		}
+	}
+	else
+	{
+		checkedWidget->topLevelWidget();
+		checkedWidget->activateWindow();
+		QString message = tr("All accounts are shown");
+		statusBar()->showMessage(message);
+	}
+
+}
+
+void MainForm::OpenAccountTypeForm()
+{
+	QString message = tr("Loading...");
+	statusBar()->showMessage(message);
+	QWidget* checkedWidget = IsWindowExist(mdiArea->subWindowList(), QString("accountTypeForm"));
+	if (checkedWidget == nullptr)
+	{
+		DataForm *dForm = new DataForm(oBL, this);
+		dForm->setWindowTitle(tr("Account type"));
+		dForm->FillTable<BusinessLayer::AccountType>(errorMessage);
+		if (errorMessage.empty())
+		{
+			dForm->setObjectName("accountTypeForm");
+			dForm->QtConnect<BusinessLayer::AccountType>();
+			QMdiSubWindow *accountTypeWindow = new QMdiSubWindow;
+			accountTypeWindow->setWidget(dForm);
+			accountTypeWindow->setAttribute(Qt::WA_DeleteOnClose);
+			mdiArea->addSubWindow(accountTypeWindow);
+			dForm->show();
+			dForm->topLevelWidget();
+			dForm->activateWindow();
+			QString message = tr("All account type are shown");
+			statusBar()->showMessage(message);
+		}
+		else
+		{
+			delete dForm;
+			QString message = tr("End with error!");
+			statusBar()->showMessage(message);
+			QMessageBox::information(NULL, QString(tr("Warning")),
+				QString(tr(errorMessage.c_str())),
+				QString(tr("Ok")));
+			errorMessage = "";
+		}
+	}
+	else
+	{
+		checkedWidget->topLevelWidget();
+		checkedWidget->activateWindow();
+		QString message = tr("All account type are shown");
+		statusBar()->showMessage(message);
+	}
+
+}
+
+void MainForm::OpenChartOfAccountsForm()
+{
+	QString message = tr("Loading...");
+	statusBar()->showMessage(message);
+	QWidget* checkedWidget = IsWindowExist(mdiArea->subWindowList(), QString("chartOffAccountForm"));
+	if (checkedWidget == nullptr)
+	{
+		DataForm *dForm = new DataForm(oBL, this);
+		dForm->setWindowTitle(tr("Chart of account"));
+		dForm->FillTable<BusinessLayer::ChartOfAccountsView>(errorMessage);
+		if (errorMessage.empty())
+		{
+			dForm->setObjectName("chartOffAccountForm");
+			dForm->QtConnect<BusinessLayer::ChartOfAccountsView>();
+			QMdiSubWindow *chartOfAccountWindow = new QMdiSubWindow;
+			chartOfAccountWindow->setWidget(dForm);
+			chartOfAccountWindow->setAttribute(Qt::WA_DeleteOnClose);
+			mdiArea->addSubWindow(chartOfAccountWindow);
+			dForm->show();
+			dForm->topLevelWidget();
+			dForm->activateWindow();
+			QString message = tr("Chart of accounts are shown");
+			statusBar()->showMessage(message);
+		}
+		else
+		{
+			delete dForm;
+			QString message = tr("End with error!");
+			statusBar()->showMessage(message);
+			QMessageBox::information(NULL, QString(tr("Warning")),
+				QString(tr(errorMessage.c_str())),
+				QString(tr("Ok")));
+			errorMessage = "";
+		}
+	}
+	else
+	{
+		checkedWidget->topLevelWidget();
+		checkedWidget->activateWindow();
+		QString message = tr("Chart of accounts are showns");
+		statusBar()->showMessage(message);
+	}
+
+}
+
+void MainForm::OpenCompanyAccountForm()
+{
+	QString message = tr("Loading...");
+	statusBar()->showMessage(message);
+	QWidget* checkedWidget = IsWindowExist(mdiArea->subWindowList(), QString("companyAccountForm"));
+	if (checkedWidget == nullptr)
+	{
+		DataForm *dForm = new DataForm(oBL, this);
+		dForm->setWindowTitle(tr("Company account relation"));
+		dForm->FillTable<BusinessLayer::CompanyAccountRelation>(errorMessage);
+		if (errorMessage.empty())
+		{
+			dForm->setObjectName("companyAccountForm");
+			dForm->QtConnect<BusinessLayer::CompanyAccountRelation>();
+			QMdiSubWindow *companyAccountWindow = new QMdiSubWindow;
+			companyAccountWindow->setWidget(dForm);
+			companyAccountWindow->setAttribute(Qt::WA_DeleteOnClose);
+			mdiArea->addSubWindow(companyAccountWindow);
+			dForm->show();
+			dForm->topLevelWidget();
+			dForm->activateWindow();
+			QString message = tr("Company account relations are shown");
+			statusBar()->showMessage(message);
+		}
+		else
+		{
+			delete dForm;
+			QString message = tr("End with error!");
+			statusBar()->showMessage(message);
+			QMessageBox::information(NULL, QString(tr("Warning")),
+				QString(tr(errorMessage.c_str())),
+				QString(tr("Ok")));
+			errorMessage = "";
+		}
+	}
+	else
+	{
+		checkedWidget->topLevelWidget();
+		checkedWidget->activateWindow();
+		QString message = tr("Company account relations are shown");
+		statusBar()->showMessage(message);
+	}
+
+}
+
+void MainForm::OpenEntryForm()
+{
+	QString message = tr("Loading...");
+	statusBar()->showMessage(message);
+	QWidget* checkedWidget = IsWindowExist(mdiArea->subWindowList(), QString("entryForm"));
+	if (checkedWidget == nullptr)
+	{
+		DataForm *dForm = new DataForm(oBL, this);
+		dForm->setWindowTitle(tr("Entries"));
+		dForm->FillTable<BusinessLayer::EntryView>(errorMessage);
+		if (errorMessage.empty())
+		{
+			dForm->setObjectName("entryForm");
+			dForm->QtConnect<BusinessLayer::EntryView>();
+			QMdiSubWindow *entryWindow = new QMdiSubWindow;
+			entryWindow->setWidget(dForm);
+			entryWindow->setAttribute(Qt::WA_DeleteOnClose);
+			mdiArea->addSubWindow(entryWindow);
+			dForm->show();
+			dForm->topLevelWidget();
+			dForm->activateWindow();
+			QString message = tr("All entries are shown");
+			statusBar()->showMessage(message);
+		}
+		else
+		{
+			delete dForm;
+			QString message = tr("End with error!");
+			statusBar()->showMessage(message);
+			QMessageBox::information(NULL, QString(tr("Warning")),
+				QString(tr(errorMessage.c_str())),
+				QString(tr("Ok")));
+			errorMessage = "";
+		}
+	}
+	else
+	{
+		checkedWidget->topLevelWidget();
+		checkedWidget->activateWindow();
+		QString message = tr("All entries are shown");
+		statusBar()->showMessage(message);
+	}
+
+}
+
+void MainForm::GenerateAccountsForm()
+{
+	GenerateAcc *generateAccDlg = new GenerateAcc(oBL, this);
+	generateAccDlg->setAttribute(Qt::WA_DeleteOnClose);
+	generateAccDlg->setWindowTitle(tr("Generate accounts"));
+	generateAccDlg->show();
+}
+
+void MainForm::GenerateOneAccountForm()s{
+	GenerateOneAcc *generateOneAccDlg = new GenerateOneAcc(oBL, this);
+	generateOneAccDlg->setAttribute(Qt::WA_DeleteOnClose);
+	generateOneAccDlg->setWindowTitle(tr("Generate one account"));
+	generateOneAccDlg->show();
 }
 
 void MainForm::OpenStockForm()
@@ -2153,11 +2993,11 @@ void MainForm::OpenRelationForm()
 	{
 		DataForm *dForm = new DataForm(oBL, this);
 		dForm->setWindowTitle(tr("Relations"));
-		dForm->FillTable<BusinessLayer::Relation>(errorMessage);
+		dForm->FillTable<BusinessLayer::RelationView>(errorMessage);
 		if (errorMessage.empty())
 		{
 			dForm->setObjectName("relationForm");
-			dForm->QtConnect<BusinessLayer::Relation>();
+			dForm->QtConnect<BusinessLayer::RelationView>();
 			QMdiSubWindow *relationWindow = new QMdiSubWindow;
 			relationWindow->setWidget(dForm);
 			relationWindow->setAttribute(Qt::WA_DeleteOnClose);

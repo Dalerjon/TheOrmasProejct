@@ -91,12 +91,9 @@ namespace BusinessLayer
 	}
 	bool Status::DeleteStatus(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
-		code.clear();
-		name.clear();
-		comment.clear();
 		if (ormasDal.DeleteStatus(id, errorMessage))
 		{
-			id = 0;
+			Clear();
 			return true;
 		}
 		if (errorMessage.empty())

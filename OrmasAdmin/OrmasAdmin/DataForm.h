@@ -25,7 +25,7 @@ public:
 		std::vector<T> dataVector = dataFormBL->GetAllDataForClass<T>(errorMessage, filter);
 		if (!dataVector.empty())
 		{
-			for (int i = 0; i < dataVector.size();i++)
+			for (unsigned int i = 0; i < dataVector.size();i++)
 			{
 				itemModel->appendRow(GetDataFromClass<T>(dataVector[i]));
 			}
@@ -50,6 +50,14 @@ private:
 private slots:
 	void OpenList(int, int);
 
+	void CrtAccDlg();
+	void UdpAccDlg();
+	void DelAccDlg();
+
+	void CrtAccTpDlg();
+	void UdpAccTpDlg();
+	void DelAccTpDlg();
+
 	void CrtAcsDlg();
 	void UdpAcsDlg();
 	void DelAcsDlg();
@@ -69,6 +77,10 @@ private slots:
 	void CrtCmpDlg();
 	void UdpCmpDlg();
 	void DelCmpDlg();
+
+	void CrtCOADlg();
+	void UdpCOADlg();
+	void DelCOADlg();
 	
 	void CrtConPDlg();
 	void UdpConPDlg();
@@ -94,6 +106,10 @@ private slots:
 	void UdpEmpDlg();
 	void DelEmpDlg();
 
+	void CrtEtrDlg();
+	void UdpEtrDlg();
+	void DelEtrDlg();
+
 	void CrtInvDlg();
 	void UdpInvDlg();
 	void DelInvDlg();
@@ -102,6 +118,14 @@ private slots:
 	void UdpInvListDlg();
 	void DelInvListDlg();
 
+	void CrtJbpDlg();
+	void UdpJbpDlg();
+	void DelJbpDlg();
+
+	void CrtJbsDlg();
+	void UdpJbsDlg();
+	void DelJbsDlg();
+
 	void CrtLcnDlg();
 	void UdpLcnDlg();
 	void DelLcnDlg();
@@ -109,6 +133,10 @@ private slots:
 	void CrtMsrDlg();
 	void UdpMsrDlg();
 	void DelMsrDlg();
+
+	void CrtNetCDlg();
+	void UdpNetCDlg();
+	void DelNetCDlg();
 
 	void CrtOrdDlg();
 	void UdpOrdDlg();
@@ -125,6 +153,10 @@ private slots:
 	void CrtOrdRListDlg();
 	void UdpOrdRListDlg();
 	void DelOrdRListDlg();
+
+	void CrtPcrDlg();
+	void UdpPcrDlg();
+	void DelPcrDlg();
 
 	void CrtPhotoDlg();
 	void UdpPhotoDlg();
@@ -158,9 +190,21 @@ private slots:
 	void UdpProdnListDlg();
 	void DelProdnListDlg();
 
+	void CrtPPlanDlg();
+	void UdpPPlanDlg();
+	void DelPPlanDlg();
+
+	void CrtPPlanListDlg();
+	void UdpPPlanListDlg();
+	void DelPPlanListDlg();
+
 	void CrtPspDlg();
 	void UdpPspDlg();
 	void DelPspDlg();
+
+	void CrtPurDlg();
+	void UdpPurDlg();
+	void DelPurDlg();
 
 	void CrtRelDlg();
 	void UdpRelDlg();
@@ -214,9 +258,29 @@ private slots:
 	void UdpStsDlg();
 	void DelStsDlg();
 
+	void CrtSpecDlg();
+	void UdpSpecDlg();
+	void DelSpecDlg();
+	
+	void CrtSpecListDlg();
+	void UdpSpecListDlg();
+	void DelSpecListDlg();
+
+	void CrtSplDlg();
+	void UdpSplDlg();
+	void DelSplDlg();
+
+	void CrtSplListDlg();
+	void UdpSplListDlg();
+	void DelSplListDlg();
+
 	void CrtStockDlg();
 	void UdpStockDlg();
 	void DelStockDlg();
+
+	void CrtTmsDlg();
+	void UdpTmsDlg();
+	void DelTmsDlg();
 
 	void CrtTrsDlg();
 	void UdpTrsDlg();
@@ -265,33 +329,48 @@ public:
 	QWidget* parentForm;
 	ClcWagesDlg* clcWagesDlg = nullptr;
 	CreateAcsDlg* createAcsDlg = nullptr;
+	CreateAccDlg* createAccDlg = nullptr;
 	CreateBlcDlg* createBlcDlg = nullptr;
 	CreateCltDlg* createCltDlg = nullptr;
 	CreateConPDlg* createConPDlg = nullptr;
 	CreateConPListDlg* createConPListDlg = nullptr;
 	CreateConRDlg* createConRDlg = nullptr;
 	CreateConRListDlg* createConRListDlg = nullptr;
+	CreateCOADlg* createCOADlg = nullptr;
 	CreateEmpDlg* createEmpDlg = nullptr;
+	CreateEtrDlg* createEtrDlg = nullptr;
+	CreateNetCDlg* createNetCDlg = nullptr;
 	CreateInvDlg* createInvDlg = nullptr;
 	CreateInvListDlg* createInvListDlg = nullptr;
+	CreateJbpDlg* createJbpDlg = nullptr;
+	CreateJbsDlg* createJbsDlg = nullptr;
 	CreateOrdDlg* createOrdDlg = nullptr;
 	CreateOrdListDlg* createOrdListDlg = nullptr;
 	CreateOrdRDlg* createOrdRDlg = nullptr;
 	CreateOrdRListDlg* createOrdRListDlg = nullptr;
+	CreatePcrDlg* createPcrDlg = nullptr;
 	CreatePhtDlg* createPhtDlg = nullptr;
 	CreatePmtDlg* createPmtDlg = nullptr;
 	CreatePrcDlg* createPrcDlg = nullptr;
 	CreateProdnListDlg* createProdnListDlg = nullptr;
+	CreatePPlanDlg* createPPlanDlg = nullptr;
+	CreatePPlanListDlg* createPPlanListDlg = nullptr;
 	CreatePspDlg* createPspDlg = nullptr;
 	CreateRelDlg* createRelDlg = nullptr;
+	CreatePurDlg* createPurDlg = nullptr;
 	CreateRcpPDlg* createRcpPDlg = nullptr;
 	CreateRcpPListDlg* createRcpPListDlg = nullptr;
 	CreateRcpRDlg* createRcpRDlg = nullptr;
 	CreateRcpRListDlg* createRcpRListDlg = nullptr;
 	CreateRfdDlg* createRfdDlg = nullptr;
 	CreateRtrnListDlg* createRtrnListDlg = nullptr;
+	CreateSpecDlg* createSpecDlg = nullptr;
+	CreateSpecListDlg* createSpecListDlg = nullptr;
+	CreateSplDlg* createSplDlg = nullptr;
+	CreateSplListDlg* createSplListDlg = nullptr;
 	CreateSlrDlg* createSlrDlg = nullptr;
 	CreateStockDlg* createStockDlg = nullptr;
+	CreateTmsDlg* createTmsDlg = nullptr;
 	CreateTrsDlg* createTrsDlg = nullptr;
 	CreateTrsListDlg* createTrsListDlg = nullptr;
 	CreateUserDlg* createUserDlg = nullptr;
@@ -303,6 +382,7 @@ public:
 	CreateWOffListDlg* createWOffListDlg = nullptr;
 	CreateWOffRDlg* createWOffRDlg = nullptr;
 	CreateWOffRListDlg* createWOffRListDlg = nullptr;
+	GenerateOneAcc* generateOneAcc = nullptr;
 	
 	int orderID = 0;
 	int returnID = 0;
@@ -312,8 +392,11 @@ public:
 	int consumeRawID = 0;
 	int inventorizationID = 0;
 	int orderRawID = 0;
+	int productionPlanID = 0;
 	int receiptProductID = 0; 
 	int receiptRawID = 0;
+	int specificationID = 0;
+	int spoilageID = 0;
 	int transportID = 0;
 	int writeOffRawID = 0;
 };

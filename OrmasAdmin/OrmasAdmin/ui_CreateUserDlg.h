@@ -30,32 +30,34 @@ class Ui_CreateUser
 {
 public:
     QGridLayout *gridLayout;
+    QLineEdit *passwordEdit;
+    QLabel *activatedLb;
+    QLineEdit *addressEdit;
+    QLabel *phoneLb;
     QHBoxLayout *horizontalLayout;
     QSpacerItem *horizontalSpacer;
     QPushButton *okBtn;
     QPushButton *cancelBtn;
     QLineEdit *nameEdit;
-    QLabel *activatedLb;
+    QComboBox *activatedCmbBox;
     QLabel *nameLb;
-    QLabel *phoneLb;
-    QLabel *addressLb;
     QLineEdit *phoneEdit;
+    QLabel *addressLb;
     QLineEdit *roleEdit;
     QLabel *surnameLb;
     QLineEdit *surnameEdit;
     QPushButton *roleBtn;
     QLabel *passworLb;
-    QComboBox *activatedCmbBox;
-    QLineEdit *passwordEdit;
-    QLineEdit *addressEdit;
     QLabel *emailLb;
     QLineEdit *emailEdit;
+    QLabel *roleNameLb;
+    QLabel *roleNamePh;
 
     void setupUi(QDialog *CreateUser)
     {
         if (CreateUser->objectName().isEmpty())
             CreateUser->setObjectName(QStringLiteral("CreateUser"));
-        CreateUser->resize(400, 258);
+        CreateUser->resize(400, 284);
         QSizePolicy sizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
         sizePolicy.setHorizontalStretch(0);
         sizePolicy.setVerticalStretch(0);
@@ -66,6 +68,27 @@ public:
         gridLayout = new QGridLayout(CreateUser);
         gridLayout->setObjectName(QStringLiteral("gridLayout"));
         gridLayout->setContentsMargins(11, 11, 11, 11);
+        passwordEdit = new QLineEdit(CreateUser);
+        passwordEdit->setObjectName(QStringLiteral("passwordEdit"));
+        passwordEdit->setEchoMode(QLineEdit::Password);
+
+        gridLayout->addWidget(passwordEdit, 5, 1, 1, 1);
+
+        activatedLb = new QLabel(CreateUser);
+        activatedLb->setObjectName(QStringLiteral("activatedLb"));
+
+        gridLayout->addWidget(activatedLb, 6, 0, 1, 1);
+
+        addressEdit = new QLineEdit(CreateUser);
+        addressEdit->setObjectName(QStringLiteral("addressEdit"));
+
+        gridLayout->addWidget(addressEdit, 2, 1, 1, 1);
+
+        phoneLb = new QLabel(CreateUser);
+        phoneLb->setObjectName(QStringLiteral("phoneLb"));
+
+        gridLayout->addWidget(phoneLb, 3, 0, 1, 1);
+
         horizontalLayout = new QHBoxLayout();
         horizontalLayout->setObjectName(QStringLiteral("horizontalLayout"));
         horizontalSpacer = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
@@ -83,17 +106,17 @@ public:
         horizontalLayout->addWidget(cancelBtn);
 
 
-        gridLayout->addLayout(horizontalLayout, 8, 0, 1, 2);
+        gridLayout->addLayout(horizontalLayout, 9, 0, 1, 2);
 
         nameEdit = new QLineEdit(CreateUser);
         nameEdit->setObjectName(QStringLiteral("nameEdit"));
 
         gridLayout->addWidget(nameEdit, 0, 1, 1, 1);
 
-        activatedLb = new QLabel(CreateUser);
-        activatedLb->setObjectName(QStringLiteral("activatedLb"));
+        activatedCmbBox = new QComboBox(CreateUser);
+        activatedCmbBox->setObjectName(QStringLiteral("activatedCmbBox"));
 
-        gridLayout->addWidget(activatedLb, 6, 0, 1, 1);
+        gridLayout->addWidget(activatedCmbBox, 6, 1, 1, 1);
 
         nameLb = new QLabel(CreateUser);
         nameLb->setObjectName(QStringLiteral("nameLb"));
@@ -101,21 +124,16 @@ public:
 
         gridLayout->addWidget(nameLb, 0, 0, 1, 1);
 
-        phoneLb = new QLabel(CreateUser);
-        phoneLb->setObjectName(QStringLiteral("phoneLb"));
-
-        gridLayout->addWidget(phoneLb, 3, 0, 1, 1);
-
-        addressLb = new QLabel(CreateUser);
-        addressLb->setObjectName(QStringLiteral("addressLb"));
-
-        gridLayout->addWidget(addressLb, 2, 0, 1, 1);
-
         phoneEdit = new QLineEdit(CreateUser);
         phoneEdit->setObjectName(QStringLiteral("phoneEdit"));
         phoneEdit->setInputMethodHints(Qt::ImhNone);
 
         gridLayout->addWidget(phoneEdit, 3, 1, 1, 1);
+
+        addressLb = new QLabel(CreateUser);
+        addressLb->setObjectName(QStringLiteral("addressLb"));
+
+        gridLayout->addWidget(addressLb, 2, 0, 1, 1);
 
         roleEdit = new QLineEdit(CreateUser);
         roleEdit->setObjectName(QStringLiteral("roleEdit"));
@@ -145,22 +163,6 @@ public:
 
         gridLayout->addWidget(passworLb, 5, 0, 1, 1);
 
-        activatedCmbBox = new QComboBox(CreateUser);
-        activatedCmbBox->setObjectName(QStringLiteral("activatedCmbBox"));
-
-        gridLayout->addWidget(activatedCmbBox, 6, 1, 1, 1);
-
-        passwordEdit = new QLineEdit(CreateUser);
-        passwordEdit->setObjectName(QStringLiteral("passwordEdit"));
-        passwordEdit->setEchoMode(QLineEdit::Password);
-
-        gridLayout->addWidget(passwordEdit, 5, 1, 1, 1);
-
-        addressEdit = new QLineEdit(CreateUser);
-        addressEdit->setObjectName(QStringLiteral("addressEdit"));
-
-        gridLayout->addWidget(addressEdit, 2, 1, 1, 1);
-
         emailLb = new QLabel(CreateUser);
         emailLb->setObjectName(QStringLiteral("emailLb"));
 
@@ -171,6 +173,23 @@ public:
         emailEdit->setInputMethodHints(Qt::ImhEmailCharactersOnly);
 
         gridLayout->addWidget(emailEdit, 4, 1, 1, 1);
+
+        roleNameLb = new QLabel(CreateUser);
+        roleNameLb->setObjectName(QStringLiteral("roleNameLb"));
+
+        gridLayout->addWidget(roleNameLb, 8, 0, 1, 1);
+
+        roleNamePh = new QLabel(CreateUser);
+        roleNamePh->setObjectName(QStringLiteral("roleNamePh"));
+        QFont font;
+        font.setFamily(QStringLiteral("Times New Roman"));
+        font.setPointSize(12);
+        font.setBold(true);
+        font.setItalic(true);
+        font.setWeight(75);
+        roleNamePh->setFont(font);
+
+        gridLayout->addWidget(roleNamePh, 8, 1, 1, 1);
 
         QWidget::setTabOrder(nameEdit, surnameEdit);
         QWidget::setTabOrder(surnameEdit, addressEdit);
@@ -191,34 +210,36 @@ public:
     void retranslateUi(QDialog *CreateUser)
     {
         CreateUser->setWindowTitle(QApplication::translate("CreateUser", "Create/Update user", 0));
+#ifndef QT_NO_TOOLTIP
+        passwordEdit->setToolTip(QApplication::translate("CreateUser", "<html><head/><body><p>At least 6 characters</p></body></html>", 0));
+#endif // QT_NO_TOOLTIP
+        activatedLb->setText(QApplication::translate("CreateUser", "Activated:", 0));
+#ifndef QT_NO_TOOLTIP
+        addressEdit->setToolTip(QApplication::translate("CreateUser", "<html><head/><body><p>For example: Downing St. 88</p></body></html>", 0));
+#endif // QT_NO_TOOLTIP
+        phoneLb->setText(QApplication::translate("CreateUser", "Phone:", 0));
         okBtn->setText(QApplication::translate("CreateUser", "OK", 0));
         cancelBtn->setText(QApplication::translate("CreateUser", "Cancel", 0));
 #ifndef QT_NO_TOOLTIP
         nameEdit->setToolTip(QApplication::translate("CreateUser", "<html><head/><body><p>For expamle: John</p></body></html>", 0));
 #endif // QT_NO_TOOLTIP
-        activatedLb->setText(QApplication::translate("CreateUser", "Activated:", 0));
         nameLb->setText(QApplication::translate("CreateUser", "Name:", 0));
-        phoneLb->setText(QApplication::translate("CreateUser", "Phone:", 0));
-        addressLb->setText(QApplication::translate("CreateUser", "Address:", 0));
 #ifndef QT_NO_TOOLTIP
         phoneEdit->setToolTip(QApplication::translate("CreateUser", "<html><head/><body><p>For example: 929999999 (only digits)</p></body></html>", 0));
 #endif // QT_NO_TOOLTIP
+        addressLb->setText(QApplication::translate("CreateUser", "Address:", 0));
         surnameLb->setText(QApplication::translate("CreateUser", "Surname:", 0));
 #ifndef QT_NO_TOOLTIP
         surnameEdit->setToolTip(QApplication::translate("CreateUser", "<html><head/><body><p>For example: Doe</p></body></html>", 0));
 #endif // QT_NO_TOOLTIP
         roleBtn->setText(QApplication::translate("CreateUser", "Select role", 0));
         passworLb->setText(QApplication::translate("CreateUser", "Password:", 0));
-#ifndef QT_NO_TOOLTIP
-        passwordEdit->setToolTip(QApplication::translate("CreateUser", "<html><head/><body><p>At least 6 characters</p></body></html>", 0));
-#endif // QT_NO_TOOLTIP
-#ifndef QT_NO_TOOLTIP
-        addressEdit->setToolTip(QApplication::translate("CreateUser", "<html><head/><body><p>For example: Downing St. 88</p></body></html>", 0));
-#endif // QT_NO_TOOLTIP
         emailLb->setText(QApplication::translate("CreateUser", "Email:", 0));
 #ifndef QT_NO_TOOLTIP
         emailEdit->setToolTip(QApplication::translate("CreateUser", "<html><head/><body><p>For example: John.Doe@gmail.com (not a mandatory field)</p></body></html>", 0));
 #endif // QT_NO_TOOLTIP
+        roleNameLb->setText(QApplication::translate("CreateUser", "Role name:", 0));
+        roleNamePh->setText(QString());
     } // retranslateUi
 
 };

@@ -19,7 +19,6 @@ public:
 	void Close();
 	void OpenUser1Dlg();
 	void OpenUser2Dlg();
-	void OpenRelTypeDlg();
 	public slots:
 	void SetID(int ID, QString childName);
 private:
@@ -27,6 +26,7 @@ private:
 	void SetRelationParams(int, int, int, int = 0);
 	void FillEditElements(int, int, int);
 	QIntValidator *vInt = nullptr;
+	void InitComboBox();
 };
 
 #endif //CREATERELDLG_H
