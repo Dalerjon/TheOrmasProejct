@@ -22,6 +22,7 @@ private:
 	void SetAccountTypeParams(QString, int, QString, int = 0);
 	void FillEditElements(QString, int, QString);
 	QIntValidator *vInt = nullptr;
+	QWidget* parentForm;
 };
 
 #endif //CREATEACCTPDLG_H

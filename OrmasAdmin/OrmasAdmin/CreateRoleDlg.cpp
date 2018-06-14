@@ -1,9 +1,8 @@
 #include "stdafx.h"
-#include <QMessageBox>
 #include "CreateRoleDlg.h"
 #include "MainForm.h"
 #include "DataForm.h"
-#include "ExtraFunctions.h"
+
 
 CreateRoleDlg::CreateRoleDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, QWidget *parent) :QDialog(parent)
 {
@@ -64,21 +63,27 @@ void CreateRoleDlg::CreateRole()
 	errorMessage.clear();
 	if (!(nameEdit->text().isEmpty() || codeEdit->text().isEmpty()))
 	{
-		DataForm *parentDataForm = (DataForm*)parentWidget();
+		DataForm *parentDataForm = (DataForm*) parentForm;
 		SetRoleParams(codeEdit->text(), nameEdit->text(), commentTextEdit->toPlainText());
 		dialogBL->StartTransaction(errorMessage);
 		if (dialogBL->CreateRole(role, errorMessage))
 		{
-			QList<QStandardItem*> roleItem;
-			roleItem << new QStandardItem(QString::number(role->GetID()))
-				<< new QStandardItem(role->GetCode().c_str())
-				<< new QStandardItem(role->GetName().c_str())
-				<< new QStandardItem(role->GetComment().c_str());
-			QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
-			itemModel->appendRow(roleItem);
+			if (parentDataForm != nullptr)
+			{
+				if (!parentDataForm->IsClosed())
+				{
+					QList<QStandardItem*> roleItem;
+					roleItem << new QStandardItem(QString::number(role->GetID()))
+						<< new QStandardItem(role->GetCode().c_str())
+						<< new QStandardItem(role->GetName().c_str())
+						<< new QStandardItem(role->GetComment().c_str());
+					QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
+					itemModel->appendRow(roleItem);
+				}
+			}
 			
 			dialogBL->CommitTransaction(errorMessage);
-			this->close();
+			Close();
 		}
 		else
 		{
@@ -105,20 +110,26 @@ void CreateRoleDlg::EditRole()
 		if (QString(role->GetCode().c_str()) != codeEdit->text() || QString(role->GetName().c_str()) != nameEdit->text() ||
 			QString(role->GetComment().c_str()) != commentTextEdit->toPlainText())
 		{
-			DataForm *parentDataForm = (DataForm*)parentWidget();
+			DataForm *parentDataForm = (DataForm*) parentForm;
 			SetRoleParams(codeEdit->text(), nameEdit->text(), commentTextEdit->toPlainText(), role->GetID());
 			dialogBL->StartTransaction(errorMessage);
 			if (dialogBL->UpdateRole(role, errorMessage))
 			{
-				QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
-				QModelIndex mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
-				itemModel->item(mIndex.row(), 1)->setText(role->GetCode().c_str());
-				itemModel->item(mIndex.row(), 2)->setText(role->GetName().c_str());
-				itemModel->item(mIndex.row(), 3)->setText(role->GetComment().c_str());
-				emit itemModel->dataChanged(mIndex, mIndex);
+				if (parentDataForm != nullptr)
+				{
+					if (!parentDataForm->IsClosed())
+					{
+						QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
+						QModelIndex mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
+						itemModel->item(mIndex.row(), 1)->setText(role->GetCode().c_str());
+						itemModel->item(mIndex.row(), 2)->setText(role->GetName().c_str());
+						itemModel->item(mIndex.row(), 3)->setText(role->GetComment().c_str());
+						emit itemModel->dataChanged(mIndex, mIndex);
+					}
+				}
 				
 				dialogBL->CommitTransaction(errorMessage);
-				this->close();
+				Close();
 			}
 			else
 			{
@@ -130,7 +141,7 @@ void CreateRoleDlg::EditRole()
 		}
 		else
 		{
-			this->close();
+			Close();
 		}
 	}
 	else
@@ -144,7 +155,7 @@ void CreateRoleDlg::EditRole()
 
 void CreateRoleDlg::Close()
 {
-	this->close();
+	this->parentWidget()->close();
 }
 
 void CreateRoleDlg::TextEditChanged()

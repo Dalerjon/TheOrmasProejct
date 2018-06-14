@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "AccountClass.h"
 #include "ChartOfAccountsClass.h"
+#include "AccountTypeClass.h"
 #include <boost/algorithm/string.hpp>
 
 namespace BusinessLayer{
@@ -10,11 +11,6 @@ namespace BusinessLayer{
 		number = std::get<1>(aCollection);
 		startBalance = std::get<2>(aCollection);
 		currentBalance = std::get<3>(aCollection);
-		currencyID = std::get<4>(aCollection);
-		statusID = std::get<5>(aCollection);
-		openedDate = std::get<6>(aCollection);
-		closedDate = std::get<7>(aCollection);
-		details = std::get<8>(aCollection);
 	}
 	Account::Account()
 	{
@@ -22,11 +18,6 @@ namespace BusinessLayer{
 		number = "";
 		startBalance = 0.0;
 		currentBalance = 0.0;
-		currencyID = 0;
-		statusID = 0;
-		openedDate = "";
-		closedDate = "";
-		details = "";
 	}
 
 	int Account::GetID()
@@ -49,31 +40,6 @@ namespace BusinessLayer{
 		return currentBalance;
 	}
 
-	int Account::GetCurrencyID()
-	{
-		return currencyID;
-	}
-	
-	int Account::GetStatusID()
-	{
-		return statusID;
-	}
-
-	std::string Account::GetOpenedDate()
-	{
-		return openedDate;
-	}
-
-	std::string Account::GetClosedDate()
-	{
-		return closedDate;
-	}
-
-	std::string Account::GetDetails()
-	{
-		return details;
-	}
-
 	void Account::SetID(int aID)
 	{
 		id = aID;
@@ -94,33 +60,7 @@ namespace BusinessLayer{
 		currentBalance = aCurrentBalance;
 	}
 
-	void Account::SetCurrencyID(int cID)
-	{
-		currencyID = cID;
-	}
-
-	void Account::SetStatusID(int sID)
-	{
-		statusID = sID;
-	}
-
-	void Account::SetOpenedDate(std::string aOpenedDate)
-	{
-		openedDate = aOpenedDate;
-	}
-
-	void Account::SetClosedDate(std::string aClosedDate)
-	{
-		closedDate = aClosedDate;
-	}
-	
-	void Account::SetDetails(std::string aDetails)
-	{
-		details = aDetails;
-	}
-
-	bool Account::CreateAccount(DataLayer::OrmasDal &ormasDal, std::string aNumber, double aStartBalance, double aCurrentBalance, int cID,
-		int sID, std::string aOpenedDate, std::string aClosedDate, std::string aDetails, std::string& errorMessage)
+	bool Account::CreateAccount(DataLayer::OrmasDal &ormasDal, std::string aNumber, double aStartBalance, double aCurrentBalance, std::string& errorMessage)
 	{
 		if (IsDuplicate(ormasDal, aNumber, errorMessage))
 			return false;
@@ -128,13 +68,7 @@ namespace BusinessLayer{
 		number = aNumber;
 		startBalance = aStartBalance;
 		currentBalance = aCurrentBalance;
-		currencyID = cID;
-		statusID = sID;
-		openedDate = aOpenedDate;
-		closedDate = aClosedDate;
-		details = aDetails;
-		if (0 != id && ormasDal.CreateAccount(id, number, startBalance, currentBalance, currencyID, statusID, openedDate, closedDate,
-			details, errorMessage))
+		if (0 != id && ormasDal.CreateAccount(id, number, startBalance, currentBalance, errorMessage))
 		{
 			return true;
 		}
@@ -149,8 +83,7 @@ namespace BusinessLayer{
 		if (IsDuplicate(ormasDal, errorMessage))
 			return false;
 		id = ormasDal.GenerateID();
-		if (ormasDal.CreateAccount(id, number, startBalance, currentBalance, currencyID, statusID, openedDate, closedDate,
-			details, errorMessage))
+		if (ormasDal.CreateAccount(id, number, startBalance, currentBalance, errorMessage))
 		{
 			return true;
 		}
@@ -174,19 +107,12 @@ namespace BusinessLayer{
 		return false;
 	}
 
-	bool Account::UpdateAccount(DataLayer::OrmasDal &ormasDal, std::string aNumber, double aStartBalance, double aCurrentBalance, int cID,
-		int sID, std::string aOpenedDate, std::string aClosedDate, std::string aDetails, std::string& errorMessage)
+	bool Account::UpdateAccount(DataLayer::OrmasDal &ormasDal, std::string aNumber, double aStartBalance, double aCurrentBalance, std::string& errorMessage)
 	{
 		number = aNumber;
 		startBalance = aStartBalance;
 		currentBalance = aCurrentBalance;
-		currencyID = cID;
-		statusID = sID;
-		openedDate = aOpenedDate;
-		closedDate = aClosedDate;
-		details = aDetails;
-		if (0 != id && ormasDal.UpdateAccount(id, number, startBalance, currentBalance, currencyID, statusID, openedDate, closedDate,
-			details, errorMessage))
+		if (0 != id && ormasDal.UpdateAccount(id, number, startBalance, currentBalance, errorMessage))
 		{
 			return true;
 		}
@@ -198,8 +124,7 @@ namespace BusinessLayer{
 	}
 	bool Account::UpdateAccount(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
-		if (ormasDal.UpdateAccount(id, number, startBalance, currentBalance, currencyID, statusID, openedDate, closedDate,
-			details, errorMessage))
+		if (ormasDal.UpdateAccount(id, number, startBalance, currentBalance, errorMessage))
 		{
 			return true;
 		}
@@ -212,11 +137,9 @@ namespace BusinessLayer{
 
 	std::string Account::GenerateFilter(DataLayer::OrmasDal& ormasDal)
 	{
-		if (0 != id || !number.empty() || 0.0 != startBalance || 0.0 != currentBalance || 0 != currencyID || 0 != statusID 
-			|| !openedDate.empty() || !closedDate.empty() || !details.empty())
+		if (0 != id || !number.empty() || 0.0 != startBalance || 0.0 != currentBalance)
 		{
-			return ormasDal.GetFilterForAccount(id, number, startBalance, currentBalance, currencyID, statusID, openedDate, closedDate,
-				details);
+			return ormasDal.GetFilterForAccount(id, number, startBalance, currentBalance);
 		}
 		return "";
 	}
@@ -225,18 +148,13 @@ namespace BusinessLayer{
 	{
 		id = aID;
 		std::string filter = GenerateFilter(ormasDal);
-		std::vector<DataLayer::accountsViewCollection> accountVector = ormasDal.GetAccounts(errorMessage, filter);
+		std::vector<DataLayer::accountsCollection> accountVector = ormasDal.GetAccounts(errorMessage, filter);
 		if (0 != accountVector.size())
 		{
 			id = std::get<0>(accountVector.at(0));
 			number = std::get<1>(accountVector.at(0));
 			startBalance = std::get<2>(accountVector.at(0));
 			currentBalance = std::get<3>(accountVector.at(0));
-			currencyID = std::get<6>(accountVector.at(0));
-			statusID = std::get<7>(accountVector.at(0));
-			openedDate = std::get<8>(accountVector.at(0));
-			closedDate = std::get<9>(accountVector.at(0));
-			details = std::get<10>(accountVector.at(0));
 			return true;
 		}
 		else
@@ -250,18 +168,13 @@ namespace BusinessLayer{
 	{
 		number = aNumber;
 		std::string filter = GenerateFilter(ormasDal);
-		std::vector<DataLayer::accountsViewCollection> accountVector = ormasDal.GetAccounts(errorMessage, filter);
+		std::vector<DataLayer::accountsCollection> accountVector = ormasDal.GetAccounts(errorMessage, filter);
 		if (0 != accountVector.size())
 		{
 			id = std::get<0>(accountVector.at(0));
 			number = std::get<1>(accountVector.at(0));
 			startBalance = std::get<2>(accountVector.at(0));
 			currentBalance = std::get<3>(accountVector.at(0));
-			currencyID = std::get<6>(accountVector.at(0));
-			statusID = std::get<7>(accountVector.at(0));
-			openedDate = std::get<8>(accountVector.at(0));
-			closedDate = std::get<9>(accountVector.at(0));
-			details = std::get<10>(accountVector.at(0));
 			return true;
 		}
 		else
@@ -271,29 +184,9 @@ namespace BusinessLayer{
 		return false;
 	}
 
-	std::string Account::GenerateRawNumber(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
-	{
-		int countOfNulls;
-		int genNumber = ormasDal.GenerateAccountID();
-		std::string accNumber = "";
-		std::string genNumberStr = std::to_string(genNumber);
-		if (genNumberStr.length() < 15)
-		{
-			countOfNulls = 15 - genNumberStr.length();
-			for (int i = 0; i < countOfNulls; i++)
-			{
-				accNumber.append("0");
-			}
-			accNumber.append(genNumberStr);
-			return accNumber;
-		}
-		return "";
-	}
-
 	bool Account::IsEmpty()
 	{
-		if (0 == id && number.empty() && 0.0 == startBalance && 0.0 == currentBalance && 0 == currencyID && 0 == statusID 
-			&& openedDate.empty() && closedDate.empty() && details.empty())
+		if (0 == id && number.empty() && 0.0 == startBalance && 0.0 == currentBalance)
 			return true;
 		return false;
 	}
@@ -304,11 +197,6 @@ namespace BusinessLayer{
 		number = "";
 		startBalance = 0.0;
 		currentBalance = 0.0;
-		currencyID = 0;
-		statusID = 0;
-		openedDate = "";
-		closedDate = "";
-		details = "";
 	}
 
 	bool Account::IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string aNumber, std::string& errorMessage)
@@ -316,7 +204,7 @@ namespace BusinessLayer{
 		Account account;
 		account.SetNumber(aNumber);
 		std::string filter = account.GenerateFilter(ormasDal);
-		std::vector<DataLayer::accountsViewCollection> accountVector = ormasDal.GetAccounts(errorMessage, filter);
+		std::vector<DataLayer::accountsCollection> accountVector = ormasDal.GetAccounts(errorMessage, filter);
 		if (!errorMessage.empty())
 			return true;
 		if (0 == accountVector.size())
@@ -332,7 +220,7 @@ namespace BusinessLayer{
 		Account account;
 		account.SetNumber(number);
 		std::string filter = account.GenerateFilter(ormasDal);
-		std::vector<DataLayer::accountsViewCollection> accountVector = ormasDal.GetAccounts(errorMessage, filter);
+		std::vector<DataLayer::accountsCollection> accountVector = ormasDal.GetAccounts(errorMessage, filter);
 		if (!errorMessage.empty())
 			return true;
 		if (0 == accountVector.size())
@@ -349,30 +237,76 @@ namespace BusinessLayer{
 		std::vector<DataLayer::chartOfAccountsViewCollection> chartOfAccountssVector;
 		if (!this->GetNumber().empty() && this->GetNumber().length() > 0)
 		{
-			std::string numberOfAccount = this->GetNumber().substr(0, 4);
-			std::string partentNumberOfAccount = this->GetNumber().substr(0, 2);
-			std::string childNumberOfAccount = this->GetNumber().substr(2, 4);
-			if (0 == childNumberOfAccount.compare("00"))
+			std::string numberOfAccount = this->GetNumber().substr(0, 5);
+			chartOfAccounts.SetNumber(numberOfAccount);
+			std::string filter = chartOfAccounts.GenerateFilter(ormasDal);
+			chartOfAccountssVector = ormasDal.GetChartOfAccounts(errorMessage, filter);
+			if (0 < chartOfAccountssVector.size())
 			{
-				chartOfAccounts.SetNumber(std::stoi(partentNumberOfAccount));
-				std::string filter = chartOfAccounts.GenerateFilter(ormasDal);
-				ormasDal.GetChartOfAccounts(errorMessage, filter);
-				if (0 < chartOfAccountssVector.size())
+				return std::get<2>(chartOfAccountssVector.at(0));
+			}
+		}
+		return "";
+	}
+
+	bool Account::AccountOperationValidation(DataLayer::OrmasDal& ormasDal, double aValue)
+	{
+		/*AccountType atype;
+		if (atype.GetAccountTypeByNumber(ormasDal, GetAccountTypeNumber(ormasDal), errorMessage))
+		{
+			if (0 == atype.GetName().compare("ACTIVE"))
+			{
+				if (aValue > 0)
 				{
-					return std::get<2>(chartOfAccountssVector.at(0));
+					return true;
+				}
+				else
+				{
+					return false;
 				}
 			}
-			else
+			if (0 == atype.GetName().compare("PASSIVE"))
 			{
-				chartOfAccounts.SetNumber(std::stoi(numberOfAccount));
-				std::string filter = chartOfAccounts.GenerateFilter(ormasDal);
-				ormasDal.GetChartOfAccounts(errorMessage, filter);
-				if (0 < chartOfAccountssVector.size())
+				if (aValue < 0)
 				{
-					return std::get<2>(chartOfAccountssVector.at(0));
+					return true;
+				}
+				else
+				{
+					return false;
+				}
+			}
+			if (0 == atype.GetName().compare("ACTIVE/PASSIVE"))
+			{
+				return true;
+			}
+		}*/
+		return true;
+	}
+
+	void Account::BalanceShortInfo(DataLayer::OrmasDal& ormasDal, double &active, double &passive, std::string& errorMessage)
+	{
+		std::vector<DataLayer::accountsCollection> accountVector = ormasDal.GetAccounts(errorMessage);
+		if (0 != accountVector.size())
+		{
+			double curBalance = 0;
+			for each (auto item in accountVector)
+			{
+				curBalance = 0;
+				curBalance = std::get<3>(item);
+				if (curBalance > 0)
+				{
+					active += curBalance;
+				}
+				else
+				{
+					passive += curBalance;
 				}
 			}
 		}
-		return nullptr;
+		else
+		{
+			errorMessage = "Cannot calculate balance!";
+		}
 	}
 }

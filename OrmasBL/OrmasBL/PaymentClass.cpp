@@ -3,6 +3,11 @@
 #include "UserClass.h"
 #include "BalanceClass.h"
 #include "BalancePaymentRelationClass.h"
+#include "EntryClass.h"
+#include "CompanyAccountRelationClass.h"
+#include "CompanyEmployeeRelationClass.h"
+#include "CompanyClass.h"
+#include "StatusClass.h"
 
 namespace BusinessLayer{
 	Payment::Payment(DataLayer::paymentsCollection pCollection)
@@ -268,38 +273,49 @@ namespace BusinessLayer{
 
 	bool Payment::Replenishment(DataLayer::OrmasDal& ormasDal, int uID, int cID, std::string& errorMessage)
 	{
-		User user;
-		user.SetID(uID);
-		int balanceID = user.GetUserAccoutID(ormasDal, cID, errorMessage);
-		if(0 != balanceID && errorMessage.empty())
+		CompanyAccountRelation cAccRel;
+		CompanyEmployeeRelation cEmpRel;
+		Balance balance;
+		Company company;
+		if (balance.GetBalanceByUserID(ormasDal, uID, errorMessage))
 		{
-			BalancePaymentRelation bpRelation;
-			Balance balance;
-			if (balance.GetBalanceByID(ormasDal, balanceID, errorMessage))
+			int credAccID = balance.GetSubaccountID();
+			int companyID = company.GetCompanyID(ormasDal, errorMessage);
+			int debAccID = cAccRel.GetAccountIDByCompanyID(ormasDal, companyID, "10110", errorMessage);
+			if (0 == debAccID || 0 == credAccID || 0 == companyID)
 			{
-				//balance.SetValue(balance.GetValue() + value);
-				bpRelation.SetBalanceID(balanceID);
-				bpRelation.SetPaymentID(id);
-				if (balance.UpdateBalance(ormasDal, errorMessage) && bpRelation.CreateBalancePaymentRelation(ormasDal, errorMessage))
+				return false;
+			}
+			if (this->CreateEntry(ormasDal, debAccID, value, credAccID, ormasDal.GetSystemDateTime(), errorMessage))
+			{
+				BalancePaymentRelation bpRelation;
+				bpRelation.SetBalanceID(balance.GetID());
+				bpRelation.SetPaymentID(this->id);
+				if (bpRelation.CreateBalancePaymentRelation(ormasDal, errorMessage))
 					return true;
 			}
 		}
 		return false;
 	}
 
-	bool Payment::Replenishment(DataLayer::OrmasDal& ormasDal, int uID, int cID, double currentValue, std::string& errorMessage)
+	bool Payment::Replenishment(DataLayer::OrmasDal& ormasDal, int uID, int cID, double previousValue, std::string& errorMessage)
 	{
-		User user;
-		user.SetID(uID);
-		int balanceID = user.GetUserAccoutID(ormasDal, cID, errorMessage);
-		if (0 != balanceID && errorMessage.empty())
+		CompanyAccountRelation cAccRel;
+		CompanyEmployeeRelation cEmpRel;
+		Balance balance;
+		Company company;
+		if (balance.GetBalanceByUserID(ormasDal, uID, errorMessage))
 		{
-			Balance balance;
-			if (balance.GetBalanceByID(ormasDal, balanceID, errorMessage))
+			int credAccID = balance.GetSubaccountID();
+			int companyID = company.GetCompanyID(ormasDal, errorMessage);
+			int debAccID = cAccRel.GetAccountIDByCompanyID(ormasDal, companyID, "10110", errorMessage);
+			if (0 == debAccID || 0 == credAccID || 0 == companyID)
 			{
-				//balance.SetValue(balance.GetValue() + (currentValue-value));
-				if (balance.UpdateBalance(ormasDal, errorMessage))
-					return true;
+				return false;
+			}
+			if (this->CreateEntry(ormasDal, debAccID, value, credAccID, previousValue, ormasDal.GetSystemDateTime(), errorMessage))
+			{
+				return true;
 			}
 		}
 		return false;
@@ -315,22 +331,77 @@ namespace BusinessLayer{
 
 	bool Payment::CancelPayment(DataLayer::OrmasDal& ormasDal, int uID, int cID, std::string& errorMessage)
 	{
-		User user;
-		user.SetID(uID);
-		int balanceID = user.GetUserAccoutID(ormasDal, cID, errorMessage);
-		if (0 != balanceID && errorMessage.empty())
+		CompanyAccountRelation cAccRel;
+		CompanyEmployeeRelation cEmpRel;
+		Balance balance;
+		Company company;
+		if (balance.GetBalanceByUserID(ormasDal, uID, errorMessage))
 		{
-			BalancePaymentRelation bpRelation;
-			Balance balance;
-			if (balance.GetBalanceByID(ormasDal, balanceID, errorMessage))
+			int credAccID = balance.GetSubaccountID();
+			int companyID = company.GetCompanyID(ormasDal, errorMessage);
+			int debAccID = cAccRel.GetAccountIDByCompanyID(ormasDal, companyID, "10110", errorMessage);
+			if (0 == debAccID || 0 == credAccID || 0 == companyID)
 			{
-				//balance.SetValue(balance.GetValue() - value);
-				bpRelation.SetBalanceID(balanceID);
-				bpRelation.SetPaymentID(id);
-				if (balance.UpdateBalance(ormasDal, errorMessage) && bpRelation.DeleteBalancePaymentRelation(ormasDal, errorMessage))
+				return false;
+			}
+			if (this->CorrectingEntry(ormasDal, debAccID, value, credAccID, ormasDal.GetSystemDateTime(), errorMessage))
+			{
+				BalancePaymentRelation bpRelation;
+				bpRelation.SetBalanceID(balance.GetID());
+				bpRelation.SetPaymentID(this->id);
+				if (bpRelation.DeleteBalancePaymentRelation(ormasDal, errorMessage))
 					return true;
 			}
 		}
 		return false;
+	}
+
+	bool Payment::CreateEntry(DataLayer::OrmasDal& ormasDal, int debAccID, double currentSum, int credAccID, std::string oExecDate, std::string& errorMessage)
+	{
+		Entry entry;
+		entry.SetDate(oExecDate);
+		entry.SetDebitingAccountID(debAccID);
+		entry.SetValue(currentSum);
+		entry.SetCreditingAccountID(credAccID);
+		if (!entry.CreateEntry(ormasDal, errorMessage))
+		{
+			return false;
+		}
+		return true;
+	}
+	bool Payment::CreateEntry(DataLayer::OrmasDal& ormasDal, int debAccID, double currentSum, int credAccID, double previousSum, std::string oExecDate, std::string& errorMessage)
+	{
+		Entry entry;
+		entry.SetDate(oExecDate);
+		entry.SetDebitingAccountID(credAccID);
+		entry.SetValue(previousSum);
+		entry.SetCreditingAccountID(debAccID);
+		if (!entry.CreateEntry(ormasDal, errorMessage, true))
+		{
+			return false;
+		}
+		entry.Clear();
+		entry.SetDate(oExecDate);
+		entry.SetDebitingAccountID(debAccID);
+		entry.SetValue(currentSum);
+		entry.SetCreditingAccountID(credAccID);
+		if (!entry.CreateEntry(ormasDal, errorMessage))
+		{
+			return false;
+		}
+		return true;
+	}
+	bool Payment::CorrectingEntry(DataLayer::OrmasDal& ormasDal, int debAccID, double currentSum, int credAccID, std::string oExecDate, std::string& errorMessage)
+	{
+		Entry entry;
+		entry.SetDate(oExecDate);
+		entry.SetDebitingAccountID(credAccID);
+		entry.SetValue(currentSum);
+		entry.SetCreditingAccountID(debAccID);
+		if (!entry.CreateEntry(ormasDal, errorMessage, true))
+		{
+			return false;
+		}
+		return true;
 	}
 }

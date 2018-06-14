@@ -48,14 +48,14 @@ public:
     QLabel *balanceLb;
     QLabel *dateLb;
     QLabel *currencyLb;
-    QPushButton *employeeBtn;
+    QPushButton *userBtn;
     QLineEdit *valueEdit;
     QCheckBox *yesCheckBox;
     QLineEdit *currencyNameEdit;
     QLineEdit *balanceEdit;
     QDateTimeEdit *dateEdit;
     QComboBox *currencyCmb;
-    QLineEdit *employeeEdit;
+    QLineEdit *userEdit;
 
     void setupUi(QDialog *CreateWithdrawal)
     {
@@ -164,11 +164,11 @@ public:
 
         gridLayout->addWidget(currencyLb, 8, 1, 1, 2);
 
-        employeeBtn = new QPushButton(CreateWithdrawal);
-        employeeBtn->setObjectName(QStringLiteral("employeeBtn"));
-        employeeBtn->setMinimumSize(QSize(150, 0));
+        userBtn = new QPushButton(CreateWithdrawal);
+        userBtn->setObjectName(QStringLiteral("userBtn"));
+        userBtn->setMinimumSize(QSize(150, 0));
 
-        gridLayout->addWidget(employeeBtn, 1, 1, 1, 2);
+        gridLayout->addWidget(userBtn, 1, 1, 1, 2);
 
         valueEdit = new QLineEdit(CreateWithdrawal);
         valueEdit->setObjectName(QStringLiteral("valueEdit"));
@@ -202,13 +202,13 @@ public:
 
         gridLayout->addWidget(currencyCmb, 8, 3, 1, 2);
 
-        employeeEdit = new QLineEdit(CreateWithdrawal);
-        employeeEdit->setObjectName(QStringLiteral("employeeEdit"));
-        employeeEdit->setReadOnly(true);
+        userEdit = new QLineEdit(CreateWithdrawal);
+        userEdit->setObjectName(QStringLiteral("userEdit"));
+        userEdit->setReadOnly(true);
 
-        gridLayout->addWidget(employeeEdit, 1, 3, 1, 2);
+        gridLayout->addWidget(userEdit, 1, 3, 1, 2);
 
-        QWidget::setTabOrder(employeeBtn, okBtn);
+        QWidget::setTabOrder(userBtn, okBtn);
         QWidget::setTabOrder(okBtn, cancelBtn);
 
         retranslateUi(CreateWithdrawal);
@@ -233,13 +233,13 @@ public:
         balanceLb->setText(QApplication::translate("CreateWithdrawal", "Balance:", 0));
         dateLb->setText(QApplication::translate("CreateWithdrawal", "Date:", 0));
         currencyLb->setText(QApplication::translate("CreateWithdrawal", "Select currency:", 0));
-        employeeBtn->setText(QApplication::translate("CreateWithdrawal", "Select employee", 0));
+        userBtn->setText(QApplication::translate("CreateWithdrawal", "Select user", 0));
         yesCheckBox->setText(QApplication::translate("CreateWithdrawal", "Yes", 0));
 #ifndef QT_NO_TOOLTIP
         balanceEdit->setToolTip(QApplication::translate("CreateWithdrawal", "<html><head/><body><p>For example: 1000 (depends on currency, in that case 1000 USD)</p></body></html>", 0));
 #endif // QT_NO_TOOLTIP
 #ifndef QT_NO_TOOLTIP
-        employeeEdit->setToolTip(QApplication::translate("CreateWithdrawal", "Must not be empty", 0));
+        userEdit->setToolTip(QApplication::translate("CreateWithdrawal", "Must not be empty", 0));
 #endif // QT_NO_TOOLTIP
     } // retranslateUi
 

@@ -183,6 +183,21 @@ namespace BusinessLayer{
 		return false;
 	}
 
+	int Company::GetCompanyID(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
+	{
+		std::string filter = this->GenerateFilter(ormasDal);
+		std::vector<DataLayer::companiesCollection> companyVector = ormasDal.GetCompanies(errorMessage, filter);
+		if (0 != companyVector.size())
+		{
+			return std::get<0>(companyVector.at(0));
+		}
+		else
+		{
+			errorMessage = "Cannot find company with this id";
+		}
+		return 0;
+	}
+
 	bool Company::IsEmpty()
 	{
 		if (0 == id && name == "" && address == "" && phone == "" && comment == "")

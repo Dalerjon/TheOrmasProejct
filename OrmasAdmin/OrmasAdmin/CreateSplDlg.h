@@ -3,6 +3,7 @@
 
 #include "ui_CreateSplDlg.h"
 #include "OrmasBL.h"
+#include "MainForm.h"
 
 class CreateSplDlg : public QDialog, public Ui::CreateSpoilage
 {
@@ -21,17 +22,20 @@ public:
 	void OpenEmpDlg();
 	void OpenStsDlg();
 	void OpenSplListDlg();
+	void TextEditChanged();
 	public slots:
 	void SetID(int ID, QString childName);
 signals:
 	void CloseCreatedForms();
 private:
 	BusinessLayer::Spoilage *spoilage = new BusinessLayer::Spoilage();
-	void SetSpoilageParams(QString, int, int, double, int, int, int = 0);
-	void FillEditElements( QString, int, int, double, int, int);
+	void SetSpoilageParams(QString, int, double, double, int, int, int = 0);
+	void FillEditElements(QString, int, double, double, int, int);
 	QDoubleValidator *vDouble = nullptr;
 	QIntValidator *vInt = nullptr;
 	std::map<std::string, int> statusMap;
 	void InitComboBox();
+	QWidget* parentForm;
+	MainForm* mainForm;
 };
 #endif //CREATESPLDLG_H

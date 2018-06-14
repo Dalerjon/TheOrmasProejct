@@ -65,7 +65,7 @@ namespace BusinessLayer
 	}
 	std::string ConsumeRawView::GetStockEmployeePosition()
 	{
-		return stockEmployeePhone;
+		return stockEmployeePosition;
 	}
 	std::string ConsumeRawView::GetCurrencyName()
 	{

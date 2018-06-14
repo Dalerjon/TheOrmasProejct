@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "ReturnClass.h"
+#include "ReturnListClass.h"
 #include "UserClass.h"
 #include "BalanceClass.h"
 #include "RefundClass.h"
@@ -46,7 +47,7 @@ namespace BusinessLayer
 		return employeeID;
 	}
 
-	int Return::GetCount()
+	double Return::GetCount()
 	{
 		return count;
 	}
@@ -87,7 +88,7 @@ namespace BusinessLayer
 		employeeID = rEmployeeID;
 	}
 	
-	void Return::SetCount(int rCount)
+	void Return::SetCount(double rCount)
 	{
 		count = rCount;
 	}
@@ -107,7 +108,7 @@ namespace BusinessLayer
 		currencyID = rCurrencyID;
 	}
 
-	bool Return::CreateReturn(DataLayer::OrmasDal& ormasDal, int clID, std::string rDate, std::string rExecDate, int eID, int rCount,
+	bool Return::CreateReturn(DataLayer::OrmasDal& ormasDal, int clID, std::string rDate, std::string rExecDate, int eID, double rCount,
 		double rSum, int sID, int cID, std::string& errorMessage)
 	{
 		if (IsDuplicate(ormasDal, clID, rDate, rCount, rSum, cID, errorMessage))
@@ -128,12 +129,16 @@ namespace BusinessLayer
 		{
 			if (statusID == statusMap.find("EXECUTED")->second)
 			{
-				if (!BalanceRefund(ormasDal, clientID, sum, currencyID, executionDate, errorMessage) ||
-					!ChangesAtStock(ormasDal, id, errorMessage))
+				if (ChangesAtStock(ormasDal, id, clientID, errorMessage))
+				{
+					ormasDal.CommitTransaction(errorMessage);
+					return true;
+				}
+				else
 				{
 					ormasDal.CancelTransaction(errorMessage);
 					return false;
-				}				
+				}
 			}
 			ormasDal.CommitTransaction(errorMessage);
 			return true;
@@ -157,8 +162,12 @@ namespace BusinessLayer
 		{
 			if (statusID == statusMap.find("EXECUTED")->second)
 			{
-				if (!BalanceRefund(ormasDal, clientID, sum, currencyID, executionDate, errorMessage) ||
-					!ChangesAtStock(ormasDal, id, errorMessage))
+				if (ChangesAtStock(ormasDal, id, clientID, errorMessage))
+				{
+					ormasDal.CommitTransaction(errorMessage);
+					return true;
+				}
+				else
 				{
 					ormasDal.CancelTransaction(errorMessage);
 					return false;
@@ -178,6 +187,19 @@ namespace BusinessLayer
 	{
 		if (!ormasDal.StartTransaction(errorMessage))
 			return false;
+		Return ret;
+		if (!ret.GetReturnByID(ormasDal, id, errorMessage))
+		{
+			return false;
+		}
+		std::map<std::string, int> statusMap = BusinessLayer::Status::GetStatusesAsMap(ormasDal, errorMessage);
+		if (0 == statusMap.size())
+			return false;
+		if (ret.GetStatusID() == statusMap.find("EXECUTED")->second)
+		{
+			errorMessage = "Cannot delete document with \"EXECUTED\" status!";
+			return false;
+		}
 		if (ormasDal.DeleteReturn(id, errorMessage))
 		{
 			if (ormasDal.DeleteListByReturnID(id, errorMessage))
@@ -201,11 +223,14 @@ namespace BusinessLayer
 		}
 		return false;
 	}
-	bool Return::UpdateReturn(DataLayer::OrmasDal& ormasDal, int clID, std::string rDate, std::string rExecDate, int eID, int rCount,
+	bool Return::UpdateReturn(DataLayer::OrmasDal& ormasDal, int clID, std::string rDate, std::string rExecDate, int eID, double rCount,
 		double rSum, int sID, int cID, std::string& errorMessage)
 	{
 		std::map<std::string, int> statusMap = BusinessLayer::Status::GetStatusesAsMap(ormasDal, errorMessage);
 		if (0 == statusMap.size())
+			return false;
+		std::map<int, double> prodCountMap = GetProductCount(ormasDal, id, errorMessage);
+		if (0 == prodCountMap.size())
 			return false;
 		clientID = clID;
 		date = rDate;
@@ -223,21 +248,36 @@ namespace BusinessLayer
 		{
 			if (statusID == statusMap.find("EXECUTED")->second && previousStatusID != statusMap.find("EXECUTED")->second)
 			{
-				if (!BalanceRefund(ormasDal, clientID, sum, currencyID, executionDate, errorMessage) ||
-					ChangesAtStock(ormasDal, id, errorMessage))
+				if (!ChangesAtStock(ormasDal, id, clientID, errorMessage))
 				{
 					ormasDal.CancelTransaction(errorMessage);
 					return false;
 				}
-				
+				else
+				{
+					ormasDal.CommitTransaction(errorMessage);
+					return false;
+				}
 			}
 			if (statusID == statusMap.find("EXECUTED")->second && previousStatusID == statusMap.find("EXECUTED")->second && previousSum != sum)
 			{
-				if (!BalanceRefund(ormasDal, clientID, sum, previousSum, currencyID, executionDate, errorMessage) ||
-					ChangesAtStock(ormasDal, id, previousSum, previousCount, errorMessage))
+				if (count != previousCount || sum != previousSum)
 				{
-					ormasDal.CancelTransaction(errorMessage);
-					return false;
+					if (ChangesAtStock(ormasDal, id, clientID, prodCountMap, previousSum, errorMessage))
+					{
+						ormasDal.CommitTransaction(errorMessage);
+						return true;
+					}
+					else
+					{
+						ormasDal.CommitTransaction(errorMessage);
+						return false;
+					}
+				}
+				else
+				{
+					ormasDal.CommitTransaction(errorMessage);
+					return true;
 				}
 			}
 			ormasDal.CancelTransaction(errorMessage);
@@ -255,6 +295,9 @@ namespace BusinessLayer
 		std::map<std::string, int> statusMap = BusinessLayer::Status::GetStatusesAsMap(ormasDal, errorMessage);
 		if (0 == statusMap.size())
 			return false;
+		std::map<int, double> prodCountMap = GetProductCount(ormasDal, id, errorMessage);
+		if (0 == prodCountMap.size())
+			return false;
 		previousSum = GetCurrentSum(ormasDal, id, errorMessage);
 		previousCount = GetCurrentCount(ormasDal, id, errorMessage);
 		previousStatusID = GetCurrentStatusID(ormasDal, id, errorMessage);
@@ -263,21 +306,36 @@ namespace BusinessLayer
 		{
 			if (statusID == statusMap.find("EXECUTED")->second && previousStatusID != statusMap.find("EXECUTED")->second)
 			{
-				if (!BalanceRefund(ormasDal, clientID, sum, currencyID, executionDate, errorMessage) ||
-					ChangesAtStock(ormasDal, id, errorMessage))
+				if (ChangesAtStock(ormasDal, id, clientID, errorMessage))
 				{
-					ormasDal.CancelTransaction(errorMessage);
+					ormasDal.CommitTransaction(errorMessage);
+					return true;
+				}
+				else
+				{
+					ormasDal.CommitTransaction(errorMessage);
 					return false;
 				}
-
 			}
 			if (statusID == statusMap.find("EXECUTED")->second && previousStatusID == statusMap.find("EXECUTED")->second && previousSum != sum)
 			{
-				if (!BalanceRefund(ormasDal, clientID, sum, previousSum, currencyID, executionDate, errorMessage) ||
-					ChangesAtStock(ormasDal, id, previousSum, previousCount, errorMessage))
+				if (count != previousCount || sum != previousSum)
 				{
-					ormasDal.CancelTransaction(errorMessage);
-					return false;
+					if (ChangesAtStock(ormasDal, id, clientID, prodCountMap, previousSum, errorMessage))
+					{
+						ormasDal.CommitTransaction(errorMessage);
+						return true;
+					}
+					else
+					{
+						ormasDal.CommitTransaction(errorMessage);
+						return false;
+					}
+				}
+				else
+				{
+					ormasDal.CommitTransaction(errorMessage);
+					return true;
 				}
 			}
 			ormasDal.CancelTransaction(errorMessage);
@@ -344,7 +402,7 @@ namespace BusinessLayer
 		currencyID = 0;
 	}
 
-	bool Return::IsDuplicate(DataLayer::OrmasDal& ormasDal, int clID, std::string rDate, int rCount, double rSum,
+	bool Return::IsDuplicate(DataLayer::OrmasDal& ormasDal, int clID, std::string rDate, double rCount, double rSum,
 		int cID, std::string& errorMessage)
 	{
 		Return ret;
@@ -385,41 +443,6 @@ namespace BusinessLayer
 		return true;
 	}
 
-	bool Return::BalanceRefund(DataLayer::OrmasDal& ormasDal, int clID, double rSum, int cID, std::string rExecDate, std::string& errorMessage)
-	{
-		Refund refund;
-		refund.SetDate(rExecDate);
-		refund.SetUserID(clID);
-		refund.SetValue(rSum);
-		refund.SetCurrencyID(cID);
-		if (refund.CreateRefund(ormasDal, errorMessage))
-		{
-			return true;
-		}
-		return false;
-	}
-
-	bool Return::BalanceRefund(DataLayer::OrmasDal& ormasDal, int clID, double rSum, double prevSum, int cID, std::string rExecDate, std::string& errorMessage)
-	{
-		Refund refund;
-		refund.SetDate(rExecDate);
-		refund.SetUserID(clID);
-		refund.SetValue(rSum);
-		refund.SetCurrencyID(cID);
-		std::string filter = refund.GenerateFilter(ormasDal);
-		std::vector<DataLayer::refundsViewCollection> refundVector = ormasDal.GetRefunds(errorMessage, filter);
-		if (0 != refundVector.size())
-		{
-			//get last payment from vector if GetWithdrawals return several rows
-			refund.SetID(std::get<0>(refundVector.at(refundVector.size() - 1)));
-			if (refund.UpdateRefund(ormasDal, errorMessage))
-			{
-				return true;
-			}
-		}
-		return false;
-	}
-
 	double Return::GetCurrentSum(DataLayer::OrmasDal& ormasDal, int rID, std::string& errorMessage)
 	{
 		Return ret;
@@ -429,7 +452,7 @@ namespace BusinessLayer
 		return 0;
 	}
 
-	int Return::GetCurrentCount(DataLayer::OrmasDal& ormasDal, int rID, std::string& errorMessage)
+	double Return::GetCurrentCount(DataLayer::OrmasDal& ormasDal, int rID, std::string& errorMessage)
 	{
 		Return ret;
 		ret.GetReturnByID(ormasDal, rID, errorMessage);
@@ -438,16 +461,16 @@ namespace BusinessLayer
 		return 0;
 	}
 
-	bool Return::ChangesAtStock(DataLayer::OrmasDal& ormasDal, int rID, std::string& errorMessage)
+	bool Return::ChangesAtStock(DataLayer::OrmasDal& ormasDal, int rID, int cID, std::string& errorMessage)
 	{
 		Stock stock;
-		return stock.ChangingByReceiptProduct(ormasDal, rID, errorMessage);
+		return stock.ChangingByReturnProduct(ormasDal, rID, cID, errorMessage);
 	}
 
-	bool Return::ChangesAtStock(DataLayer::OrmasDal& ormasDal, int rID, double rSum, int rCount, std::string& errorMessage)
+	bool Return::ChangesAtStock(DataLayer::OrmasDal& ormasDal, int rID, int cID, std::map<int, double> pProdCountMap, double rSum, std::string& errorMessage)
 	{
 		Stock stock;
-		return stock.ChangingByReceiptProduct(ormasDal, rID, rSum, rCount, errorMessage);
+		return stock.ChangingByReturnProduct(ormasDal, rID, cID, pProdCountMap, rSum, errorMessage);
 	}
 
 	int Return::GetCurrentStatusID(DataLayer::OrmasDal& ormasDal, int rID, std::string& errorMessage)
@@ -457,5 +480,21 @@ namespace BusinessLayer
 		if (errorMessage.empty())
 			return ret.GetStatusID();
 		return 0;
+	}
+	std::map<int, double> Return::GetProductCount(DataLayer::OrmasDal& ormasDal, int cpID, std::string& errorMessage)
+	{
+		std::map<int, double> mapProdCount;
+		ReturnList rPList;
+		rPList.SetReturnID(cpID);
+		std::string filter = rPList.GenerateFilter(ormasDal);
+		std::vector<DataLayer::returnListViewCollection> productListVector = ormasDal.GetReturnList(errorMessage, filter);
+		if (productListVector.size() > 0)
+		{
+			for each (auto item in productListVector)
+			{
+				mapProdCount.insert(std::make_pair(std::get<11>(item), std::get<7>(item)));
+			}
+		}
+		return mapProdCount;
 	}
 }

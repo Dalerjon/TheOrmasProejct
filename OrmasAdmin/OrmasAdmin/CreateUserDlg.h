@@ -2,6 +2,7 @@
 #define CREATEUSERDLG_H
 #include "ui_CreateUserDlg.h"
 #include "OrmasBL.h"
+#include "MainForm.h"
 
 class CreateUserDlg : public QDialog, public Ui::CreateUser
 {
@@ -25,6 +26,8 @@ private:
 	void SetUserParams(QString, QString, QString, QString, QString, int, QString, QString, int = 0);
 	void FillEditElements(QString, QString, QString, QString, QString, int, QString, QString);
 	QIntValidator *vInt = nullptr;
+	QWidget* parentForm;
+	MainForm* mainForm;
 };
 
 #endif //CREATEUSERDLG_H

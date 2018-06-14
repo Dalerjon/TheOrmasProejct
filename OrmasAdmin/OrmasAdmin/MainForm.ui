@@ -64,6 +64,7 @@
     <addaction name="actionClients"/>
     <addaction name="actionEmployees"/>
     <addaction name="actionPurveyors"/>
+    <addaction name="actionCompanyEmployees"/>
     <addaction name="separator"/>
     <addaction name="actionAccess"/>
     <addaction name="actionAccessItems"/>
@@ -79,6 +80,8 @@
     <addaction name="actionProductPhoto"/>
     <addaction name="actionSpecifications"/>
     <addaction name="actionSpecificationList"/>
+    <addaction name="actionPrices"/>
+    <addaction name="actionNetCost"/>
    </widget>
    <widget class="QMenu" name="menuOrders">
     <property name="title">
@@ -104,6 +107,7 @@
     <addaction name="actionLocation"/>
     <addaction name="actionRoles"/>
     <addaction name="actionStatus"/>
+    <addaction name="actionStatusRule"/>
     <addaction name="actionRelation"/>
     <addaction name="actionRelationType"/>
    </widget>
@@ -119,14 +123,17 @@
     </property>
     <addaction name="actionProduction"/>
     <addaction name="actionProductionList"/>
+    <addaction name="actionProductionStock"/>
+    <addaction name="actionProductionConsumeRaws"/>
+    <addaction name="actionProductionPlan"/>
+    <addaction name="actionProductionPlanList"/>
     <addaction name="actionJobprice"/>
     <addaction name="actionJobsheet"/>
     <addaction name="actionPercentRate"/>
     <addaction name="actionTimesheet"/>
-    <addaction name="actionProductionPlan"/>
-    <addaction name="actionProductionPlanList"/>
     <addaction name="actionSpoilage"/>
     <addaction name="actionSpoilageList"/>
+    <addaction name="actionReworkRaws"/>
    </widget>
    <widget class="QMenu" name="menuWriteOffs">
     <property name="title">
@@ -140,24 +147,20 @@
      <string>Accounting</string>
     </property>
     <addaction name="actionBalances"/>
-    <addaction name="actionPayments"/>
-    <addaction name="actionRefund"/>
-    <addaction name="actionNetCost"/>
-    <addaction name="actionPrices"/>
+    <addaction name="actionAccounts"/>
+    <addaction name="actionSubaccounts"/>
+    <addaction name="actionGenerateOneAccount"/>
+    <addaction name="actionGenerateAccounts"/>
     <addaction name="separator"/>
     <addaction name="actionSalary"/>
     <addaction name="actionSalaryType"/>
     <addaction name="actionPayroll"/>
-    <addaction name="actionWithdrawal"/>
-    <addaction name="actionPayslip"/>
     <addaction name="separator"/>
-    <addaction name="actionAccounts"/>
     <addaction name="actionAccountType"/>
     <addaction name="actionChartOfAccounts"/>
     <addaction name="actionCompanyAccounts"/>
     <addaction name="actionEntry"/>
-    <addaction name="actionGenerateAccounts"/>
-    <addaction name="actionGenerateOneAccount"/>
+    <addaction name="actionEntryRouting"/>
    </widget>
    <widget class="QMenu" name="menuStock">
     <property name="title">
@@ -173,6 +176,21 @@
     <addaction name="actionConsumptionProducts"/>
     <addaction name="actionInventorization"/>
    </widget>
+   <widget class="QMenu" name="menuCash">
+    <property name="title">
+     <string>Cash</string>
+    </property>
+    <addaction name="actionPayments"/>
+    <addaction name="actionPayslip"/>
+    <addaction name="actionRefund"/>
+    <addaction name="actionWithdrawal"/>
+   </widget>
+   <widget class="QMenu" name="menuReports">
+    <property name="title">
+     <string>Reports</string>
+    </property>
+    <addaction name="actionCompanyBalanceInfo"/>
+   </widget>
    <addaction name="menuUsers"/>
    <addaction name="menuProducts"/>
    <addaction name="menuOrders"/>
@@ -180,7 +198,9 @@
    <addaction name="menuWriteOffs"/>
    <addaction name="menuProductions"/>
    <addaction name="menuAccountings"/>
+   <addaction name="menuCash"/>
    <addaction name="menuStock"/>
+   <addaction name="menuReports"/>
    <addaction name="menuReferences"/>
    <addaction name="menuHelp"/>
   </widget>
@@ -472,7 +492,7 @@
   </action>
   <action name="actionCompanyAccounts">
    <property name="text">
-    <string>Company accouts</string>
+    <string>Company accounts</string>
    </property>
   </action>
   <action name="actionEntry">
@@ -518,6 +538,46 @@
   <action name="actionGenerateOneAccount">
    <property name="text">
     <string>Generate one account</string>
+   </property>
+  </action>
+  <action name="actionEntryRouting">
+   <property name="text">
+    <string>Entry routing</string>
+   </property>
+  </action>
+  <action name="actionCompanyEmployees">
+   <property name="text">
+    <string>Company employees</string>
+   </property>
+  </action>
+  <action name="actionProductionStock">
+   <property name="text">
+    <string>Production stock</string>
+   </property>
+  </action>
+  <action name="actionStatusRule">
+   <property name="text">
+    <string>Status rule</string>
+   </property>
+  </action>
+  <action name="actionSubaccounts">
+   <property name="text">
+    <string>Subaccounts</string>
+   </property>
+  </action>
+  <action name="actionProductionConsumeRaws">
+   <property name="text">
+    <string>Consume raws</string>
+   </property>
+  </action>
+  <action name="actionCompanyBalanceInfo">
+   <property name="text">
+    <string>Company balance info</string>
+   </property>
+  </action>
+  <action name="actionReworkRaws">
+   <property name="text">
+    <string>Rework raws</string>
    </property>
   </action>
  </widget>

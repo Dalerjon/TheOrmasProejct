@@ -2,6 +2,7 @@
 #define CREATEPHTDLG_H
 #include "ui_CreatePhtDlg.h"
 #include "OrmasBL.h"
+#include "MainForm.h"
 
 class CreatePhtDlg : public QDialog, public Ui::CreatePhoto
 {
@@ -26,5 +27,7 @@ private:
 	void SetPhotoParams(int, int, QString, int = 0);
 	void FillEditElements(int, int, QString);
 	QIntValidator *vInt = nullptr;
+	QWidget* parentForm;
+	MainForm* mainForm;
 };
 #endif //CREATECURDLG_H

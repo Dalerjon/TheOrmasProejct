@@ -1,28 +1,26 @@
 #include "stdafx.h"
 #include "GenerateOneAccDlg.h"
-#include "MainForm.h"
-#include "ExtraFunctions.h"
-#include <QMessageBox>
-#include <QProgressDialog>
-
+#include "DataForm.h"
 
 GenerateOneAcc::GenerateOneAcc(BusinessLayer::OrmasBL *ormasBL, QWidget *parent) :QDialog(parent)
 {
 	setupUi(this);
 	setModal(true);
 	dialogBL = ormasBL;
+	parentForm = parent;
+	MainForm *mainForm = (MainForm *)this->parent();
 	InitComboBox();
 	vInt = new QIntValidator(0, 1000000000, this);
 	chartOfAccEdit->setValidator(vInt);
 	QObject::connect(generateBtn, &QPushButton::released, this, &GenerateOneAcc::Generate);
 	QObject::connect(cancelBtn, &QPushButton::released, this, &GenerateOneAcc::Close);
-	QObject::connect(chartOfAccEdit, &QLineEdit::textChanged, this, &GenerateOneAcc::OpenCOADlg);
+	QObject::connect(chartOfAccBtn, &QPushButton::released, this, &GenerateOneAcc::OpenCOADlg);
 	QObject::connect(this, SIGNAL(CloseCreatedForms()), ((MainForm*)((DataForm*)parent)->GetParent()), SLOT(CloseChildsByName()));
 }
 
 GenerateOneAcc::~GenerateOneAcc()
 {
-	delete account;
+	delete subaccount;
 	delete status;
 	delete caRelation;
 	emit CloseCreatedForms();
@@ -34,6 +32,13 @@ void GenerateOneAcc::SetID(int ID, QString childName)
 	{
 		if (0 != childName.length())
 		{
+			this->hide();
+			this->setWindowFlags(this->windowFlags() | Qt::WindowStaysOnTopHint);
+			this->show();
+			this->raise();
+			this->activateWindow();
+			QApplication::setActiveWindow(this);
+
 			if (childName == QString("chartOfAccountForm"))
 			{
 				chartOfAccEdit->setText(QString::number(ID));
@@ -49,8 +54,8 @@ void GenerateOneAcc::SetID(int ID, QString childName)
 
 void GenerateOneAcc::Generate()
 {
-	BusinessLayer::AccountType acType;
 	BusinessLayer::Currency currency;
+	BusinessLayer::Account account;
 	std::string number = "";
 	std::string genAccRawNumber = "";
 
@@ -79,14 +84,6 @@ void GenerateOneAcc::Generate()
 			errorMessage.clear();
 			return;
 		}
-		if (!acType.GetAccountTypeByID(dialogBL->GetOrmasDal(), coAcc.GetAccountTypeID(), errorMessage))
-		{
-			QMessageBox::information(NULL, QString(tr("Warning")),
-				QString(tr("Account type is empty please contact with Administrator")),
-				QString(tr("Ok")));
-			errorMessage.clear();
-			Close();
-		}
 		if (!currency.GetCurrencyByID(dialogBL->GetOrmasDal(), currencyCmb->currentData().toInt(), errorMessage))
 		{
 			dialogBL->CancelTransaction(errorMessage);
@@ -97,10 +94,20 @@ void GenerateOneAcc::Generate()
 			return;
 		}
 
-		number = std::to_string(coAcc.GetNumber());
+		number = coAcc.GetNumber();
+		
+		if (!account.GetAccountByNumber(dialogBL->GetOrmasDal(), coAcc.GetNumber(), errorMessage))
+		{
+			dialogBL->CancelTransaction(errorMessage);
+			QMessageBox::information(NULL, QString(tr("Warning")),
+				QString(tr(errorMessage.c_str())),
+				QString(tr("Ok")));
+			errorMessage.clear();
+			return;
+		}
+
 		number.append(std::to_string(currency.GetCode()));
-		number.append(std::to_string(acType.GetNumber()));
-		genAccRawNumber = account->GenerateRawNumber(dialogBL->GetOrmasDal(), errorMessage);
+		genAccRawNumber = subaccount->GenerateRawNumber(dialogBL->GetOrmasDal(), errorMessage);
 		if (genAccRawNumber.empty())
 		{
 			QMessageBox::information(NULL, QString(tr("Info")),
@@ -109,28 +116,20 @@ void GenerateOneAcc::Generate()
 			Close();
 		}
 		number.append(genAccRawNumber);
-		account->Clear();
-		account->SetNumber(number);
-		account->SetStartBalance(0.0);
-		account->SetCurrentBalance(0.0);
-		account->SetCurrencyID(currencyCmb->currentData().toInt());
-		account->SetStatusID(status->GetID());
-		account->SetOpenedDate(dialogBL->GetOrmasDal().GetSystemDate());
-		account->SetClosedDate("");
-		account->SetDetails("");
+		subaccount->Clear();
+		subaccount->SetParentAccountID(account.GetID());
+		subaccount->SetNumber(number);
+		subaccount->SetStartBalance(0.0);
+		subaccount->SetCurrentBalance(0.0);
+		subaccount->SetCurrencyID(currencyCmb->currentData().toInt());
+		subaccount->SetStatusID(status->GetID());
+		subaccount->SetOpenedDate(dialogBL->GetOrmasDal().GetSystemDate());
+		subaccount->SetClosedDate("");
+		subaccount->SetDetails("");
 
-		if (!account->CreateAccount(dialogBL->GetOrmasDal(), errorMessage))
+		if (subaccount->CreateSubaccount(dialogBL->GetOrmasDal(), errorMessage))
 		{
-			caRelation->Clear();
-			caRelation->SetAccountID(account->GetID());
-			caRelation->SetCompanyID(companyCmb->currentData().toInt());
-			if (!caRelation->CreateCompanyAccountRelation(dialogBL->GetOrmasDal(), errorMessage))
-			{
-				QMessageBox::information(NULL, QString(tr("Info")),
-					QString(tr("Cannot create relation with generated account and company! Please contact with Administrator!")),
-					QString(tr("Ok")));
-				Close();
-			}
+			Close();
 		}
 		else
 		{
@@ -142,11 +141,12 @@ void GenerateOneAcc::Generate()
 		number = "";
 		genAccRawNumber = "";
 	}
+	Close();
 }
 
 void GenerateOneAcc::Close()
 {
-	this->close();
+	this->parentWidget()->close();
 }
 
 void GenerateOneAcc::OpenCOADlg()
@@ -154,8 +154,6 @@ void GenerateOneAcc::OpenCOADlg()
 	this->hide();
 	this->setModal(false);
 	this->show();
-	DataForm *userParent = (DataForm *)parent();
-	MainForm *mainForm = (MainForm *)userParent->GetParent();
 	QString message = tr("Loading...");
 	mainForm->statusBar()->showMessage(message);
 	DataForm *dForm = new DataForm(dialogBL, mainForm);
@@ -166,18 +164,20 @@ void GenerateOneAcc::OpenCOADlg()
 	dForm->FillTable<BusinessLayer::ChartOfAccountsView>(errorMessage);
 	if (errorMessage.empty())
 	{
-		dForm->generateOneAcc = this;
+		dForm->parentDialog = this;
 		dForm->setObjectName("chartOfAccountForm");
 		dForm->QtConnect<BusinessLayer::ChartOfAccountsView>();
 		QMdiSubWindow *coAccWindow = new QMdiSubWindow;
 		coAccWindow->setWidget(dForm);
 		coAccWindow->setAttribute(Qt::WA_DeleteOnClose);
 		mainForm->mdiArea->addSubWindow(coAccWindow);
+		coAccWindow->resize(dForm->size().width() + 18, dForm->size().height() + 30);
 		dForm->topLevelWidget();
 		dForm->activateWindow();
 		QApplication::setActiveWindow(dForm);
 		dForm->show();
 		dForm->raise();
+		dForm->setWindowFlags(dForm->windowFlags() | Qt::WindowStaysOnTopHint);
 		QString message = tr("All statuses are shown");
 		mainForm->statusBar()->showMessage(message);
 	}
@@ -209,7 +209,7 @@ void GenerateOneAcc::InitComboBox()
 	{
 		for (unsigned int i = 0; i < comVector.size(); i++)
 		{
-			currencyCmb->addItem(comVector[i].GetName().c_str(), QVariant(comVector[i].GetID()));
+			companyCmb->addItem(comVector[i].GetName().c_str(), QVariant(comVector[i].GetID()));
 		}
 	}
 }

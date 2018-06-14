@@ -22,6 +22,7 @@ private:
 	BusinessLayer::RelationType *relationType = new BusinessLayer::RelationType();
 	void SetRelationTypeParams(QString, QString, int = 0);
 	void FillEditElements(QString, QString);
+	QWidget* parentForm;
 };
 
 #endif //CREATERELTYPEDLG_H

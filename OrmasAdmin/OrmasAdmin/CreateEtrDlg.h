@@ -2,6 +2,7 @@
 #define CREATEETRDLG_H
 #include "ui_CreateEtrDlg.h"
 #include "OrmasBL.h"
+#include "MainForm.h"
 
 class CreateEtrDlg : public QDialog, public Ui::CreateEntry
 {
@@ -19,7 +20,11 @@ public:
 	void Close();
 	void OpenDAccDlg();
 	void OpenCAccDlg();
-	void TextChanged();
+	void OpenDSAccDlg();
+	void OpenCSAccDlg();
+	void DATextChanged();
+	void CATextChanged();
+	void TextEditChanged();
 	public slots:
 	void SetID(int ID, QString childName);
 private:
@@ -28,6 +33,8 @@ private:
 	void FillEditElements(QString, int, double, int);
 	QDoubleValidator *vDouble = nullptr;
 	QIntValidator *vInt = nullptr;
+	QWidget* parentForm;
+	MainForm* mainForm;
 };
 
 #endif //CREATEETRDLG_H

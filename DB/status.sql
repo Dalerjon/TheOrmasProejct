@@ -24,10 +24,40 @@ INSERT INTO "OrmasSchema".status(
     VALUES ((SELECT nextval('"OrmasSchema".id_seq')), '0008', 'TO RETURN', 'Status of ordering');
 INSERT INTO "OrmasSchema".status(
             status_id, status_code, status_name, comment)
-    VALUES ((SELECT nextval('"OrmasSchema".id_seq')), '0009', 'WRITEOFFED', 'Status of ordering');
+    VALUES ((SELECT nextval('"OrmasSchema".id_seq')), '0009', 'WRITE-OFFED', 'Status of ordering');
 INSERT INTO "OrmasSchema".status(
             status_id, status_code, status_name, comment)
     VALUES ((SELECT nextval('"OrmasSchema".id_seq')), '0010', 'PRODUCED', 'Status of product production');
 INSERT INTO "OrmasSchema".status(
             status_id, status_code, status_name, comment)
-    VALUES ((SELECT nextval('"OrmasSchema".id_seq')), '0011', 'IN STOKE', 'Status of product production');
+    VALUES ((SELECT nextval('"OrmasSchema".id_seq')), '0011', 'IN STOCK', 'Status of product production');
+	INSERT INTO "OrmasSchema".status(
+            status_id, status_code, status_name, comment)
+    VALUES ((SELECT nextval('"OrmasSchema".id_seq')), '0012', 'TRANSPORTING', 'Products are transporting');
+INSERT INTO "OrmasSchema".status(
+            status_id, status_code, status_name, comment)
+    VALUES ((SELECT nextval('"OrmasSchema".id_seq')), '0013', 'TRANSPORTED', 'Products were transported');
+INSERT INTO "OrmasSchema".status(
+            status_id, status_code, status_name, comment)
+    VALUES ((SELECT nextval('"OrmasSchema".id_seq')), '0014', 'CONSUMED', 'Products/Raws were consumed');
+INSERT INTO "OrmasSchema".status(
+            status_id, status_code, status_name, comment)
+    VALUES ((SELECT nextval('"OrmasSchema".id_seq')), '0015', 'RECEIPTED', 'Products/Raws were receipted');
+INSERT INTO "OrmasSchema".status(
+            status_id, status_code, status_name, comment)
+    VALUES ((SELECT nextval('"OrmasSchema".id_seq')), '0016', 'INVENTORIZED', 'Inventorization of stock');
+INSERT INTO "OrmasSchema".status(
+            status_id, status_code, status_name, comment)
+    VALUES ((SELECT nextval('"OrmasSchema".id_seq')), '0017', 'STOKEED', 'Products are stoked');
+INSERT INTO "OrmasSchema".status(
+            status_id, status_code, status_name, comment)
+    VALUES ((SELECT nextval('"OrmasSchema".id_seq')), '0018', 'OPEN', 'Account status is opened');
+INSERT INTO "OrmasSchema".status(
+            status_id, status_code, status_name, comment)
+    VALUES ((SELECT nextval('"OrmasSchema".id_seq')), '0019', 'CLOSED', 'Account status is closed');
+INSERT INTO "OrmasSchema".status(
+            status_id, status_code, status_name, comment)
+    VALUES ((SELECT nextval('"OrmasSchema".id_seq')), '0020', 'PLANNED', 'Production is planed');
+INSERT INTO "OrmasSchema".status(
+            status_id, status_code, status_name, comment)
+    VALUES ((SELECT nextval('"OrmasSchema".id_seq')), '0021', 'SPOILAGE', 'Product is spoilage');

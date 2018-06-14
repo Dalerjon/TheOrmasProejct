@@ -10,12 +10,12 @@ namespace BusinessLayer
 		int id = 0;
 		int transportID = 0;
 		int productID = 0;
-		int count = 0;
+		double count = 0;
 		double sum = 0;
 		int statusID = 0;
 		int currencyID = 0;
 	public:
-		TransportList(int tlID, int tID, int pID, int tlCount, double tlSum, int sID, int cID) :id(tlID), transportID(tID),
+		TransportList(int tlID, int tID, int pID, double tlCount, double tlSum, int sID, int cID) :id(tlID), transportID(tID),
 			productID(pID),	count(tlCount), sum(tlSum), statusID(sID), currencyID(cID){};
 		TransportList(DataLayer::transportListCollection);
 		TransportList(){};
@@ -25,7 +25,7 @@ namespace BusinessLayer
 		int GetID();
 		int GetTransportID();
 		int GetProductID();
-		int GetCount();
+		double GetCount();
 		double GetSum();
 		int GetStatusID();
 		int GetCurrencyID();
@@ -34,7 +34,7 @@ namespace BusinessLayer
 		void SetID(int);
 		void SetTransportID(int);
 		void SetProductID(int);
-		void SetCount(int);
+		void SetCount(double);
 		void SetSum(double);
 		void SetStatusID(int);
 		void SetCurrencyID(int);
@@ -44,9 +44,9 @@ namespace BusinessLayer
 		bool UpdateTransportList(DataLayer::OrmasDal& ormasDal, std::string& errorMessage);
 		bool DeleteTransportList(DataLayer::OrmasDal& ormasDal, std::string& errorMessage);
 		bool DeleteListByTransportID(DataLayer::OrmasDal& ormasDal, int tID, std::string& errorMessage);
-		bool CreateTransportList(DataLayer::OrmasDal& ormasDal, int tID, int pID, int tlCount, double tlSum,
+		bool CreateTransportList(DataLayer::OrmasDal& ormasDal, int tID, int pID, double tlCount, double tlSum,
 			int sID, int cID, std::string& errorMessage);
-		bool UpdateTransportList(DataLayer::OrmasDal& ormasDal, int tID, int pID, int tlCount, double tlSum,
+		bool UpdateTransportList(DataLayer::OrmasDal& ormasDal, int tID, int pID, double tlCount, double tlSum,
 			int sID, int cID, std::string& errorMessage);
 
 		//Generate filter string for class
@@ -55,7 +55,7 @@ namespace BusinessLayer
 		bool IsEmpty();
 		void Clear();
 	private:
-		bool IsDuplicate(DataLayer::OrmasDal& ormasDal, int tID, int pID, int tlCount, double tlSum,
+		bool IsDuplicate(DataLayer::OrmasDal& ormasDal, int tID, int pID, double tlCount, double tlSum,
 			int cID, std::string& errorMessage);
 		bool IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string& errorMessage);
 	};

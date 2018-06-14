@@ -1,9 +1,7 @@
 #include "stdafx.h"
-#include <QMessageBox>
 #include "CreateStsDlg.h"
 #include "MainForm.h"
 #include "DataForm.h"
-#include "ExtraFunctions.h"
 
 CreateStsDlg::CreateStsDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, QWidget *parent) :QDialog(parent)
 {
@@ -12,6 +10,7 @@ CreateStsDlg::CreateStsDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, QWi
 	codeEdit->setMaxLength(4);
 	nameEdit->setMaxLength(10);
 	dialogBL = ormasBL;
+	parentForm = parent;
 	if (true == updateFlag)
 	{
 		QObject::connect(okBtn, &QPushButton::released, this, &CreateStsDlg::EditStatus);
@@ -64,19 +63,24 @@ void CreateStsDlg::CreateStatus()
 	errorMessage.clear();
 	if (!(codeEdit->text().isEmpty() || nameEdit->text().isEmpty()))
 	{
-		DataForm *parentDataForm = (DataForm*)parentWidget();
+		DataForm *parentDataForm = (DataForm*) parentForm;
 		SetStatusParams(codeEdit->text(), nameEdit->text(), commentTextEdit->toPlainText());
 		dialogBL->StartTransaction(errorMessage);
 		if (dialogBL->CreateStatus(status, errorMessage))
 		{
-			QList<QStandardItem*> statusItem;
-			statusItem << new QStandardItem(QString::number(status->GetID())) << new QStandardItem(status->GetCode().c_str())
-				<< new QStandardItem(status->GetName().c_str()) << new QStandardItem(status->GetComment().c_str());
-			QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
-			itemModel->appendRow(statusItem);
-			
+			if (parentDataForm != nullptr)
+			{
+				if (!parentDataForm->IsClosed())
+				{
+					QList<QStandardItem*> statusItem;
+					statusItem << new QStandardItem(QString::number(status->GetID())) << new QStandardItem(status->GetCode().c_str())
+						<< new QStandardItem(status->GetName().c_str()) << new QStandardItem(status->GetComment().c_str());
+					QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
+					itemModel->appendRow(statusItem);
+				}
+			}
 			dialogBL->CommitTransaction(errorMessage);
-			this->close();
+			Close();
 		}
 		else
 		{
@@ -103,20 +107,26 @@ void CreateStsDlg::EditStatus()
 		if (QString(status->GetCode().c_str()) != codeEdit->text() || QString(status->GetName().c_str()) != nameEdit->text()
 			|| QString(status->GetComment().c_str()) != commentTextEdit->toPlainText())
 		{
-			DataForm *parentDataForm = (DataForm*)parentWidget();
+			DataForm *parentDataForm = (DataForm*) parentForm;
 			SetStatusParams(codeEdit->text(), nameEdit->text(), commentTextEdit->toPlainText(), status->GetID());
 			dialogBL->StartTransaction(errorMessage);
 			if (dialogBL->UpdateStatus(status, errorMessage))
 			{
-				QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
-				QModelIndex mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
-				itemModel->item(mIndex.row(), 1)->setText(status->GetCode().c_str());
-				itemModel->item(mIndex.row(), 2)->setText(status->GetName().c_str());
-				itemModel->item(mIndex.row(), 3)->setText(status->GetComment().c_str());
-				emit itemModel->dataChanged(mIndex, mIndex);
+				if (parentDataForm != nullptr)
+				{
+					if (!parentDataForm->IsClosed())
+					{
+						QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
+						QModelIndex mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
+						itemModel->item(mIndex.row(), 1)->setText(status->GetCode().c_str());
+						itemModel->item(mIndex.row(), 2)->setText(status->GetName().c_str());
+						itemModel->item(mIndex.row(), 3)->setText(status->GetComment().c_str());
+						emit itemModel->dataChanged(mIndex, mIndex);
+					}
+				}
 				
 				dialogBL->CommitTransaction(errorMessage);
-				this->close();
+				Close();
 			}
 			else
 			{
@@ -128,7 +138,7 @@ void CreateStsDlg::EditStatus()
 		}
 		else
 		{
-			this->close();
+			Close();
 		}
 	}
 	else
@@ -142,7 +152,7 @@ void CreateStsDlg::EditStatus()
 
 void CreateStsDlg::Close()
 {
-	this->close();
+	this->parentWidget()->close();
 }
 void CreateStsDlg::TextEditChanged()
 {

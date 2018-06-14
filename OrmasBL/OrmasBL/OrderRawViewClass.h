@@ -9,14 +9,14 @@ namespace BusinessLayer
 	{
 		std::string statusCode = "";
 		std::string statusName = "";
+		std::string purveyorName = "";
+		std::string purveyorSurname = "";
+		std::string purveyorPhone = "";
+		std::string purveyorCompanyName = "";
 		std::string employeeName = "";
 		std::string employeeSurname = "";
 		std::string employeePhone = "";
 		std::string employeePosition = "";
-		std::string stockEmployeeName = "";
-		std::string stockEmployeeSurname = "";
-		std::string stockEmployeePhone = "";
-		std::string stockEmployeePosition = "";
 		std::string currencyName = "";
 	public:
 		OrderRawView(DataLayer::orderRawsViewCollection);
@@ -26,14 +26,14 @@ namespace BusinessLayer
 		// OrderView class Accessors
 		std::string GetStatusCode();
 		std::string GetStatusName();
+		std::string GetPurveyorName();
+		std::string GetPurveyorSurname();
+		std::string GetPurveyorPhone();
+		std::string GetPurveyorCompanyName();
 		std::string GetEmployeeName();
 		std::string GetEmployeeSurname();
 		std::string GetEmployeePhone();
 		std::string GetEmployeePosition();
-		std::string GetStockEmployeeName();
-		std::string GetStockEmployeeSurname();
-		std::string GetStockEmployeePhone();
-		std::string GetStockEmployeePosition();
 		std::string GetCurrencyName();
 
 	};

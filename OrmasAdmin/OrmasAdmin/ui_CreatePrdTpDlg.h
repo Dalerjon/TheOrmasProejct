@@ -37,12 +37,14 @@ public:
     QPushButton *okBtn;
     QPushButton *cancelBtn;
     QLineEdit *shortNameEdit;
+    QLineEdit *codeEdit;
+    QLabel *codeLb;
 
     void setupUi(QDialog *CreateProductType)
     {
         if (CreateProductType->objectName().isEmpty())
             CreateProductType->setObjectName(QStringLiteral("CreateProductType"));
-        CreateProductType->resize(400, 99);
+        CreateProductType->resize(400, 127);
         QSizePolicy sizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
         sizePolicy.setHorizontalStretch(0);
         sizePolicy.setVerticalStretch(0);
@@ -86,12 +88,22 @@ public:
         horizontalLayout->addWidget(cancelBtn);
 
 
-        gridLayout->addLayout(horizontalLayout, 2, 0, 1, 2);
+        gridLayout->addLayout(horizontalLayout, 3, 0, 1, 2);
 
         shortNameEdit = new QLineEdit(CreateProductType);
         shortNameEdit->setObjectName(QStringLiteral("shortNameEdit"));
 
         gridLayout->addWidget(shortNameEdit, 1, 1, 1, 1);
+
+        codeEdit = new QLineEdit(CreateProductType);
+        codeEdit->setObjectName(QStringLiteral("codeEdit"));
+
+        gridLayout->addWidget(codeEdit, 2, 1, 1, 1);
+
+        codeLb = new QLabel(CreateProductType);
+        codeLb->setObjectName(QStringLiteral("codeLb"));
+
+        gridLayout->addWidget(codeLb, 2, 0, 1, 1);
 
         QWidget::setTabOrder(nameEdit, shortNameEdit);
         QWidget::setTabOrder(shortNameEdit, okBtn);
@@ -115,6 +127,10 @@ public:
 #ifndef QT_NO_TOOLTIP
         shortNameEdit->setToolTip(QApplication::translate("CreateProductType", "<html><head/><body><p>For example: Dairy</p></body></html>", 0));
 #endif // QT_NO_TOOLTIP
+#ifndef QT_NO_TOOLTIP
+        codeEdit->setToolTip(QApplication::translate("CreateProductType", "<html><head/><body><p>For example: PRODUCT</p></body></html>", 0));
+#endif // QT_NO_TOOLTIP
+        codeLb->setText(QApplication::translate("CreateProductType", "Code:", 0));
     } // retranslateUi
 
 };

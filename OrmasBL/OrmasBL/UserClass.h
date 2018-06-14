@@ -23,7 +23,7 @@ namespace BusinessLayer
 		bool IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string& errorMessage);
 		bool IsUnique(DataLayer::OrmasDal& ormasDal, std::string uPhone, std::string& errorMessage);
 		bool IsUnique(DataLayer::OrmasDal& ormasDal, std::string& errorMessage);
-		bool CreateAccount(DataLayer::OrmasDal& ormasDal, std::string& errorMessage);
+		bool CreateBalance(DataLayer::OrmasDal& ormasDal, std::string& errorMessage);
 	public:
 		User(int uID, std::string uEmail, std::string uName, std::string uSurname, std::string uPhone, std::string uAddress, 
 			int uRoleID, std::string uPassword, bool uActivated) :id(uID), email(uEmail), name(uName), phone(uPhone), surname(uSurname)
@@ -69,7 +69,8 @@ namespace BusinessLayer
 		bool GetUserByCredentials(DataLayer::OrmasDal& ormasDal, std::string uPhoneOrEmail, std::string uPassword);
 		bool IsEmpty();
 		void Clear();
-		int GetUserAccoutID(DataLayer::OrmasDal& ormasDal, int cID, std::string& errorMessage);
+		int GetUserBalanceID(DataLayer::OrmasDal& ormasDal, int cID, std::string& errorMessage);
+		std::string GetCurrentPhone(DataLayer::OrmasDal& ormasDal, int uID, std::string& errorMessage);
 	};
 }
 #endif //USERCLASS_H

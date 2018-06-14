@@ -21,5 +21,6 @@ private:
 	BusinessLayer::Location *location = new BusinessLayer::Location();
 	void SetLocationParams(QString, QString, QString, QString, int = 0);
 	void FillEditElements(QString, QString, QString, QString);
+	QWidget* parentForm;
 };
 #endif //CREATELCNDLG_H

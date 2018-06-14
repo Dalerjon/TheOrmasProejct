@@ -52,7 +52,7 @@ public:
     QLabel *volumeLb;
     QComboBox *measureCmb;
     QLineEdit *positionEdit;
-    QLabel *PositionLb;
+    QLabel *positionLb;
     QPushButton *positionBtn;
 
     void setupUi(QDialog *CreateJobprice)
@@ -200,10 +200,10 @@ public:
 
         gridLayout->addWidget(positionEdit, 8, 2, 1, 1);
 
-        PositionLb = new QLabel(CreateJobprice);
-        PositionLb->setObjectName(QStringLiteral("PositionLb"));
+        positionLb = new QLabel(CreateJobprice);
+        positionLb->setObjectName(QStringLiteral("positionLb"));
 
-        gridLayout->addWidget(PositionLb, 8, 3, 1, 1);
+        gridLayout->addWidget(positionLb, 8, 3, 1, 1);
 
         positionBtn = new QPushButton(CreateJobprice);
         positionBtn->setObjectName(QStringLiteral("positionBtn"));
@@ -242,7 +242,7 @@ public:
         prodNameLb->setText(QApplication::translate("CreateJobprice", "Product name:", 0));
         prodNamePh->setText(QString());
         volumeLb->setText(QApplication::translate("CreateJobprice", "Volume:", 0));
-        PositionLb->setText(QApplication::translate("CreateJobprice", "Product type name:", 0));
+        positionLb->setText(QApplication::translate("CreateJobprice", "Position name:", 0));
         positionBtn->setText(QApplication::translate("CreateJobprice", "Select position", 0));
     } // retranslateUi
 

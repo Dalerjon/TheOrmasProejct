@@ -12,12 +12,12 @@ namespace BusinessLayer
 		int id = 0;
 		std::string date = "";
 		int employeeID = 0;
-		int count = 0;
+		double count = 0;
 		double sum = 0;
 		int statusID = 0;
 		int currencyID = 0;
 	public:
-		ProductionPlan(int pID, std::string pDate, int eID, int pCount, double pSum, int sID, int cID) :
+		ProductionPlan(int pID, std::string pDate, int eID, double pCount, double pSum, int sID, int cID) :
 			id(pID), date(pDate), employeeID(eID), count(pCount), sum(pSum), statusID(sID), currencyID(cID){};
 		ProductionPlan(DataLayer::productionPlanCollection);
 		ProductionPlan(){};
@@ -27,7 +27,7 @@ namespace BusinessLayer
 		int GetID();
 		std::string GetDate();
 		int GetEmployeeID();
-		int GetCount();
+		double GetCount();
 		double GetSum();
 		int GetStatusID();
 		int GetCurrencyID();
@@ -36,7 +36,7 @@ namespace BusinessLayer
 		void SetID(int);
 		void SetDate(std::string);
 		void SetEmployeeID(int);
-		void SetCount(int);
+		void SetCount(double);
 		void SetSum(double);
 		void SetStatusID(int);
 		void SetCurrencyID(int);
@@ -45,9 +45,9 @@ namespace BusinessLayer
 		bool CreateProductionPlan(DataLayer::OrmasDal& ormasDal, std::string& errorMessage);
 		bool UpdateProductionPlan(DataLayer::OrmasDal& ormasDal, std::string& errorMessage);
 		bool DeleteProductionPlan(DataLayer::OrmasDal& ormasDal, std::string& errorMessage);
-		bool CreateProductionPlan(DataLayer::OrmasDal& ormasDal, std::string oDate, int eID, int oCount,
+		bool CreateProductionPlan(DataLayer::OrmasDal& ormasDal, std::string oDate, int eID, double oCount,
 			double oSum, int sID, int cID, std::string& errorMessage);
-		bool UpdateProductionPlan(DataLayer::OrmasDal& ormasDal, std::string oDate, int eID, int oCount,
+		bool UpdateProductionPlan(DataLayer::OrmasDal& ormasDal, std::string oDate, int eID, double oCount,
 			double oSum, int sID, int cID, std::string& errorMessage);
 
 		//Generate filter string for class
@@ -56,7 +56,7 @@ namespace BusinessLayer
 		bool IsEmpty();
 		void Clear();
 	private:
-		bool IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string oDate, int oCount, double oSum,
+		bool IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string oDate, double oCount, double oSum,
 			int cID, std::string& errorMessage);
 		bool IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string& errorMessage);
 	};

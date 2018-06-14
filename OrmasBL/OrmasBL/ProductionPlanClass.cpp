@@ -31,7 +31,7 @@ namespace BusinessLayer
 		return employeeID;
 	}
 
-	int ProductionPlan::GetCount()
+	double ProductionPlan::GetCount()
 	{
 		return count;
 	}
@@ -64,7 +64,7 @@ namespace BusinessLayer
 		employeeID = pEmployeeID;
 	}
 
-	void ProductionPlan::SetCount(int pCount)
+	void ProductionPlan::SetCount(double pCount)
 	{
 		count = pCount;
 	}
@@ -84,7 +84,7 @@ namespace BusinessLayer
 		currencyID = pCurrencyID;
 	}
 
-	bool ProductionPlan::CreateProductionPlan(DataLayer::OrmasDal& ormasDal, std::string pDate, int eID, int pCount,
+	bool ProductionPlan::CreateProductionPlan(DataLayer::OrmasDal& ormasDal, std::string pDate, int eID, double pCount,
 		double pSum, int sID, int cID, std::string& errorMessage)
 	{
 		if (IsDuplicate(ormasDal, pDate, pCount, pSum, cID, errorMessage))
@@ -159,7 +159,7 @@ namespace BusinessLayer
 		}
 		return false;
 	}
-	bool ProductionPlan::UpdateProductionPlan(DataLayer::OrmasDal& ormasDal, std::string pDate, int eID, int pCount,
+	bool ProductionPlan::UpdateProductionPlan(DataLayer::OrmasDal& ormasDal, std::string pDate, int eID, double pCount,
 		double pSum, int sID, int cID, std::string& errorMessage)
 	{
 		std::map<std::string, int> statusMap = BusinessLayer::Status::GetStatusesAsMap(ormasDal, errorMessage);
@@ -253,7 +253,7 @@ namespace BusinessLayer
 		currencyID = 0;
 	}
 
-	bool ProductionPlan::IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string pDate, int pCount, double pSum,
+	bool ProductionPlan::IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string pDate, double pCount, double pSum,
 		int cID, std::string& errorMessage)
 	{
 		ProductionPlan productionPlan;

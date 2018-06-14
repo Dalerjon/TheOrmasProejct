@@ -68,8 +68,8 @@ public:
     {
         if (DataForm->objectName().isEmpty())
             DataForm->setObjectName(QStringLiteral("DataForm"));
-        DataForm->resize(700, 401);
-        DataForm->setMinimumSize(QSize(700, 400));
+        DataForm->resize(800, 500);
+        DataForm->setMinimumSize(QSize(800, 500));
         DataForm->setLocale(QLocale(QLocale::English, QLocale::UnitedStates));
         gridLayout = new QGridLayout(DataForm);
         gridLayout->setObjectName(QStringLiteral("gridLayout"));
@@ -171,7 +171,7 @@ public:
         gridLayout_3->setContentsMargins(3, 3, 3, 3);
         valueLb = new QLabel(tab1);
         valueLb->setObjectName(QStringLiteral("valueLb"));
-        valueLb->setMaximumSize(QSize(60, 16777215));
+        valueLb->setMaximumSize(QSize(70, 16777215));
         valueLb->setAlignment(Qt::AlignCenter);
 
         gridLayout_3->addWidget(valueLb, 0, 4, 1, 1);
@@ -202,7 +202,7 @@ public:
 
         filterTypeLb = new QLabel(tab1);
         filterTypeLb->setObjectName(QStringLiteral("filterTypeLb"));
-        filterTypeLb->setMaximumSize(QSize(60, 16777215));
+        filterTypeLb->setMaximumSize(QSize(80, 16777215));
         filterTypeLb->setAlignment(Qt::AlignCenter);
 
         gridLayout_3->addWidget(filterTypeLb, 0, 2, 1, 1);

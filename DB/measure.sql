@@ -1,4 +1,4 @@
-------------------------------------Measure--------------------------------------------------------------------------
+﻿------------------------------------Measure--------------------------------------------------------------------------
 
 INSERT INTO "OrmasSchema".measures(
             measure_id, measure_name, measure_short_name, measure_unit)
@@ -15,3 +15,7 @@ INSERT INTO "OrmasSchema".measures(
 INSERT INTO "OrmasSchema".measures(
             measure_id, measure_name, measure_short_name, measure_unit)
     VALUES ((SELECT nextval('"OrmasSchema".id_seq')), 'Миллилитр', 'мл', 1);
+
+INSERT INTO "OrmasSchema".measures(
+            measure_id, measure_name, measure_short_name, measure_unit)
+    VALUES ((SELECT nextval('"OrmasSchema".id_seq')), 'Штука', 'шт', 1);

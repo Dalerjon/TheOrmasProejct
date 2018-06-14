@@ -2,6 +2,7 @@
 #define CREATECONRLISTDLG_H
 #include "ui_CreateConRListDlg.h"
 #include "OrmasBL.h"
+#include "MainForm.h"
 
 class CreateConRListDlg : public QDialog, public Ui::CreateConRList
 {
@@ -21,14 +22,19 @@ public:
 	void OpenConRDlg();
 	void OpenProdDlg();
 	void OpenStsDlg();
+	void TextEditChanged();
 	public slots:
 	void SetID(int ID, QString childName);
+signals:
+	void DataIsChanged();
 private:
 	BusinessLayer::ConsumeRawList *consumeRawList = new BusinessLayer::ConsumeRawList();
-	void SetConRListParams(int, int, int, double, int, int, int = 0);
-	void FillEditElements(int, int, int, double, int, int);
+	void SetConRListParams(int, int, double, double, int, int, int = 0);
+	void FillEditElements(int, int, double, double, int, int);
 	QDoubleValidator *vDouble = nullptr;
 	QIntValidator *vInt = nullptr;
 	void InitComboBox();
+	QWidget* parentForm;
+	MainForm* mainForm;
 };
 #endif //CREATEORDLITDLG_H

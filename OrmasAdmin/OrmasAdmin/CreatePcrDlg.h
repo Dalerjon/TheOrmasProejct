@@ -2,6 +2,7 @@
 #define CREATEPCRDLG_H
 #include "ui_CreatePcrDlg.h"
 #include "OrmasBL.h"
+#include "MainForm.h"
 
 class CreatePcrDlg : public QDialog, public Ui::CreatePercentRate
 {
@@ -18,6 +19,7 @@ public:
 	void DeletePercentRate(){};
 	void Close();
 	void OpenPosDlg();
+	void TextEditChanged();
 	public slots:
 	void SetID(int ID, QString childName);
 private:
@@ -26,6 +28,8 @@ private:
 	void FillEditElements(double, QString, int);
 	QDoubleValidator *vDouble = nullptr;
 	QIntValidator *vInt = nullptr;
+	QWidget* parentForm;
+	MainForm* mainForm;
 };
 
 #endif //CreatePcrDLG_H

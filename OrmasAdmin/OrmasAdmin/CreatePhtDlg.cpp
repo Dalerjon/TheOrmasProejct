@@ -1,9 +1,7 @@
 #include "stdafx.h"
 #include "CreatePhtDlg.h"
-#include <QMessageBox>
-#include "MainForm.h"
 #include "DataForm.h"
-#include "ExtraFunctions.h"
+
 
 
 CreatePhtDlg::CreatePhtDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, QWidget *parent) :QDialog(parent)
@@ -11,6 +9,9 @@ CreatePhtDlg::CreatePhtDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, QWi
 	setupUi(this);
 	setModal(true);
 	dialogBL = ormasBL;
+	parentForm = parent;
+	DataForm *dataFormParent = (DataForm *)this->parentForm;
+	mainForm = (MainForm *)dataFormParent->GetParent();
 	vInt = new QIntValidator(0, 1000000000, this);
 	productEdit->setValidator(vInt);
 	userEdit->setValidator(vInt);
@@ -19,6 +20,12 @@ CreatePhtDlg::CreatePhtDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, QWi
 	{
 		productEdit->setVisible(false);
 		productBtn->setVisible(false);
+		prodNameLb->setVisible(false);
+		volumeLb->setVisible(false);
+		measureLb->setVisible(false);
+		prodNamePh->setVisible(false);
+		volumePh->setVisible(false);
+		measurePh->setVisible(false);
 		userEdit->setVisible(true);
 		userBtn->setVisible(true);
 	}
@@ -26,6 +33,12 @@ CreatePhtDlg::CreatePhtDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, QWi
 	{
 		userEdit->setVisible(false);
 		userBtn->setVisible(false);
+		nameLb->setVisible(false);
+		surnameLb->setVisible(false);
+		phoneLb->setVisible(false);
+		namePh->setVisible(false);
+		surnamePh->setVisible(false);
+		phonePh->setVisible(false);
 		productEdit->setVisible(true);
 		productBtn->setVisible(true);
 	}
@@ -53,6 +66,13 @@ void CreatePhtDlg::SetID(int ID, QString childName)
 	{
 		if (0 != childName.length())
 		{
+			this->hide();
+			this->setWindowFlags(this->windowFlags() | Qt::WindowStaysOnTopHint);
+			this->show();
+			this->raise();
+			this->activateWindow();
+			QApplication::setActiveWindow(this);
+
 			if (childName == QString("userForm"))
 			{
 				userEdit->setText(QString::number(ID));
@@ -141,19 +161,24 @@ void CreatePhtDlg::CreatePhoto()
 	errorMessage.clear();
 	if (!sourceEdit->text().isEmpty() && (0 != userEdit->text().toInt() || 0 != productEdit->text().toInt()))
 	{
-		DataForm *parentDataForm = (DataForm*)parentWidget();
+		DataForm *parentDataForm = (DataForm*) parentForm;
 		SetPhotoParams(userEdit->text().toInt(), productEdit->text().toInt(), sourceEdit->text());
 		dialogBL->StartTransaction(errorMessage);
 		if (dialogBL->CreatePhoto(photo, errorMessage))
 		{
-			QList<QStandardItem*> photoItem;
-			photoItem << new QStandardItem(QString::number(photo->GetID())) << new QStandardItem(QString::number(photo->GetUserID()))
-				<< new QStandardItem(QString::number(photo->GetProductID())) << new QStandardItem(photo->GetSource().c_str());
-			QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
-			itemModel->appendRow(photoItem);
-			
+			if (parentDataForm != nullptr)
+			{
+				if (!parentDataForm->IsClosed())
+				{
+					QList<QStandardItem*> photoItem;
+					photoItem << new QStandardItem(QString::number(photo->GetID())) << new QStandardItem(QString::number(photo->GetUserID()))
+						<< new QStandardItem(QString::number(photo->GetProductID())) << new QStandardItem(photo->GetSource().c_str());
+					QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
+					itemModel->appendRow(photoItem);
+				}
+			}
 			dialogBL->CommitTransaction(errorMessage);
-			this->close();
+			Close();
 		}
 		else
 		{
@@ -182,20 +207,26 @@ void CreatePhtDlg::EditPhoto()
 		if (photo->GetUserID() != userEdit->text().toInt() || photo->GetProductID() != productEdit->text().toInt()
 			|| QString(photo->GetSource().c_str()) != sourceEdit->text())
 		{
-			DataForm *parentDataForm = (DataForm*)parentWidget();
+			DataForm *parentDataForm = (DataForm*) parentForm;
 			SetPhotoParams(userEdit->text().toInt(), productEdit->text().toInt(), sourceEdit->text(), photo->GetID());
 			dialogBL->StartTransaction(errorMessage);
 			if (dialogBL->UpdatePhoto(photo, errorMessage))
 			{
-				QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
-				QModelIndex mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
-				itemModel->item(mIndex.row(), 1)->setText(QString::number(photo->GetUserID()));
-				itemModel->item(mIndex.row(), 2)->setText(QString::number(photo->GetProductID()));
-				itemModel->item(mIndex.row(), 3)->setText(photo->GetSource().c_str());
-				emit itemModel->dataChanged(mIndex, mIndex);
+				if (parentDataForm != nullptr)
+				{
+					if (!parentDataForm->IsClosed())
+					{
+						QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
+						QModelIndex mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
+						itemModel->item(mIndex.row(), 1)->setText(QString::number(photo->GetUserID()));
+						itemModel->item(mIndex.row(), 2)->setText(QString::number(photo->GetProductID()));
+						itemModel->item(mIndex.row(), 3)->setText(photo->GetSource().c_str());
+						emit itemModel->dataChanged(mIndex, mIndex);
+					}
+				}
 				
 				dialogBL->CommitTransaction(errorMessage);
-				this->close();
+				Close();
 			}
 			else
 			{
@@ -207,7 +238,7 @@ void CreatePhtDlg::EditPhoto()
 		}
 		else
 		{
-			this->close();
+			Close();
 		}
 	}
 	else
@@ -221,7 +252,7 @@ void CreatePhtDlg::EditPhoto()
 
 void CreatePhtDlg::Close()
 {
-	this->close();
+	this->parentWidget()->close();
 }
 
 void CreatePhtDlg::OpenUserDlg()
@@ -229,8 +260,6 @@ void CreatePhtDlg::OpenUserDlg()
 	this->hide();
 	this->setModal(false);
 	this->show();
-	DataForm *userParent = (DataForm *)parent();
-	MainForm *mainForm = (MainForm *)userParent->GetParent();
 	QString message = tr("Loading...");
 	mainForm->statusBar()->showMessage(message);
 	DataForm *dForm = new DataForm(dialogBL, mainForm);
@@ -240,18 +269,21 @@ void CreatePhtDlg::OpenUserDlg()
 	dForm->FillTable<BusinessLayer::UserView>(errorMessage);
 	if (errorMessage.empty())
 	{
-		dForm->createPhtDlg = this;
+		dForm->parentDialog = this;
 		dForm->setObjectName("userForm");
 		dForm->QtConnect<BusinessLayer::UserView>();
 		QMdiSubWindow *userWindow = new QMdiSubWindow;
 		userWindow->setWidget(dForm);
 		userWindow->setAttribute(Qt::WA_DeleteOnClose);
 		mainForm->mdiArea->addSubWindow(userWindow);
+		userWindow->resize(dForm->size().width() + 18, dForm->size().height() + 30);
 		dForm->topLevelWidget();
 		dForm->activateWindow();
 		QApplication::setActiveWindow(dForm);
+		dForm->HileSomeRow();
 		dForm->show();
 		dForm->raise();
+		dForm->setWindowFlags(dForm->windowFlags() | Qt::WindowStaysOnTopHint);
 		QString message = tr("All users are shown");
 		mainForm->statusBar()->showMessage(message);
 	}
@@ -272,8 +304,6 @@ void CreatePhtDlg::OpenPrdDlg()
 	this->hide();
 	this->setModal(false);
 	this->show();
-	DataForm *productParent = (DataForm *)parent();
-	MainForm *mainForm = (MainForm *)productParent->GetParent();
 	QString message = tr("Loading...");
 	mainForm->statusBar()->showMessage(message);
 	DataForm *dForm = new DataForm(dialogBL, mainForm);
@@ -283,18 +313,20 @@ void CreatePhtDlg::OpenPrdDlg()
 	dForm->FillTable<BusinessLayer::ProductView>(errorMessage);
 	if (errorMessage.empty())
 	{
-		dForm->createPhtDlg = this;
+		dForm->parentDialog = this;
 		dForm->setObjectName("productForm");
 		dForm->QtConnect<BusinessLayer::ProductView>();
 		QMdiSubWindow *productWindow = new QMdiSubWindow;
 		productWindow->setWidget(dForm);
 		productWindow->setAttribute(Qt::WA_DeleteOnClose);
 		mainForm->mdiArea->addSubWindow(productWindow);
+		productWindow->resize(dForm->size().width() + 18, dForm->size().height() + 30);
 		dForm->topLevelWidget();
 		dForm->activateWindow();
 		QApplication::setActiveWindow(dForm);
 		dForm->show();
 		dForm->raise();
+		dForm->setWindowFlags(dForm->windowFlags() | Qt::WindowStaysOnTopHint);
 		QString message = tr("All products are shown");
 		mainForm->statusBar()->showMessage(message);
 	}

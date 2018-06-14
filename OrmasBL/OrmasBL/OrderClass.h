@@ -14,12 +14,12 @@ namespace BusinessLayer
 		std::string date = "";
 		std::string executionDate = "";
 		int employeeID = 0;
-		int count = 0;
+		double count = 0;
 		double sum = 0;
 		int statusID = 0;
 		int currencyID = 0;
 	public:
-		Order(int oID, int clID, std::string oDate, std::string oExecDate, int eID, int oCount, double oSum, int sID, int cID) :
+		Order(int oID, int clID, std::string oDate, std::string oExecDate, int eID, double oCount, double oSum, int sID, int cID) :
 			id(oID), clientID(clID), date(oDate), executionDate(oExecDate), employeeID(eID), count(oCount), sum(oSum), 
 			statusID(sID), currencyID(cID){};
 		Order(DataLayer::ordersCollection);
@@ -32,7 +32,7 @@ namespace BusinessLayer
 		std::string GetDate();
 		std::string GetExecutionDate();
 		int GetEmployeeID();
-		int GetCount();
+		double GetCount();
 		double GetSum();
 		int GetStatusID();
 		int GetCurrencyID();
@@ -43,7 +43,7 @@ namespace BusinessLayer
 		void SetDate(std::string);
 		void SetExecutionDate(std::string);
 		void SetEmployeeID(int);
-		void SetCount(int);
+		void SetCount(double);
 		void SetSum(double);
 		void SetStatusID(int);
 		void SetCurrencyID(int);
@@ -52,9 +52,9 @@ namespace BusinessLayer
 		bool CreateOrder(DataLayer::OrmasDal& ormasDal, std::string& errorMessage);
 		bool UpdateOrder(DataLayer::OrmasDal& ormasDal, std::string& errorMessage);
 		bool DeleteOrder(DataLayer::OrmasDal& ormasDal, std::string& errorMessage);
-		bool CreateOrder(DataLayer::OrmasDal& ormasDal, int clID, std::string oDate, std::string oExecDate, int eID, int oCount, 
+		bool CreateOrder(DataLayer::OrmasDal& ormasDal, int clID, std::string oDate, std::string oExecDate, int eID, double oCount,
 			double oSum, int sID, int cID, std::string& errorMessage);
-		bool UpdateOrder(DataLayer::OrmasDal& ormasDal, int clID, std::string oDate, std::string oExecDate, int eID, int oCount, 
+		bool UpdateOrder(DataLayer::OrmasDal& ormasDal, int clID, std::string oDate, std::string oExecDate, int eID, double oCount,
 			double oSum, int sID, int cID, std::string& errorMessage);
 
 		//Generate filter string for class
@@ -65,14 +65,18 @@ namespace BusinessLayer
 		void Clear();
 	private:
 		double previousSum = 0.0;
-		double previousStatusID = 0;
-		bool IsDuplicate(DataLayer::OrmasDal& ormasDal, int clID, std::string oDate, int oCount, double oSum,
+		int previousStatusID = 0;
+		double prevCount = 0.0;
+		bool IsDuplicate(DataLayer::OrmasDal& ormasDal, int clID, std::string oDate, double oCount, double oSum,
 			int cID, std::string& errorMessage);
 		bool IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string& errorMessage);
-		bool BalanceWithdrawal(DataLayer::OrmasDal& ormasDal, int clID, double oSum, int cID, std::string oExecDate, std::string& errorMessage);
-		bool BalanceWithdrawal(DataLayer::OrmasDal& ormasDal, int clID, double oSum, double prevSum, int cID, std::string oExecDate, std::string& errorMessage);
+		bool CreateOrderEntry(DataLayer::OrmasDal& ormasDal, int clID, int eID, double oSum, int cID, std::string oExecDate, std::string& errorMessage);
+		bool CreateOrderEntry(DataLayer::OrmasDal& ormasDal, int clID, int eID, double oSum, double prevSum, int cID, std::string oExecDate, std::string& errorMessage);
 		double GetCurrentSum(DataLayer::OrmasDal& ormasDal, int oID, std::string& errorMessage);
-		double GetCurrentStatusID(DataLayer::OrmasDal& ormasDal, int oID, std::string& errorMessage);
+		int GetCurrentStatusID(DataLayer::OrmasDal& ormasDal, int oID, std::string& errorMessage);
+		double GetCurrentCount(DataLayer::OrmasDal& ormasDal, int oID, std::string& errorMessage);
+		bool CreateEntry(DataLayer::OrmasDal& ormasDal, int debAccID, double currentSum, int credAccID, std::string oExecDate, std::string& errorMessage);
+		bool CreateEntry(DataLayer::OrmasDal& ormasDal, int debAccID, double currentSum, int credAccID, double previousSum, std::string oExecDate, std::string& errorMessage);
 	};
 }
 #endif //ORDERCLASS_H

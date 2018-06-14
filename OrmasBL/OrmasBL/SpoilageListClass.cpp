@@ -29,7 +29,7 @@ namespace BusinessLayer
 		return productID;
 	}
 
-	int SpoilageList::GetCount()
+	double SpoilageList::GetCount()
 	{
 		return count;
 	}
@@ -61,7 +61,7 @@ namespace BusinessLayer
 	{
 		productID = sProductID;
 	}
-	void SpoilageList::SetCount(int sCount)
+	void SpoilageList::SetCount(double sCount)
 	{
 		count = sCount;
 	}
@@ -78,7 +78,7 @@ namespace BusinessLayer
 		currencyID = sCurrencyID;
 	}
 
-	bool SpoilageList::CreateSpoilageList(DataLayer::OrmasDal& ormasDal, int sID, int pID, int slCount, double slSum,
+	bool SpoilageList::CreateSpoilageList(DataLayer::OrmasDal& ormasDal, int sID, int pID, double slCount, double slSum,
 		int stsID, int cID, std::string& errorMessage)
 	{
 		id = ormasDal.GenerateID();
@@ -123,7 +123,7 @@ namespace BusinessLayer
 		return false;
 	}
 
-	bool SpoilageList::UpdateSpoilageList(DataLayer::OrmasDal& ormasDal, int sID, int pID, int slCount, double slSum,
+	bool SpoilageList::UpdateSpoilageList(DataLayer::OrmasDal& ormasDal, int sID, int pID, double slCount, double slSum,
 		int stsID, int cID, std::string& errorMessage)
 	{
 		spoilageID = sID;

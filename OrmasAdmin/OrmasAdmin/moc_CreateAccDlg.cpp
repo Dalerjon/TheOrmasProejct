@@ -20,7 +20,7 @@
 QT_BEGIN_MOC_NAMESPACE
 struct qt_meta_stringdata_CreateAccDlg_t {
     QByteArrayData data[11];
-    char stringdata0[101];
+    char stringdata0[106];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
@@ -35,16 +35,16 @@ QT_MOC_LITERAL(2, 27, 0), // ""
 QT_MOC_LITERAL(3, 28, 11), // "EditAccount"
 QT_MOC_LITERAL(4, 40, 13), // "DeleteAccount"
 QT_MOC_LITERAL(5, 54, 5), // "Close"
-QT_MOC_LITERAL(6, 60, 10), // "OpenStsDlg"
-QT_MOC_LITERAL(7, 71, 10), // "OpenCOADlg"
-QT_MOC_LITERAL(8, 82, 5), // "SetID"
-QT_MOC_LITERAL(9, 88, 2), // "ID"
-QT_MOC_LITERAL(10, 91, 9) // "childName"
+QT_MOC_LITERAL(6, 60, 10), // "OpenCOADlg"
+QT_MOC_LITERAL(7, 71, 15), // "TextEditChanged"
+QT_MOC_LITERAL(8, 87, 5), // "SetID"
+QT_MOC_LITERAL(9, 93, 2), // "ID"
+QT_MOC_LITERAL(10, 96, 9) // "childName"
 
     },
     "CreateAccDlg\0CreateAccount\0\0EditAccount\0"
-    "DeleteAccount\0Close\0OpenStsDlg\0"
-    "OpenCOADlg\0SetID\0ID\0childName"
+    "DeleteAccount\0Close\0OpenCOADlg\0"
+    "TextEditChanged\0SetID\0ID\0childName"
 };
 #undef QT_MOC_LITERAL
 
@@ -92,8 +92,8 @@ void CreateAccDlg::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id
         case 1: _t->EditAccount(); break;
         case 2: _t->DeleteAccount(); break;
         case 3: _t->Close(); break;
-        case 4: _t->OpenStsDlg(); break;
-        case 5: _t->OpenCOADlg(); break;
+        case 4: _t->OpenCOADlg(); break;
+        case 5: _t->TextEditChanged(); break;
         case 6: _t->SetID((*reinterpret_cast< int(*)>(_a[1])),(*reinterpret_cast< QString(*)>(_a[2]))); break;
         default: ;
         }

@@ -4,7 +4,8 @@
 #include "ui_DataForm.h"
 #include "OrmasBL.h"
 #include <QStandardItem>
-#include "AllDlgHeaders.h"
+#include <QStringList>
+#include <QDialog>
 
 
 class DataForm : public QWidget, public Ui::DataForm
@@ -78,6 +79,14 @@ private slots:
 	void UdpCmpDlg();
 	void DelCmpDlg();
 
+	void CrtCARDlg();
+	void UdpCARDlg();
+	void DelCARDlg();
+
+	void CrtCERDlg();
+	void UdpCERDlg();
+	void DelCERDlg();
+
 	void CrtCOADlg();
 	void UdpCOADlg();
 	void DelCOADlg();
@@ -109,6 +118,10 @@ private slots:
 	void CrtEtrDlg();
 	void UdpEtrDlg();
 	void DelEtrDlg();
+
+	void CrtEtrRtDlg();
+	void UdpEtrRtDlg();
+	void DelEtrRtDlg();
 
 	void CrtInvDlg();
 	void UdpInvDlg();
@@ -186,6 +199,18 @@ private slots:
 	void UdpProdnDlg();
 	void DelProdnDlg();
 
+	void CrtProdConRDlg();
+	void UdpProdConRDlg();
+	void DelProdConRDlg();
+
+	void CrtProdConRListDlg();
+	void UdpProdConRListDlg();
+	void DelProdConRListDlg();
+
+	void CrtProdnStockDlg();
+	void UdpProdnStockDlg();
+	void DelProdnStockDlg();
+
 	void CrtProdnListDlg();
 	void UdpProdnListDlg();
 	void DelProdnListDlg();
@@ -258,6 +283,10 @@ private slots:
 	void UdpStsDlg();
 	void DelStsDlg();
 
+	void CrtStsRuleDlg();
+	void UdpStsRuleDlg();
+	void DelStsRuleDlg();
+
 	void CrtSpecDlg();
 	void UdpSpecDlg();
 	void DelSpecDlg();
@@ -277,6 +306,10 @@ private slots:
 	void CrtStockDlg();
 	void UdpStockDlg();
 	void DelStockDlg();
+
+	void CrtSAccDlg();
+	void UdpSAccDlg();
+	void DelSAccDlg();
 
 	void CrtTmsDlg();
 	void UdpTmsDlg();
@@ -317,6 +350,7 @@ private slots:
 	void ChangeBtnState();
 	void GetIDValue(QModelIndex index);
 	void OnRowsNumberChanged();
+	void AcsDenied();
 	
 	public slots:
 	void CloseDataForm();
@@ -325,79 +359,28 @@ private slots:
 	void SendID(int ID, QString childName);
 	
 public:
-	BusinessLayer::OrmasBL *dataFormBL;
+	BusinessLayer::OrmasBL* dataFormBL;
 	QWidget* parentForm;
-	ClcWagesDlg* clcWagesDlg = nullptr;
-	CreateAcsDlg* createAcsDlg = nullptr;
-	CreateAccDlg* createAccDlg = nullptr;
-	CreateBlcDlg* createBlcDlg = nullptr;
-	CreateCltDlg* createCltDlg = nullptr;
-	CreateConPDlg* createConPDlg = nullptr;
-	CreateConPListDlg* createConPListDlg = nullptr;
-	CreateConRDlg* createConRDlg = nullptr;
-	CreateConRListDlg* createConRListDlg = nullptr;
-	CreateCOADlg* createCOADlg = nullptr;
-	CreateEmpDlg* createEmpDlg = nullptr;
-	CreateEtrDlg* createEtrDlg = nullptr;
-	CreateNetCDlg* createNetCDlg = nullptr;
-	CreateInvDlg* createInvDlg = nullptr;
-	CreateInvListDlg* createInvListDlg = nullptr;
-	CreateJbpDlg* createJbpDlg = nullptr;
-	CreateJbsDlg* createJbsDlg = nullptr;
-	CreateOrdDlg* createOrdDlg = nullptr;
-	CreateOrdListDlg* createOrdListDlg = nullptr;
-	CreateOrdRDlg* createOrdRDlg = nullptr;
-	CreateOrdRListDlg* createOrdRListDlg = nullptr;
-	CreatePcrDlg* createPcrDlg = nullptr;
-	CreatePhtDlg* createPhtDlg = nullptr;
-	CreatePmtDlg* createPmtDlg = nullptr;
-	CreatePrcDlg* createPrcDlg = nullptr;
-	CreateProdnListDlg* createProdnListDlg = nullptr;
-	CreatePPlanDlg* createPPlanDlg = nullptr;
-	CreatePPlanListDlg* createPPlanListDlg = nullptr;
-	CreatePspDlg* createPspDlg = nullptr;
-	CreateRelDlg* createRelDlg = nullptr;
-	CreatePurDlg* createPurDlg = nullptr;
-	CreateRcpPDlg* createRcpPDlg = nullptr;
-	CreateRcpPListDlg* createRcpPListDlg = nullptr;
-	CreateRcpRDlg* createRcpRDlg = nullptr;
-	CreateRcpRListDlg* createRcpRListDlg = nullptr;
-	CreateRfdDlg* createRfdDlg = nullptr;
-	CreateRtrnListDlg* createRtrnListDlg = nullptr;
-	CreateSpecDlg* createSpecDlg = nullptr;
-	CreateSpecListDlg* createSpecListDlg = nullptr;
-	CreateSplDlg* createSplDlg = nullptr;
-	CreateSplListDlg* createSplListDlg = nullptr;
-	CreateSlrDlg* createSlrDlg = nullptr;
-	CreateStockDlg* createStockDlg = nullptr;
-	CreateTmsDlg* createTmsDlg = nullptr;
-	CreateTrsDlg* createTrsDlg = nullptr;
-	CreateTrsListDlg* createTrsListDlg = nullptr;
-	CreateUserDlg* createUserDlg = nullptr;
-	CreateProdDlg* createProdDlg = nullptr;
-	CreateProdnDlg* createProdnDlg = nullptr;
-	CreateRtrnDlg* createRtrnDlg = nullptr;
-	CreateWdwDlg* createWdwDlg = nullptr;
-	CreateWOffDlg* createWOffDlg = nullptr;
-	CreateWOffListDlg* createWOffListDlg = nullptr;
-	CreateWOffRDlg* createWOffRDlg = nullptr;
-	CreateWOffRListDlg* createWOffRListDlg = nullptr;
-	GenerateOneAcc* generateOneAcc = nullptr;
+	QDialog* parentDialog;
+	BusinessLayer::User* loggedUser;
+	void HileSomeRow();
+	bool IsClosed();
 	
-	int orderID = 0;
-	int returnID = 0;
-	int productionID = 0;
-	int writeOffID = 0;
-	int consumeProductID = 0;
-	int consumeRawID = 0;
-	int inventorizationID = 0;
-	int orderRawID = 0;
-	int productionPlanID = 0;
-	int receiptProductID = 0; 
-	int receiptRawID = 0;
-	int specificationID = 0;
-	int spoilageID = 0;
-	int transportID = 0;
-	int writeOffRawID = 0;
+	unsigned int orderID = 0;
+	unsigned int returnID = 0;
+	unsigned int productionID = 0;
+	unsigned int writeOffID = 0;
+	unsigned int consumeProductID = 0;
+	unsigned int consumeRawID = 0;
+	unsigned int inventorizationID = 0;
+	unsigned int orderRawID = 0;
+	unsigned int productionPlanID = 0;
+	unsigned int pConsumeRawID = 0;
+	unsigned int receiptProductID = 0;
+	unsigned int receiptRawID = 0;
+	unsigned int specificationID = 0;
+	unsigned int spoilageID = 0;
+	unsigned int transportID = 0;
+	unsigned int writeOffRawID = 0;
 };
 #endif //DATAFORM_H

@@ -21,6 +21,7 @@ private:
 	BusinessLayer::AccessItem *accessItem = new BusinessLayer::AccessItem();
 	void SetAccessItemParams(QString, QString, QString, int = 0);
 	void FillEditElements(QString, QString, QString);
+	QWidget* parentForm;
 };
 
 #endif //CREATEACSITEMDLG_H

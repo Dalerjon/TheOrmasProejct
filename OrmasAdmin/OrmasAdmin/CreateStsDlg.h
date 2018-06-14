@@ -22,5 +22,6 @@ private:
 	BusinessLayer::Status *status = new BusinessLayer::Status();
 	void SetStatusParams(QString, QString, QString, int = 0);
 	void FillEditElements(QString, QString, QString);
+	QWidget* parentForm;
 };
 #endif //CREATESTSDLG_H

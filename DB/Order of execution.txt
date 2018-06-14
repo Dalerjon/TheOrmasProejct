@@ -1,0 +1,15 @@
+OrmasDB
+status
+role
+menu
+access
+location
+measure
+currency
+account_type
+salary_type
+relation_type
+product_type
+user
+chart_of_accounts
+entry_routing

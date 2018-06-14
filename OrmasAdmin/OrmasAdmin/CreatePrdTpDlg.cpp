@@ -1,17 +1,19 @@
 #include "stdafx.h"
-#include <QMessageBox>
+
 #include "CreatePrdTpDlg.h"
 #include "MainForm.h"
 #include "DataForm.h"
-#include "ExtraFunctions.h"
+
 
 CreatePrdTpDlg::CreatePrdTpDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, QWidget *parent) :QDialog(parent)
 {
 	setupUi(this);
 	setModal(true);
 	nameEdit->setMaxLength(50);
-	shortNameEdit->setMaxLength(10);	
+	shortNameEdit->setMaxLength(10);
+	codeEdit->setMaxLength(15);
 	dialogBL = ormasBL;
+	parentForm = parent;
 	if (true == updateFlag)
 	{
 		QObject::connect(okBtn, &QPushButton::released, this, &CreatePrdTpDlg::EditProductType);
@@ -23,17 +25,19 @@ CreatePrdTpDlg::CreatePrdTpDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag,
 	QObject::connect(cancelBtn, &QPushButton::released, this, &CreatePrdTpDlg::Close);
 }
 
-void CreatePrdTpDlg::SetProdTypeParams(QString pName, QString pShortName, int id)
+void CreatePrdTpDlg::SetProdTypeParams(QString pName, QString pShortName, QString pCode, int id)
 {
 	prodType->SetName(pName.toUtf8().constData());
 	prodType->SetShortName(pShortName.toUtf8().constData());
+	prodType->SetCode(pShortName.toUtf8().constData());
 	prodType->SetID(id);
 }
 
-void CreatePrdTpDlg::FillEditElements(QString pName, QString pShortName)
+void CreatePrdTpDlg::FillEditElements(QString pName, QString pShortName, QString pCode)
 {
 	nameEdit->setText(pName);
 	shortNameEdit->setText(pShortName);
+	codeEdit->setText(pCode);
 }
 
 bool CreatePrdTpDlg::FillDlgElements(QTableView* pTable)
@@ -43,9 +47,11 @@ bool CreatePrdTpDlg::FillDlgElements(QTableView* pTable)
 	{
 		SetProdTypeParams(pTable->model()->data(pTable->model()->index(mIndex.row(), 1)).toString().toUtf8().constData(),
 			pTable->model()->data(pTable->model()->index(mIndex.row(), 2)).toString().toUtf8().constData(),
+			pTable->model()->data(pTable->model()->index(mIndex.row(), 3)).toString().toUtf8().constData(),
 			pTable->model()->data(pTable->model()->index(mIndex.row(), 0)).toInt());
 		FillEditElements(pTable->model()->data(pTable->model()->index(mIndex.row(), 1)).toString().toUtf8().constData(),
-			pTable->model()->data(pTable->model()->index(mIndex.row(), 2)).toString().toUtf8().constData());
+			pTable->model()->data(pTable->model()->index(mIndex.row(), 2)).toString().toUtf8().constData(),
+			pTable->model()->data(pTable->model()->index(mIndex.row(), 3)).toString().toUtf8().constData());
 		return true;
 	}
 	else
@@ -57,21 +63,27 @@ bool CreatePrdTpDlg::FillDlgElements(QTableView* pTable)
 void CreatePrdTpDlg::CreateProductType()
 {
 	errorMessage.clear();
-	if (!(nameEdit->text().isEmpty() || shortNameEdit->text().isEmpty()))
+	if (!(nameEdit->text().isEmpty() || shortNameEdit->text().isEmpty() || codeEdit->text().isEmpty()))
 	{
-		DataForm *parentDataForm = (DataForm*)parentWidget();
-		SetProdTypeParams(nameEdit->text(), shortNameEdit->text());
+		DataForm *parentDataForm = (DataForm*) parentForm;
+		SetProdTypeParams(nameEdit->text(), shortNameEdit->text(), codeEdit->text());
 		dialogBL->StartTransaction(errorMessage);
 		if (dialogBL->CreateProductType(prodType, errorMessage))
 		{
-			QList<QStandardItem*> prodTypeItem;
-			prodTypeItem << new QStandardItem(QString::number(prodType->GetID())) << new QStandardItem(prodType->GetName().c_str())
-				<< new QStandardItem(prodType->GetShortName().c_str());
-			QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
-			itemModel->appendRow(prodTypeItem);
+			if (parentDataForm != nullptr)
+			{
+				if (!parentDataForm->IsClosed())
+				{
+					QList<QStandardItem*> prodTypeItem;
+					prodTypeItem << new QStandardItem(QString::number(prodType->GetID())) << new QStandardItem(prodType->GetName().c_str())
+						<< new QStandardItem(prodType->GetShortName().c_str()) << new QStandardItem(prodType->GetCode().c_str());
+					QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
+					itemModel->appendRow(prodTypeItem);
+				}
+			}
 			
 			dialogBL->CommitTransaction(errorMessage);
-			this->close();
+			Close();
 		}
 		else
 		{
@@ -84,7 +96,7 @@ void CreatePrdTpDlg::CreateProductType()
 	else
 	{
 		QMessageBox::information(NULL, QString(tr("Warning")),
-			QString(tr("Please fill name and short name!")),
+			QString(tr("Please fill name, code and short name!")),
 			QString(tr("Ok")));
 	}
 	errorMessage.clear();
@@ -93,23 +105,31 @@ void CreatePrdTpDlg::CreateProductType()
 void CreatePrdTpDlg::EditProductType()
 {
 	errorMessage.clear();
-	if (!(nameEdit->text().isEmpty() || shortNameEdit->text().isEmpty()))
+	if (!(nameEdit->text().isEmpty() || shortNameEdit->text().isEmpty() || codeEdit->text().isEmpty()))
 	{
-		if (QString(prodType->GetName().c_str()) != nameEdit->text() || QString(prodType->GetShortName().c_str()) != shortNameEdit->text())
+		if (QString(prodType->GetName().c_str()) != nameEdit->text() || QString(prodType->GetShortName().c_str()) != shortNameEdit->text()
+			|| QString(prodType->GetCode().c_str()) != codeEdit->text())
 		{
-			DataForm *parentDataForm = (DataForm*)parentWidget();
-			SetProdTypeParams(nameEdit->text(), shortNameEdit->text(), prodType->GetID());
+			DataForm *parentDataForm = (DataForm*) parentForm;
+			SetProdTypeParams(nameEdit->text(), shortNameEdit->text(), codeEdit->text(), prodType->GetID());
 			dialogBL->StartTransaction(errorMessage);
 			if (dialogBL->UpdateProductType(prodType, errorMessage))
 			{
-				QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
-				QModelIndex mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
-				itemModel->item(mIndex.row(), 1)->setText(prodType->GetName().c_str());
-				itemModel->item(mIndex.row(), 2)->setText(prodType->GetShortName().c_str());
-				emit itemModel->dataChanged(mIndex, mIndex);
+				if (parentDataForm != nullptr)
+				{
+					if (!parentDataForm->IsClosed())
+					{
+						QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
+						QModelIndex mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
+						itemModel->item(mIndex.row(), 1)->setText(prodType->GetName().c_str());
+						itemModel->item(mIndex.row(), 2)->setText(prodType->GetShortName().c_str());
+						itemModel->item(mIndex.row(), 3)->setText(prodType->GetCode().c_str());
+						emit itemModel->dataChanged(mIndex, mIndex);
+					}
+				}
 				
 				dialogBL->CommitTransaction(errorMessage);
-				this->close();
+				Close();
 			}
 			else
 			{
@@ -121,13 +141,13 @@ void CreatePrdTpDlg::EditProductType()
 		}
 		else
 		{
-			this->close();
+			Close();
 		}
 	}
 	else
 	{
 		QMessageBox::information(NULL, QString(tr("Warning")),
-			QString(tr("Please fill name, phone and address!")),
+			QString(tr("Please fill name, code and short name!")),
 			QString(tr("Ok")));
 	}
 	errorMessage.clear();
@@ -135,6 +155,6 @@ void CreatePrdTpDlg::EditProductType()
 
 void CreatePrdTpDlg::Close()
 {
-	this->close();
+	this->parentWidget()->close();
 }
 

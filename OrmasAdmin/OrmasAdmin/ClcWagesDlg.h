@@ -3,6 +3,7 @@
 
 #include "ui_ClcWagesDlg.h"
 #include "OrmasBL.h"
+#include "MainForm.h"
 
 class ClcWagesDlg : public QDialog, public Ui::CalculateWages
 {
@@ -22,5 +23,7 @@ public:
 private:
 	BusinessLayer::Access *access = new BusinessLayer::Access();
 	double sum = 0;
+	QWidget* parentForm;
+	MainForm* mainForm;
 };
 #endif

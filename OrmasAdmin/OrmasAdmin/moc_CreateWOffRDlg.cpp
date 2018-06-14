@@ -20,7 +20,7 @@
 QT_BEGIN_MOC_NAMESPACE
 struct qt_meta_stringdata_CreateWOffRDlg_t {
     QByteArrayData data[15];
-    char stringdata0[180];
+    char stringdata0[179];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
@@ -39,18 +39,18 @@ QT_MOC_LITERAL(6, 86, 5), // "Close"
 QT_MOC_LITERAL(7, 92, 10), // "OpenEmpDlg"
 QT_MOC_LITERAL(8, 103, 12), // "OpenSkEmpDlg"
 QT_MOC_LITERAL(9, 116, 10), // "OpenStsDlg"
-QT_MOC_LITERAL(10, 127, 16), // "OpenWOffRListDlg"
-QT_MOC_LITERAL(11, 144, 16), // "StatusWasChenged"
-QT_MOC_LITERAL(12, 161, 5), // "SetID"
-QT_MOC_LITERAL(13, 167, 2), // "ID"
-QT_MOC_LITERAL(14, 170, 9) // "childName"
+QT_MOC_LITERAL(10, 127, 15), // "TextEditChanged"
+QT_MOC_LITERAL(11, 143, 16), // "OpenWOffRListDlg"
+QT_MOC_LITERAL(12, 160, 5), // "SetID"
+QT_MOC_LITERAL(13, 166, 2), // "ID"
+QT_MOC_LITERAL(14, 169, 9) // "childName"
 
     },
     "CreateWOffRDlg\0CloseCreatedForms\0\0"
     "CreateWriteOffRaw\0EditWriteOffRaw\0"
     "DeleteWriteOffRaw\0Close\0OpenEmpDlg\0"
-    "OpenSkEmpDlg\0OpenStsDlg\0OpenWOffRListDlg\0"
-    "StatusWasChenged\0SetID\0ID\0childName"
+    "OpenSkEmpDlg\0OpenStsDlg\0TextEditChanged\0"
+    "OpenWOffRListDlg\0SetID\0ID\0childName"
 };
 #undef QT_MOC_LITERAL
 
@@ -114,8 +114,8 @@ void CreateWOffRDlg::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _
         case 5: _t->OpenEmpDlg(); break;
         case 6: _t->OpenSkEmpDlg(); break;
         case 7: _t->OpenStsDlg(); break;
-        case 8: _t->OpenWOffRListDlg(); break;
-        case 9: _t->StatusWasChenged(); break;
+        case 8: _t->TextEditChanged(); break;
+        case 9: _t->OpenWOffRListDlg(); break;
         case 10: _t->SetID((*reinterpret_cast< int(*)>(_a[1])),(*reinterpret_cast< QString(*)>(_a[2]))); break;
         default: ;
         }

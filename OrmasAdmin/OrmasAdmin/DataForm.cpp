@@ -1,10 +1,8 @@
 #include "stdafx.h"
-#include <QStandardItemModel>
-#include <QtWidgets/QMdiArea>
-#include <QMessageBox>
 #include "DataForm.h"
 #include "MainForm.h"
-#include "ExtraFunctions.h"
+#include "AllDlgHeaders.h"
+
 
 DataForm::DataForm(BusinessLayer::OrmasBL *ormasBL, QWidget *parent) :QWidget(parent)
 {
@@ -17,14 +15,16 @@ DataForm::DataForm(BusinessLayer::OrmasBL *ormasBL, QWidget *parent) :QWidget(pa
 	deleteBtn->setDisabled(true);
 	dataFormBL = ormasBL;
 	parentForm = parent;
+	loggedUser = ((MainForm*)parentForm)->GetLoggedUser();
 	if (objectName() == "orderForm" || objectName() == "returnForm" || objectName() == "productionForm" || objectName() == "writeOffForm" ||
 		objectName() == "consumeProductForm" || objectName() == "consumeRawForm" || objectName() == "inventorizationForm" ||
 		objectName() == "orderRawForm" || objectName() == "receiptProductForm" || objectName() == "receiptRawForm" ||
-		objectName() == "productionPlanForm" || objectName() == "spoilageForm" ||
+		objectName() == "productionPlanForm" || objectName() == "spoilageForm" || objectName() == "productionConsumeRawForm" ||
 		objectName() == "specificationForm" || objectName() == "transportForm" || objectName() == "writeOffRawForm")
 	{
 		connect(tableView, SIGNAL(cellClicked(int, int)), this, SLOT(OpenList(int, int)));
 	}
+	HileSomeRow();
 }
 
 // All Slots ----------------------------------------------------------------------------
@@ -33,6 +33,18 @@ void DataForm::CloseDataForm()
 	QMdiSubWindow *dataFromWindow = ((MainForm*)parentForm)->GetWindowByName(this->objectName());
 	if (dataFromWindow != nullptr)
 		dataFromWindow->close();
+}
+
+bool DataForm::IsClosed()
+{
+	//This is not correct method, please reimplement it!
+	if (orderID != 0 && productionID != 0 && writeOffID != 0 && consumeProductID != 0 && consumeRawID != 0 && inventorizationID != 0 && 
+		productionPlanID != 0 && receiptProductID != 0 && receiptRawID != 0 && specificationID != 0 && spoilageID != 0 &&
+		transportID != 0 && writeOffRawID != 0)
+	{
+		return true;
+	}
+	return false;
 }
 
 void DataForm::ChangeBtnState()
@@ -57,6 +69,47 @@ void DataForm::EnableButtons()
 	deleteBtn->setDisabled(false);
 }
 
+void DataForm::HileSomeRow()
+{
+	BusinessLayer::Access access;
+	if (objectName() == "userForm")
+	{
+		std::string crud = access.GetCRUDAccess(&dataFormBL->GetOrmasDal(), loggedUser, "actionAllUsers");
+		std::size_t pos = crud.find("CRUD");
+		if (pos == std::string::npos)
+		{
+			tableView->setColumnHidden(7, true);
+		}
+	}
+	if (objectName() == "clientForm")
+	{
+		std::string crud = access.GetCRUDAccess(&dataFormBL->GetOrmasDal(), loggedUser, "actionClients");
+		std::size_t pos = crud.find("CRUD");
+		if (pos == std::string::npos)
+		{
+			tableView->setColumnHidden(11, true);
+		}
+	}
+	if (objectName() == "employeeForm" || objectName() == "stockEmployeeForm")
+	{
+		std::string crud = access.GetCRUDAccess(&dataFormBL->GetOrmasDal(), loggedUser, "actionEmployees");
+		std::size_t pos = crud.find("CRUD");
+		if (pos == std::string::npos)
+		{
+			tableView->setColumnHidden(9, true);
+		}
+	}
+	if (objectName() == "purveyorForm")
+	{
+		std::string crud = access.GetCRUDAccess(&dataFormBL->GetOrmasDal(), loggedUser, "actionPurveyors");
+		std::size_t pos = crud.find("CRUD");
+		if (pos == std::string::npos)
+		{
+			tableView->setColumnHidden(10, true);
+		}
+	}
+}
+
 QWidget* DataForm::GetParent()
 {
 	return parentForm;
@@ -67,6 +120,14 @@ void DataForm::GetIDValue(QModelIndex index)
 	int id = GetIDFromTable(tableView, index);
 	emit SendID(id, objectName());
 	CloseDataForm();
+}
+
+void DataForm::AcsDenied()
+{
+	QString message = tr("Access denied!");
+	QMessageBox::information(NULL, QString(tr("Warning")),
+		QString(tr("Access denied, contact with Administrator!")),
+		QString(tr("Ok")));
 }
 
 void DataForm::OpenList(int row, int column)
@@ -103,6 +164,7 @@ void DataForm::OpenList(int row, int column)
 						prodListWindow->setWidget(dForm);
 						prodListWindow->setAttribute(Qt::WA_DeleteOnClose);
 						((MainForm*)parentWidget())->mdiArea->addSubWindow(prodListWindow);
+						prodListWindow->resize(dForm->size().width() + 18, dForm->size().height() + 30);
 						dForm->setWindowModality(Qt::WindowModal);
 						dForm->show();
 						dForm->topLevelWidget();
@@ -154,6 +216,7 @@ void DataForm::OpenList(int row, int column)
 						conProdListWindow->setWidget(dForm);
 						conProdListWindow->setAttribute(Qt::WA_DeleteOnClose);
 						((MainForm*)parentWidget())->mdiArea->addSubWindow(conProdListWindow);
+						conProdListWindow->resize(dForm->size().width() + 18, dForm->size().height() + 30);
 						dForm->setWindowModality(Qt::WindowModal);
 						dForm->show();
 						dForm->topLevelWidget();
@@ -205,6 +268,7 @@ void DataForm::OpenList(int row, int column)
 						conRawListWindow->setWidget(dForm);
 						conRawListWindow->setAttribute(Qt::WA_DeleteOnClose);
 						((MainForm*)parentWidget())->mdiArea->addSubWindow(conRawListWindow);
+						conRawListWindow->resize(dForm->size().width() + 18, dForm->size().height() + 30);
 						dForm->setWindowModality(Qt::WindowModal);
 						dForm->show();
 						dForm->topLevelWidget();
@@ -256,6 +320,7 @@ void DataForm::OpenList(int row, int column)
 						invListWindow->setWidget(dForm);
 						invListWindow->setAttribute(Qt::WA_DeleteOnClose);
 						((MainForm*)parentWidget())->mdiArea->addSubWindow(invListWindow);
+						invListWindow->resize(dForm->size().width() + 18, dForm->size().height() + 30);
 						dForm->setWindowModality(Qt::WindowModal);
 						dForm->show();
 						dForm->topLevelWidget();
@@ -307,6 +372,7 @@ void DataForm::OpenList(int row, int column)
 						orderRawListWindow->setWidget(dForm);
 						orderRawListWindow->setAttribute(Qt::WA_DeleteOnClose);
 						((MainForm*)parentWidget())->mdiArea->addSubWindow(orderRawListWindow);
+						orderRawListWindow->resize(dForm->size().width() + 18, dForm->size().height() + 30);
 						dForm->setWindowModality(Qt::WindowModal);
 						dForm->show();
 						dForm->topLevelWidget();
@@ -358,6 +424,7 @@ void DataForm::OpenList(int row, int column)
 						prodListWindow->setWidget(dForm);
 						prodListWindow->setAttribute(Qt::WA_DeleteOnClose);
 						((MainForm*)parentWidget())->mdiArea->addSubWindow(prodListWindow);
+						prodListWindow->resize(dForm->size().width() + 18, dForm->size().height() + 30);
 						dForm->setWindowModality(Qt::WindowModal);
 						dForm->show();
 						dForm->topLevelWidget();
@@ -381,6 +448,58 @@ void DataForm::OpenList(int row, int column)
 					checkedWidget->topLevelWidget();
 					checkedWidget->activateWindow();
 					QString message = tr("All products for production list are shown");
+					((MainForm*)parentWidget())->statusBar()->showMessage(message);
+				}
+			}
+		}
+		else if (objectName() == "productionConusmeRawForm")
+		{
+			id = GetIDFromTable(tableView, errorMessage);
+			if (0 != id)
+				consumeRawID = id;
+			BusinessLayer::ProductionConsumeRawList *pConsumeRawList = new BusinessLayer::ProductionConsumeRawList();
+			pConsumeRawList->SetProductionConsumeRawID(id);
+			filterString = dataFormBL->GenerateFilter<BusinessLayer::ProductionConsumeRawList>(pConsumeRawList);
+			delete pConsumeRawList;
+			checkedWidget = IsWindowExist(((MainForm*)parentWidget())->mdiArea->subWindowList(), QString("productionConusmeRawListForm"));
+			if (errorMessage.empty())
+			{
+				if (checkedWidget == nullptr)
+				{
+					DataForm *dForm = new DataForm(dataFormBL, this);
+					dForm->setWindowTitle(tr("Production consume raw list"));
+					dForm->FillTable<BusinessLayer::ProductionConsumeRawListView>(errorMessage, filterString);
+					if (errorMessage.empty())
+					{
+						dForm->setObjectName("productionConusmeRawForm");
+						QMdiSubWindow *pconRawListWindow = new QMdiSubWindow;
+						pconRawListWindow->setWidget(dForm);
+						pconRawListWindow->setAttribute(Qt::WA_DeleteOnClose);
+						((MainForm*)parentWidget())->mdiArea->addSubWindow(pconRawListWindow);
+						pconRawListWindow->resize(dForm->size().width() + 18, dForm->size().height() + 30);
+						dForm->setWindowModality(Qt::WindowModal);
+						dForm->show();
+						dForm->topLevelWidget();
+						dForm->activateWindow();
+						QString message = tr("All raws for  production consume product list are shown");
+						((MainForm*)parentWidget())->statusBar()->showMessage(message);
+					}
+					else
+					{
+						delete dForm;
+						QString message = tr("End with error!");
+						((MainForm*)parentWidget())->statusBar()->showMessage(message);
+						QMessageBox::information(NULL, QString(tr("Warning")),
+							QString(tr(errorMessage.c_str())),
+							QString(tr("Ok")));
+						errorMessage = "";
+					}
+				}
+				else
+				{
+					checkedWidget->topLevelWidget();
+					checkedWidget->activateWindow();
+					QString message = tr("All raws for production consume product list are shown");
 					((MainForm*)parentWidget())->statusBar()->showMessage(message);
 				}
 			}
@@ -409,6 +528,7 @@ void DataForm::OpenList(int row, int column)
 						prodPlanListWindow->setWidget(dForm);
 						prodPlanListWindow->setAttribute(Qt::WA_DeleteOnClose);
 						((MainForm*)parentWidget())->mdiArea->addSubWindow(prodPlanListWindow);
+						prodPlanListWindow->resize(dForm->size().width() + 18, dForm->size().height() + 30);
 						dForm->setWindowModality(Qt::WindowModal);
 						dForm->show();
 						dForm->topLevelWidget();
@@ -460,6 +580,7 @@ void DataForm::OpenList(int row, int column)
 						recProdListWindow->setWidget(dForm);
 						recProdListWindow->setAttribute(Qt::WA_DeleteOnClose);
 						((MainForm*)parentWidget())->mdiArea->addSubWindow(recProdListWindow);
+						recProdListWindow->resize(dForm->size().width() + 18, dForm->size().height() + 30);
 						dForm->setWindowModality(Qt::WindowModal);
 						dForm->show();
 						dForm->topLevelWidget();
@@ -511,6 +632,7 @@ void DataForm::OpenList(int row, int column)
 						recRawListWindow->setWidget(dForm);
 						recRawListWindow->setAttribute(Qt::WA_DeleteOnClose);
 						((MainForm*)parentWidget())->mdiArea->addSubWindow(recRawListWindow);
+						recRawListWindow->resize(dForm->size().width() + 18, dForm->size().height() + 30);
 						dForm->setWindowModality(Qt::WindowModal);
 						dForm->show();
 						dForm->topLevelWidget();
@@ -562,6 +684,7 @@ void DataForm::OpenList(int row, int column)
 						retListWindow->setWidget(dForm);
 						retListWindow->setAttribute(Qt::WA_DeleteOnClose);
 						((MainForm*)parentWidget())->mdiArea->addSubWindow(retListWindow);
+						retListWindow->resize(dForm->size().width() + 18, dForm->size().height() + 30);
 						dForm->setWindowModality(Qt::WindowModal);
 						dForm->show();
 						dForm->topLevelWidget();
@@ -613,6 +736,7 @@ void DataForm::OpenList(int row, int column)
 						specListWindow->setWidget(dForm);
 						specListWindow->setAttribute(Qt::WA_DeleteOnClose);
 						((MainForm*)parentWidget())->mdiArea->addSubWindow(specListWindow);
+						specListWindow->resize(dForm->size().width() + 18, dForm->size().height() + 30);
 						dForm->setWindowModality(Qt::WindowModal);
 						dForm->show();
 						dForm->topLevelWidget();
@@ -664,6 +788,7 @@ void DataForm::OpenList(int row, int column)
 						spoListWindow->setWidget(dForm);
 						spoListWindow->setAttribute(Qt::WA_DeleteOnClose);
 						((MainForm*)parentWidget())->mdiArea->addSubWindow(spoListWindow);
+						spoListWindow->resize(dForm->size().width() + 18, dForm->size().height() + 30);
 						dForm->setWindowModality(Qt::WindowModal);
 						dForm->show();
 						dForm->topLevelWidget();
@@ -715,6 +840,7 @@ void DataForm::OpenList(int row, int column)
 						tranListWindow->setWidget(dForm);
 						tranListWindow->setAttribute(Qt::WA_DeleteOnClose);
 						((MainForm*)parentWidget())->mdiArea->addSubWindow(tranListWindow);
+						tranListWindow->resize(dForm->size().width() + 18, dForm->size().height() + 30);
 						dForm->setWindowModality(Qt::WindowModal);
 						dForm->show();
 						dForm->topLevelWidget();
@@ -765,6 +891,7 @@ void DataForm::OpenList(int row, int column)
 						wListWindow->setWidget(dForm);
 						wListWindow->setAttribute(Qt::WA_DeleteOnClose);
 						((MainForm*)parentWidget())->mdiArea->addSubWindow(wListWindow);
+						wListWindow->resize(dForm->size().width() + 18, dForm->size().height() + 30);
 						dForm->setWindowModality(Qt::WindowModal);
 						dForm->show();
 						dForm->topLevelWidget();
@@ -815,6 +942,7 @@ void DataForm::OpenList(int row, int column)
 						rawListWindow->setWidget(dForm);
 						rawListWindow->setAttribute(Qt::WA_DeleteOnClose);
 						((MainForm*)parentWidget())->mdiArea->addSubWindow(rawListWindow);
+						rawListWindow->resize(dForm->size().width() + 18, dForm->size().height() + 30);
 						dForm->setWindowModality(Qt::WindowModal);
 						dForm->show();
 						dForm->topLevelWidget();
@@ -854,105 +982,150 @@ void DataForm::OpenList(int row, int column)
 
 void DataForm::OnRowsNumberChanged()
 {
-	if (createConPDlg != nullptr || createConRDlg != nullptr || createInvDlg != nullptr || createOrdDlg != nullptr ||
-		createOrdRDlg != nullptr || createRcpPDlg != nullptr || createRcpRDlg != nullptr || createRtrnDlg != nullptr ||
-		createTrsDlg != nullptr || createWOffDlg != nullptr || createWOffRDlg != nullptr || createSplDlg != nullptr
-		|| createPPlanDlg != nullptr)
+	if (parentDialog != nullptr)
 	{
-
+		std::string errorMessage = "";
 		double sum = 0;
-		int count = 0;
+		double count = 0;
 		int currencyID = 0;
-		if (tableView->model()->rowCount() > 0)
+		if (parentDialog->objectName() == "CreateSpecification")
 		{
-			for (int i = 0; i < tableView->model()->rowCount(); i++)
+			if (tableView->model()->rowCount() > 0)
 			{
-				sum = sum + tableView->model()->data(tableView->model()->index(i, 8)).toDouble();
-				count = count + tableView->model()->data(tableView->model()->index(i, 7)).toDouble();
+				BusinessLayer::Product product;
+				for (int i = 0; i < tableView->model()->rowCount(); i++)
+				{
+					product.Clear();
+					product.GetProductByID(dataFormBL->GetOrmasDal(), tableView->model()->data(tableView->model()->index(i, 5)).toInt(), errorMessage);
+					count = count + tableView->model()->data(tableView->model()->index(i, 3)).toDouble();
+					sum = sum + (tableView->model()->data(tableView->model()->index(i, 3)).toDouble() * product.GetPrice());
+				}
+				currencyID = product.GetCurrencyID();
 			}
-			currencyID = tableView->model()->data(tableView->model()->index(0, 13)).toInt();
+		}
+		else if (parentDialog->objectName() == "CreateConsumeProduct" || parentDialog->objectName() == "CreateReceiptProduct")
+		{
+			if (tableView->model()->rowCount() > 0)
+			{
+				BusinessLayer::Product product;
+				BusinessLayer::NetCost nCost;
+				for (int i = 0; i < tableView->model()->rowCount(); i++)
+				{
+					product.Clear();
+					product.GetProductByID(dataFormBL->GetOrmasDal(), tableView->model()->data(tableView->model()->index(i, 11)).toInt(), errorMessage);
+					nCost.Clear();
+					nCost.GetNetCostByProductID(dataFormBL->GetOrmasDal(), product.GetID(), errorMessage);
+					count = count + tableView->model()->data(tableView->model()->index(i, 7)).toDouble();
+					sum = sum + (tableView->model()->data(tableView->model()->index(i, 7)).toDouble() * nCost.GetValue());
+				}
+				currencyID = product.GetCurrencyID();
+			}
+		}
+		else
+		{
+			if (tableView->model()->rowCount() > 0)
+			{
+				for (int i = 0; i < tableView->model()->rowCount(); i++)
+				{
+					sum = sum + tableView->model()->data(tableView->model()->index(i, 8)).toDouble();
+					count = count + tableView->model()->data(tableView->model()->index(i, 7)).toDouble();
+				}
+				currencyID = tableView->model()->data(tableView->model()->index(0, 13)).toInt();
+			}
 		}
 		
-		if (createConPDlg != nullptr)
+		if (parentDialog->objectName() == "CreateConsumeProduct")
 		{
-			createConPDlg->prodCountEdit->setText(QString::number(count));
-			createConPDlg->sumEdit->setText(QString::number(sum));
-			createConPDlg->currencyCmb->setCurrentIndex(createConPDlg->currencyCmb->findData(QVariant(currencyID)));
+			((CreateConPDlg*)parentDialog)->prodCountEdit->setText(QString::number(count));
+			((CreateConPDlg*)parentDialog)->sumEdit->setText(QString::number(sum));
+			((CreateConPDlg*)parentDialog)->currencyCmb->setCurrentIndex(((CreateConPDlg*)parentDialog)->currencyCmb->findData(QVariant(currencyID)));
 		}
-		else if (createConRDlg != nullptr)
+		else if (parentDialog->objectName() == "CreateConsumeRaw")
 		{
-			createConRDlg->prodCountEdit->setText(QString::number(count));
-			createConRDlg->sumEdit->setText(QString::number(sum));
-			createConRDlg->currencyCmb->setCurrentIndex(createConRDlg->currencyCmb->findData(QVariant(currencyID)));
+			((CreateConRDlg*)parentDialog)->prodCountEdit->setText(QString::number(count));
+			((CreateConRDlg*)parentDialog)->sumEdit->setText(QString::number(sum));
+			((CreateConRDlg*)parentDialog)->currencyCmb->setCurrentIndex(((CreateConRDlg*)parentDialog)->currencyCmb->findData(QVariant(currencyID)));
 		}
-		else if (createInvDlg != nullptr)
+		else if (parentDialog->objectName() == "CreateInventorization")
 		{
-			createInvDlg->prodCountEdit->setText(QString::number(count));
-			createInvDlg->sumEdit->setText(QString::number(sum));
-			createInvDlg->currencyCmb->setCurrentIndex(createInvDlg->currencyCmb->findData(QVariant(currencyID)));
+			((CreateInvDlg*)parentDialog)->prodCountEdit->setText(QString::number(count));
+			((CreateInvDlg*)parentDialog)->sumEdit->setText(QString::number(sum));
+			((CreateInvDlg*)parentDialog)->currencyCmb->setCurrentIndex(((CreateInvDlg*)parentDialog)->currencyCmb->findData(QVariant(currencyID)));
 		}
-		else if (createOrdDlg != nullptr)
+		else if (parentDialog->objectName() == "CreateOrder")
 		{
-			createOrdDlg->prodCountEdit->setText(QString::number(count));
-			createOrdDlg->sumEdit->setText(QString::number(sum));
-			createOrdDlg->currencyCmb->setCurrentIndex(createOrdDlg->currencyCmb->findData(QVariant(currencyID)));
+			((CreateOrdDlg*)parentDialog)->prodCountEdit->setText(QString::number(count));
+			((CreateOrdDlg*)parentDialog)->sumEdit->setText(QString::number(sum));
+			((CreateOrdDlg*)parentDialog)->currencyCmb->setCurrentIndex(((CreateOrdDlg*)parentDialog)->currencyCmb->findData(QVariant(currencyID)));
 		}
-		else if (createOrdRDlg != nullptr)
+		else if (parentDialog->objectName() == "CreateOrderRaw")
 		{
-			createOrdRDlg->prodCountEdit->setText(QString::number(count));
-			createOrdRDlg->sumEdit->setText(QString::number(sum));
-			createOrdRDlg->currencyCmb->setCurrentIndex(createOrdRDlg->currencyCmb->findData(QVariant(currencyID)));
+			((CreateOrdRDlg*)parentDialog)->prodCountEdit->setText(QString::number(count));
+			((CreateOrdRDlg*)parentDialog)->sumEdit->setText(QString::number(sum));
+			((CreateOrdRDlg*)parentDialog)->currencyCmb->setCurrentIndex(((CreateOrdRDlg*)parentDialog)->currencyCmb->findData(QVariant(currencyID)));
 		}
-		else if (createRcpPDlg != nullptr)
+		else if (parentDialog->objectName() == "CreateReceiptProduct")
 		{
-			createRcpPDlg->prodCountEdit->setText(QString::number(count));
-			createRcpPDlg->sumEdit->setText(QString::number(sum));
-			createRcpPDlg->currencyCmb->setCurrentIndex(createRcpPDlg->currencyCmb->findData(QVariant(currencyID)));
+			((CreateRcpPDlg*)parentDialog)->prodCountEdit->setText(QString::number(count));
+			((CreateRcpPDlg*)parentDialog)->sumEdit->setText(QString::number(sum));
+			((CreateRcpPDlg*)parentDialog)->currencyCmb->setCurrentIndex(((CreateRcpPDlg*)parentDialog)->currencyCmb->findData(QVariant(currencyID)));
 		}
-		else if (createRcpRDlg != nullptr)
+		else if (parentDialog->objectName() == "CreateReceiptRaw")
 		{
-			createRcpRDlg->prodCountEdit->setText(QString::number(count));
-			createRcpRDlg->sumEdit->setText(QString::number(sum));
-			createRcpRDlg->currencyCmb->setCurrentIndex(createRcpRDlg->currencyCmb->findData(QVariant(currencyID)));
+			((CreateRcpRDlg*)parentDialog)->prodCountEdit->setText(QString::number(count));
+			((CreateRcpRDlg*)parentDialog)->sumEdit->setText(QString::number(sum));
+			((CreateRcpRDlg*)parentDialog)->currencyCmb->setCurrentIndex(((CreateRcpRDlg*)parentDialog)->currencyCmb->findData(QVariant(currencyID)));
 		}
-		else if (createPPlanDlg != nullptr)
+		else if (parentDialog->objectName() == "CreateProductionConsumeRaw")
 		{
-			createPPlanDlg->prodCountEdit->setText(QString::number(count));
-			createPPlanDlg->sumEdit->setText(QString::number(sum));
-			createPPlanDlg->currencyCmb->setCurrentIndex(createPPlanDlg->currencyCmb->findData(QVariant(currencyID)));
+			((CreateProdConRDlg*)parentDialog)->prodCountEdit->setText(QString::number(count));
+			((CreateProdConRDlg*)parentDialog)->sumEdit->setText(QString::number(sum));
+			((CreateProdConRDlg*)parentDialog)->currencyCmb->setCurrentIndex(((CreateProdConRDlg*)parentDialog)->currencyCmb->findData(QVariant(currencyID)));
 		}
-		else if (createTrsDlg != nullptr)
+		else if (parentDialog->objectName() == "CreateProductionPlan")
 		{
-			createTrsDlg->prodCountEdit->setText(QString::number(count));
-			createTrsDlg->sumEdit->setText(QString::number(sum));
-			createTrsDlg->currencyCmb->setCurrentIndex(createTrsDlg->currencyCmb->findData(QVariant(currencyID)));
+			((CreatePPlanDlg*)parentDialog)->prodCountEdit->setText(QString::number(count));
+			((CreatePPlanDlg*)parentDialog)->sumEdit->setText(QString::number(sum));
+			((CreatePPlanDlg*)parentDialog)->currencyCmb->setCurrentIndex(((CreatePPlanDlg*)parentDialog)->currencyCmb->findData(QVariant(currencyID)));
 		}
-		else if (createRtrnDlg != nullptr)
+		else if (parentDialog->objectName() == "CreateTransport")
 		{
-			createRtrnDlg->prodCountEdit->setText(QString::number(count));
-			createRtrnDlg->sumEdit->setText(QString::number(sum));
-			createRtrnDlg->currencyCmb->setCurrentIndex(createRtrnDlg->currencyCmb->findData(QVariant(currencyID)));
+			((CreateTrsDlg*)parentDialog)->prodCountEdit->setText(QString::number(count));
+			((CreateTrsDlg*)parentDialog)->sumEdit->setText(QString::number(sum));
+			((CreateTrsDlg*)parentDialog)->currencyCmb->setCurrentIndex(((CreateTrsDlg*)parentDialog)->currencyCmb->findData(QVariant(currencyID)));
 		}
-		else if (createSplDlg != nullptr)
+		else if (parentDialog->objectName() == "CreateReturn")
 		{
-			createSplDlg->prodCountEdit->setText(QString::number(count));
-			createSplDlg->sumEdit->setText(QString::number(sum));
-			createSplDlg->currencyCmb->setCurrentIndex(createSplDlg->currencyCmb->findData(QVariant(currencyID)));
+			((CreateRtrnDlg*)parentDialog)->prodCountEdit->setText(QString::number(count));
+			((CreateRtrnDlg*)parentDialog)->sumEdit->setText(QString::number(sum));
+			((CreateRtrnDlg*)parentDialog)->currencyCmb->setCurrentIndex(((CreateRtrnDlg*)parentDialog)->currencyCmb->findData(QVariant(currencyID)));
 		}
-		else if (createWOffDlg != nullptr)
+		else if (parentDialog->objectName() == "CreateSpecification")
 		{
-			createWOffDlg->prodCountEdit->setText(QString::number(count));
-			createWOffDlg->sumEdit->setText(QString::number(sum));
-			createWOffDlg->currencyCmb->setCurrentIndex(createWOffDlg->currencyCmb->findData(QVariant(currencyID)));
+			((CreateSpecDlg*)parentDialog)->prodCountPh->setText(QString::number(count));
+			((CreateSpecDlg*)parentDialog)->sumEdit->setText(QString::number(sum));
+			((CreateSpecDlg*)parentDialog)->currencyCmb->setCurrentIndex(((CreateSpecDlg*)parentDialog)->currencyCmb->findData(QVariant(currencyID)));
 		}
-		else if (createWOffRDlg != nullptr)
+		else if (parentDialog->objectName() == "CreateSpoilage")
 		{
-			createWOffRDlg->prodCountEdit->setText(QString::number(count));
-			createWOffRDlg->sumEdit->setText(QString::number(sum));
-			createWOffRDlg->currencyCmb->setCurrentIndex(createWOffRDlg->currencyCmb->findData(QVariant(currencyID)));
+			((CreateSplDlg*)parentDialog)->prodCountEdit->setText(QString::number(count));
+			((CreateSplDlg*)parentDialog)->sumEdit->setText(QString::number(sum));
+			((CreateSplDlg*)parentDialog)->currencyCmb->setCurrentIndex(((CreateSplDlg*)parentDialog)->currencyCmb->findData(QVariant(currencyID)));
+		}
+		else if (parentDialog->objectName() == "CreateWriteOff")
+		{
+			((CreateWOffDlg*)parentDialog)->prodCountEdit->setText(QString::number(count));
+			((CreateWOffDlg*)parentDialog)->sumEdit->setText(QString::number(sum));
+			((CreateWOffDlg*)parentDialog)->currencyCmb->setCurrentIndex(((CreateWOffDlg*)parentDialog)->currencyCmb->findData(QVariant(currencyID)));
+		}
+		else if (parentDialog->objectName() == "CreateWriteOffR")
+		{
+			((CreateWOffRDlg*)parentDialog)->prodCountEdit->setText(QString::number(count));
+			((CreateWOffRDlg*)parentDialog)->sumEdit->setText(QString::number(sum));
+			((CreateWOffRDlg*)parentDialog)->currencyCmb->setCurrentIndex(((CreateWOffRDlg*)parentDialog)->currencyCmb->findData(QVariant(currencyID)));
 		}
 	}
-	if (createProdnDlg != nullptr)
+	if (parentDialog->objectName() == "CreateProduction")
 	{
 		int count = 0;
 		if (tableView->model()->rowCount() > 0)
@@ -962,7 +1135,7 @@ void DataForm::OnRowsNumberChanged()
 				count = count + tableView->model()->data(tableView->model()->index(i, 7)).toDouble();
 			}
 		}
-		createProdnDlg->prodCountEdit->setText(QString::number(count));
+		((CreateProdnDlg*)parentDialog)->prodCountEdit->setText(QString::number(count));
 	}
 }
 
@@ -971,6 +1144,10 @@ void DataForm::CrtAccDlg()
 	CreateAccDlg *accountDlg = new CreateAccDlg(dataFormBL, false, this);
 	accountDlg->setAttribute(Qt::WA_DeleteOnClose);
 	accountDlg->setWindowTitle(tr("Create account"));
+	QMdiSubWindow *accountWindow = new QMdiSubWindow;
+	accountWindow->setWidget(accountDlg);
+	accountWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(accountWindow);
 	accountDlg->show();
 }
 void DataForm::UdpAccDlg()
@@ -978,6 +1155,10 @@ void DataForm::UdpAccDlg()
 	CreateAccDlg *accountDlg = new CreateAccDlg(dataFormBL, true, this);
 	accountDlg->setAttribute(Qt::WA_DeleteOnClose);
 	accountDlg->setWindowTitle(tr("Update account"));
+	QMdiSubWindow *accountWindow = new QMdiSubWindow;
+	accountWindow->setWidget(accountDlg);
+	accountWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(accountWindow);
 	if (accountDlg->FillDlgElements(tableView))
 	{
 		accountDlg->show();
@@ -1022,6 +1203,10 @@ void DataForm::CrtAccTpDlg()
 	CreateAccTpDlg *accountTpDlg = new CreateAccTpDlg(dataFormBL, false, this);
 	accountTpDlg->setAttribute(Qt::WA_DeleteOnClose);
 	accountTpDlg->setWindowTitle(tr("Create account type"));
+	QMdiSubWindow *accountTpWindow = new QMdiSubWindow;
+	accountTpWindow->setWidget(accountTpDlg);
+	accountTpWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(accountTpWindow);
 	accountTpDlg->show();
 }
 void DataForm::UdpAccTpDlg()
@@ -1029,6 +1214,10 @@ void DataForm::UdpAccTpDlg()
 	CreateAccTpDlg *accountTpDlg = new CreateAccTpDlg(dataFormBL, true, this);
 	accountTpDlg->setAttribute(Qt::WA_DeleteOnClose);
 	accountTpDlg->setWindowTitle(tr("Update account type"));
+	QMdiSubWindow *accountTpWindow = new QMdiSubWindow;
+	accountTpWindow->setWidget(accountTpDlg);
+	accountTpWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(accountTpWindow);
 	if (accountTpDlg->FillDlgElements(tableView))
 	{
 		accountTpDlg->show();
@@ -1073,6 +1262,10 @@ void DataForm::CrtAcsDlg()
 	CreateAcsDlg *accessDlg = new CreateAcsDlg(dataFormBL, false, this);
 	accessDlg->setAttribute(Qt::WA_DeleteOnClose);
 	accessDlg->setWindowTitle(tr("Create access"));
+	QMdiSubWindow *accessWindow = new QMdiSubWindow;
+	accessWindow->setWidget(accessDlg);
+	accessWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(accessWindow);
 	accessDlg->show();
 }
 void DataForm::UdpAcsDlg()
@@ -1080,6 +1273,10 @@ void DataForm::UdpAcsDlg()
 	CreateAcsDlg *accessDlg = new CreateAcsDlg(dataFormBL, true, this);
 	accessDlg->setAttribute(Qt::WA_DeleteOnClose);
 	accessDlg->setWindowTitle(tr("Update access"));
+	QMdiSubWindow *accessWindow = new QMdiSubWindow;
+	accessWindow->setWidget(accessDlg);
+	accessWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(accessWindow);
 	if (accessDlg->FillDlgElements(tableView))
 	{
 		accessDlg->show();
@@ -1124,6 +1321,10 @@ void DataForm::CrtAcsItemDlg()
 	CreateAcsItemDlg *accessItemDlg = new CreateAcsItemDlg(dataFormBL, false, this);
 	accessItemDlg->setAttribute(Qt::WA_DeleteOnClose);
 	accessItemDlg->setWindowTitle(tr("Create access item"));
+	QMdiSubWindow *accessItemWindow = new QMdiSubWindow;
+	accessItemWindow->setWidget(accessItemDlg);
+	accessItemWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(accessItemWindow);
 	accessItemDlg->show();
 }
 void DataForm::UdpAcsItemDlg()
@@ -1131,6 +1332,10 @@ void DataForm::UdpAcsItemDlg()
 	CreateAcsItemDlg *accessItemDlg = new CreateAcsItemDlg(dataFormBL, true, this);
 	accessItemDlg->setAttribute(Qt::WA_DeleteOnClose);
 	accessItemDlg->setWindowTitle(tr("Update access item"));
+	QMdiSubWindow *accessItemWindow = new QMdiSubWindow;
+	accessItemWindow->setWidget(accessItemDlg);
+	accessItemWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(accessItemWindow);
 	if (accessItemDlg->FillDlgElements(tableView))
 	{
 		accessItemDlg->show();
@@ -1175,6 +1380,10 @@ void DataForm::CrtBlcDlg()
 	CreateBlcDlg *balanceDlg = new CreateBlcDlg(dataFormBL, false, this);
 	balanceDlg->setAttribute(Qt::WA_DeleteOnClose);
 	balanceDlg->setWindowTitle(tr("Create balance"));
+	QMdiSubWindow *balanceWindow = new QMdiSubWindow;
+	balanceWindow->setWidget(balanceDlg);
+	balanceWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(balanceWindow);
 	balanceDlg->show();
 }
 void DataForm::UdpBlcDlg()
@@ -1182,6 +1391,10 @@ void DataForm::UdpBlcDlg()
 	CreateBlcDlg *balanceDlg = new CreateBlcDlg(dataFormBL, true, this);
 	balanceDlg->setAttribute(Qt::WA_DeleteOnClose);
 	balanceDlg->setWindowTitle(tr("Update balance"));
+	QMdiSubWindow *balanceWindow = new QMdiSubWindow;
+	balanceWindow->setWidget(balanceDlg);
+	balanceWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(balanceWindow);
 	if (balanceDlg->FillDlgElements(tableView))
 	{
 		balanceDlg->show();
@@ -1226,6 +1439,10 @@ void DataForm::CrtCltDlg()
 	CreateCltDlg *clientDlg = new CreateCltDlg(dataFormBL, false, this);
 	clientDlg->setAttribute(Qt::WA_DeleteOnClose);
 	clientDlg->setWindowTitle(tr("Create client"));
+	QMdiSubWindow *clientWindow = new QMdiSubWindow;
+	clientWindow->setWidget(clientDlg);
+	clientWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(clientWindow);
 	clientDlg->show();
 }
 void DataForm::UdpCltDlg()
@@ -1233,6 +1450,10 @@ void DataForm::UdpCltDlg()
 	CreateCltDlg *clientDlg = new CreateCltDlg(dataFormBL, true, this);
 	clientDlg->setAttribute(Qt::WA_DeleteOnClose);
 	clientDlg->setWindowTitle(tr("Update client"));
+	QMdiSubWindow *clientWindow = new QMdiSubWindow;
+	clientWindow->setWidget(clientDlg);
+	clientWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(clientWindow);
 	if (clientDlg->FillDlgElements(tableView))
 	{
 		clientDlg->show();
@@ -1278,6 +1499,10 @@ void DataForm::CrtCmpDlg()
 	CreateCmpDlg *companyDlg = new CreateCmpDlg(dataFormBL,false,this);
 	companyDlg->setAttribute(Qt::WA_DeleteOnClose);
 	companyDlg->setWindowTitle(tr("Create company"));
+	QMdiSubWindow *companyWindow = new QMdiSubWindow;
+	companyWindow->setWidget(companyDlg);
+	companyWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(companyWindow);
 	companyDlg->show();
 }
 void DataForm::UdpCmpDlg()
@@ -1285,6 +1510,10 @@ void DataForm::UdpCmpDlg()
 	CreateCmpDlg *companyDlg = new CreateCmpDlg(dataFormBL,true, this);
 	companyDlg->setAttribute(Qt::WA_DeleteOnClose);
 	companyDlg->setWindowTitle(tr("Update company"));
+	QMdiSubWindow *companyWindow = new QMdiSubWindow;
+	companyWindow->setWidget(companyDlg);
+	companyWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(companyWindow);
 	if (companyDlg->FillDlgElements(tableView))
 	{
 		companyDlg->show();
@@ -1324,11 +1553,133 @@ void DataForm::DelCmpDlg()
 	}
 }
 
+void DataForm::CrtCERDlg()
+{
+	CreateCERDlg *ceRelDlg = new CreateCERDlg(dataFormBL, false, this);
+	ceRelDlg->setAttribute(Qt::WA_DeleteOnClose);
+	ceRelDlg->setWindowTitle(tr("Create company-employee relation"));
+	QMdiSubWindow *ceRelWindow = new QMdiSubWindow;
+	ceRelWindow->setWidget(ceRelDlg);
+	ceRelWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(ceRelWindow);
+	ceRelDlg->show();
+}
+void DataForm::UdpCERDlg()
+{
+	CreateCERDlg *ceRelDlg = new CreateCERDlg(dataFormBL, true, this);
+	ceRelDlg->setAttribute(Qt::WA_DeleteOnClose);
+	ceRelDlg->setWindowTitle(tr("Update company-employee relation"));
+	QMdiSubWindow *ceRelWindow = new QMdiSubWindow;
+	ceRelWindow->setWidget(ceRelDlg);
+	ceRelWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(ceRelWindow);
+	if (ceRelDlg->FillDlgElements(tableView))
+	{
+		ceRelDlg->show();
+	}
+	else
+	{
+		QMessageBox::information(NULL, QString(tr("Warning")),
+			QString(tr("Please select one row at first!")),
+			QString(tr("Ok")));
+	}
+}
+void DataForm::DelCERDlg()
+{
+	std::string errorMessage = "";
+	int id = GetIDFromTable(tableView, errorMessage);
+	BusinessLayer::CompanyEmployeeRelation ceRel;
+	
+	if (0 != id && ceRel.GetCompanyEmployeeByID(dataFormBL->GetOrmasDal(), id, errorMessage))
+	{
+		if (dataFormBL->DeleteCompanyEmployeeRelation(&ceRel, errorMessage))
+		{
+			tableView->model()->removeRow(tableView->selectionModel()->currentIndex().row());
+			ChangeBtnState();
+		}
+		else
+		{
+			QMessageBox::information(NULL, QString(tr("Warning")),
+				QString(tr(errorMessage.c_str())),
+				QString(tr("Ok")));
+		}
+	}
+	else
+	{
+		QMessageBox::information(NULL, QString(tr("Warning")),
+			QString(tr("Company-employee relation with this id does not exist!")),
+			QString(tr("Ok")));
+	}
+}
+
+void DataForm::CrtCARDlg()
+{
+	CreateCARDlg *caRelDlg = new CreateCARDlg(dataFormBL, false, this);
+	caRelDlg->setAttribute(Qt::WA_DeleteOnClose);
+	caRelDlg->setWindowTitle(tr("Create company-account relation"));
+	QMdiSubWindow *caRelWindow = new QMdiSubWindow;
+	caRelWindow->setWidget(caRelDlg);
+	caRelWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(caRelWindow);
+	caRelDlg->show();
+}
+void DataForm::UdpCARDlg()
+{
+	CreateCARDlg *caRelDlg = new CreateCARDlg(dataFormBL, true, this);
+	caRelDlg->setAttribute(Qt::WA_DeleteOnClose);
+	caRelDlg->setWindowTitle(tr("Update company-account relation"));
+	QMdiSubWindow *caRelWindow = new QMdiSubWindow;
+	caRelWindow->setWidget(caRelDlg);
+	caRelWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(caRelWindow);
+	if (caRelDlg->FillDlgElements(tableView))
+	{
+		caRelDlg->show();
+	}
+	else
+	{
+		QMessageBox::information(NULL, QString(tr("Warning")),
+			QString(tr("Please select one row at first!")),
+			QString(tr("Ok")));
+	}
+}
+void DataForm::DelCARDlg()
+{
+	std::string errorMessage = "";
+	int id = GetIDFromTable(tableView, errorMessage);
+	BusinessLayer::CompanyAccountRelation caRel;
+
+	if (0 != id && caRel.GetCompanyAccountByID(dataFormBL->GetOrmasDal(), id, errorMessage))
+	{
+		if (dataFormBL->DeleteCompanyAccountRelation(&caRel, errorMessage))
+		{
+			tableView->model()->removeRow(tableView->selectionModel()->currentIndex().row());
+			ChangeBtnState();
+		}
+		else
+		{
+			QMessageBox::information(NULL, QString(tr("Warning")),
+				QString(tr(errorMessage.c_str())),
+				QString(tr("Ok")));
+		}
+	}
+	else
+	{
+		QMessageBox::information(NULL, QString(tr("Warning")),
+			QString(tr("Company-account relation with this id does not exist!")),
+			QString(tr("Ok")));
+	}
+}
+
 void DataForm::CrtCOADlg()
 {
 	CreateCOADlg *coAccDlg = new CreateCOADlg(dataFormBL, false, this);
 	coAccDlg->setAttribute(Qt::WA_DeleteOnClose);
 	coAccDlg->setWindowTitle(tr("Create chart of account"));
+	QMdiSubWindow *coAccWindow = new QMdiSubWindow;
+	coAccWindow->setWidget(coAccDlg);
+	coAccWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(coAccWindow);
 	coAccDlg->show();
 }
 void DataForm::UdpCOADlg()
@@ -1336,6 +1687,10 @@ void DataForm::UdpCOADlg()
 	CreateCOADlg *coAccDlg = new CreateCOADlg(dataFormBL, true, this);
 	coAccDlg->setAttribute(Qt::WA_DeleteOnClose);
 	coAccDlg->setWindowTitle(tr("Update chart of account"));
+	QMdiSubWindow *coAccWindow = new QMdiSubWindow;
+	coAccWindow->setWidget(coAccDlg);
+	coAccWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(coAccWindow);
 	if (coAccDlg->FillDlgElements(tableView))
 	{
 		coAccDlg->show();
@@ -1380,6 +1735,10 @@ void DataForm::CrtConPDlg()
 	CreateConPDlg *conPDlg = new CreateConPDlg(dataFormBL, false, this);
 	conPDlg->setAttribute(Qt::WA_DeleteOnClose);
 	conPDlg->setWindowTitle(tr("Create consume product"));
+	QMdiSubWindow *conPWindow = new QMdiSubWindow;
+	conPWindow->setWidget(conPDlg);
+	conPWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(conPWindow);
 	conPDlg->show();
 }
 void DataForm::UdpConPDlg()
@@ -1387,16 +1746,20 @@ void DataForm::UdpConPDlg()
 	CreateConPDlg *conPDlg = new CreateConPDlg(dataFormBL, true, this);
 	conPDlg->setAttribute(Qt::WA_DeleteOnClose);
 	conPDlg->setWindowTitle(tr("Update consume product"));
+	QMdiSubWindow *conPWindow = new QMdiSubWindow;
+	conPWindow->setWidget(conPDlg);
+	conPWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(conPWindow);
 	if (conPDlg->FillDlgElements(tableView))
 	{
 		conPDlg->show();
 	}
-	else
+	/*else
 	{
 		QMessageBox::information(NULL, QString(tr("Warning")),
 			QString(tr("Please select one row at first!")),
 			QString(tr("Ok")));
-	}
+	}*/
 }
 void DataForm::DelConPDlg()
 {
@@ -1435,6 +1798,10 @@ void DataForm::CrtConPListDlg()
 	}
 	craeteConPListDlg->setAttribute(Qt::WA_DeleteOnClose);
 	craeteConPListDlg->setWindowTitle(tr("Add product to consume product list"));
+	QMdiSubWindow *craeteConPListWindow = new QMdiSubWindow;
+	craeteConPListWindow->setWidget(craeteConPListDlg);
+	craeteConPListWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(craeteConPListWindow);
 	craeteConPListDlg->show();
 }
 void DataForm::UdpConPListDlg()
@@ -1442,6 +1809,10 @@ void DataForm::UdpConPListDlg()
 	CreateConPListDlg *craeteConPListDlg = new CreateConPListDlg(dataFormBL, true, this);
 	craeteConPListDlg->setAttribute(Qt::WA_DeleteOnClose);
 	craeteConPListDlg->setWindowTitle(tr("Update product in consume product list"));
+	QMdiSubWindow *craeteConPListWindow = new QMdiSubWindow;
+	craeteConPListWindow->setWidget(craeteConPListDlg);
+	craeteConPListWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(craeteConPListWindow);
 	if (craeteConPListDlg->FillDlgElements(tableView))
 	{
 		craeteConPListDlg->show();
@@ -1486,6 +1857,10 @@ void DataForm::CrtConRDlg()
 	CreateConRDlg *conRDlg = new CreateConRDlg(dataFormBL, false, this);
 	conRDlg->setAttribute(Qt::WA_DeleteOnClose);
 	conRDlg->setWindowTitle(tr("Create consume raw"));
+	QMdiSubWindow *conRWindow = new QMdiSubWindow;
+	conRWindow->setWidget(conRDlg);
+	conRWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(conRWindow);
 	conRDlg->show();
 }
 void DataForm::UdpConRDlg()
@@ -1493,16 +1868,20 @@ void DataForm::UdpConRDlg()
 	CreateConRDlg *conRDlg = new CreateConRDlg(dataFormBL, true, this);
 	conRDlg->setAttribute(Qt::WA_DeleteOnClose);
 	conRDlg->setWindowTitle(tr("Update consume raw"));
+	QMdiSubWindow *conRWindow = new QMdiSubWindow;
+	conRWindow->setWidget(conRDlg);
+	conRWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(conRWindow);
 	if (conRDlg->FillDlgElements(tableView))
 	{
 		conRDlg->show();
 	}
-	else
+	/*else
 	{
 		QMessageBox::information(NULL, QString(tr("Warning")),
 			QString(tr("Please select one row at first!")),
 			QString(tr("Ok")));
-	}
+	}*/
 }
 void DataForm::DelConRDlg()
 {
@@ -1541,6 +1920,10 @@ void DataForm::CrtConRListDlg()
 	}
 	craeteConRListDlg->setAttribute(Qt::WA_DeleteOnClose);
 	craeteConRListDlg->setWindowTitle(tr("Add raw to consume raw list"));
+	QMdiSubWindow *craeteConRListWindow = new QMdiSubWindow;
+	craeteConRListWindow->setWidget(craeteConRListDlg);
+	craeteConRListWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(craeteConRListWindow);
 	craeteConRListDlg->show();
 }
 void DataForm::UdpConRListDlg()
@@ -1548,6 +1931,10 @@ void DataForm::UdpConRListDlg()
 	CreateConRListDlg *craeteConRListDlg = new CreateConRListDlg(dataFormBL, true, this);
 	craeteConRListDlg->setAttribute(Qt::WA_DeleteOnClose);
 	craeteConRListDlg->setWindowTitle(tr("Update raw in consume raw list"));
+	QMdiSubWindow *craeteConRListWindow = new QMdiSubWindow;
+	craeteConRListWindow->setWidget(craeteConRListDlg);
+	craeteConRListWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(craeteConRListWindow);
 	if (craeteConRListDlg->FillDlgElements(tableView))
 	{
 		craeteConRListDlg->show();
@@ -1592,6 +1979,10 @@ void DataForm::CrtCurDlg()
 	CreateCurDlg *currencyDlg = new CreateCurDlg(dataFormBL, false, this);
 	currencyDlg->setAttribute(Qt::WA_DeleteOnClose);
 	currencyDlg->setWindowTitle(tr("Create currency"));
+	QMdiSubWindow *currencyWindow = new QMdiSubWindow;
+	currencyWindow->setWidget(currencyDlg);
+	currencyWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(currencyWindow);
 	currencyDlg->show();
 }
 void DataForm::UdpCurDlg()
@@ -1599,6 +1990,10 @@ void DataForm::UdpCurDlg()
 	CreateCurDlg *currencyDlg = new CreateCurDlg(dataFormBL, true, this);
 	currencyDlg->setAttribute(Qt::WA_DeleteOnClose);
 	currencyDlg->setWindowTitle(tr("Update currency"));
+	QMdiSubWindow *currencyWindow = new QMdiSubWindow;
+	currencyWindow->setWidget(currencyDlg);
+	currencyWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(currencyWindow);
 	if (currencyDlg->FillDlgElements(tableView))
 	{
 		currencyDlg->show();
@@ -1643,6 +2038,10 @@ void DataForm::CrtEmpDlg()
 	CreateEmpDlg *employeeDlg = new CreateEmpDlg(dataFormBL, false, this);
 	employeeDlg->setAttribute(Qt::WA_DeleteOnClose);
 	employeeDlg->setWindowTitle(tr("Create employee"));
+	QMdiSubWindow *employeeWindow = new QMdiSubWindow;
+	employeeWindow->setWidget(employeeDlg);
+	employeeWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(employeeWindow);
 	employeeDlg->show();
 }
 void DataForm::UdpEmpDlg()
@@ -1650,6 +2049,10 @@ void DataForm::UdpEmpDlg()
 	CreateEmpDlg *employeeDlg = new CreateEmpDlg(dataFormBL, true, this);
 	employeeDlg->setAttribute(Qt::WA_DeleteOnClose);
 	employeeDlg->setWindowTitle(tr("Update employee"));
+	QMdiSubWindow *employeeWindow = new QMdiSubWindow;
+	employeeWindow->setWidget(employeeDlg);
+	employeeWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(employeeWindow);
 	if (employeeDlg->FillDlgElements(tableView))
 	{
 		employeeDlg->show();
@@ -1694,6 +2097,10 @@ void DataForm::CrtEtrDlg()
 	CreateEtrDlg *entryDlg = new CreateEtrDlg(dataFormBL, false, this);
 	entryDlg->setAttribute(Qt::WA_DeleteOnClose);
 	entryDlg->setWindowTitle(tr("Create entry"));
+	QMdiSubWindow *entryWindow = new QMdiSubWindow;
+	entryWindow->setWidget(entryDlg);
+	entryWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(entryWindow);
 	entryDlg->show();
 }
 void DataForm::UdpEtrDlg()
@@ -1701,6 +2108,10 @@ void DataForm::UdpEtrDlg()
 	CreateEtrDlg *entryDlg = new CreateEtrDlg(dataFormBL, true, this);
 	entryDlg->setAttribute(Qt::WA_DeleteOnClose);
 	entryDlg->setWindowTitle(tr("Update entry"));
+	QMdiSubWindow *entryWindow = new QMdiSubWindow;
+	entryWindow->setWidget(entryDlg);
+	entryWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(entryWindow);
 	if (entryDlg->FillDlgElements(tableView))
 	{
 		entryDlg->show();
@@ -1740,21 +2151,29 @@ void DataForm::DelEtrDlg()
 	}
 }
 
-void DataForm::CrtInvDlg()
+void DataForm::CrtEtrRtDlg()
 {
-	CreateInvDlg *invDlg = new CreateInvDlg(dataFormBL, false, this);
-	invDlg->setAttribute(Qt::WA_DeleteOnClose);
-	invDlg->setWindowTitle(tr("Create inventorization"));
-	invDlg->show();
+	CreateEtrRtDlg *entryRtDlg = new CreateEtrRtDlg(dataFormBL, false, this);
+	entryRtDlg->setAttribute(Qt::WA_DeleteOnClose);
+	entryRtDlg->setWindowTitle(tr("Create entry routing"));
+	QMdiSubWindow *entryRtWindow = new QMdiSubWindow;
+	entryRtWindow->setWidget(entryRtDlg);
+	entryRtWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(entryRtWindow);
+	entryRtDlg->show();
 }
-void DataForm::UdpInvDlg()
+void DataForm::UdpEtrRtDlg()
 {
-	CreateInvDlg *invDlg = new CreateInvDlg(dataFormBL, true, this);
-	invDlg->setAttribute(Qt::WA_DeleteOnClose);
-	invDlg->setWindowTitle(tr("Update inventorization"));
-	if (invDlg->FillDlgElements(tableView))
+	CreateEtrRtDlg *entryRtDlg = new CreateEtrRtDlg(dataFormBL, true, this);
+	entryRtDlg->setAttribute(Qt::WA_DeleteOnClose);
+	entryRtDlg->setWindowTitle(tr("Update entry routing"));
+	QMdiSubWindow *entryRtWindow = new QMdiSubWindow;
+	entryRtWindow->setWidget(entryRtDlg);
+	entryRtWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(entryRtWindow);
+	if (entryRtDlg->FillDlgElements(tableView))
 	{
-		invDlg->show();
+		entryRtDlg->show();
 	}
 	else
 	{
@@ -1762,6 +2181,65 @@ void DataForm::UdpInvDlg()
 			QString(tr("Please select one row at first!")),
 			QString(tr("Ok")));
 	}
+}
+void DataForm::DelEtrRtDlg()
+{
+	std::string errorMessage = "";
+	int id = GetIDFromTable(tableView, errorMessage);
+	BusinessLayer::EntryRouting entryRouting;
+	entryRouting.SetID(id);
+	if (0 != id)
+	{
+		if (dataFormBL->DeleteEntryRouting(&entryRouting, errorMessage))
+		{
+			tableView->model()->removeRow(tableView->selectionModel()->currentIndex().row());
+			ChangeBtnState();
+		}
+		else
+		{
+			QMessageBox::information(NULL, QString(tr("Warning")),
+				QString(tr(errorMessage.c_str())),
+				QString(tr("Ok")));
+		}
+	}
+	else
+	{
+		QMessageBox::information(NULL, QString(tr("Warning")),
+			QString(tr("Entry routing with this id does not exist!")),
+			QString(tr("Ok")));
+	}
+}
+
+void DataForm::CrtInvDlg()
+{
+	CreateInvDlg *invDlg = new CreateInvDlg(dataFormBL, false, this);
+	invDlg->setAttribute(Qt::WA_DeleteOnClose);
+	invDlg->setWindowTitle(tr("Create inventorization"));
+	QMdiSubWindow *invWindow = new QMdiSubWindow;
+	invWindow->setWidget(invDlg);
+	invWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(invWindow);
+	invDlg->show();
+}
+void DataForm::UdpInvDlg()
+{
+	CreateInvDlg *invDlg = new CreateInvDlg(dataFormBL, true, this);
+	invDlg->setAttribute(Qt::WA_DeleteOnClose);
+	invDlg->setWindowTitle(tr("Update inventorization"));
+	QMdiSubWindow *invWindow = new QMdiSubWindow;
+	invWindow->setWidget(invDlg);
+	invWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(invWindow);
+	if (invDlg->FillDlgElements(tableView))
+	{
+		invDlg->show();
+	}
+	/*else
+	{
+		QMessageBox::information(NULL, QString(tr("Warning")),
+			QString(tr("Please select one row at first!")),
+			QString(tr("Ok")));
+	}*/
 }
 void DataForm::DelInvDlg()
 {
@@ -1800,6 +2278,10 @@ void DataForm::CrtInvListDlg()
 	}
 	craeteInvListDlg->setAttribute(Qt::WA_DeleteOnClose);
 	craeteInvListDlg->setWindowTitle(tr("Add product to inventorization list"));
+	QMdiSubWindow *craeteInvListWindow = new QMdiSubWindow;
+	craeteInvListWindow->setWidget(craeteInvListDlg);
+	craeteInvListWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(craeteInvListWindow);
 	craeteInvListDlg->show();
 }
 void DataForm::UdpInvListDlg()
@@ -1807,6 +2289,10 @@ void DataForm::UdpInvListDlg()
 	CreateInvListDlg *craeteInvListDlg = new CreateInvListDlg(dataFormBL, true, this);
 	craeteInvListDlg->setAttribute(Qt::WA_DeleteOnClose);
 	craeteInvListDlg->setWindowTitle(tr("Update product in inventorization list"));
+	QMdiSubWindow *craeteInvListWindow = new QMdiSubWindow;
+	craeteInvListWindow->setWidget(craeteInvListDlg);
+	craeteInvListWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(craeteInvListWindow);
 	if (craeteInvListDlg->FillDlgElements(tableView))
 	{
 		craeteInvListDlg->show();
@@ -1851,6 +2337,10 @@ void DataForm::CrtJbpDlg()
 	CreateJbpDlg *jobpriceDlg = new CreateJbpDlg(dataFormBL, false, this);
 	jobpriceDlg->setAttribute(Qt::WA_DeleteOnClose);
 	jobpriceDlg->setWindowTitle(tr("Create jobprice"));
+	QMdiSubWindow *jobpriceWindow = new QMdiSubWindow;
+	jobpriceWindow->setWidget(jobpriceDlg);
+	jobpriceWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(jobpriceWindow);
 	jobpriceDlg->show();
 }
 void DataForm::UdpJbpDlg()
@@ -1858,6 +2348,10 @@ void DataForm::UdpJbpDlg()
 	CreateJbpDlg *jobpriceDlg = new CreateJbpDlg(dataFormBL, true, this);
 	jobpriceDlg->setAttribute(Qt::WA_DeleteOnClose);
 	jobpriceDlg->setWindowTitle(tr("Update jobprice"));
+	QMdiSubWindow *jobpriceWindow = new QMdiSubWindow;
+	jobpriceWindow->setWidget(jobpriceDlg);
+	jobpriceWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(jobpriceWindow);
 	if (jobpriceDlg->FillDlgElements(tableView))
 	{
 		jobpriceDlg->show();
@@ -1903,6 +2397,10 @@ void DataForm::CrtJbsDlg()
 	CreateJbsDlg *jobsheetDlg = new CreateJbsDlg(dataFormBL, false, this);
 	jobsheetDlg->setAttribute(Qt::WA_DeleteOnClose);
 	jobsheetDlg->setWindowTitle(tr("Create jobsheet"));
+	QMdiSubWindow *jobsheetWindow = new QMdiSubWindow;
+	jobsheetWindow->setWidget(jobsheetDlg);
+	jobsheetWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(jobsheetWindow);
 	jobsheetDlg->show();
 }
 void DataForm::UdpJbsDlg()
@@ -1910,6 +2408,10 @@ void DataForm::UdpJbsDlg()
 	CreateJbsDlg *jobsheetDlg = new CreateJbsDlg(dataFormBL, true, this);
 	jobsheetDlg->setAttribute(Qt::WA_DeleteOnClose);
 	jobsheetDlg->setWindowTitle(tr("Update jobsheet"));
+	QMdiSubWindow *jobsheetWindow = new QMdiSubWindow;
+	jobsheetWindow->setWidget(jobsheetDlg);
+	jobsheetWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(jobsheetWindow);
 	if (jobsheetDlg->FillDlgElements(tableView))
 	{
 		jobsheetDlg->show();
@@ -1955,6 +2457,10 @@ void DataForm::CrtLcnDlg()
 	CreateLcnDlg *locationDlg = new CreateLcnDlg(dataFormBL, false, this);
 	locationDlg->setAttribute(Qt::WA_DeleteOnClose);
 	locationDlg->setWindowTitle(tr("Create location"));
+	QMdiSubWindow *locationWindow = new QMdiSubWindow;
+	locationWindow->setWidget(locationDlg);
+	locationWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(locationWindow);
 	locationDlg->show();
 }
 void DataForm::UdpLcnDlg()
@@ -1962,6 +2468,10 @@ void DataForm::UdpLcnDlg()
 	CreateLcnDlg *locationDlg = new CreateLcnDlg(dataFormBL, true, this);
 	locationDlg->setAttribute(Qt::WA_DeleteOnClose);
 	locationDlg->setWindowTitle(tr("Update location"));
+	QMdiSubWindow *locationWindow = new QMdiSubWindow;
+	locationWindow->setWidget(locationDlg);
+	locationWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(locationWindow);
 	if (locationDlg->FillDlgElements(tableView))
 	{
 		locationDlg->show();
@@ -2008,6 +2518,10 @@ void DataForm::CrtMsrDlg()
 	CreateMsrDlg *measureDlg = new CreateMsrDlg(dataFormBL, false, this);
 	measureDlg->setAttribute(Qt::WA_DeleteOnClose);
 	measureDlg->setWindowTitle(tr("Create measure"));
+	QMdiSubWindow *measureWindow = new QMdiSubWindow;
+	measureWindow->setWidget(measureDlg);
+	measureWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(measureWindow);
 	measureDlg->show();
 }
 void DataForm::UdpMsrDlg()
@@ -2015,6 +2529,10 @@ void DataForm::UdpMsrDlg()
 	CreateMsrDlg *measureDlg = new CreateMsrDlg(dataFormBL, true, this);
 	measureDlg->setAttribute(Qt::WA_DeleteOnClose);
 	measureDlg->setWindowTitle(tr("Update currency"));
+	QMdiSubWindow *measureWindow = new QMdiSubWindow;
+	measureWindow->setWidget(measureDlg);
+	measureWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(measureWindow);
 	if (measureDlg->FillDlgElements(tableView))
 	{
 		measureDlg->show();
@@ -2059,6 +2577,10 @@ void DataForm::CrtNetCDlg()
 	CreateNetCDlg *netCostDlg = new CreateNetCDlg(dataFormBL, false, this);
 	netCostDlg->setAttribute(Qt::WA_DeleteOnClose);
 	netCostDlg->setWindowTitle(tr("Create net cost"));
+	QMdiSubWindow *netCostWindow = new QMdiSubWindow;
+	netCostWindow->setWidget(netCostDlg);
+	netCostWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(netCostWindow);
 	netCostDlg->show();
 }
 void DataForm::UdpNetCDlg()
@@ -2066,6 +2588,10 @@ void DataForm::UdpNetCDlg()
 	CreateNetCDlg *netCostDlg = new CreateNetCDlg(dataFormBL, true, this);
 	netCostDlg->setAttribute(Qt::WA_DeleteOnClose);
 	netCostDlg->setWindowTitle(tr("Update net cost"));
+	QMdiSubWindow *netCostWindow = new QMdiSubWindow;
+	netCostWindow->setWidget(netCostDlg);
+	netCostWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(netCostWindow);
 	if (netCostDlg->FillDlgElements(tableView))
 	{
 		netCostDlg->show();
@@ -2110,6 +2636,10 @@ void DataForm::CrtOrdDlg()
 	CreateOrdDlg *orderDlg = new CreateOrdDlg(dataFormBL, false, this);
 	orderDlg->setAttribute(Qt::WA_DeleteOnClose);
 	orderDlg->setWindowTitle(tr("Create order"));
+	QMdiSubWindow *orderWindow = new QMdiSubWindow;
+	orderWindow->setWidget(orderDlg);
+	orderWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(orderWindow);
 	orderDlg->show();
 }
 void DataForm::UdpOrdDlg()
@@ -2117,16 +2647,20 @@ void DataForm::UdpOrdDlg()
 	CreateOrdDlg *orderDlg = new CreateOrdDlg(dataFormBL, true, this);
 	orderDlg->setAttribute(Qt::WA_DeleteOnClose);
 	orderDlg->setWindowTitle(tr("Update order"));
+	QMdiSubWindow *orderWindow = new QMdiSubWindow;
+	orderWindow->setWidget(orderDlg);
+	orderWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(orderWindow);
 	if (orderDlg->FillDlgElements(tableView))
 	{
 		orderDlg->show();
 	}
-	else
+	/*else
 	{
 		QMessageBox::information(NULL, QString(tr("Warning")),
 			QString(tr("Please select one row at first!")),
 			QString(tr("Ok")));
-	}
+	}*/
 }
 void DataForm::DelOrdDlg()
 {
@@ -2165,6 +2699,10 @@ void DataForm::CrtOrdListDlg()
 	}
 	craeteOrdListDlg->setAttribute(Qt::WA_DeleteOnClose);
 	craeteOrdListDlg->setWindowTitle(tr("Add product to order list"));
+	QMdiSubWindow *craeteOrdListWindow = new QMdiSubWindow;
+	craeteOrdListWindow->setWidget(craeteOrdListDlg);
+	craeteOrdListWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(craeteOrdListWindow);
 	craeteOrdListDlg->show();
 }
 void DataForm::UdpOrdListDlg()
@@ -2172,6 +2710,10 @@ void DataForm::UdpOrdListDlg()
 	CreateOrdListDlg *craeteOrdListDlg = new CreateOrdListDlg(dataFormBL, true, this);
 	craeteOrdListDlg->setAttribute(Qt::WA_DeleteOnClose);
 	craeteOrdListDlg->setWindowTitle(tr("Update product in order list"));
+	QMdiSubWindow *craeteOrdListWindow = new QMdiSubWindow;
+	craeteOrdListWindow->setWidget(craeteOrdListDlg);
+	craeteOrdListWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(craeteOrdListWindow);
 	if (craeteOrdListDlg->FillDlgElements(tableView))
 	{
 		craeteOrdListDlg->show();
@@ -2216,6 +2758,10 @@ void DataForm::CrtOrdRDlg()
 	CreateOrdRDlg *orderRDlg = new CreateOrdRDlg(dataFormBL, false, this);
 	orderRDlg->setAttribute(Qt::WA_DeleteOnClose);
 	orderRDlg->setWindowTitle(tr("Create order raw"));
+	QMdiSubWindow *orderRWindow = new QMdiSubWindow;
+	orderRWindow->setWidget(orderRDlg);
+	orderRWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(orderRWindow);
 	orderRDlg->show();
 }
 void DataForm::UdpOrdRDlg()
@@ -2223,16 +2769,20 @@ void DataForm::UdpOrdRDlg()
 	CreateOrdRDlg *orderRDlg = new CreateOrdRDlg(dataFormBL, true, this);
 	orderRDlg->setAttribute(Qt::WA_DeleteOnClose);
 	orderRDlg->setWindowTitle(tr("Update order raw"));
+	QMdiSubWindow *orderRWindow = new QMdiSubWindow;
+	orderRWindow->setWidget(orderRDlg);
+	orderRWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(orderRWindow);
 	if (orderRDlg->FillDlgElements(tableView))
 	{
 		orderRDlg->show();
 	}
-	else
+	/*else
 	{
 		QMessageBox::information(NULL, QString(tr("Warning")),
 			QString(tr("Please select one row at first!")),
 			QString(tr("Ok")));
-	}
+	}*/
 }
 void DataForm::DelOrdRDlg()
 {
@@ -2271,6 +2821,10 @@ void DataForm::CrtOrdRListDlg()
 	}
 	craeteOrdRListDlg->setAttribute(Qt::WA_DeleteOnClose);
 	craeteOrdRListDlg->setWindowTitle(tr("Add raw to order list"));
+	QMdiSubWindow *craeteOrdRListWindow = new QMdiSubWindow;
+	craeteOrdRListWindow->setWidget(craeteOrdRListDlg);
+	craeteOrdRListWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(craeteOrdRListWindow);
 	craeteOrdRListDlg->show();
 }
 void DataForm::UdpOrdRListDlg()
@@ -2278,6 +2832,10 @@ void DataForm::UdpOrdRListDlg()
 	CreateOrdRListDlg *craeteOrdRListDlg = new CreateOrdRListDlg(dataFormBL, true, this);
 	craeteOrdRListDlg->setAttribute(Qt::WA_DeleteOnClose);
 	craeteOrdRListDlg->setWindowTitle(tr("Update raw in order list"));
+	QMdiSubWindow *craeteOrdRListWindow = new QMdiSubWindow;
+	craeteOrdRListWindow->setWidget(craeteOrdRListDlg);
+	craeteOrdRListWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(craeteOrdRListWindow);
 	if (craeteOrdRListDlg->FillDlgElements(tableView))
 	{
 		craeteOrdRListDlg->show();
@@ -2322,6 +2880,10 @@ void DataForm::CrtPcrDlg()
 	CreatePcrDlg *percentRateDlg = new CreatePcrDlg(dataFormBL, false, this);
 	percentRateDlg->setAttribute(Qt::WA_DeleteOnClose);
 	percentRateDlg->setWindowTitle(tr("Create percent rate"));
+	QMdiSubWindow *percentRateWindow = new QMdiSubWindow;
+	percentRateWindow->setWidget(percentRateDlg);
+	percentRateWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(percentRateWindow);
 	percentRateDlg->show();
 }
 void DataForm::UdpPcrDlg()
@@ -2329,6 +2891,10 @@ void DataForm::UdpPcrDlg()
 	CreatePcrDlg *percentRateDlg = new CreatePcrDlg(dataFormBL, true, this);
 	percentRateDlg->setAttribute(Qt::WA_DeleteOnClose);
 	percentRateDlg->setWindowTitle(tr("Update percent rate"));
+	QMdiSubWindow *percentRateWindow = new QMdiSubWindow;
+	percentRateWindow->setWidget(percentRateDlg);
+	percentRateWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(percentRateWindow);
 	if (percentRateDlg->FillDlgElements(tableView))
 	{
 		percentRateDlg->show();
@@ -2373,6 +2939,10 @@ void DataForm::CrtPhotoDlg()
 	CreatePhtDlg *photoDlg = new CreatePhtDlg(dataFormBL, false, this);
 	photoDlg->setAttribute(Qt::WA_DeleteOnClose);
 	photoDlg->setWindowTitle(tr("Create photo"));
+	QMdiSubWindow *photoWindow = new QMdiSubWindow;
+	photoWindow->setWidget(photoDlg);
+	photoWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(photoWindow);
 	photoDlg->show();
 }
 void DataForm::UdpPhotoDlg()
@@ -2380,6 +2950,10 @@ void DataForm::UdpPhotoDlg()
 	CreatePhtDlg *photoDlg = new CreatePhtDlg(dataFormBL, true, this);
 	photoDlg->setAttribute(Qt::WA_DeleteOnClose);
 	photoDlg->setWindowTitle(tr("Update photo"));
+	QMdiSubWindow *photoWindow = new QMdiSubWindow;
+	photoWindow->setWidget(photoDlg);
+	photoWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(photoWindow);
 	if (photoDlg->FillDlgElements(tableView))
 	{
 		photoDlg->show();
@@ -2424,6 +2998,10 @@ void DataForm::CrtPmtDlg()
 	CreatePmtDlg *paymentDlg = new CreatePmtDlg(dataFormBL, false, this);
 	paymentDlg->setAttribute(Qt::WA_DeleteOnClose);
 	paymentDlg->setWindowTitle(tr("Create payment"));
+	QMdiSubWindow *paymentWindow = new QMdiSubWindow;
+	paymentWindow->setWidget(paymentDlg);
+	paymentWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(paymentWindow);
 	paymentDlg->show();
 }
 void DataForm::UdpPmtDlg()
@@ -2431,6 +3009,10 @@ void DataForm::UdpPmtDlg()
 	CreatePmtDlg *paymentDlg = new CreatePmtDlg(dataFormBL, true, this);
 	paymentDlg->setAttribute(Qt::WA_DeleteOnClose);
 	paymentDlg->setWindowTitle(tr("Update payment"));
+	QMdiSubWindow *paymentWindow = new QMdiSubWindow;
+	paymentWindow->setWidget(paymentDlg);
+	paymentWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(paymentWindow);
 	if (paymentDlg->FillDlgElements(tableView))
 	{
 		paymentDlg->show();
@@ -2475,6 +3057,10 @@ void DataForm::CrtPosDlg()
 	CreatePosDlg *positionDlg = new CreatePosDlg(dataFormBL, false, this);
 	positionDlg->setAttribute(Qt::WA_DeleteOnClose);
 	positionDlg->setWindowTitle(tr("Create position"));
+	QMdiSubWindow *positionWindow = new QMdiSubWindow;
+	positionWindow->setWidget(positionDlg);
+	positionWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(positionWindow);
 	positionDlg->show();
 }
 void DataForm::UdpPosDlg()
@@ -2482,6 +3068,10 @@ void DataForm::UdpPosDlg()
 	CreatePosDlg *positionDlg = new CreatePosDlg(dataFormBL, true, this);
 	positionDlg->setAttribute(Qt::WA_DeleteOnClose);
 	positionDlg->setWindowTitle(tr("Update position"));
+	QMdiSubWindow *positionWindow = new QMdiSubWindow;
+	positionWindow->setWidget(positionDlg);
+	positionWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(positionWindow);
 	if (positionDlg->FillDlgElements(tableView))
 	{
 		positionDlg->show();
@@ -2526,6 +3116,10 @@ void DataForm::CrtPrcDlg()
 	CreatePrcDlg *priceDlg = new CreatePrcDlg(dataFormBL, false, this);
 	priceDlg->setAttribute(Qt::WA_DeleteOnClose);
 	priceDlg->setWindowTitle(tr("Create price"));
+	QMdiSubWindow *priceWindow = new QMdiSubWindow;
+	priceWindow->setWidget(priceDlg);
+	priceWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(priceWindow);
 	priceDlg->show();
 }
 void DataForm::UdpPrcDlg()
@@ -2533,6 +3127,10 @@ void DataForm::UdpPrcDlg()
 	CreatePrcDlg *priceDlg = new CreatePrcDlg(dataFormBL, true, this);
 	priceDlg->setAttribute(Qt::WA_DeleteOnClose);
 	priceDlg->setWindowTitle(tr("Update price"));
+	QMdiSubWindow *priceWindow = new QMdiSubWindow;
+	priceWindow->setWidget(priceDlg);
+	priceWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(priceWindow);
 	if (priceDlg->FillDlgElements(tableView))
 	{
 		priceDlg->show();
@@ -2577,16 +3175,24 @@ void DataForm::CrtProdTpDlg()
 	CreatePrdTpDlg *prodTypeDlg = new CreatePrdTpDlg(dataFormBL, false, this);
 	prodTypeDlg->setAttribute(Qt::WA_DeleteOnClose);
 	prodTypeDlg->setWindowTitle(tr("Create product type"));
+	QMdiSubWindow *prodTypeWindow = new QMdiSubWindow;
+	prodTypeWindow->setWidget(prodTypeDlg);
+	prodTypeWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(prodTypeWindow);
 	prodTypeDlg->show();
 }
 void DataForm::UdpProdTpDlg()
 {
-	CreatePrdTpDlg *prodTpDlg = new CreatePrdTpDlg(dataFormBL, true, this);
-	prodTpDlg->setAttribute(Qt::WA_DeleteOnClose);
-	prodTpDlg->setWindowTitle(tr("Update product type"));
-	if (prodTpDlg->FillDlgElements(tableView))
+	CreatePrdTpDlg *prodTypeDlg = new CreatePrdTpDlg(dataFormBL, true, this);
+	prodTypeDlg->setAttribute(Qt::WA_DeleteOnClose);
+	prodTypeDlg->setWindowTitle(tr("Update product type"));
+	QMdiSubWindow *prodTypeWindow = new QMdiSubWindow;
+	prodTypeWindow->setWidget(prodTypeDlg);
+	prodTypeWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(prodTypeWindow);
+	if (prodTypeDlg->FillDlgElements(tableView))
 	{
-		prodTpDlg->show();
+		prodTypeDlg->show();
 	}
 	else
 	{
@@ -2628,6 +3234,10 @@ void DataForm::CrtProdDlg()
 	CreateProdDlg *prodDlg = new CreateProdDlg(dataFormBL, false, this);
 	prodDlg->setAttribute(Qt::WA_DeleteOnClose);
 	prodDlg->setWindowTitle(tr("Create product"));
+	QMdiSubWindow *prodWindow = new QMdiSubWindow;
+	prodWindow->setWidget(prodDlg);
+	prodWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(prodWindow);
 	prodDlg->show();
 }
 void DataForm::UdpProdDlg()
@@ -2635,6 +3245,10 @@ void DataForm::UdpProdDlg()
 	CreateProdDlg *prodDlg = new CreateProdDlg(dataFormBL, true, this);
 	prodDlg->setAttribute(Qt::WA_DeleteOnClose);
 	prodDlg->setWindowTitle(tr("Update product"));
+	QMdiSubWindow *prodWindow = new QMdiSubWindow;
+	prodWindow->setWidget(prodDlg);
+	prodWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(prodWindow);
 	if (prodDlg->FillDlgElements(tableView))
 	{
 		prodDlg->show();
@@ -2679,6 +3293,10 @@ void DataForm::CrtProdnDlg()
 	CreateProdnDlg *prodnDlg = new CreateProdnDlg(dataFormBL, false, this);
 	prodnDlg->setAttribute(Qt::WA_DeleteOnClose);
 	prodnDlg->setWindowTitle(tr("Create production"));
+	QMdiSubWindow *prodnWindow = new QMdiSubWindow;
+	prodnWindow->setWidget(prodnDlg);
+	prodnWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(prodnWindow);
 	prodnDlg->show();
 }
 void DataForm::UdpProdnDlg()
@@ -2686,6 +3304,10 @@ void DataForm::UdpProdnDlg()
 	CreateProdnDlg *prodnDlg = new CreateProdnDlg(dataFormBL, true, this);
 	prodnDlg->setAttribute(Qt::WA_DeleteOnClose);
 	prodnDlg->setWindowTitle(tr("Update production"));
+	QMdiSubWindow *prodnWindow = new QMdiSubWindow;
+	prodnWindow->setWidget(prodnDlg);
+	prodnWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(prodnWindow);
 	if (prodnDlg->FillDlgElements(tableView))
 	{
 		prodnDlg->show();
@@ -2725,6 +3347,66 @@ void DataForm::DelProdnDlg()
 	}
 }
 
+
+void DataForm::CrtProdnStockDlg()
+{
+	CreateProdnStockDlg *prodnStockDlg = new CreateProdnStockDlg(dataFormBL, false, this);
+	prodnStockDlg->setAttribute(Qt::WA_DeleteOnClose);
+	prodnStockDlg->setWindowTitle(tr("Create production stock"));
+	QMdiSubWindow *prodnStockWindow = new QMdiSubWindow;
+	prodnStockWindow->setWidget(prodnStockDlg);
+	prodnStockWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(prodnStockWindow);
+	prodnStockDlg->show();
+}
+void DataForm::UdpProdnStockDlg()
+{
+	CreateProdnStockDlg *prodnStockDlg = new CreateProdnStockDlg(dataFormBL, true, this);
+	prodnStockDlg->setAttribute(Qt::WA_DeleteOnClose);
+	prodnStockDlg->setWindowTitle(tr("Update production stock"));
+	QMdiSubWindow *prodnStockWindow = new QMdiSubWindow;
+	prodnStockWindow->setWidget(prodnStockDlg);
+	prodnStockWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(prodnStockWindow);
+	if (prodnStockDlg->FillDlgElements(tableView))
+	{
+		prodnStockDlg->show();
+	}
+	else
+	{
+		QMessageBox::information(NULL, QString(tr("Warning")),
+			QString(tr("Please select one row at first!")),
+			QString(tr("Ok")));
+	}
+}
+void DataForm::DelProdnStockDlg()
+{
+	std::string errorMessage = "";
+	int id = GetIDFromTable(tableView, errorMessage);
+	BusinessLayer::ProductionStock prodnStock;
+	prodnStock.SetID(id);
+	if (0 != id)
+	{
+		if (dataFormBL->DeleteProductionStock(&prodnStock, errorMessage))
+		{
+			tableView->model()->removeRow(tableView->selectionModel()->currentIndex().row());
+			ChangeBtnState();
+		}
+		else
+		{
+			QMessageBox::information(NULL, QString(tr("Warning")),
+				QString(tr(errorMessage.c_str())),
+				QString(tr("Ok")));
+		}
+	}
+	else
+	{
+		QMessageBox::information(NULL, QString(tr("Warning")),
+			QString(tr("Production stock with this id does not exist!")),
+			QString(tr("Ok")));
+	}
+}
+
 void DataForm::CrtProdnListDlg()
 {
 	CreateProdnListDlg *craeteProdnListDlg = new CreateProdnListDlg(dataFormBL, false, this);
@@ -2734,6 +3416,10 @@ void DataForm::CrtProdnListDlg()
 	}
 	craeteProdnListDlg->setAttribute(Qt::WA_DeleteOnClose);
 	craeteProdnListDlg->setWindowTitle(tr("Add product to production list"));
+	QMdiSubWindow *craeteProdnListWindow = new QMdiSubWindow;
+	craeteProdnListWindow->setWidget(craeteProdnListDlg);
+	craeteProdnListWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(craeteProdnListWindow);
 	craeteProdnListDlg->show();
 }
 void DataForm::UdpProdnListDlg()
@@ -2741,6 +3427,10 @@ void DataForm::UdpProdnListDlg()
 	CreateProdnListDlg *craeteProdnListDlg = new CreateProdnListDlg(dataFormBL, true, this);
 	craeteProdnListDlg->setAttribute(Qt::WA_DeleteOnClose);
 	craeteProdnListDlg->setWindowTitle(tr("Update product in production list"));
+	QMdiSubWindow *craeteProdnListWindow = new QMdiSubWindow;
+	craeteProdnListWindow->setWidget(craeteProdnListDlg);
+	craeteProdnListWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(craeteProdnListWindow);
 	if (craeteProdnListDlg->FillDlgElements(tableView))
 	{
 		craeteProdnListDlg->show();
@@ -2780,11 +3470,137 @@ void DataForm::DelProdnListDlg()
 	}
 }
 
+void DataForm::CrtProdConRDlg()
+{
+	CreateProdConRDlg *pConRDlg = new CreateProdConRDlg(dataFormBL, false, this);
+	pConRDlg->setAttribute(Qt::WA_DeleteOnClose);
+	pConRDlg->setWindowTitle(tr("Create production consume raw"));
+	QMdiSubWindow *pconRWindow = new QMdiSubWindow;
+	pconRWindow->setWidget(pConRDlg);
+	pconRWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(pconRWindow);
+	pConRDlg->show();
+}
+void DataForm::UdpProdConRDlg()
+{
+	CreateProdConRDlg *pConRDlg = new CreateProdConRDlg(dataFormBL, true, this);
+	pConRDlg->setAttribute(Qt::WA_DeleteOnClose);
+	pConRDlg->setWindowTitle(tr("Update production consume raw"));
+	QMdiSubWindow *pConRWindow = new QMdiSubWindow;
+	pConRWindow->setWidget(pConRDlg);
+	pConRWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(pConRWindow);
+	if (pConRDlg->FillDlgElements(tableView))
+	{
+		pConRDlg->show();
+	}
+	/*else
+	{
+		QMessageBox::information(NULL, QString(tr("Warning")),
+			QString(tr("Please select one row at first!")),
+			QString(tr("Ok")));
+	}*/
+}
+void DataForm::DelProdConRDlg()
+{
+	std::string errorMessage = "";
+	int id = GetIDFromTable(tableView, errorMessage);
+	BusinessLayer::ProductionConsumeRaw pConsumeRaw;
+	pConsumeRaw.SetID(id);
+	if (0 != id)
+	{
+		if (dataFormBL->DeleteProductionConsumeRaw(&pConsumeRaw, errorMessage))
+		{
+			tableView->model()->removeRow(tableView->selectionModel()->currentIndex().row());
+			ChangeBtnState();
+		}
+		else
+		{
+			QMessageBox::information(NULL, QString(tr("Warning")),
+				QString(tr(errorMessage.c_str())),
+				QString(tr("Ok")));
+		}
+	}
+	else
+	{
+		QMessageBox::information(NULL, QString(tr("Warning")),
+			QString(tr("Prodcution consume raw with this id does not exist!")),
+			QString(tr("Ok")));
+	}
+}
+
+void DataForm::CrtProdConRListDlg()
+{
+	CreateProdConRListDlg *craeteProdConRListDlg = new CreateProdConRListDlg(dataFormBL, false, this);
+	if (0 != pConsumeRawID)
+	{
+		craeteProdConRListDlg->pConsumeRawID = pConsumeRawID;
+	}
+	craeteProdConRListDlg->setAttribute(Qt::WA_DeleteOnClose);
+	craeteProdConRListDlg->setWindowTitle(tr("Add raw to production consume raw list"));
+	QMdiSubWindow *craeteConRListWindow = new QMdiSubWindow;
+	craeteConRListWindow->setWidget(craeteProdConRListDlg);
+	craeteConRListWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(craeteConRListWindow);
+	craeteProdConRListDlg->show();
+}
+void DataForm::UdpProdConRListDlg()
+{
+	CreateProdConRListDlg *craeteProdConRListDlg = new CreateProdConRListDlg(dataFormBL, true, this);
+	craeteProdConRListDlg->setAttribute(Qt::WA_DeleteOnClose);
+	craeteProdConRListDlg->setWindowTitle(tr("Update raw in production consume raw list"));
+	QMdiSubWindow *craeteProdConRListWindow = new QMdiSubWindow;
+	craeteProdConRListWindow->setWidget(craeteProdConRListDlg);
+	craeteProdConRListWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(craeteProdConRListWindow);
+	if (craeteProdConRListDlg->FillDlgElements(tableView))
+	{
+		craeteProdConRListDlg->show();
+	}
+	else
+	{
+		QMessageBox::information(NULL, QString(tr("Warning")),
+			QString(tr("Please select one row at first!")),
+			QString(tr("Ok")));
+	}
+}
+void DataForm::DelProdConRListDlg()
+{
+	std::string errorMessage = "";
+	int id = GetIDFromTable(tableView, errorMessage);
+	BusinessLayer::ProductionConsumeRawList pConsumeRawList;
+	pConsumeRawList.SetID(id);
+	if (0 != id)
+	{
+		if (dataFormBL->DeleteProductionConsumeRawList(&pConsumeRawList, errorMessage))
+		{
+			tableView->model()->removeRow(tableView->selectionModel()->currentIndex().row());
+			ChangeBtnState();
+		}
+		else
+		{
+			QMessageBox::information(NULL, QString(tr("Warning")),
+				QString(tr(errorMessage.c_str())),
+				QString(tr("Ok")));
+		}
+	}
+	else
+	{
+		QMessageBox::information(NULL, QString(tr("Warning")),
+			QString(tr("Wrong id, cannot delete data from this row!")),
+			QString(tr("Ok")));
+	}
+}
+
 void DataForm::CrtPPlanDlg()
 {
 	CreatePPlanDlg *pPlanDlg = new CreatePPlanDlg(dataFormBL, false, this);
 	pPlanDlg->setAttribute(Qt::WA_DeleteOnClose);
 	pPlanDlg->setWindowTitle(tr("Create production plan"));
+	QMdiSubWindow *pPlanWindow = new QMdiSubWindow;
+	pPlanWindow->setWidget(pPlanDlg);
+	pPlanWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(pPlanWindow);
 	pPlanDlg->show();
 }
 void DataForm::UdpPPlanDlg()
@@ -2792,6 +3608,10 @@ void DataForm::UdpPPlanDlg()
 	CreatePPlanDlg *pPlanDlg = new CreatePPlanDlg(dataFormBL, true, this);
 	pPlanDlg->setAttribute(Qt::WA_DeleteOnClose);
 	pPlanDlg->setWindowTitle(tr("Update production plan"));
+	QMdiSubWindow *pPlanWindow = new QMdiSubWindow;
+	pPlanWindow->setWidget(pPlanDlg);
+	pPlanWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(pPlanWindow);
 	if (pPlanDlg->FillDlgElements(tableView))
 	{
 		pPlanDlg->show();
@@ -2840,6 +3660,10 @@ void DataForm::CrtPPlanListDlg()
 	}
 	craetePPlanListDlg->setAttribute(Qt::WA_DeleteOnClose);
 	craetePPlanListDlg->setWindowTitle(tr("Add product to production plan list"));
+	QMdiSubWindow *craetePPlanListWindow = new QMdiSubWindow;
+	craetePPlanListWindow->setWidget(craetePPlanListDlg);
+	craetePPlanListWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(craetePPlanListWindow);
 	craetePPlanListDlg->show();
 }
 void DataForm::UdpPPlanListDlg()
@@ -2847,6 +3671,10 @@ void DataForm::UdpPPlanListDlg()
 	CreatePPlanListDlg *craetePPlanListDlg = new CreatePPlanListDlg(dataFormBL, true, this);
 	craetePPlanListDlg->setAttribute(Qt::WA_DeleteOnClose);
 	craetePPlanListDlg->setWindowTitle(tr("Update product in production plan list"));
+	QMdiSubWindow *craetePPlanListWindow = new QMdiSubWindow;
+	craetePPlanListWindow->setWidget(craetePPlanListDlg);
+	craetePPlanListWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(craetePPlanListWindow);
 	if (craetePPlanListDlg->FillDlgElements(tableView))
 	{
 		craetePPlanListDlg->show();
@@ -2891,6 +3719,10 @@ void DataForm::CrtPspDlg()
 	CreatePspDlg *payslipDlg = new CreatePspDlg(dataFormBL, false, this);
 	payslipDlg->setAttribute(Qt::WA_DeleteOnClose);
 	payslipDlg->setWindowTitle(tr("Create payslip"));
+	QMdiSubWindow *payslipWindow = new QMdiSubWindow;
+	payslipWindow->setWidget(payslipDlg);
+	payslipWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(payslipWindow);
 	payslipDlg->show();
 }
 void DataForm::UdpPspDlg()
@@ -2898,6 +3730,10 @@ void DataForm::UdpPspDlg()
 	CreatePspDlg *payslipDlg = new CreatePspDlg(dataFormBL, true, this);
 	payslipDlg->setAttribute(Qt::WA_DeleteOnClose);
 	payslipDlg->setWindowTitle(tr("Update payslip"));
+	QMdiSubWindow *payslipWindow = new QMdiSubWindow;
+	payslipWindow->setWidget(payslipDlg);
+	payslipWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(payslipWindow);
 	if (payslipDlg->FillDlgElements(tableView))
 	{
 		payslipDlg->show();
@@ -2942,6 +3778,10 @@ void DataForm::CrtPurDlg()
 	CreatePurDlg *purveyorDlg = new CreatePurDlg(dataFormBL, false, this);
 	purveyorDlg->setAttribute(Qt::WA_DeleteOnClose);
 	purveyorDlg->setWindowTitle(tr("Create purveyor"));
+	QMdiSubWindow *purveyorWindow = new QMdiSubWindow;
+	purveyorWindow->setWidget(purveyorDlg);
+	purveyorWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(purveyorWindow);
 	purveyorDlg->show();
 }
 void DataForm::UdpPurDlg()
@@ -2949,6 +3789,10 @@ void DataForm::UdpPurDlg()
 	CreatePurDlg *purveyorDlg = new CreatePurDlg(dataFormBL, true, this);
 	purveyorDlg->setAttribute(Qt::WA_DeleteOnClose);
 	purveyorDlg->setWindowTitle(tr("Update purveyor"));
+	QMdiSubWindow *purveyorWindow = new QMdiSubWindow;
+	purveyorWindow->setWidget(purveyorDlg);
+	purveyorWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(purveyorWindow);
 	if (purveyorDlg->FillDlgElements(tableView))
 	{
 		purveyorDlg->show();
@@ -2993,6 +3837,10 @@ void DataForm::CrtRelDlg()
 	CreateRelDlg *relationDlg = new CreateRelDlg(dataFormBL, false, this);
 	relationDlg->setAttribute(Qt::WA_DeleteOnClose);
 	relationDlg->setWindowTitle(tr("Create relation"));
+	QMdiSubWindow *relationWindow = new QMdiSubWindow;
+	relationWindow->setWidget(relationDlg);
+	relationWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(relationWindow);
 	relationDlg->show();
 }
 void DataForm::UdpRelDlg()
@@ -3000,6 +3848,10 @@ void DataForm::UdpRelDlg()
 	CreateRelDlg *relationDlg = new CreateRelDlg(dataFormBL, true, this);
 	relationDlg->setAttribute(Qt::WA_DeleteOnClose);
 	relationDlg->setWindowTitle(tr("Update relation"));
+	QMdiSubWindow *relationWindow = new QMdiSubWindow;
+	relationWindow->setWidget(relationDlg);
+	relationWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(relationWindow);
 	if (relationDlg->FillDlgElements(tableView))
 	{
 		relationDlg->show();
@@ -3044,6 +3896,10 @@ void DataForm::CrtRelTypeDlg()
 	CreateRelTypeDlg *relationTypeDlg = new CreateRelTypeDlg(dataFormBL, false, this);
 	relationTypeDlg->setAttribute(Qt::WA_DeleteOnClose);
 	relationTypeDlg->setWindowTitle(tr("Create relation type"));
+	QMdiSubWindow *relationTypeWindow = new QMdiSubWindow;
+	relationTypeWindow->setWidget(relationTypeDlg);
+	relationTypeWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(relationTypeWindow);
 	relationTypeDlg->show();
 }
 void DataForm::UdpRelTypeDlg()
@@ -3051,6 +3907,10 @@ void DataForm::UdpRelTypeDlg()
 	CreateRelTypeDlg *relationTypeDlg = new CreateRelTypeDlg(dataFormBL, true, this);
 	relationTypeDlg->setAttribute(Qt::WA_DeleteOnClose);
 	relationTypeDlg->setWindowTitle(tr("Update relation type"));
+	QMdiSubWindow *relationTypeWindow = new QMdiSubWindow;
+	relationTypeWindow->setWidget(relationTypeDlg);
+	relationTypeWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(relationTypeWindow);
 	if (relationTypeDlg->FillDlgElements(tableView))
 	{
 		relationTypeDlg->show();
@@ -3095,6 +3955,10 @@ void DataForm::CrtRcpPDlg()
 	CreateRcpPDlg *rcpPDlg = new CreateRcpPDlg(dataFormBL, false, this);
 	rcpPDlg->setAttribute(Qt::WA_DeleteOnClose);
 	rcpPDlg->setWindowTitle(tr("Create receipt product"));
+	QMdiSubWindow *rcpPWindow = new QMdiSubWindow;
+	rcpPWindow->setWidget(rcpPDlg);
+	rcpPWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(rcpPWindow);
 	rcpPDlg->show();
 }
 void DataForm::UdpRcpPDlg()
@@ -3102,16 +3966,20 @@ void DataForm::UdpRcpPDlg()
 	CreateRcpPDlg *rcpPDlg = new CreateRcpPDlg(dataFormBL, true, this);
 	rcpPDlg->setAttribute(Qt::WA_DeleteOnClose);
 	rcpPDlg->setWindowTitle(tr("Update receipt product"));
+	QMdiSubWindow *rcpPWindow = new QMdiSubWindow;
+	rcpPWindow->setWidget(rcpPDlg);
+	rcpPWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(rcpPWindow);
 	if (rcpPDlg->FillDlgElements(tableView))
 	{
 		rcpPDlg->show();
 	}
-	else
+	/*else
 	{
 		QMessageBox::information(NULL, QString(tr("Warning")),
 			QString(tr("Please select one row at first!")),
 			QString(tr("Ok")));
-	}
+	}*/
 }
 void DataForm::DelRcpPDlg()
 {
@@ -3150,6 +4018,10 @@ void DataForm::CrtRcpPListDlg()
 	}
 	craeteRcpPListDlg->setAttribute(Qt::WA_DeleteOnClose);
 	craeteRcpPListDlg->setWindowTitle(tr("Add product to receipt product list"));
+	QMdiSubWindow *craeteRcpPListWindow = new QMdiSubWindow;
+	craeteRcpPListWindow->setWidget(craeteRcpPListDlg);
+	craeteRcpPListWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(craeteRcpPListWindow);
 	craeteRcpPListDlg->show();
 }
 void DataForm::UdpRcpPListDlg()
@@ -3157,6 +4029,10 @@ void DataForm::UdpRcpPListDlg()
 	CreateRcpPListDlg *craeteRcpPListDlg = new CreateRcpPListDlg(dataFormBL, true, this);
 	craeteRcpPListDlg->setAttribute(Qt::WA_DeleteOnClose);
 	craeteRcpPListDlg->setWindowTitle(tr("Update product in receipt product list"));
+	QMdiSubWindow *craeteRcpPListWindow = new QMdiSubWindow;
+	craeteRcpPListWindow->setWidget(craeteRcpPListDlg);
+	craeteRcpPListWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(craeteRcpPListWindow);
 	if (craeteRcpPListDlg->FillDlgElements(tableView))
 	{
 		craeteRcpPListDlg->show();
@@ -3201,6 +4077,10 @@ void DataForm::CrtRcpRDlg()
 	CreateConRDlg *rcpRDlg = new CreateConRDlg(dataFormBL, false, this);
 	rcpRDlg->setAttribute(Qt::WA_DeleteOnClose);
 	rcpRDlg->setWindowTitle(tr("Receipt receipt raw"));
+	QMdiSubWindow *rcpRWindow = new QMdiSubWindow;
+	rcpRWindow->setWidget(rcpRDlg);
+	rcpRWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(rcpRWindow);
 	rcpRDlg->show();
 }
 void DataForm::UdpRcpRDlg()
@@ -3208,16 +4088,20 @@ void DataForm::UdpRcpRDlg()
 	CreateConRDlg *rcpRDlg = new CreateConRDlg(dataFormBL, true, this);
 	rcpRDlg->setAttribute(Qt::WA_DeleteOnClose);
 	rcpRDlg->setWindowTitle(tr("Update receipt raw"));
+	QMdiSubWindow *rcpRWindow = new QMdiSubWindow;
+	rcpRWindow->setWidget(rcpRDlg);
+	rcpRWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(rcpRWindow);
 	if (rcpRDlg->FillDlgElements(tableView))
 	{
 		rcpRDlg->show();
 	}
-	else
+	/*else
 	{
 		QMessageBox::information(NULL, QString(tr("Warning")),
 			QString(tr("Please select one row at first!")),
 			QString(tr("Ok")));
-	}
+	}*/
 }
 void DataForm::DelRcpRDlg()
 {
@@ -3256,6 +4140,10 @@ void DataForm::CrtRcpRListDlg()
 	}
 	craeteRcpRListDlg->setAttribute(Qt::WA_DeleteOnClose);
 	craeteRcpRListDlg->setWindowTitle(tr("Add raw to receipt raw list"));
+	QMdiSubWindow *craeteRcpRListWindow = new QMdiSubWindow;
+	craeteRcpRListWindow->setWidget(craeteRcpRListDlg);
+	craeteRcpRListWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(craeteRcpRListWindow);
 	craeteRcpRListDlg->show();
 }
 void DataForm::UdpRcpRListDlg()
@@ -3263,6 +4151,10 @@ void DataForm::UdpRcpRListDlg()
 	CreateRcpRListDlg *craeteRcpRListDlg = new CreateRcpRListDlg(dataFormBL, true, this);
 	craeteRcpRListDlg->setAttribute(Qt::WA_DeleteOnClose);
 	craeteRcpRListDlg->setWindowTitle(tr("Update raw in receipt raw list"));
+	QMdiSubWindow *craeteRcpRListWindow = new QMdiSubWindow;
+	craeteRcpRListWindow->setWidget(craeteRcpRListDlg);
+	craeteRcpRListWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(craeteRcpRListWindow);
 	if (craeteRcpRListDlg->FillDlgElements(tableView))
 	{
 		craeteRcpRListDlg->show();
@@ -3307,6 +4199,10 @@ void DataForm::CrtRfdDlg()
 	CreateRfdDlg *refundDlg = new CreateRfdDlg(dataFormBL, false, this);
 	refundDlg->setAttribute(Qt::WA_DeleteOnClose);
 	refundDlg->setWindowTitle(tr("Create refund"));
+	QMdiSubWindow *refundWindow = new QMdiSubWindow;
+	refundWindow->setWidget(refundDlg);
+	refundWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(refundWindow);
 	refundDlg->show();
 }
 void DataForm::UdpRfdDlg()
@@ -3314,6 +4210,10 @@ void DataForm::UdpRfdDlg()
 	CreateRfdDlg *refundDlg = new CreateRfdDlg(dataFormBL, true, this);
 	refundDlg->setAttribute(Qt::WA_DeleteOnClose);
 	refundDlg->setWindowTitle(tr("Update refund"));
+	QMdiSubWindow *refundWindow = new QMdiSubWindow;
+	refundWindow->setWidget(refundDlg);
+	refundWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(refundWindow);
 	if (refundDlg->FillDlgElements(tableView))
 	{
 		refundDlg->show();
@@ -3358,6 +4258,10 @@ void DataForm::CrtRoleDlg()
 	CreateRoleDlg *roleDlg = new CreateRoleDlg(dataFormBL, false, this);
 	roleDlg->setAttribute(Qt::WA_DeleteOnClose);
 	roleDlg->setWindowTitle(tr("Create role"));
+	QMdiSubWindow *roleWindow = new QMdiSubWindow;
+	roleWindow->setWidget(roleDlg);
+	roleWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(roleWindow);
 	roleDlg->show();
 }
 void DataForm::UdpRoleDlg()
@@ -3365,6 +4269,10 @@ void DataForm::UdpRoleDlg()
 	CreateRoleDlg *roleDlg = new CreateRoleDlg(dataFormBL, true, this);
 	roleDlg->setAttribute(Qt::WA_DeleteOnClose);
 	roleDlg->setWindowTitle(tr("Update role"));
+	QMdiSubWindow *roleWindow = new QMdiSubWindow;
+	roleWindow->setWidget(roleDlg);
+	roleWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(roleWindow);
 	if (roleDlg->FillDlgElements(tableView))
 	{
 		roleDlg->show();
@@ -3409,6 +4317,10 @@ void DataForm::CrtRtrnDlg()
 	CreateRtrnDlg *returnDlg = new CreateRtrnDlg(dataFormBL, false, this);
 	returnDlg->setAttribute(Qt::WA_DeleteOnClose);
 	returnDlg->setWindowTitle(tr("Create return"));
+	QMdiSubWindow *returnWindow = new QMdiSubWindow;
+	returnWindow->setWidget(returnDlg);
+	returnWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(returnWindow);
 	returnDlg->show();
 }
 void DataForm::UdpRtrnDlg()
@@ -3416,16 +4328,20 @@ void DataForm::UdpRtrnDlg()
 	CreateRtrnDlg *returnDlg = new CreateRtrnDlg(dataFormBL, true, this);
 	returnDlg->setAttribute(Qt::WA_DeleteOnClose);
 	returnDlg->setWindowTitle(tr("Update return"));
+	QMdiSubWindow *returnWindow = new QMdiSubWindow;
+	returnWindow->setWidget(returnDlg);
+	returnWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(returnWindow);
 	if (returnDlg->FillDlgElements(tableView))
 	{
 		returnDlg->show();
 	}
-	else
+	/*else
 	{
 		QMessageBox::information(NULL, QString(tr("Warning")),
 			QString(tr("Please select one row at first!")),
 			QString(tr("Ok")));
-	}
+	}*/
 }
 void DataForm::DelRtrnDlg()
 {
@@ -3465,6 +4381,10 @@ void DataForm::CrtRtrnListDlg()
 	}
 	craeteRtrnListDlg->setAttribute(Qt::WA_DeleteOnClose);
 	craeteRtrnListDlg->setWindowTitle(tr("Add product to return list"));
+	QMdiSubWindow *craeteRtrnListWindow = new QMdiSubWindow;
+	craeteRtrnListWindow->setWidget(craeteRtrnListDlg);
+	craeteRtrnListWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(craeteRtrnListWindow);
 	craeteRtrnListDlg->show();
 }
 void DataForm::UdpRtrnListDlg()
@@ -3472,6 +4392,10 @@ void DataForm::UdpRtrnListDlg()
 	CreateRtrnListDlg *craeteRtrnListDlg = new CreateRtrnListDlg(dataFormBL, true, this);
 	craeteRtrnListDlg->setAttribute(Qt::WA_DeleteOnClose);
 	craeteRtrnListDlg->setWindowTitle(tr("Update product in return list"));
+	QMdiSubWindow *craeteRtrnListWindow = new QMdiSubWindow;
+	craeteRtrnListWindow->setWidget(craeteRtrnListDlg);
+	craeteRtrnListWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(craeteRtrnListWindow);
 	if (craeteRtrnListDlg->FillDlgElements(tableView))
 	{
 		craeteRtrnListDlg->show();
@@ -3516,6 +4440,10 @@ void DataForm::CrtSlrDlg()
 	CreateSlrDlg *salaryDlg = new CreateSlrDlg(dataFormBL, false, this);
 	salaryDlg->setAttribute(Qt::WA_DeleteOnClose);
 	salaryDlg->setWindowTitle(tr("Create salary"));
+	QMdiSubWindow *salaryWindow = new QMdiSubWindow;
+	salaryWindow->setWidget(salaryDlg);
+	salaryWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(salaryWindow);
 	salaryDlg->show();
 }
 void DataForm::UdpSlrDlg()
@@ -3523,6 +4451,10 @@ void DataForm::UdpSlrDlg()
 	CreateSlrDlg *salaryDlg = new CreateSlrDlg(dataFormBL, true, this);
 	salaryDlg->setAttribute(Qt::WA_DeleteOnClose);
 	salaryDlg->setWindowTitle(tr("Update salary"));
+	QMdiSubWindow *salaryWindow = new QMdiSubWindow;
+	salaryWindow->setWidget(salaryDlg);
+	salaryWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(salaryWindow);
 	if (salaryDlg->FillDlgElements(tableView))
 	{
 		salaryDlg->show();
@@ -3567,6 +4499,10 @@ void DataForm::CrtSlrTypeDlg()
 	CreateSlrTypeDlg *salaryTypeDlg = new CreateSlrTypeDlg(dataFormBL, false, this);
 	salaryTypeDlg->setAttribute(Qt::WA_DeleteOnClose);
 	salaryTypeDlg->setWindowTitle(tr("Create salary type" ));
+	QMdiSubWindow *salaryTypeWindow = new QMdiSubWindow;
+	salaryTypeWindow->setWidget(salaryTypeDlg);
+	salaryTypeWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(salaryTypeWindow);
 	salaryTypeDlg->show();
 }
 void DataForm::UdpSlrTypeDlg()
@@ -3574,6 +4510,10 @@ void DataForm::UdpSlrTypeDlg()
 	CreateSlrTypeDlg *salaryTypeDlg = new CreateSlrTypeDlg(dataFormBL, true, this);
 	salaryTypeDlg->setAttribute(Qt::WA_DeleteOnClose);
 	salaryTypeDlg->setWindowTitle(tr("Update salary type"));
+	QMdiSubWindow *salaryTypeWindow = new QMdiSubWindow;
+	salaryTypeWindow->setWidget(salaryTypeDlg);
+	salaryTypeWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(salaryTypeWindow);
 	if (salaryTypeDlg->FillDlgElements(tableView))
 	{
 		salaryTypeDlg->show();
@@ -3618,6 +4558,10 @@ void DataForm::CrtStsDlg()
 	CreateStsDlg *statusDlg = new CreateStsDlg(dataFormBL, false, this);
 	statusDlg->setAttribute(Qt::WA_DeleteOnClose);
 	statusDlg->setWindowTitle(tr("Create status"));
+	QMdiSubWindow *statusWindow = new QMdiSubWindow;
+	statusWindow->setWidget(statusDlg);
+	statusWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(statusWindow);
 	statusDlg->show();
 }
 void DataForm::UdpStsDlg()
@@ -3625,6 +4569,10 @@ void DataForm::UdpStsDlg()
 	CreateStsDlg *statusDlg = new CreateStsDlg(dataFormBL, true, this);
 	statusDlg->setAttribute(Qt::WA_DeleteOnClose);
 	statusDlg->setWindowTitle(tr("Update status"));
+	QMdiSubWindow *statusWindow = new QMdiSubWindow;
+	statusWindow->setWidget(statusDlg);
+	statusWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(statusWindow);
 	if (statusDlg->FillDlgElements(tableView))
 	{
 		statusDlg->show();
@@ -3664,11 +4612,75 @@ void DataForm::DelStsDlg()
 	}
 }
 
+
+void DataForm::CrtStsRuleDlg()
+{
+	CreateStsRuleDlg *statusRuleDlg = new CreateStsRuleDlg(dataFormBL, false, this);
+	statusRuleDlg->setAttribute(Qt::WA_DeleteOnClose);
+	statusRuleDlg->setWindowTitle(tr("Create status rule"));
+	QMdiSubWindow *statusRuleWindow = new QMdiSubWindow;
+	statusRuleWindow->setWidget(statusRuleDlg);
+	statusRuleWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(statusRuleWindow);
+	statusRuleDlg->show();
+}
+void DataForm::UdpStsRuleDlg()
+{
+	CreateStsRuleDlg *statusRuleDlg = new CreateStsRuleDlg(dataFormBL, true, this);
+	statusRuleDlg->setAttribute(Qt::WA_DeleteOnClose);
+	statusRuleDlg->setWindowTitle(tr("Update status rule"));
+	QMdiSubWindow *statusRuleWindow = new QMdiSubWindow;
+	statusRuleWindow->setWidget(statusRuleDlg);
+	statusRuleWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(statusRuleWindow);
+	if (statusRuleDlg->FillDlgElements(tableView))
+	{
+		statusRuleDlg->show();
+	}
+	else
+	{
+		QMessageBox::information(NULL, QString(tr("Warning")),
+			QString(tr("Please select one row at first!")),
+			QString(tr("Ok")));
+	}
+}
+void DataForm::DelStsRuleDlg()
+{
+	std::string errorMessage = "";
+	int id = GetIDFromTable(tableView, errorMessage);
+	BusinessLayer::StatusRule statusRule;
+	statusRule.SetID(id);
+	if (0 != id)
+	{
+		if (dataFormBL->DeleteStatusRule (&statusRule, errorMessage))
+		{
+			tableView->model()->removeRow(tableView->selectionModel()->currentIndex().row());
+			ChangeBtnState();
+		}
+		else
+		{
+			QMessageBox::information(NULL, QString(tr("Warning")),
+				QString(tr(errorMessage.c_str())),
+				QString(tr("Ok")));
+		}
+	}
+	else
+	{
+		QMessageBox::information(NULL, QString(tr("Warning")),
+			QString(tr("Status rule with this id does not exist!")),
+			QString(tr("Ok")));
+	}
+}
+
 void DataForm::CrtSpecDlg()
 {
 	CreateSpecDlg *specPDlg = new CreateSpecDlg(dataFormBL, false, this);
 	specPDlg->setAttribute(Qt::WA_DeleteOnClose);
 	specPDlg->setWindowTitle(tr("Create specification"));
+	QMdiSubWindow *specPWindow = new QMdiSubWindow;
+	specPWindow->setWidget(specPDlg);
+	specPWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(specPWindow);
 	specPDlg->show();
 }
 void DataForm::UdpSpecDlg()
@@ -3676,6 +4688,10 @@ void DataForm::UdpSpecDlg()
 	CreateSpecDlg *specPDlg = new CreateSpecDlg(dataFormBL, true, this);
 	specPDlg->setAttribute(Qt::WA_DeleteOnClose);
 	specPDlg->setWindowTitle(tr("Update specification"));
+	QMdiSubWindow *specPWindow = new QMdiSubWindow;
+	specPWindow->setWidget(specPDlg);
+	specPWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(specPWindow);
 	if (specPDlg->FillDlgElements(tableView))
 	{
 		specPDlg->show();
@@ -3724,6 +4740,10 @@ void DataForm::CrtSpecListDlg()
 	}
 	specListDlg->setAttribute(Qt::WA_DeleteOnClose);
 	specListDlg->setWindowTitle(tr("Add product to specification list"));
+	QMdiSubWindow *specListWindow = new QMdiSubWindow;
+	specListWindow->setWidget(specListDlg);
+	specListWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(specListWindow);
 	specListDlg->show();
 }
 void DataForm::UdpSpecListDlg()
@@ -3731,6 +4751,10 @@ void DataForm::UdpSpecListDlg()
 	CreateSpecListDlg *specListDlg = new CreateSpecListDlg(dataFormBL, true, this);
 	specListDlg->setAttribute(Qt::WA_DeleteOnClose);
 	specListDlg->setWindowTitle(tr("Update product in specification list"));
+	QMdiSubWindow *specListWindow = new QMdiSubWindow;
+	specListWindow->setWidget(specListDlg);
+	specListWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(specListWindow);
 	if (specListDlg->FillDlgElements(tableView))
 	{
 		specListDlg->show();
@@ -3775,6 +4799,10 @@ void DataForm::CrtSplDlg()
 	CreateSplDlg *spoilageDlg = new CreateSplDlg(dataFormBL, false, this);
 	spoilageDlg->setAttribute(Qt::WA_DeleteOnClose);
 	spoilageDlg->setWindowTitle(tr("Create spoilage"));
+	QMdiSubWindow *spoilageWindow = new QMdiSubWindow;
+	spoilageWindow->setWidget(spoilageDlg);
+	spoilageWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(spoilageWindow);
 	spoilageDlg->show();
 }
 void DataForm::UdpSplDlg()
@@ -3782,6 +4810,10 @@ void DataForm::UdpSplDlg()
 	CreateSplDlg *spoilageDlg = new CreateSplDlg(dataFormBL, true, this);
 	spoilageDlg->setAttribute(Qt::WA_DeleteOnClose);
 	spoilageDlg->setWindowTitle(tr("Update spoilage"));
+	QMdiSubWindow *spoilageWindow = new QMdiSubWindow;
+	spoilageWindow->setWidget(spoilageDlg);
+	spoilageWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(spoilageWindow);
 	if (spoilageDlg->FillDlgElements(tableView))
 	{
 		spoilageDlg->show();
@@ -3830,6 +4862,10 @@ void DataForm::CrtSplListDlg()
 	}
 	spoilageListDlg->setAttribute(Qt::WA_DeleteOnClose);
 	spoilageListDlg->setWindowTitle(tr("Add product to spoilage list"));
+	QMdiSubWindow *spoilageListWindow = new QMdiSubWindow;
+	spoilageListWindow->setWidget(spoilageListDlg);
+	spoilageListWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(spoilageListWindow);
 	spoilageListDlg->show();
 }
 void DataForm::UdpSplListDlg()
@@ -3837,6 +4873,10 @@ void DataForm::UdpSplListDlg()
 	CreateSplListDlg *spoilageListDlg = new CreateSplListDlg(dataFormBL, true, this);
 	spoilageListDlg->setAttribute(Qt::WA_DeleteOnClose);
 	spoilageListDlg->setWindowTitle(tr("Update product in spoilage list"));
+	QMdiSubWindow *spoilageListWindow = new QMdiSubWindow;
+	spoilageListWindow->setWidget(spoilageListDlg);
+	spoilageListWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(spoilageListWindow);
 	if (spoilageListDlg->FillDlgElements(tableView))
 	{
 		spoilageListDlg->show();
@@ -3881,6 +4921,10 @@ void DataForm::CrtStockDlg()
 	CreateStockDlg *stockDlg = new CreateStockDlg(dataFormBL, false, this);
 	stockDlg->setAttribute(Qt::WA_DeleteOnClose);
 	stockDlg->setWindowTitle(tr("Create stock"));
+	QMdiSubWindow *stockWindow = new QMdiSubWindow;
+	stockWindow->setWidget(stockDlg);
+	stockWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(stockWindow);
 	stockDlg->show();
 }
 void DataForm::UdpStockDlg()
@@ -3888,6 +4932,10 @@ void DataForm::UdpStockDlg()
 	CreateStockDlg *stockDlg = new CreateStockDlg(dataFormBL, true, this);
 	stockDlg->setAttribute(Qt::WA_DeleteOnClose);
 	stockDlg->setWindowTitle(tr("Update stock"));
+	QMdiSubWindow *stockWindow = new QMdiSubWindow;
+	stockWindow->setWidget(stockDlg);
+	stockWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(stockWindow);
 	if (stockDlg->FillDlgElements(tableView))
 	{
 		stockDlg->show();
@@ -3927,11 +4975,74 @@ void DataForm::DelStockDlg()
 	}
 }
 
+void DataForm::CrtSAccDlg()
+{
+	CreateSAccDlg *sAccountDlg = new CreateSAccDlg(dataFormBL, false, this);
+	sAccountDlg->setAttribute(Qt::WA_DeleteOnClose);
+	sAccountDlg->setWindowTitle(tr("Create subaccount"));
+	QMdiSubWindow *sAccountWindow = new QMdiSubWindow;
+	sAccountWindow->setWidget(sAccountDlg);
+	sAccountWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(sAccountWindow);
+	sAccountDlg->show();
+}
+void DataForm::UdpSAccDlg()
+{
+	CreateSAccDlg *sAccountDlg = new CreateSAccDlg(dataFormBL, true, this);
+	sAccountDlg->setAttribute(Qt::WA_DeleteOnClose);
+	sAccountDlg->setWindowTitle(tr("Update subaccount"));
+	QMdiSubWindow *sAccountWindow = new QMdiSubWindow;
+	sAccountWindow->setWidget(sAccountDlg);
+	sAccountWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(sAccountWindow);
+	if (sAccountDlg->FillDlgElements(tableView))
+	{
+		sAccountDlg->show();
+	}
+	else
+	{
+		QMessageBox::information(NULL, QString(tr("Warning")),
+			QString(tr("Please select one row at first!")),
+			QString(tr("Ok")));
+	}
+}
+void DataForm::DelSAccDlg()
+{
+	std::string errorMessage = "";
+	int id = GetIDFromTable(tableView, errorMessage);
+	BusinessLayer::Subaccount subaccount;
+	subaccount.SetID(id);
+	if (0 != id)
+	{
+		if (dataFormBL->DeleteSubaccount(&subaccount, errorMessage))
+		{
+			tableView->model()->removeRow(tableView->selectionModel()->currentIndex().row());
+			ChangeBtnState();
+		}
+		else
+		{
+			QMessageBox::information(NULL, QString(tr("Warning")),
+				QString(tr(errorMessage.c_str())),
+				QString(tr("Ok")));
+		}
+	}
+	else
+	{
+		QMessageBox::information(NULL, QString(tr("Warning")),
+			QString(tr("Subaccount with this id does not exist!")),
+			QString(tr("Ok")));
+	}
+}
+
 void DataForm::CrtTmsDlg()
 {
 	CreateTmsDlg *tmsDlg = new CreateTmsDlg(dataFormBL, false, this);
 	tmsDlg->setAttribute(Qt::WA_DeleteOnClose);
 	tmsDlg->setWindowTitle(tr("Create timesheet"));
+	QMdiSubWindow *tmsWindow = new QMdiSubWindow;
+	tmsWindow->setWidget(tmsDlg);
+	tmsWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(tmsWindow);
 	tmsDlg->show();
 }
 void DataForm::UdpTmsDlg()
@@ -3939,6 +5050,10 @@ void DataForm::UdpTmsDlg()
 	CreateTmsDlg *tmsDlg = new CreateTmsDlg(dataFormBL, true, this);
 	tmsDlg->setAttribute(Qt::WA_DeleteOnClose);
 	tmsDlg->setWindowTitle(tr("Update timesheet"));
+	QMdiSubWindow *tmsWindow = new QMdiSubWindow;
+	tmsWindow->setWidget(tmsDlg);
+	tmsWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(tmsWindow);
 	if (tmsDlg->FillDlgElements(tableView))
 	{
 		tmsDlg->show();
@@ -3983,6 +5098,10 @@ void DataForm::CrtTrsDlg()
 	CreateTrsDlg *trsDlg = new CreateTrsDlg(dataFormBL, false, this);
 	trsDlg->setAttribute(Qt::WA_DeleteOnClose);
 	trsDlg->setWindowTitle(tr("Create transport"));
+	QMdiSubWindow *trsWindow = new QMdiSubWindow;
+	trsWindow->setWidget(trsDlg);
+	trsWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(trsWindow);
 	trsDlg->show();
 }
 void DataForm::UdpTrsDlg()
@@ -3990,16 +5109,20 @@ void DataForm::UdpTrsDlg()
 	CreateTrsDlg *trsDlg = new CreateTrsDlg(dataFormBL, true, this);
 	trsDlg->setAttribute(Qt::WA_DeleteOnClose);
 	trsDlg->setWindowTitle(tr("Update transport"));
+	QMdiSubWindow *trsWindow = new QMdiSubWindow;
+	trsWindow->setWidget(trsDlg);
+	trsWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(trsWindow);
 	if (trsDlg->FillDlgElements(tableView))
 	{
 		trsDlg->show();
 	}
-	else
+	/*else
 	{
 		QMessageBox::information(NULL, QString(tr("Warning")),
 			QString(tr("Please select one row at first!")),
 			QString(tr("Ok")));
-	}
+	}*/
 }
 void DataForm::DelTrsDlg()
 {
@@ -4038,6 +5161,10 @@ void DataForm::CrtTrsListDlg()
 	}
 	craeteTrsListDlg->setAttribute(Qt::WA_DeleteOnClose);
 	craeteTrsListDlg->setWindowTitle(tr("Add product to transport list"));
+	QMdiSubWindow *craeteTrsListWindow = new QMdiSubWindow;
+	craeteTrsListWindow->setWidget(craeteTrsListDlg);
+	craeteTrsListWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(craeteTrsListWindow);
 	craeteTrsListDlg->show();
 }
 void DataForm::UdpTrsListDlg()
@@ -4045,6 +5172,10 @@ void DataForm::UdpTrsListDlg()
 	CreateTrsListDlg *craeteTrsListDlg = new CreateTrsListDlg(dataFormBL, true, this);
 	craeteTrsListDlg->setAttribute(Qt::WA_DeleteOnClose);
 	craeteTrsListDlg->setWindowTitle(tr("Update product in transport list"));
+	QMdiSubWindow *craeteTrsListWindow = new QMdiSubWindow;
+	craeteTrsListWindow->setWidget(craeteTrsListDlg);
+	craeteTrsListWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(craeteTrsListWindow);
 	if (craeteTrsListDlg->FillDlgElements(tableView))
 	{
 		craeteTrsListDlg->show();
@@ -4089,6 +5220,10 @@ void DataForm::CrtUserDlg()
 	CreateUserDlg *userDlg = new CreateUserDlg(dataFormBL, false, this);
 	userDlg->setAttribute(Qt::WA_DeleteOnClose);
 	userDlg->setWindowTitle(tr("Create user"));
+	QMdiSubWindow *userWindow = new QMdiSubWindow;
+	userWindow->setWidget(userDlg);
+	userWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(userWindow);
 	userDlg->show();
 }
 void DataForm::UdpUserDlg()
@@ -4096,6 +5231,10 @@ void DataForm::UdpUserDlg()
 	CreateUserDlg *userDlg = new CreateUserDlg(dataFormBL, true, this);
 	userDlg->setAttribute(Qt::WA_DeleteOnClose);
 	userDlg->setWindowTitle(tr("Update user"));
+	QMdiSubWindow *userWindow = new QMdiSubWindow;
+	userWindow->setWidget(userDlg);
+	userWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(userWindow);
 	if (userDlg->FillDlgElements(tableView))
 	{
 		userDlg->show();
@@ -4141,6 +5280,10 @@ void DataForm::CrtWdwDlg()
 	CreateWdwDlg *withdrawalDlg = new CreateWdwDlg(dataFormBL, false, this);
 	withdrawalDlg->setAttribute(Qt::WA_DeleteOnClose);
 	withdrawalDlg->setWindowTitle(tr("Create withdrawal"));
+	QMdiSubWindow *withdrawalWindow = new QMdiSubWindow;
+	withdrawalWindow->setWidget(withdrawalDlg);
+	withdrawalWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(withdrawalWindow);
 	withdrawalDlg->show();
 }
 void DataForm::UdpWdwDlg()
@@ -4148,6 +5291,10 @@ void DataForm::UdpWdwDlg()
 	CreateWdwDlg *withdrawalDlg = new CreateWdwDlg(dataFormBL, true, this);
 	withdrawalDlg->setAttribute(Qt::WA_DeleteOnClose);
 	withdrawalDlg->setWindowTitle(tr("Update withdrawal"));
+	QMdiSubWindow *withdrawalWindow = new QMdiSubWindow;
+	withdrawalWindow->setWidget(withdrawalDlg);
+	withdrawalWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(withdrawalWindow);
 	if (withdrawalDlg->FillDlgElements(tableView))
 	{
 		withdrawalDlg->show();
@@ -4192,6 +5339,10 @@ void DataForm::CrtWOffDlg()
 	CreateWOffDlg *writeOffDlg = new CreateWOffDlg(dataFormBL, false, this);
 	writeOffDlg->setAttribute(Qt::WA_DeleteOnClose);
 	writeOffDlg->setWindowTitle(tr("Create write-off"));
+	QMdiSubWindow *writeOffWindow = new QMdiSubWindow;
+	writeOffWindow->setWidget(writeOffDlg);
+	writeOffWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(writeOffWindow);
 	writeOffDlg->show();
 }
 void DataForm::UdpWOffDlg()
@@ -4199,6 +5350,10 @@ void DataForm::UdpWOffDlg()
 	CreateWOffDlg *writeOffDlg = new CreateWOffDlg(dataFormBL, true, this);
 	writeOffDlg->setAttribute(Qt::WA_DeleteOnClose);
 	writeOffDlg->setWindowTitle(tr("Update write-off"));
+	QMdiSubWindow *writeOffWindow = new QMdiSubWindow;
+	writeOffWindow->setWidget(writeOffDlg);
+	writeOffWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(writeOffWindow);
 	if (writeOffDlg->FillDlgElements(tableView))
 	{
 		writeOffDlg->show();
@@ -4248,6 +5403,10 @@ void DataForm::CrtWOffListDlg()
 	}
 	craeteWOffListDlg->setAttribute(Qt::WA_DeleteOnClose);
 	craeteWOffListDlg->setWindowTitle(tr("Add product to write-off list"));
+	QMdiSubWindow *craeteWOffListWindow = new QMdiSubWindow;
+	craeteWOffListWindow->setWidget(craeteWOffListDlg);
+	craeteWOffListWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(craeteWOffListWindow);
 	craeteWOffListDlg->show();
 }
 void DataForm::UdpWOffListDlg()
@@ -4255,6 +5414,10 @@ void DataForm::UdpWOffListDlg()
 	CreateWOffListDlg *craeteWOffListDlg = new CreateWOffListDlg(dataFormBL, true, this);
 	craeteWOffListDlg->setAttribute(Qt::WA_DeleteOnClose);
 	craeteWOffListDlg->setWindowTitle(tr("Update product in write-off list"));
+	QMdiSubWindow *craeteWOffListWindow = new QMdiSubWindow;
+	craeteWOffListWindow->setWidget(craeteWOffListDlg);
+	craeteWOffListWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(craeteWOffListWindow);
 	if (craeteWOffListDlg->FillDlgElements(tableView))
 	{
 		craeteWOffListDlg->show();
@@ -4299,6 +5462,10 @@ void DataForm::CrtWOffRDlg()
 	CreateWOffRDlg *writeOffRDlg = new CreateWOffRDlg(dataFormBL, false, this);
 	writeOffRDlg->setAttribute(Qt::WA_DeleteOnClose);
 	writeOffRDlg->setWindowTitle(tr("Create write-off raw"));
+	QMdiSubWindow *writeOffRWindow = new QMdiSubWindow;
+	writeOffRWindow->setWidget(writeOffRDlg);
+	writeOffRWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(writeOffRWindow);
 	writeOffRDlg->show();
 }
 void DataForm::UdpWOffRDlg()
@@ -4306,6 +5473,10 @@ void DataForm::UdpWOffRDlg()
 	CreateWOffRDlg *writeOffRDlg = new CreateWOffRDlg(dataFormBL, true, this);
 	writeOffRDlg->setAttribute(Qt::WA_DeleteOnClose);
 	writeOffRDlg->setWindowTitle(tr("Update write-off raw"));
+	QMdiSubWindow *writeOffRWindow = new QMdiSubWindow;
+	writeOffRWindow->setWidget(writeOffRDlg);
+	writeOffRWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(writeOffRWindow);
 	if (writeOffRDlg->FillDlgElements(tableView))
 	{
 		writeOffRDlg->show();
@@ -4355,6 +5526,10 @@ void DataForm::CrtWOffRListDlg()
 	}
 	craeteWOffRListDlg->setAttribute(Qt::WA_DeleteOnClose);
 	craeteWOffRListDlg->setWindowTitle(tr("Add raw to write-off list"));
+	QMdiSubWindow *craeteWOffRListWindow = new QMdiSubWindow;
+	craeteWOffRListWindow->setWidget(craeteWOffRListDlg);
+	craeteWOffRListWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(craeteWOffRListWindow);
 	craeteWOffRListDlg->show();
 }
 void DataForm::UdpWOffRListDlg()
@@ -4362,6 +5537,10 @@ void DataForm::UdpWOffRListDlg()
 	CreateWOffRListDlg *craeteWOffRListDlg = new CreateWOffRListDlg(dataFormBL, true, this);
 	craeteWOffRListDlg->setAttribute(Qt::WA_DeleteOnClose);
 	craeteWOffRListDlg->setWindowTitle(tr("Update raw in write-off list"));
+	QMdiSubWindow *craeteWOffRListWindow = new QMdiSubWindow;
+	craeteWOffRListWindow->setWidget(craeteWOffRListDlg);
+	craeteWOffRListWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(craeteWOffRListWindow);
 	if (craeteWOffRListDlg->FillDlgElements(tableView))
 	{
 		craeteWOffRListDlg->show();
@@ -4403,12 +5582,11 @@ void DataForm::DelWOffRListDlg()
 
 // Template specializations for generating headers of table ------------------------------
 template<>
-QStringList DataForm::GetTableHeader<BusinessLayer::AccountView>()
+QStringList DataForm::GetTableHeader<BusinessLayer::Account>()
 {
 	QStringList header;
 	header << QObject::tr("ID") << QObject::tr("Number") << QObject::tr("Start balance") << QObject::tr("Current balance")
-		<< QObject::tr("Currency name") << QObject::tr("Status name") << QObject::tr("Currency ID") << QObject::tr("Status ID")
-		<< QObject::tr("Opened date") << QObject::tr("Closed date") << QObject::tr("Details");
+	 << QObject::tr("Details");
 	return header;
 }
 
@@ -4474,10 +5652,20 @@ QStringList DataForm::GetTableHeader<BusinessLayer::Company>()
 }
 
 template<>
-QStringList DataForm::GetTableHeader<BusinessLayer::CompanyAccountRelation>()
+QStringList DataForm::GetTableHeader<BusinessLayer::CompanyAccountRelationView>()
 {
 	QStringList header;
-	header << QObject::tr("Company ID") << QObject::tr("Account ID");
+	header << QObject::tr("ID") << QObject::tr("Company name") << QObject::tr("Account number") 
+		<< QObject::tr("Company ID") << QObject::tr("Account ID");
+	return header;
+}
+
+template<>
+QStringList DataForm::GetTableHeader<BusinessLayer::CompanyEmployeeRelationView>()
+{
+	QStringList header;
+	header << QObject::tr("ID") << QObject::tr("Company name") << QObject::tr("Employee name") << QObject::tr("Employee surname") 
+		<< QObject::tr("Employee Phone") << QObject::tr("Company ID") << QObject::tr("Account ID");
 	return header;
 }
 
@@ -4555,6 +5743,15 @@ QStringList DataForm::GetTableHeader<BusinessLayer::EntryView>()
 	QStringList header;
 	header << QObject::tr("ID") << QObject::tr("Date") << QObject::tr("Debiting account number") << QObject::tr("Value")
 		<< QObject::tr("Crediting account number") << QObject::tr("Debiting account ID") << QObject::tr("Crediting account ID");
+	return header;
+}
+
+template<>
+QStringList DataForm::GetTableHeader<BusinessLayer::EntryRouting>()
+{
+	QStringList header;
+	header << QObject::tr("ID") << QObject::tr("Operation") << QObject::tr("Debit") 
+		<< QObject::tr("Credit");
 	return header;
 }
 
@@ -4659,8 +5856,8 @@ QStringList DataForm::GetTableHeader<BusinessLayer::OrderRawView>()
 {
 	QStringList header;
 	header << QObject::tr("ID") << QObject::tr("Order raw date") << QObject::tr("Execution date") << QObject::tr("Status code")
-		<< QObject::tr("Status name") << QObject::tr("Employee name") << QObject::tr("Employee surname") << QObject::tr("Employee phone")
-		<< QObject::tr("Employee position") << QObject::tr("Employee name") << QObject::tr("Employee surname") << QObject::tr("Employee phone")
+		<< QObject::tr("Status name") << QObject::tr("Purveyor name") << QObject::tr("Purveyor surname") << QObject::tr("Purveyor phone")
+		<< QObject::tr("Purveyor company name") << QObject::tr("Employee name") << QObject::tr("Employee surname") << QObject::tr("Employee phone")
 		<< QObject::tr("Employee position") << QObject::tr("Product count") << QObject::tr("Sum") << QObject::tr("Currency name")
 		<< QObject::tr("Employee ID") << QObject::tr("Client ID") << QObject::tr("Status ID") << QObject::tr("Currency ID")
 		<< QObject::tr("Product list");
@@ -4725,7 +5922,7 @@ template<>
 QStringList DataForm::GetTableHeader<BusinessLayer::ProductType>()
 {
 	QStringList header;
-	header << QObject::tr("ID") << QObject::tr("Name") << QObject::tr("Short name");
+	header << QObject::tr("ID") << QObject::tr("Name") << QObject::tr("Short name") << QObject::tr("Code");
 	return header;
 }
 
@@ -4760,6 +5957,30 @@ QStringList DataForm::GetTableHeader<BusinessLayer::ProductionListView>()
 }
 
 template<>
+QStringList DataForm::GetTableHeader<BusinessLayer::ProductionConsumeRawView>()
+{
+	QStringList header;
+	header << QObject::tr("ID") << QObject::tr("Consume raw date") << QObject::tr("Execution date") << QObject::tr("Status code")
+		<< QObject::tr("Status name") << QObject::tr("Employee name") << QObject::tr("Employee surname") << QObject::tr("Employee phone")
+		<< QObject::tr("Employee position") << QObject::tr("Employee name") << QObject::tr("Employee surname") << QObject::tr("Employee phone")
+		<< QObject::tr("Employee position") << QObject::tr("Product count") << QObject::tr("Sum") << QObject::tr("Currency name")
+		<< QObject::tr("Employee ID") << QObject::tr("Client ID") << QObject::tr("Status ID") << QObject::tr("Currency ID")
+		<< QObject::tr("Product list");
+	return header;
+}
+
+template<>
+QStringList DataForm::GetTableHeader<BusinessLayer::ProductionConsumeRawListView>()
+{
+	QStringList header;
+	header << QObject::tr("ID") << QObject::tr("Consume raw ID") << QObject::tr("Product name") << QObject::tr("Price")
+		<< QObject::tr("Currency name") << QObject::tr("Volume") << QObject::tr("Measure name") << QObject::tr("Count")
+		<< QObject::tr("Sum") << QObject::tr("Sum currency name") << QObject::tr("Status name")
+		<< QObject::tr("Product ID") << QObject::tr("Status ID") << QObject::tr("Currency ID");
+	return header;
+}
+
+template<>
 QStringList DataForm::GetTableHeader<BusinessLayer::ProductionPlanView>()
 {
 	QStringList header;
@@ -4775,6 +5996,17 @@ QStringList DataForm::GetTableHeader<BusinessLayer::ProductionPlanListView>()
 {
 	QStringList header;
 	header << QObject::tr("ID") << QObject::tr("Production plan ID") << QObject::tr("Product name") << QObject::tr("Price")
+		<< QObject::tr("Currency name") << QObject::tr("Volume") << QObject::tr("Measure name") << QObject::tr("Count")
+		<< QObject::tr("Sum") << QObject::tr("Sum currency name") << QObject::tr("Status name")
+		<< QObject::tr("Product ID") << QObject::tr("Status ID") << QObject::tr("Currency ID");
+	return header;
+}
+
+template<>
+QStringList DataForm::GetTableHeader<BusinessLayer::ProductionStockView>()
+{
+	QStringList header;
+	header << QObject::tr("ID") << QObject::tr("Product name") << QObject::tr("Price")
 		<< QObject::tr("Currency name") << QObject::tr("Volume") << QObject::tr("Measure name") << QObject::tr("Count")
 		<< QObject::tr("Sum") << QObject::tr("Sum currency name") << QObject::tr("Status name")
 		<< QObject::tr("Product ID") << QObject::tr("Status ID") << QObject::tr("Currency ID");
@@ -4934,6 +6166,14 @@ QStringList DataForm::GetTableHeader<BusinessLayer::Status>()
 }
 
 template<>
+QStringList DataForm::GetTableHeader<BusinessLayer::StatusRuleView>()
+{
+	QStringList header;
+	header << QObject::tr("ID") << QObject::tr("Operation") << QObject::tr("Status name") << QObject::tr("Status ID");
+	return header;
+}
+
+template<>
 QStringList DataForm::GetTableHeader<BusinessLayer::SpecificationView>()
 {
 	QStringList header;
@@ -4983,6 +6223,17 @@ QStringList DataForm::GetTableHeader<BusinessLayer::StockView>()
 		<< QObject::tr("Currency name") << QObject::tr("Volume") << QObject::tr("Measure name") << QObject::tr("Count")
 		<< QObject::tr("Sum") << QObject::tr("Sum currency name") << QObject::tr("Status name")
 		<< QObject::tr("Product ID") << QObject::tr("Status ID") << QObject::tr("Currency ID");
+	return header;
+}
+
+template<>
+QStringList DataForm::GetTableHeader<BusinessLayer::SubaccountView>()
+{
+	QStringList header;
+	header << QObject::tr("ID") << QObject::tr("Parent account ID") << QObject::tr("Parent account Number") << QObject::tr("Number") 
+		<< QObject::tr("Start balance") << QObject::tr("Current balance")
+		<< QObject::tr("Currency name") << QObject::tr("Status name") << QObject::tr("Currency ID") << QObject::tr("Status ID")
+		<< QObject::tr("Opened date") << QObject::tr("Closed date") << QObject::tr("Details");
 	return header;
 }
 
@@ -5088,20 +6339,13 @@ QStringList DataForm::GetTableHeader<BusinessLayer::WriteOffRawListView>()
 
 // Template specializations for generating data ---------------------------------------------------------------------------
 template<>
-QList<QStandardItem*> DataForm::GetDataFromClass<BusinessLayer::AccountView>(BusinessLayer::AccountView& data)
+QList<QStandardItem*> DataForm::GetDataFromClass<BusinessLayer::Account>(BusinessLayer::Account& data)
 {
 	QList<QStandardItem*> items;
 	items << new QStandardItem(QString::number(data.GetID()))
 		<< new QStandardItem(data.GetNumber().c_str())
-		<< new QStandardItem(QString::number(data.GetStartBalance()))
-		<< new QStandardItem(QString::number(data.GetCurrentBalance()))
-		<< new QStandardItem(data.GetCurrencyName().c_str())
-		<< new QStandardItem(data.GetStatusName().c_str())
-		<< new QStandardItem(QString::number(data.GetCurrencyID()))
-		<< new QStandardItem(QString::number(data.GetStatusID()))
-		<< new QStandardItem(data.GetOpenedDate().c_str())
-		<< new QStandardItem(data.GetClosedDate().c_str())
-		<< new QStandardItem(data.GetDetails().c_str());
+		<< new QStandardItem(QString::number(data.GetStartBalance(), 'f', 3))
+		<< new QStandardItem(QString::number(data.GetCurrentBalance(), 'f', 3));
 	return items;
 }
 
@@ -5144,10 +6388,10 @@ QList<QStandardItem*> DataForm::GetDataFromClass<BusinessLayer::BalanceView>(Bus
 	items << new QStandardItem(QString::number(data.GetID()))
 		<< new QStandardItem(data.GetUsername().c_str())
 		<< new QStandardItem(data.GetUserSurname().c_str())
-		<< new QStandardItem(QString::number(data.GetCurrentBalance()))
+		<< new QStandardItem(QString::number(data.GetCurrentBalance(), 'f', 3))
 		<< new QStandardItem(data.GetCurrencyName().c_str())
 		<< new QStandardItem(QString::number(data.GetUserID()))
-		<< new QStandardItem(QString::number(data.GetAccountID()));
+		<< new QStandardItem(QString::number(data.GetSubaccountID()));
 	return items;
 }
 
@@ -5156,7 +6400,7 @@ QList<QStandardItem*> DataForm::GetDataFromClass<BusinessLayer::ChartOfAccountsV
 {
 	QList<QStandardItem*> items;
 	items << new QStandardItem(QString::number(data.GetID()))
-		<< new QStandardItem(QString::number(data.GetNumber()))
+		<< new QStandardItem(data.GetNumber().c_str())
 		<< new QStandardItem(data.GetName().c_str())
 		<< new QStandardItem(data.GetAccountTypeName().c_str())
 		<< new QStandardItem(QString::number(data.GetAccountTypeID()));
@@ -5197,13 +6441,31 @@ QList<QStandardItem*> DataForm::GetDataFromClass<BusinessLayer::Company>(Busines
 }
 
 template<>
-QList<QStandardItem*> DataForm::GetDataFromClass<BusinessLayer::CompanyAccountRelation>(BusinessLayer::CompanyAccountRelation& data)
+QList<QStandardItem*> DataForm::GetDataFromClass<BusinessLayer::CompanyAccountRelationView>(BusinessLayer::CompanyAccountRelationView& data)
 {
 	QList<QStandardItem*> items;
-	items << new QStandardItem(QString::number(data.GetCompanyID())) 
+	items << new QStandardItem(QString::number(data.GetID()))
+		<< new QStandardItem(data.GetCompanyName().c_str())
+		<< new QStandardItem(data.GetAccountNumber().c_str())
+		<< new QStandardItem(QString::number(data.GetCompanyID())) 
 		<< new QStandardItem(QString::number(data.GetAccountID()));
 	return items;
 }
+
+template<>
+QList<QStandardItem*> DataForm::GetDataFromClass<BusinessLayer::CompanyEmployeeRelationView>(BusinessLayer::CompanyEmployeeRelationView& data)
+{
+	QList<QStandardItem*> items;
+	items << new QStandardItem(QString::number(data.GetID()))
+		<< new QStandardItem(data.GetCompanyName().c_str())
+		<< new QStandardItem(data.GetUsername().c_str())
+		<< new QStandardItem(data.GetUserSurname().c_str())
+		<< new QStandardItem(data.GetUserPhone().c_str())
+		<< new QStandardItem(QString::number(data.GetCompanyID()))
+		<< new QStandardItem(QString::number(data.GetEmployeeID()));
+	return items;
+}
+
 
 template<>
 QList<QStandardItem*> DataForm::GetDataFromClass<BusinessLayer::ConsumeProductView>(BusinessLayer::ConsumeProductView& data)
@@ -5224,7 +6486,7 @@ QList<QStandardItem*> DataForm::GetDataFromClass<BusinessLayer::ConsumeProductVi
 		<< new QStandardItem(data.GetStockEmployeePhone().c_str())
 		<< new QStandardItem(data.GetStockEmployeePosition().c_str())
 		<< new QStandardItem(QString::number(data.GetCount()))
-		<< new QStandardItem(QString::number(data.GetSum()))
+		<< new QStandardItem(QString::number(data.GetSum(), 'f', 3))
 		<< new QStandardItem(data.GetCurrencyName().c_str())
 		<< new QStandardItem(QString::number(data.GetStockEmployeeID()))
 		<< new QStandardItem(QString::number(data.GetEmployeeID()))
@@ -5246,7 +6508,7 @@ QList<QStandardItem*> DataForm::GetDataFromClass<BusinessLayer::ConsumeProductLi
 		<< new QStandardItem(QString::number(data.GetVolume()))
 		<< new QStandardItem(data.GetMeasureName().c_str())
 		<< new QStandardItem(QString::number(data.GetCount()))
-		<< new QStandardItem(QString::number(data.GetSum()))
+		<< new QStandardItem(QString::number(data.GetSum(), 'f', 3))
 		<< new QStandardItem(data.GetCurrencyName().c_str())
 		<< new QStandardItem(data.GetStatusName().c_str())
 		<< new QStandardItem(QString::number(data.GetProductID()))
@@ -5274,7 +6536,7 @@ QList<QStandardItem*> DataForm::GetDataFromClass<BusinessLayer::ConsumeRawView>(
 		<< new QStandardItem(data.GetStockEmployeePhone().c_str())
 		<< new QStandardItem(data.GetStockEmployeePosition().c_str())
 		<< new QStandardItem(QString::number(data.GetCount()))
-		<< new QStandardItem(QString::number(data.GetSum()))
+		<< new QStandardItem(QString::number(data.GetSum(), 'f', 3))
 		<< new QStandardItem(data.GetCurrencyName().c_str())
 		<< new QStandardItem(QString::number(data.GetStockEmployeeID()))
 		<< new QStandardItem(QString::number(data.GetEmployeeID()))
@@ -5296,7 +6558,7 @@ QList<QStandardItem*> DataForm::GetDataFromClass<BusinessLayer::ConsumeRawListVi
 		<< new QStandardItem(QString::number(data.GetVolume()))
 		<< new QStandardItem(data.GetMeasureName().c_str())
 		<< new QStandardItem(QString::number(data.GetCount()))
-		<< new QStandardItem(QString::number(data.GetSum()))
+		<< new QStandardItem(QString::number(data.GetSum(), 'f', 3))
 		<< new QStandardItem(data.GetCurrencyName().c_str())
 		<< new QStandardItem(data.GetStatusName().c_str())
 		<< new QStandardItem(QString::number(data.GetProductID()))
@@ -5343,10 +6605,21 @@ QList<QStandardItem*> DataForm::GetDataFromClass<BusinessLayer::EntryView>(Busin
 	items << new QStandardItem(QString::number(data.GetID()))
 		<< new QStandardItem(data.GetDate().c_str())
 		<< new QStandardItem(data.GetDebitingAccountNumber().c_str())
-		<< new QStandardItem(QString::number(data.GetValue()))
+		<< new QStandardItem(QString::number(data.GetValue(), 'f', 3))
 		<< new QStandardItem(data.GetCreditingAccountNumber().c_str())
 		<< new QStandardItem(QString::number(data.GetDebitingAccountID()))
 		<< new QStandardItem(QString::number(data.GetCreditingAccountID()));
+	return items;
+}
+
+template<>
+QList<QStandardItem*> DataForm::GetDataFromClass<BusinessLayer::EntryRouting>(BusinessLayer::EntryRouting& data)
+{
+	QList<QStandardItem*> items;
+	items << new QStandardItem(QString::number(data.GetID()))
+		<< new QStandardItem(data.GetOperation().c_str())
+		<< new QStandardItem(QString::number(data.GetDebit()))
+		<< new QStandardItem(QString::number(data.GetCredit()));
 	return items;
 }
 
@@ -5370,7 +6643,7 @@ QList<QStandardItem*> DataForm::GetDataFromClass<BusinessLayer::InventorizationV
 		<< new QStandardItem(data.GetStockEmployeePhone().c_str())
 		<< new QStandardItem(data.GetStockEmployeePosition().c_str())
 		<< new QStandardItem(QString::number(data.GetCount()))
-		<< new QStandardItem(QString::number(data.GetSum()))
+		<< new QStandardItem(QString::number(data.GetSum(), 'f', 3))
 		<< new QStandardItem(data.GetCurrencyName().c_str())
 		<< new QStandardItem(QString::number(data.GetStockEmployeeID()))
 		<< new QStandardItem(QString::number(data.GetEmployeeID()))
@@ -5392,7 +6665,7 @@ QList<QStandardItem*> DataForm::GetDataFromClass<BusinessLayer::InventorizationL
 		<< new QStandardItem(QString::number(data.GetVolume()))
 		<< new QStandardItem(data.GetMeasureName().c_str())
 		<< new QStandardItem(QString::number(data.GetCount()))
-		<< new QStandardItem(QString::number(data.GetSum()))
+		<< new QStandardItem(QString::number(data.GetSum(), 'f', 3))
 		<< new QStandardItem(data.GetCurrencyName().c_str())
 		<< new QStandardItem(data.GetStatusName().c_str())
 		<< new QStandardItem(QString::number(data.GetProductID()))
@@ -5491,7 +6764,7 @@ QList<QStandardItem*> DataForm::GetDataFromClass<BusinessLayer::OrderView>(Busin
 		<< new QStandardItem(data.GetEmployeeSurname().c_str())
 		<< new QStandardItem(data.GetEmployeePhone().c_str())
 		<< new QStandardItem(QString::number(data.GetCount())) 
-		<< new QStandardItem(QString::number(data.GetSum()))
+		<< new QStandardItem(QString::number(data.GetSum(), 'f', 3))
 		<< new QStandardItem(data.GetCurrencyName().c_str()) 
 		<< new QStandardItem(QString::number(data.GetEmployeeID())) 
 		<< new QStandardItem(QString::number(data.GetClientID())) 
@@ -5513,7 +6786,7 @@ QList<QStandardItem*> DataForm::GetDataFromClass<BusinessLayer::OrderListView>(B
 		<< new QStandardItem(QString::number(data.GetVolume()))
 		<< new QStandardItem(data.GetMeasureName().c_str())
 		<< new QStandardItem(QString::number(data.GetCount()))
-		<< new QStandardItem(QString::number(data.GetSum()))
+		<< new QStandardItem(QString::number(data.GetSum(), 'f', 3))
 		<< new QStandardItem(data.GetCurrencyName().c_str())
 		<< new QStandardItem(data.GetStatusName().c_str())
 		<< new QStandardItem(QString::number(data.GetProductID()))
@@ -5532,19 +6805,19 @@ QList<QStandardItem*> DataForm::GetDataFromClass<BusinessLayer::OrderRawView>(Bu
 		<< new QStandardItem(data.GetExecutionDate().c_str())
 		<< new QStandardItem(data.GetStatusCode().c_str())
 		<< new QStandardItem(data.GetStatusName().c_str())
+		<< new QStandardItem(data.GetPurveyorName().c_str())
+		<< new QStandardItem(data.GetPurveyorSurname().c_str())
+		<< new QStandardItem(data.GetPurveyorPhone().c_str())
+		<< new QStandardItem(data.GetPurveyorCompanyName().c_str())
 		<< new QStandardItem(data.GetEmployeeName().c_str())
 		<< new QStandardItem(data.GetEmployeeSurname().c_str())
 		<< new QStandardItem(data.GetEmployeePhone().c_str())
 		<< new QStandardItem(data.GetEmployeePosition().c_str())
-		<< new QStandardItem(data.GetStockEmployeeName().c_str())
-		<< new QStandardItem(data.GetStockEmployeeSurname().c_str())
-		<< new QStandardItem(data.GetStockEmployeePhone().c_str())
-		<< new QStandardItem(data.GetStockEmployeePosition().c_str())
 		<< new QStandardItem(QString::number(data.GetCount()))
-		<< new QStandardItem(QString::number(data.GetSum()))
+		<< new QStandardItem(QString::number(data.GetSum(), 'f', 3))
 		<< new QStandardItem(data.GetCurrencyName().c_str())
-		<< new QStandardItem(QString::number(data.GetStockEmployeeID()))
 		<< new QStandardItem(QString::number(data.GetEmployeeID()))
+		<< new QStandardItem(QString::number(data.GetPurveyorID()))
 		<< new QStandardItem(QString::number(data.GetStatusID()))
 		<< new QStandardItem(QString::number(data.GetCurrencyID()))
 		<< new QStandardItem(icon, "Detail");
@@ -5563,7 +6836,7 @@ QList<QStandardItem*> DataForm::GetDataFromClass<BusinessLayer::OrderRawListView
 		<< new QStandardItem(QString::number(data.GetVolume()))
 		<< new QStandardItem(data.GetMeasureName().c_str())
 		<< new QStandardItem(QString::number(data.GetCount()))
-		<< new QStandardItem(QString::number(data.GetSum()))
+		<< new QStandardItem(QString::number(data.GetSum(), 'f', 3))
 		<< new QStandardItem(data.GetCurrencyName().c_str())
 		<< new QStandardItem(data.GetStatusName().c_str())
 		<< new QStandardItem(QString::number(data.GetProductID()))
@@ -5635,7 +6908,7 @@ QList<QStandardItem*> DataForm::GetDataFromClass<BusinessLayer::ProductType>(Bus
 {
 	QList<QStandardItem*> items;
 	items << new QStandardItem(QString::number(data.GetID())) << new QStandardItem(data.GetName().c_str())
-		<< new QStandardItem(data.GetShortName().c_str());
+		<< new QStandardItem(data.GetShortName().c_str()) << new QStandardItem(data.GetCode().c_str());
 	return items;
 }
 
@@ -5682,7 +6955,57 @@ QList<QStandardItem*> DataForm::GetDataFromClass<BusinessLayer::ProductionListVi
 		<< new QStandardItem(QString::number(data.GetVolume()))
 		<< new QStandardItem(data.GetMeasureName().c_str())
 		<< new QStandardItem(QString::number(data.GetCount()))
-		<< new QStandardItem(QString::number(data.GetSum()))
+		<< new QStandardItem(QString::number(data.GetSum(), 'f', 3))
+		<< new QStandardItem(data.GetCurrencyName().c_str())
+		<< new QStandardItem(data.GetStatusName().c_str())
+		<< new QStandardItem(QString::number(data.GetProductID()))
+		<< new QStandardItem(QString::number(data.GetStatusID()))
+		<< new QStandardItem(QString::number(data.GetCurrencyID()));
+	return items;
+}
+
+template<>
+QList<QStandardItem*> DataForm::GetDataFromClass<BusinessLayer::ProductionConsumeRawView>(BusinessLayer::ProductionConsumeRawView& data)
+{
+	QList<QStandardItem*> items;
+	QIcon icon;
+	items << new QStandardItem(QString::number(data.GetID()))
+		<< new QStandardItem(data.GetDate().c_str())
+		<< new QStandardItem(data.GetExecutionDate().c_str())
+		<< new QStandardItem(data.GetStatusCode().c_str())
+		<< new QStandardItem(data.GetStatusName().c_str())
+		<< new QStandardItem(data.GetEmployeeName().c_str())
+		<< new QStandardItem(data.GetEmployeeSurname().c_str())
+		<< new QStandardItem(data.GetEmployeePhone().c_str())
+		<< new QStandardItem(data.GetEmployeePosition().c_str())
+		<< new QStandardItem(data.GetStockEmployeeName().c_str())
+		<< new QStandardItem(data.GetStockEmployeeSurname().c_str())
+		<< new QStandardItem(data.GetStockEmployeePhone().c_str())
+		<< new QStandardItem(data.GetStockEmployeePosition().c_str())
+		<< new QStandardItem(QString::number(data.GetCount()))
+		<< new QStandardItem(QString::number(data.GetSum(), 'f', 3))
+		<< new QStandardItem(data.GetCurrencyName().c_str())
+		<< new QStandardItem(QString::number(data.GetStockEmployeeID()))
+		<< new QStandardItem(QString::number(data.GetEmployeeID()))
+		<< new QStandardItem(QString::number(data.GetStatusID()))
+		<< new QStandardItem(QString::number(data.GetCurrencyID()))
+		<< new QStandardItem(icon, "Detail");
+	return items;
+}
+
+template<>
+QList<QStandardItem*> DataForm::GetDataFromClass<BusinessLayer::ProductionConsumeRawListView>(BusinessLayer::ProductionConsumeRawListView& data)
+{
+	QList<QStandardItem*> items;
+	items << new QStandardItem(QString::number(data.GetID()))
+		<< new QStandardItem(QString::number(data.GetProductionConsumeRawID()))
+		<< new QStandardItem(data.GetProductName().c_str())
+		<< new QStandardItem(QString::number(data.GetPrice()))
+		<< new QStandardItem(data.GetCurrencyName().c_str())
+		<< new QStandardItem(QString::number(data.GetVolume()))
+		<< new QStandardItem(data.GetMeasureName().c_str())
+		<< new QStandardItem(QString::number(data.GetCount()))
+		<< new QStandardItem(QString::number(data.GetSum(), 'f', 3))
 		<< new QStandardItem(data.GetCurrencyName().c_str())
 		<< new QStandardItem(data.GetStatusName().c_str())
 		<< new QStandardItem(QString::number(data.GetProductID()))
@@ -5699,7 +7022,7 @@ QList<QStandardItem*> DataForm::GetDataFromClass<BusinessLayer::ProductionPlanVi
 	items << new QStandardItem(QString::number(data.GetID()))
 		<< new QStandardItem(data.GetDate().c_str())
 		<< new QStandardItem(QString::number(data.GetCount()))
-		<< new QStandardItem(QString::number(data.GetSum()))
+		<< new QStandardItem(QString::number(data.GetSum(), 'f', 3))
 		<< new QStandardItem(data.GetCurrencyName().c_str())
 		<< new QStandardItem(data.GetStatusName().c_str())
 		<< new QStandardItem(data.GetEmployeeName().c_str())
@@ -5725,7 +7048,27 @@ QList<QStandardItem*> DataForm::GetDataFromClass<BusinessLayer::ProductionPlanLi
 		<< new QStandardItem(QString::number(data.GetVolume()))
 		<< new QStandardItem(data.GetMeasureName().c_str())
 		<< new QStandardItem(QString::number(data.GetCount()))
-		<< new QStandardItem(QString::number(data.GetSum()))
+		<< new QStandardItem(QString::number(data.GetSum(), 'f', 3))
+		<< new QStandardItem(data.GetCurrencyName().c_str())
+		<< new QStandardItem(data.GetStatusName().c_str())
+		<< new QStandardItem(QString::number(data.GetProductID()))
+		<< new QStandardItem(QString::number(data.GetStatusID()))
+		<< new QStandardItem(QString::number(data.GetCurrencyID()));
+	return items;
+}
+
+template<>
+QList<QStandardItem*> DataForm::GetDataFromClass<BusinessLayer::ProductionStockView>(BusinessLayer::ProductionStockView& data)
+{
+	QList<QStandardItem*> items;
+	items << new QStandardItem(QString::number(data.GetID()))
+		<< new QStandardItem(data.GetProductName().c_str())
+		<< new QStandardItem(QString::number(data.GetPrice()))
+		<< new QStandardItem(data.GetCurrencyName().c_str())
+		<< new QStandardItem(QString::number(data.GetVolume()))
+		<< new QStandardItem(data.GetMeasureName().c_str())
+		<< new QStandardItem(QString::number(data.GetCount()))
+		<< new QStandardItem(QString::number(data.GetSum(), 'f', 3))
 		<< new QStandardItem(data.GetCurrencyName().c_str())
 		<< new QStandardItem(data.GetStatusName().c_str())
 		<< new QStandardItem(QString::number(data.GetProductID()))
@@ -5815,7 +7158,7 @@ QList<QStandardItem*> DataForm::GetDataFromClass<BusinessLayer::ReceiptProductVi
 		<< new QStandardItem(data.GetStockEmployeePhone().c_str())
 		<< new QStandardItem(data.GetStockEmployeePosition().c_str())
 		<< new QStandardItem(QString::number(data.GetCount()))
-		<< new QStandardItem(QString::number(data.GetSum()))
+		<< new QStandardItem(QString::number(data.GetSum(), 'f', 3))
 		<< new QStandardItem(data.GetCurrencyName().c_str())
 		<< new QStandardItem(QString::number(data.GetStockEmployeeID()))
 		<< new QStandardItem(QString::number(data.GetEmployeeID()))
@@ -5837,7 +7180,7 @@ QList<QStandardItem*> DataForm::GetDataFromClass<BusinessLayer::ReceiptProductLi
 		<< new QStandardItem(QString::number(data.GetVolume()))
 		<< new QStandardItem(data.GetMeasureName().c_str())
 		<< new QStandardItem(QString::number(data.GetCount()))
-		<< new QStandardItem(QString::number(data.GetSum()))
+		<< new QStandardItem(QString::number(data.GetSum(), 'f', 3))
 		<< new QStandardItem(data.GetCurrencyName().c_str())
 		<< new QStandardItem(data.GetStatusName().c_str())
 		<< new QStandardItem(QString::number(data.GetProductID()))
@@ -5865,7 +7208,7 @@ QList<QStandardItem*> DataForm::GetDataFromClass<BusinessLayer::ReceiptRawView>(
 		<< new QStandardItem(data.GetStockEmployeePhone().c_str())
 		<< new QStandardItem(data.GetStockEmployeePosition().c_str())
 		<< new QStandardItem(QString::number(data.GetCount()))
-		<< new QStandardItem(QString::number(data.GetSum()))
+		<< new QStandardItem(QString::number(data.GetSum(), 'f', 3))
 		<< new QStandardItem(data.GetCurrencyName().c_str())
 		<< new QStandardItem(QString::number(data.GetStockEmployeeID()))
 		<< new QStandardItem(QString::number(data.GetEmployeeID()))
@@ -5887,7 +7230,7 @@ QList<QStandardItem*> DataForm::GetDataFromClass<BusinessLayer::ReceiptRawListVi
 		<< new QStandardItem(QString::number(data.GetVolume()))
 		<< new QStandardItem(data.GetMeasureName().c_str())
 		<< new QStandardItem(QString::number(data.GetCount()))
-		<< new QStandardItem(QString::number(data.GetSum()))
+		<< new QStandardItem(QString::number(data.GetSum(), 'f', 3))
 		<< new QStandardItem(data.GetCurrencyName().c_str())
 		<< new QStandardItem(data.GetStatusName().c_str())
 		<< new QStandardItem(QString::number(data.GetProductID()))
@@ -5939,7 +7282,7 @@ QList<QStandardItem*> DataForm::GetDataFromClass<BusinessLayer::ReturnView>(Busi
 		<< new QStandardItem(data.GetEmployeeSurname().c_str())
 		<< new QStandardItem(data.GetEmployeePhone().c_str())
 		<< new QStandardItem(QString::number(data.GetCount()))
-		<< new QStandardItem(QString::number(data.GetSum()))
+		<< new QStandardItem(QString::number(data.GetSum(), 'f', 3))
 		<< new QStandardItem(data.GetCurrencyName().c_str())
 		<< new QStandardItem(QString::number(data.GetEmployeeID()))
 		<< new QStandardItem(QString::number(data.GetClientID()))
@@ -5961,7 +7304,7 @@ QList<QStandardItem*> DataForm::GetDataFromClass<BusinessLayer::ReturnListView>(
 		<< new QStandardItem(QString::number(data.GetVolume()))
 		<< new QStandardItem(data.GetMeasureName().c_str())
 		<< new QStandardItem(QString::number(data.GetCount()))
-		<< new QStandardItem(QString::number(data.GetSum()))
+		<< new QStandardItem(QString::number(data.GetSum(), 'f', 3))
 		<< new QStandardItem(data.GetCurrencyName().c_str())
 		<< new QStandardItem(data.GetStatusName().c_str())
 		<< new QStandardItem(QString::number(data.GetProductID()))
@@ -6008,6 +7351,16 @@ QList<QStandardItem*> DataForm::GetDataFromClass<BusinessLayer::Status>(Business
 }
 
 template<>
+QList<QStandardItem*> DataForm::GetDataFromClass<BusinessLayer::StatusRuleView>(BusinessLayer::StatusRuleView& data)
+{
+	QList<QStandardItem*> items;
+	items << new QStandardItem(QString::number(data.GetID())) << new QStandardItem(data.GetOperation().c_str())
+		<< new QStandardItem(data.GetStatusName().c_str()) << new QStandardItem(QString::number(data.GetStatusID()));
+	return items;
+}
+
+
+template<>
 QList<QStandardItem*> DataForm::GetDataFromClass<BusinessLayer::SpecificationView>(BusinessLayer::SpecificationView& data)
 {
 	QList<QStandardItem*> items;
@@ -6015,7 +7368,7 @@ QList<QStandardItem*> DataForm::GetDataFromClass<BusinessLayer::SpecificationVie
 	items << new QStandardItem(QString::number(data.GetID()))
 		<< new QStandardItem(data.GetDate().c_str())
 		<< new QStandardItem(data.GetProductName().c_str())
-		<< new QStandardItem(QString::number(data.GetSum()))
+		<< new QStandardItem(QString::number(data.GetSum(), 'f', 3))
 		<< new QStandardItem(data.GetCurrencyName().c_str())
 		<< new QStandardItem(data.GetEmployeeName().c_str())
 		<< new QStandardItem(data.GetEmployeeSurname().c_str())
@@ -6049,7 +7402,7 @@ QList<QStandardItem*> DataForm::GetDataFromClass<BusinessLayer::SpoilageView>(Bu
 	items << new QStandardItem(QString::number(data.GetID()))
 		<< new QStandardItem(data.GetDate().c_str())
 		<< new QStandardItem(QString::number(data.GetCount()))
-		<< new QStandardItem(QString::number(data.GetSum()))
+		<< new QStandardItem(QString::number(data.GetSum(), 'f', 3))
 		<< new QStandardItem(data.GetCurrencyName().c_str())
 		<< new QStandardItem(data.GetStatusName().c_str())
 		<< new QStandardItem(data.GetEmployeeName().c_str())
@@ -6075,7 +7428,7 @@ QList<QStandardItem*> DataForm::GetDataFromClass<BusinessLayer::SpoilageListView
 		<< new QStandardItem(QString::number(data.GetVolume()))
 		<< new QStandardItem(data.GetMeasureName().c_str())
 		<< new QStandardItem(QString::number(data.GetCount()))
-		<< new QStandardItem(QString::number(data.GetSum()))
+		<< new QStandardItem(QString::number(data.GetSum(), 'f', 3))
 		<< new QStandardItem(data.GetCurrencyName().c_str())
 		<< new QStandardItem(data.GetStatusName().c_str())
 		<< new QStandardItem(QString::number(data.GetProductID()))
@@ -6095,12 +7448,32 @@ QList<QStandardItem*> DataForm::GetDataFromClass<BusinessLayer::StockView>(Busin
 		<< new QStandardItem(QString::number(data.GetVolume()))
 		<< new QStandardItem(data.GetMeasureName().c_str())
 		<< new QStandardItem(QString::number(data.GetCount()))
-		<< new QStandardItem(QString::number(data.GetSum()))
+		<< new QStandardItem(QString::number(data.GetSum(), 'f', 3))
 		<< new QStandardItem(data.GetCurrencyName().c_str())
 		<< new QStandardItem(data.GetStatusName().c_str())
 		<< new QStandardItem(QString::number(data.GetProductID()))
 		<< new QStandardItem(QString::number(data.GetStatusID()))
 		<< new QStandardItem(QString::number(data.GetCurrencyID()));
+	return items;
+}
+
+template<>
+QList<QStandardItem*> DataForm::GetDataFromClass<BusinessLayer::SubaccountView>(BusinessLayer::SubaccountView& data)
+{
+	QList<QStandardItem*> items;
+	items << new QStandardItem(QString::number(data.GetID()))
+		<< new QStandardItem(QString::number(data.GetParentAccountID()))
+		<< new QStandardItem(data.GetParentAccountNumber().c_str())
+		<< new QStandardItem(data.GetNumber().c_str())
+		<< new QStandardItem(QString::number(data.GetStartBalance(), 'f', 3))
+		<< new QStandardItem(QString::number(data.GetCurrentBalance(), 'f', 3))
+		<< new QStandardItem(data.GetCurrencyName().c_str())
+		<< new QStandardItem(data.GetStatusName().c_str())
+		<< new QStandardItem(QString::number(data.GetCurrencyID()))
+		<< new QStandardItem(QString::number(data.GetStatusID()))
+		<< new QStandardItem(data.GetOpenedDate().c_str())
+		<< new QStandardItem(data.GetClosedDate().c_str())
+		<< new QStandardItem(data.GetDetails().c_str());
 	return items;
 }
 
@@ -6139,7 +7512,7 @@ QList<QStandardItem*> DataForm::GetDataFromClass<BusinessLayer::TransportView>(B
 		<< new QStandardItem(data.GetStockEmployeePhone().c_str())
 		<< new QStandardItem(data.GetStockEmployeePosition().c_str())
 		<< new QStandardItem(QString::number(data.GetCount()))
-		<< new QStandardItem(QString::number(data.GetSum()))
+		<< new QStandardItem(QString::number(data.GetSum(), 'f', 3))
 		<< new QStandardItem(data.GetCurrencyName().c_str())
 		<< new QStandardItem(QString::number(data.GetStockEmployeeID()))
 		<< new QStandardItem(QString::number(data.GetEmployeeID()))
@@ -6161,7 +7534,7 @@ QList<QStandardItem*> DataForm::GetDataFromClass<BusinessLayer::TransportListVie
 		<< new QStandardItem(QString::number(data.GetVolume()))
 		<< new QStandardItem(data.GetMeasureName().c_str())
 		<< new QStandardItem(QString::number(data.GetCount()))
-		<< new QStandardItem(QString::number(data.GetSum()))
+		<< new QStandardItem(QString::number(data.GetSum(), 'f', 3))
 		<< new QStandardItem(data.GetCurrencyName().c_str())
 		<< new QStandardItem(data.GetStatusName().c_str())
 		<< new QStandardItem(QString::number(data.GetProductID()))
@@ -6214,7 +7587,7 @@ QList<QStandardItem*> DataForm::GetDataFromClass<BusinessLayer::WriteOffView>(Bu
 		<< new QStandardItem(data.GetEmployeeSurname().c_str())
 		<< new QStandardItem(data.GetEmployeePhone().c_str())
 		<< new QStandardItem(QString::number(data.GetCount()))
-		<< new QStandardItem(QString::number(data.GetSum()))
+		<< new QStandardItem(QString::number(data.GetSum(), 'f', 3))
 		<< new QStandardItem(data.GetCurrencyName().c_str())
 		<< new QStandardItem(QString::number(data.GetEmployeeID()))
 		<< new QStandardItem(QString::number(data.GetClientID()))
@@ -6236,7 +7609,7 @@ QList<QStandardItem*> DataForm::GetDataFromClass<BusinessLayer::WriteOffListView
 		<< new QStandardItem(QString::number(data.GetVolume()))
 		<< new QStandardItem(data.GetMeasureName().c_str())
 		<< new QStandardItem(QString::number(data.GetCount()))
-		<< new QStandardItem(QString::number(data.GetSum()))
+		<< new QStandardItem(QString::number(data.GetSum(), 'f', 3))
 		<< new QStandardItem(data.GetCurrencyName().c_str())
 		<< new QStandardItem(data.GetStatusName().c_str())
 		<< new QStandardItem(QString::number(data.GetProductID()))
@@ -6263,7 +7636,7 @@ QList<QStandardItem*> DataForm::GetDataFromClass<BusinessLayer::WriteOffRawView>
 		<< new QStandardItem(data.GetStockEmployeePhone().c_str())
 		<< new QStandardItem(data.GetStockEmployeePosition().c_str())
 		<< new QStandardItem(QString::number(data.GetCount()))
-		<< new QStandardItem(QString::number(data.GetSum()))
+		<< new QStandardItem(QString::number(data.GetSum(), 'f', 3))
 		<< new QStandardItem(data.GetCurrencyName().c_str())
 		<< new QStandardItem(QString::number(data.GetStockEmployeeID()))
 		<< new QStandardItem(QString::number(data.GetEmployeeID()))
@@ -6285,7 +7658,7 @@ QList<QStandardItem*> DataForm::GetDataFromClass<BusinessLayer::WriteOffRawListV
 		<< new QStandardItem(QString::number(data.GetVolume()))
 		<< new QStandardItem(data.GetMeasureName().c_str())
 		<< new QStandardItem(QString::number(data.GetCount()))
-		<< new QStandardItem(QString::number(data.GetSum()))
+		<< new QStandardItem(QString::number(data.GetSum(), 'f', 3))
 		<< new QStandardItem(data.GetCurrencyName().c_str())
 		<< new QStandardItem(data.GetStatusName().c_str())
 		<< new QStandardItem(QString::number(data.GetProductID()))
@@ -6295,35 +7668,127 @@ QList<QStandardItem*> DataForm::GetDataFromClass<BusinessLayer::WriteOffRawListV
 }
 // Template specializations for connections ---------------------------------------------------------------------------
 template<>
-void DataForm::QtConnect<BusinessLayer::AccountView>()
+void DataForm::QtConnect<BusinessLayer::Account>()
 {
-	connect(createBtn, &QPushButton::released, this, &DataForm::CrtAccDlg);
-	connect(editBtn, &QPushButton::released, this, &DataForm::UdpAccDlg);
-	connect(deleteBtn, &QPushButton::released, this, &DataForm::DelAccDlg);
+	BusinessLayer::Access access;
+	std::string crud = access.GetCRUDAccess(&dataFormBL->GetOrmasDal(), loggedUser, "actionAccounts");
+	std::size_t pos = crud.find("C");
+	if (pos != std::string::npos)
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::CrtAccDlg);
+	}
+	else
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("U");
+	if (pos != std::string::npos)
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::UdpAccDlg);
+	}
+	else
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("D");
+	if (pos != std::string::npos)
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::DelAccDlg);
+	}
+	else
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	
 	connect(closeBtn, &QPushButton::released, this, &DataForm::CloseDataForm);
+	
 	connect(tableView->selectionModel(), SIGNAL(currentRowChanged(QModelIndex, QModelIndex)), this, SLOT(ChangeBtnState()));
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreateCompanyAccount")
+	{
+		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreateCARDlg*)parentDialog), SLOT(SetID(int, QString)));
+	}
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreateEntry")
+	{
+		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreateEtrDlg*)parentDialog), SLOT(SetID(int, QString)));
+	}
 }
 
 template<>
 void DataForm::QtConnect<BusinessLayer::AccountType>()
 {
-	connect(createBtn, &QPushButton::released, this, &DataForm::CrtAccTpDlg);
-	connect(editBtn, &QPushButton::released, this, &DataForm::UdpAccTpDlg);
-	connect(deleteBtn, &QPushButton::released, this, &DataForm::DelAccTpDlg);
+	BusinessLayer::Access access;
+	std::string crud = access.GetCRUDAccess(&dataFormBL->GetOrmasDal(), loggedUser, "actionAccountType");
+	std::size_t pos = crud.find("C");
+	if (pos != std::string::npos)
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::CrtAccTpDlg);
+	}
+	else
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("U");
+	if (pos != std::string::npos)
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::UdpAccTpDlg);
+	}
+	else
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("D");
+	if (pos != std::string::npos)
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::DelAccTpDlg);
+	}
+	else
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	
 	connect(closeBtn, &QPushButton::released, this, &DataForm::CloseDataForm);
 	connect(tableView->selectionModel(), SIGNAL(currentRowChanged(QModelIndex, QModelIndex)), this, SLOT(ChangeBtnState()));
-	if (createCOADlg != nullptr)
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreateChartOfAccounts")
 	{
 		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
-		connect(this, SIGNAL(SendID(int, QString)), createCOADlg, SLOT(SetID(int, QString)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreateCOADlg*)parentDialog), SLOT(SetID(int, QString)));
 	}
 }
 template<>
 void DataForm::QtConnect<BusinessLayer::AccessView>()
 {
-	connect(createBtn, &QPushButton::released, this, &DataForm::CrtAcsDlg);
-	connect(editBtn, &QPushButton::released, this, &DataForm::UdpAcsDlg);
-	connect(deleteBtn, &QPushButton::released, this, &DataForm::DelAcsDlg);
+	BusinessLayer::Access access;
+	std::string crud = access.GetCRUDAccess(&dataFormBL->GetOrmasDal(), loggedUser, "actionAccess");
+	std::size_t pos = crud.find("C");
+	if (pos != std::string::npos)
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::CrtAcsDlg);
+	}
+	else
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("U");
+	if (pos != std::string::npos)
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::UdpAcsDlg);
+	}
+	else
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("D");
+	if (pos != std::string::npos)
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::DelAcsDlg);
+	}
+	else
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}	
+	
 	connect(closeBtn, &QPushButton::released, this, &DataForm::CloseDataForm);
 	connect(tableView->selectionModel(), SIGNAL(currentRowChanged(QModelIndex, QModelIndex)), this, SLOT(ChangeBtnState()));
 }
@@ -6331,15 +7796,42 @@ void DataForm::QtConnect<BusinessLayer::AccessView>()
 template<>
 void DataForm::QtConnect<BusinessLayer::AccessItem>()
 {
-	connect(createBtn, &QPushButton::released, this, &DataForm::CrtAcsItemDlg);
-	connect(editBtn, &QPushButton::released, this, &DataForm::UdpAcsItemDlg);
-	connect(deleteBtn, &QPushButton::released, this, &DataForm::DelAcsItemDlg);
+	BusinessLayer::Access access;
+	std::string crud = access.GetCRUDAccess(&dataFormBL->GetOrmasDal(), loggedUser, "actionAccessItems");
+	std::size_t pos = crud.find("C");
+	if (pos != std::string::npos)
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::CrtAcsItemDlg);
+	}
+	else
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("U");
+	if (pos != std::string::npos)
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::UdpAcsItemDlg);
+	}
+	else
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("D");
+	if (pos != std::string::npos)
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::DelAcsItemDlg);
+	}
+	else
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+		
 	connect(closeBtn, &QPushButton::released, this, &DataForm::CloseDataForm);
 	connect(tableView->selectionModel(), SIGNAL(currentRowChanged(QModelIndex, QModelIndex)), this, SLOT(ChangeBtnState()));
-	if (createAcsDlg != nullptr)
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreateAccess")
 	{
 		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
-		connect(this, SIGNAL(SendID(int, QString)), createAcsDlg, SLOT(SetID(int, QString)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreateAcsDlg*)parentDialog), SLOT(SetID(int, QString)));
 	}
 }
 
@@ -6347,9 +7839,36 @@ void DataForm::QtConnect<BusinessLayer::AccessItem>()
 template<>
 void DataForm::QtConnect<BusinessLayer::BalanceView>()
 {
-	connect(createBtn, &QPushButton::released, this, &DataForm::CrtBlcDlg);
-	connect(editBtn, &QPushButton::released, this, &DataForm::UdpBlcDlg);
-	connect(deleteBtn, &QPushButton::released, this, &DataForm::DelBlcDlg);
+	BusinessLayer::Access access;
+	std::string crud = access.GetCRUDAccess(&dataFormBL->GetOrmasDal(), loggedUser, "actionBalances");
+	std::size_t pos = crud.find("C");
+	if (pos != std::string::npos)
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::CrtBlcDlg);
+	}
+	else
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("U");
+	if (pos != std::string::npos)
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::UdpBlcDlg);
+	}
+	else
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("D");
+	if (pos != std::string::npos)
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::DelBlcDlg);
+	}
+	else
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+		
 	connect(closeBtn, &QPushButton::released, this, &DataForm::CloseDataForm);
 	connect(tableView->selectionModel(), SIGNAL(currentRowChanged(QModelIndex, QModelIndex)), this, SLOT(ChangeBtnState()));
 }
@@ -6357,80 +7876,304 @@ void DataForm::QtConnect<BusinessLayer::BalanceView>()
 template<>
 void DataForm::QtConnect<BusinessLayer::ChartOfAccountsView>()
 {
-	connect(createBtn, &QPushButton::released, this, &DataForm::CrtCOADlg);
-	connect(editBtn, &QPushButton::released, this, &DataForm::UdpCOADlg);
-	connect(deleteBtn, &QPushButton::released, this, &DataForm::DelCOADlg);
+	BusinessLayer::Access access;
+	std::string crud = access.GetCRUDAccess(&dataFormBL->GetOrmasDal(), loggedUser, "actionChartOfAccounts");
+	std::size_t pos = crud.find("C");
+	if (pos != std::string::npos)
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::CrtCOADlg);
+	}
+	else
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("U");
+	if (pos != std::string::npos)
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::UdpCOADlg);
+	}
+	else
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("D");
+	if (pos != std::string::npos)
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::DelCOADlg);
+	}
+	else
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+		
 	connect(closeBtn, &QPushButton::released, this, &DataForm::CloseDataForm);
 	connect(tableView->selectionModel(), SIGNAL(currentRowChanged(QModelIndex, QModelIndex)), this, SLOT(ChangeBtnState()));
+	if (parentDialog != nullptr && parentDialog->objectName() == "GenerateOneAccount")
+	{
+		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
+		connect(this, SIGNAL(SendID(int, QString)), ((GenerateOneAcc*)parentDialog), SLOT(SetID(int, QString)));
+	}
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreateAccount")
+	{
+		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreateAccDlg*)parentDialog), SLOT(SetID(int, QString)));
+	}
 }
 
 template<>
 void DataForm::QtConnect<BusinessLayer::ClientView>()
 {
-	connect(createBtn, &QPushButton::released, this, &DataForm::CrtCltDlg);
-	connect(editBtn, &QPushButton::released, this, &DataForm::UdpCltDlg);
-	connect(deleteBtn, &QPushButton::released, this, &DataForm::DelCltDlg);
+	BusinessLayer::Access access;
+	std::string crud = access.GetCRUDAccess(&dataFormBL->GetOrmasDal(), loggedUser, "actionClients");
+	std::size_t pos = crud.find("C");
+	if (pos != std::string::npos)
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::CrtCltDlg);
+	}
+	else
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("U");
+	if (pos != std::string::npos)
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::UdpCltDlg);
+	}
+	else
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("D");
+	if (pos != std::string::npos)
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::DelCltDlg);
+	}
+	else
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+		
 	connect(closeBtn, &QPushButton::released, this, &DataForm::CloseDataForm);
 	connect(tableView->selectionModel(), SIGNAL(currentRowChanged(QModelIndex, QModelIndex)), this, SLOT(ChangeBtnState()));
-	if (createOrdDlg != nullptr)
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreateOrder")
 	{
 		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
-		connect(this, SIGNAL(SendID(int, QString)), createOrdDlg, SLOT(SetID(int, QString)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreateOrdDlg*)parentDialog), SLOT(SetID(int, QString)));
 	}
-	if (createRtrnDlg != nullptr)
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreateReturn")
 	{
 		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
-		connect(this, SIGNAL(SendID(int, QString)), createRtrnDlg, SLOT(SetID(int, QString)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreateRtrnDlg*)parentDialog), SLOT(SetID(int, QString)));
 	}
-	if (createWOffDlg != nullptr)
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreateWriteOff")
 	{
 		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
-		connect(this, SIGNAL(SendID(int, QString)), createWOffDlg, SLOT(SetID(int, QString)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreateWOffDlg*)parentDialog), SLOT(SetID(int, QString)));
+	}
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreatePayment")
+	{
+		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreatePmtDlg*)parentDialog), SLOT(SetID(int, QString)));
 	}
 }
 
 template<>
 void DataForm::QtConnect<BusinessLayer::Company>()
 {
-	connect(createBtn, &QPushButton::released, this, &DataForm::CrtCmpDlg);
-	connect(editBtn, &QPushButton::released, this, &DataForm::UdpCmpDlg);
-	connect(deleteBtn, &QPushButton::released, this, &DataForm::DelCmpDlg);
+	BusinessLayer::Access access;
+	std::string crud = access.GetCRUDAccess(&dataFormBL->GetOrmasDal(), loggedUser, "actionCompany");
+	std::size_t pos = crud.find("C");
+	if (pos != std::string::npos)
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::CrtCmpDlg);
+	}
+	else
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("U");
+	if (pos != std::string::npos)
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::UdpCmpDlg);
+	}
+	else
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("D");
+	if (pos != std::string::npos)
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::DelCmpDlg);
+	}
+	else
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}	
+	
 	connect(closeBtn, &QPushButton::released, this, &DataForm::CloseDataForm);
 	connect(tableView->selectionModel(), SIGNAL(currentRowChanged(QModelIndex, QModelIndex)), this, SLOT(ChangeBtnState()));
-	if (createProdDlg != nullptr)
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreateProduct")
 	{
 		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
-		connect(this, SIGNAL(SendID(int, QString)), createProdDlg, SLOT(SetID(int, QString)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreateProdDlg*)parentDialog), SLOT(SetID(int, QString)));
 	}
+}
+
+template<>
+void DataForm::QtConnect<BusinessLayer::CompanyEmployeeRelationView>()
+{
+	BusinessLayer::Access access;
+	std::string crud = access.GetCRUDAccess(&dataFormBL->GetOrmasDal(), loggedUser, "actionCompanyEmployees");
+	std::size_t pos = crud.find("C");
+	if (pos != std::string::npos)
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::CrtCERDlg);
+	}
+	else
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("U");
+	if (pos != std::string::npos)
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::UdpCERDlg);
+	}
+	else
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("D");
+	if (pos != std::string::npos)
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::DelCERDlg);
+	}
+	else
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+		
+	connect(closeBtn, &QPushButton::released, this, &DataForm::CloseDataForm);
+	connect(tableView->selectionModel(), SIGNAL(currentRowChanged(QModelIndex, QModelIndex)), this, SLOT(ChangeBtnState()));
+}
+
+template<>
+void DataForm::QtConnect<BusinessLayer::CompanyAccountRelationView>()
+{
+	BusinessLayer::Access access;
+	std::string crud = access.GetCRUDAccess(&dataFormBL->GetOrmasDal(), loggedUser, "actionCompanyAccounts");
+	std::size_t pos = crud.find("C");
+	if (pos != std::string::npos)
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::CrtCARDlg);
+	}
+	else
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("U");
+	if (pos != std::string::npos)
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::UdpCARDlg);
+	}
+	else
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("D");
+	if (pos != std::string::npos)
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::DelCARDlg);
+	}
+	else
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+		
+	connect(closeBtn, &QPushButton::released, this, &DataForm::CloseDataForm);
+	connect(tableView->selectionModel(), SIGNAL(currentRowChanged(QModelIndex, QModelIndex)), this, SLOT(ChangeBtnState()));
 }
 
 template<>
 void DataForm::QtConnect<BusinessLayer::ConsumeProductView>()
 {
-	connect(createBtn, &QPushButton::released, this, &DataForm::CrtConPDlg);
-	connect(editBtn, &QPushButton::released, this, &DataForm::UdpConPDlg);
-	connect(deleteBtn, &QPushButton::released, this, &DataForm::DelConPDlg);
+	BusinessLayer::Access access;
+	std::string crud = access.GetCRUDAccess(&dataFormBL->GetOrmasDal(), loggedUser, "actionConsumptionProducts");
+	std::size_t pos = crud.find("C");
+	if (pos != std::string::npos)
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::CrtConPDlg);
+	}
+	else
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("U");
+	if (pos != std::string::npos)
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::UdpConPDlg);
+	}
+	else
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("D");
+	if (pos != std::string::npos)
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::DelConPDlg);
+	}
+	else
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	
 	connect(closeBtn, &QPushButton::released, this, &DataForm::CloseDataForm);
 	connect(tableView->selectionModel(), SIGNAL(currentRowChanged(QModelIndex, QModelIndex)), this, SLOT(ChangeBtnState()));
-	if (createConPListDlg != nullptr)
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreateConPList")
 	{
 		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
-		connect(this, SIGNAL(SendID(int, QString)), createConPListDlg, SLOT(SetID(int, QString)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreateConPListDlg*)parentDialog), SLOT(SetID(int, QString)));
 	}
 }
 
 template<>
 void DataForm::QtConnect<BusinessLayer::ConsumeProductListView>()
 {
-	connect(createBtn, &QPushButton::released, this, &DataForm::CrtConPListDlg);
-	connect(editBtn, &QPushButton::released, this, &DataForm::UdpConPListDlg);
-	connect(deleteBtn, &QPushButton::released, this, &DataForm::DelConPListDlg);
+	BusinessLayer::Access access;
+	std::string crud = access.GetCRUDAccess(&dataFormBL->GetOrmasDal(), loggedUser, "actionConsumptionProductsList");
+	std::size_t pos = crud.find("C");
+	if (pos != std::string::npos)
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::CrtConPListDlg);
+	}
+	else
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("U");
+	if (pos != std::string::npos)
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::UdpConPListDlg);
+	}
+	else
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("D");
+	if (pos != std::string::npos)
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::DelConPListDlg);
+	}
+	else
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	
 	connect(closeBtn, &QPushButton::released, this, &DataForm::CloseDataForm);
 	connect(tableView->selectionModel(), SIGNAL(currentRowChanged(QModelIndex, QModelIndex)), this, SLOT(ChangeBtnState()));
-	if (createConPDlg != nullptr)
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreateConsumeProduct")
 	{
 		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
-		connect(this, SIGNAL(SendID(int, QString)), createConPDlg, SLOT(SetID(int, QString)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreateConPDlg*)parentDialog), SLOT(SetID(int, QString)));
 		connect(tableView->model(), SIGNAL(rowsInserted(QModelIndex, int, int)), this, SLOT(OnRowsNumberChanged()));
 		connect(tableView->model(), SIGNAL(rowsRemoved(QModelIndex, int, int)), this, SLOT(OnRowsNumberChanged()));
 	}
@@ -6439,30 +8182,84 @@ void DataForm::QtConnect<BusinessLayer::ConsumeProductListView>()
 template<>
 void DataForm::QtConnect<BusinessLayer::ConsumeRawView>()
 {
-	connect(createBtn, &QPushButton::released, this, &DataForm::CrtConRDlg);
-	connect(editBtn, &QPushButton::released, this, &DataForm::UdpConRDlg);
-	connect(deleteBtn, &QPushButton::released, this, &DataForm::DelConRDlg);
+	BusinessLayer::Access access;
+	std::string crud = access.GetCRUDAccess(&dataFormBL->GetOrmasDal(), loggedUser, "actionConsumptionRaws");
+	std::size_t pos = crud.find("C");
+	if (pos != std::string::npos)
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::CrtConRDlg);
+	}
+	else
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("U");
+	if (pos != std::string::npos)
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::UdpConRDlg);
+	}
+	else
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("D");
+	if (pos != std::string::npos)
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::DelConRDlg);
+	}
+	else
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}	
+	
 	connect(closeBtn, &QPushButton::released, this, &DataForm::CloseDataForm);
 	connect(tableView->selectionModel(), SIGNAL(currentRowChanged(QModelIndex, QModelIndex)), this, SLOT(ChangeBtnState()));
-	if (createConRListDlg != nullptr)
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreateConRList")
 	{
 		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
-		connect(this, SIGNAL(SendID(int, QString)), createConRListDlg, SLOT(SetID(int, QString)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreateConRListDlg*)parentDialog), SLOT(SetID(int, QString)));
 	}
 }
 
 template<>
 void DataForm::QtConnect<BusinessLayer::ConsumeRawListView>()
 {
-	connect(createBtn, &QPushButton::released, this, &DataForm::CrtConRListDlg);
-	connect(editBtn, &QPushButton::released, this, &DataForm::UdpConRListDlg);
-	connect(deleteBtn, &QPushButton::released, this, &DataForm::DelConRListDlg);
+	BusinessLayer::Access access;
+	std::string crud = access.GetCRUDAccess(&dataFormBL->GetOrmasDal(), loggedUser, "actionConsumptionRawsList");
+	std::size_t pos = crud.find("C");
+	if (pos != std::string::npos)
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::CrtConRListDlg);
+	}
+	else
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("U");
+	if (pos != std::string::npos)
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::UdpConRListDlg);
+	}
+	else
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("D");
+	if (pos != std::string::npos)
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::DelConRListDlg);
+	}
+	else
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	
 	connect(closeBtn, &QPushButton::released, this, &DataForm::CloseDataForm);
 	connect(tableView->selectionModel(), SIGNAL(currentRowChanged(QModelIndex, QModelIndex)), this, SLOT(ChangeBtnState()));
-	if (createConRDlg != nullptr)
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreateConsumeRaw")
 	{
 		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
-		connect(this, SIGNAL(SendID(int, QString)), createConRDlg, SLOT(SetID(int, QString)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreateConRDlg*)parentDialog), SLOT(SetID(int, QString)));
 		connect(tableView->model(), SIGNAL(rowsInserted(QModelIndex, int, int)), this, SLOT(OnRowsNumberChanged()));
 		connect(tableView->model(), SIGNAL(rowsRemoved(QModelIndex, int, int)), this, SLOT(OnRowsNumberChanged()));
 	}
@@ -6471,99 +8268,244 @@ void DataForm::QtConnect<BusinessLayer::ConsumeRawListView>()
 template<>
 void DataForm::QtConnect<BusinessLayer::Currency>()
 {
-	connect(createBtn, &QPushButton::released, this, &DataForm::CrtCurDlg);
-	connect(editBtn, &QPushButton::released, this, &DataForm::UdpCurDlg);
-	connect(deleteBtn, &QPushButton::released, this, &DataForm::DelCurDlg);
+	BusinessLayer::Access access;
+	std::string crud = access.GetCRUDAccess(&dataFormBL->GetOrmasDal(), loggedUser, "actionCurrency");
+	std::size_t pos = crud.find("C");
+	if (pos != std::string::npos)
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::CrtCurDlg);
+	}
+	else
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("U");
+	if (pos != std::string::npos)
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::UdpCurDlg);
+	}
+	else
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("D");
+	if (pos != std::string::npos)
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::DelCurDlg);
+	}
+	else
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+		
 	connect(closeBtn, &QPushButton::released, this, &DataForm::CloseDataForm);
 	connect(tableView->selectionModel(), SIGNAL(currentRowChanged(QModelIndex, QModelIndex)), this, SLOT(ChangeBtnState()));
 }
 
+
 template<>
 void DataForm::QtConnect<BusinessLayer::EmployeeView>()
 {
-	connect(createBtn, &QPushButton::released, this, &DataForm::CrtEmpDlg);
-	connect(editBtn, &QPushButton::released, this, &DataForm::UdpEmpDlg);
-	connect(deleteBtn, &QPushButton::released, this, &DataForm::DelEmpDlg);
+	BusinessLayer::Access access;
+	std::string crud = access.GetCRUDAccess(&dataFormBL->GetOrmasDal(), loggedUser, "actionEmployees");
+	std::size_t pos = crud.find("C");
+	if (pos != std::string::npos)
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::CrtEmpDlg);
+	}
+	else
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("U");
+	if (pos != std::string::npos)
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::UdpEmpDlg);
+	}
+	else
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("D");
+	if (pos != std::string::npos)
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::DelEmpDlg);
+	}
+	else
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}	
+	
 	connect(closeBtn, &QPushButton::released, this, &DataForm::CloseDataForm);
 	connect(tableView->selectionModel(), SIGNAL(currentRowChanged(QModelIndex, QModelIndex)), this, SLOT(ChangeBtnState()));
-	if (createConPDlg != nullptr)
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreateConsumeProduct")
 	{
 		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
-		connect(this, SIGNAL(SendID(int, QString)), createConPDlg, SLOT(SetID(int, QString)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreateConPDlg*)parentDialog), SLOT(SetID(int, QString)));
 	}
-	if (createConRDlg != nullptr)
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreateConsumeRaw")
 	{
 		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
-		connect(this, SIGNAL(SendID(int, QString)), createConRDlg, SLOT(SetID(int, QString)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreateConRDlg*)parentDialog), SLOT(SetID(int, QString)));
 	}
-	if (createInvDlg != nullptr)
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreateCompanyEmployee")
 	{
 		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
-		connect(this, SIGNAL(SendID(int, QString)), createInvDlg, SLOT(SetID(int, QString)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreateCERDlg*)parentDialog), SLOT(SetID(int, QString)));
 	}
-	if (createJbsDlg != nullptr)
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreateInventorization")
 	{
 		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
-		connect(this, SIGNAL(SendID(int, QString)), createJbsDlg, SLOT(SetID(int, QString)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreateInvDlg*)parentDialog), SLOT(SetID(int, QString)));
 	}
-	if (createOrdDlg != nullptr)
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreateJobsheet")
 	{
 		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
-		connect(this, SIGNAL(SendID(int, QString)), createOrdDlg, SLOT(SetID(int, QString)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreateJbsDlg*)parentDialog), SLOT(SetID(int, QString)));
 	}
-	if (createOrdRDlg != nullptr)
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreateOrder")
 	{
 		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
-		connect(this, SIGNAL(SendID(int, QString)), createOrdDlg, SLOT(SetID(int, QString)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreateOrdDlg*)parentDialog), SLOT(SetID(int, QString)));
 	}
-	if (createRcpPDlg != nullptr)
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreateOrderRaw")
 	{
 		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
-		connect(this, SIGNAL(SendID(int, QString)), createRcpPDlg, SLOT(SetID(int, QString)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreateOrdRDlg*)parentDialog), SLOT(SetID(int, QString)));
 	}
-	if (createRcpRDlg != nullptr)
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreateReceiptProduct")
 	{
 		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
-		connect(this, SIGNAL(SendID(int, QString)), createRcpRDlg, SLOT(SetID(int, QString)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreateRcpPDlg*)parentDialog), SLOT(SetID(int, QString)));
 	}
-	if (createRtrnDlg != nullptr)
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreateReceiptRaw")
 	{
 		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
-		connect(this, SIGNAL(SendID(int, QString)), createRtrnDlg, SLOT(SetID(int, QString)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreateRcpRDlg*)parentDialog), SLOT(SetID(int, QString)));
 	}
-	if (createSpecDlg != nullptr)
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreateProductionConsumeRaw")
 	{
 		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
-		connect(this, SIGNAL(SendID(int, QString)), createSpecDlg, SLOT(SetID(int, QString)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreateProdConRDlg*)parentDialog), SLOT(SetID(int, QString)));
 	}
-	if (createTrsDlg != nullptr)
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreateProductionPlan")
 	{
 		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
-		connect(this, SIGNAL(SendID(int, QString)), createTrsDlg, SLOT(SetID(int, QString)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreatePPlanDlg*)parentDialog), SLOT(SetID(int, QString)));
 	}
-	if (createWOffDlg != nullptr)
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreateReturn")
 	{
 		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
-		connect(this, SIGNAL(SendID(int, QString)), createWOffDlg, SLOT(SetID(int, QString)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreateRtrnDlg*)parentDialog), SLOT(SetID(int, QString)));
 	}
-	if (createWOffRDlg != nullptr)
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreateSpecification")
 	{
 		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
-		connect(this, SIGNAL(SendID(int, QString)), createWOffRDlg, SLOT(SetID(int, QString)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreateSpecDlg*)parentDialog), SLOT(SetID(int, QString)));
 	}
-	if (clcWagesDlg != nullptr)
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreateSalary")
 	{
 		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
-		connect(this, SIGNAL(SendID(int, QString)), clcWagesDlg, SLOT(SetID(int, QString)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreateSlrDlg*)parentDialog), SLOT(SetID(int, QString)));
+	}
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreateSpoilage")
+	{
+		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreateSplDlg*)parentDialog), SLOT(SetID(int, QString)));
+	}
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreateTransport")
+	{
+		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreateTrsDlg*)parentDialog), SLOT(SetID(int, QString)));
+	}
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreateWriteOff")
+	{
+		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreateWOffDlg*)parentDialog), SLOT(SetID(int, QString)));
+	}
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreateWriteOffR")
+	{
+		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreateWOffRDlg*)parentDialog), SLOT(SetID(int, QString)));
+	}
+	if (parentDialog != nullptr && parentDialog->objectName() == "CalcWages")
+	{
+		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
+		connect(this, SIGNAL(SendID(int, QString)), ((ClcWagesDlg*)parentDialog), SLOT(SetID(int, QString)));
 	}
 }
 
 template<>
 void DataForm::QtConnect<BusinessLayer::EntryView>()
 {
-	connect(createBtn, &QPushButton::released, this, &DataForm::CrtEtrDlg);
-	connect(editBtn, &QPushButton::released, this, &DataForm::UdpEtrDlg);
-	connect(deleteBtn, &QPushButton::released, this, &DataForm::DelEtrDlg);
+	BusinessLayer::Access access;
+	std::string crud = access.GetCRUDAccess(&dataFormBL->GetOrmasDal(), loggedUser, "actionEntry");
+	std::size_t pos = crud.find("C");
+	if (pos != std::string::npos)
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::CrtEtrDlg);
+	}
+	else
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("U");
+	if (pos != std::string::npos)
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::UdpEtrDlg);
+	}
+	else
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("D");
+	if (pos != std::string::npos)
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::DelEtrDlg);
+	}
+	else
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}	
+	
+	connect(closeBtn, &QPushButton::released, this, &DataForm::CloseDataForm);
+	connect(tableView->selectionModel(), SIGNAL(currentRowChanged(QModelIndex, QModelIndex)), this, SLOT(ChangeBtnState()));
+}
+
+
+template<>
+void DataForm::QtConnect<BusinessLayer::EntryRouting>()
+{
+	BusinessLayer::Access access;
+	std::string crud = access.GetCRUDAccess(&dataFormBL->GetOrmasDal(), loggedUser, "actionEntryRouting");
+	std::size_t pos = crud.find("C");
+	if (pos != std::string::npos)
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::CrtEtrRtDlg);
+	}
+	else
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("U");
+	if (pos != std::string::npos)
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::UdpEtrRtDlg);
+	}
+	else
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("D");
+	if (pos != std::string::npos)
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::DelEtrRtDlg);
+	}
+	else
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+		
 	connect(closeBtn, &QPushButton::released, this, &DataForm::CloseDataForm);
 	connect(tableView->selectionModel(), SIGNAL(currentRowChanged(QModelIndex, QModelIndex)), this, SLOT(ChangeBtnState()));
 }
@@ -6572,30 +8514,84 @@ void DataForm::QtConnect<BusinessLayer::EntryView>()
 template<>
 void DataForm::QtConnect<BusinessLayer::InventorizationView>()
 {
-	connect(createBtn, &QPushButton::released, this, &DataForm::CrtInvDlg);
-	connect(editBtn, &QPushButton::released, this, &DataForm::UdpInvDlg);
-	connect(deleteBtn, &QPushButton::released, this, &DataForm::DelInvDlg);
+	BusinessLayer::Access access;
+	std::string crud = access.GetCRUDAccess(&dataFormBL->GetOrmasDal(), loggedUser, "actionInventorization");
+	std::size_t pos = crud.find("C");
+	if (pos != std::string::npos)
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::CrtInvDlg);
+	}
+	else
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("U");
+	if (pos != std::string::npos)
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::UdpInvDlg);
+	}
+	else
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("D");
+	if (pos != std::string::npos)
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::DelInvDlg);
+	}
+	else
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+		
 	connect(closeBtn, &QPushButton::released, this, &DataForm::CloseDataForm);
 	connect(tableView->selectionModel(), SIGNAL(currentRowChanged(QModelIndex, QModelIndex)), this, SLOT(ChangeBtnState()));
-	if (createInvListDlg != nullptr)
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreateInvList")
 	{
 		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
-		connect(this, SIGNAL(SendID(int, QString)), createInvListDlg, SLOT(SetID(int, QString)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreateInvListDlg*)parentDialog), SLOT(SetID(int, QString)));
 	}
 }
 
 template<>
 void DataForm::QtConnect<BusinessLayer::InventorizationListView>()
 {
-	connect(createBtn, &QPushButton::released, this, &DataForm::CrtInvListDlg);
-	connect(editBtn, &QPushButton::released, this, &DataForm::UdpInvListDlg);
-	connect(deleteBtn, &QPushButton::released, this, &DataForm::DelInvListDlg);
+	BusinessLayer::Access access;
+	std::string crud = access.GetCRUDAccess(&dataFormBL->GetOrmasDal(), loggedUser, "actionInventorizationList");
+	std::size_t pos = crud.find("C");
+	if (pos != std::string::npos)
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::CrtInvListDlg);
+	}
+	else
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("U");
+	if (pos != std::string::npos)
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::UdpInvListDlg);
+	}
+	else
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("D");
+	if (pos != std::string::npos)
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::DelInvListDlg);
+	}
+	else
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+		
 	connect(closeBtn, &QPushButton::released, this, &DataForm::CloseDataForm);
 	connect(tableView->selectionModel(), SIGNAL(currentRowChanged(QModelIndex, QModelIndex)), this, SLOT(ChangeBtnState()));
-	if (createInvDlg != nullptr)
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreateInventorization")
 	{
 		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
-		connect(this, SIGNAL(SendID(int, QString)), createInvDlg, SLOT(SetID(int, QString)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreateInvDlg*)parentDialog), SLOT(SetID(int, QString)));
 		connect(tableView->model(), SIGNAL(rowsInserted(QModelIndex, int, int)), this, SLOT(OnRowsNumberChanged()));
 		connect(tableView->model(), SIGNAL(rowsRemoved(QModelIndex, int, int)), this, SLOT(OnRowsNumberChanged()));
 	}
@@ -6604,9 +8600,36 @@ void DataForm::QtConnect<BusinessLayer::InventorizationListView>()
 template<>
 void DataForm::QtConnect<BusinessLayer::JobpriceView>()
 {
-	connect(createBtn, &QPushButton::released, this, &DataForm::CrtJbpDlg);
-	connect(editBtn, &QPushButton::released, this, &DataForm::UdpJbpDlg);
-	connect(deleteBtn, &QPushButton::released, this, &DataForm::DelJbpDlg);
+	BusinessLayer::Access access;
+	std::string crud = access.GetCRUDAccess(&dataFormBL->GetOrmasDal(), loggedUser, "actionJobprice");
+	std::size_t pos = crud.find("C");
+	if (pos != std::string::npos)
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::CrtJbpDlg);
+	}
+	else
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("U");
+	if (pos != std::string::npos)
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::UdpJbpDlg);
+	}
+	else
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("D");
+	if (pos != std::string::npos)
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::DelJbpDlg);
+	}
+	else
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	
 	connect(closeBtn, &QPushButton::released, this, &DataForm::CloseDataForm);
 	connect(tableView->selectionModel(), SIGNAL(currentRowChanged(QModelIndex, QModelIndex)), this, SLOT(ChangeBtnState()));
 }
@@ -6614,9 +8637,36 @@ void DataForm::QtConnect<BusinessLayer::JobpriceView>()
 template<>
 void DataForm::QtConnect<BusinessLayer::JobsheetView>()
 {
-	connect(createBtn, &QPushButton::released, this, &DataForm::CrtJbsDlg);
-	connect(editBtn, &QPushButton::released, this, &DataForm::UdpJbsDlg);
-	connect(deleteBtn, &QPushButton::released, this, &DataForm::DelJbsDlg);
+	BusinessLayer::Access access;
+	std::string crud = access.GetCRUDAccess(&dataFormBL->GetOrmasDal(), loggedUser, "actionJobsheet");
+	std::size_t pos = crud.find("C");
+	if (pos != std::string::npos)
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::CrtJbsDlg);
+	}
+	else
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("U");
+	if (pos != std::string::npos)
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::UdpJbsDlg);
+	}
+	else
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("D");
+	if (pos != std::string::npos)
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::DelJbsDlg);
+	}
+	else
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+		
 	connect(closeBtn, &QPushButton::released, this, &DataForm::CloseDataForm);
 	connect(tableView->selectionModel(), SIGNAL(currentRowChanged(QModelIndex, QModelIndex)), this, SLOT(ChangeBtnState()));
 }
@@ -6624,15 +8674,47 @@ void DataForm::QtConnect<BusinessLayer::JobsheetView>()
 template<>
 void DataForm::QtConnect<BusinessLayer::Location>()
 {
-	connect(createBtn, &QPushButton::released, this, &DataForm::CrtLcnDlg);
-	connect(editBtn, &QPushButton::released, this, &DataForm::UdpLcnDlg);
-	connect(deleteBtn, &QPushButton::released, this, &DataForm::DelLcnDlg);
+	BusinessLayer::Access access;
+	std::string crud = access.GetCRUDAccess(&dataFormBL->GetOrmasDal(), loggedUser, "actionLocation");
+	std::size_t pos = crud.find("C");
+	if (pos != std::string::npos)
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::CrtLcnDlg);
+	}
+	else
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("U");
+	if (pos != std::string::npos)
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::UdpLcnDlg);
+	}
+	else
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("D");
+	if (pos != std::string::npos)
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::DelLcnDlg);
+	}
+	else
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	
 	connect(closeBtn, &QPushButton::released, this, &DataForm::CloseDataForm);
 	connect(tableView->selectionModel(), SIGNAL(currentRowChanged(QModelIndex, QModelIndex)), this, SLOT(ChangeBtnState()));
-	if (createCltDlg != nullptr)
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreateClient")
 	{
 		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
-		connect(this, SIGNAL(SendID(int, QString)), createCltDlg, SLOT(SetID(int, QString)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreateCltDlg*)parentDialog), SLOT(SetID(int, QString)));
+	}
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreatePurveyor")
+	{
+		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreatePurDlg*)parentDialog), SLOT(SetID(int, QString)));
 	}
 }
 
@@ -6640,9 +8722,36 @@ void DataForm::QtConnect<BusinessLayer::Location>()
 template<>
 void DataForm::QtConnect<BusinessLayer::Measure>()
 {
-	connect(createBtn, &QPushButton::released, this, &DataForm::CrtMsrDlg);
-	connect(editBtn, &QPushButton::released, this, &DataForm::UdpMsrDlg);
-	connect(deleteBtn, &QPushButton::released, this, &DataForm::DelMsrDlg);
+	BusinessLayer::Access access;
+	std::string crud = access.GetCRUDAccess(&dataFormBL->GetOrmasDal(), loggedUser, "actionMeasure");
+	std::size_t pos = crud.find("C");
+	if (pos != std::string::npos)
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::CrtMsrDlg);
+	}
+	else
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("U");
+	if (pos != std::string::npos)
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::UdpMsrDlg);
+	}
+	else
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("D");
+	if (pos != std::string::npos)
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::DelMsrDlg);
+	}
+	else
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+		
 	connect(closeBtn, &QPushButton::released, this, &DataForm::CloseDataForm);
 	connect(tableView->selectionModel(), SIGNAL(currentRowChanged(QModelIndex, QModelIndex)), this, SLOT(ChangeBtnState()));
 }
@@ -6650,9 +8759,36 @@ void DataForm::QtConnect<BusinessLayer::Measure>()
 template<>
 void DataForm::QtConnect<BusinessLayer::NetCostView>()
 {
-	connect(createBtn, &QPushButton::released, this, &DataForm::CrtNetCDlg);
-	connect(editBtn, &QPushButton::released, this, &DataForm::UdpNetCDlg);
-	connect(deleteBtn, &QPushButton::released, this, &DataForm::DelNetCDlg);
+	BusinessLayer::Access access;
+	std::string crud = access.GetCRUDAccess(&dataFormBL->GetOrmasDal(), loggedUser, "actionNetCost");
+	std::size_t pos = crud.find("C");
+	if (pos != std::string::npos)
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::CrtNetCDlg);
+	}
+	else
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("U");
+	if (pos != std::string::npos)
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::UdpNetCDlg);
+	}
+	else
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("D");
+	if (pos != std::string::npos)
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::DelNetCDlg);
+	}
+	else
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	
 	connect(closeBtn, &QPushButton::released, this, &DataForm::CloseDataForm);
 	connect(tableView->selectionModel(), SIGNAL(currentRowChanged(QModelIndex, QModelIndex)), this, SLOT(ChangeBtnState()));
 }
@@ -6661,31 +8797,86 @@ void DataForm::QtConnect<BusinessLayer::NetCostView>()
 template<>
 void DataForm::QtConnect<BusinessLayer::OrderView>()
 {
-	connect(createBtn, &QPushButton::released, this, &DataForm::CrtOrdDlg);
-	connect(editBtn, &QPushButton::released, this, &DataForm::UdpOrdDlg);
-	connect(deleteBtn, &QPushButton::released, this, &DataForm::DelOrdDlg);
+	BusinessLayer::Access access;
+	std::string crud = access.GetCRUDAccess(&dataFormBL->GetOrmasDal(), loggedUser, "actionOrders");
+	std::size_t pos = crud.find("C");
+	if (pos != std::string::npos)
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::CrtOrdDlg);
+	}
+	else
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("U");
+	if (pos != std::string::npos)
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::UdpOrdDlg);
+	}
+	else
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("D");
+	if (pos != std::string::npos)
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::DelOrdDlg);
+	}
+	else
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+		
 	connect(closeBtn, &QPushButton::released, this, &DataForm::CloseDataForm);
 	connect(tableView->selectionModel(), SIGNAL(currentRowChanged(QModelIndex, QModelIndex)), this, SLOT(ChangeBtnState()));
-	if (createOrdListDlg != nullptr)
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreateOrdList")
 	{
 		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
-		connect(this, SIGNAL(SendID(int, QString)), createOrdListDlg, SLOT(SetID(int, QString)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreateOrdListDlg*)parentDialog), SLOT(SetID(int, QString)));
 	}
 }
 
 template<>
 void DataForm::QtConnect<BusinessLayer::OrderListView>()
 {
-	connect(createBtn, &QPushButton::released, this, &DataForm::CrtOrdListDlg);
-	connect(editBtn, &QPushButton::released, this, &DataForm::UdpOrdListDlg);
-	connect(deleteBtn, &QPushButton::released, this, &DataForm::DelOrdListDlg);
+	BusinessLayer::Access access;
+	std::string crud = access.GetCRUDAccess(&dataFormBL->GetOrmasDal(), loggedUser, "actionOrderList");
+	std::size_t pos = crud.find("C");
+	if (pos != std::string::npos)
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::CrtOrdListDlg);
+	}
+	else
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("U");
+	if (pos != std::string::npos)
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::UdpOrdListDlg);
+	}
+	else
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("D");
+	if (pos != std::string::npos)
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::DelOrdListDlg);
+	}
+	else
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+
 	connect(closeBtn, &QPushButton::released, this, &DataForm::CloseDataForm);
 	connect(tableView->selectionModel(), SIGNAL(currentRowChanged(QModelIndex, QModelIndex)), this, SLOT(ChangeBtnState()));
-	if (createOrdDlg != nullptr)
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreateOrder")
 	{
 		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
-		connect(this, SIGNAL(SendID(int, QString)), createOrdDlg, SLOT(SetID(int, QString)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreateOrdDlg*)parentDialog), SLOT(SetID(int, QString)));
 		connect(tableView->model(), SIGNAL(rowsInserted(QModelIndex, int, int)), this, SLOT(OnRowsNumberChanged()));
+		connect(tableView->model(), SIGNAL(rowsRemoved(QModelIndex, int, int)), this, SLOT(OnRowsNumberChanged()));
 		connect(tableView->model(), SIGNAL(rowsRemoved(QModelIndex, int, int)), this, SLOT(OnRowsNumberChanged()));
 	}
 }
@@ -6693,30 +8884,84 @@ void DataForm::QtConnect<BusinessLayer::OrderListView>()
 template<>
 void DataForm::QtConnect<BusinessLayer::OrderRawView>()
 {
-	connect(createBtn, &QPushButton::released, this, &DataForm::CrtOrdRDlg);
-	connect(editBtn, &QPushButton::released, this, &DataForm::UdpOrdRDlg);
-	connect(deleteBtn, &QPushButton::released, this, &DataForm::DelOrdRDlg);
+	BusinessLayer::Access access;
+	std::string crud = access.GetCRUDAccess(&dataFormBL->GetOrmasDal(), loggedUser, "actionOrderRaws");
+	std::size_t pos = crud.find("C");
+	if (pos != std::string::npos)
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::CrtOrdRDlg);
+	}
+	else
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("U");
+	if (pos != std::string::npos)
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::UdpOrdRDlg);
+	}
+	else
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("D");
+	if (pos != std::string::npos)
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::DelOrdRDlg);
+	}
+	else
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	
 	connect(closeBtn, &QPushButton::released, this, &DataForm::CloseDataForm);
 	connect(tableView->selectionModel(), SIGNAL(currentRowChanged(QModelIndex, QModelIndex)), this, SLOT(ChangeBtnState()));
-	if (createOrdRListDlg != nullptr)
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreateOrdRList")
 	{
 		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
-		connect(this, SIGNAL(SendID(int, QString)), createOrdRListDlg, SLOT(SetID(int, QString)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreateOrdRListDlg*)parentDialog), SLOT(SetID(int, QString)));
 	}
 }
 
 template<>
 void DataForm::QtConnect<BusinessLayer::OrderRawListView>()
 {
-	connect(createBtn, &QPushButton::released, this, &DataForm::CrtOrdRListDlg);
-	connect(editBtn, &QPushButton::released, this, &DataForm::UdpOrdRListDlg);
-	connect(deleteBtn, &QPushButton::released, this, &DataForm::DelOrdRListDlg);
+	BusinessLayer::Access access;
+	std::string crud = access.GetCRUDAccess(&dataFormBL->GetOrmasDal(), loggedUser, "actionOrderRawsList");
+	std::size_t pos = crud.find("C");
+	if (pos != std::string::npos)
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::CrtOrdRListDlg);
+	}
+	else
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("U");
+	if (pos != std::string::npos)
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::UdpOrdRListDlg);
+	}
+	else
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("D");
+	if (pos != std::string::npos)
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::DelOrdRListDlg);
+	}
+	else
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+
 	connect(closeBtn, &QPushButton::released, this, &DataForm::CloseDataForm);
 	connect(tableView->selectionModel(), SIGNAL(currentRowChanged(QModelIndex, QModelIndex)), this, SLOT(ChangeBtnState()));
-	if (createOrdRDlg != nullptr)
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreateOrderRaw")
 	{
 		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
-		connect(this, SIGNAL(SendID(int, QString)), createOrdRDlg, SLOT(SetID(int, QString)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreateOrdRDlg*)parentDialog), SLOT(SetID(int, QString)));
 		connect(tableView->model(), SIGNAL(rowsInserted(QModelIndex, int, int)), this, SLOT(OnRowsNumberChanged()));
 		connect(tableView->model(), SIGNAL(rowsRemoved(QModelIndex, int, int)), this, SLOT(OnRowsNumberChanged()));
 	}
@@ -6725,9 +8970,36 @@ void DataForm::QtConnect<BusinessLayer::OrderRawListView>()
 template<>
 void DataForm::QtConnect<BusinessLayer::PercentRate>()
 {
-	connect(createBtn, &QPushButton::released, this, &DataForm::CrtPcrDlg);
-	connect(editBtn, &QPushButton::released, this, &DataForm::UdpPcrDlg);
-	connect(deleteBtn, &QPushButton::released, this, &DataForm::DelPcrDlg);
+	BusinessLayer::Access access;
+	std::string crud = access.GetCRUDAccess(&dataFormBL->GetOrmasDal(), loggedUser, "actionPercentRate");
+	std::size_t pos = crud.find("C");
+	if (pos != std::string::npos)
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::CrtPcrDlg);
+	}
+	else
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("U");
+	if (pos != std::string::npos)
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::UdpPcrDlg);
+	}
+	else
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("D");
+	if (pos != std::string::npos)
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::DelPcrDlg);
+	}
+	else
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	
 	connect(closeBtn, &QPushButton::released, this, &DataForm::CloseDataForm);
 	connect(tableView->selectionModel(), SIGNAL(currentRowChanged(QModelIndex, QModelIndex)), this, SLOT(ChangeBtnState()));
 }
@@ -6735,9 +9007,36 @@ void DataForm::QtConnect<BusinessLayer::PercentRate>()
 template<>
 void DataForm::QtConnect<BusinessLayer::Photo>()
 {
-	connect(createBtn, &QPushButton::released, this, &DataForm::CrtPhotoDlg);
-	connect(editBtn, &QPushButton::released, this, &DataForm::UdpPhotoDlg);
-	connect(deleteBtn, &QPushButton::released, this, &DataForm::DelPhotoDlg);
+	BusinessLayer::Access access;
+	std::string crud = access.GetCRUDAccess(&dataFormBL->GetOrmasDal(), loggedUser, "actionPhoto");
+	std::size_t pos = crud.find("C");
+	if (pos != std::string::npos)
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::CrtPhotoDlg);
+	}
+	else
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("U");
+	if (pos != std::string::npos)
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::UdpPhotoDlg);
+	}
+	else
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("D");
+	if (pos != std::string::npos)
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::DelPhotoDlg);
+	}
+	else
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	
 	connect(closeBtn, &QPushButton::released, this, &DataForm::CloseDataForm);
 	connect(tableView->selectionModel(), SIGNAL(currentRowChanged(QModelIndex, QModelIndex)), this, SLOT(ChangeBtnState()));
 }
@@ -6745,9 +9044,36 @@ void DataForm::QtConnect<BusinessLayer::Photo>()
 template<>
 void DataForm::QtConnect<BusinessLayer::PaymentView>()
 {
-	connect(createBtn, &QPushButton::released, this, &DataForm::CrtPmtDlg);
-	connect(editBtn, &QPushButton::released, this, &DataForm::UdpPmtDlg);
-	connect(deleteBtn, &QPushButton::released, this, &DataForm::DelPmtDlg);
+	BusinessLayer::Access access;
+	std::string crud = access.GetCRUDAccess(&dataFormBL->GetOrmasDal(), loggedUser, "actionPayments");
+	std::size_t pos = crud.find("C");
+	if (pos != std::string::npos)
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::CrtPmtDlg);
+	}
+	else
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("U");
+	if (pos != std::string::npos)
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::UdpPmtDlg);
+	}
+	else
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("D");
+	if (pos != std::string::npos)
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::DelPmtDlg);
+	}
+	else
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	
 	connect(closeBtn, &QPushButton::released, this, &DataForm::CloseDataForm);
 	connect(tableView->selectionModel(), SIGNAL(currentRowChanged(QModelIndex, QModelIndex)), this, SLOT(ChangeBtnState()));
 }
@@ -6755,34 +9081,98 @@ void DataForm::QtConnect<BusinessLayer::PaymentView>()
 template<>
 void DataForm::QtConnect<BusinessLayer::Position>()
 {
-	connect(createBtn, &QPushButton::released, this, &DataForm::CrtPosDlg);
-	connect(editBtn, &QPushButton::released, this, &DataForm::UdpPosDlg);
-	connect(deleteBtn, &QPushButton::released, this, &DataForm::DelPosDlg);
+	BusinessLayer::Access access;
+	std::string crud = access.GetCRUDAccess(&dataFormBL->GetOrmasDal(), loggedUser, "actionPosition");
+	std::size_t pos = crud.find("C");
+	if (pos != std::string::npos)
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::CrtPosDlg);
+	}
+	else
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("U");
+	if (pos != std::string::npos)
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::UdpPosDlg);
+	}
+	else
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("D");
+	if (pos != std::string::npos)
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::DelPosDlg);
+	}
+	else
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	
 	connect(closeBtn, &QPushButton::released, this, &DataForm::CloseDataForm);
 	connect(tableView->selectionModel(), SIGNAL(currentRowChanged(QModelIndex, QModelIndex)), this, SLOT(ChangeBtnState()));
-	if (createEmpDlg != nullptr)
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreateEmployee")
 	{
 		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
-		connect(this, SIGNAL(SendID(int, QString)), createEmpDlg, SLOT(SetID(int, QString)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreateEmpDlg*)parentDialog), SLOT(SetID(int, QString)));
 	}
-	if (createJbpDlg != nullptr)
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreateJobsheet")
 	{
 		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
-		connect(this, SIGNAL(SendID(int, QString)), createJbpDlg, SLOT(SetID(int, QString)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreateJbsDlg*)parentDialog), SLOT(SetID(int, QString)));
 	}
-	if (createTmsDlg != nullptr)
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreateJobprice")
 	{
 		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
-		connect(this, SIGNAL(SendID(int, QString)), createTmsDlg, SLOT(SetID(int, QString)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreateJbpDlg*)parentDialog), SLOT(SetID(int, QString)));
+	}
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreatePercentRate")
+	{
+		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreatePrcDlg*)parentDialog), SLOT(SetID(int, QString)));
+	}
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreateTimesheet")
+	{
+		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreateTmsDlg*)parentDialog), SLOT(SetID(int, QString)));
 	}
 }
 
 template<>
 void DataForm::QtConnect<BusinessLayer::PriceView>()
 {
-	connect(createBtn, &QPushButton::released, this, &DataForm::CrtPrcDlg);
-	connect(editBtn, &QPushButton::released, this, &DataForm::UdpPrcDlg);
-	connect(deleteBtn, &QPushButton::released, this, &DataForm::DelPrcDlg);
+	BusinessLayer::Access access;
+	std::string crud = access.GetCRUDAccess(&dataFormBL->GetOrmasDal(), loggedUser, "actionPrices");
+	std::size_t pos = crud.find("C");
+	if (pos != std::string::npos)
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::CrtPrcDlg);
+	}
+	else
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("U");
+	if (pos != std::string::npos)
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::UdpPrcDlg);
+	}
+	else
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("D");
+	if (pos != std::string::npos)
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::DelPrcDlg);
+	}
+	else
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+		
 	connect(closeBtn, &QPushButton::released, this, &DataForm::CloseDataForm);
 	connect(tableView->selectionModel(), SIGNAL(currentRowChanged(QModelIndex, QModelIndex)), this, SLOT(ChangeBtnState()));
 }
@@ -6790,145 +9180,364 @@ void DataForm::QtConnect<BusinessLayer::PriceView>()
 template<>
 void DataForm::QtConnect<BusinessLayer::ProductType>()
 {
-	connect(createBtn, &QPushButton::released, this, &DataForm::CrtProdTpDlg);
-	connect(editBtn, &QPushButton::released, this, &DataForm::UdpProdTpDlg);
-	connect(deleteBtn, &QPushButton::released, this, &DataForm::DelProdTpDlg);
+	BusinessLayer::Access access;
+	std::string crud = access.GetCRUDAccess(&dataFormBL->GetOrmasDal(), loggedUser, "actionProductType");
+	std::size_t pos = crud.find("C");
+	if (pos != std::string::npos)
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::CrtProdTpDlg);
+	}
+	else
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("U");
+	if (pos != std::string::npos)
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::UdpProdTpDlg);
+	}
+	else
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("D");
+	if (pos != std::string::npos)
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::DelProdTpDlg);
+	}
+	else
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+		
 	connect(closeBtn, &QPushButton::released, this, &DataForm::CloseDataForm);
 	connect(tableView->selectionModel(), SIGNAL(currentRowChanged(QModelIndex, QModelIndex)), this, SLOT(ChangeBtnState()));
-	if (createProdDlg != nullptr)
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreateProduct")
 	{
 		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
-		connect(this, SIGNAL(SendID(int, QString)), createProdDlg, SLOT(SetID(int, QString)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreateProdDlg*)parentDialog), SLOT(SetID(int, QString)));
 	}
 }
 
 template<>
 void DataForm::QtConnect<BusinessLayer::ProductView>()
 {
-	connect(createBtn, &QPushButton::released, this, &DataForm::CrtProdDlg);
-	connect(editBtn, &QPushButton::released, this, &DataForm::UdpProdDlg);
-	connect(deleteBtn, &QPushButton::released, this, &DataForm::DelProdDlg);
+	BusinessLayer::Access access;
+	std::string crud = access.GetCRUDAccess(&dataFormBL->GetOrmasDal(), loggedUser, "actionProducts");
+	std::size_t pos = crud.find("C");
+	if (pos != std::string::npos)
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::CrtProdDlg);
+	}
+	else
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("U");
+	if (pos != std::string::npos)
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::UdpProdDlg);
+	}
+	else
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("D");
+	if (pos != std::string::npos)
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::DelProdDlg);
+	}
+	else
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	
 	connect(closeBtn, &QPushButton::released, this, &DataForm::CloseDataForm);
 	connect(tableView->selectionModel(), SIGNAL(currentRowChanged(QModelIndex, QModelIndex)), this, SLOT(ChangeBtnState()));
-	if (createConPListDlg != nullptr)
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreateConPList")
 	{
 		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
-		connect(this, SIGNAL(SendID(int, QString)), createConPListDlg, SLOT(SetID(int, QString)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreateConPListDlg*)parentDialog), SLOT(SetID(int, QString)));
 	}
-	if (createConRListDlg != nullptr)
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreateConRList")
 	{
 		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
-		connect(this, SIGNAL(SendID(int, QString)), createConRListDlg, SLOT(SetID(int, QString)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreateConRListDlg*)parentDialog), SLOT(SetID(int, QString)));
 	}
-	if (createInvListDlg != nullptr)
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreateInvList")
 	{
 		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
-		connect(this, SIGNAL(SendID(int, QString)), createInvListDlg, SLOT(SetID(int, QString)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreateInvListDlg*)parentDialog), SLOT(SetID(int, QString)));
 	}
-	if (createOrdListDlg != nullptr)
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreateOrdList")
 	{
 		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
-		connect(this, SIGNAL(SendID(int, QString)), createOrdListDlg, SLOT(SetID(int, QString)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreateOrdListDlg*)parentDialog), SLOT(SetID(int, QString)));
 	}
-	if (createOrdRListDlg != nullptr)
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreateOrdRList")
 	{
 		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
-		connect(this, SIGNAL(SendID(int, QString)), createOrdRListDlg, SLOT(SetID(int, QString)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreateOrdRListDlg*)parentDialog), SLOT(SetID(int, QString)));
 	}
-	if (createProdnListDlg != nullptr)
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreatePrdnList")
 	{
 		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
-		connect(this, SIGNAL(SendID(int, QString)), createProdnListDlg, SLOT(SetID(int, QString)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreateProdnListDlg*)parentDialog), SLOT(SetID(int, QString)));
 	}
-	if (createRcpPListDlg != nullptr)
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreateProdConRList")
 	{
 		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
-		connect(this, SIGNAL(SendID(int, QString)), createRcpPListDlg, SLOT(SetID(int, QString)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreateProdConRListDlg*)parentDialog), SLOT(SetID(int, QString)));
 	}
-	if (createRcpRListDlg != nullptr)
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreatePPlanList")
 	{
 		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
-		connect(this, SIGNAL(SendID(int, QString)), createRcpRListDlg, SLOT(SetID(int, QString)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreatePPlanListDlg*)parentDialog), SLOT(SetID(int, QString)));
 	}
-	if (createRtrnListDlg != nullptr)
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreateRcpPList")
 	{
 		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
-		connect(this, SIGNAL(SendID(int, QString)), createRtrnListDlg, SLOT(SetID(int, QString)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreateRcpPListDlg*)parentDialog), SLOT(SetID(int, QString)));
 	}
-	if (createSpecListDlg != nullptr)
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreateRcpRList")
 	{
 		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
-		connect(this, SIGNAL(SendID(int, QString)), createSpecListDlg, SLOT(SetID(int, QString)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreateRcpRListDlg*)parentDialog), SLOT(SetID(int, QString)));
 	}
-	if (createTrsListDlg != nullptr)
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreateRtrnList")
 	{
 		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
-		connect(this, SIGNAL(SendID(int, QString)), createTrsListDlg, SLOT(SetID(int, QString)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreateRtrnListDlg*)parentDialog), SLOT(SetID(int, QString)));
 	}
-	if (createWOffListDlg != nullptr)
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreateSpecList")
 	{
 		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
-		connect(this, SIGNAL(SendID(int, QString)), createWOffListDlg, SLOT(SetID(int, QString)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreateSpecListDlg*)parentDialog), SLOT(SetID(int, QString)));
 	}
-	if (createWOffRListDlg != nullptr)
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreateSplList")
 	{
 		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
-		connect(this, SIGNAL(SendID(int, QString)), createWOffRListDlg, SLOT(SetID(int, QString)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreateSplListDlg*)parentDialog), SLOT(SetID(int, QString)));
 	}
-	if (createPhtDlg != nullptr)
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreateTrsList")
 	{
 		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
-		connect(this, SIGNAL(SendID(int, QString)), createPhtDlg, SLOT(SetID(int, QString)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreateTrsListDlg*)parentDialog), SLOT(SetID(int, QString)));
 	}
-	if (createJbpDlg != nullptr)
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreateWOffList")
 	{
 		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
-		connect(this, SIGNAL(SendID(int, QString)), createJbpDlg, SLOT(SetID(int, QString)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreateWOffListDlg*)parentDialog), SLOT(SetID(int, QString)));
 	}
-	if (createJbsDlg != nullptr)
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreateWOffRList")
 	{
 		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
-		connect(this, SIGNAL(SendID(int, QString)), createJbsDlg, SLOT(SetID(int, QString)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreateWOffRListDlg*)parentDialog), SLOT(SetID(int, QString)));
 	}
-	if (createPrcDlg != nullptr)
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreatePhoto")
 	{
 		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
-		connect(this, SIGNAL(SendID(int, QString)), createPrcDlg, SLOT(SetID(int, QString)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreatePhtDlg*)parentDialog), SLOT(SetID(int, QString)));
 	}
-	if (createSpecDlg != nullptr)
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreateJobprice")
 	{
 		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
-		connect(this, SIGNAL(SendID(int, QString)), createSpecDlg, SLOT(SetID(int, QString)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreateJbpDlg*)parentDialog), SLOT(SetID(int, QString)));
+	}
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreateJobsheet")
+	{
+		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreateJbsDlg*)parentDialog), SLOT(SetID(int, QString)));
+	}
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreatePrice")
+	{
+		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreatePrcDlg*)parentDialog), SLOT(SetID(int, QString)));
+	}
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreateNetCost")
+	{
+		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreateNetCDlg*)parentDialog), SLOT(SetID(int, QString)));
+	}
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreateSpecification")
+	{
+		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreateSpecDlg*)parentDialog), SLOT(SetID(int, QString)));
 	}	
+	if (parentDialog != nullptr && parentDialog->objectName() == "ReworkRaw")
+	{
+		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
+		connect(this, SIGNAL(SendID(int, QString)), ((ReworkRawDlg*)parentDialog), SLOT(SetID(int, QString)));
+	}
 }
 
 template<>
 void DataForm::QtConnect<BusinessLayer::Production>()
 {
-	connect(createBtn, &QPushButton::released, this, &DataForm::CrtProdnDlg);
-	connect(editBtn, &QPushButton::released, this, &DataForm::UdpProdnDlg);
-	connect(deleteBtn, &QPushButton::released, this, &DataForm::DelProdnDlg);
+	BusinessLayer::Access access;
+	std::string crud = access.GetCRUDAccess(&dataFormBL->GetOrmasDal(), loggedUser, "actionProduction");
+	std::size_t pos = crud.find("C");
+	if (pos != std::string::npos)
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::CrtProdnDlg);
+	}
+	else
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("U");
+	if (pos != std::string::npos)
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::UdpProdnDlg);
+	}
+	else
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("D");
+	if (pos != std::string::npos)
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::DelProdnDlg);
+	}
+	else
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}	
+	
 	connect(closeBtn, &QPushButton::released, this, &DataForm::CloseDataForm);
 	connect(tableView->selectionModel(), SIGNAL(currentRowChanged(QModelIndex, QModelIndex)), this, SLOT(ChangeBtnState()));
-	if (createProdnListDlg != nullptr)
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreatePrdnList")
 	{
 		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
-		connect(this, SIGNAL(SendID(int, QString)), createProdnListDlg, SLOT(SetID(int, QString)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreateProdnListDlg*)parentDialog), SLOT(SetID(int, QString)));
 	}
 }
 
 template<>
 void DataForm::QtConnect<BusinessLayer::ProductionListView>()
 {
-	connect(createBtn, &QPushButton::released, this, &DataForm::CrtProdnListDlg);
-	connect(editBtn, &QPushButton::released, this, &DataForm::UdpProdnListDlg);
-	connect(deleteBtn, &QPushButton::released, this, &DataForm::DelProdnListDlg);
+	BusinessLayer::Access access;
+	std::string crud = access.GetCRUDAccess(&dataFormBL->GetOrmasDal(), loggedUser, "actionProductionList");
+	std::size_t pos = crud.find("C");
+	if (pos != std::string::npos)
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::CrtProdnListDlg);
+	}
+	else
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("U");
+	if (pos != std::string::npos)
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::UdpProdnListDlg);
+	}
+	else
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("D");
+	if (pos != std::string::npos)
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::DelProdnListDlg);
+	}
+	else
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+		
 	connect(closeBtn, &QPushButton::released, this, &DataForm::CloseDataForm);
 	connect(tableView->selectionModel(), SIGNAL(currentRowChanged(QModelIndex, QModelIndex)), this, SLOT(ChangeBtnState()));
-	if (createProdnDlg != nullptr)
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreateProduction")
 	{
 		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
-		connect(this, SIGNAL(SendID(int, QString)), createProdnDlg, SLOT(SetID(int, QString)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreateProdnDlg*)parentDialog), SLOT(SetID(int, QString)));
+		connect(tableView->model(), SIGNAL(rowsInserted(QModelIndex, int, int)), this, SLOT(OnRowsNumberChanged()));
+		connect(tableView->model(), SIGNAL(rowsRemoved(QModelIndex, int, int)), this, SLOT(OnRowsNumberChanged()));
+	}
+}
+
+template<>
+void DataForm::QtConnect<BusinessLayer::ProductionConsumeRawView>()
+{
+	BusinessLayer::Access access;
+	std::string crud = access.GetCRUDAccess(&dataFormBL->GetOrmasDal(), loggedUser, "actionProductionConsumeRaws");
+	std::size_t pos = crud.find("C");
+	if (pos != std::string::npos)
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::CrtProdConRDlg);
+	}
+	else
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("U");
+	if (pos != std::string::npos)
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::UdpProdConRDlg);
+	}
+	else
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("D");
+	if (pos != std::string::npos)
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::DelProdConRDlg);
+	}
+	else
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+
+	connect(closeBtn, &QPushButton::released, this, &DataForm::CloseDataForm);
+	connect(tableView->selectionModel(), SIGNAL(currentRowChanged(QModelIndex, QModelIndex)), this, SLOT(ChangeBtnState()));
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreateProdConRList")
+	{
+		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreateProdConRListDlg*)parentDialog), SLOT(SetID(int, QString)));
+	}
+}
+
+template<>
+void DataForm::QtConnect<BusinessLayer::ProductionConsumeRawListView>()
+{
+	BusinessLayer::Access access;
+	std::string crud = access.GetCRUDAccess(&dataFormBL->GetOrmasDal(), loggedUser, "actionProductionConsumeRawsLis");
+	std::size_t pos = crud.find("C");
+	if (pos != std::string::npos)
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::CrtProdConRListDlg);
+	}
+	else
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("U");
+	if (pos != std::string::npos)
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::UdpProdConRListDlg);
+	}
+	else
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("D");
+	if (pos != std::string::npos)
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::DelProdConRListDlg);
+	}
+	else
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+
+	connect(closeBtn, &QPushButton::released, this, &DataForm::CloseDataForm);
+	connect(tableView->selectionModel(), SIGNAL(currentRowChanged(QModelIndex, QModelIndex)), this, SLOT(ChangeBtnState()));
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreateProductionConsumeRaw")
+	{
+		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreateProdConRDlg*)parentDialog), SLOT(SetID(int, QString)));
 		connect(tableView->model(), SIGNAL(rowsInserted(QModelIndex, int, int)), this, SLOT(OnRowsNumberChanged()));
 		connect(tableView->model(), SIGNAL(rowsRemoved(QModelIndex, int, int)), this, SLOT(OnRowsNumberChanged()));
 	}
@@ -6937,41 +9546,159 @@ void DataForm::QtConnect<BusinessLayer::ProductionListView>()
 template<>
 void DataForm::QtConnect<BusinessLayer::ProductionPlanView>()
 {
-	connect(createBtn, &QPushButton::released, this, &DataForm::CrtPPlanDlg);
-	connect(editBtn, &QPushButton::released, this, &DataForm::UdpPPlanDlg);
-	connect(deleteBtn, &QPushButton::released, this, &DataForm::DelPPlanDlg);
+	BusinessLayer::Access access;
+	std::string crud = access.GetCRUDAccess(&dataFormBL->GetOrmasDal(), loggedUser, "actionProductionPlan");
+	std::size_t pos = crud.find("C");
+	if (pos != std::string::npos)
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::CrtPPlanDlg);
+	}
+	else
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("U");
+	if (pos != std::string::npos)
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::UdpPPlanDlg);
+	}
+	else
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("D");
+	if (pos != std::string::npos)
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::DelPPlanDlg);
+	}
+	else
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+
 	connect(closeBtn, &QPushButton::released, this, &DataForm::CloseDataForm);
 	connect(tableView->selectionModel(), SIGNAL(currentRowChanged(QModelIndex, QModelIndex)), this, SLOT(ChangeBtnState()));
-	if (createPPlanListDlg != nullptr)
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreatePPlanList")
 	{
 		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
-		connect(this, SIGNAL(SendID(int, QString)), createPPlanListDlg, SLOT(SetID(int, QString)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreatePPlanListDlg*)parentDialog), SLOT(SetID(int, QString)));
 	}
 }
 
 template<>
 void DataForm::QtConnect<BusinessLayer::ProductionPlanListView>()
 {
-	connect(createBtn, &QPushButton::released, this, &DataForm::CrtPPlanListDlg);
-	connect(editBtn, &QPushButton::released, this, &DataForm::UdpPPlanListDlg);
-	connect(deleteBtn, &QPushButton::released, this, &DataForm::DelPPlanListDlg);
+	BusinessLayer::Access access;
+	std::string crud = access.GetCRUDAccess(&dataFormBL->GetOrmasDal(), loggedUser, "actionProductionPlanList");
+	std::size_t pos = crud.find("C");
+	if (pos != std::string::npos)
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::CrtPPlanListDlg);
+	}
+	else
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("U");
+	if (pos != std::string::npos)
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::UdpPPlanListDlg);
+	}
+	else
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("D");
+	if (pos != std::string::npos)
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::DelPPlanListDlg);
+	}
+	else
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+		
 	connect(closeBtn, &QPushButton::released, this, &DataForm::CloseDataForm);
 	connect(tableView->selectionModel(), SIGNAL(currentRowChanged(QModelIndex, QModelIndex)), this, SLOT(ChangeBtnState()));
-	if (createPPlanDlg != nullptr)
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreateProductionPlan")
 	{
 		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
-		connect(this, SIGNAL(SendID(int, QString)), createPPlanDlg, SLOT(SetID(int, QString)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreatePPlanDlg*)parentDialog), SLOT(SetID(int, QString)));
 		connect(tableView->model(), SIGNAL(rowsInserted(QModelIndex, int, int)), this, SLOT(OnRowsNumberChanged()));
 		connect(tableView->model(), SIGNAL(rowsRemoved(QModelIndex, int, int)), this, SLOT(OnRowsNumberChanged()));
 	}
 }
 
 template<>
+void DataForm::QtConnect<BusinessLayer::ProductionStockView>()
+{
+	BusinessLayer::Access access;
+	std::string crud = access.GetCRUDAccess(&dataFormBL->GetOrmasDal(), loggedUser, "actionProductionStock");
+	std::size_t pos = crud.find("C");
+	if (pos != std::string::npos)
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::CrtProdnStockDlg);
+	}
+	else
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("U");
+	if (pos != std::string::npos)
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::UdpProdnStockDlg);
+	}
+	else
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("D");
+	if (pos != std::string::npos)
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::DelProdnStockDlg);
+	}
+	else
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+		
+	connect(closeBtn, &QPushButton::released, this, &DataForm::CloseDataForm);
+	connect(tableView->selectionModel(), SIGNAL(currentRowChanged(QModelIndex, QModelIndex)), this, SLOT(ChangeBtnState()));
+}
+
+template<>
 void DataForm::QtConnect<BusinessLayer::PayslipView>()
 {
-	connect(createBtn, &QPushButton::released, this, &DataForm::CrtPspDlg);
-	connect(editBtn, &QPushButton::released, this, &DataForm::UdpPspDlg);
-	connect(deleteBtn, &QPushButton::released, this, &DataForm::DelPspDlg);
+	BusinessLayer::Access access;
+	std::string crud = access.GetCRUDAccess(&dataFormBL->GetOrmasDal(), loggedUser, "actionPayslip");
+	std::size_t pos = crud.find("C");
+	if (pos != std::string::npos)
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::CrtPspDlg);
+	}
+	else
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("U");
+	if (pos != std::string::npos)
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::UdpPspDlg);
+	}
+	else
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("D");
+	if (pos != std::string::npos)
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::DelPspDlg);
+	}
+	else
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+		
 	connect(closeBtn, &QPushButton::released, this, &DataForm::CloseDataForm);
 	connect(tableView->selectionModel(), SIGNAL(currentRowChanged(QModelIndex, QModelIndex)), this, SLOT(ChangeBtnState()));
 }
@@ -6979,19 +9706,78 @@ void DataForm::QtConnect<BusinessLayer::PayslipView>()
 template<>
 void DataForm::QtConnect<BusinessLayer::PurveyorView>()
 {
-	connect(createBtn, &QPushButton::released, this, &DataForm::CrtPurDlg);
-	connect(editBtn, &QPushButton::released, this, &DataForm::UdpPurDlg);
-	connect(deleteBtn, &QPushButton::released, this, &DataForm::DelPurDlg);
+	BusinessLayer::Access access;
+	std::string crud = access.GetCRUDAccess(&dataFormBL->GetOrmasDal(), loggedUser, "actionPurveyors");
+	std::size_t pos = crud.find("C");
+	if (pos != std::string::npos)
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::CrtPurDlg);
+	}
+	else
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("U");
+	if (pos != std::string::npos)
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::UdpPurDlg);
+	}
+	else
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("D");
+	if (pos != std::string::npos)
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::DelPurDlg);
+	}
+	else
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+		
 	connect(closeBtn, &QPushButton::released, this, &DataForm::CloseDataForm);
 	connect(tableView->selectionModel(), SIGNAL(currentRowChanged(QModelIndex, QModelIndex)), this, SLOT(ChangeBtnState()));
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreateOrderRaw")
+	{
+		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreateOrdRDlg*)parentDialog), SLOT(SetID(int, QString)));
+	}
 }
 
 template<>
 void DataForm::QtConnect<BusinessLayer::RelationView>()
 {
-	connect(createBtn, &QPushButton::released, this, &DataForm::CrtRelDlg);
-	connect(editBtn, &QPushButton::released, this, &DataForm::UdpRelDlg);
-	connect(deleteBtn, &QPushButton::released, this, &DataForm::DelRelDlg);
+	BusinessLayer::Access access;
+	std::string crud = access.GetCRUDAccess(&dataFormBL->GetOrmasDal(), loggedUser, "actionRelation");
+	std::size_t pos = crud.find("C");
+	if (pos != std::string::npos)
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::CrtRelDlg);
+	}
+	else
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("U");
+	if (pos != std::string::npos)
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::UdpRelDlg);
+	}
+	else
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("D");
+	if (pos != std::string::npos)
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::DelRelDlg);
+	}
+	else
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+		
 	connect(closeBtn, &QPushButton::released, this, &DataForm::CloseDataForm);
 	connect(tableView->selectionModel(), SIGNAL(currentRowChanged(QModelIndex, QModelIndex)), this, SLOT(ChangeBtnState()));
 }
@@ -6999,44 +9785,125 @@ void DataForm::QtConnect<BusinessLayer::RelationView>()
 template<>
 void DataForm::QtConnect<BusinessLayer::RelationType>()
 {
-	connect(createBtn, &QPushButton::released, this, &DataForm::CrtRelTypeDlg);
-	connect(editBtn, &QPushButton::released, this, &DataForm::UdpRelTypeDlg);
-	connect(deleteBtn, &QPushButton::released, this, &DataForm::DelRelTypeDlg);
+	BusinessLayer::Access access;
+	std::string crud = access.GetCRUDAccess(&dataFormBL->GetOrmasDal(), loggedUser, "actionRelationType");
+	std::size_t pos = crud.find("C");
+	if (pos != std::string::npos)
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::CrtRelTypeDlg);
+	}
+	else
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("U");
+	if (pos != std::string::npos)
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::UdpRelTypeDlg);
+	}
+	else
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("D");
+	if (pos != std::string::npos)
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::DelRelTypeDlg);
+	}
+	else
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	
 	connect(closeBtn, &QPushButton::released, this, &DataForm::CloseDataForm);
 	connect(tableView->selectionModel(), SIGNAL(currentRowChanged(QModelIndex, QModelIndex)), this, SLOT(ChangeBtnState()));
-	if (createRelDlg != nullptr)
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreateRelation")
 	{
 		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
-		connect(this, SIGNAL(SendID(int, QString)), createRelDlg, SLOT(SetID(int, QString)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreateRelDlg*)parentDialog), SLOT(SetID(int, QString)));
 	}
 }
 template<>
 void DataForm::QtConnect<BusinessLayer::ReceiptProductView>()
 {
-	connect(createBtn, &QPushButton::released, this, &DataForm::CrtRcpPDlg);
-	connect(editBtn, &QPushButton::released, this, &DataForm::UdpRcpPDlg);
-	connect(deleteBtn, &QPushButton::released, this, &DataForm::DelRcpPDlg);
+	BusinessLayer::Access access;
+	std::string crud = access.GetCRUDAccess(&dataFormBL->GetOrmasDal(), loggedUser, "actionReceiptProducts");
+	std::size_t pos = crud.find("C");
+	if (pos != std::string::npos)
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::CrtRcpPDlg);
+	}
+	else
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("U");
+	if (pos != std::string::npos)
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::UdpRcpPDlg);
+	}
+	else
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("D");
+	if (pos != std::string::npos)
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::DelRcpPDlg);
+	}
+	else
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	
 	connect(closeBtn, &QPushButton::released, this, &DataForm::CloseDataForm);
 	connect(tableView->selectionModel(), SIGNAL(currentRowChanged(QModelIndex, QModelIndex)), this, SLOT(ChangeBtnState()));
-	if (createRcpPListDlg != nullptr)
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreateRcpPList")
 	{
 		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
-		connect(this, SIGNAL(SendID(int, QString)), createRcpPListDlg, SLOT(SetID(int, QString)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreateRcpPListDlg*)parentDialog), SLOT(SetID(int, QString)));
 	}
 }
 
 template<>
 void DataForm::QtConnect<BusinessLayer::ReceiptProductListView>()
 {
-	connect(createBtn, &QPushButton::released, this, &DataForm::CrtRcpPListDlg);
-	connect(editBtn, &QPushButton::released, this, &DataForm::UdpRcpPListDlg);
-	connect(deleteBtn, &QPushButton::released, this, &DataForm::DelRcpPListDlg);
+	BusinessLayer::Access access;
+	std::string crud = access.GetCRUDAccess(&dataFormBL->GetOrmasDal(), loggedUser, "actionReceiptProductsList");
+	std::size_t pos = crud.find("C");
+	if (pos != std::string::npos)
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::CrtRcpPListDlg);
+	}
+	else
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("U");
+	if (pos != std::string::npos)
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::UdpRcpPListDlg);
+	}
+	else
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("D");
+	if (pos != std::string::npos)
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::DelRcpPListDlg);
+	}
+	else
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+		
 	connect(closeBtn, &QPushButton::released, this, &DataForm::CloseDataForm);
 	connect(tableView->selectionModel(), SIGNAL(currentRowChanged(QModelIndex, QModelIndex)), this, SLOT(ChangeBtnState()));
-	if (createRcpPDlg != nullptr)
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreateReceiptProduct")
 	{
 		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
-		connect(this, SIGNAL(SendID(int, QString)), createRcpPDlg, SLOT(SetID(int, QString)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreateRcpPDlg*)parentDialog), SLOT(SetID(int, QString)));
 		connect(tableView->model(), SIGNAL(rowsInserted(QModelIndex, int, int)), this, SLOT(OnRowsNumberChanged()));
 		connect(tableView->model(), SIGNAL(rowsRemoved(QModelIndex, int, int)), this, SLOT(OnRowsNumberChanged()));
 	}
@@ -7045,30 +9912,84 @@ void DataForm::QtConnect<BusinessLayer::ReceiptProductListView>()
 template<>
 void DataForm::QtConnect<BusinessLayer::ReceiptRawView>()
 {
-	connect(createBtn, &QPushButton::released, this, &DataForm::CrtRcpRDlg);
-	connect(editBtn, &QPushButton::released, this, &DataForm::UdpRcpRDlg);
-	connect(deleteBtn, &QPushButton::released, this, &DataForm::DelRcpRDlg);
+	BusinessLayer::Access access;
+	std::string crud = access.GetCRUDAccess(&dataFormBL->GetOrmasDal(), loggedUser, "actionReceiptRaws");
+	std::size_t pos = crud.find("C");
+	if (pos != std::string::npos)
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::CrtRcpRDlg);
+	}
+	else
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("U");
+	if (pos != std::string::npos)
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::UdpRcpRDlg);
+	}
+	else
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("D");
+	if (pos != std::string::npos)
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::DelRcpRDlg);
+	}
+	else
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	
 	connect(closeBtn, &QPushButton::released, this, &DataForm::CloseDataForm);
 	connect(tableView->selectionModel(), SIGNAL(currentRowChanged(QModelIndex, QModelIndex)), this, SLOT(ChangeBtnState()));
-	if (createRcpRListDlg != nullptr)
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreateRcpRList")
 	{
 		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
-		connect(this, SIGNAL(SendID(int, QString)), createRcpRListDlg, SLOT(SetID(int, QString)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreateRcpRListDlg*)parentDialog), SLOT(SetID(int, QString)));
 	}
 }
 
 template<>
 void DataForm::QtConnect<BusinessLayer::ReceiptRawListView>()
 {
-	connect(createBtn, &QPushButton::released, this, &DataForm::CrtRcpRListDlg);
-	connect(editBtn, &QPushButton::released, this, &DataForm::UdpRcpRListDlg);
-	connect(deleteBtn, &QPushButton::released, this, &DataForm::DelRcpRListDlg);
+	BusinessLayer::Access access;
+	std::string crud = access.GetCRUDAccess(&dataFormBL->GetOrmasDal(), loggedUser, "actionReceiptRawsList");
+	std::size_t pos = crud.find("C");
+	if (pos != std::string::npos)
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::CrtRcpRListDlg);
+	}
+	else
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("U");
+	if (pos != std::string::npos)
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::UdpRcpRListDlg);
+	}
+	else
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("D");
+	if (pos != std::string::npos)
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::DelRcpRListDlg);
+	}
+	else
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	
 	connect(closeBtn, &QPushButton::released, this, &DataForm::CloseDataForm);
 	connect(tableView->selectionModel(), SIGNAL(currentRowChanged(QModelIndex, QModelIndex)), this, SLOT(ChangeBtnState()));
-	if (createRcpRDlg != nullptr)
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreateReceiptRaw")
 	{
 		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
-		connect(this, SIGNAL(SendID(int, QString)), createRcpRDlg, SLOT(SetID(int, QString)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreateRcpRDlg*)parentDialog), SLOT(SetID(int, QString)));
 		connect(tableView->model(), SIGNAL(rowsInserted(QModelIndex, int, int)), this, SLOT(OnRowsNumberChanged()));
 		connect(tableView->model(), SIGNAL(rowsRemoved(QModelIndex, int, int)), this, SLOT(OnRowsNumberChanged()));
 	}
@@ -7077,9 +9998,36 @@ void DataForm::QtConnect<BusinessLayer::ReceiptRawListView>()
 template<>
 void DataForm::QtConnect<BusinessLayer::RefundView>()
 {
-	connect(createBtn, &QPushButton::released, this, &DataForm::CrtRfdDlg);
-	connect(editBtn, &QPushButton::released, this, &DataForm::UdpRfdDlg);
-	connect(deleteBtn, &QPushButton::released, this, &DataForm::DelRfdDlg);
+	BusinessLayer::Access access;
+	std::string crud = access.GetCRUDAccess(&dataFormBL->GetOrmasDal(), loggedUser, "actionRefund");
+	std::size_t pos = crud.find("C");
+	if (pos != std::string::npos)
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::CrtRfdDlg);
+	}
+	else
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("U");
+	if (pos != std::string::npos)
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::UdpRfdDlg);
+	}
+	else
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("D");
+	if (pos != std::string::npos)
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::DelRfdDlg);
+	}
+	else
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	
 	connect(closeBtn, &QPushButton::released, this, &DataForm::CloseDataForm);
 	connect(tableView->selectionModel(), SIGNAL(currentRowChanged(QModelIndex, QModelIndex)), this, SLOT(ChangeBtnState()));
 }
@@ -7087,75 +10035,141 @@ void DataForm::QtConnect<BusinessLayer::RefundView>()
 template<>
 void DataForm::QtConnect<BusinessLayer::Role>()
 {
-	connect(createBtn, &QPushButton::released, this, &DataForm::CrtRoleDlg);
-	connect(editBtn, &QPushButton::released, this, &DataForm::UdpRoleDlg);
-	connect(deleteBtn, &QPushButton::released, this, &DataForm::DelRoleDlg);
+	BusinessLayer::Access access;
+	std::string crud = access.GetCRUDAccess(&dataFormBL->GetOrmasDal(), loggedUser, "actionRoles");
+	std::size_t pos = crud.find("C");
+	if (pos != std::string::npos)
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::CrtRoleDlg);
+	}
+	else
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("U");
+	if (pos != std::string::npos)
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::UdpRoleDlg);
+	}
+	else
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("D");
+	if (pos != std::string::npos)
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::DelRoleDlg);
+	}
+	else
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	
 	connect(closeBtn, &QPushButton::released, this, &DataForm::CloseDataForm);
 	connect(tableView->selectionModel(), SIGNAL(currentRowChanged(QModelIndex, QModelIndex)), this, SLOT(ChangeBtnState()));
-	if (createUserDlg != nullptr)
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreateUser")
 	{
 		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
-		connect(this, SIGNAL(SendID(int, QString)), createUserDlg, SLOT(SetID(int, QString)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreateUserDlg*)parentDialog), SLOT(SetID(int, QString)));
 	}
-	/*if (createOrdDlg != nullptr)
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreateClient")
 	{
 		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
-		connect(this, SIGNAL(SendID(int, QString)), createOrdDlg, SLOT(SetID(int, QString)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreateCltDlg*)parentDialog), SLOT(SetID(int, QString)));
 	}
-	if (createRtrnDlg != nullptr)
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreateEmployee")
 	{
 		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
-		connect(this, SIGNAL(SendID(int, QString)), createRtrnDlg, SLOT(SetID(int, QString)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreateEmpDlg*)parentDialog), SLOT(SetID(int, QString)));
 	}
-	if (createWOffDlg != nullptr)
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreateAccess")
 	{
 		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
-		connect(this, SIGNAL(SendID(int, QString)), createWOffDlg, SLOT(SetID(int, QString)));
-	}*/
-	if (createCltDlg != nullptr)
-	{
-		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
-		connect(this, SIGNAL(SendID(int, QString)), createCltDlg, SLOT(SetID(int, QString)));
-	}
-	if (createEmpDlg != nullptr)
-	{
-		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
-		connect(this, SIGNAL(SendID(int, QString)), createEmpDlg, SLOT(SetID(int, QString)));
-	}
-	if (createAcsDlg != nullptr)
-	{
-		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
-		connect(this, SIGNAL(SendID(int, QString)), createAcsDlg, SLOT(SetID(int, QString)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreateAcsDlg*)parentDialog), SLOT(SetID(int, QString)));
 	}
 }
 
 template<>
 void DataForm::QtConnect<BusinessLayer::ReturnView>()
 {
-	connect(createBtn, &QPushButton::released, this, &DataForm::CrtRtrnDlg);
-	connect(editBtn, &QPushButton::released, this, &DataForm::UdpRtrnDlg);
-	connect(deleteBtn, &QPushButton::released, this, &DataForm::DelRtrnDlg);
+	BusinessLayer::Access access;
+	std::string crud = access.GetCRUDAccess(&dataFormBL->GetOrmasDal(), loggedUser, "actionReturns");
+	std::size_t pos = crud.find("C");
+	if (pos != std::string::npos)
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::CrtRtrnDlg);
+	}
+	else
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("U");
+	if (pos != std::string::npos)
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::UdpRtrnDlg);
+	}
+	else
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("D");
+	if (pos != std::string::npos)
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::DelRtrnDlg);
+	}
+	else
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	
 	connect(closeBtn, &QPushButton::released, this, &DataForm::CloseDataForm);
 	connect(tableView->selectionModel(), SIGNAL(currentRowChanged(QModelIndex, QModelIndex)), this, SLOT(ChangeBtnState()));
-	if (createRtrnListDlg != nullptr)
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreateRtrnList")
 	{
 		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
-		connect(this, SIGNAL(SendID(int, QString)), createRtrnListDlg, SLOT(SetID(int, QString)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreateRtrnListDlg*)parentDialog), SLOT(SetID(int, QString)));
 	}
 }
 
 template<>
 void DataForm::QtConnect<BusinessLayer::ReturnListView>()
 {
-	connect(createBtn, &QPushButton::released, this, &DataForm::CrtRtrnListDlg);
-	connect(editBtn, &QPushButton::released, this, &DataForm::UdpRtrnListDlg);
-	connect(deleteBtn, &QPushButton::released, this, &DataForm::DelRtrnListDlg);
+	BusinessLayer::Access access;
+	std::string crud = access.GetCRUDAccess(&dataFormBL->GetOrmasDal(), loggedUser, "actionReturnList");
+	std::size_t pos = crud.find("C");
+	if (pos != std::string::npos)
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::CrtRtrnListDlg);
+	}
+	else
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("U");
+	if (pos != std::string::npos)
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::UdpRtrnListDlg);
+	}
+	else
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("D");
+	if (pos != std::string::npos)
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::DelRtrnListDlg);
+	}
+	else
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	
 	connect(closeBtn, &QPushButton::released, this, &DataForm::CloseDataForm);
 	connect(tableView->selectionModel(), SIGNAL(currentRowChanged(QModelIndex, QModelIndex)), this, SLOT(ChangeBtnState()));
-	if (createRtrnDlg != nullptr)
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreateReturn")
 	{
 		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
-		connect(this, SIGNAL(SendID(int, QString)), createRtrnDlg, SLOT(SetID(int, QString)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreateRtrnDlg*)parentDialog), SLOT(SetID(int, QString)));
 		connect(tableView->model(), SIGNAL(rowsInserted(QModelIndex, int, int)), this, SLOT(OnRowsNumberChanged()));
 		connect(tableView->model(), SIGNAL(rowsRemoved(QModelIndex, int, int)), this, SLOT(OnRowsNumberChanged()));
 	}
@@ -7164,190 +10178,407 @@ void DataForm::QtConnect<BusinessLayer::ReturnListView>()
 template<>
 void DataForm::QtConnect<BusinessLayer::SalaryView>()
 {
-	connect(createBtn, &QPushButton::released, this, &DataForm::CrtSlrDlg);
-	connect(editBtn, &QPushButton::released, this, &DataForm::UdpSlrDlg);
-	connect(deleteBtn, &QPushButton::released, this, &DataForm::DelSlrDlg);
+	BusinessLayer::Access access;
+	std::string crud = access.GetCRUDAccess(&dataFormBL->GetOrmasDal(), loggedUser, "actionSalary");
+	std::size_t pos = crud.find("C");
+	if (pos != std::string::npos)
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::CrtSlrDlg);
+	}
+	else
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("U");
+	if (pos != std::string::npos)
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::UdpSlrDlg);
+	}
+	else
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("D");
+	if (pos != std::string::npos)
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::DelSlrDlg);
+	}
+	else
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	
 	connect(closeBtn, &QPushButton::released, this, &DataForm::CloseDataForm);
 	connect(tableView->selectionModel(), SIGNAL(currentRowChanged(QModelIndex, QModelIndex)), this, SLOT(ChangeBtnState()));
-	if (createPspDlg != nullptr)
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreatePayslip")
 	{
 		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
-		connect(this, SIGNAL(SendID(int, QString)), createPspDlg, SLOT(SetID(int, QString)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreatePspDlg*)parentDialog), SLOT(SetID(int, QString)));
 	}
-	if (createTmsDlg != nullptr)
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreateTimesheet")
 	{
 		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
-		connect(this, SIGNAL(SendID(int, QString)), createTmsDlg, SLOT(SetID(int, QString)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreateTmsDlg*)parentDialog), SLOT(SetID(int, QString)));
 	}
 }
 
 template<>
 void DataForm::QtConnect<BusinessLayer::SalaryType>()
 {
-	connect(createBtn, &QPushButton::released, this, &DataForm::CrtSlrTypeDlg);
-	connect(editBtn, &QPushButton::released, this, &DataForm::UdpSlrTypeDlg);
-	connect(deleteBtn, &QPushButton::released, this, &DataForm::DelSlrTypeDlg);
+	BusinessLayer::Access access;
+	std::string crud = access.GetCRUDAccess(&dataFormBL->GetOrmasDal(), loggedUser, "actionSalaryType");
+	std::size_t pos = crud.find("C");
+	if (pos != std::string::npos)
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::CrtSlrTypeDlg);
+	}
+	else
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("U");
+	if (pos != std::string::npos)
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::UdpSlrTypeDlg);
+	}
+	else
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("D");
+	if (pos != std::string::npos)
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::DelSlrTypeDlg);
+	}
+	else
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	
 	connect(closeBtn, &QPushButton::released, this, &DataForm::CloseDataForm);
 	connect(tableView->selectionModel(), SIGNAL(currentRowChanged(QModelIndex, QModelIndex)), this, SLOT(ChangeBtnState()));
-	if (createSlrDlg != nullptr)
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreateSalary")
 	{
 		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
-		connect(this, SIGNAL(SendID(int, QString)), createSlrDlg, SLOT(SetID(int, QString)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreateSlrDlg*)parentDialog), SLOT(SetID(int, QString)));
 	}
 }
 
 template<>
 void DataForm::QtConnect<BusinessLayer::Status>()
 {
-	connect(createBtn, &QPushButton::released, this, &DataForm::CrtStsDlg);
-	connect(editBtn, &QPushButton::released, this, &DataForm::UdpStsDlg);
-	connect(deleteBtn, &QPushButton::released, this, &DataForm::DelStsDlg);
+	BusinessLayer::Access access;
+	std::string crud = access.GetCRUDAccess(&dataFormBL->GetOrmasDal(), loggedUser, "actionStatus");
+	std::size_t pos = crud.find("C");
+	if (pos != std::string::npos)
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::CrtStsDlg);
+	}
+	else
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("U");
+	if (pos != std::string::npos)
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::UdpStsDlg);
+	}
+	else
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("D");
+	if (pos != std::string::npos)
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::DelStsDlg);
+	}
+	else
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}	
+	
 	connect(closeBtn, &QPushButton::released, this, &DataForm::CloseDataForm);
 	connect(tableView->selectionModel(), SIGNAL(currentRowChanged(QModelIndex, QModelIndex)), this, SLOT(ChangeBtnState()));
-	if (createConPDlg != nullptr)
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreateConsumeProduct")
 	{
 		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
-		connect(this, SIGNAL(SendID(int, QString)), createConPDlg, SLOT(SetID(int, QString)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreateConPDlg*)parentDialog), SLOT(SetID(int, QString)));
 	}
-	if (createConRDlg != nullptr)
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreateConsumeRaw")
 	{
 		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
-		connect(this, SIGNAL(SendID(int, QString)), createConRDlg, SLOT(SetID(int, QString)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreateConRDlg*)parentDialog), SLOT(SetID(int, QString)));
 	}
-	if (createInvDlg != nullptr)
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreateInventorization")
 	{
 		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
-		connect(this, SIGNAL(SendID(int, QString)), createInvDlg, SLOT(SetID(int, QString)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreateInvDlg*)parentDialog), SLOT(SetID(int, QString)));
 	}
-	if (createOrdDlg != nullptr)
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreateOrder")
 	{
 		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
-		connect(this, SIGNAL(SendID(int, QString)), createOrdDlg, SLOT(SetID(int, QString)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreateOrdDlg*)parentDialog), SLOT(SetID(int, QString)));
 	}
-	if (createOrdRDlg != nullptr)
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreateOrderRaw")
 	{
 		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
-		connect(this, SIGNAL(SendID(int, QString)), createOrdRDlg, SLOT(SetID(int, QString)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreateOrdRDlg*)parentDialog), SLOT(SetID(int, QString)));
 	}
-	if (createRcpPDlg != nullptr)
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreateProduction")
 	{
 		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
-		connect(this, SIGNAL(SendID(int, QString)), createRcpPDlg, SLOT(SetID(int, QString)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreatePPlanDlg*)parentDialog), SLOT(SetID(int, QString)));
 	}
-	if (createRcpRDlg != nullptr)
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreateProductionConsumeRaw")
 	{
 		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
-		connect(this, SIGNAL(SendID(int, QString)), createRcpRDlg, SLOT(SetID(int, QString)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreateConRDlg*)parentDialog), SLOT(SetID(int, QString)));
 	}
-	if (createRtrnDlg != nullptr)
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreateReceiptProduct")
 	{
 		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
-		connect(this, SIGNAL(SendID(int, QString)), createRtrnDlg, SLOT(SetID(int, QString)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreateRcpPDlg*)parentDialog), SLOT(SetID(int, QString)));
 	}
-	if (createStockDlg != nullptr)
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreateReceiptRaw")
 	{
 		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
-		connect(this, SIGNAL(SendID(int, QString)), createStockDlg, SLOT(SetID(int, QString)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreateRcpRDlg*)parentDialog), SLOT(SetID(int, QString)));
 	}
-	if (createTrsDlg != nullptr)
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreateReturn")
 	{
 		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
-		connect(this, SIGNAL(SendID(int, QString)), createTrsDlg, SLOT(SetID(int, QString)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreateRtrnDlg*)parentDialog), SLOT(SetID(int, QString)));
 	}
-	if (createWOffDlg != nullptr)
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreateSpoilage")
 	{
 		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
-		connect(this, SIGNAL(SendID(int, QString)), createWOffDlg, SLOT(SetID(int, QString)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreateSplDlg*)parentDialog), SLOT(SetID(int, QString)));
 	}
-	if (createConPListDlg != nullptr)
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreateStock")
 	{
 		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
-		connect(this, SIGNAL(SendID(int, QString)), createConPListDlg, SLOT(SetID(int, QString)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreateStockDlg*)parentDialog), SLOT(SetID(int, QString)));
 	}
-	if (createConRListDlg != nullptr)
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreateStatusRule")
 	{
 		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
-		connect(this, SIGNAL(SendID(int, QString)), createConRListDlg, SLOT(SetID(int, QString)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreateStsRuleDlg*)parentDialog), SLOT(SetID(int, QString)));
 	}
-	if (createInvListDlg != nullptr)
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreateTransport")
 	{
 		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
-		connect(this, SIGNAL(SendID(int, QString)), createInvListDlg, SLOT(SetID(int, QString)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreateTrsDlg*)parentDialog), SLOT(SetID(int, QString)));
 	}
-	if (createOrdListDlg != nullptr)
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreateWriteOff")
 	{
 		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
-		connect(this, SIGNAL(SendID(int, QString)), createOrdListDlg, SLOT(SetID(int, QString)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreateWOffDlg*)parentDialog), SLOT(SetID(int, QString)));
 	}
-	if (createOrdRListDlg != nullptr)
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreateWriteOffR")
 	{
 		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
-		connect(this, SIGNAL(SendID(int, QString)), createOrdRListDlg, SLOT(SetID(int, QString)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreateWOffRDlg*)parentDialog), SLOT(SetID(int, QString)));
 	}
-	if (createProdnListDlg != nullptr)
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreateConPList")
 	{
 		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
-		connect(this, SIGNAL(SendID(int, QString)), createProdnListDlg, SLOT(SetID(int, QString)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreateConPListDlg*)parentDialog), SLOT(SetID(int, QString)));
 	}
-	if (createRcpPListDlg != nullptr)
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreateConRList")
 	{
 		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
-		connect(this, SIGNAL(SendID(int, QString)), createRcpPListDlg, SLOT(SetID(int, QString)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreateConRListDlg*)parentDialog), SLOT(SetID(int, QString)));
 	}
-	if (createRcpRListDlg != nullptr)
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreateInvList")
 	{
 		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
-		connect(this, SIGNAL(SendID(int, QString)), createRcpRListDlg, SLOT(SetID(int, QString)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreateInvListDlg*)parentDialog), SLOT(SetID(int, QString)));
 	}
-	if (createRtrnListDlg != nullptr)
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreateOrdList")
 	{
 		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
-		connect(this, SIGNAL(SendID(int, QString)), createRtrnListDlg, SLOT(SetID(int, QString)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreateOrdListDlg*)parentDialog), SLOT(SetID(int, QString)));
 	}
-	if (createTrsListDlg != nullptr)
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreateOrdRList")
 	{
 		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
-		connect(this, SIGNAL(SendID(int, QString)), createTrsListDlg, SLOT(SetID(int, QString)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreateOrdRListDlg*)parentDialog), SLOT(SetID(int, QString)));
 	}
-	if (createWOffListDlg != nullptr)
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreatePrdnList")
 	{
 		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
-		connect(this, SIGNAL(SendID(int, QString)), createWOffListDlg, SLOT(SetID(int, QString)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreateProdnListDlg*)parentDialog), SLOT(SetID(int, QString)));
 	}
-	if (createWOffRListDlg != nullptr)
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreateProdConRList")
 	{
 		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
-		connect(this, SIGNAL(SendID(int, QString)), createWOffRListDlg, SLOT(SetID(int, QString)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreateProdConRListDlg*)parentDialog), SLOT(SetID(int, QString)));
 	}
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreatePPlanList")
+	{
+		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreatePPlanListDlg*)parentDialog), SLOT(SetID(int, QString)));
+	}
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreateRcpPList")
+	{
+		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreateRcpPListDlg*)parentDialog), SLOT(SetID(int, QString)));
+	}
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreateRcpRList")
+	{
+		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreateRcpRListDlg*)parentDialog), SLOT(SetID(int, QString)));
+	}
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreateRtrnList")
+	{
+		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreateRtrnListDlg*)parentDialog), SLOT(SetID(int, QString)));
+	}
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreateSpecList")
+	{
+		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreateSpecListDlg*)parentDialog), SLOT(SetID(int, QString)));
+	}
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreateSplList")
+	{
+		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreateSplListDlg*)parentDialog), SLOT(SetID(int, QString)));
+	}
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreateTrsList")
+	{
+		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreateTrsListDlg*)parentDialog), SLOT(SetID(int, QString)));
+	}
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreateWOffList")
+	{
+		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreateWOffListDlg*)parentDialog), SLOT(SetID(int, QString)));
+	}
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreateWOffRList")
+	{
+		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreateWOffRListDlg*)parentDialog), SLOT(SetID(int, QString)));
+	}
+}
+
+template<>
+void DataForm::QtConnect<BusinessLayer::StatusRuleView>()
+{
+	BusinessLayer::Access access;
+	std::string crud = access.GetCRUDAccess(&dataFormBL->GetOrmasDal(), loggedUser, "actionStatusRule");
+	std::size_t pos = crud.find("C");
+	if (pos != std::string::npos)
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::CrtStsRuleDlg);
+	}
+	else
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("U");
+	if (pos != std::string::npos)
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::UdpStsRuleDlg);
+	}
+	else
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("D");
+	if (pos != std::string::npos)
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::DelStsRuleDlg);
+	}
+	else
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+		
+	connect(closeBtn, &QPushButton::released, this, &DataForm::CloseDataForm);
+	connect(tableView->selectionModel(), SIGNAL(currentRowChanged(QModelIndex, QModelIndex)), this, SLOT(ChangeBtnState()));
 }
 
 template<>
 void DataForm::QtConnect<BusinessLayer::SpecificationView>()
 {
-	connect(createBtn, &QPushButton::released, this, &DataForm::CrtSpecDlg);
-	connect(editBtn, &QPushButton::released, this, &DataForm::UdpSpecDlg);
-	connect(deleteBtn, &QPushButton::released, this, &DataForm::DelSpecDlg);
+	BusinessLayer::Access access;
+	std::string crud = access.GetCRUDAccess(&dataFormBL->GetOrmasDal(), loggedUser, "actionSpecifications");
+	std::size_t pos = crud.find("C");
+	if (pos != std::string::npos)
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::CrtSpecDlg);
+	}
+	else
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("U");
+	if (pos != std::string::npos)
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::UdpSpecDlg);
+	}
+	else
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("D");
+	if (pos != std::string::npos)
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::DelSpecDlg);
+	}
+	else
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	
 	connect(closeBtn, &QPushButton::released, this, &DataForm::CloseDataForm);
 	connect(tableView->selectionModel(), SIGNAL(currentRowChanged(QModelIndex, QModelIndex)), this, SLOT(ChangeBtnState()));
-	if (createSpecListDlg != nullptr)
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreateSpecList")
 	{
 		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
-		connect(this, SIGNAL(SendID(int, QString)), createSpecListDlg, SLOT(SetID(int, QString)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreateSpecListDlg*)parentDialog), SLOT(SetID(int, QString)));
 	}
 }
 
 template<>
 void DataForm::QtConnect<BusinessLayer::SpecificationListView>()
 {
-	connect(createBtn, &QPushButton::released, this, &DataForm::CrtSpecListDlg);
-	connect(editBtn, &QPushButton::released, this, &DataForm::UdpSpecListDlg);
-	connect(deleteBtn, &QPushButton::released, this, &DataForm::DelSpecListDlg);
+	BusinessLayer::Access access;
+	std::string crud = access.GetCRUDAccess(&dataFormBL->GetOrmasDal(), loggedUser, "actionSpecificationList");
+	std::size_t pos = crud.find("C");
+	if (pos != std::string::npos)
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::CrtSpecListDlg);
+	}
+	else
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("U");
+	if (pos != std::string::npos)
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::UdpSpecListDlg);
+	}
+	else
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("D");
+	if (pos != std::string::npos)
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::DelSpecListDlg);
+	}
+	else
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+		
 	connect(closeBtn, &QPushButton::released, this, &DataForm::CloseDataForm);
 	connect(tableView->selectionModel(), SIGNAL(currentRowChanged(QModelIndex, QModelIndex)), this, SLOT(ChangeBtnState()));
-	if (createSpecDlg != nullptr)
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreateSpecification")
 	{
 		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
-		connect(this, SIGNAL(SendID(int, QString)), createSpecDlg, SLOT(SetID(int, QString)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreateSpecDlg*)parentDialog), SLOT(SetID(int, QString)));
 		connect(tableView->model(), SIGNAL(rowsInserted(QModelIndex, int, int)), this, SLOT(OnRowsNumberChanged()));
 		connect(tableView->model(), SIGNAL(rowsRemoved(QModelIndex, int, int)), this, SLOT(OnRowsNumberChanged()));
 	}
@@ -7356,30 +10587,84 @@ void DataForm::QtConnect<BusinessLayer::SpecificationListView>()
 template<>
 void DataForm::QtConnect<BusinessLayer::SpoilageView>()
 {
-	connect(createBtn, &QPushButton::released, this, &DataForm::CrtSplDlg);
-	connect(editBtn, &QPushButton::released, this, &DataForm::UdpSplDlg);
-	connect(deleteBtn, &QPushButton::released, this, &DataForm::DelSplDlg);
+	BusinessLayer::Access access;
+	std::string crud = access.GetCRUDAccess(&dataFormBL->GetOrmasDal(), loggedUser, "actionSpoilage");
+	std::size_t pos = crud.find("C");
+	if (pos != std::string::npos)
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::CrtSplDlg);
+	}
+	else
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("U");
+	if (pos != std::string::npos)
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::UdpSplDlg);
+	}
+	else
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("D");
+	if (pos != std::string::npos)
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::DelSplDlg);
+	}
+	else
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	
 	connect(closeBtn, &QPushButton::released, this, &DataForm::CloseDataForm);
 	connect(tableView->selectionModel(), SIGNAL(currentRowChanged(QModelIndex, QModelIndex)), this, SLOT(ChangeBtnState()));
-	if (createSplListDlg != nullptr)
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreateSplList")
 	{
 		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
-		connect(this, SIGNAL(SendID(int, QString)), createPPlanListDlg, SLOT(SetID(int, QString)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreatePPlanListDlg*)parentDialog), SLOT(SetID(int, QString)));
 	}
 }
 
 template<>
 void DataForm::QtConnect<BusinessLayer::SpoilageListView>()
 {
-	connect(createBtn, &QPushButton::released, this, &DataForm::CrtSplListDlg);
-	connect(editBtn, &QPushButton::released, this, &DataForm::UdpSplListDlg);
-	connect(deleteBtn, &QPushButton::released, this, &DataForm::DelSplListDlg);
+	BusinessLayer::Access access;
+	std::string crud = access.GetCRUDAccess(&dataFormBL->GetOrmasDal(), loggedUser, "actionSpoilageList");
+	std::size_t pos = crud.find("C");
+	if (pos != std::string::npos)
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::CrtSplListDlg);
+	}
+	else
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("U");
+	if (pos != std::string::npos)
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::UdpSplListDlg);
+	}
+	else
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("D");
+	if (pos != std::string::npos)
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::DelSplListDlg);
+	}
+	else
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+		
 	connect(closeBtn, &QPushButton::released, this, &DataForm::CloseDataForm);
 	connect(tableView->selectionModel(), SIGNAL(currentRowChanged(QModelIndex, QModelIndex)), this, SLOT(ChangeBtnState()));
-	if (createSplDlg != nullptr)
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreateSpoilage")
 	{
 		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
-		connect(this, SIGNAL(SendID(int, QString)), createPPlanDlg, SLOT(SetID(int, QString)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreatePPlanDlg*)parentDialog), SLOT(SetID(int, QString)));
 		connect(tableView->model(), SIGNAL(rowsInserted(QModelIndex, int, int)), this, SLOT(OnRowsNumberChanged()));
 		connect(tableView->model(), SIGNAL(rowsRemoved(QModelIndex, int, int)), this, SLOT(OnRowsNumberChanged()));
 	}
@@ -7388,19 +10673,120 @@ void DataForm::QtConnect<BusinessLayer::SpoilageListView>()
 template<>
 void DataForm::QtConnect<BusinessLayer::StockView>()
 {
-	connect(createBtn, &QPushButton::released, this, &DataForm::CrtStockDlg);
-	connect(editBtn, &QPushButton::released, this, &DataForm::UdpStockDlg);
-	connect(deleteBtn, &QPushButton::released, this, &DataForm::DelStockDlg);
+	BusinessLayer::Access access;
+	std::string crud = access.GetCRUDAccess(&dataFormBL->GetOrmasDal(), loggedUser, "actionStock");
+	std::size_t pos = crud.find("C");
+	if (pos != std::string::npos)
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::CrtStockDlg);
+	}
+	else
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("U");
+	if (pos != std::string::npos)
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::UdpStockDlg);
+	}
+	else
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("D");
+	if (pos != std::string::npos)
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::DelStockDlg);
+	}
+	else
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}	
+	
 	connect(closeBtn, &QPushButton::released, this, &DataForm::CloseDataForm);
 	connect(tableView->selectionModel(), SIGNAL(currentRowChanged(QModelIndex, QModelIndex)), this, SLOT(ChangeBtnState()));
 }
 
 template<>
+void DataForm::QtConnect<BusinessLayer::SubaccountView>()
+{
+	BusinessLayer::Access access;
+	std::string crud = access.GetCRUDAccess(&dataFormBL->GetOrmasDal(), loggedUser, "actionSubaccounts");
+	std::size_t pos = crud.find("C");
+	if (pos != std::string::npos)
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::CrtSAccDlg);
+	}
+	else
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("U");
+	if (pos != std::string::npos)
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::UdpSAccDlg);
+	}
+	else
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("D");
+	if (pos != std::string::npos)
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::DelSAccDlg);
+	}
+	else
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}	
+	
+	connect(closeBtn, &QPushButton::released, this, &DataForm::CloseDataForm);
+	connect(tableView->selectionModel(), SIGNAL(currentRowChanged(QModelIndex, QModelIndex)), this, SLOT(ChangeBtnState()));
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreateCompanyAccount")
+	{
+		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreateCARDlg*)parentDialog), SLOT(SetID(int, QString)));
+	}
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreateEntry")
+	{
+		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreateEtrDlg*)parentDialog), SLOT(SetID(int, QString)));
+	}
+}
+
+template<>
 void DataForm::QtConnect<BusinessLayer::TimesheetView>()
 {
-	connect(createBtn, &QPushButton::released, this, &DataForm::CrtTmsDlg);
-	connect(editBtn, &QPushButton::released, this, &DataForm::UdpTmsDlg);
-	connect(deleteBtn, &QPushButton::released, this, &DataForm::DelTmsDlg);
+	BusinessLayer::Access access;
+	std::string crud = access.GetCRUDAccess(&dataFormBL->GetOrmasDal(), loggedUser, "actionTimesheet");
+	std::size_t pos = crud.find("C");
+	if (pos != std::string::npos)
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::CrtTmsDlg);
+	}
+	else
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("U");
+	if (pos != std::string::npos)
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::UdpTmsDlg);
+	}
+	else
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("D");
+	if (pos != std::string::npos)
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::DelTmsDlg);
+	}
+	else
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+		
 	connect(closeBtn, &QPushButton::released, this, &DataForm::CloseDataForm);
 	connect(tableView->selectionModel(), SIGNAL(currentRowChanged(QModelIndex, QModelIndex)), this, SLOT(ChangeBtnState()));
 }
@@ -7408,30 +10794,84 @@ void DataForm::QtConnect<BusinessLayer::TimesheetView>()
 template<>
 void DataForm::QtConnect<BusinessLayer::TransportView>()
 {
-	connect(createBtn, &QPushButton::released, this, &DataForm::CrtTrsDlg);
-	connect(editBtn, &QPushButton::released, this, &DataForm::UdpTrsDlg);
-	connect(deleteBtn, &QPushButton::released, this, &DataForm::DelTrsDlg);
+	BusinessLayer::Access access;
+	std::string crud = access.GetCRUDAccess(&dataFormBL->GetOrmasDal(), loggedUser, "actionTransports");
+	std::size_t pos = crud.find("C");
+	if (pos != std::string::npos)
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::CrtTrsDlg);
+	}
+	else
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("U");
+	if (pos != std::string::npos)
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::UdpTrsDlg);
+	}
+	else
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("D");
+	if (pos != std::string::npos)
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::DelTrsDlg);
+	}
+	else
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+		
 	connect(closeBtn, &QPushButton::released, this, &DataForm::CloseDataForm);
 	connect(tableView->selectionModel(), SIGNAL(currentRowChanged(QModelIndex, QModelIndex)), this, SLOT(ChangeBtnState()));
-	if (createTrsListDlg != nullptr)
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreateTrsList")
 	{
 		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
-		connect(this, SIGNAL(SendID(int, QString)), createTrsListDlg, SLOT(SetID(int, QString)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreateTrsListDlg*)parentDialog), SLOT(SetID(int, QString)));
 	}
 }
 
 template<>
 void DataForm::QtConnect<BusinessLayer::TransportListView>()
 {
-	connect(createBtn, &QPushButton::released, this, &DataForm::CrtTrsListDlg);
-	connect(editBtn, &QPushButton::released, this, &DataForm::UdpTrsListDlg);
-	connect(deleteBtn, &QPushButton::released, this, &DataForm::DelTrsListDlg);
+	BusinessLayer::Access access;
+	std::string crud = access.GetCRUDAccess(&dataFormBL->GetOrmasDal(), loggedUser, "actionTransportsList");
+	std::size_t pos = crud.find("C");
+	if (pos != std::string::npos)
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::CrtTrsListDlg);
+	}
+	else
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("U");
+	if (pos != std::string::npos)
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::UdpTrsListDlg);
+	}
+	else
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("D");
+	if (pos != std::string::npos)
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::DelTrsListDlg);
+	}
+	else
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	
 	connect(closeBtn, &QPushButton::released, this, &DataForm::CloseDataForm);
 	connect(tableView->selectionModel(), SIGNAL(currentRowChanged(QModelIndex, QModelIndex)), this, SLOT(ChangeBtnState()));
-	if (createTrsDlg != nullptr)
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreateTransport")
 	{
 		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
-		connect(this, SIGNAL(SendID(int, QString)), createTrsDlg, SLOT(SetID(int, QString)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreateTrsDlg*)parentDialog), SLOT(SetID(int, QString)));
 		connect(tableView->model(), SIGNAL(rowsInserted(QModelIndex, int, int)), this, SLOT(OnRowsNumberChanged()));
 		connect(tableView->model(), SIGNAL(rowsRemoved(QModelIndex, int, int)), this, SLOT(OnRowsNumberChanged()));
 	}
@@ -7440,49 +10880,108 @@ void DataForm::QtConnect<BusinessLayer::TransportListView>()
 template<>
 void DataForm::QtConnect<BusinessLayer::UserView>()
 {
-	connect(createBtn, &QPushButton::released, this, &DataForm::CrtUserDlg);
-	connect(editBtn, &QPushButton::released, this, &DataForm::UdpUserDlg);
-	connect(deleteBtn, &QPushButton::released, this, &DataForm::DelUserDlg);
+	BusinessLayer::Access access;
+	std::string crud = access.GetCRUDAccess(&dataFormBL->GetOrmasDal(), loggedUser, "actionAllUsers");
+	std::size_t pos = crud.find("C");
+	if (pos != std::string::npos)
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::CrtUserDlg);
+	}
+	else
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("U");
+	if (pos != std::string::npos)
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::UdpUserDlg);
+	}
+	else
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("D");
+	if (pos != std::string::npos)
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::DelUserDlg);
+	}
+	else
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	
 	connect(closeBtn, &QPushButton::released, this, &DataForm::CloseDataForm);
 	connect(tableView->selectionModel(), SIGNAL(currentRowChanged(QModelIndex, QModelIndex)), this, SLOT(ChangeBtnState()));
-	if (createBlcDlg != nullptr)
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreateBalance")
 	{
 		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
-		connect(this, SIGNAL(SendID(int, QString)), createBlcDlg, SLOT(SetID(int, QString)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreateBlcDlg*)parentDialog), SLOT(SetID(int, QString)));
 	}	
-	if (createPhtDlg != nullptr)
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreatePhoto")
 	{
 		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
-		connect(this, SIGNAL(SendID(int, QString)), createPhtDlg, SLOT(SetID(int, QString)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreatePhtDlg*)parentDialog), SLOT(SetID(int, QString)));
 	}
-	if (createPmtDlg != nullptr)
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreatePayment")
 	{
 		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
-		connect(this, SIGNAL(SendID(int, QString)), createPmtDlg, SLOT(SetID(int, QString)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreatePmtDlg*)parentDialog), SLOT(SetID(int, QString)));
 	}
-	if (createRfdDlg != nullptr)
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreateRefund")
 	{
 		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
-		connect(this, SIGNAL(SendID(int, QString)), createRfdDlg, SLOT(SetID(int, QString)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreateRfdDlg*)parentDialog), SLOT(SetID(int, QString)));
 	}
-	if (createRelDlg != nullptr)
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreateRelation")
 	{
 		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
-		connect(this, SIGNAL(SendID(int, QString)), createRelDlg, SLOT(SetID(int, QString)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreateRelDlg*)parentDialog), SLOT(SetID(int, QString)));
 	}
-	if (createSlrDlg != nullptr)
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreateSalary")
 	{
 		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
-		connect(this, SIGNAL(SendID(int, QString)), createSlrDlg, SLOT(SetID(int, QString)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreateSlrDlg*)parentDialog), SLOT(SetID(int, QString)));
+	}
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreateWithdrawal")
+	{
+		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreateWdwDlg*)parentDialog), SLOT(SetID(int, QString)));
 	}
 }
 
 template<>
 void DataForm::QtConnect<BusinessLayer::WithdrawalView>()
 {
-	connect(createBtn, &QPushButton::released, this, &DataForm::CrtWdwDlg);
-	connect(editBtn, &QPushButton::released, this, &DataForm::UdpWdwDlg);
-	connect(deleteBtn, &QPushButton::released, this, &DataForm::DelWdwDlg);
+	BusinessLayer::Access access;
+	std::string crud = access.GetCRUDAccess(&dataFormBL->GetOrmasDal(), loggedUser, "actionWithdrawal");
+	std::size_t pos = crud.find("C");
+	if (pos != std::string::npos)
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::CrtWdwDlg);
+	}
+	else
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("U");
+	if (pos != std::string::npos)
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::UdpWdwDlg);
+	}
+	else
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("D");
+	if (pos != std::string::npos)
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::DelWdwDlg);
+	}
+	else
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	
 	connect(closeBtn, &QPushButton::released, this, &DataForm::CloseDataForm);
 	connect(tableView->selectionModel(), SIGNAL(currentRowChanged(QModelIndex, QModelIndex)), this, SLOT(ChangeBtnState()));
 }
@@ -7490,30 +10989,84 @@ void DataForm::QtConnect<BusinessLayer::WithdrawalView>()
 template<>
 void DataForm::QtConnect<BusinessLayer::WriteOffView>()
 {
-	connect(createBtn, &QPushButton::released, this, &DataForm::CrtWOffDlg);
-	connect(editBtn, &QPushButton::released, this, &DataForm::UdpWOffDlg);
-	connect(deleteBtn, &QPushButton::released, this, &DataForm::DelWOffDlg);
+	BusinessLayer::Access access;
+	std::string crud = access.GetCRUDAccess(&dataFormBL->GetOrmasDal(), loggedUser, "actionWriteOffs");
+	std::size_t pos = crud.find("C");
+	if (pos != std::string::npos)
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::CrtWOffDlg);
+	}
+	else
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("U");
+	if (pos != std::string::npos)
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::UdpWOffDlg);
+	}
+	else
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("D");
+	if (pos != std::string::npos)
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::DelWOffDlg);
+	}
+	else
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+
 	connect(closeBtn, &QPushButton::released, this, &DataForm::CloseDataForm);
 	connect(tableView->selectionModel(), SIGNAL(currentRowChanged(QModelIndex, QModelIndex)), this, SLOT(ChangeBtnState()));
-	if (createWOffListDlg != nullptr)
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreateWOffList")
 	{
 		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
-		connect(this, SIGNAL(SendID(int, QString)), createWOffListDlg, SLOT(SetID(int, QString)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreateWOffListDlg*)parentDialog), SLOT(SetID(int, QString)));
 	}
 }
 
 template<>
 void DataForm::QtConnect<BusinessLayer::WriteOffListView>()
 {
-	connect(createBtn, &QPushButton::released, this, &DataForm::CrtWOffListDlg);
-	connect(editBtn, &QPushButton::released, this, &DataForm::UdpWOffListDlg);
-	connect(deleteBtn, &QPushButton::released, this, &DataForm::DelWOffListDlg);
+	BusinessLayer::Access access;
+	std::string crud = access.GetCRUDAccess(&dataFormBL->GetOrmasDal(), loggedUser, "actionWriteOffList");
+	std::size_t pos = crud.find("C");
+	if (pos != std::string::npos)
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::CrtWOffListDlg);
+	}
+	else
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("U");
+	if (pos != std::string::npos)
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::UdpWOffListDlg);
+	}
+	else
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("D");
+	if (pos != std::string::npos)
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::DelWOffListDlg);
+	}
+	else
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+		
 	connect(closeBtn, &QPushButton::released, this, &DataForm::CloseDataForm);
 	connect(tableView->selectionModel(), SIGNAL(currentRowChanged(QModelIndex, QModelIndex)), this, SLOT(ChangeBtnState()));
-	if (createWOffDlg != nullptr)
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreateWriteOff")
 	{
 		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
-		connect(this, SIGNAL(SendID(int, QString)), createWOffDlg, SLOT(SetID(int, QString)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreateWOffDlg*)parentDialog), SLOT(SetID(int, QString)));
 		connect(tableView->model(), SIGNAL(rowsInserted(QModelIndex, int, int)), this, SLOT(OnRowsNumberChanged()));
 		connect(tableView->model(), SIGNAL(rowsRemoved(QModelIndex, int, int)), this, SLOT(OnRowsNumberChanged()));
 	}
@@ -7522,30 +11075,84 @@ void DataForm::QtConnect<BusinessLayer::WriteOffListView>()
 template<>
 void DataForm::QtConnect<BusinessLayer::WriteOffRawView>()
 {
-	connect(createBtn, &QPushButton::released, this, &DataForm::CrtWOffRDlg);
-	connect(editBtn, &QPushButton::released, this, &DataForm::UdpWOffRDlg);
-	connect(deleteBtn, &QPushButton::released, this, &DataForm::DelWOffRDlg);
+	BusinessLayer::Access access;
+	std::string crud = access.GetCRUDAccess(&dataFormBL->GetOrmasDal(), loggedUser, "actionWriteOffRaws");
+	std::size_t pos = crud.find("C");
+	if (pos != std::string::npos)
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::CrtWOffRDlg);
+	}
+	else
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("U");
+	if (pos != std::string::npos)
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::UdpWOffRDlg);
+	}
+	else
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("D");
+	if (pos != std::string::npos)
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::DelWOffRDlg);
+	}
+	else
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	
 	connect(closeBtn, &QPushButton::released, this, &DataForm::CloseDataForm);
 	connect(tableView->selectionModel(), SIGNAL(currentRowChanged(QModelIndex, QModelIndex)), this, SLOT(ChangeBtnState()));
-	if (createWOffRListDlg != nullptr)
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreateWOffRList")
 	{
 		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
-		connect(this, SIGNAL(SendID(int, QString)), createWOffRListDlg, SLOT(SetID(int, QString)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreateWOffRListDlg*)parentDialog), SLOT(SetID(int, QString)));
 	}
 }
 
 template<>
 void DataForm::QtConnect<BusinessLayer::WriteOffRawListView>()
 {
-	connect(createBtn, &QPushButton::released, this, &DataForm::CrtWOffRListDlg);
-	connect(editBtn, &QPushButton::released, this, &DataForm::UdpWOffRListDlg);
-	connect(deleteBtn, &QPushButton::released, this, &DataForm::DelWOffRListDlg);
+	BusinessLayer::Access access;
+	std::string crud = access.GetCRUDAccess(&dataFormBL->GetOrmasDal(), loggedUser, "actionWriteOffRawsList");
+	std::size_t pos = crud.find("C");
+	if (pos != std::string::npos)
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::CrtWOffRListDlg);
+	}
+	else
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("U");
+	if (pos != std::string::npos)
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::UdpWOffRListDlg);
+	}
+	else
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("D");
+	if (pos != std::string::npos)
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::DelWOffRListDlg);
+	}
+	else
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	
 	connect(closeBtn, &QPushButton::released, this, &DataForm::CloseDataForm);
 	connect(tableView->selectionModel(), SIGNAL(currentRowChanged(QModelIndex, QModelIndex)), this, SLOT(ChangeBtnState()));
-	if (createWOffRDlg != nullptr)
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreateWriteOffR")
 	{
 		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
-		connect(this, SIGNAL(SendID(int, QString)), createWOffRDlg, SLOT(SetID(int, QString)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreateWOffRDlg*)parentDialog), SLOT(SetID(int, QString)));
 		connect(tableView->model(), SIGNAL(rowsInserted(QModelIndex, int, int)), this, SLOT(OnRowsNumberChanged()));
 		connect(tableView->model(), SIGNAL(rowsRemoved(QModelIndex, int, int)), this, SLOT(OnRowsNumberChanged()));
 	}

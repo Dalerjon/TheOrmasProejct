@@ -29,7 +29,7 @@ namespace BusinessLayer
 		return productID;
 	}
 
-	int InventorizationList::GetCount()
+	double InventorizationList::GetCount()
 	{
 		return count;
 	}
@@ -61,7 +61,7 @@ namespace BusinessLayer
 	{
 		productID = iProductID;
 	}
-	void InventorizationList::SetCount(int iCount)
+	void InventorizationList::SetCount(double iCount)
 	{
 		count = iCount;
 	}
@@ -78,7 +78,7 @@ namespace BusinessLayer
 		currencyID = iCurrencyID;
 	}
 
-	bool InventorizationList::CreateInventorizationList(DataLayer::OrmasDal& ormasDal, int iID, int pID, int ilCount, double ilSum,
+	bool InventorizationList::CreateInventorizationList(DataLayer::OrmasDal& ormasDal, int iID, int pID, double ilCount, double ilSum,
 		int sID, int cID, std::string& errorMessage)
 	{
 		id = ormasDal.GenerateID();
@@ -123,7 +123,7 @@ namespace BusinessLayer
 		return false;
 	}
 
-	bool InventorizationList::UpdateInventorizationList(DataLayer::OrmasDal& ormasDal, int iID, int pID, int ilCount, double ilSum,
+	bool InventorizationList::UpdateInventorizationList(DataLayer::OrmasDal& ormasDal, int iID, int pID, double ilCount, double ilSum,
 		int sID, int cID, std::string& errorMessage)
 	{
 		inventorizationID = iID;
@@ -197,7 +197,7 @@ namespace BusinessLayer
 		currencyID = 0;
 	}
 
-	bool InventorizationList::IsDuplicate(DataLayer::OrmasDal& ormasDal, int iID, int pID, int ilCount, double ilSum,
+	bool InventorizationList::IsDuplicate(DataLayer::OrmasDal& ormasDal, int iID, int pID, double ilCount, double ilSum,
 		int cID, std::string& errorMessage)
 	{
 		InventorizationList inventorizationList;

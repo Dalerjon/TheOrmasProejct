@@ -2,6 +2,7 @@
 #define CREATEPRODUCTIONDLG_H
 #include "ui_CreateProdnDlg.h"
 #include "OrmasBL.h"
+#include "MainForm.h"
 
 class CreateProdnDlg : public QDialog, public Ui::CreateProduction
 {
@@ -24,6 +25,8 @@ private:
 	BusinessLayer::Production *production = new BusinessLayer::Production();
 	void SetProductionParams(QString, QString, QString, QString, int=0);
 	void FillEditElements(QString, QString, QString, QString);
+	QWidget* parentForm;
+	MainForm* mainForm;
 };
 
 #endif //CREATEPRODNDLG_H

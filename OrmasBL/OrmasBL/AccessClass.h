@@ -42,6 +42,7 @@ namespace BusinessLayer{
 		void Clear();
 		bool CheckAccess(DataLayer::OrmasDal* ormasDal, int accessItemID, std::string checkedDivision, std::string checkingItem);
 		bool CheckAccess(DataLayer::OrmasDal* ormasDal, int accessItemID, std::string checkedDivision);
+		std::string GetCRUDAccess(DataLayer::OrmasDal* ormasDal, User*, std::string accessItemName);
 		std::vector<int> GetRightsList(DataLayer::OrmasDal* ormasDal, User*);
 	private:
 		bool IsDuplicate(DataLayer::OrmasDal& ormasDal, int rID, int aiID, std::string& errorMessage);

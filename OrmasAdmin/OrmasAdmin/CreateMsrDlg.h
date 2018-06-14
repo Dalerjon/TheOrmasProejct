@@ -22,5 +22,6 @@ private:
 	void SetMeasureParams(QString, QString, int, int = 0);
 	void FillEditElements(QString, QString, int);
 	QIntValidator *vInt = nullptr;
+	QWidget* parentForm;
 };
 #endif //CREATEMSRDLG_H

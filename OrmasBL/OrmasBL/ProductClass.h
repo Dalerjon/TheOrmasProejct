@@ -67,7 +67,10 @@ namespace BusinessLayer
 		bool IsDuplicate(DataLayer::OrmasDal& ormasDal, int cID, std::string pName, double vol, int mID, double price,
 			 int curID, std::string& errorMessage);
 		bool IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string& errorMessage);
-		bool AddPriceData(DataLayer::OrmasDal& ormasDal, int pID, double pPrice, int curID, std::string& errorMessage);		
+		bool AddPriceData(DataLayer::OrmasDal& ormasDal, int pID, double pPrice, int curID, std::string& errorMessage);
+		double GetCurrentPrice(DataLayer::OrmasDal& ormasDal, int pID, std::string& errorMessage);
+		bool UpdateSpecifications(DataLayer::OrmasDal& ormasDal, int pID, double oldPrice, double newPrice, std::string& errorMessage);
+		bool RecalculateStock(DataLayer::OrmasDal& ormasDal, int pID, double oldPrice, double newPrice, std::string& errorMessage);
 	};
 }
 #endif //PRODUCTCLASS_H

@@ -29,7 +29,7 @@ namespace BusinessLayer
 		return productID;
 	}
 
-	int WriteOffList::GetCount()
+	double WriteOffList::GetCount()
 	{
 		return count;
 	}
@@ -61,7 +61,7 @@ namespace BusinessLayer
 	{
 		productID = pProductID;
 	}
-	void WriteOffList::SetCount(int wCount)
+	void WriteOffList::SetCount(double wCount)
 	{
 		count = wCount;
 	}
@@ -78,7 +78,7 @@ namespace BusinessLayer
 		currencyID = pCurrencyID;
 	}
 
-	bool WriteOffList::CreateWriteOffList(DataLayer::OrmasDal& ormasDal, int wID, int pID, int wCount, double wSum,
+	bool WriteOffList::CreateWriteOffList(DataLayer::OrmasDal& ormasDal, int wID, int pID, double wCount, double wSum,
 		int sID, int cID, std::string& errorMessage)
 	{
 		id = ormasDal.GenerateID();
@@ -123,7 +123,7 @@ namespace BusinessLayer
 		return false;
 	}
 
-	bool WriteOffList::UpdateWriteOffList(DataLayer::OrmasDal& ormasDal, int wID, int pID, int wCount, double wSum,
+	bool WriteOffList::UpdateWriteOffList(DataLayer::OrmasDal& ormasDal, int wID, int pID, double wCount, double wSum,
 		int sID, int cID, std::string& errorMessage)
 	{
 		writeOffID = wID;
@@ -197,7 +197,7 @@ namespace BusinessLayer
 		currencyID = 0;
 	}
 
-	bool WriteOffList::IsDuplicate(DataLayer::OrmasDal& ormasDal, int wID, int pID, int wlCount, double wlSum,
+	bool WriteOffList::IsDuplicate(DataLayer::OrmasDal& ormasDal, int wID, int pID, double wlCount, double wlSum,
 		int cID, std::string& errorMessage)
 	{
 		WriteOffList writeOffList;

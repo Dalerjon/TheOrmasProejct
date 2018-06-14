@@ -9,6 +9,19 @@
 
 #include <stdio.h>
 #include <tchar.h>
+#include "ExtraFunctions.h"
+
+#include <QMessageBox>
+#include <QResource>
+#include <QApplication>
+#include <QtGUI>
+#include <QWidget>
+#include <QMenu>
+#include <QProgressDialog>
+#include <QStandardItemModel>
+#include <QtWidgets/QMdiArea>
+#include <QMessageBox>
+#include <QStandardItem>
 
 
 

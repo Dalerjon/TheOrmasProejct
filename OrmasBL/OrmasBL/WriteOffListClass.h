@@ -10,12 +10,12 @@ namespace BusinessLayer
 		int id = 0;
 		int writeOffID = 0;
 		int productID = 0;
-		int count = 0;
+		double count = 0;
 		double sum = 0;
 		int statusID = 0;
 		int currencyID = 0;
 	public:
-		WriteOffList(int wlID, int wID, int pID, int wlCount, double wlSum, int sID, int cID) :id(wlID), writeOffID(wID), productID(pID),
+		WriteOffList(int wlID, int wID, int pID, double wlCount, double wlSum, int sID, int cID) :id(wlID), writeOffID(wID), productID(pID),
 			count(wlCount), sum(wlSum), statusID(sID), currencyID(cID){};
 		WriteOffList(DataLayer::writeOffListCollection);
 		WriteOffList(){};
@@ -25,7 +25,7 @@ namespace BusinessLayer
 		int GetID();
 		int GetWriteOffID();
 		int GetProductID();
-		int GetCount();
+		double GetCount();
 		double GetSum();
 		int GetStatusID();
 		int GetCurrencyID();
@@ -34,7 +34,7 @@ namespace BusinessLayer
 		void SetID(int);
 		void SetWriteOffID(int);
 		void SetProductID(int);
-		void SetCount(int);
+		void SetCount(double);
 		void SetSum(double);
 		void SetStatusID(int);
 		void SetCurrencyID(int);
@@ -44,9 +44,9 @@ namespace BusinessLayer
 		bool UpdateWriteOffList(DataLayer::OrmasDal& ormasDal, std::string& errorMessage);
 		bool DeleteWriteOffList(DataLayer::OrmasDal& ormasDal, std::string& errorMessage);
 		bool DeleteListByWriteOffID(DataLayer::OrmasDal& ormasDal, int wID, std::string& errorMessage);
-		bool CreateWriteOffList(DataLayer::OrmasDal& ormasDal, int wID, int pID, int wlCount, double wlSum,
+		bool CreateWriteOffList(DataLayer::OrmasDal& ormasDal, int wID, int pID, double wlCount, double wlSum,
 			int sID, int cID, std::string& errorMessage);
-		bool UpdateWriteOffList(DataLayer::OrmasDal& ormasDal, int wID, int pID, int wlCount, double wlSum,
+		bool UpdateWriteOffList(DataLayer::OrmasDal& ormasDal, int wID, int pID, double wlCount, double wlSum,
 			int sID, int cID, std::string& errorMessage);
 
 		//Generate filter string for class
@@ -55,7 +55,7 @@ namespace BusinessLayer
 		bool IsEmpty();
 		void Clear();
 	private:
-		bool IsDuplicate(DataLayer::OrmasDal& ormasDal, int wID, int pID, int wlCount, double wlSum,
+		bool IsDuplicate(DataLayer::OrmasDal& ormasDal, int wID, int pID, double wlCount, double wlSum,
 			int cID, std::string& errorMessage);
 		bool IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string& errorMessage);
 	};

@@ -43,7 +43,7 @@ namespace BusinessLayer
 		return stockEmployeeID;
 	}
 
-	int Transport::GetCount()
+	double Transport::GetCount()
 	{
 		return count;
 	}
@@ -84,7 +84,7 @@ namespace BusinessLayer
 		stockEmployeeID = tStockEmployeeID;
 	}
 
-	void Transport::SetCount(int tCount)
+	void Transport::SetCount(double tCount)
 	{
 		count = tCount;
 	}
@@ -105,7 +105,7 @@ namespace BusinessLayer
 	}
 
 	bool Transport::CreateTransport(DataLayer::OrmasDal& ormasDal, int uID, std::string tDate, std::string tExecDate, 
-		int seID, int tCount, double tSum, int sID, int cID, std::string& errorMessage)
+		int seID, double tCount, double tSum, int sID, int cID, std::string& errorMessage)
 	{
 		if (IsDuplicate(ormasDal, uID, tDate, seID ,tCount, tSum, cID, errorMessage))
 			return false;
@@ -176,7 +176,7 @@ namespace BusinessLayer
 		return false;
 	}
 	bool Transport::UpdateTransport(DataLayer::OrmasDal& ormasDal, int uID, std::string tDate, std::string tExecnDate,
-		int eID, int tCount, double tSum, int sID, int cID, std::string& errorMessage)
+		int eID, double tCount, double tSum, int sID, int cID, std::string& errorMessage)
 	{
 		std::map<std::string, int> statusMap = BusinessLayer::Status::GetStatusesAsMap(ormasDal, errorMessage);
 		if (0 == statusMap.size())
@@ -270,7 +270,7 @@ namespace BusinessLayer
 		currencyID = 0;
 	}
 
-	bool Transport::IsDuplicate(DataLayer::OrmasDal& ormasDal, int eID, std::string tDate, int seID, int tCount, double tSum,
+	bool Transport::IsDuplicate(DataLayer::OrmasDal& ormasDal, int eID, std::string tDate, int seID, double tCount, double tSum,
 		int cID, std::string& errorMessage)
 	{
 		Transport transport;

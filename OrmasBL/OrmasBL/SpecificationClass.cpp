@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "SpecificationClass.h"
+#include "SpecificationListClass.h"
 #include "BalanceClass.h"
 #include "UserClass.h"
 #include "WithdrawalClass.h"
@@ -194,11 +195,33 @@ namespace BusinessLayer
 		return false;
 	}
 
+	bool Specification::GetSpecificationByProductID(DataLayer::OrmasDal& ormasDal, int pID, std::string& errorMessage)
+	{
+		productID = pID;
+		std::string filter = GenerateFilter(ormasDal);
+		std::vector<DataLayer::specificationsViewCollection> specificationVector = ormasDal.GetSpecifications(errorMessage, filter);
+		if (0 != specificationVector.size())
+		{
+			id = std::get<0>(specificationVector.at(0));
+			productID = std::get<9>(specificationVector.at(0));
+			sum = std::get<3>(specificationVector.at(0));
+			currencyID = std::get<10>(specificationVector.at(0));
+			employeeID = std::get<11>(specificationVector.at(0));
+			date = std::get<1>(specificationVector.at(0));
+			return true;
+		}
+		else
+		{
+			errorMessage = "Cannot find specification with this product id";
+		}
+		return false;
+	}
+
 	bool Specification::IsEmpty()
 	{
 		if (0 == id && 0 == productID && 0 == sum && 0 == currencyID && 0 == employeeID && date == "")
-			return false;
-		return true;
+			return true;
+		return false;
 	}
 
 	void Specification::Clear()
@@ -244,6 +267,26 @@ namespace BusinessLayer
 			return false;
 		}
 		errorMessage = "Specification with these parameters are already exist! Please avoid the duplication!";
+		return true;
+	}
+
+	bool Specification::UpdateSpecificationByProductID(DataLayer::OrmasDal& ormasDal, int pID, double oldPrice, double newPrice, std::string& errorMessage)
+	{
+		Specification spec;
+		SpecificationList sList;
+		sList.SetProductID(pID);
+		std::string filter = sList.GenerateFilter(ormasDal);
+		std::vector<DataLayer::specificationListViewCollection> specificationListVector = ormasDal.GetSpecificationList(errorMessage, filter);
+		for each (auto item in specificationListVector)
+		{
+			spec.Clear();
+			if (spec.GetSpecificationByID(ormasDal, std::get<1>(item), errorMessage))
+			{
+				spec.SetSum(spec.GetSum() + (std::get<3>(item)*newPrice - std::get<3>(item)*oldPrice));
+				if (!spec.UpdateSpecification(ormasDal, errorMessage))
+					return false;
+			}
+		}
 		return true;
 	}
 }

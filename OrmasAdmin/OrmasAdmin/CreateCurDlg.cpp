@@ -1,9 +1,9 @@
 #include "stdafx.h"
-#include <QMessageBox>
+
 #include "CreateCurDlg.h"
 #include "MainForm.h"
 #include "DataForm.h"
-#include "ExtraFunctions.h"
+
 
 CreateCurDlg::CreateCurDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, QWidget *parent) :QDialog(parent)
 {
@@ -19,6 +19,7 @@ CreateCurDlg::CreateCurDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, QWi
 	mainTradeCmbBox->addItem("false");
 	mainTradeCmbBox->addItem("true");
 	dialogBL = ormasBL;
+	parentForm = parent;
 	if (true == updateFlag)
 	{
 		QObject::connect(okBtn, &QPushButton::released, this, &CreateCurDlg::EditCurrency);
@@ -85,20 +86,27 @@ void CreateCurDlg::CreateCurrency()
 	if (!(codeEdit->text().isEmpty() || shortNameEdit->text().isEmpty() || nameEdit->text().isEmpty()) || unitEdit->text().isEmpty()
 		|| mainTradeCmbBox->currentText().isEmpty())
 	{
-		DataForm *parentDataForm = (DataForm*)parentWidget();
+		DataForm *parentDataForm = (DataForm*) parentForm;
 		SetCurrencyParams(codeEdit->text().toInt(), shortNameEdit->text(), nameEdit->text(), unitEdit->text().toInt(),
 			mainTradeCmbBox->currentText());
 		dialogBL->StartTransaction(errorMessage);
 		if (dialogBL->CreateCurrency(currency,errorMessage))
 		{
-			QList<QStandardItem*> companyItem;
-			companyItem << new QStandardItem(QString::number(currency->GetID())) << new QStandardItem(QString::number(currency->GetCode()))
-				<< new QStandardItem(currency->GetShortName().c_str()) << new QStandardItem(currency->GetName().c_str())
-				<< new QStandardItem(QString::number(currency->GetUnit())) << new QStandardItem(currency->GetMainTrade()?"true":"false");
-			QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
-			itemModel->appendRow(companyItem);
-			this->close();
+			if (parentDataForm != nullptr)
+			{
+				if (!parentDataForm->IsClosed())
+				{
+					QList<QStandardItem*> companyItem;
+					companyItem << new QStandardItem(QString::number(currency->GetID())) << new QStandardItem(QString::number(currency->GetCode()))
+						<< new QStandardItem(currency->GetShortName().c_str()) << new QStandardItem(currency->GetName().c_str())
+						<< new QStandardItem(QString::number(currency->GetUnit())) << new QStandardItem(currency->GetMainTrade() ? "true" : "false");
+					QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
+					itemModel->appendRow(companyItem);
+				}
+			}
 			dialogBL->CommitTransaction(errorMessage);
+			Close();
+			
 		}
 		else
 		{
@@ -127,22 +135,28 @@ void CreateCurDlg::EditCurrency()
 			|| QString(currency->GetName().c_str()) != nameEdit->text() || currency->GetUnit() != nameEdit->text().toInt()
 			|| QString(currency->GetMainTrade() ? "true" : "false") != mainTradeCmbBox->currentText())
 		{
-			DataForm *parentDataForm = (DataForm*)parentWidget();
+			DataForm *parentDataForm = (DataForm*) parentForm;
 			SetCurrencyParams(codeEdit->text().toInt(), shortNameEdit->text(), nameEdit->text(), unitEdit->text().toInt(),
 				mainTradeCmbBox->currentText(), currency->GetID());
 			dialogBL->StartTransaction(errorMessage);
 			if (dialogBL->UpdateCurrency(currency,errorMessage))
 			{
-				QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
-				QModelIndex mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
-				itemModel->item(mIndex.row(), 1)->setText(QString::number(currency->GetCode()));
-				itemModel->item(mIndex.row(), 2)->setText(currency->GetShortName().c_str());
-				itemModel->item(mIndex.row(), 3)->setText(currency->GetName().c_str());
-				itemModel->item(mIndex.row(), 4)->setText(QString::number(currency->GetUnit()));
-				itemModel->item(mIndex.row(), 5)->setText(currency->GetMainTrade() ? "true" : "false");
-				emit itemModel->dataChanged(mIndex, mIndex);
-				this->close();
+				if (parentDataForm != nullptr)
+				{
+					if (!parentDataForm->IsClosed())
+					{
+						QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
+						QModelIndex mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
+						itemModel->item(mIndex.row(), 1)->setText(QString::number(currency->GetCode()));
+						itemModel->item(mIndex.row(), 2)->setText(currency->GetShortName().c_str());
+						itemModel->item(mIndex.row(), 3)->setText(currency->GetName().c_str());
+						itemModel->item(mIndex.row(), 4)->setText(QString::number(currency->GetUnit()));
+						itemModel->item(mIndex.row(), 5)->setText(currency->GetMainTrade() ? "true" : "false");
+						emit itemModel->dataChanged(mIndex, mIndex);
+					}
+				}
 				dialogBL->CommitTransaction(errorMessage);
+				Close();
 			}
 			else
 			{
@@ -154,7 +168,7 @@ void CreateCurDlg::EditCurrency()
 		}
 		else
 		{
-			this->close();
+			Close();
 		}
 	}
 	else
@@ -168,5 +182,5 @@ void CreateCurDlg::EditCurrency()
 
 void CreateCurDlg::Close()
 {
-	this->close();
+	this->parentWidget()->close();
 }

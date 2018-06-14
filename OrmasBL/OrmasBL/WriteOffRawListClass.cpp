@@ -29,7 +29,7 @@ namespace BusinessLayer
 		return productID;
 	}
 
-	int WriteOffRawList::GetCount()
+	double WriteOffRawList::GetCount()
 	{
 		return count;
 	}
@@ -61,7 +61,7 @@ namespace BusinessLayer
 	{
 		productID = wProductID;
 	}
-	void WriteOffRawList::SetCount(int wCount)
+	void WriteOffRawList::SetCount(double wCount)
 	{
 		count = wCount;
 	}
@@ -78,7 +78,7 @@ namespace BusinessLayer
 		currencyID = wCurrencyID;
 	}
 
-	bool WriteOffRawList::CreateWriteOffRawList(DataLayer::OrmasDal& ormasDal, int wID, int pID, int wlCount, double wlSum,
+	bool WriteOffRawList::CreateWriteOffRawList(DataLayer::OrmasDal& ormasDal, int wID, int pID, double wlCount, double wlSum,
 		int sID, int cID, std::string& errorMessage)
 	{
 		id = ormasDal.GenerateID();
@@ -123,7 +123,7 @@ namespace BusinessLayer
 		return false;
 	}
 
-	bool WriteOffRawList::UpdateWriteOffRawList(DataLayer::OrmasDal& ormasDal, int wID, int pID, int wlCount, double wlSum,
+	bool WriteOffRawList::UpdateWriteOffRawList(DataLayer::OrmasDal& ormasDal, int wID, int pID, double wlCount, double wlSum,
 		int sID, int cID, std::string& errorMessage)
 	{
 		writeOffRawID = wID;
@@ -197,7 +197,7 @@ namespace BusinessLayer
 		currencyID = 0;
 	}
 
-	bool WriteOffRawList::IsDuplicate(DataLayer::OrmasDal& ormasDal, int wID, int pID, int wlCount, double wlSum,
+	bool WriteOffRawList::IsDuplicate(DataLayer::OrmasDal& ormasDal, int wID, int pID, double wlCount, double wlSum,
 		int cID, std::string& errorMessage)
 	{
 		WriteOffRawList writeOffRawList;

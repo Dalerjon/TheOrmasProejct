@@ -1,21 +1,23 @@
 #include "stdafx.h"
-#include <QMessageBox>
+
 #include "CreateSpecListDlg.h"
-#include "MainForm.h"
 #include "DataForm.h"
-#include "ExtraFunctions.h"
+
 
 CreateSpecListDlg::CreateSpecListDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, QWidget *parent) :QDialog(parent)
 {
 	setupUi(this);
 	//setModal(true);
 	dialogBL = ormasBL;
+	parentForm = parent;
+	DataForm *dataFormParent = (DataForm *)this->parentForm;
+	mainForm = (MainForm *)dataFormParent->GetParent();
 	specificationID = ((DataForm*)parent)->specificationID;
-	vDouble = new QDoubleValidator(0.00, 1000000000.00, 3, this);
+	vDouble = new QDoubleValidator(0.00, 1000000000.00000, 5, this);
 	vInt = new QIntValidator(0, 1000000000, this);
 	productEdit->setValidator(vInt);
-	countEdit->setValidator(vInt);
-	countEdit->setMaxLength(10);
+	countEdit->setValidator(vDouble);
+	countEdit->setMaxLength(24);
 	specEdit->setValidator(vInt);
 	if (true == updateFlag)
 	{
@@ -31,6 +33,8 @@ CreateSpecListDlg::CreateSpecListDlg(BusinessLayer::OrmasBL *ormasBL, bool updat
 	QObject::connect(cancelBtn, &QPushButton::released, this, &CreateSpecListDlg::Close);
 	QObject::connect(specBtn, &QPushButton::released, this, &CreateSpecListDlg::OpenSpecDlg);
 	QObject::connect(productBtn, &QPushButton::released, this, &CreateSpecListDlg::OpenProdDlg);
+	QObject::connect(countEdit, &QLineEdit::textChanged, this, &CreateSpecListDlg::TextEditChanged);
+	QObject::connect(this, SIGNAL(DataIsChanged()), ((DataForm*)parent), SLOT(OnRowsNumberChanged()));
 }
 
 CreateSpecListDlg::~CreateSpecListDlg()
@@ -45,6 +49,13 @@ void CreateSpecListDlg::SetID(int ID, QString childName)
 	{
 		if (0 != childName.length())
 		{
+			this->hide();
+			this->setWindowFlags(this->windowFlags() | Qt::WindowStaysOnTopHint);
+			this->show();
+			this->raise();
+			this->activateWindow();
+			QApplication::setActiveWindow(this);
+
 			if (childName == QString("productForm"))
 			{
 				productEdit->setText(QString::number(ID));
@@ -79,7 +90,7 @@ void CreateSpecListDlg::SetSpecificationListParams(int sID, int pID, double slCo
 void CreateSpecListDlg::FillEditElements(int sID, int pID, double slCount)
 
 {
-	specEdit->setText(QString::number(pID));
+	specEdit->setText(QString::number(sID));
 	productEdit->setText(QString::number(pID));
 	countEdit->setText(QString::number(slCount));
 	BusinessLayer::Product product;
@@ -101,11 +112,11 @@ bool CreateSpecListDlg::FillDlgElements(QTableView* oTable)
 	if (mIndex.row() >= 0)
 	{
 		SetSpecificationListParams(oTable->model()->data(oTable->model()->index(mIndex.row(), 1)).toInt(),
-			oTable->model()->data(oTable->model()->index(mIndex.row(), 5)).toInt(),
+			oTable->model()->data(oTable->model()->index(mIndex.row(), 5)).toDouble(),
 			oTable->model()->data(oTable->model()->index(mIndex.row(), 3)).toDouble(),
 			oTable->model()->data(oTable->model()->index(mIndex.row(), 0)).toInt());
 		FillEditElements(oTable->model()->data(oTable->model()->index(mIndex.row(), 1)).toInt(),
-			oTable->model()->data(oTable->model()->index(mIndex.row(), 5)).toInt(),
+			oTable->model()->data(oTable->model()->index(mIndex.row(), 5)).toDouble(),
 			oTable->model()->data(oTable->model()->index(mIndex.row(), 3)).toDouble());
 		return true;
 	}
@@ -118,9 +129,9 @@ bool CreateSpecListDlg::FillDlgElements(QTableView* oTable)
 void CreateSpecListDlg::AddProductToList()
 {
 	errorMessage.clear();
-	if (0 != productEdit->text().toInt() || 0 != countEdit->text().toInt())
+	if (0 != productEdit->text().toInt() || 0 != countEdit->text().toDouble())
 	{
-		DataForm *parentDataForm = (DataForm*)parentWidget();
+		DataForm *parentDataForm = (DataForm*) parentForm;
 		BusinessLayer::Product *product = new BusinessLayer::Product();
 		BusinessLayer::Measure *measure = new BusinessLayer::Measure();
 
@@ -148,26 +159,31 @@ void CreateSpecListDlg::AddProductToList()
 
 		if (dialogBL->CreateSpecificationList(specificationList, errorMessage))
 		{
-			QList<QStandardItem*> productListItem;
-			productListItem << new QStandardItem(QString::number(specificationList->GetID()));
-			if (0 != specificationList)
+			if (parentDataForm != nullptr)
 			{
-				productListItem << new QStandardItem(QString::number(specificationID));
+				if (!parentDataForm->IsClosed())
+				{
+					QList<QStandardItem*> productListItem;
+					productListItem << new QStandardItem(QString::number(specificationList->GetID()));
+					if (0 != specificationList)
+					{
+						productListItem << new QStandardItem(QString::number(specificationID));
+					}
+					else
+					{
+						productListItem << new QStandardItem(QString::number(0));
+					}
+					productListItem << new QStandardItem(product->GetName().c_str())
+						<< new QStandardItem(QString::number(specificationList->GetCount()))
+						<< new QStandardItem(measure->GetName().c_str())
+						<< new QStandardItem(QString::number(specificationList->GetProductID()));
+					QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
+					itemModel->appendRow(productListItem);
+				}
 			}
-			else
-			{
-				productListItem << new QStandardItem(QString::number(0));
-			}
-			productListItem << new QStandardItem(product->GetName().c_str())
-				<< new QStandardItem(QString::number(specificationList->GetCount()))
-				<< new QStandardItem(measure->GetName().c_str())
-				<< new QStandardItem(QString::number(specificationList->GetProductID()));
-			QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
-			itemModel->appendRow(productListItem);
-
 			delete measure;
 			delete product;
-			this->close();
+			Close();
 		}
 		else
 		{
@@ -188,7 +204,7 @@ void CreateSpecListDlg::AddProductToList()
 void CreateSpecListDlg::EditProductInList()
 {
 	errorMessage.clear();
-	if (0 != productEdit->text().toInt() || 0 != countEdit->text().toInt())
+	if (0 != productEdit->text().toInt() || 0 != countEdit->text().toDouble())
 	{
 		if (productEdit->text().toInt() != specificationList->GetProductID() || countEdit->text().toDouble() != specificationList->GetCount()
 			|| specEdit->text().toInt() != specificationList->GetSpecificationID())
@@ -203,34 +219,41 @@ void CreateSpecListDlg::EditProductInList()
 				delete product;
 				return;
 			}
-			DataForm *parentDataForm = (DataForm*)parentWidget();
-			SetSpecificationListParams(specEdit->text().toInt(), productEdit->text().toInt(), countEdit->text().toInt(), specificationList->GetID());
+			DataForm *parentDataForm = (DataForm*) parentForm;
+			SetSpecificationListParams(specEdit->text().toInt(), productEdit->text().toInt(), countEdit->text().toDouble(), specificationList->GetID());
 			if (dialogBL->UpdateSpecificationList(specificationList, errorMessage))
 			{
-				BusinessLayer::Measure *measure = new BusinessLayer::Measure();
-				if (!measure->GetMeasureByID(dialogBL->GetOrmasDal(), product->GetMeasureID(), errorMessage))
+				if (parentDataForm != nullptr)
 				{
-					QMessageBox::information(NULL, QString(tr("Warning")),
-						QString(tr(errorMessage.c_str())),
-						QString(tr("Ok")));
-					errorMessage.clear();
-					delete measure;
-					return;
+					if (!parentDataForm->IsClosed())
+					{
+						BusinessLayer::Measure *measure = new BusinessLayer::Measure();
+						if (!measure->GetMeasureByID(dialogBL->GetOrmasDal(), product->GetMeasureID(), errorMessage))
+						{
+							QMessageBox::information(NULL, QString(tr("Warning")),
+								QString(tr(errorMessage.c_str())),
+								QString(tr("Ok")));
+							errorMessage.clear();
+							delete measure;
+							return;
+						}
+
+						QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
+						QModelIndex mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
+						itemModel->item(mIndex.row(), 1)->setText(QString::number(specificationList->GetSpecificationID()));
+						itemModel->item(mIndex.row(), 2)->setText(product->GetName().c_str());
+						itemModel->item(mIndex.row(), 3)->setText(QString::number(specificationList->GetCount()));
+						itemModel->item(mIndex.row(), 4)->setText(measure->GetName().c_str());
+						itemModel->item(mIndex.row(), 5)->setText(QString::number(specificationList->GetProductID()));
+
+						emit itemModel->dataChanged(mIndex, mIndex);
+						emit DataIsChanged();
+						delete measure;
+					}
 				}
-
-				QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
-				QModelIndex mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
-				itemModel->item(mIndex.row(), 1)->setText(QString::number(specificationList->GetSpecificationID()));
-				itemModel->item(mIndex.row(), 2)->setText(product->GetName().c_str());
-				itemModel->item(mIndex.row(), 3)->setText(QString::number(specificationList->GetCount()));
-				itemModel->item(mIndex.row(), 4)->setText(measure->GetName().c_str());
-				itemModel->item(mIndex.row(), 5)->setText(QString::number(specificationList->GetProductID()));
-
-				emit itemModel->dataChanged(mIndex, mIndex);
-				
 				delete product;
-				delete measure;
-				this->close();
+				
+				Close();
 			}
 			else
 			{
@@ -241,7 +264,7 @@ void CreateSpecListDlg::EditProductInList()
 		}
 		else
 		{
-			this->close();
+			Close();
 		}
 	}
 	else
@@ -255,7 +278,7 @@ void CreateSpecListDlg::EditProductInList()
 
 void CreateSpecListDlg::Close()
 {
-	this->close();
+	this->parentWidget()->close();
 }
 
 void CreateSpecListDlg::OpenProdDlg()
@@ -263,29 +286,62 @@ void CreateSpecListDlg::OpenProdDlg()
 	this->hide();
 	this->setModal(false);
 	this->show();
-	DataForm *productParent = (DataForm *)parent();
-	MainForm *mainForm = (MainForm *)productParent->GetParent();
 	QString message = tr("Loading...");
 	mainForm->statusBar()->showMessage(message);
 	DataForm *dForm = new DataForm(dialogBL, mainForm);
 	dForm->setWindowTitle(tr("Products"));
 	dForm->hide();
 	dForm->setWindowModality(Qt::WindowModal);
-	dForm->FillTable<BusinessLayer::ProductView>(errorMessage);
+
+	BusinessLayer::ProductType *pType = new BusinessLayer::ProductType();
+	pType->SetCode("RAW");
+	std::string pTypeFilter = dialogBL->GenerateFilter<BusinessLayer::ProductType>(pType);
+	std::vector<BusinessLayer::ProductType> pTypeVector = dialogBL->GetAllDataForClass<BusinessLayer::ProductType>(errorMessage, pTypeFilter);
+	if (pTypeVector.size() == 0)
+	{
+		delete pType;
+		QString message = tr("Sorry could not find product type with \"Raw\" code!");
+		mainForm->statusBar()->showMessage(message);
+		QMessageBox::information(NULL, QString(tr("Warning")),
+			QString(message),
+			QString(tr("Ok")));
+		errorMessage = "";
+		return;
+	}
+
+	BusinessLayer::Product *product = new BusinessLayer::Product();
+	product->SetProductTypeID(pTypeVector.at(0).GetID());
+	std::string productFilter = dialogBL->GenerateFilter<BusinessLayer::Product>(product);
+	std::vector<BusinessLayer::ProductView> productVector = dialogBL->GetAllDataForClass<BusinessLayer::ProductView>(errorMessage, productFilter);
+	if (productVector.size() == 0)
+	{
+		delete product;
+		QString message = tr("Sorry could not find product with \"Product\" code!");
+		mainForm->statusBar()->showMessage(message);
+		QMessageBox::information(NULL, QString(tr("Warning")),
+			QString(message),
+			QString(tr("Ok")));
+		errorMessage = "";
+		return;
+	}
+
+	dForm->FillTable<BusinessLayer::ProductView>(errorMessage, productFilter);
 	if (errorMessage.empty())
 	{
-		dForm->createSpecListDlg = this;
+		dForm->parentDialog = this;
 		dForm->setObjectName("productForm");
 		dForm->QtConnect<BusinessLayer::ProductView>();
 		QMdiSubWindow *productWindow = new QMdiSubWindow;
 		productWindow->setWidget(dForm);
 		productWindow->setAttribute(Qt::WA_DeleteOnClose);
 		mainForm->mdiArea->addSubWindow(productWindow);
+		productWindow->resize(dForm->size().width() + 18, dForm->size().height() + 30);
 		dForm->topLevelWidget();
 		dForm->activateWindow();
 		QApplication::setActiveWindow(dForm);
 		dForm->show();
 		dForm->raise();
+		dForm->setWindowFlags(dForm->windowFlags() | Qt::WindowStaysOnTopHint);
 		QString message = tr("All products are shown");
 		mainForm->statusBar()->showMessage(message);
 	}
@@ -308,8 +364,6 @@ void CreateSpecListDlg::OpenSpecDlg()
 	this->hide();
 	this->setModal(false);
 	this->show();
-	DataForm *productParent = (DataForm *)parent();
-	MainForm *mainForm = (MainForm *)productParent->GetParent();
 	QString message = tr("Loading...");
 	mainForm->statusBar()->showMessage(message);
 	DataForm *dForm = new DataForm(dialogBL, mainForm);
@@ -319,18 +373,20 @@ void CreateSpecListDlg::OpenSpecDlg()
 	dForm->FillTable<BusinessLayer::SpecificationView>(errorMessage);
 	if (errorMessage.empty())
 	{
-		dForm->createSpecListDlg = this;
+		dForm->parentDialog = this;
 		dForm->setObjectName("SpecificationForm");
 		dForm->QtConnect<BusinessLayer::SpecificationView>();
 		QMdiSubWindow *specificationWindow = new QMdiSubWindow;
 		specificationWindow->setWidget(dForm);
 		specificationWindow->setAttribute(Qt::WA_DeleteOnClose);
 		mainForm->mdiArea->addSubWindow(specificationWindow);
+		specificationWindow->resize(dForm->size().width() + 18, dForm->size().height() + 30);
 		dForm->topLevelWidget();
 		dForm->activateWindow();
 		QApplication::setActiveWindow(dForm);
 		dForm->show();
 		dForm->raise();
+		dForm->setWindowFlags(dForm->windowFlags() | Qt::WindowStaysOnTopHint);
 		QString message = tr("All Specifications are shown");
 		mainForm->statusBar()->showMessage(message);
 	}
@@ -345,4 +401,16 @@ void CreateSpecListDlg::OpenSpecDlg()
 		errorMessage = "";
 	}
 
+}
+
+void CreateSpecListDlg::TextEditChanged()
+{
+	if (countEdit->text().contains(","))
+	{
+		countEdit->setText(countEdit->text().replace(",", "."));
+	}
+	if (countEdit->text().contains(".."))
+	{
+		countEdit->setText(countEdit->text().replace("..", "."));
+	}
 }

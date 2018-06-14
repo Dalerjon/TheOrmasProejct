@@ -32,20 +32,20 @@ class Ui_CreateOrderRaw
 {
 public:
     QGridLayout *gridLayout;
-    QLabel *empStockNameLb;
-    QLabel *currencyLb;
-    QLabel *empStockNamePh;
-    QLabel *empStockPhonePh;
-    QLabel *empStockSurnamePh;
-    QLabel *empStockSurnameLb;
-    QLabel *empStockPhoneLb;
-    QLabel *sumLb;
     QLabel *empNameLb;
+    QLabel *currencyLb;
     QLabel *empNamePh;
-    QLabel *empSurnameLb;
-    QLabel *empSurnamePh;
-    QLabel *empPhoneLb;
     QLabel *empPhonePh;
+    QLabel *empSurnamePh;
+    QLabel *empSurnameLb;
+    QLabel *empPhoneLb;
+    QLabel *sumLb;
+    QLabel *prNameLb;
+    QLabel *prNamePh;
+    QLabel *prSurnameLb;
+    QLabel *prSurnamePh;
+    QLabel *prPhoneLb;
+    QLabel *prPhonePh;
     QComboBox *currencyCmb;
     QLineEdit *sumEdit;
     QHBoxLayout *horizontalLayout;
@@ -66,11 +66,11 @@ public:
     QDateTimeEdit *execDateEdit;
     QLineEdit *prodCountEdit;
     QLabel *prodCountLb;
-    QPushButton *employeeBtn;
+    QPushButton *purveyorBtn;
     QLabel *dateLb;
+    QLineEdit *purveyorEdit;
     QLineEdit *employeeEdit;
-    QLineEdit *stockEmployeeEdit;
-    QPushButton *stockEmployeeBtn;
+    QPushButton *employeeBtn;
     QPushButton *addProdBtn;
 
     void setupUi(QDialog *CreateOrderRaw)
@@ -83,101 +83,101 @@ public:
         gridLayout = new QGridLayout(CreateOrderRaw);
         gridLayout->setObjectName(QStringLiteral("gridLayout"));
         gridLayout->setContentsMargins(11, 11, 11, 11);
-        empStockNameLb = new QLabel(CreateOrderRaw);
-        empStockNameLb->setObjectName(QStringLiteral("empStockNameLb"));
-        empStockNameLb->setMinimumSize(QSize(50, 0));
-        empStockNameLb->setMaximumSize(QSize(50, 16777215));
+        empNameLb = new QLabel(CreateOrderRaw);
+        empNameLb->setObjectName(QStringLiteral("empNameLb"));
+        empNameLb->setMinimumSize(QSize(50, 0));
+        empNameLb->setMaximumSize(QSize(50, 16777215));
 
-        gridLayout->addWidget(empStockNameLb, 5, 0, 1, 1);
+        gridLayout->addWidget(empNameLb, 5, 0, 1, 1);
 
         currencyLb = new QLabel(CreateOrderRaw);
         currencyLb->setObjectName(QStringLiteral("currencyLb"));
 
         gridLayout->addWidget(currencyLb, 9, 0, 1, 1);
 
-        empStockNamePh = new QLabel(CreateOrderRaw);
-        empStockNamePh->setObjectName(QStringLiteral("empStockNamePh"));
-        empStockNamePh->setMinimumSize(QSize(100, 0));
+        empNamePh = new QLabel(CreateOrderRaw);
+        empNamePh->setObjectName(QStringLiteral("empNamePh"));
+        empNamePh->setMinimumSize(QSize(100, 0));
         QFont font;
         font.setFamily(QStringLiteral("Times New Roman"));
         font.setPointSize(12);
         font.setBold(true);
         font.setItalic(true);
         font.setWeight(75);
-        empStockNamePh->setFont(font);
-
-        gridLayout->addWidget(empStockNamePh, 5, 1, 1, 1);
-
-        empStockPhonePh = new QLabel(CreateOrderRaw);
-        empStockPhonePh->setObjectName(QStringLiteral("empStockPhonePh"));
-        empStockPhonePh->setMinimumSize(QSize(100, 0));
-        empStockPhonePh->setFont(font);
-
-        gridLayout->addWidget(empStockPhonePh, 5, 5, 1, 1);
-
-        empStockSurnamePh = new QLabel(CreateOrderRaw);
-        empStockSurnamePh->setObjectName(QStringLiteral("empStockSurnamePh"));
-        empStockSurnamePh->setMinimumSize(QSize(100, 0));
-        empStockSurnamePh->setFont(font);
-
-        gridLayout->addWidget(empStockSurnamePh, 5, 3, 1, 1);
-
-        empStockSurnameLb = new QLabel(CreateOrderRaw);
-        empStockSurnameLb->setObjectName(QStringLiteral("empStockSurnameLb"));
-        empStockSurnameLb->setMinimumSize(QSize(50, 0));
-        empStockSurnameLb->setMaximumSize(QSize(50, 16777215));
-
-        gridLayout->addWidget(empStockSurnameLb, 5, 2, 1, 1);
-
-        empStockPhoneLb = new QLabel(CreateOrderRaw);
-        empStockPhoneLb->setObjectName(QStringLiteral("empStockPhoneLb"));
-
-        gridLayout->addWidget(empStockPhoneLb, 5, 4, 1, 1);
-
-        sumLb = new QLabel(CreateOrderRaw);
-        sumLb->setObjectName(QStringLiteral("sumLb"));
-
-        gridLayout->addWidget(sumLb, 8, 0, 1, 1);
-
-        empNameLb = new QLabel(CreateOrderRaw);
-        empNameLb->setObjectName(QStringLiteral("empNameLb"));
-        empNameLb->setMinimumSize(QSize(50, 0));
-        empNameLb->setMaximumSize(QSize(50, 16777215));
-
-        gridLayout->addWidget(empNameLb, 1, 0, 1, 1);
-
-        empNamePh = new QLabel(CreateOrderRaw);
-        empNamePh->setObjectName(QStringLiteral("empNamePh"));
-        empNamePh->setMinimumSize(QSize(100, 0));
         empNamePh->setFont(font);
 
-        gridLayout->addWidget(empNamePh, 1, 1, 1, 1);
-
-        empSurnameLb = new QLabel(CreateOrderRaw);
-        empSurnameLb->setObjectName(QStringLiteral("empSurnameLb"));
-        empSurnameLb->setMinimumSize(QSize(50, 0));
-        empSurnameLb->setMaximumSize(QSize(50, 16777215));
-
-        gridLayout->addWidget(empSurnameLb, 1, 2, 1, 1);
-
-        empSurnamePh = new QLabel(CreateOrderRaw);
-        empSurnamePh->setObjectName(QStringLiteral("empSurnamePh"));
-        empSurnamePh->setMinimumSize(QSize(100, 0));
-        empSurnamePh->setFont(font);
-
-        gridLayout->addWidget(empSurnamePh, 1, 3, 1, 1);
-
-        empPhoneLb = new QLabel(CreateOrderRaw);
-        empPhoneLb->setObjectName(QStringLiteral("empPhoneLb"));
-
-        gridLayout->addWidget(empPhoneLb, 1, 4, 1, 1);
+        gridLayout->addWidget(empNamePh, 5, 1, 1, 1);
 
         empPhonePh = new QLabel(CreateOrderRaw);
         empPhonePh->setObjectName(QStringLiteral("empPhonePh"));
         empPhonePh->setMinimumSize(QSize(100, 0));
         empPhonePh->setFont(font);
 
-        gridLayout->addWidget(empPhonePh, 1, 5, 1, 1);
+        gridLayout->addWidget(empPhonePh, 5, 5, 1, 1);
+
+        empSurnamePh = new QLabel(CreateOrderRaw);
+        empSurnamePh->setObjectName(QStringLiteral("empSurnamePh"));
+        empSurnamePh->setMinimumSize(QSize(100, 0));
+        empSurnamePh->setFont(font);
+
+        gridLayout->addWidget(empSurnamePh, 5, 3, 1, 1);
+
+        empSurnameLb = new QLabel(CreateOrderRaw);
+        empSurnameLb->setObjectName(QStringLiteral("empSurnameLb"));
+        empSurnameLb->setMinimumSize(QSize(50, 0));
+        empSurnameLb->setMaximumSize(QSize(50, 16777215));
+
+        gridLayout->addWidget(empSurnameLb, 5, 2, 1, 1);
+
+        empPhoneLb = new QLabel(CreateOrderRaw);
+        empPhoneLb->setObjectName(QStringLiteral("empPhoneLb"));
+
+        gridLayout->addWidget(empPhoneLb, 5, 4, 1, 1);
+
+        sumLb = new QLabel(CreateOrderRaw);
+        sumLb->setObjectName(QStringLiteral("sumLb"));
+
+        gridLayout->addWidget(sumLb, 8, 0, 1, 1);
+
+        prNameLb = new QLabel(CreateOrderRaw);
+        prNameLb->setObjectName(QStringLiteral("prNameLb"));
+        prNameLb->setMinimumSize(QSize(50, 0));
+        prNameLb->setMaximumSize(QSize(50, 16777215));
+
+        gridLayout->addWidget(prNameLb, 1, 0, 1, 1);
+
+        prNamePh = new QLabel(CreateOrderRaw);
+        prNamePh->setObjectName(QStringLiteral("prNamePh"));
+        prNamePh->setMinimumSize(QSize(100, 0));
+        prNamePh->setFont(font);
+
+        gridLayout->addWidget(prNamePh, 1, 1, 1, 1);
+
+        prSurnameLb = new QLabel(CreateOrderRaw);
+        prSurnameLb->setObjectName(QStringLiteral("prSurnameLb"));
+        prSurnameLb->setMinimumSize(QSize(50, 0));
+        prSurnameLb->setMaximumSize(QSize(50, 16777215));
+
+        gridLayout->addWidget(prSurnameLb, 1, 2, 1, 1);
+
+        prSurnamePh = new QLabel(CreateOrderRaw);
+        prSurnamePh->setObjectName(QStringLiteral("prSurnamePh"));
+        prSurnamePh->setMinimumSize(QSize(100, 0));
+        prSurnamePh->setFont(font);
+
+        gridLayout->addWidget(prSurnamePh, 1, 3, 1, 1);
+
+        prPhoneLb = new QLabel(CreateOrderRaw);
+        prPhoneLb->setObjectName(QStringLiteral("prPhoneLb"));
+
+        gridLayout->addWidget(prPhoneLb, 1, 4, 1, 1);
+
+        prPhonePh = new QLabel(CreateOrderRaw);
+        prPhonePh->setObjectName(QStringLiteral("prPhonePh"));
+        prPhonePh->setMinimumSize(QSize(100, 0));
+        prPhonePh->setFont(font);
+
+        gridLayout->addWidget(prPhonePh, 1, 5, 1, 1);
 
         currencyCmb = new QComboBox(CreateOrderRaw);
         currencyCmb->setObjectName(QStringLiteral("currencyCmb"));
@@ -293,41 +293,41 @@ public:
 
         gridLayout->addWidget(prodCountLb, 6, 2, 1, 1);
 
-        employeeBtn = new QPushButton(CreateOrderRaw);
-        employeeBtn->setObjectName(QStringLiteral("employeeBtn"));
-        employeeBtn->setMinimumSize(QSize(200, 0));
+        purveyorBtn = new QPushButton(CreateOrderRaw);
+        purveyorBtn->setObjectName(QStringLiteral("purveyorBtn"));
+        purveyorBtn->setMinimumSize(QSize(200, 0));
 
-        gridLayout->addWidget(employeeBtn, 0, 0, 1, 2);
+        gridLayout->addWidget(purveyorBtn, 0, 0, 1, 2);
 
         dateLb = new QLabel(CreateOrderRaw);
         dateLb->setObjectName(QStringLiteral("dateLb"));
 
         gridLayout->addWidget(dateLb, 2, 0, 1, 2);
 
+        purveyorEdit = new QLineEdit(CreateOrderRaw);
+        purveyorEdit->setObjectName(QStringLiteral("purveyorEdit"));
+        purveyorEdit->setReadOnly(true);
+
+        gridLayout->addWidget(purveyorEdit, 0, 2, 1, 2);
+
         employeeEdit = new QLineEdit(CreateOrderRaw);
         employeeEdit->setObjectName(QStringLiteral("employeeEdit"));
         employeeEdit->setReadOnly(true);
 
-        gridLayout->addWidget(employeeEdit, 0, 2, 1, 2);
+        gridLayout->addWidget(employeeEdit, 4, 2, 1, 2);
 
-        stockEmployeeEdit = new QLineEdit(CreateOrderRaw);
-        stockEmployeeEdit->setObjectName(QStringLiteral("stockEmployeeEdit"));
-        stockEmployeeEdit->setReadOnly(true);
+        employeeBtn = new QPushButton(CreateOrderRaw);
+        employeeBtn->setObjectName(QStringLiteral("employeeBtn"));
 
-        gridLayout->addWidget(stockEmployeeEdit, 4, 2, 1, 2);
-
-        stockEmployeeBtn = new QPushButton(CreateOrderRaw);
-        stockEmployeeBtn->setObjectName(QStringLiteral("stockEmployeeBtn"));
-
-        gridLayout->addWidget(stockEmployeeBtn, 4, 0, 1, 2);
+        gridLayout->addWidget(employeeBtn, 4, 0, 1, 2);
 
         addProdBtn = new QPushButton(CreateOrderRaw);
         addProdBtn->setObjectName(QStringLiteral("addProdBtn"));
 
         gridLayout->addWidget(addProdBtn, 6, 0, 1, 2);
 
-        QWidget::setTabOrder(employeeBtn, stockEmployeeBtn);
-        QWidget::setTabOrder(stockEmployeeBtn, addProdBtn);
+        QWidget::setTabOrder(purveyorBtn, employeeBtn);
+        QWidget::setTabOrder(employeeBtn, addProdBtn);
         QWidget::setTabOrder(addProdBtn, okBtn);
         QWidget::setTabOrder(okBtn, cancelBtn);
 
@@ -339,20 +339,20 @@ public:
     void retranslateUi(QDialog *CreateOrderRaw)
     {
         CreateOrderRaw->setWindowTitle(QApplication::translate("CreateOrderRaw", "Create/Update order raw", 0));
-        empStockNameLb->setText(QApplication::translate("CreateOrderRaw", "Name:", 0));
-        currencyLb->setText(QApplication::translate("CreateOrderRaw", "Select currency:", 0));
-        empStockNamePh->setText(QString());
-        empStockPhonePh->setText(QString());
-        empStockSurnamePh->setText(QString());
-        empStockSurnameLb->setText(QApplication::translate("CreateOrderRaw", "Surname:", 0));
-        empStockPhoneLb->setText(QApplication::translate("CreateOrderRaw", "Phone:", 0));
-        sumLb->setText(QApplication::translate("CreateOrderRaw", "Total amount:", 0));
         empNameLb->setText(QApplication::translate("CreateOrderRaw", "Name:", 0));
+        currencyLb->setText(QApplication::translate("CreateOrderRaw", "Select currency:", 0));
         empNamePh->setText(QString());
-        empSurnameLb->setText(QApplication::translate("CreateOrderRaw", "Surname:", 0));
-        empSurnamePh->setText(QString());
-        empPhoneLb->setText(QApplication::translate("CreateOrderRaw", "Phone:", 0));
         empPhonePh->setText(QString());
+        empSurnamePh->setText(QString());
+        empSurnameLb->setText(QApplication::translate("CreateOrderRaw", "Surname:", 0));
+        empPhoneLb->setText(QApplication::translate("CreateOrderRaw", "Phone:", 0));
+        sumLb->setText(QApplication::translate("CreateOrderRaw", "Total amount:", 0));
+        prNameLb->setText(QApplication::translate("CreateOrderRaw", "Name:", 0));
+        prNamePh->setText(QString());
+        prSurnameLb->setText(QApplication::translate("CreateOrderRaw", "Surname:", 0));
+        prSurnamePh->setText(QString());
+        prPhoneLb->setText(QApplication::translate("CreateOrderRaw", "Phone:", 0));
+        prPhonePh->setText(QString());
         okBtn->setText(QApplication::translate("CreateOrderRaw", "OK", 0));
         cancelBtn->setText(QApplication::translate("CreateOrderRaw", "Cancel", 0));
         statusBtn->setText(QApplication::translate("CreateOrderRaw", "Change status", 0));
@@ -360,15 +360,15 @@ public:
         statusPh->setText(QString());
         execDateLb->setText(QApplication::translate("CreateOrderRaw", "Execution date:", 0));
         prodCountLb->setText(QApplication::translate("CreateOrderRaw", "Count of products:", 0));
-        employeeBtn->setText(QApplication::translate("CreateOrderRaw", "Select employee", 0));
+        purveyorBtn->setText(QApplication::translate("CreateOrderRaw", "Select purveyor", 0));
         dateLb->setText(QApplication::translate("CreateOrderRaw", "Consume order raw date:", 0));
 #ifndef QT_NO_TOOLTIP
-        employeeEdit->setToolTip(QApplication::translate("CreateOrderRaw", "<html><head/><body><p>Enter client ID</p></body></html>", 0));
+        purveyorEdit->setToolTip(QApplication::translate("CreateOrderRaw", "<html><head/><body><p>Enter client ID</p></body></html>", 0));
 #endif // QT_NO_TOOLTIP
 #ifndef QT_NO_TOOLTIP
-        stockEmployeeEdit->setToolTip(QApplication::translate("CreateOrderRaw", "<html><head/><body><p>Enter employee ID</p></body></html>", 0));
+        employeeEdit->setToolTip(QApplication::translate("CreateOrderRaw", "<html><head/><body><p>Enter employee ID</p></body></html>", 0));
 #endif // QT_NO_TOOLTIP
-        stockEmployeeBtn->setText(QApplication::translate("CreateOrderRaw", "Select stock employee", 0));
+        employeeBtn->setText(QApplication::translate("CreateOrderRaw", "Select employee", 0));
         addProdBtn->setText(QApplication::translate("CreateOrderRaw", "Add products", 0));
     } // retranslateUi
 

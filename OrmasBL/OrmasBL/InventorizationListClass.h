@@ -10,12 +10,12 @@ namespace BusinessLayer
 		int id = 0;
 		int inventorizationID = 0;
 		int productID = 0;
-		int count = 0;
+		double count = 0;
 		double sum = 0;
 		int statusID = 0;
 		int currencyID = 0;
 	public:
-		InventorizationList(int ilID, int iID, int pID, int ilCount, double ilSum, int sID, int cID) :id(ilID), inventorizationID(iID),
+		InventorizationList(int ilID, int iID, int pID, double ilCount, double ilSum, int sID, int cID) :id(ilID), inventorizationID(iID),
 			productID(pID),	count(ilCount), sum(ilSum), statusID(sID), currencyID(cID){};
 		InventorizationList(DataLayer::inventorizationListCollection);
 		InventorizationList(){};
@@ -25,7 +25,7 @@ namespace BusinessLayer
 		int GetID();
 		int GetInventorizationID();
 		int GetProductID();
-		int GetCount();
+		double GetCount();
 		double GetSum();
 		int GetStatusID();
 		int GetCurrencyID();
@@ -34,7 +34,7 @@ namespace BusinessLayer
 		void SetID(int);
 		void SetInventorizationID(int);
 		void SetProductID(int);
-		void SetCount(int);
+		void SetCount(double);
 		void SetSum(double);
 		void SetStatusID(int);
 		void SetCurrencyID(int);
@@ -44,9 +44,9 @@ namespace BusinessLayer
 		bool UpdateInventorizationList(DataLayer::OrmasDal& ormasDal, std::string& errorMessage);
 		bool DeleteInventorizationList(DataLayer::OrmasDal& ormasDal, std::string& errorMessage);
 		bool DeleteListByInventorizationID(DataLayer::OrmasDal& ormasDal, int iID, std::string& errorMessage);
-		bool CreateInventorizationList(DataLayer::OrmasDal& ormasDal, int iID, int pID, int ilCount, double ilSum,
+		bool CreateInventorizationList(DataLayer::OrmasDal& ormasDal, int iID, int pID, double ilCount, double ilSum,
 			int sID, int cID, std::string& errorMessage);
-		bool UpdateInventorizationList(DataLayer::OrmasDal& ormasDal, int iID, int pID, int ilCount, double ilSum,
+		bool UpdateInventorizationList(DataLayer::OrmasDal& ormasDal, int iID, int pID, double ilCount, double ilSum,
 			int sID, int cID, std::string& errorMessage);
 
 		//Generate filter string for class
@@ -55,7 +55,7 @@ namespace BusinessLayer
 		bool IsEmpty();
 		void Clear();
 	private:
-		bool IsDuplicate(DataLayer::OrmasDal& ormasDal, int iID, int pID, int ilCount, double ilSum,
+		bool IsDuplicate(DataLayer::OrmasDal& ormasDal, int iID, int pID, double ilCount, double ilSum,
 			int cID, std::string& errorMessage);
 		bool IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string& errorMessage);
 	};

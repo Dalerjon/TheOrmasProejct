@@ -1,9 +1,9 @@
 #include "stdafx.h"
 #include "CreatePcrDlg.h"
-#include <QMessageBox>
+
 #include "MainForm.h"
 #include "DataForm.h"
-#include "ExtraFunctions.h"
+
 
 
 CreatePcrDlg::CreatePcrDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, QWidget *parent) :QDialog(parent)
@@ -11,6 +11,9 @@ CreatePcrDlg::CreatePcrDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, QWi
 	setupUi(this);
 	setModal(true);
 	dialogBL = ormasBL;
+	parentForm = parent;
+	DataForm *dataFormParent = (DataForm *)this->parentForm;
+	mainForm = (MainForm *)dataFormParent->GetParent();
 	vDouble = new QDoubleValidator(0.00, 1000000000.00, 3, this);
 	vInt = new QIntValidator(0, 1000000000, this);
 	valueEdit->setValidator(vDouble);
@@ -26,6 +29,7 @@ CreatePcrDlg::CreatePcrDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, QWi
 	}
 	QObject::connect(cancelBtn, &QPushButton::released, this, &CreatePcrDlg::Close);
 	QObject::connect(positionBtn, &QPushButton::released, this, &CreatePcrDlg::OpenPosDlg);
+	QObject::connect(valueEdit, &QLineEdit::textChanged, this, &CreatePcrDlg::TextEditChanged);
 }
 
 CreatePcrDlg::~CreatePcrDlg()
@@ -40,9 +44,21 @@ void CreatePcrDlg::SetID(int ID, QString childName)
 	{
 		if (0 != childName.length())
 		{
+			this->hide();
+			this->setWindowFlags(this->windowFlags() | Qt::WindowStaysOnTopHint);
+			this->show();
+			this->raise();
+			this->activateWindow();
+			QApplication::setActiveWindow(this);
+
 			if (childName == QString("positionForm"))
 			{
 				positionEdit->setText(QString::number(ID));
+				BusinessLayer::Position position;
+				if (position.GetPositionByID(dialogBL->GetOrmasDal(), ID, errorMessage))
+				{
+					positionPh->setText(position.GetName().c_str());
+				}
 			}
 		}
 	}
@@ -61,6 +77,11 @@ void CreatePcrDlg::FillEditElements(double pValue, QString pCondition, int posID
 	valueEdit->setText(QString::number(pValue));
 	conditionEdit->setText(pCondition);
 	positionEdit->setText(QString::number(posID));
+	BusinessLayer::Position position;
+	if (position.GetPositionByID(dialogBL->GetOrmasDal(), posID, errorMessage))
+	{
+		positionPh->setText(position.GetName().c_str());
+	}
 }
 
 bool CreatePcrDlg::FillDlgElements(QTableView* pTable)
@@ -89,33 +110,39 @@ void CreatePcrDlg::CreatePercentRate()
 	if (0.0 != valueEdit->text().toDouble() && 0 != positionEdit->text().toInt()
 		&& !conditionEdit->text().isEmpty())
 	{
-		DataForm *parentDataForm = (DataForm*)parentWidget();
+		DataForm *parentDataForm = (DataForm*) parentForm;
 		SetPercentRateParams(valueEdit->text().toDouble(), conditionEdit->text(), positionEdit->text().toInt());
 		dialogBL->StartTransaction(errorMessage);
 		if (dialogBL->CreatePercentRate(percentRate, errorMessage))
 		{
-			BusinessLayer::Position *position = new BusinessLayer::Position;
-			if (!position->GetPositionByID(dialogBL->GetOrmasDal(), percentRate->GetPositionID(), errorMessage))
+			if (parentDataForm != nullptr)
 			{
-				dialogBL->CancelTransaction(errorMessage);
-				QMessageBox::information(NULL, QString(tr("Warning")),
-					QString(tr(errorMessage.c_str())),
-					QString(tr("Ok")));
-				errorMessage.clear();
-				delete position;
-				return;
+				if (!parentDataForm->IsClosed())
+				{
+					BusinessLayer::Position *position = new BusinessLayer::Position;
+					if (!position->GetPositionByID(dialogBL->GetOrmasDal(), percentRate->GetPositionID(), errorMessage))
+					{
+						dialogBL->CancelTransaction(errorMessage);
+						QMessageBox::information(NULL, QString(tr("Warning")),
+							QString(tr(errorMessage.c_str())),
+							QString(tr("Ok")));
+						errorMessage.clear();
+						delete position;
+						return;
+					}
+					QList<QStandardItem*> PercentRateItem;
+					PercentRateItem << new QStandardItem(QString::number(percentRate->GetID()))
+						<< new QStandardItem(QString::number(percentRate->GetValue()))
+						<< new QStandardItem(percentRate->GetCondition().c_str())
+						<< new QStandardItem(QString::number(percentRate->GetPositionID()));
+					QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
+					itemModel->appendRow(PercentRateItem);
+					delete position;
+				}
 			}
-			QList<QStandardItem*> PercentRateItem;
-			PercentRateItem << new QStandardItem(QString::number(percentRate->GetID()))
-				<< new QStandardItem(QString::number(percentRate->GetValue()))
-				<< new QStandardItem(percentRate->GetCondition().c_str())
-				<< new QStandardItem(QString::number(percentRate->GetPositionID()));
-			QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
-			itemModel->appendRow(PercentRateItem);
-			
 			dialogBL->CommitTransaction(errorMessage);
-			delete position;
-			this->close();
+			
+			Close();
 		}
 		else
 		{
@@ -146,32 +173,38 @@ void CreatePcrDlg::EditPercentRate()
 		if (percentRate->GetValue() != valueEdit->text().toDouble() || QString(percentRate->GetCondition().c_str()) != conditionEdit->text() ||
 			percentRate->GetPositionID() != positionEdit->text().toInt())
 		{
-			DataForm *parentDataForm = (DataForm*)parentWidget();
+			DataForm *parentDataForm = (DataForm*) parentForm;
 			SetPercentRateParams(valueEdit->text().toDouble(), conditionEdit->text(), positionEdit->text().toInt(), percentRate->GetID());
 			dialogBL->StartTransaction(errorMessage);
 			if (dialogBL->UpdatePercentRate(percentRate, errorMessage))
 			{
-				BusinessLayer::Position *position = new BusinessLayer::Position;
-				if (!position->GetPositionByID(dialogBL->GetOrmasDal(), percentRate->GetPositionID(), errorMessage))
+				if (parentDataForm != nullptr)
 				{
-					dialogBL->CancelTransaction(errorMessage);
-					QMessageBox::information(NULL, QString(tr("Warning")),
-						QString(tr(errorMessage.c_str())),
-						QString(tr("Ok")));
-					errorMessage.clear();
-					delete position;
-					return;
+					if (!parentDataForm->IsClosed())
+					{
+						BusinessLayer::Position *position = new BusinessLayer::Position;
+						if (!position->GetPositionByID(dialogBL->GetOrmasDal(), percentRate->GetPositionID(), errorMessage))
+						{
+							dialogBL->CancelTransaction(errorMessage);
+							QMessageBox::information(NULL, QString(tr("Warning")),
+								QString(tr(errorMessage.c_str())),
+								QString(tr("Ok")));
+							errorMessage.clear();
+							delete position;
+							return;
+						}
+						QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
+						QModelIndex mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
+						itemModel->item(mIndex.row(), 1)->setText(QString::number(percentRate->GetValue()));
+						itemModel->item(mIndex.row(), 2)->setText(percentRate->GetCondition().c_str());
+						itemModel->item(mIndex.row(), 3)->setText(QString::number(percentRate->GetPositionID()));
+						emit itemModel->dataChanged(mIndex, mIndex);
+						delete position;
+					}
 				}
-				QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
-				QModelIndex mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
-				itemModel->item(mIndex.row(), 1)->setText(QString::number(percentRate->GetValue()));
-				itemModel->item(mIndex.row(), 2)->setText(percentRate->GetCondition().c_str());
-				itemModel->item(mIndex.row(), 3)->setText(QString::number(percentRate->GetPositionID()));
-				emit itemModel->dataChanged(mIndex, mIndex);
-				
 				dialogBL->CommitTransaction(errorMessage);
-				delete position;
-				this->close();
+				
+				Close();
 			}
 			else
 			{
@@ -184,7 +217,7 @@ void CreatePcrDlg::EditPercentRate()
 		}
 		else
 		{
-			this->close();
+			Close();
 		}
 	}
 	else
@@ -198,7 +231,7 @@ void CreatePcrDlg::EditPercentRate()
 
 void CreatePcrDlg::Close()
 {
-	this->close();
+	this->parentWidget()->close();
 }
 
 void CreatePcrDlg::OpenPosDlg()
@@ -206,8 +239,6 @@ void CreatePcrDlg::OpenPosDlg()
 	this->hide();
 	this->setModal(false);
 	this->show();
-	DataForm *productParent = (DataForm *)parent();
-	MainForm *mainForm = (MainForm *)productParent->GetParent();
 	QString message = tr("Loading...");
 	mainForm->statusBar()->showMessage(message);
 	DataForm *dForm = new DataForm(dialogBL, mainForm);
@@ -217,18 +248,20 @@ void CreatePcrDlg::OpenPosDlg()
 	dForm->FillTable<BusinessLayer::Position>(errorMessage);
 	if (errorMessage.empty())
 	{
-		dForm->createPcrDlg = this;
+		dForm->parentDialog = this;
 		dForm->setObjectName("positionForm");
 		dForm->QtConnect<BusinessLayer::Position>();
 		QMdiSubWindow *currencyWindow = new QMdiSubWindow;
 		currencyWindow->setWidget(dForm);
 		currencyWindow->setAttribute(Qt::WA_DeleteOnClose);
 		mainForm->mdiArea->addSubWindow(currencyWindow);
+		currencyWindow->resize(dForm->size().width() + 18, dForm->size().height() + 30);
 		dForm->topLevelWidget();
 		dForm->activateWindow();
 		QApplication::setActiveWindow(dForm);
 		dForm->show();
 		dForm->raise();
+		dForm->setWindowFlags(dForm->windowFlags() | Qt::WindowStaysOnTopHint);
 		QString message = tr("All positions are shown");
 		mainForm->statusBar()->showMessage(message);
 	}
@@ -241,5 +274,17 @@ void CreatePcrDlg::OpenPosDlg()
 			QString(tr(errorMessage.c_str())),
 			QString(tr("Ok")));
 		errorMessage = "";
+	}
+}
+
+void CreatePcrDlg::TextEditChanged()
+{
+	if (valueEdit->text().contains(","))
+	{
+		valueEdit->setText(valueEdit->text().replace(",", "."));
+	}
+	if (valueEdit->text().contains(".."))
+	{
+		valueEdit->setText(valueEdit->text().replace("..", "."));
 	}
 }

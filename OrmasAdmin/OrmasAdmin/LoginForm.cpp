@@ -57,6 +57,5 @@ void LoginForm::CheckCredentials()
 
 void LoginForm::Close()
 {
-	
 	this->close();
 }

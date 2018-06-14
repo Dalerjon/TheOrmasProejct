@@ -1,9 +1,9 @@
 #include "stdafx.h"
-#include <QMessageBox>
+
 #include "CreateRelTypeDlg.h"
 #include "MainForm.h"
 #include "DataForm.h"
-#include "ExtraFunctions.h"
+
 
 CreateRelTypeDlg::CreateRelTypeDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, QWidget *parent) :QDialog(parent)
 {
@@ -11,6 +11,7 @@ CreateRelTypeDlg::CreateRelTypeDlg(BusinessLayer::OrmasBL *ormasBL, bool updateF
 	setModal(true);
 	nameEdit->setMaxLength(20);
 	dialogBL = ormasBL;
+	parentForm = parent;
 	nameEdit->setMaxLength(30);
 	if (true == updateFlag)
 	{
@@ -60,19 +61,25 @@ void CreateRelTypeDlg::CreateRelationType()
 	errorMessage.clear();
 	if (!(nameEdit->text().isEmpty()))
 	{
-		DataForm *parentDataForm = (DataForm*)parentWidget();
+		DataForm *parentDataForm = (DataForm*) parentForm;
 		SetRelationTypeParams(nameEdit->text(), commentTextEdit->toPlainText());
 		dialogBL->StartTransaction(errorMessage);
 		if (dialogBL->CreateRelationType(relationType, errorMessage))
 		{
-			QList<QStandardItem*> relationTypeItem;
-			relationTypeItem << new QStandardItem(QString::number(relationType->GetID())) << new QStandardItem(relationType->GetName().c_str())
-				<< new QStandardItem(relationType->GetComment().c_str());
-			QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
-			itemModel->appendRow(relationTypeItem);
+			if (parentDataForm != nullptr)
+			{
+				if (!parentDataForm->IsClosed())
+				{
+					QList<QStandardItem*> relationTypeItem;
+					relationTypeItem << new QStandardItem(QString::number(relationType->GetID())) << new QStandardItem(relationType->GetName().c_str())
+						<< new QStandardItem(relationType->GetComment().c_str());
+					QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
+					itemModel->appendRow(relationTypeItem);
+				}
+			}
 			
 			dialogBL->CommitTransaction(errorMessage);
-			this->close();
+			Close();
 		}
 		else
 		{
@@ -98,19 +105,25 @@ void CreateRelTypeDlg::EditRelationType()
 	{
 		if (QString(relationType->GetName().c_str()) != nameEdit->text() || QString(relationType->GetComment().c_str()) != commentTextEdit->toPlainText())
 		{
-			DataForm *parentDataForm = (DataForm*)parentWidget();
+			DataForm *parentDataForm = (DataForm*) parentForm;
 			SetRelationTypeParams(nameEdit->text(), commentTextEdit->toPlainText(), relationType->GetID());
 			dialogBL->StartTransaction(errorMessage);
 			if (dialogBL->UpdateRelationType(relationType, errorMessage))
 			{
-				QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
-				QModelIndex mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
-				itemModel->item(mIndex.row(), 1)->setText(relationType->GetName().c_str());
-				itemModel->item(mIndex.row(), 2)->setText(relationType->GetComment().c_str());
-				emit itemModel->dataChanged(mIndex, mIndex);
+				if (parentDataForm != nullptr)
+				{
+					if (!parentDataForm->IsClosed())
+					{
+						QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
+						QModelIndex mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
+						itemModel->item(mIndex.row(), 1)->setText(relationType->GetName().c_str());
+						itemModel->item(mIndex.row(), 2)->setText(relationType->GetComment().c_str());
+						emit itemModel->dataChanged(mIndex, mIndex);
+					}
+				}
 				
 				dialogBL->CommitTransaction(errorMessage);
-				this->close();
+				Close();
 			}
 			else
 			{
@@ -122,7 +135,7 @@ void CreateRelTypeDlg::EditRelationType()
 		}
 		else
 		{
-			this->close();
+			Close();
 		}
 	}
 	else
@@ -136,7 +149,7 @@ void CreateRelTypeDlg::EditRelationType()
 
 void CreateRelTypeDlg::Close()
 {
-	this->close();
+	this->parentWidget()->close();
 }
 
 void CreateRelTypeDlg::TextEditChanged()

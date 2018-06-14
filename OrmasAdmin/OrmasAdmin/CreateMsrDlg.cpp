@@ -1,9 +1,9 @@
 #include "stdafx.h"
-#include <QMessageBox>
+
 #include "CreateMsrDlg.h"
 #include "MainForm.h"
 #include "DataForm.h"
-#include "ExtraFunctions.h"
+
 
 CreateMsrDlg::CreateMsrDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, QWidget *parent) :QDialog(parent)
 {
@@ -12,6 +12,7 @@ CreateMsrDlg::CreateMsrDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, QWi
 	shortNameEdit->setMaxLength(4);
 	nameEdit->setMaxLength(15);
 	dialogBL = ormasBL;
+	parentForm = parent;
 	vInt = new QIntValidator(0, 1000000000, this);
 	unitEdit->setValidator(vInt);
 	unitEdit->setMaxLength(10);
@@ -72,19 +73,25 @@ void CreateMsrDlg::CreateMeasure()
 	errorMessage.clear();
 	if (!(nameEdit->text().isEmpty() || shortNameEdit->text().isEmpty()) && 0 != unitEdit->text().toInt())
 	{
-		DataForm *parentDataForm = (DataForm*)parentWidget();
+		DataForm *parentDataForm = (DataForm*) parentForm;
 		SetMeasureParams(nameEdit->text(), shortNameEdit->text(), unitEdit->text().toInt());
 		dialogBL->StartTransaction(errorMessage);
 		if (dialogBL->CreateMeasure(measure,errorMessage))
 		{
-			QList<QStandardItem*> measureItem;
-			measureItem << new QStandardItem(QString::number(measure->GetID())) << new QStandardItem(measure->GetName().c_str())
-				<< new QStandardItem(measure->GetShortName().c_str()) << new QStandardItem(QString::number(measure->GetUnit()));
-			QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
-			itemModel->appendRow(measureItem);
+			if (parentDataForm != nullptr)
+			{
+				if (!parentDataForm->IsClosed())
+				{
+					QList<QStandardItem*> measureItem;
+					measureItem << new QStandardItem(QString::number(measure->GetID())) << new QStandardItem(measure->GetName().c_str())
+						<< new QStandardItem(measure->GetShortName().c_str()) << new QStandardItem(QString::number(measure->GetUnit()));
+					QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
+					itemModel->appendRow(measureItem);
+				}
+			}
 			
 			dialogBL->CommitTransaction(errorMessage);
-			this->close();
+			Close();
 		}
 		else
 		{
@@ -111,20 +118,26 @@ void CreateMsrDlg::EditMeasure()
 		if (QString(measure->GetName().c_str()) != nameEdit->text() || QString(measure->GetShortName().c_str()) != shortNameEdit->text()
 			|| measure->GetUnit() != unitEdit->text().toInt())
 		{
-			DataForm *parentDataForm = (DataForm*)parentWidget();
+			DataForm *parentDataForm = (DataForm*) parentForm;
 			SetMeasureParams(nameEdit->text(), shortNameEdit->text(), unitEdit->text().toInt(), measure->GetID());
 			dialogBL->StartTransaction(errorMessage);
 			if (dialogBL->UpdateMeasure(measure,errorMessage))
 			{
-				QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
-				QModelIndex mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
-				itemModel->item(mIndex.row(), 1)->setText(measure->GetName().c_str());
-				itemModel->item(mIndex.row(), 2)->setText(shortNameEdit->text());
-				itemModel->item(mIndex.row(), 3)->setText(QString::number(unitEdit->text().toInt()));
-				emit itemModel->dataChanged(mIndex, mIndex);
+				if (parentDataForm != nullptr)
+				{
+					if (!parentDataForm->IsClosed())
+					{
+						QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
+						QModelIndex mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
+						itemModel->item(mIndex.row(), 1)->setText(measure->GetName().c_str());
+						itemModel->item(mIndex.row(), 2)->setText(shortNameEdit->text());
+						itemModel->item(mIndex.row(), 3)->setText(QString::number(unitEdit->text().toInt()));
+						emit itemModel->dataChanged(mIndex, mIndex);
+					}
+				}
 				
 				dialogBL->CommitTransaction(errorMessage);
-				this->close();
+				Close();
 			}
 			else
 			{
@@ -136,7 +149,7 @@ void CreateMsrDlg::EditMeasure()
 		}
 		else
 		{
-			this->close();
+			Close();
 		}
 	}
 	else
@@ -150,5 +163,5 @@ void CreateMsrDlg::EditMeasure()
 
 void CreateMsrDlg::Close()
 {
-	this->close();
+	this->parentWidget()->close();
 }

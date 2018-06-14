@@ -1,9 +1,9 @@
 #include "stdafx.h"
-#include <QMessageBox>
+
 #include "CreateSlrTypeDlg.h"
 #include "MainForm.h"
 #include "DataForm.h"
-#include "ExtraFunctions.h"
+
 
 CreateSlrTypeDlg::CreateSlrTypeDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, QWidget *parent) :QDialog(parent)
 {
@@ -59,19 +59,25 @@ void CreateSlrTypeDlg::CreateSalaryType()
 	errorMessage.clear();
 	if (!(codeEdit->text().isEmpty() || nameEdit->text().isEmpty()))
 	{
-		DataForm *parentDataForm = (DataForm*)parentWidget();
+		DataForm *parentDataForm = (DataForm*) parentForm;
 		SetSalaryTypeParams(codeEdit->text(), nameEdit->text());
 		dialogBL->StartTransaction(errorMessage);
 		if (dialogBL->CreateSalaryType(salaryType, errorMessage))
 		{
-			QList<QStandardItem*> salaryTypeItem;
-			salaryTypeItem << new QStandardItem(QString::number(salaryType->GetID())) << new QStandardItem(salaryType->GetCode().c_str())
-				<< new QStandardItem(salaryType->GetName().c_str());
-			QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
-			itemModel->appendRow(salaryTypeItem);
+			if (parentDataForm != nullptr)
+			{
+				if (!parentDataForm->IsClosed())
+				{
+					QList<QStandardItem*> salaryTypeItem;
+					salaryTypeItem << new QStandardItem(QString::number(salaryType->GetID())) << new QStandardItem(salaryType->GetCode().c_str())
+						<< new QStandardItem(salaryType->GetName().c_str());
+					QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
+					itemModel->appendRow(salaryTypeItem);
+				}
+			}
 			
 			dialogBL->CommitTransaction(errorMessage);
-			this->close();
+			Close();
 		}
 		else
 		{
@@ -97,19 +103,24 @@ void CreateSlrTypeDlg::EditSalaryType()
 	{
 		if (QString(salaryType->GetCode().c_str()) != codeEdit->text() || QString(salaryType->GetName().c_str()) != nameEdit->text())
 		{
-			DataForm *parentDataForm = (DataForm*)parentWidget();
+			DataForm *parentDataForm = (DataForm*) parentForm;
 			SetSalaryTypeParams(codeEdit->text(), nameEdit->text(), salaryType->GetID());
 			dialogBL->StartTransaction(errorMessage);
 			if (dialogBL->UpdateSalaryType(salaryType, errorMessage))
 			{
-				QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
-				QModelIndex mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
-				itemModel->item(mIndex.row(), 1)->setText(salaryType->GetCode().c_str());
-				itemModel->item(mIndex.row(), 2)->setText(salaryType->GetName().c_str());
-				emit itemModel->dataChanged(mIndex, mIndex);
-				
+				if (parentDataForm != nullptr)
+				{
+					if (!parentDataForm->IsClosed())
+					{
+						QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
+						QModelIndex mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
+						itemModel->item(mIndex.row(), 1)->setText(salaryType->GetCode().c_str());
+						itemModel->item(mIndex.row(), 2)->setText(salaryType->GetName().c_str());
+						emit itemModel->dataChanged(mIndex, mIndex);
+					}
+				}
 				dialogBL->CommitTransaction(errorMessage);
-				this->close();
+				Close();
 			}
 			else
 			{
@@ -121,7 +132,7 @@ void CreateSlrTypeDlg::EditSalaryType()
 		}
 		else
 		{
-			this->close();
+			Close();
 		}
 	}
 	else
@@ -135,5 +146,5 @@ void CreateSlrTypeDlg::EditSalaryType()
 
 void CreateSlrTypeDlg::Close()
 {
-	this->close();
+	this->parentWidget()->close();
 }

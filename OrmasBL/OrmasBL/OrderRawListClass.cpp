@@ -29,7 +29,7 @@ namespace BusinessLayer
 		return productID;
 	}
 
-	int OrderRawList::GetCount()
+	double OrderRawList::GetCount()
 	{
 		return count;
 	}
@@ -61,7 +61,7 @@ namespace BusinessLayer
 	{
 		productID = oProductID;
 	}
-	void OrderRawList::SetCount(int oCount)
+	void OrderRawList::SetCount(double oCount)
 	{
 		count = oCount;
 	}
@@ -78,7 +78,7 @@ namespace BusinessLayer
 		currencyID = oCurrencyID;
 	}
 
-	bool OrderRawList::CreateOrderRawList(DataLayer::OrmasDal& ormasDal, int oID, int pID, int olCount, double olSum,
+	bool OrderRawList::CreateOrderRawList(DataLayer::OrmasDal& ormasDal, int oID, int pID, double olCount, double olSum,
 		int sID, int cID, std::string& errorMessage)
 	{
 		id = ormasDal.GenerateID();
@@ -123,7 +123,7 @@ namespace BusinessLayer
 		return false;
 	}
 
-	bool OrderRawList::UpdateOrderRawList(DataLayer::OrmasDal& ormasDal, int oID, int pID, int olCount, double olSum,
+	bool OrderRawList::UpdateOrderRawList(DataLayer::OrmasDal& ormasDal, int oID, int pID, double olCount, double olSum,
 		int sID, int cID, std::string& errorMessage)
 	{
 		orderRawID = oID;
@@ -197,7 +197,7 @@ namespace BusinessLayer
 		currencyID = 0;
 	}
 
-	bool OrderRawList::IsDuplicate(DataLayer::OrmasDal& ormasDal, int oID, int pID, int olCount, double olSum,
+	bool OrderRawList::IsDuplicate(DataLayer::OrmasDal& ormasDal, int oID, int pID, double olCount, double olSum,
 		int cID, std::string& errorMessage)
 	{
 		OrderRawList orderRawList;

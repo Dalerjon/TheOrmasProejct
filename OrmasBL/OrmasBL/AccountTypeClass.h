@@ -39,6 +39,7 @@ namespace BusinessLayer
 		//Generate filter string for class
 		std::string GenerateFilter(DataLayer::OrmasDal& ormasDal);
 		bool GetAccountTypeByID(DataLayer::OrmasDal& ormasDal, int atID, std::string& errorMessage);
+		bool GetAccountTypeByNumber(DataLayer::OrmasDal& ormasDal, int atNumber, std::string& errorMessage);
 		bool IsEmpty();
 		void Clear();
 	private:

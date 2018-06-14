@@ -27,7 +27,7 @@
 
 QT_BEGIN_NAMESPACE
 
-class Ui_CreateWrOffList
+class Ui_CreateWOffList
 {
 public:
     QGridLayout *gridLayout;
@@ -63,17 +63,17 @@ public:
     QLineEdit *productEdit;
     QLineEdit *countEdit;
 
-    void setupUi(QDialog *CreateWrOffList)
+    void setupUi(QDialog *CreateWOffList)
     {
-        if (CreateWrOffList->objectName().isEmpty())
-            CreateWrOffList->setObjectName(QStringLiteral("CreateWrOffList"));
-        CreateWrOffList->resize(635, 255);
-        CreateWrOffList->setLocale(QLocale(QLocale::English, QLocale::UnitedStates));
-        CreateWrOffList->setModal(false);
-        gridLayout = new QGridLayout(CreateWrOffList);
+        if (CreateWOffList->objectName().isEmpty())
+            CreateWOffList->setObjectName(QStringLiteral("CreateWOffList"));
+        CreateWOffList->resize(635, 255);
+        CreateWOffList->setLocale(QLocale(QLocale::English, QLocale::UnitedStates));
+        CreateWOffList->setModal(false);
+        gridLayout = new QGridLayout(CreateWOffList);
         gridLayout->setObjectName(QStringLiteral("gridLayout"));
         gridLayout->setContentsMargins(11, 11, 11, 17);
-        prodNamePh = new QLabel(CreateWrOffList);
+        prodNamePh = new QLabel(CreateWOffList);
         prodNamePh->setObjectName(QStringLiteral("prodNamePh"));
         prodNamePh->setMinimumSize(QSize(100, 0));
         QFont font;
@@ -86,40 +86,40 @@ public:
 
         gridLayout->addWidget(prodNamePh, 1, 1, 1, 1);
 
-        prodNameLb = new QLabel(CreateWrOffList);
+        prodNameLb = new QLabel(CreateWOffList);
         prodNameLb->setObjectName(QStringLiteral("prodNameLb"));
         prodNameLb->setMinimumSize(QSize(70, 0));
         prodNameLb->setMaximumSize(QSize(70, 16777215));
 
         gridLayout->addWidget(prodNameLb, 1, 0, 1, 1);
 
-        volumeLb = new QLabel(CreateWrOffList);
+        volumeLb = new QLabel(CreateWOffList);
         volumeLb->setObjectName(QStringLiteral("volumeLb"));
         volumeLb->setMinimumSize(QSize(70, 0));
         volumeLb->setMaximumSize(QSize(70, 16777215));
 
         gridLayout->addWidget(volumeLb, 1, 2, 1, 1);
 
-        volumePh = new QLabel(CreateWrOffList);
+        volumePh = new QLabel(CreateWOffList);
         volumePh->setObjectName(QStringLiteral("volumePh"));
         volumePh->setMinimumSize(QSize(100, 0));
         volumePh->setFont(font);
 
         gridLayout->addWidget(volumePh, 1, 3, 1, 1);
 
-        measureLb = new QLabel(CreateWrOffList);
+        measureLb = new QLabel(CreateWOffList);
         measureLb->setObjectName(QStringLiteral("measureLb"));
 
         gridLayout->addWidget(measureLb, 1, 4, 1, 1);
 
-        measurePh = new QLabel(CreateWrOffList);
+        measurePh = new QLabel(CreateWOffList);
         measurePh->setObjectName(QStringLiteral("measurePh"));
         measurePh->setMinimumSize(QSize(100, 0));
         measurePh->setFont(font);
 
         gridLayout->addWidget(measurePh, 1, 5, 1, 1);
 
-        editSectionWgt = new QWidget(CreateWrOffList);
+        editSectionWgt = new QWidget(CreateWOffList);
         editSectionWgt->setObjectName(QStringLiteral("editSectionWgt"));
         gridLayout_3 = new QGridLayout(editSectionWgt);
         gridLayout_3->setObjectName(QStringLiteral("gridLayout_3"));
@@ -220,12 +220,12 @@ public:
 
         horizontalLayout->addItem(horizontalSpacer);
 
-        addBtn = new QPushButton(CreateWrOffList);
+        addBtn = new QPushButton(CreateWOffList);
         addBtn->setObjectName(QStringLiteral("addBtn"));
 
         horizontalLayout->addWidget(addBtn);
 
-        cancelBtn = new QPushButton(CreateWrOffList);
+        cancelBtn = new QPushButton(CreateWOffList);
         cancelBtn->setObjectName(QStringLiteral("cancelBtn"));
 
         horizontalLayout->addWidget(cancelBtn);
@@ -233,24 +233,24 @@ public:
 
         gridLayout->addLayout(horizontalLayout, 4, 0, 1, 6);
 
-        productBtn = new QPushButton(CreateWrOffList);
+        productBtn = new QPushButton(CreateWOffList);
         productBtn->setObjectName(QStringLiteral("productBtn"));
 
         gridLayout->addWidget(productBtn, 0, 0, 1, 2);
 
-        countLb = new QLabel(CreateWrOffList);
+        countLb = new QLabel(CreateWOffList);
         countLb->setObjectName(QStringLiteral("countLb"));
         countLb->setMinimumSize(QSize(150, 0));
 
         gridLayout->addWidget(countLb, 2, 0, 1, 2);
 
-        productEdit = new QLineEdit(CreateWrOffList);
+        productEdit = new QLineEdit(CreateWOffList);
         productEdit->setObjectName(QStringLiteral("productEdit"));
         productEdit->setReadOnly(true);
 
         gridLayout->addWidget(productEdit, 0, 3, 1, 1);
 
-        countEdit = new QLineEdit(CreateWrOffList);
+        countEdit = new QLineEdit(CreateWOffList);
         countEdit->setObjectName(QStringLiteral("countEdit"));
 
         gridLayout->addWidget(countEdit, 2, 3, 1, 1);
@@ -261,43 +261,43 @@ public:
         QWidget::setTabOrder(sumEdit, addBtn);
         QWidget::setTabOrder(addBtn, cancelBtn);
 
-        retranslateUi(CreateWrOffList);
+        retranslateUi(CreateWOffList);
 
-        QMetaObject::connectSlotsByName(CreateWrOffList);
+        QMetaObject::connectSlotsByName(CreateWOffList);
     } // setupUi
 
-    void retranslateUi(QDialog *CreateWrOffList)
+    void retranslateUi(QDialog *CreateWOffList)
     {
-        CreateWrOffList->setWindowTitle(QApplication::translate("CreateWrOffList", "Create/Update product in write-off list", 0));
+        CreateWOffList->setWindowTitle(QApplication::translate("CreateWOffList", "Create/Update product in write-off list", 0));
         prodNamePh->setText(QString());
-        prodNameLb->setText(QApplication::translate("CreateWrOffList", "Product name:", 0));
-        volumeLb->setText(QApplication::translate("CreateWrOffList", "Volume:", 0));
+        prodNameLb->setText(QApplication::translate("CreateWOffList", "Product name:", 0));
+        volumeLb->setText(QApplication::translate("CreateWOffList", "Volume:", 0));
         volumePh->setText(QString());
-        measureLb->setText(QApplication::translate("CreateWrOffList", "Measure:", 0));
+        measureLb->setText(QApplication::translate("CreateWOffList", "Measure:", 0));
         measurePh->setText(QString());
-        currencyLb->setText(QApplication::translate("CreateWrOffList", "Select currency:", 0));
+        currencyLb->setText(QApplication::translate("CreateWOffList", "Select currency:", 0));
 #ifndef QT_NO_TOOLTIP
-        sumEdit->setToolTip(QApplication::translate("CreateWrOffList", "<html><head/><body><p>For example: 1000 (depends on currency)</p></body></html>", 0));
+        sumEdit->setToolTip(QApplication::translate("CreateWOffList", "<html><head/><body><p>For example: 1000 (depends on currency)</p></body></html>", 0));
 #endif // QT_NO_TOOLTIP
-        sumLb->setText(QApplication::translate("CreateWrOffList", "Sum:", 0));
-        writeOffBtn->setText(QApplication::translate("CreateWrOffList", "Select write-off", 0));
+        sumLb->setText(QApplication::translate("CreateWOffList", "Sum:", 0));
+        writeOffBtn->setText(QApplication::translate("CreateWOffList", "Select write-off", 0));
         writeOffEdit->setText(QString());
-        statusBtn->setText(QApplication::translate("CreateWrOffList", "Change status", 0));
-        statusLb->setText(QApplication::translate("CreateWrOffList", "Status name:", 0));
+        statusBtn->setText(QApplication::translate("CreateWOffList", "Change status", 0));
+        statusLb->setText(QApplication::translate("CreateWOffList", "Status name:", 0));
         statusPh->setText(QString());
-        addBtn->setText(QApplication::translate("CreateWrOffList", "Add", 0));
-        cancelBtn->setText(QApplication::translate("CreateWrOffList", "Cancel", 0));
-        productBtn->setText(QApplication::translate("CreateWrOffList", "Select product", 0));
-        countLb->setText(QApplication::translate("CreateWrOffList", "Count:", 0));
+        addBtn->setText(QApplication::translate("CreateWOffList", "Add", 0));
+        cancelBtn->setText(QApplication::translate("CreateWOffList", "Cancel", 0));
+        productBtn->setText(QApplication::translate("CreateWOffList", "Select product", 0));
+        countLb->setText(QApplication::translate("CreateWOffList", "Count:", 0));
 #ifndef QT_NO_TOOLTIP
-        countEdit->setToolTip(QApplication::translate("CreateWrOffList", "<html><head/><body><p>For example: 100</p></body></html>", 0));
+        countEdit->setToolTip(QApplication::translate("CreateWOffList", "<html><head/><body><p>For example: 100</p></body></html>", 0));
 #endif // QT_NO_TOOLTIP
     } // retranslateUi
 
 };
 
 namespace Ui {
-    class CreateWrOffList: public Ui_CreateWrOffList {};
+    class CreateWOffList: public Ui_CreateWOffList {};
 } // namespace Ui
 
 QT_END_NAMESPACE

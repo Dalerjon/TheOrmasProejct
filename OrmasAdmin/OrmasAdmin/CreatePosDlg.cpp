@@ -1,9 +1,9 @@
 #include "stdafx.h"
-#include <QMessageBox>
+
 #include "CreatePosDlg.h"
 #include "MainForm.h"
 #include "DataForm.h"
-#include "ExtraFunctions.h"
+
 
 CreatePosDlg::CreatePosDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, QWidget *parent) :QDialog(parent)
 {
@@ -11,6 +11,7 @@ CreatePosDlg::CreatePosDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, QWi
 	setModal(true);
 	nameEdit->setMaxLength(20);
 	dialogBL = ormasBL;
+	parentForm = parent;
 	nameEdit->setMaxLength(50);
 	if (true == updateFlag)
 	{
@@ -55,18 +56,24 @@ void CreatePosDlg::CreatePosition()
 	errorMessage.clear();
 	if (!(nameEdit->text().isEmpty()))
 	{
-		DataForm *parentDataForm = (DataForm*)parentWidget();
+		DataForm *parentDataForm = (DataForm*) parentForm;
 		SetPositionParams(nameEdit->text());
 		dialogBL->StartTransaction(errorMessage);
 		if (dialogBL->CreatePosition(position, errorMessage))
 		{
-			QList<QStandardItem*> PositionItem;
-			PositionItem << new QStandardItem(QString::number(position->GetID())) << new QStandardItem(position->GetName().c_str());
-			QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
-			itemModel->appendRow(PositionItem);
+			if (parentDataForm != nullptr)
+			{
+				if (!parentDataForm->IsClosed())
+				{
+					QList<QStandardItem*> PositionItem;
+					PositionItem << new QStandardItem(QString::number(position->GetID())) << new QStandardItem(position->GetName().c_str());
+					QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
+					itemModel->appendRow(PositionItem);
+				}
+			}
 			
 			dialogBL->CommitTransaction(errorMessage);
-			this->close();
+			Close();
 		}
 		else
 		{
@@ -92,18 +99,24 @@ void CreatePosDlg::EditPosition()
 	{
 		if (QString(position->GetName().c_str()) != nameEdit->text())
 		{
-			DataForm *parentDataForm = (DataForm*)parentWidget();
+			DataForm *parentDataForm = (DataForm*) parentForm;
 			SetPositionParams(nameEdit->text(), position->GetID());
 			dialogBL->StartTransaction(errorMessage);
 			if (dialogBL->UpdatePosition(position, errorMessage))
 			{
-				QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
-				QModelIndex mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
-				itemModel->item(mIndex.row(), 1)->setText(position->GetName().c_str());
-				emit itemModel->dataChanged(mIndex, mIndex);
+				if (parentDataForm != nullptr)
+				{
+					if (!parentDataForm->IsClosed())
+					{
+						QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
+						QModelIndex mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
+						itemModel->item(mIndex.row(), 1)->setText(position->GetName().c_str());
+						emit itemModel->dataChanged(mIndex, mIndex);
+					}
+				}
 				
 				dialogBL->CommitTransaction(errorMessage);
-				this->close();
+				Close();
 			}
 			else
 			{
@@ -115,7 +128,7 @@ void CreatePosDlg::EditPosition()
 		}
 		else
 		{
-			this->close();
+			Close();
 		}
 	}
 	else
@@ -129,5 +142,5 @@ void CreatePosDlg::EditPosition()
 
 void CreatePosDlg::Close()
 {
-	this->close();
+	this->parentWidget()->close();
 }

@@ -29,7 +29,7 @@ namespace BusinessLayer
 		return productID;
 	}
 
-	int TransportList::GetCount()
+	double TransportList::GetCount()
 	{
 		return count;
 	}
@@ -61,7 +61,7 @@ namespace BusinessLayer
 	{
 		productID = tProductID;
 	}
-	void TransportList::SetCount(int tCount)
+	void TransportList::SetCount(double tCount)
 	{
 		count = tCount;
 	}
@@ -78,7 +78,7 @@ namespace BusinessLayer
 		currencyID = tCurrencyID;
 	}
 
-	bool TransportList::CreateTransportList(DataLayer::OrmasDal& ormasDal, int tID, int pID, int tlCount, double tlSum,
+	bool TransportList::CreateTransportList(DataLayer::OrmasDal& ormasDal, int tID, int pID, double tlCount, double tlSum,
 		int sID, int cID, std::string& errorMessage)
 	{
 		id = ormasDal.GenerateID();
@@ -123,7 +123,7 @@ namespace BusinessLayer
 		return false;
 	}
 
-	bool TransportList::UpdateTransportList(DataLayer::OrmasDal& ormasDal, int tID, int pID, int tlCount, double tlSum,
+	bool TransportList::UpdateTransportList(DataLayer::OrmasDal& ormasDal, int tID, int pID, double tlCount, double tlSum,
 		int sID, int cID, std::string& errorMessage)
 	{
 		id = ormasDal.GenerateID();
@@ -198,7 +198,7 @@ namespace BusinessLayer
 		currencyID = 0;
 	}
 
-	bool TransportList::IsDuplicate(DataLayer::OrmasDal& ormasDal, int tID, int pID, int tlCount, double tlSum,
+	bool TransportList::IsDuplicate(DataLayer::OrmasDal& ormasDal, int tID, int pID, double tlCount, double tlSum,
 		int cID, std::string& errorMessage)
 	{
 		TransportList transportList;

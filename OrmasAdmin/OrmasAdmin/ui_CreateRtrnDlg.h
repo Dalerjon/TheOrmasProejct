@@ -77,7 +77,7 @@ public:
     {
         if (CreateReturn->objectName().isEmpty())
             CreateReturn->setObjectName(QStringLiteral("CreateReturn"));
-        CreateReturn->resize(633, 319);
+        CreateReturn->resize(700, 320);
         CreateReturn->setMinimumSize(QSize(150, 0));
         CreateReturn->setMaximumSize(QSize(16777215, 16777215));
         CreateReturn->setLocale(QLocale(QLocale::English, QLocale::UnitedStates));
@@ -245,7 +245,7 @@ public:
 
         execDateEdit = new QDateTimeEdit(execDateWidget);
         execDateEdit->setObjectName(QStringLiteral("execDateEdit"));
-        execDateEdit->setMinimumSize(QSize(127, 0));
+        execDateEdit->setMinimumSize(QSize(155, 0));
 
         horizontalLayout_2->addWidget(execDateEdit);
 

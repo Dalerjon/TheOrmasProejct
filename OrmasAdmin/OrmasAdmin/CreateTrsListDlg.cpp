@@ -1,21 +1,23 @@
 #include "stdafx.h"
-#include <QMessageBox>
+
 #include "CreateTrsListDlg.h"
-#include "MainForm.h"
 #include "DataForm.h"
-#include "ExtraFunctions.h"
+
 
 CreateTrsListDlg::CreateTrsListDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, QWidget *parent) :QDialog(parent)
 {
 	setupUi(this);
 	//setModal(true);
 	dialogBL = ormasBL;
+	parentForm = parent;
+	DataForm *dataFormParent = (DataForm *)this->parentForm;
+	mainForm = (MainForm *)dataFormParent->GetParent();
 	transportID = ((DataForm*)parent)->transportID;
 	vDouble = new QDoubleValidator(0.00, 1000000000.00, 3, this);
 	vInt = new QIntValidator(0, 1000000000, this);
 	productEdit->setValidator(vInt);
-	countEdit->setValidator(vInt);
-	countEdit->setMaxLength(10);
+	countEdit->setValidator(vDouble);
+	countEdit->setMaxLength(20);
 	transportEdit->setValidator(vInt);
 	statusEdit->setValidator(vInt);
 	sumEdit->setValidator(vDouble);
@@ -38,6 +40,9 @@ CreateTrsListDlg::CreateTrsListDlg(BusinessLayer::OrmasBL *ormasBL, bool updateF
 	QObject::connect(transportBtn, &QPushButton::released, this, &CreateTrsListDlg::OpenTrsDlg);
 	QObject::connect(productBtn, &QPushButton::released, this, &CreateTrsListDlg::OpenProdDlg);
 	QObject::connect(statusBtn, &QPushButton::released, this, &CreateTrsListDlg::OpenStsDlg);
+	QObject::connect(countEdit, &QLineEdit::textChanged, this, &CreateTrsListDlg::TextEditChanged);
+	QObject::connect(sumEdit, &QLineEdit::textChanged, this, &CreateTrsListDlg::TextEditChanged);
+	QObject::connect(this, SIGNAL(DataIsChanged()), ((DataForm*)parent), SLOT(OnRowsNumberChanged()));
 	InitComboBox();
 }
 
@@ -53,6 +58,13 @@ void CreateTrsListDlg::SetID(int ID, QString childName)
 	{
 		if (0 != childName.length())
 		{
+			this->hide();
+			this->setWindowFlags(this->windowFlags() | Qt::WindowStaysOnTopHint);
+			this->show();
+			this->raise();
+			this->activateWindow();
+			QApplication::setActiveWindow(this);
+
 			if (childName == QString("productForm"))
 			{
 				productEdit->setText(QString::number(ID));
@@ -85,7 +97,7 @@ void CreateTrsListDlg::SetID(int ID, QString childName)
 	}
 }
 
-void CreateTrsListDlg::SetTrsListParams(int tTransportID, int tProductID, int tCount, double tSum, int tStatusID, int tCurrencyID, int id)
+void CreateTrsListDlg::SetTrsListParams(int tTransportID, int tProductID, double tCount, double tSum, int tStatusID, int tCurrencyID, int id)
 {
 	transportList->SetTransportID(tTransportID);
 	transportList->SetProductID(tProductID);
@@ -96,7 +108,7 @@ void CreateTrsListDlg::SetTrsListParams(int tTransportID, int tProductID, int tC
 	transportList->SetID(id);
 }
 
-void CreateTrsListDlg::FillEditElements(int tTransportID, int tProductID, int tCount, double tSum, int tStatusID, int tCurrencyID)
+void CreateTrsListDlg::FillEditElements(int tTransportID, int tProductID, double tCount, double tSum, int tStatusID, int tCurrencyID)
 {
 	transportEdit->setText(QString::number(tTransportID));
 	productEdit->setText(QString::number(tProductID));
@@ -129,14 +141,14 @@ bool CreateTrsListDlg::FillDlgElements(QTableView* oTable)
 	{
 		SetTrsListParams(oTable->model()->data(oTable->model()->index(mIndex.row(), 1)).toInt(),
 			oTable->model()->data(oTable->model()->index(mIndex.row(), 11)).toInt(),
-			oTable->model()->data(oTable->model()->index(mIndex.row(), 7)).toInt(),
+			oTable->model()->data(oTable->model()->index(mIndex.row(), 7)).toDouble(),
 			oTable->model()->data(oTable->model()->index(mIndex.row(), 8)).toDouble(),
 			oTable->model()->data(oTable->model()->index(mIndex.row(), 12)).toInt(),
 			oTable->model()->data(oTable->model()->index(mIndex.row(), 13)).toInt(),
 			oTable->model()->data(oTable->model()->index(mIndex.row(), 0)).toInt());
 		FillEditElements(oTable->model()->data(oTable->model()->index(mIndex.row(), 1)).toInt(),
 			oTable->model()->data(oTable->model()->index(mIndex.row(), 11)).toInt(),
-			oTable->model()->data(oTable->model()->index(mIndex.row(), 7)).toInt(),
+			oTable->model()->data(oTable->model()->index(mIndex.row(), 7)).toDouble(),
 			oTable->model()->data(oTable->model()->index(mIndex.row(), 8)).toDouble(),
 			oTable->model()->data(oTable->model()->index(mIndex.row(), 12)).toInt(),
 			oTable->model()->data(oTable->model()->index(mIndex.row(), 13)).toInt());
@@ -151,9 +163,9 @@ bool CreateTrsListDlg::FillDlgElements(QTableView* oTable)
 void CreateTrsListDlg::AddProductToList()
 {
 	errorMessage.clear();
-	if (0 != productEdit->text().toInt() || 0 != countEdit->text().toInt())
+	if (0 != productEdit->text().toInt() || 0 != countEdit->text().toDouble())
 	{
-		DataForm *parentDataForm = (DataForm*)parentWidget();
+		DataForm *parentDataForm = (DataForm*) parentForm;
 		BusinessLayer::Status *status = new BusinessLayer::Status();
 		status->SetName("TRANSPORTING");
 		std::string statusFilter = dialogBL->GenerateFilter<BusinessLayer::Status>(status);
@@ -187,7 +199,7 @@ void CreateTrsListDlg::AddProductToList()
 		{
 			if (!measure->GetMeasureByID(dialogBL->GetOrmasDal(), product->GetMeasureID(), errorMessage)
 				|| !currency->GetCurrencyByID(dialogBL->GetOrmasDal(), product->GetCurrencyID(), errorMessage)
-				|| !sumCurrency->GetCurrencyByID(dialogBL->GetOrmasDal(), transportList->GetCurrencyID(), errorMessage))
+				|| !sumCurrency->GetCurrencyByID(dialogBL->GetOrmasDal(), product->GetCurrencyID(), errorMessage))
 			{
 				QMessageBox::information(NULL, QString(tr("Warning")),
 					QString(tr(errorMessage.c_str())),
@@ -201,40 +213,45 @@ void CreateTrsListDlg::AddProductToList()
 		}
 
 		SetTrsListParams(transportID, productEdit->text().toInt(),
-			countEdit->text().toInt(), (countEdit->text().toInt() * product->GetPrice()),
+			countEdit->text().toDouble(), (countEdit->text().toDouble() * product->GetPrice()),
 			statusVector.at(0).GetID(), product->GetCurrencyID());
 
 		if (dialogBL->CreateTransportList(transportList, errorMessage))
 		{
-			QList<QStandardItem*> productListItem;
-			productListItem << new QStandardItem(QString::number(transportList->GetID()));
-			if (0 != transportID)
+			if (parentDataForm != nullptr)
 			{
-				productListItem << new QStandardItem(QString::number(transportID));
+				if (!parentDataForm->IsClosed())
+				{
+					QList<QStandardItem*> productListItem;
+					productListItem << new QStandardItem(QString::number(transportList->GetID()));
+					if (0 != transportID)
+					{
+						productListItem << new QStandardItem(QString::number(transportID));
+					}
+					else
+					{
+						productListItem << new QStandardItem(QString::number(0));
+					}
+					productListItem << new QStandardItem(product->GetName().c_str())
+						<< new QStandardItem(QString::number(product->GetPrice()))
+						<< new QStandardItem(currency->GetShortName().c_str())
+						<< new QStandardItem(QString::number(product->GetVolume()))
+						<< new QStandardItem(measure->GetName().c_str())
+						<< new QStandardItem(QString::number(transportList->GetCount()))
+						<< new QStandardItem(QString::number(transportList->GetSum()))
+						<< new QStandardItem(sumCurrency->GetShortName().c_str())
+						<< new QStandardItem(statusVector.at(0).GetName().c_str())
+						<< new QStandardItem(QString::number(transportList->GetProductID()))
+						<< new QStandardItem(QString::number(transportList->GetStatusID()))
+						<< new QStandardItem(QString::number(transportList->GetCurrencyID()));
+					QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
+					itemModel->appendRow(productListItem);
+				}
 			}
-			else
-			{
-				productListItem << new QStandardItem(QString::number(0));
-			}
-			productListItem << new QStandardItem(product->GetName().c_str())
-				<< new QStandardItem(QString::number(product->GetPrice()))
-				<< new QStandardItem(currency->GetShortName().c_str())
-				<< new QStandardItem(QString::number(product->GetVolume()))
-				<< new QStandardItem(measure->GetName().c_str())
-				<< new QStandardItem(QString::number(transportList->GetCount()))
-				<< new QStandardItem(QString::number(transportList->GetSum()))
-				<< new QStandardItem(sumCurrency->GetShortName().c_str())
-				<< new QStandardItem(statusVector.at(0).GetName().c_str())
-				<< new QStandardItem(QString::number(transportList->GetProductID()))
-				<< new QStandardItem(QString::number(transportList->GetStatusID()))
-				<< new QStandardItem(QString::number(transportList->GetCurrencyID()));
-			QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
-			itemModel->appendRow(productListItem);
-
 			delete measure;
 			delete product;
 			delete currency;
-			this->close();
+			Close();
 		}
 		else
 		{
@@ -255,10 +272,10 @@ void CreateTrsListDlg::AddProductToList()
 void CreateTrsListDlg::EditProductInList()
 {
 	errorMessage.clear();
-	if (0 != productEdit->text().toInt() || 0 != countEdit->text().toInt())
+	if (0 != productEdit->text().toInt() || 0 != countEdit->text().toDouble())
 	{
-		if (productEdit->text().toInt() != transportList->GetProductID() || countEdit->text().toInt() != transportList->GetCount()
-			|| transportEdit->text().toInt() != transportList->GetTransportID() || sumEdit->text().toInt() != transportList->GetSum()
+		if (productEdit->text().toInt() != transportList->GetProductID() || countEdit->text().toDouble() != transportList->GetCount()
+			|| transportEdit->text().toInt() != transportList->GetTransportID() || sumEdit->text().toDouble() != transportList->GetSum()
 			|| statusEdit->text().toInt() != transportList->GetStatusID() || currencyCmb->currentData().toInt() != transportList->GetCurrencyID())
 		{
 			BusinessLayer::Product *product = new BusinessLayer::Product();
@@ -271,59 +288,66 @@ void CreateTrsListDlg::EditProductInList()
 				delete product;
 				return;
 			}
-			if (countEdit->text().toInt() != transportList->GetCount())
+			if (countEdit->text().toDouble() != transportList->GetCount())
 			{
-				sumEdit->setText(QString::number(countEdit->text().toInt() * product->GetPrice()));
+				sumEdit->setText(QString::number(countEdit->text().toDouble() * product->GetPrice()));
 			}
-			DataForm *parentDataForm = (DataForm*)parentWidget();
+			DataForm *parentDataForm = (DataForm*) parentForm;
 			SetTrsListParams(transportEdit->text().toInt(),
-				productEdit->text().toInt(), countEdit->text().toInt(), sumEdit->text().toDouble(), statusEdit->text().toInt(),
+				productEdit->text().toInt(), countEdit->text().toDouble(), sumEdit->text().toDouble(), statusEdit->text().toInt(),
 				transportList->GetCurrencyID(), transportList->GetID());
 			if (dialogBL->UpdateTransportList(transportList, errorMessage))
 			{
-				BusinessLayer::Measure *measure = new BusinessLayer::Measure();
-				BusinessLayer::Status *status = new BusinessLayer::Status();
-				BusinessLayer::Currency *currency = new BusinessLayer::Currency();
-				BusinessLayer::Currency *sumCurrency = new BusinessLayer::Currency();
-				if (!measure->GetMeasureByID(dialogBL->GetOrmasDal(), product->GetMeasureID(), errorMessage)
-					|| !currency->GetCurrencyByID(dialogBL->GetOrmasDal(), product->GetCurrencyID(), errorMessage)
-					|| !sumCurrency->GetCurrencyByID(dialogBL->GetOrmasDal(), currencyCmb->currentData().toInt(), errorMessage)
-					|| !status->GetStatusByID(dialogBL->GetOrmasDal(), statusEdit->text().toInt(), errorMessage))
+				if (parentDataForm != nullptr)
 				{
-					QMessageBox::information(NULL, QString(tr("Warning")),
-						QString(tr(errorMessage.c_str())),
-						QString(tr("Ok")));
-					errorMessage.clear();
-					delete product;
-					delete measure;
-					delete status;
-					delete currency;
-					return;
+					if (!parentDataForm->IsClosed())
+					{
+						BusinessLayer::Measure *measure = new BusinessLayer::Measure();
+						BusinessLayer::Status *status = new BusinessLayer::Status();
+						BusinessLayer::Currency *currency = new BusinessLayer::Currency();
+						BusinessLayer::Currency *sumCurrency = new BusinessLayer::Currency();
+						if (!measure->GetMeasureByID(dialogBL->GetOrmasDal(), product->GetMeasureID(), errorMessage)
+							|| !currency->GetCurrencyByID(dialogBL->GetOrmasDal(), product->GetCurrencyID(), errorMessage)
+							|| !sumCurrency->GetCurrencyByID(dialogBL->GetOrmasDal(), product->GetCurrencyID(), errorMessage)
+							|| !status->GetStatusByID(dialogBL->GetOrmasDal(), statusEdit->text().toInt(), errorMessage))
+						{
+							QMessageBox::information(NULL, QString(tr("Warning")),
+								QString(tr(errorMessage.c_str())),
+								QString(tr("Ok")));
+							errorMessage.clear();
+							delete product;
+							delete measure;
+							delete status;
+							delete currency;
+							return;
+						}
+
+						QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
+						QModelIndex mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
+						itemModel->item(mIndex.row(), 1)->setText(QString::number(transportList->GetTransportID()));
+						itemModel->item(mIndex.row(), 2)->setText(product->GetName().c_str());
+						itemModel->item(mIndex.row(), 3)->setText(QString::number(product->GetPrice()));
+						itemModel->item(mIndex.row(), 4)->setText(currency->GetShortName().c_str());
+						itemModel->item(mIndex.row(), 5)->setText(QString::number(product->GetVolume()));
+						itemModel->item(mIndex.row(), 6)->setText(measure->GetName().c_str());
+						itemModel->item(mIndex.row(), 7)->setText(QString::number(transportList->GetCount()));
+						itemModel->item(mIndex.row(), 8)->setText(QString::number(transportList->GetSum()));
+						itemModel->item(mIndex.row(), 9)->setText(sumCurrency->GetShortName().c_str());
+						itemModel->item(mIndex.row(), 10)->setText(status->GetName().c_str());
+						itemModel->item(mIndex.row(), 11)->setText(QString::number(transportList->GetStatusID()));
+						itemModel->item(mIndex.row(), 12)->setText(QString::number(product->GetMeasureID()));
+						itemModel->item(mIndex.row(), 13)->setText(QString::number(transportList->GetCurrencyID()));
+
+						emit itemModel->dataChanged(mIndex, mIndex);
+						emit DataIsChanged();
+						delete measure;
+						delete status;
+						delete currency;
+					}
 				}
-
-				QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
-				QModelIndex mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
-				itemModel->item(mIndex.row(), 1)->setText(QString::number(transportList->GetTransportID()));
-				itemModel->item(mIndex.row(), 2)->setText(product->GetName().c_str());
-				itemModel->item(mIndex.row(), 3)->setText(QString::number(product->GetPrice()));
-				itemModel->item(mIndex.row(), 4)->setText(currency->GetShortName().c_str());
-				itemModel->item(mIndex.row(), 5)->setText(QString::number(product->GetVolume()));
-				itemModel->item(mIndex.row(), 6)->setText(measure->GetName().c_str());
-				itemModel->item(mIndex.row(), 7)->setText(QString::number(transportList->GetCount()));
-				itemModel->item(mIndex.row(), 8)->setText(QString::number(transportList->GetSum()));
-				itemModel->item(mIndex.row(), 9)->setText(sumCurrency->GetShortName().c_str());
-				itemModel->item(mIndex.row(), 10)->setText(status->GetName().c_str());
-				itemModel->item(mIndex.row(), 11)->setText(QString::number(transportList->GetStatusID()));
-				itemModel->item(mIndex.row(), 12)->setText(QString::number(product->GetMeasureID()));
-				itemModel->item(mIndex.row(), 13)->setText(QString::number(transportList->GetCurrencyID()));
-
-				emit itemModel->dataChanged(mIndex, mIndex);
-				
 				delete product;
-				delete measure;
-				delete status;
-				delete currency;
-				this->close();
+				
+				Close();
 			}
 			else
 			{
@@ -334,7 +358,7 @@ void CreateTrsListDlg::EditProductInList()
 		}
 		else
 		{
-			this->close();
+			Close();
 		}
 	}
 	else
@@ -348,7 +372,7 @@ void CreateTrsListDlg::EditProductInList()
 
 void CreateTrsListDlg::Close()
 {
-	this->close();
+	this->parentWidget()->close();
 }
 
 void CreateTrsListDlg::OpenStsDlg()
@@ -356,8 +380,6 @@ void CreateTrsListDlg::OpenStsDlg()
 	this->hide();
 	this->setModal(false);
 	this->show();
-	DataForm *productParent = (DataForm *)parent();
-	MainForm *mainForm = (MainForm *)productParent->GetParent();
 	QString message = tr("Loading...");
 	mainForm->statusBar()->showMessage(message);
 	DataForm *dForm = new DataForm(dialogBL, mainForm);
@@ -367,18 +389,20 @@ void CreateTrsListDlg::OpenStsDlg()
 	dForm->FillTable<BusinessLayer::Status>(errorMessage);
 	if (errorMessage.empty())
 	{
-		dForm->createTrsListDlg = this;
+		dForm->parentDialog = this;
 		dForm->setObjectName("statusForm");
 		dForm->QtConnect<BusinessLayer::Measure>();
 		QMdiSubWindow *statusWindow = new QMdiSubWindow;
 		statusWindow->setWidget(dForm);
 		statusWindow->setAttribute(Qt::WA_DeleteOnClose);
 		mainForm->mdiArea->addSubWindow(statusWindow);
+		statusWindow->resize(dForm->size().width() + 18, dForm->size().height() + 30);
 		dForm->topLevelWidget();
 		dForm->activateWindow();
 		QApplication::setActiveWindow(dForm);
 		dForm->show();
 		dForm->raise();
+		dForm->setWindowFlags(dForm->windowFlags() | Qt::WindowStaysOnTopHint);
 		QString message = tr("All measures are shown");
 		mainForm->statusBar()->showMessage(message);
 	}
@@ -400,29 +424,62 @@ void CreateTrsListDlg::OpenProdDlg()
 	this->hide();
 	this->setModal(false);
 	this->show();
-	DataForm *productParent = (DataForm *)parent();
-	MainForm *mainForm = (MainForm *)productParent->GetParent();
 	QString message = tr("Loading...");
 	mainForm->statusBar()->showMessage(message);
 	DataForm *dForm = new DataForm(dialogBL, mainForm);
 	dForm->setWindowTitle(tr("Products"));
 	dForm->hide();
 	dForm->setWindowModality(Qt::WindowModal);
-	dForm->FillTable<BusinessLayer::ProductView>(errorMessage);
+
+	BusinessLayer::ProductType *pType = new BusinessLayer::ProductType();
+	pType->SetCode("PRODUCT");
+	std::string pTypeFilter = dialogBL->GenerateFilter<BusinessLayer::ProductType>(pType);
+	std::vector<BusinessLayer::ProductType> pTypeVector = dialogBL->GetAllDataForClass<BusinessLayer::ProductType>(errorMessage, pTypeFilter);
+	if (pTypeVector.size() == 0)
+	{
+		delete pType;
+		QString message = tr("Sorry could not find product type with \"Product\" code!");
+		mainForm->statusBar()->showMessage(message);
+		QMessageBox::information(NULL, QString(tr("Warning")),
+			QString(message),
+			QString(tr("Ok")));
+		errorMessage = "";
+		return;
+	}
+
+	BusinessLayer::Product *product = new BusinessLayer::Product();
+	product->SetProductTypeID(pTypeVector.at(0).GetID());
+	std::string productFilter = dialogBL->GenerateFilter<BusinessLayer::Product>(product);
+	std::vector<BusinessLayer::ProductView> productVector = dialogBL->GetAllDataForClass<BusinessLayer::ProductView>(errorMessage, productFilter);
+	if (productVector.size() == 0)
+	{
+		delete product;
+		QString message = tr("Sorry could not find product with \"Product\" code!");
+		mainForm->statusBar()->showMessage(message);
+		QMessageBox::information(NULL, QString(tr("Warning")),
+			QString(message),
+			QString(tr("Ok")));
+		errorMessage = "";
+		return;
+	}
+
+	dForm->FillTable<BusinessLayer::ProductView>(errorMessage, productFilter);
 	if (errorMessage.empty())
 	{
-		dForm->createTrsListDlg = this;
+		dForm->parentDialog = this;
 		dForm->setObjectName("productForm");
 		dForm->QtConnect<BusinessLayer::ProductView>();
 		QMdiSubWindow *productWindow = new QMdiSubWindow;
 		productWindow->setWidget(dForm);
 		productWindow->setAttribute(Qt::WA_DeleteOnClose);
 		mainForm->mdiArea->addSubWindow(productWindow);
+		productWindow->resize(dForm->size().width() + 18, dForm->size().height() + 30);
 		dForm->topLevelWidget();
 		dForm->activateWindow();
 		QApplication::setActiveWindow(dForm);
 		dForm->show();
 		dForm->raise();
+		dForm->setWindowFlags(dForm->windowFlags() | Qt::WindowStaysOnTopHint);
 		QString message = tr("All products are shown");
 		mainForm->statusBar()->showMessage(message);
 	}
@@ -445,8 +502,6 @@ void CreateTrsListDlg::OpenTrsDlg()
 	this->hide();
 	this->setModal(false);
 	this->show();
-	DataForm *productParent = (DataForm *)parent();
-	MainForm *mainForm = (MainForm *)productParent->GetParent();
 	QString message = tr("Loading...");
 	mainForm->statusBar()->showMessage(message);
 	DataForm *dForm = new DataForm(dialogBL, mainForm);
@@ -456,18 +511,20 @@ void CreateTrsListDlg::OpenTrsDlg()
 	dForm->FillTable<BusinessLayer::TransportView>(errorMessage);
 	if (errorMessage.empty())
 	{
-		dForm->createTrsListDlg = this;
+		dForm->parentDialog = this;
 		dForm->setObjectName("transportForm");
 		dForm->QtConnect<BusinessLayer::TransportView>();
 		QMdiSubWindow *transportWindow = new QMdiSubWindow;
 		transportWindow->setWidget(dForm);
 		transportWindow->setAttribute(Qt::WA_DeleteOnClose);
 		mainForm->mdiArea->addSubWindow(transportWindow);
+		transportWindow->resize(dForm->size().width() + 18, dForm->size().height() + 30);
 		dForm->topLevelWidget();
 		dForm->activateWindow();
 		QApplication::setActiveWindow(dForm);
 		dForm->show();
 		dForm->raise();
+		dForm->setWindowFlags(dForm->windowFlags() | Qt::WindowStaysOnTopHint);
 		QString message = tr("All transports are shown");
 		mainForm->statusBar()->showMessage(message);
 	}
@@ -494,5 +551,25 @@ void CreateTrsListDlg::InitComboBox()
 		{
 			currencyCmb->addItem(curVector[i].GetShortName().c_str(), QVariant(curVector[i].GetID()));
 		}
+	}
+}
+
+void CreateTrsListDlg::TextEditChanged()
+{
+	if (countEdit->text().contains(","))
+	{
+		countEdit->setText(countEdit->text().replace(",", "."));
+	}
+	if (countEdit->text().contains(".."))
+	{
+		countEdit->setText(countEdit->text().replace("..", "."));
+	}
+	if (sumEdit->text().contains(","))
+	{
+		sumEdit->setText(sumEdit->text().replace(",", "."));
+	}
+	if (sumEdit->text().contains(".."))
+	{
+		sumEdit->setText(sumEdit->text().replace("..", "."));
 	}
 }

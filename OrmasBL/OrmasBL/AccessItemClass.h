@@ -40,6 +40,8 @@ namespace BusinessLayer{
 		//Generate filter string for class
 		std::string GenerateFilter(DataLayer::OrmasDal& ormasDal);
 		bool GetAccessItemByID(DataLayer::OrmasDal& ormasDal, int aID, std::string& errorMessage);
+		bool GetAccessItemByEngName(DataLayer::OrmasDal& ormasDal, std::string engName, std::string& errorMessage);
+		bool GetAccessItemByRuName(DataLayer::OrmasDal& ormasDal, std::string ruName, std::string& errorMessage);
 		bool IsEmpty();
 		void Clear();
 	private:

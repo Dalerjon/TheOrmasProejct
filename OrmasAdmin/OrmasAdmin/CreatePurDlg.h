@@ -3,6 +3,7 @@
 
 #include "ui_CreatePurDlg.h"
 #include "OrmasBL.h"
+#include "MainForm.h"
 
 class CreatePurDlg : public QDialog, public Ui::CreatePurveyor
 {
@@ -27,6 +28,8 @@ private:
 	void SetPurveyorParams(QString, QString, QString, QString, QString, int, QString, QString, QString, int, int = 0);
 	void FillEditElements(QString, QString, QString, QString, QString, int, QString, QString, QString, int);
 	QIntValidator *vInt = nullptr;
+	QWidget* parentForm;
+	MainForm* mainForm;
 };
 
 #endif //CREATEPurDLG_H

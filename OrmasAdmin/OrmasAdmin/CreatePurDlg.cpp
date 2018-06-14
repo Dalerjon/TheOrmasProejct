@@ -1,15 +1,17 @@
 #include "stdafx.h"
-#include <QMessageBox>
+
 #include "CreatePurDlg.h"
-#include "MainForm.h"
 #include "DataForm.h"
-#include "ExtraFunctions.h"
+
 
 CreatePurDlg::CreatePurDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, QWidget *parent) :QDialog(parent)
 {
 	setupUi(this);
 	setModal(true);
 	dialogBL = ormasBL;
+	parentForm = parent;
+	DataForm *dataFormParent = (DataForm *)this->parentForm;
+	mainForm = (MainForm *)dataFormParent->GetParent();
 	activatedCmbBox->addItem("false");
 	activatedCmbBox->addItem("true");
 	locationEdit->setReadOnly(true);
@@ -50,6 +52,13 @@ void CreatePurDlg::SetID(int ID, QString childName)
 	{
 		if (0 != childName.length())
 		{
+			this->hide();
+			this->setWindowFlags(this->windowFlags() | Qt::WindowStaysOnTopHint);
+			this->show();
+			this->raise();
+			this->activateWindow();
+			QApplication::setActiveWindow(this);
+
 			if (childName == QString("locationForm"))
 			{
 				locationEdit->setText(QString::number(ID));
@@ -131,7 +140,7 @@ void CreatePurDlg::CreatePurveyor()
 		&& !addressEdit->text().isEmpty() && !companyEdit->text().isEmpty()
 		&& !passwordEdit->text().isEmpty() && !activatedCmbBox->currentText().isEmpty() && 0 != locationEdit->text().toInt())
 	{
-		DataForm *parentDataForm = (DataForm*)parentWidget();
+		DataForm *parentDataForm = (DataForm*) parentForm;
 
 		BusinessLayer::Role *role = new BusinessLayer::Role();
 		role->SetName("PURVEYOR");
@@ -153,44 +162,50 @@ void CreatePurDlg::CreatePurveyor()
 		dialogBL->StartTransaction(errorMessage);
 		if (dialogBL->CreatePurveyor(purveyor, errorMessage))
 		{
-			BusinessLayer::Location *location = new BusinessLayer::Location();
-			if (roleVector.size() < 1
-				|| !location->GetLocationByID(dialogBL->GetOrmasDal(), purveyor->GetLocationID(), errorMessage))
+			if (parentDataForm != nullptr)
 			{
-				dialogBL->CancelTransaction(errorMessage);
-				QMessageBox::information(NULL, QString(tr("Warning")),
-					QString(tr(errorMessage.c_str())),
-					QString(tr("Ok")));
+				if (!parentDataForm->IsClosed())
+				{
+					BusinessLayer::Location *location = new BusinessLayer::Location();
+					if (roleVector.size() < 1
+						|| !location->GetLocationByID(dialogBL->GetOrmasDal(), purveyor->GetLocationID(), errorMessage))
+					{
+						dialogBL->CancelTransaction(errorMessage);
+						QMessageBox::information(NULL, QString(tr("Warning")),
+							QString(tr(errorMessage.c_str())),
+							QString(tr("Ok")));
 
-				errorMessage.clear();
-				delete location;
-				delete role;
-				return;
+						errorMessage.clear();
+						delete location;
+						delete role;
+						return;
+					}
+					QList<QStandardItem*> purveyorItem;
+					purveyorItem << new QStandardItem(QString::number(purveyor->GetID()))
+						<< new QStandardItem(purveyor->GetName().c_str())
+						<< new QStandardItem(purveyor->GetSurname().c_str())
+						<< new QStandardItem(purveyor->GetPhone().c_str())
+						<< new QStandardItem(location->GetCountryName().c_str())
+						<< new QStandardItem(location->GetRegionName().c_str())
+						<< new QStandardItem(location->GetCityName().c_str())
+						<< new QStandardItem(purveyor->GetAddress().c_str())
+						<< new QStandardItem(purveyor->GetCompanyName().c_str())
+						<< new QStandardItem(roleVector.at(0).GetName().c_str())
+						<< new QStandardItem(purveyor->GetPassword().c_str())
+						<< new QStandardItem(purveyor->GetEmail().c_str())
+						<< new QStandardItem(purveyor->GetActivated() ? "true" : "false")
+						<< new QStandardItem(QString::number(purveyor->GetRoleID()))
+						<< new QStandardItem(QString::number(purveyor->GetLocationID()));
+					QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
+					itemModel->appendRow(purveyorItem);
+					delete location;
+				}
 			}
-			QList<QStandardItem*> purveyorItem;
-			purveyorItem << new QStandardItem(QString::number(purveyor->GetID()))
-				<< new QStandardItem(purveyor->GetName().c_str())
-				<< new QStandardItem(purveyor->GetSurname().c_str())
-				<< new QStandardItem(purveyor->GetPhone().c_str())
-				<< new QStandardItem(location->GetCountryName().c_str())
-				<< new QStandardItem(location->GetRegionName().c_str())
-				<< new QStandardItem(location->GetCityName().c_str())
-				<< new QStandardItem(purveyor->GetAddress().c_str())
-				<< new QStandardItem(purveyor->GetCompanyName().c_str())
-				<< new QStandardItem(roleVector.at(0).GetName().c_str())
-				<< new QStandardItem(purveyor->GetPassword().c_str())
-				<< new QStandardItem(purveyor->GetEmail().c_str())
-				<< new QStandardItem(purveyor->GetActivated() ? "true" : "false")
-				<< new QStandardItem(QString::number(purveyor->GetRoleID()))
-				<< new QStandardItem(QString::number(purveyor->GetLocationID()));
-			QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
-			itemModel->appendRow(purveyorItem);
-
-			delete location;
+			
 			delete role;
 			dialogBL->CommitTransaction(errorMessage);
 
-			this->close();
+			Close();
 		}
 		else
 		{
@@ -224,7 +239,7 @@ void CreatePurDlg::EditPurveyor()
 			purveyor->GetLocationID() != locationEdit->text().toInt() || QString(purveyor->GetPassword().c_str()) != passwordEdit->text() ||
 			QString(purveyor->GetActivated() ? "true" : "false") != activatedCmbBox->currentText())
 		{
-			DataForm *parentDataForm = (DataForm*)parentWidget();
+			DataForm *parentDataForm = (DataForm*) parentForm;
 			BusinessLayer::Role *role = new BusinessLayer::Role();
 			role->SetName("PURVEYOR");
 			std::string roleFilter = dialogBL->GenerateFilter<BusinessLayer::Role>(role);
@@ -244,49 +259,55 @@ void CreatePurDlg::EditPurveyor()
 			dialogBL->StartTransaction(errorMessage);
 			if (dialogBL->UpdatePurveyor(purveyor, errorMessage))
 			{
-				//updating Pur data
-				QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
-				QModelIndex mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
-				itemModel->item(mIndex.row(), 1)->setText(purveyor->GetName().c_str());
-				itemModel->item(mIndex.row(), 2)->setText(purveyor->GetSurname().c_str());
-				itemModel->item(mIndex.row(), 3)->setText(purveyor->GetPhone().c_str());
-
-				//if location of Purveyor is changed, then update location data fields
-				BusinessLayer::Location *location = new BusinessLayer::Location();
-
-				if (roleVector.size() < 1
-					|| !location->GetLocationByID(dialogBL->GetOrmasDal(), purveyor->GetLocationID(), errorMessage))
+				if (parentDataForm != nullptr)
 				{
-					dialogBL->CancelTransaction(errorMessage);
-					dialogBL->CancelTransaction(errorMessage);
-					QMessageBox::information(NULL, QString(tr("Warning")),
-						QString(tr(errorMessage.c_str())),
-						QString(tr("Ok")));
+					if (!parentDataForm->IsClosed())
+					{
+						//updating Pur data
+						QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
+						QModelIndex mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
+						itemModel->item(mIndex.row(), 1)->setText(purveyor->GetName().c_str());
+						itemModel->item(mIndex.row(), 2)->setText(purveyor->GetSurname().c_str());
+						itemModel->item(mIndex.row(), 3)->setText(purveyor->GetPhone().c_str());
 
-					errorMessage.clear();
-					delete location;
-					delete role;
-					return;
+						//if location of Purveyor is changed, then update location data fields
+						BusinessLayer::Location *location = new BusinessLayer::Location();
+
+						if (roleVector.size() < 1
+							|| !location->GetLocationByID(dialogBL->GetOrmasDal(), purveyor->GetLocationID(), errorMessage))
+						{
+							dialogBL->CancelTransaction(errorMessage);
+							dialogBL->CancelTransaction(errorMessage);
+							QMessageBox::information(NULL, QString(tr("Warning")),
+								QString(tr(errorMessage.c_str())),
+								QString(tr("Ok")));
+
+							errorMessage.clear();
+							delete location;
+							delete role;
+							return;
+						}
+						itemModel->item(mIndex.row(), 4)->setText(location->GetCountryName().c_str());
+						itemModel->item(mIndex.row(), 5)->setText(location->GetRegionName().c_str());
+						itemModel->item(mIndex.row(), 6)->setText(location->GetCityName().c_str());
+						itemModel->item(mIndex.row(), 7)->setText(purveyor->GetAddress().c_str());
+						itemModel->item(mIndex.row(), 8)->setText(purveyor->GetCompanyName().c_str());
+						itemModel->item(mIndex.row(), 9)->setText(roleVector.at(0).GetName().c_str());
+						itemModel->item(mIndex.row(), 10)->setText(purveyor->GetPassword().c_str());
+						itemModel->item(mIndex.row(), 11)->setText(purveyor->GetEmail().c_str());
+						itemModel->item(mIndex.row(), 12)->setText(purveyor->GetActivated() ? "true" : "false");
+						itemModel->item(mIndex.row(), 13)->setText(QString::number(purveyor->GetRoleID()));
+						itemModel->item(mIndex.row(), 14)->setText(QString::number(purveyor->GetLocationID()));
+
+						emit itemModel->dataChanged(mIndex, mIndex);
+						delete location;
+					}
 				}
-				itemModel->item(mIndex.row(), 4)->setText(location->GetCountryName().c_str());
-				itemModel->item(mIndex.row(), 5)->setText(location->GetRegionName().c_str());
-				itemModel->item(mIndex.row(), 6)->setText(location->GetCityName().c_str());
-				itemModel->item(mIndex.row(), 7)->setText(purveyor->GetAddress().c_str());
-				itemModel->item(mIndex.row(), 8)->setText(purveyor->GetCompanyName().c_str());
-				itemModel->item(mIndex.row(), 9)->setText(roleVector.at(0).GetName().c_str());
-				itemModel->item(mIndex.row(), 10)->setText(purveyor->GetPassword().c_str());
-				itemModel->item(mIndex.row(), 11)->setText(purveyor->GetEmail().c_str());
-				itemModel->item(mIndex.row(), 12)->setText(purveyor->GetActivated() ? "true" : "false");
-				itemModel->item(mIndex.row(), 13)->setText(QString::number(purveyor->GetRoleID()));
-				itemModel->item(mIndex.row(), 14)->setText(QString::number(purveyor->GetLocationID()));
 
-				emit itemModel->dataChanged(mIndex, mIndex);
-
-
-				delete location;
+				
 				delete role;
 				dialogBL->CommitTransaction(errorMessage);
-				this->close();
+				Close();
 			}
 			else
 			{
@@ -298,7 +319,7 @@ void CreatePurDlg::EditPurveyor()
 		}
 		else
 		{
-			this->close();
+			Close();
 		}
 	}
 	else
@@ -312,7 +333,7 @@ void CreatePurDlg::EditPurveyor()
 
 void CreatePurDlg::Close()
 {
-	this->close();
+	this->parentWidget()->close();
 }
 
 void CreatePurDlg::OpenLcnDlg()
@@ -320,8 +341,6 @@ void CreatePurDlg::OpenLcnDlg()
 	this->hide();
 	this->setModal(false);
 	this->show();
-	DataForm *PurveyorParent = (DataForm *)parent();
-	MainForm *mainForm = (MainForm *)PurveyorParent->GetParent();
 	QString message = tr("Loading...");
 	mainForm->statusBar()->showMessage(message);
 	DataForm *dForm = new DataForm(dialogBL, mainForm);
@@ -331,18 +350,20 @@ void CreatePurDlg::OpenLcnDlg()
 	dForm->FillTable<BusinessLayer::Location>(errorMessage);
 	if (errorMessage.empty())
 	{
-		dForm->createPurDlg = this;
+		dForm->parentDialog = this;
 		dForm->setObjectName("locationForm");
 		dForm->QtConnect<BusinessLayer::Location>();
 		QMdiSubWindow *locationWindow = new QMdiSubWindow;
 		locationWindow->setWidget(dForm);
 		locationWindow->setAttribute(Qt::WA_DeleteOnClose);
 		mainForm->mdiArea->addSubWindow(locationWindow);
+		locationWindow->resize(dForm->size().width() + 18, dForm->size().height() + 30);
 		dForm->topLevelWidget();
 		dForm->activateWindow();
 		QApplication::setActiveWindow(dForm);
 		dForm->show();
 		dForm->raise();
+		dForm->setWindowFlags(dForm->windowFlags() | Qt::WindowStaysOnTopHint);
 		QString message = tr("All locations are shown");
 		mainForm->statusBar()->showMessage(message);
 	}
@@ -363,8 +384,6 @@ void CreatePurDlg::OpenRoleDlg()
 	this->hide();
 	this->setModal(false);
 	this->show();
-	DataForm *PurveyorParent = (DataForm *)parent();
-	MainForm *mainForm = (MainForm *)PurveyorParent->GetParent();
 	QString message = tr("Loading...");
 	mainForm->statusBar()->showMessage(message);
 	DataForm *dForm = new DataForm(dialogBL, mainForm);
@@ -374,18 +393,20 @@ void CreatePurDlg::OpenRoleDlg()
 	dForm->FillTable<BusinessLayer::Role>(errorMessage);
 	if (errorMessage.empty())
 	{
-		dForm->createPurDlg = this;
+		dForm->parentDialog = this;
 		dForm->setObjectName("roleForm");
 		dForm->QtConnect<BusinessLayer::Role>();
 		QMdiSubWindow *roleWindow = new QMdiSubWindow;
 		roleWindow->setWidget(dForm);
 		roleWindow->setAttribute(Qt::WA_DeleteOnClose);
 		mainForm->mdiArea->addSubWindow(roleWindow);
+		roleWindow->resize(dForm->size().width() + 18, dForm->size().height() + 30);
 		dForm->topLevelWidget();
 		dForm->activateWindow();
 		QApplication::setActiveWindow(dForm);
 		dForm->show();
 		dForm->raise();
+		dForm->setWindowFlags(dForm->windowFlags() | Qt::WindowStaysOnTopHint);
 		QString message = tr("All roles are shown");
 		mainForm->statusBar()->showMessage(message);
 	}

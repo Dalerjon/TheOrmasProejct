@@ -1,9 +1,7 @@
 #include "stdafx.h"
 #include "CreateRelDlg.h"
-#include <QMessageBox>
-#include "MainForm.h"
 #include "DataForm.h"
-#include "ExtraFunctions.h"
+
 
 
 CreateRelDlg::CreateRelDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, QWidget *parent) :QDialog(parent)
@@ -11,6 +9,9 @@ CreateRelDlg::CreateRelDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, QWi
 	setupUi(this);
 	setModal(true);
 	dialogBL = ormasBL;
+	parentForm = parent;
+	DataForm *dataFormParent = (DataForm *)this->parentForm;
+	mainForm = (MainForm *)dataFormParent->GetParent();
 	vInt = new QIntValidator(0, 1000000000, this);
 	user1Edit->setValidator(vInt);
 	user2Edit->setValidator(vInt);
@@ -40,6 +41,13 @@ void CreateRelDlg::SetID(int ID, QString childName)
 	{
 		if (0 != childName.length())
 		{
+			this->hide();
+			this->setWindowFlags(this->windowFlags() | Qt::WindowStaysOnTopHint);
+			this->show();
+			this->raise();
+			this->activateWindow();
+			QApplication::setActiveWindow(this);
+
 			if (childName == QString("user1Form"))
 			{
 				user1Edit->setText(QString::number(ID));
@@ -120,51 +128,57 @@ void CreateRelDlg::CreateRelation()
 	errorMessage.clear();
 	if (0 != user1Edit->text().toInt() || 0 != user2Edit->text().toInt() || !relTypeCmb->currentText().isEmpty())
 	{
-		DataForm *parentDataForm = (DataForm*)parentWidget();
+		DataForm *parentDataForm = (DataForm*) parentForm;
 		SetRelationParams(user1Edit->text().toInt(), user2Edit->text().toInt(), relTypeCmb->currentData().toInt());
 		dialogBL->StartTransaction(errorMessage);
 		if (dialogBL->CreateRelation(relation, errorMessage))
 		{
-			BusinessLayer::User *user1 = new BusinessLayer::User();
-			BusinessLayer::User *user2 = new BusinessLayer::User();
-			BusinessLayer::RelationType *rType = new BusinessLayer::RelationType();
-			if (!user1->GetUserByID(dialogBL->GetOrmasDal(), relation->GetUser1ID(), errorMessage)
-				|| !user2->GetUserByID(dialogBL->GetOrmasDal(), relation->GetUser2ID(), errorMessage)
-				|| !rType->GetRelationTypeByID(dialogBL->GetOrmasDal(), relation->GetRelationTypeID(), errorMessage))
+			if (parentDataForm != nullptr)
 			{
-					dialogBL->CancelTransaction(errorMessage);
-					dialogBL->CancelTransaction(errorMessage);
-					QMessageBox::information(NULL, QString(tr("Warning")),
-						QString(tr(errorMessage.c_str())),
-						QString(tr("Ok")));
+				if (!parentDataForm->IsClosed())
+				{
+					BusinessLayer::User *user1 = new BusinessLayer::User();
+					BusinessLayer::User *user2 = new BusinessLayer::User();
+					BusinessLayer::RelationType *rType = new BusinessLayer::RelationType();
+					if (!user1->GetUserByID(dialogBL->GetOrmasDal(), relation->GetUser1ID(), errorMessage)
+						|| !user2->GetUserByID(dialogBL->GetOrmasDal(), relation->GetUser2ID(), errorMessage)
+						|| !rType->GetRelationTypeByID(dialogBL->GetOrmasDal(), relation->GetRelationTypeID(), errorMessage))
+					{
+						dialogBL->CancelTransaction(errorMessage);
+						dialogBL->CancelTransaction(errorMessage);
+						QMessageBox::information(NULL, QString(tr("Warning")),
+							QString(tr(errorMessage.c_str())),
+							QString(tr("Ok")));
 
-					errorMessage.clear();
+						errorMessage.clear();
+						delete user1;
+						delete user2;
+						delete rType;
+						return;
+					}
+					QList<QStandardItem*> relationItem;
+					relationItem << new QStandardItem(QString::number(relation->GetID()))
+						<< new QStandardItem(user1->GetName().c_str())
+						<< new QStandardItem(user1->GetSurname().c_str())
+						<< new QStandardItem(user1->GetPhone().c_str())
+						<< new QStandardItem(rType->GetName().c_str())
+						<< new QStandardItem(user2->GetName().c_str())
+						<< new QStandardItem(user2->GetSurname().c_str())
+						<< new QStandardItem(user2->GetPhone().c_str())
+						<< new QStandardItem(QString::number(relation->GetUser1ID()))
+						<< new QStandardItem(QString::number(relation->GetUser2ID()))
+						<< new QStandardItem(QString::number(relation->GetRelationTypeID()));
+					QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
+					itemModel->appendRow(relationItem);
 					delete user1;
 					delete user2;
 					delete rType;
-					return;
+				}
 			}
-			QList<QStandardItem*> relationItem;
-			relationItem << new QStandardItem(QString::number(relation->GetID())) 
-				<< new QStandardItem(user1->GetName().c_str())
-				<< new QStandardItem(user1->GetSurname().c_str())
-				<< new QStandardItem(user1->GetPhone().c_str())
-				<< new QStandardItem(rType->GetName().c_str())
-				<< new QStandardItem(user2->GetName().c_str())
-				<< new QStandardItem(user2->GetSurname().c_str())
-				<< new QStandardItem(user2->GetPhone().c_str())
-				<< new QStandardItem(QString::number(relation->GetUser1ID()))
-				<< new QStandardItem(QString::number(relation->GetUser2ID())) 
-				<< new QStandardItem(QString::number(relation->GetRelationTypeID()));
-			QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
-			itemModel->appendRow(relationItem);
-			
 			dialogBL->CommitTransaction(errorMessage);
 
-			delete user1;
-			delete user2;
-			delete rType;
-			this->close();
+			
+			Close();
 		}
 		else
 		{
@@ -193,45 +207,52 @@ void CreateRelDlg::EditRelation()
 		if (relation->GetUser1ID() != user1Edit->text().toInt() || relation->GetUser2ID() != user2Edit->text().toInt()
 			|| relation->GetRelationTypeID() != relTypeCmb->currentData().toInt())
 		{
-			DataForm *parentDataForm = (DataForm*)parentWidget();
+			DataForm *parentDataForm = (DataForm*) parentForm;
 			SetRelationParams(user1Edit->text().toInt(), user2Edit->text().toInt(), relTypeCmb->currentData().toInt(), relation->GetID());
 			dialogBL->StartTransaction(errorMessage);
 			if (dialogBL->UpdateRelation(relation, errorMessage))
 			{
-				BusinessLayer::User *user1 = new BusinessLayer::User();
-				BusinessLayer::User *user2 = new BusinessLayer::User();
-				BusinessLayer::RelationType *rType = new BusinessLayer::RelationType();
-				if (!user1->GetUserByID(dialogBL->GetOrmasDal(), relation->GetUser1ID(), errorMessage)
-					|| !user2->GetUserByID(dialogBL->GetOrmasDal(), relation->GetUser2ID(), errorMessage)
-					|| !rType->GetRelationTypeByID(dialogBL->GetOrmasDal(), relation->GetRelationTypeID(), errorMessage))
+				if (parentDataForm != nullptr)
 				{
-					dialogBL->CancelTransaction(errorMessage);
-					dialogBL->CancelTransaction(errorMessage);
-					QMessageBox::information(NULL, QString(tr("Warning")),
-						QString(tr(errorMessage.c_str())),
-						QString(tr("Ok")));
+					if (!parentDataForm->IsClosed())
+					{
+						BusinessLayer::User *user1 = new BusinessLayer::User();
+						BusinessLayer::User *user2 = new BusinessLayer::User();
+						BusinessLayer::RelationType *rType = new BusinessLayer::RelationType();
+						if (!user1->GetUserByID(dialogBL->GetOrmasDal(), relation->GetUser1ID(), errorMessage)
+							|| !user2->GetUserByID(dialogBL->GetOrmasDal(), relation->GetUser2ID(), errorMessage)
+							|| !rType->GetRelationTypeByID(dialogBL->GetOrmasDal(), relation->GetRelationTypeID(), errorMessage))
+						{
+							dialogBL->CancelTransaction(errorMessage);
+							dialogBL->CancelTransaction(errorMessage);
+							QMessageBox::information(NULL, QString(tr("Warning")),
+								QString(tr(errorMessage.c_str())),
+								QString(tr("Ok")));
 
-					errorMessage.clear();
-					delete user1;
-					delete user2;
-					delete rType;
-					return;
+							errorMessage.clear();
+							delete user1;
+							delete user2;
+							delete rType;
+							return;
+						}
+						QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
+						QModelIndex mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
+						itemModel->item(mIndex.row(), 1)->setText(user1->GetName().c_str());
+						itemModel->item(mIndex.row(), 2)->setText(user1->GetSurname().c_str());
+						itemModel->item(mIndex.row(), 3)->setText(user1->GetPhone().c_str());
+						itemModel->item(mIndex.row(), 4)->setText(rType->GetName().c_str());
+						itemModel->item(mIndex.row(), 5)->setText(user2->GetName().c_str());
+						itemModel->item(mIndex.row(), 6)->setText(user2->GetSurname().c_str());
+						itemModel->item(mIndex.row(), 7)->setText(user2->GetPhone().c_str());
+						itemModel->item(mIndex.row(), 8)->setText(QString::number(relation->GetUser1ID()));
+						itemModel->item(mIndex.row(), 9)->setText(QString::number(relation->GetUser1ID()));
+						itemModel->item(mIndex.row(), 10)->setText(QString::number(relation->GetRelationTypeID()));
+						emit itemModel->dataChanged(mIndex, mIndex);
+					}
 				}
-				QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
-				QModelIndex mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
-				itemModel->item(mIndex.row(), 1)->setText(user1->GetName().c_str());
-				itemModel->item(mIndex.row(), 1)->setText(user1->GetSurname().c_str());
-				itemModel->item(mIndex.row(), 1)->setText(user1->GetPhone().c_str());
-				itemModel->item(mIndex.row(), 1)->setText(rType->GetName().c_str());
-				itemModel->item(mIndex.row(), 1)->setText(user2->GetName().c_str());
-				itemModel->item(mIndex.row(), 1)->setText(user2->GetSurname().c_str());
-				itemModel->item(mIndex.row(), 1)->setText(user2->GetPhone().c_str());
-				itemModel->item(mIndex.row(), 1)->setText(QString::number(relation->GetUser1ID()));
-				itemModel->item(mIndex.row(), 2)->setText(QString::number(relation->GetUser1ID()));
-				itemModel->item(mIndex.row(), 3)->setText(QString::number(relation->GetRelationTypeID()));
-				emit itemModel->dataChanged(mIndex, mIndex);
-				this->close();
 				dialogBL->CommitTransaction(errorMessage);
+				Close();
+				
 			}
 			else
 			{
@@ -243,7 +264,7 @@ void CreateRelDlg::EditRelation()
 		}
 		else
 		{
-			this->close();
+			Close();
 		}
 	}
 	else
@@ -257,7 +278,7 @@ void CreateRelDlg::EditRelation()
 
 void CreateRelDlg::Close()
 {
-	this->close();
+	this->parentWidget()->close();
 }
 
 void CreateRelDlg::OpenUser1Dlg()
@@ -265,8 +286,6 @@ void CreateRelDlg::OpenUser1Dlg()
 	this->hide();
 	this->setModal(false);
 	this->show();
-	DataForm *userParent = (DataForm *)parent();
-	MainForm *mainForm = (MainForm *)userParent->GetParent();
 	QString message = tr("Loading...");
 	mainForm->statusBar()->showMessage(message);
 	DataForm *dForm = new DataForm(dialogBL, mainForm);
@@ -276,18 +295,20 @@ void CreateRelDlg::OpenUser1Dlg()
 	dForm->FillTable<BusinessLayer::UserView>(errorMessage);
 	if (errorMessage.empty())
 	{
-		dForm->createRelDlg = this;
+		dForm->parentDialog = this;
 		dForm->setObjectName("user1Form");
 		dForm->QtConnect<BusinessLayer::UserView>();
 		QMdiSubWindow *userWindow = new QMdiSubWindow;
 		userWindow->setWidget(dForm);
 		userWindow->setAttribute(Qt::WA_DeleteOnClose);
 		mainForm->mdiArea->addSubWindow(userWindow);
+		userWindow->resize(dForm->size().width() + 18, dForm->size().height() + 30);
 		dForm->topLevelWidget();
 		dForm->activateWindow();
 		QApplication::setActiveWindow(dForm);
 		dForm->show();
 		dForm->raise();
+		dForm->setWindowFlags(dForm->windowFlags() | Qt::WindowStaysOnTopHint);
 		QString message = tr("All users are shown");
 		mainForm->statusBar()->showMessage(message);
 	}
@@ -308,8 +329,6 @@ void CreateRelDlg::OpenUser2Dlg()
 	this->hide();
 	this->setModal(false);
 	this->show();
-	DataForm *userParent = (DataForm *)parent();
-	MainForm *mainForm = (MainForm *)userParent->GetParent();
 	QString message = tr("Loading...");
 	mainForm->statusBar()->showMessage(message);
 	DataForm *dForm = new DataForm(dialogBL, mainForm);
@@ -319,18 +338,20 @@ void CreateRelDlg::OpenUser2Dlg()
 	dForm->FillTable<BusinessLayer::UserView>(errorMessage);
 	if (errorMessage.empty())
 	{
-		dForm->createRelDlg = this;
+		dForm->parentDialog = this;
 		dForm->setObjectName("user2Form");
 		dForm->QtConnect<BusinessLayer::UserView>();
 		QMdiSubWindow *user2Window = new QMdiSubWindow;
 		user2Window->setWidget(dForm);
 		user2Window->setAttribute(Qt::WA_DeleteOnClose);
 		mainForm->mdiArea->addSubWindow(user2Window);
+		user2Window->resize(dForm->size().width() + 18, dForm->size().height() + 30);
 		dForm->topLevelWidget();
 		dForm->activateWindow();
 		QApplication::setActiveWindow(dForm);
 		dForm->show();
 		dForm->raise();
+		dForm->setWindowFlags(dForm->windowFlags() | Qt::WindowStaysOnTopHint);
 		QString message = tr("All users are shown");
 		mainForm->statusBar()->showMessage(message);
 	}

@@ -3,6 +3,7 @@
 
 #include "ui_CreateRcpPDlg.h"
 #include "OrmasBL.h"
+#include "MainForm.h"
 
 class CreateRcpPDlg : public QDialog, public Ui::CreateReceiptProduct
 {
@@ -23,17 +24,20 @@ public:
 	void OpenStsDlg();
 	void OpenRcpPListDlg();
 	void StatusWasChenged();
+	void TextEditChanged();
 	public slots:
 	void SetID(int ID, QString childName);
 signals:
 	void CloseCreatedForms();
 private:
 	BusinessLayer::ReceiptProduct *receiptProduct = new BusinessLayer::ReceiptProduct();
-	void SetReceiptProductParams(int, QString, QString, int, int, double, int, int, int = 0);
-	void FillEditElements(int, QString, QString, int, int, double, int, int);
+	void SetReceiptProductParams(int, QString, QString, int, double, double, int, int, int = 0);
+	void FillEditElements(int, QString, QString, int, double, double, int, int);
 	QDoubleValidator *vDouble = nullptr;
 	QIntValidator *vInt = nullptr;
 	std::map<std::string, int> statusMap;
 	void InitComboBox();
+	QWidget* parentForm;
+	MainForm* mainForm;
 };
 #endif //CREATERCPPDLG_H

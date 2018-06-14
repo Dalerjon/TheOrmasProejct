@@ -1,9 +1,7 @@
 #include "stdafx.h"
 #include "CreateEtrDlg.h"
-#include <QMessageBox>
-#include "MainForm.h"
 #include "DataForm.h"
-#include "ExtraFunctions.h"
+
 
 
 CreateEtrDlg::CreateEtrDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, QWidget *parent) :QDialog(parent)
@@ -11,6 +9,9 @@ CreateEtrDlg::CreateEtrDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, QWi
 	setupUi(this);
 	setModal(true);
 	dialogBL = ormasBL;
+	parentForm = parent;
+	DataForm *dataFormParent = (DataForm *)this->parentForm;
+	mainForm = (MainForm *)dataFormParent->GetParent();
 	vDouble = new QDoubleValidator(0.00, 1000000000.00, 3, this);
 	vInt = new QIntValidator(0, 1000000000, this);
 	daIDEdit->setValidator(vInt);
@@ -29,8 +30,11 @@ CreateEtrDlg::CreateEtrDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, QWi
 	QObject::connect(cancelBtn, &QPushButton::released, this, &CreateEtrDlg::Close);
 	QObject::connect(dAccBtn, &QPushButton::released, this, &CreateEtrDlg::OpenDAccDlg);
 	QObject::connect(cAccBtn, &QPushButton::released, this, &CreateEtrDlg::OpenCAccDlg);
-	QObject::connect(daNumberEdit, &QLineEdit::textChanged, this, &CreateEtrDlg::TextChanged);
-	QObject::connect(caNumberEdit, &QLineEdit::textChanged, this, &CreateEtrDlg::TextChanged);
+	QObject::connect(dSubAccBtn, &QPushButton::released, this, &CreateEtrDlg::OpenDSAccDlg);
+	QObject::connect(cSubAccBtn, &QPushButton::released, this, &CreateEtrDlg::OpenCSAccDlg);
+	QObject::connect(daNumberEdit, &QLineEdit::textChanged, this, &CreateEtrDlg::DATextChanged);
+	QObject::connect(caNumberEdit, &QLineEdit::textChanged, this, &CreateEtrDlg::CATextChanged);
+	QObject::connect(valueEdit, &QLineEdit::textChanged, this, &CreateEtrDlg::TextEditChanged);
 }
 
 CreateEtrDlg::~CreateEtrDlg()
@@ -45,14 +49,19 @@ void CreateEtrDlg::SetID(int ID, QString childName)
 	{
 		if (0 != childName.length())
 		{
+			this->hide();
+			this->setWindowFlags(this->windowFlags() | Qt::WindowStaysOnTopHint);
+			this->show();
+			this->raise();
+			this->activateWindow();
+			QApplication::setActiveWindow(this);
+
 			if (childName == QString("debitingAccountForm"))
 			{
 				daIDEdit->setText(QString::number(ID));
 				BusinessLayer::Account account;
 				if (account.GetAccountByID(dialogBL->GetOrmasDal(), ID, errorMessage))
 				{
-					if (account.GetName(dialogBL->GetOrmasDal()).c_str() != nullptr)
-						daNamePh->setText(account.GetName(dialogBL->GetOrmasDal()).c_str());
 					daNumberEdit->setReadOnly(true);
 					daNumberEdit->setText(account.GetNumber().c_str());
 				}
@@ -63,10 +72,28 @@ void CreateEtrDlg::SetID(int ID, QString childName)
 				BusinessLayer::Account account;
 				if (account.GetAccountByID(dialogBL->GetOrmasDal(), ID, errorMessage))
 				{
-					if (account.GetName(dialogBL->GetOrmasDal()).c_str() != nullptr)
-						caNamePh->setText(account.GetName(dialogBL->GetOrmasDal()).c_str());
 					caNumberEdit->setReadOnly(true);
 					caNumberEdit->setText(account.GetNumber().c_str());
+				}
+			}
+			if (childName == QString("debitingSubaccountForm"))
+			{
+				daIDEdit->setText(QString::number(ID));
+				BusinessLayer::Subaccount subaccount;
+				if (subaccount.GetSubaccountByID(dialogBL->GetOrmasDal(), ID, errorMessage))
+				{
+					daNumberEdit->setReadOnly(true);
+					daNumberEdit->setText(subaccount.GetNumber().c_str());
+				}
+			}
+			if (childName == QString("creditingSubaccountForm"))
+			{
+				caIDEdit->setText(QString::number(ID));
+				BusinessLayer::Subaccount subaccount;
+				if (subaccount.GetSubaccountByID(dialogBL->GetOrmasDal(), ID, errorMessage))
+				{
+					caNumberEdit->setReadOnly(true);
+					caNumberEdit->setText(subaccount.GetNumber().c_str());
 				}
 			}
 		}
@@ -84,25 +111,33 @@ void CreateEtrDlg::SetEntryParams(QString eDate, int daID, double eValue, int ca
 
 void CreateEtrDlg::FillEditElements(QString eDate, int daID, double eValue, int caID)
 {
-	dateEdit->setDate(QDate::fromString(eDate, "yyyy.MM.dd"));
+	dateEdit->setDate(QDate::fromString(eDate, "dd.MM.yyyy"));
 	daIDEdit->setText(QString::number(daID));
 	valueEdit->setText(QString::number(eValue));
 	caIDEdit->setText(QString::number(caID));
 	BusinessLayer::Account account1;
 	if (account1.GetAccountByID(dialogBL->GetOrmasDal(), daID, errorMessage))
 	{
-		if (account1.GetName(dialogBL->GetOrmasDal()).c_str() != nullptr)
-			daNamePh->setText(account1.GetName(dialogBL->GetOrmasDal()).c_str());
 		daNumberEdit->setReadOnly(true);
 		daNumberEdit->setText(account1.GetNumber().c_str());
 	}
 	BusinessLayer::Account account2;
 	if (account2.GetAccountByID(dialogBL->GetOrmasDal(), caID, errorMessage))
 	{
-		if (account2.GetName(dialogBL->GetOrmasDal()).c_str() != nullptr)
-			caNamePh->setText(account2.GetName(dialogBL->GetOrmasDal()).c_str());
 		caNumberEdit->setReadOnly(true);
 		caNumberEdit->setText(account2.GetNumber().c_str());
+	}
+	BusinessLayer::Subaccount subaccount1;
+	if (subaccount1.GetSubaccountByID(dialogBL->GetOrmasDal(), daID, errorMessage))
+	{
+		daNumberEdit->setReadOnly(true);
+		daNumberEdit->setText(subaccount1.GetNumber().c_str());
+	}
+	BusinessLayer::Subaccount subaccount2;
+	if (subaccount2.GetSubaccountByID(dialogBL->GetOrmasDal(), caID, errorMessage))
+	{
+		caNumberEdit->setReadOnly(true);
+		caNumberEdit->setText(subaccount2.GetNumber().c_str());
 	}
 }
 
@@ -134,51 +169,81 @@ void CreateEtrDlg::CreateEntry()
 	if (0 != daIDEdit->text().toInt() && 0.0 != valueEdit->text().toDouble() && 0 != caIDEdit->text().toInt()
 		&& !dateEdit->text().isEmpty())
 	{
-		DataForm *parentDataForm = (DataForm*)parentWidget();
-		SetEntryParams(dateEdit->text(), daIDEdit->text().toInt(), dateEdit->text().toDouble(), caIDEdit->text().toInt());
+		DataForm *parentDataForm = (DataForm*) parentForm;
+		SetEntryParams(dateEdit->text(), daIDEdit->text().toInt(), valueEdit->text().toDouble(), caIDEdit->text().toInt());
 		dialogBL->StartTransaction(errorMessage);
 		if (dialogBL->CreateEntry(entry, errorMessage))
 		{
-			BusinessLayer::Account *dAccount = new BusinessLayer::Account;
-			if (dAccount->GetAccountByID(dialogBL->GetOrmasDal(), daIDEdit->text().toInt(), errorMessage))
+			if (parentDataForm != nullptr)
 			{
-				dialogBL->CancelTransaction(errorMessage);
-				QMessageBox::information(NULL, QString(tr("Warning")),
-					QString(tr(errorMessage.c_str())),
-					QString(tr("Ok")));
-				errorMessage.clear();
-				delete dAccount;
-				return;
-			}
-			BusinessLayer::Account *cAccount = new BusinessLayer::Account;
-			if (cAccount->GetAccountByID(dialogBL->GetOrmasDal(), caIDEdit->text().toInt(), errorMessage))
-			{
-				dialogBL->CancelTransaction(errorMessage);
-				QMessageBox::information(NULL, QString(tr("Warning")),
-					QString(tr(errorMessage.c_str())),
-					QString(tr("Ok")));
-				errorMessage.clear();
-				delete dAccount;
-				delete cAccount;
-				return;
-			}
+				if (!parentDataForm->IsClosed())
+				{
+					BusinessLayer::Account *dAccount = new BusinessLayer::Account;
+					BusinessLayer::Subaccount *dSAccount = new BusinessLayer::Subaccount;
+					if (!dAccount->GetAccountByID(dialogBL->GetOrmasDal(), entry->GetDebitingAccountID(), errorMessage)
+						&& !dSAccount->GetSubaccountByID(dialogBL->GetOrmasDal(), entry->GetDebitingAccountID(), errorMessage))
+					{
+						dialogBL->CancelTransaction(errorMessage);
+						QMessageBox::information(NULL, QString(tr("Warning")),
+							QString(tr(errorMessage.c_str())),
+							QString(tr("Ok")));
+						errorMessage.clear();
+						delete dAccount;
+						delete dSAccount;
+						return;
+					}
+					BusinessLayer::Account *cAccount = new BusinessLayer::Account;
+					BusinessLayer::Subaccount *cSAccount = new BusinessLayer::Subaccount;
+					if (!cAccount->GetAccountByID(dialogBL->GetOrmasDal(), entry->GetCreditingAccountID(), errorMessage)
+						&& !cSAccount->GetSubaccountByID(dialogBL->GetOrmasDal(), entry->GetCreditingAccountID(), errorMessage))
+					{
+						dialogBL->CancelTransaction(errorMessage);
+						QMessageBox::information(NULL, QString(tr("Warning")),
+							QString(tr(errorMessage.c_str())),
+							QString(tr("Ok")));
+						errorMessage.clear();
+						delete dAccount;
+						delete dSAccount;
+						delete cAccount;
+						delete cSAccount;
+						return;
+					}
 
-			QList<QStandardItem*> entryItem;
-			entryItem << new QStandardItem(QString::number(entry->GetID()))
-				<< new QStandardItem(entry->GetDate().c_str())
-				<< new QStandardItem(dAccount->GetNumber().c_str())
-				<< new QStandardItem(QString::number(entry->GetValue()))
-				<< new QStandardItem(cAccount->GetNumber().c_str())
-				<< new QStandardItem(QString::number(entry->GetDebitingAccountID()))
-				<< new QStandardItem(QString::number(entry->GetCreditingAccountID()));
-			QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
-			itemModel->appendRow(entryItem);
+					QList<QStandardItem*> entryItem;
+					entryItem << new QStandardItem(QString::number(entry->GetID()))
+						<< new QStandardItem(entry->GetDate().c_str());
+					if (!dAccount->GetNumber().empty())
+					{
+						entryItem << new QStandardItem(dAccount->GetNumber().c_str());
+					}
+					else if (!dSAccount->GetNumber().empty())
+					{
+						entryItem << new QStandardItem(dSAccount->GetSubaccountParentNumber(dialogBL->GetOrmasDal()).c_str());
+					}
+					entryItem << new QStandardItem(QString::number(entry->GetValue(), 'f', 3));
+					if (!cAccount->GetNumber().empty())
+					{
+						entryItem << new QStandardItem(cAccount->GetNumber().c_str());
+					}
+					else if (!cSAccount->GetNumber().empty())
+					{
+						entryItem << new QStandardItem(cSAccount->GetSubaccountParentNumber(dialogBL->GetOrmasDal()).c_str());
+					}
+					entryItem << new QStandardItem(QString::number(entry->GetDebitingAccountID()))
+						<< new QStandardItem(QString::number(entry->GetCreditingAccountID()));
+					QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
+					itemModel->appendRow(entryItem);
 
+					delete dAccount;
+					delete dSAccount;
+					delete cAccount;
+					delete cSAccount;
+				}
+			}
 			dialogBL->CommitTransaction(errorMessage);
 
-			delete dAccount;
-			delete cAccount;
-			this->close();
+		
+			Close();
 		}
 		else
 		{
@@ -209,49 +274,78 @@ void CreateEtrDlg::EditEntry()
 		if (QString(entry->GetDate().c_str()) != dateEdit->text() || entry->GetCreditingAccountID() != caIDEdit->text().toInt()
 			|| entry->GetValue() != valueEdit->text().toDouble() || entry->GetDebitingAccountID() != daIDEdit->text().toInt())
 		{
-			DataForm *parentDataForm = (DataForm*)parentWidget();
-			SetEntryParams(dateEdit->text(), daIDEdit->text().toInt(), dateEdit->text().toDouble(), caIDEdit->text().toInt(), entry->GetID());
+			DataForm *parentDataForm = (DataForm*) parentForm;
+			SetEntryParams(dateEdit->text(), daIDEdit->text().toInt(), valueEdit->text().toDouble(), caIDEdit->text().toInt(), entry->GetID());
 			dialogBL->StartTransaction(errorMessage);
 			if (dialogBL->UpdateEntry(entry, errorMessage))
 			{
-				BusinessLayer::Account *dAccount = new BusinessLayer::Account;
-				if (dAccount->GetAccountByID(dialogBL->GetOrmasDal(), daIDEdit->text().toInt(), errorMessage))
+				if (parentDataForm != nullptr)
 				{
-					dialogBL->CancelTransaction(errorMessage);
-					QMessageBox::information(NULL, QString(tr("Warning")),
-						QString(tr(errorMessage.c_str())),
-						QString(tr("Ok")));
-					errorMessage.clear();
-					delete dAccount;
-					return;
-				}
-				BusinessLayer::Account *cAccount = new BusinessLayer::Account;
-				if (cAccount->GetAccountByID(dialogBL->GetOrmasDal(), caIDEdit->text().toInt(), errorMessage))
-				{
-					dialogBL->CancelTransaction(errorMessage);
-					QMessageBox::information(NULL, QString(tr("Warning")),
-						QString(tr(errorMessage.c_str())),
-						QString(tr("Ok")));
-					errorMessage.clear();
-					delete dAccount;
-					delete cAccount;
-					return;
-				}
-				QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
-				QModelIndex mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
-				itemModel->item(mIndex.row(), 1)->setText(entry->GetDate().c_str());
-				itemModel->item(mIndex.row(), 2)->setText(dAccount->GetNumber().c_str());
-				itemModel->item(mIndex.row(), 3)->setText(QString::number(entry->GetValue()));
-				itemModel->item(mIndex.row(), 4)->setText(cAccount->GetNumber().c_str());
-				itemModel->item(mIndex.row(), 5)->setText(QString::number(entry->GetDebitingAccountID()));
-				itemModel->item(mIndex.row(), 6)->setText(QString::number(entry->GetCreditingAccountID()));
-				emit itemModel->dataChanged(mIndex, mIndex);
+					if (!parentDataForm->IsClosed())
+					{
+						BusinessLayer::Account *dAccount = new BusinessLayer::Account;
+						BusinessLayer::Subaccount *dSAccount = new BusinessLayer::Subaccount;
+						if (!dAccount->GetAccountByID(dialogBL->GetOrmasDal(), entry->GetDebitingAccountID(), errorMessage)
+							&& !dSAccount->GetSubaccountByID(dialogBL->GetOrmasDal(), entry->GetDebitingAccountID(), errorMessage))
+						{
+							dialogBL->CancelTransaction(errorMessage);
+							QMessageBox::information(NULL, QString(tr("Warning")),
+								QString(tr(errorMessage.c_str())),
+								QString(tr("Ok")));
+							errorMessage.clear();
+							delete dAccount;
+							delete dSAccount;
+							return;
+						}
+						BusinessLayer::Account *cAccount = new BusinessLayer::Account;
+						BusinessLayer::Subaccount *cSAccount = new BusinessLayer::Subaccount;
+						if (!cAccount->GetAccountByID(dialogBL->GetOrmasDal(), entry->GetCreditingAccountID(), errorMessage)
+							&& !cSAccount->GetSubaccountByID(dialogBL->GetOrmasDal(), entry->GetCreditingAccountID(), errorMessage))
+						{
+							dialogBL->CancelTransaction(errorMessage);
+							QMessageBox::information(NULL, QString(tr("Warning")),
+								QString(tr(errorMessage.c_str())),
+								QString(tr("Ok")));
+							errorMessage.clear();
+							delete dAccount;
+							delete dSAccount;
+							delete cAccount;
+							delete cSAccount;
+							return;
+						}
 
+						QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
+						QModelIndex mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
+						itemModel->item(mIndex.row(), 1)->setText(entry->GetDate().c_str());
+						if (!dAccount->GetNumber().empty())
+						{
+							itemModel->item(mIndex.row(), 2)->setText(dAccount->GetNumber().c_str());
+						}
+						else if (!dSAccount->GetNumber().empty())
+						{
+							itemModel->item(mIndex.row(), 2)->setText(dSAccount->GetSubaccountParentNumber(dialogBL->GetOrmasDal()).c_str());
+						}
+						itemModel->item(mIndex.row(), 3)->setText(QString::number(entry->GetValue()));
+						if (!cAccount->GetNumber().empty())
+						{
+							itemModel->item(mIndex.row(), 4)->setText(cAccount->GetNumber().c_str());
+						}
+						else if (!cSAccount->GetNumber().empty())
+						{
+							itemModel->item(mIndex.row(), 4)->setText(cSAccount->GetSubaccountParentNumber(dialogBL->GetOrmasDal()).c_str());
+						}
+						itemModel->item(mIndex.row(), 5)->setText(QString::number(entry->GetDebitingAccountID()));
+						itemModel->item(mIndex.row(), 6)->setText(QString::number(entry->GetCreditingAccountID()));
+						emit itemModel->dataChanged(mIndex, mIndex);
+						delete dAccount;
+						delete dSAccount;
+						delete cAccount;
+						delete cSAccount;
+						
+					}
+				}
 				dialogBL->CommitTransaction(errorMessage);
-
-				delete dAccount;
-				delete cAccount;
-				this->close();
+				Close();
 			}
 			else
 			{
@@ -264,7 +358,7 @@ void CreateEtrDlg::EditEntry()
 		}
 		else
 		{
-			this->close();
+			Close();
 		}
 	}
 	else
@@ -278,7 +372,7 @@ void CreateEtrDlg::EditEntry()
 
 void CreateEtrDlg::Close()
 {
-	this->close();
+	this->parentWidget()->close();
 }
 
 void CreateEtrDlg::OpenDAccDlg()
@@ -286,29 +380,29 @@ void CreateEtrDlg::OpenDAccDlg()
 	this->hide();
 	this->setModal(false);
 	this->show();
-	DataForm *userParent = (DataForm *)parent();
-	MainForm *mainForm = (MainForm *)userParent->GetParent();
 	QString message = tr("Loading...");
 	mainForm->statusBar()->showMessage(message);
 	DataForm *dForm = new DataForm(dialogBL, mainForm);
 	dForm->setWindowTitle(tr("Accounts"));
 	dForm->hide();
 	dForm->setWindowModality(Qt::WindowModal);
-	dForm->FillTable<BusinessLayer::AccountView>(errorMessage);
+	dForm->FillTable<BusinessLayer::Account>(errorMessage);
 	if (errorMessage.empty())
 	{
-		dForm->createEtrDlg = this;
+		dForm->parentDialog = this;
 		dForm->setObjectName("debitingAccountForm");
-		dForm->QtConnect<BusinessLayer::AccountView>();
+		dForm->QtConnect<BusinessLayer::Account>();
 		QMdiSubWindow *dAccountWindow = new QMdiSubWindow;
 		dAccountWindow->setWidget(dForm);
 		dAccountWindow->setAttribute(Qt::WA_DeleteOnClose);
 		mainForm->mdiArea->addSubWindow(dAccountWindow);
+		dAccountWindow->resize(dForm->size().width() + 18, dForm->size().height() + 30);
 		dForm->topLevelWidget();
 		dForm->activateWindow();
 		QApplication::setActiveWindow(dForm);
 		dForm->show();
 		dForm->raise();
+		dForm->setWindowFlags(dForm->windowFlags() | Qt::WindowStaysOnTopHint);
 		QString message = tr("All accounts are shown");
 		mainForm->statusBar()->showMessage(message);
 	}
@@ -329,29 +423,29 @@ void CreateEtrDlg::OpenCAccDlg()
 	this->hide();
 	this->setModal(false);
 	this->show();
-	DataForm *productParent = (DataForm *)parent();
-	MainForm *mainForm = (MainForm *)productParent->GetParent();
 	QString message = tr("Loading...");
 	mainForm->statusBar()->showMessage(message);
 	DataForm *dForm = new DataForm(dialogBL, mainForm);
 	dForm->setWindowTitle(tr("Accounts"));
 	dForm->hide();
 	dForm->setWindowModality(Qt::WindowModal);
-	dForm->FillTable<BusinessLayer::AccountView>(errorMessage);
+	dForm->FillTable<BusinessLayer::Account>(errorMessage);
 	if (errorMessage.empty())
 	{
-		dForm->createEtrDlg = this;
+		dForm->parentDialog = this;
 		dForm->setObjectName("creditingAccountForm");
-		dForm->QtConnect<BusinessLayer::AccountView>();
+		dForm->QtConnect<BusinessLayer::Account>();
 		QMdiSubWindow *cAccountWindow = new QMdiSubWindow;
 		cAccountWindow->setWidget(dForm);
 		cAccountWindow->setAttribute(Qt::WA_DeleteOnClose);
 		mainForm->mdiArea->addSubWindow(cAccountWindow);
+		cAccountWindow->resize(dForm->size().width() + 18, dForm->size().height() + 30);
 		dForm->topLevelWidget();
 		dForm->activateWindow();
 		QApplication::setActiveWindow(dForm);
 		dForm->show();
 		dForm->raise();
+		dForm->setWindowFlags(dForm->windowFlags() | Qt::WindowStaysOnTopHint);
 		QString message = tr("All accounts are shown");
 		mainForm->statusBar()->showMessage(message);
 	}
@@ -368,9 +462,96 @@ void CreateEtrDlg::OpenCAccDlg()
 
 }
 
-void CreateEtrDlg::TextChanged()
+void CreateEtrDlg::OpenDSAccDlg()
 {
-	if (daIDEdit->text().length() == 15)
+	this->hide();
+	this->setModal(false);
+	this->show();
+	QString message = tr("Loading...");
+	mainForm->statusBar()->showMessage(message);
+	DataForm *dForm = new DataForm(dialogBL, mainForm);
+	dForm->setWindowTitle(tr("Subccounts"));
+	dForm->hide();
+	dForm->setWindowModality(Qt::WindowModal);
+	dForm->FillTable<BusinessLayer::SubaccountView>(errorMessage);
+	if (errorMessage.empty())
+	{
+		dForm->parentDialog = this;
+		dForm->setObjectName("debitingSubaccountForm");
+		dForm->QtConnect<BusinessLayer::SubaccountView>();
+		QMdiSubWindow *dSAccountWindow = new QMdiSubWindow;
+		dSAccountWindow->setWidget(dForm);
+		dSAccountWindow->setAttribute(Qt::WA_DeleteOnClose);
+		mainForm->mdiArea->addSubWindow(dSAccountWindow);
+		dSAccountWindow->resize(dForm->size().width() + 18, dForm->size().height() + 30);
+		dForm->topLevelWidget();
+		dForm->activateWindow();
+		QApplication::setActiveWindow(dForm);
+		dForm->show();
+		dForm->raise();
+		dForm->setWindowFlags(dForm->windowFlags() | Qt::WindowStaysOnTopHint);
+		QString message = tr("All subaccounts are shown");
+		mainForm->statusBar()->showMessage(message);
+	}
+	else
+	{
+		delete dForm;
+		QString message = tr("End with error!");
+		mainForm->statusBar()->showMessage(message);
+		QMessageBox::information(NULL, QString(tr("Warning")),
+			QString(tr(errorMessage.c_str())),
+			QString(tr("Ok")));
+		errorMessage = "";
+	}
+}
+
+void CreateEtrDlg::OpenCSAccDlg()
+{
+	this->hide();
+	this->setModal(false);
+	this->show();
+	QString message = tr("Loading...");
+	mainForm->statusBar()->showMessage(message);
+	DataForm *dForm = new DataForm(dialogBL, mainForm);
+	dForm->setWindowTitle(tr("Subaccounts"));
+	dForm->hide();
+	dForm->setWindowModality(Qt::WindowModal);
+	dForm->FillTable<BusinessLayer::SubaccountView>(errorMessage);
+	if (errorMessage.empty())
+	{
+		dForm->parentDialog = this;
+		dForm->setObjectName("creditingSubaccountForm");
+		dForm->QtConnect<BusinessLayer::SubaccountView>();
+		QMdiSubWindow *cSAccountWindow = new QMdiSubWindow;
+		cSAccountWindow->setWidget(dForm);
+		cSAccountWindow->setAttribute(Qt::WA_DeleteOnClose);
+		mainForm->mdiArea->addSubWindow(cSAccountWindow);
+		cSAccountWindow->resize(dForm->size().width() + 18, dForm->size().height() + 30);
+		dForm->topLevelWidget();
+		dForm->activateWindow();
+		QApplication::setActiveWindow(dForm);
+		dForm->show();
+		dForm->raise();
+		dForm->setWindowFlags(dForm->windowFlags() | Qt::WindowStaysOnTopHint);
+		QString message = tr("All subaccounts are shown");
+		mainForm->statusBar()->showMessage(message);
+	}
+	else
+	{
+		delete dForm;
+		QString message = tr("End with error!");
+		mainForm->statusBar()->showMessage(message);
+		QMessageBox::information(NULL, QString(tr("Warning")),
+			QString(tr(errorMessage.c_str())),
+			QString(tr("Ok")));
+		errorMessage = "";
+	}
+
+}
+
+void CreateEtrDlg::DATextChanged()
+{
+	if (daNumberEdit->text().length() == 5 || daNumberEdit->text().length() == 6)
 	{
 		BusinessLayer::Account account;
 		if (account.GetAccountByNumber(dialogBL->GetOrmasDal(), daNumberEdit->text().toUtf8().constData(), errorMessage))
@@ -382,28 +563,78 @@ void CreateEtrDlg::TextChanged()
 		else
 		{
 			daNamePh->setText(tr("Incorrect account number!"));
+			daIDEdit->setText("");
+		}
+	}
+	else if (daNumberEdit->text().length() == 15)
+	{
+		BusinessLayer::Subaccount subaccount;
+		if (subaccount.GetSubaccountByNumber(dialogBL->GetOrmasDal(), daNumberEdit->text().toUtf8().constData(), errorMessage))
+		{
+			daIDEdit->setText(QString::number(subaccount.GetID()));
+			if (subaccount.GetName(dialogBL->GetOrmasDal()).c_str() != nullptr)
+				daNamePh->setText(subaccount.GetName(dialogBL->GetOrmasDal()).c_str());
+		}
+		else
+		{
+			daNamePh->setText(tr("Incorrect account number!"));
+			daIDEdit->setText("");
 		}
 	}
 	else
 	{
 		daNamePh->setText("");
-	}
-	if (caIDEdit->text().length() == 15)
+		daIDEdit->setText("");
+	}	
+}
+
+void CreateEtrDlg::CATextChanged()
+{
+	if (caNumberEdit->text().length() == 5 || caNumberEdit->text().length() == 6)
 	{
 		BusinessLayer::Account account;
-		if (account.GetAccountByNumber(dialogBL->GetOrmasDal(), daNumberEdit->text().toUtf8().constData(), errorMessage))
+		if (account.GetAccountByNumber(dialogBL->GetOrmasDal(), caNumberEdit->text().toUtf8().constData(), errorMessage))
 		{
-			daIDEdit->setText(QString::number(account.GetID()));
+			caIDEdit->setText(QString::number(account.GetID()));
 			if (account.GetName(dialogBL->GetOrmasDal()).c_str() != nullptr)
-				daNamePh->setText(account.GetName(dialogBL->GetOrmasDal()).c_str());
+				caNamePh->setText(account.GetName(dialogBL->GetOrmasDal()).c_str());
 		}
 		else
 		{
-			daNamePh->setText(tr("Incorrect account number!"));
+			caNamePh->setText(tr("Incorrect account number!"));
+			caIDEdit->setText("");
+		}
+	}
+	else if (caNumberEdit->text().length() == 15)
+	{
+		BusinessLayer::Subaccount subaccount;
+		if (subaccount.GetSubaccountByNumber(dialogBL->GetOrmasDal(), caNumberEdit->text().toUtf8().constData(), errorMessage))
+		{
+			caIDEdit->setText(QString::number(subaccount.GetID()));
+			if (subaccount.GetName(dialogBL->GetOrmasDal()).c_str() != nullptr)
+				caNamePh->setText(subaccount.GetName(dialogBL->GetOrmasDal()).c_str());
+		}
+		else
+		{
+			caNamePh->setText(tr("Incorrect account number!"));
+			caIDEdit->setText("");
 		}
 	}
 	else
 	{
 		caNamePh->setText("");
+		caIDEdit->setText("");
+	}
+}
+
+void CreateEtrDlg::TextEditChanged()
+{
+	if (valueEdit->text().contains(","))
+	{
+		valueEdit->setText(valueEdit->text().replace(",", "."));
+	}
+	if (valueEdit->text().contains(".."))
+	{
+		valueEdit->setText(valueEdit->text().replace("..", "."));
 	}
 }

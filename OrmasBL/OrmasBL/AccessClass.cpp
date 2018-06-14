@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "AccessClass.h"
 #include "AccessItemClass.h"
+#include "UserClass.h"
+#include "RoleClass.h"
 
 namespace BusinessLayer{
 	Access::Access(DataLayer::accessesCollection aCollection)
@@ -163,8 +165,7 @@ namespace BusinessLayer{
 	{
 		AccessItem accessItem;
 		errorMessage = "";
-		accessItem.GetAccessItemByID(*ormasDal, accessItemID, errorMessage);
-		if (errorMessage.empty())
+		if (accessItem.GetAccessItemByID(*ormasDal, accessItemID, errorMessage))
 		{
 			if (0 == checkedDivision.compare(accessItem.GetDivision()))
 			{
@@ -179,8 +180,7 @@ namespace BusinessLayer{
 	{
 		AccessItem accessItem;
 		errorMessage = "";
-		accessItem.GetAccessItemByID(*ormasDal, accessItemID, errorMessage);
-		if (errorMessage.empty())
+		if (accessItem.GetAccessItemByID(*ormasDal, accessItemID, errorMessage))
 		{
 			if (0 == checkedDivision.compare(accessItem.GetDivision()))
 			{
@@ -188,6 +188,43 @@ namespace BusinessLayer{
 			}
 		}
 		return false;
+	}
+
+	std::string Access::GetCRUDAccess(DataLayer::OrmasDal* ormasDal, User* loggedUser, std::string accessItemName)
+	{
+		std::vector<int> rights;
+		rights = GetRightsList(ormasDal, loggedUser);
+		if (1 == rights.size())
+		{
+			if (CheckAccess(ormasDal, rights.at(0), "ALL"))
+			{
+				// returning 'CRUD', CREATE/READ/UPDATE/DELETE - max access rights
+				return "CRUD";
+			}
+		}
+		if (0 < rights.size())
+		{
+			std::string errorMessage = "";
+			AccessItem itemRights;
+			AccessItem itemForCheck;
+			if (!itemForCheck.GetAccessItemByEngName(*ormasDal, accessItemName, errorMessage))
+				return "";
+			for each (auto id in rights)
+			{
+				itemRights.Clear();
+				if (itemRights.GetAccessItemByID(*ormasDal, id, errorMessage))
+				{
+					if (itemRights.GetNameEng() == itemForCheck.GetNameEng())
+					{
+						if (0 != itemRights.GetDivision().compare("MENU") && 0 != itemRights.GetDivision().compare("MENUITEM"))
+						{
+							return itemRights.GetDivision();
+						}
+					}
+				}
+			}
+		}
+		return "";
 	}
 
 	std::vector<int> Access::GetRightsList(DataLayer::OrmasDal* ormasDal, User *loggedUser)

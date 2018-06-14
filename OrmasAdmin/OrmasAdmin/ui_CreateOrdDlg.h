@@ -77,7 +77,7 @@ public:
     {
         if (CreateOrder->objectName().isEmpty())
             CreateOrder->setObjectName(QStringLiteral("CreateOrder"));
-        CreateOrder->resize(633, 319);
+        CreateOrder->resize(700, 320);
         CreateOrder->setLocale(QLocale(QLocale::English, QLocale::UnitedStates));
         CreateOrder->setModal(false);
         gridLayout = new QGridLayout(CreateOrder);
@@ -270,7 +270,7 @@ public:
         sizePolicy1.setVerticalStretch(0);
         sizePolicy1.setHeightForWidth(execDateLb->sizePolicy().hasHeightForWidth());
         execDateLb->setSizePolicy(sizePolicy1);
-        execDateLb->setMinimumSize(QSize(197, 0));
+        execDateLb->setMinimumSize(QSize(0, 0));
 
         horizontalLayout_2->addWidget(execDateLb);
 
@@ -280,7 +280,7 @@ public:
 
         execDateEdit = new QDateTimeEdit(execDateWidget);
         execDateEdit->setObjectName(QStringLiteral("execDateEdit"));
-        execDateEdit->setMinimumSize(QSize(127, 0));
+        execDateEdit->setMinimumSize(QSize(155, 0));
 
         horizontalLayout_2->addWidget(execDateEdit);
 

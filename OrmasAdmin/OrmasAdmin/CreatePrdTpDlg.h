@@ -19,7 +19,8 @@ private slots:
 	void Close();
 private:
 	BusinessLayer::ProductType *prodType = new BusinessLayer::ProductType();
-	void SetProdTypeParams(QString, QString, int = 0);
-	void FillEditElements(QString, QString);
+	void SetProdTypeParams(QString, QString, QString, int = 0);
+	void FillEditElements(QString, QString, QString);
+	QWidget* parentForm;
 };
 #endif //CREATEPRDTPDLG_H

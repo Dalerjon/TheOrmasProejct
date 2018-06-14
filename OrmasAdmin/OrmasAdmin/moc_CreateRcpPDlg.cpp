@@ -19,8 +19,8 @@
 
 QT_BEGIN_MOC_NAMESPACE
 struct qt_meta_stringdata_CreateRcpPDlg_t {
-    QByteArrayData data[15];
-    char stringdata0[187];
+    QByteArrayData data[16];
+    char stringdata0[203];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
@@ -41,16 +41,18 @@ QT_MOC_LITERAL(8, 111, 12), // "OpenSkEmpDlg"
 QT_MOC_LITERAL(9, 124, 10), // "OpenStsDlg"
 QT_MOC_LITERAL(10, 135, 15), // "OpenRcpPListDlg"
 QT_MOC_LITERAL(11, 151, 16), // "StatusWasChenged"
-QT_MOC_LITERAL(12, 168, 5), // "SetID"
-QT_MOC_LITERAL(13, 174, 2), // "ID"
-QT_MOC_LITERAL(14, 177, 9) // "childName"
+QT_MOC_LITERAL(12, 168, 15), // "TextEditChanged"
+QT_MOC_LITERAL(13, 184, 5), // "SetID"
+QT_MOC_LITERAL(14, 190, 2), // "ID"
+QT_MOC_LITERAL(15, 193, 9) // "childName"
 
     },
     "CreateRcpPDlg\0CloseCreatedForms\0\0"
     "CreateReceiptProduct\0EditReceiptProduct\0"
     "DeleteReceiptProduct\0Close\0OpenEmpDlg\0"
     "OpenSkEmpDlg\0OpenStsDlg\0OpenRcpPListDlg\0"
-    "StatusWasChenged\0SetID\0ID\0childName"
+    "StatusWasChenged\0TextEditChanged\0SetID\0"
+    "ID\0childName"
 };
 #undef QT_MOC_LITERAL
 
@@ -60,7 +62,7 @@ static const uint qt_meta_data_CreateRcpPDlg[] = {
        7,       // revision
        0,       // classname
        0,    0, // classinfo
-      11,   14, // methods
+      12,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -68,19 +70,20 @@ static const uint qt_meta_data_CreateRcpPDlg[] = {
        1,       // signalCount
 
  // signals: name, argc, parameters, tag, flags
-       1,    0,   69,    2, 0x06 /* Public */,
+       1,    0,   74,    2, 0x06 /* Public */,
 
  // slots: name, argc, parameters, tag, flags
-       3,    0,   70,    2, 0x08 /* Private */,
-       4,    0,   71,    2, 0x08 /* Private */,
-       5,    0,   72,    2, 0x08 /* Private */,
-       6,    0,   73,    2, 0x08 /* Private */,
-       7,    0,   74,    2, 0x08 /* Private */,
-       8,    0,   75,    2, 0x08 /* Private */,
-       9,    0,   76,    2, 0x08 /* Private */,
-      10,    0,   77,    2, 0x08 /* Private */,
-      11,    0,   78,    2, 0x08 /* Private */,
-      12,    2,   79,    2, 0x0a /* Public */,
+       3,    0,   75,    2, 0x08 /* Private */,
+       4,    0,   76,    2, 0x08 /* Private */,
+       5,    0,   77,    2, 0x08 /* Private */,
+       6,    0,   78,    2, 0x08 /* Private */,
+       7,    0,   79,    2, 0x08 /* Private */,
+       8,    0,   80,    2, 0x08 /* Private */,
+       9,    0,   81,    2, 0x08 /* Private */,
+      10,    0,   82,    2, 0x08 /* Private */,
+      11,    0,   83,    2, 0x08 /* Private */,
+      12,    0,   84,    2, 0x08 /* Private */,
+      13,    2,   85,    2, 0x0a /* Public */,
 
  // signals: parameters
     QMetaType::Void,
@@ -95,7 +98,8 @@ static const uint qt_meta_data_CreateRcpPDlg[] = {
     QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void,
-    QMetaType::Void, QMetaType::Int, QMetaType::QString,   13,   14,
+    QMetaType::Void,
+    QMetaType::Void, QMetaType::Int, QMetaType::QString,   14,   15,
 
        0        // eod
 };
@@ -116,7 +120,8 @@ void CreateRcpPDlg::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _i
         case 7: _t->OpenStsDlg(); break;
         case 8: _t->OpenRcpPListDlg(); break;
         case 9: _t->StatusWasChenged(); break;
-        case 10: _t->SetID((*reinterpret_cast< int(*)>(_a[1])),(*reinterpret_cast< QString(*)>(_a[2]))); break;
+        case 10: _t->TextEditChanged(); break;
+        case 11: _t->SetID((*reinterpret_cast< int(*)>(_a[1])),(*reinterpret_cast< QString(*)>(_a[2]))); break;
         default: ;
         }
     } else if (_c == QMetaObject::IndexOfMethod) {
@@ -159,13 +164,13 @@ int CreateRcpPDlg::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 11)
+        if (_id < 12)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 11;
+        _id -= 12;
     } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 11)
+        if (_id < 12)
             *reinterpret_cast<int*>(_a[0]) = -1;
-        _id -= 11;
+        _id -= 12;
     }
     return _id;
 }

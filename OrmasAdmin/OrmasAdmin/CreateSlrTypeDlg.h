@@ -21,6 +21,7 @@ private:
 	BusinessLayer::SalaryType *salaryType = new BusinessLayer::SalaryType();
 	void SetSalaryTypeParams(QString, QString, int = 0);
 	void FillEditElements(QString, QString);
+	QWidget* parentForm;
 };
 
 #endif //CREATESLRDLG_H

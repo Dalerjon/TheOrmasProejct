@@ -2,6 +2,7 @@
 #define CREATECOADLG_H
 #include "ui_CreateCOADlg.h"
 #include "OrmasBL.h"
+#include "MainForm.h"
 
 class CreateCOADlg : public QDialog, public Ui::CreateChartOfAccounts
 {
@@ -22,10 +23,11 @@ public:
 	void SetID(int ID, QString childName);
 private:
 	BusinessLayer::ChartOfAccounts *chartOfAccounts = new BusinessLayer::ChartOfAccounts();
-	void SetChartOfAccountsParams(QString, int, int, int = 0);
-	void FillEditElements(QString, int, int);
-	QDoubleValidator *vDouble = nullptr;
+	void SetChartOfAccountsParams(QString, QString, int, int = 0);
+	void FillEditElements(QString, QString, int);
 	QIntValidator *vInt = nullptr;
+	QWidget* parentForm;
+	MainForm* mainForm;
 };
 
 #endif //CREATECOADLG_H

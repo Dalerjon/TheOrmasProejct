@@ -1,9 +1,8 @@
 #include "stdafx.h"
-#include <QMessageBox>
+
 #include "CreateProdDlg.h"
-#include "MainForm.h"
 #include "DataForm.h"
-#include "ExtraFunctions.h"
+
 
 
 CreateProdDlg::CreateProdDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, QWidget *parent) :QDialog(parent)
@@ -11,7 +10,10 @@ CreateProdDlg::CreateProdDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, Q
 	setupUi(this);
 	//setModal(true);
 	dialogBL = ormasBL;
-	vDouble = new QDoubleValidator(0.00, 1000000000.00, 3, this);
+	parentForm = parent;
+	DataForm *dataFormParent = (DataForm *)this->parentForm;
+	mainForm = (MainForm *)dataFormParent->GetParent();
+	vDouble = new QDoubleValidator(0.00, 1000000000.00, 5, this);
 	vInt = new QIntValidator(0, 1000000000, this);
 	companyEdit->setValidator(vInt);
 	shelfLifeEdit->setValidator(vInt);
@@ -19,7 +21,7 @@ CreateProdDlg::CreateProdDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, Q
 	volumeEdit->setMaxLength(17);
 	priceEdit->setValidator(vDouble);
 	priceEdit->setMaxLength(17);
-	nameEdit->setMaxLength(20);
+	nameEdit->setMaxLength(50);
 	
 	if (true == updateFlag)
 	{
@@ -35,6 +37,8 @@ CreateProdDlg::CreateProdDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, Q
 	}
 	QObject::connect(cancelBtn, &QPushButton::released, this, &CreateProdDlg::Close);
 	QObject::connect(companyBtn, &QPushButton::released, this, &CreateProdDlg::OpenCmpDlg);
+	QObject::connect(volumeEdit, &QLineEdit::textChanged, this, &CreateProdDlg::TextEditChanged);
+	QObject::connect(priceEdit, &QLineEdit::textChanged, this, &CreateProdDlg::TextEditChanged);
 	InitComboBox();
 }
 
@@ -50,6 +54,13 @@ void CreateProdDlg::SetID(int ID, QString childName)
 	{
 		if (0 != childName.length())
 		{
+			this->hide();
+			this->setWindowFlags(this->windowFlags() | Qt::WindowStaysOnTopHint);
+			this->show();
+			this->raise();
+			this->activateWindow();
+			QApplication::setActiveWindow(this);
+
 			if (childName == QString("companyForm"))
 			{
 				companyEdit->setText(QString::number(ID));
@@ -132,57 +143,64 @@ void CreateProdDlg::CreateProduct()
 		&& !measureCmb->currentText().isEmpty() && 0 != priceEdit->text()
 		&& !prodTypeCmb->currentText().isEmpty() && 0 != shelfLifeEdit->text().toInt() && !currencyCmb->currentText().isEmpty())
 	{
-		DataForm *parentDataForm = (DataForm*)parentWidget();
+		DataForm *parentDataForm = (DataForm*) parentForm;
 		SetProductParams(companyEdit->text().toInt(), nameEdit->text(), volumeEdit->text().toDouble(), measureCmb->currentData().toInt(),
 			priceEdit->text().toDouble(), prodTypeCmb->currentData().toInt(), shelfLifeEdit->text().toInt(), currencyCmb->currentData().toInt());
 		dialogBL->StartTransaction(errorMessage);
 		if (dialogBL->CreateProduct(product, errorMessage))
 		{
-			BusinessLayer::Company *company = new BusinessLayer::Company();
-			BusinessLayer::Measure *measure = new BusinessLayer::Measure();
-			BusinessLayer::ProductType *prodType = new BusinessLayer::ProductType();
-			BusinessLayer::Currency *currency = new BusinessLayer::Currency();
-
-			if (!company->GetCompanyByID(dialogBL->GetOrmasDal(), product->GetCompanyID(), errorMessage)
-				|| !measure->GetMeasureByID(dialogBL->GetOrmasDal(), product->GetMeasureID(), errorMessage)
-				|| !prodType->GetProductTypeByID(dialogBL->GetOrmasDal(), product->GetProductTypeID(), errorMessage)
-				|| !currency->GetCurrencyByID(dialogBL->GetOrmasDal(), product->GetCurrencyID(), errorMessage))
+			if (parentDataForm != nullptr)
 			{
-				dialogBL->CancelTransaction(errorMessage);
-				QMessageBox::information(NULL, QString(tr("Warning")),
-					QString(tr(errorMessage.c_str())),
-					QString(tr("Ok")));
-				
-				errorMessage.clear();
-				delete company;
-				delete measure;
-				delete prodType;
-				delete currency;
-				return;
+				if (!parentDataForm->IsClosed())
+				{
+					BusinessLayer::Company *company = new BusinessLayer::Company();
+					BusinessLayer::Measure *measure = new BusinessLayer::Measure();
+					BusinessLayer::ProductType *prodType = new BusinessLayer::ProductType();
+					BusinessLayer::Currency *currency = new BusinessLayer::Currency();
+
+					if (!company->GetCompanyByID(dialogBL->GetOrmasDal(), product->GetCompanyID(), errorMessage)
+						|| !measure->GetMeasureByID(dialogBL->GetOrmasDal(), product->GetMeasureID(), errorMessage)
+						|| !prodType->GetProductTypeByID(dialogBL->GetOrmasDal(), product->GetProductTypeID(), errorMessage)
+						|| !currency->GetCurrencyByID(dialogBL->GetOrmasDal(), product->GetCurrencyID(), errorMessage))
+					{
+						dialogBL->CancelTransaction(errorMessage);
+						QMessageBox::information(NULL, QString(tr("Warning")),
+							QString(tr(errorMessage.c_str())),
+							QString(tr("Ok")));
+
+						errorMessage.clear();
+						delete company;
+						delete measure;
+						delete prodType;
+						delete currency;
+						return;
+					}
+					QList<QStandardItem*> ProductionItem;
+					ProductionItem << new QStandardItem(QString::number(product->GetID()))
+						<< new QStandardItem(product->GetName().c_str())
+						<< new QStandardItem(QString::number(product->GetPrice()))
+						<< new QStandardItem(currency->GetShortName().c_str())
+						<< new QStandardItem(QString::number(product->GetVolume()))
+						<< new QStandardItem(measure->GetName().c_str())
+						<< new QStandardItem(prodType->GetShortName().c_str())
+						<< new QStandardItem(QString::number(product->GetShelfLife()))
+						<< new QStandardItem(company->GetName().c_str())
+						<< new QStandardItem(QString::number(product->GetCompanyID()))
+						<< new QStandardItem(QString::number(product->GetMeasureID()))
+						<< new QStandardItem(QString::number(product->GetProductTypeID()))
+						<< new QStandardItem(QString::number(product->GetCurrencyID()));
+					QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
+					itemModel->appendRow(ProductionItem);
+					delete company;
+					delete measure;
+					delete prodType;
+					delete currency;
+				}
 			}
-			QList<QStandardItem*> ProductionItem;
-			ProductionItem << new QStandardItem(QString::number(product->GetID()))
-				<< new QStandardItem(product->GetName().c_str())
-				<< new QStandardItem(QString::number(product->GetPrice()))
-				<< new QStandardItem(currency->GetShortName().c_str())
-				<< new QStandardItem(QString::number(product->GetVolume()))
-				<< new QStandardItem(measure->GetName().c_str())
-				<< new QStandardItem(prodType->GetShortName().c_str())
-				<< new QStandardItem(QString::number(product->GetShelfLife()))
-				<< new QStandardItem(company->GetName().c_str())
-				<< new QStandardItem(QString::number(product->GetCompanyID()))
-				<< new QStandardItem(QString::number(product->GetMeasureID()))
-				<< new QStandardItem(QString::number(product->GetProductTypeID()))
-				<< new QStandardItem(QString::number(product->GetCurrencyID()));
-			QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
-			itemModel->appendRow(ProductionItem);
 			dialogBL->CommitTransaction(errorMessage);
 
-			delete company;
-			delete measure;
-			delete prodType;
-			delete currency;
-			this->close();
+		
+			Close();
 		}
 		else
 		{
@@ -215,60 +233,67 @@ void CreateProdDlg::EditProduct()
 			product->GetPrice() != priceEdit->text().toDouble() || product->GetProductTypeID() != prodTypeCmb->currentData().toInt() ||
 			product->GetShelfLife() != shelfLifeEdit->text().toInt() || product->GetCurrencyID() != currencyCmb->currentData().toInt())
 			{
-			DataForm *parentDataForm = (DataForm*)parentWidget();
+			DataForm *parentDataForm = (DataForm*) parentForm;
 			SetProductParams(companyEdit->text().toInt(), nameEdit->text(), volumeEdit->text().toDouble(), measureCmb->currentData().toInt(),
 				priceEdit->text().toDouble(), prodTypeCmb->currentData().toInt(), shelfLifeEdit->text().toInt(), currencyCmb->currentData().toInt(),
 				product->GetID());
 			dialogBL->StartTransaction(errorMessage);
 			if (dialogBL->UpdateProduct(product, errorMessage))
 			{
-				QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
-				QModelIndex mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
-				itemModel->item(mIndex.row(), 1)->setText(product->GetName().c_str());
-				itemModel->item(mIndex.row(), 2)->setText(QString::number(product->GetPrice()));
-								
-				BusinessLayer::Company *company = new BusinessLayer::Company();
-				BusinessLayer::Measure *measure = new BusinessLayer::Measure();
-				BusinessLayer::ProductType *prodType = new BusinessLayer::ProductType();
-				BusinessLayer::Currency *currency = new BusinessLayer::Currency();
-				
-				if (!company->GetCompanyByID(dialogBL->GetOrmasDal(), product->GetCompanyID(), errorMessage)
-					|| !measure->GetMeasureByID(dialogBL->GetOrmasDal(), product->GetMeasureID(), errorMessage)
-					|| !prodType->GetProductTypeByID(dialogBL->GetOrmasDal(), product->GetProductTypeID(), errorMessage)
-					|| !currency->GetCurrencyByID(dialogBL->GetOrmasDal(), product->GetCurrencyID(), errorMessage))
+				if (parentDataForm != nullptr)
 				{
-					dialogBL->CancelTransaction(errorMessage);
-					QMessageBox::information(NULL, QString(tr("Warning")),
-						QString(tr(errorMessage.c_str())),
-						QString(tr("Ok")));
-					errorMessage.clear();
-					delete company;
-					delete measure;
-					delete prodType;
-					delete currency;
-					return;
-				}
+					if (!parentDataForm->IsClosed())
+					{
+						QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
+						QModelIndex mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
+						itemModel->item(mIndex.row(), 1)->setText(product->GetName().c_str());
+						itemModel->item(mIndex.row(), 2)->setText(QString::number(product->GetPrice()));
 
-				itemModel->item(mIndex.row(), 3)->setText(currency->GetShortName().c_str());
-				itemModel->item(mIndex.row(), 4)->setText(QString::number(product->GetVolume()));
-				itemModel->item(mIndex.row(), 5)->setText(measure->GetName().c_str());
-				itemModel->item(mIndex.row(), 6)->setText(prodType->GetShortName().c_str());
-				itemModel->item(mIndex.row(), 7)->setText(shelfLifeEdit->text());
-				itemModel->item(mIndex.row(), 8)->setText(company->GetName().c_str());
-				itemModel->item(mIndex.row(), 9)->setText(QString::number(product->GetCompanyID()));
-				itemModel->item(mIndex.row(), 10)->setText(QString::number(product->GetMeasureID()));
-				itemModel->item(mIndex.row(), 11)->setText(QString::number(product->GetProductTypeID()));
-				itemModel->item(mIndex.row(), 12)->setText(QString::number(product->GetCurrencyID()));
-				
-				emit itemModel->dataChanged(mIndex, mIndex);
-				
+						BusinessLayer::Company *company = new BusinessLayer::Company();
+						BusinessLayer::Measure *measure = new BusinessLayer::Measure();
+						BusinessLayer::ProductType *prodType = new BusinessLayer::ProductType();
+						BusinessLayer::Currency *currency = new BusinessLayer::Currency();
+
+						if (!company->GetCompanyByID(dialogBL->GetOrmasDal(), product->GetCompanyID(), errorMessage)
+							|| !measure->GetMeasureByID(dialogBL->GetOrmasDal(), product->GetMeasureID(), errorMessage)
+							|| !prodType->GetProductTypeByID(dialogBL->GetOrmasDal(), product->GetProductTypeID(), errorMessage)
+							|| !currency->GetCurrencyByID(dialogBL->GetOrmasDal(), product->GetCurrencyID(), errorMessage))
+						{
+							dialogBL->CancelTransaction(errorMessage);
+							QMessageBox::information(NULL, QString(tr("Warning")),
+								QString(tr(errorMessage.c_str())),
+								QString(tr("Ok")));
+							errorMessage.clear();
+							delete company;
+							delete measure;
+							delete prodType;
+							delete currency;
+							return;
+						}
+
+						itemModel->item(mIndex.row(), 3)->setText(currency->GetShortName().c_str());
+						itemModel->item(mIndex.row(), 4)->setText(QString::number(product->GetVolume()));
+						itemModel->item(mIndex.row(), 5)->setText(measure->GetName().c_str());
+						itemModel->item(mIndex.row(), 6)->setText(prodType->GetShortName().c_str());
+						itemModel->item(mIndex.row(), 7)->setText(shelfLifeEdit->text());
+						itemModel->item(mIndex.row(), 8)->setText(company->GetName().c_str());
+						itemModel->item(mIndex.row(), 9)->setText(QString::number(product->GetCompanyID()));
+						itemModel->item(mIndex.row(), 10)->setText(QString::number(product->GetMeasureID()));
+						itemModel->item(mIndex.row(), 11)->setText(QString::number(product->GetProductTypeID()));
+						itemModel->item(mIndex.row(), 12)->setText(QString::number(product->GetCurrencyID()));
+
+						emit itemModel->dataChanged(mIndex, mIndex);
+
+						delete company;
+						delete measure;
+						delete prodType;
+						delete currency;
+					}
+				}
 				dialogBL->CommitTransaction(errorMessage);
 
-				delete company;
-				delete measure;
-				delete prodType;
-				delete currency;
-				this->close();
+			
+				Close();
 			}
 			else
 			{
@@ -280,7 +305,7 @@ void CreateProdDlg::EditProduct()
 		}
 		else
 		{
-			this->close();
+			Close();
 		}
 	}
 	else
@@ -294,7 +319,7 @@ void CreateProdDlg::EditProduct()
 
 void CreateProdDlg::Close()
 {
-	this->close();
+	this->parentWidget()->close();
 }
 
 void CreateProdDlg::OpenCmpDlg()
@@ -302,8 +327,6 @@ void CreateProdDlg::OpenCmpDlg()
 	this->hide();
 	this->setModal(false);
 	this->show();
-	DataForm *productParent = (DataForm *)parent();
-	MainForm *mainForm = (MainForm *)productParent->GetParent();
 	QString message = tr("Loading...");
 	mainForm->statusBar()->showMessage(message);
 	DataForm *dForm = new DataForm(dialogBL, mainForm);
@@ -313,18 +336,20 @@ void CreateProdDlg::OpenCmpDlg()
 	dForm->FillTable<BusinessLayer::Company>(errorMessage);
 	if (errorMessage.empty())
 	{
-		dForm->createProdDlg = this;
+		dForm->parentDialog = this;
 		dForm->setObjectName("companyForm");
 		dForm->QtConnect<BusinessLayer::Company>();
 		QMdiSubWindow *companyWindow = new QMdiSubWindow;
 		companyWindow->setWidget(dForm);
 		companyWindow->setAttribute(Qt::WA_DeleteOnClose);
 		mainForm->mdiArea->addSubWindow(companyWindow);
+		companyWindow->resize(dForm->size().width() + 18, dForm->size().height() + 30);
 		dForm->topLevelWidget();
 		dForm->activateWindow();
 		QApplication::setActiveWindow(dForm);
 		dForm->show();
 		dForm->raise();
+		dForm->setWindowFlags(dForm->windowFlags() | Qt::WindowStaysOnTopHint);
 		QString message = tr("All companies are shown");
 		mainForm->statusBar()->showMessage(message);
 	}
@@ -365,5 +390,25 @@ void CreateProdDlg::InitComboBox()
 		{
 			prodTypeCmb->addItem(ptVector[i].GetShortName().c_str(), QVariant(ptVector[i].GetID()));
 		}
+	}
+}
+
+void CreateProdDlg::TextEditChanged()
+{
+	if (priceEdit->text().contains(","))
+	{
+		priceEdit->setText(priceEdit->text().replace(",", "."));
+	}
+	if (priceEdit->text().contains(".."))
+	{
+		priceEdit->setText(priceEdit->text().replace("..", "."));
+	}
+	if (volumeEdit->text().contains(","))
+	{
+		volumeEdit->setText(volumeEdit->text().replace(",", "."));
+	}
+	if (volumeEdit->text().contains(".."))
+	{
+		volumeEdit->setText(volumeEdit->text().replace("..", "."));
 	}
 }

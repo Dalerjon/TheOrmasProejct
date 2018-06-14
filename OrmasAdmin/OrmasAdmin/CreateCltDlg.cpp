@@ -1,15 +1,17 @@
 #include "stdafx.h"
-#include <QMessageBox>
+
 #include "CreateCltDlg.h"
-#include "MainForm.h"
 #include "DataForm.h"
-#include "ExtraFunctions.h"
+
 
 CreateCltDlg::CreateCltDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, QWidget *parent) :QDialog(parent)
 {
 	setupUi(this);
 	setModal(true);
 	dialogBL = ormasBL;
+	parentForm = parent;
+	DataForm *dataFormParent = (DataForm *)this->parentForm;
+	mainForm = (MainForm *)dataFormParent->GetParent();
 	activatedCmbBox->addItem("false");
 	activatedCmbBox->addItem("true");
 	locationEdit->setReadOnly(true);
@@ -51,6 +53,13 @@ void CreateCltDlg::SetID(int ID, QString childName)
 	{
 		if (0 != childName.length())
 		{
+			this->hide();
+			this->setWindowFlags(this->windowFlags() | Qt::WindowStaysOnTopHint);
+			this->show();
+			this->raise();
+			this->activateWindow();
+			QApplication::setActiveWindow(this);
+
 			if (childName == QString("locationForm"))
 			{
 				locationEdit->setText(QString::number(ID));
@@ -136,7 +145,7 @@ void CreateCltDlg::CreateClient()
 		&& !addressEdit->text().isEmpty() && !firmEdit->text().isEmpty() 
 		&& !passwordEdit->text().isEmpty() && !activatedCmbBox->currentText().isEmpty() &&  0 != locationEdit->text().toInt())
 	{
-		DataForm *parentDataForm = (DataForm*)parentWidget();
+		DataForm *parentDataForm = (DataForm*) parentForm;
 		
 		BusinessLayer::Role *role = new BusinessLayer::Role();
 		role->SetName("CLIENT");
@@ -158,45 +167,52 @@ void CreateCltDlg::CreateClient()
 		dialogBL->StartTransaction(errorMessage);
 		if (dialogBL->CreateClient(client, errorMessage))
 		{
-			BusinessLayer::Location *location = new BusinessLayer::Location();
-			if (roleVector.size() < 1
-				|| !location->GetLocationByID(dialogBL->GetOrmasDal(), client->GetLocationID(), errorMessage))
+			if (parentDataForm != nullptr)
 			{
-				dialogBL->CancelTransaction(errorMessage);
-				QMessageBox::information(NULL, QString(tr("Warning")),
-					QString(tr(errorMessage.c_str())),
-					QString(tr("Ok")));
+				if (!parentDataForm->IsClosed())
+				{
+					BusinessLayer::Location *location = new BusinessLayer::Location();
+					if (roleVector.size() < 1
+						|| !location->GetLocationByID(dialogBL->GetOrmasDal(), client->GetLocationID(), errorMessage))
+					{
+						dialogBL->CancelTransaction(errorMessage);
+						QMessageBox::information(NULL, QString(tr("Warning")),
+							QString(tr(errorMessage.c_str())),
+							QString(tr("Ok")));
 
-				errorMessage.clear();
-				delete location;
-				delete role;
-				return;
+						errorMessage.clear();
+						delete location;
+						delete role;
+						return;
+					}
+					QList<QStandardItem*> clientItem;
+					clientItem << new QStandardItem(QString::number(client->GetID()))
+						<< new QStandardItem(client->GetName().c_str())
+						<< new QStandardItem(client->GetSurname().c_str())
+						<< new QStandardItem(client->GetPhone().c_str())
+						<< new QStandardItem(location->GetCountryName().c_str())
+						<< new QStandardItem(location->GetRegionName().c_str())
+						<< new QStandardItem(location->GetCityName().c_str())
+						<< new QStandardItem(client->GetAddress().c_str())
+						<< new QStandardItem(client->GetFirm().c_str())
+						<< new QStandardItem(client->GetFirmNumber().c_str())
+						<< new QStandardItem(roleVector.at(0).GetName().c_str())
+						<< new QStandardItem(client->GetPassword().c_str())
+						<< new QStandardItem(client->GetEmail().c_str())
+						<< new QStandardItem(client->GetActivated() ? "true" : "false")
+						<< new QStandardItem(QString::number(client->GetRoleID()))
+						<< new QStandardItem(QString::number(client->GetLocationID()));
+					QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
+					itemModel->appendRow(clientItem);
+
+					delete location;
+					
+				}
 			}
-			QList<QStandardItem*> clientItem;
-			clientItem << new QStandardItem(QString::number(client->GetID())) 
-				<< new QStandardItem(client->GetName().c_str())
-				<< new QStandardItem(client->GetSurname().c_str()) 
-				<< new QStandardItem(client->GetPhone().c_str())
-				<< new QStandardItem(location->GetCountryName().c_str())
-				<< new QStandardItem(location->GetRegionName().c_str())
-				<< new QStandardItem(location->GetCityName().c_str())
-				<< new QStandardItem(client->GetAddress().c_str())
-				<< new QStandardItem(client->GetFirm().c_str())
-				<< new QStandardItem(client->GetFirmNumber().c_str()) 
-				<< new QStandardItem(roleVector.at(0).GetName().c_str())
-				<< new QStandardItem(client->GetPassword().c_str())
-				<< new QStandardItem(client->GetEmail().c_str())
-				<< new QStandardItem(client->GetActivated() ? "true" : "false")
-				<< new QStandardItem(QString::number(client->GetRoleID()))
-				<< new QStandardItem(QString::number(client->GetLocationID()));
-			QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
-			itemModel->appendRow(clientItem);
-			
-			delete location;
 			delete role;
 			dialogBL->CommitTransaction(errorMessage);
 
-			this->close();
+			Close();
 		}
 		else
 		{
@@ -231,7 +247,7 @@ void CreateCltDlg::EditClient()
 			client->GetLocationID() != locationEdit->text().toInt() || QString(client->GetPassword().c_str()) != passwordEdit->text() ||
 			QString(client->GetActivated() ? "true" : "false") != activatedCmbBox->currentText())
 		{
-			DataForm *parentDataForm = (DataForm*)parentWidget();
+			DataForm *parentDataForm = (DataForm*) parentForm;
 			BusinessLayer::Role *role = new BusinessLayer::Role();
 			role->SetName("CLIENT");
 			std::string roleFilter = dialogBL->GenerateFilter<BusinessLayer::Role>(role);
@@ -251,50 +267,56 @@ void CreateCltDlg::EditClient()
 			dialogBL->StartTransaction(errorMessage);
 			if (dialogBL->UpdateClient(client, errorMessage))
 			{
-				//updating Clt data
-				QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
-				QModelIndex mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
-				itemModel->item(mIndex.row(), 1)->setText(client->GetName().c_str());
-				itemModel->item(mIndex.row(), 2)->setText(client->GetSurname().c_str());
-				itemModel->item(mIndex.row(), 3)->setText(client->GetPhone().c_str());
-				
-				//if location of client is changed, then update location data fields
-				BusinessLayer::Location *location = new BusinessLayer::Location();
-				
-				if (roleVector.size() < 1
-					|| !location->GetLocationByID(dialogBL->GetOrmasDal(), client->GetLocationID(), errorMessage))
+				if (parentDataForm != nullptr)
 				{
-					dialogBL->CancelTransaction(errorMessage);
-					dialogBL->CancelTransaction(errorMessage);
-					QMessageBox::information(NULL, QString(tr("Warning")),
-						QString(tr(errorMessage.c_str())),
-						QString(tr("Ok")));
+					if (!parentDataForm->IsClosed())
+					{
+						//updating Clt data
+						QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
+						QModelIndex mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
+						itemModel->item(mIndex.row(), 1)->setText(client->GetName().c_str());
+						itemModel->item(mIndex.row(), 2)->setText(client->GetSurname().c_str());
+						itemModel->item(mIndex.row(), 3)->setText(client->GetPhone().c_str());
 
-					errorMessage.clear();
-					delete location;
-					delete role;
-					return;
+						//if location of client is changed, then update location data fields
+						BusinessLayer::Location *location = new BusinessLayer::Location();
+
+						if (roleVector.size() < 1
+							|| !location->GetLocationByID(dialogBL->GetOrmasDal(), client->GetLocationID(), errorMessage))
+						{
+							dialogBL->CancelTransaction(errorMessage);
+							dialogBL->CancelTransaction(errorMessage);
+							QMessageBox::information(NULL, QString(tr("Warning")),
+								QString(tr(errorMessage.c_str())),
+								QString(tr("Ok")));
+
+							errorMessage.clear();
+							delete location;
+							delete role;
+							return;
+						}
+						itemModel->item(mIndex.row(), 4)->setText(location->GetCountryName().c_str());
+						itemModel->item(mIndex.row(), 5)->setText(location->GetRegionName().c_str());
+						itemModel->item(mIndex.row(), 6)->setText(location->GetCityName().c_str());
+						itemModel->item(mIndex.row(), 7)->setText(client->GetAddress().c_str());
+						itemModel->item(mIndex.row(), 8)->setText(client->GetFirm().c_str());
+						itemModel->item(mIndex.row(), 9)->setText(client->GetFirmNumber().c_str());
+						itemModel->item(mIndex.row(), 10)->setText(roleVector.at(0).GetName().c_str());
+						itemModel->item(mIndex.row(), 11)->setText(client->GetPassword().c_str());
+						itemModel->item(mIndex.row(), 12)->setText(client->GetEmail().c_str());
+						itemModel->item(mIndex.row(), 13)->setText(client->GetActivated() ? "true" : "false");
+						itemModel->item(mIndex.row(), 14)->setText(QString::number(client->GetRoleID()));
+						itemModel->item(mIndex.row(), 15)->setText(QString::number(client->GetLocationID()));
+
+						emit itemModel->dataChanged(mIndex, mIndex);
+						delete location;
+					}
 				}
-				itemModel->item(mIndex.row(), 4)->setText(location->GetCountryName().c_str());
-				itemModel->item(mIndex.row(), 5)->setText(location->GetRegionName().c_str());
-				itemModel->item(mIndex.row(), 6)->setText(location->GetCityName().c_str());
-				itemModel->item(mIndex.row(), 7)->setText(client->GetAddress().c_str());
-				itemModel->item(mIndex.row(), 8)->setText(client->GetFirm().c_str());
-				itemModel->item(mIndex.row(), 9)->setText(client->GetFirmNumber().c_str());
-				itemModel->item(mIndex.row(), 10)->setText(roleVector.at(0).GetName().c_str());
-				itemModel->item(mIndex.row(), 11)->setText(client->GetPassword().c_str());
-				itemModel->item(mIndex.row(), 12)->setText(client->GetEmail().c_str());
-				itemModel->item(mIndex.row(), 13)->setText(client->GetActivated() ? "true" : "false");
-				itemModel->item(mIndex.row(), 14)->setText(QString::number(client->GetRoleID()));
-				itemModel->item(mIndex.row(), 15)->setText(QString::number(client->GetLocationID()));
 
-				emit itemModel->dataChanged(mIndex, mIndex);
 				
-
-				delete location;
 				delete role;
 				dialogBL->CommitTransaction(errorMessage);
-				this->close();
+				Close();
 			}
 			else
 			{
@@ -306,7 +328,7 @@ void CreateCltDlg::EditClient()
 		}
 		else
 		{
-			this->close();
+			Close();
 		}
 	}
 	else
@@ -320,7 +342,7 @@ void CreateCltDlg::EditClient()
 
 void CreateCltDlg::Close()
 {
-	this->close();
+	this->parentWidget()->close();
 }
 
 void CreateCltDlg::OpenLcnDlg()
@@ -328,8 +350,6 @@ void CreateCltDlg::OpenLcnDlg()
 	this->hide();
 	this->setModal(false);
 	this->show();
-	DataForm *clientParent = (DataForm *)parent();
-	MainForm *mainForm = (MainForm *)clientParent->GetParent();
 	QString message = tr("Loading...");
 	mainForm->statusBar()->showMessage(message);
 	DataForm *dForm = new DataForm(dialogBL, mainForm);
@@ -339,18 +359,20 @@ void CreateCltDlg::OpenLcnDlg()
 	dForm->FillTable<BusinessLayer::Location>(errorMessage);
 	if (errorMessage.empty())
 	{
-		dForm->createCltDlg = this;
+		dForm->parentDialog = this;
 		dForm->setObjectName("locationForm");
 		dForm->QtConnect<BusinessLayer::Location>();
 		QMdiSubWindow *locationWindow = new QMdiSubWindow;
 		locationWindow->setWidget(dForm);
 		locationWindow->setAttribute(Qt::WA_DeleteOnClose);
 		mainForm->mdiArea->addSubWindow(locationWindow);
+		locationWindow->resize(dForm->size().width() + 18, dForm->size().height() + 30);
 		dForm->topLevelWidget();
 		dForm->activateWindow();
 		QApplication::setActiveWindow(dForm);
 		dForm->show();
 		dForm->raise();
+		dForm->setWindowFlags(dForm->windowFlags() | Qt::WindowStaysOnTopHint);
 		QString message = tr("All locations are shown");
 		mainForm->statusBar()->showMessage(message);
 	}
@@ -371,8 +393,6 @@ void CreateCltDlg::OpenRoleDlg()
 	this->hide();
 	this->setModal(false);
 	this->show();
-	DataForm *clientParent = (DataForm *)parent();
-	MainForm *mainForm = (MainForm *)clientParent->GetParent();
 	QString message = tr("Loading...");
 	mainForm->statusBar()->showMessage(message);
 	DataForm *dForm = new DataForm(dialogBL, mainForm);
@@ -382,18 +402,20 @@ void CreateCltDlg::OpenRoleDlg()
 	dForm->FillTable<BusinessLayer::Role>(errorMessage);
 	if (errorMessage.empty())
 	{
-		dForm->createCltDlg = this;
+		dForm->parentDialog = this;
 		dForm->setObjectName("roleForm");
 		dForm->QtConnect<BusinessLayer::Role>();
 		QMdiSubWindow *roleWindow = new QMdiSubWindow;
 		roleWindow->setWidget(dForm);
 		roleWindow->setAttribute(Qt::WA_DeleteOnClose);
 		mainForm->mdiArea->addSubWindow(roleWindow);
+		roleWindow->resize(dForm->size().width() + 18, dForm->size().height() + 30);
 		dForm->topLevelWidget();
 		dForm->activateWindow();
 		QApplication::setActiveWindow(dForm);
 		dForm->show();
 		dForm->raise();
+		dForm->setWindowFlags(dForm->windowFlags() | Qt::WindowStaysOnTopHint);
 		QString message = tr("All roles are shown");
 		mainForm->statusBar()->showMessage(message);
 	}

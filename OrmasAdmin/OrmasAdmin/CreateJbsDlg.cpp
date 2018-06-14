@@ -1,9 +1,7 @@
 #include "stdafx.h"
 #include "CreateJbsDlg.h"
-#include <QMessageBox>
-#include "MainForm.h"
 #include "DataForm.h"
-#include "ExtraFunctions.h"
+
 
 
 CreateJbsDlg::CreateJbsDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, QWidget *parent) :QDialog(parent)
@@ -11,6 +9,9 @@ CreateJbsDlg::CreateJbsDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, QWi
 	setupUi(this);
 	setModal(true);
 	dialogBL = ormasBL;
+	parentForm = parent;
+	DataForm *dataFormParent = (DataForm *)this->parentForm;
+	mainForm = (MainForm *)dataFormParent->GetParent();
 	vDouble = new QDoubleValidator(0.00, 1000000000.00, 3, this);
 	vInt = new QIntValidator(0, 1000000000, this);
 	employeeEdit->setValidator(vInt);
@@ -29,6 +30,7 @@ CreateJbsDlg::CreateJbsDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, QWi
 	QObject::connect(cancelBtn, &QPushButton::released, this, &CreateJbsDlg::Close);
 	QObject::connect(employeeBtn, &QPushButton::released, this, &CreateJbsDlg::OpenEmpDlg);
 	QObject::connect(productBtn, &QPushButton::released, this, &CreateJbsDlg::OpenProdDlg);
+	QObject::connect(countEdit, &QLineEdit::textChanged, this, &CreateJbsDlg::TextEditChanged);
 }
 
 CreateJbsDlg::~CreateJbsDlg()
@@ -43,6 +45,13 @@ void CreateJbsDlg::SetID(int ID, QString childName)
 	{
 		if (0 != childName.length())
 		{
+			this->hide();
+			this->setWindowFlags(this->windowFlags() | Qt::WindowStaysOnTopHint);
+			this->show();
+			this->raise();
+			this->activateWindow();
+			QApplication::setActiveWindow(this);
+
 			if (childName == QString("employeeForm"))
 			{
 				employeeEdit->setText(QString::number(ID));
@@ -84,7 +93,7 @@ void CreateJbsDlg::SetJobsheetParams(QString jDate, double jCount, int pID, int 
 
 void CreateJbsDlg::FillEditElements(QString jDate, double jCount, int pID, int eID)
 {
-	dateEdit->setDate(QDate::fromString(jDate, "yyyy.MM.dd"));
+	dateEdit->setDate(QDate::fromString(jDate, "dd.MM.yyyy"));
 	countEdit->setText(QString::number(jCount));
 	productEdit->setText(QString::number(pID));
 	employeeEdit->setText(QString::number(eID));
@@ -136,58 +145,65 @@ void CreateJbsDlg::CreateJobsheet()
 	if (0 != employeeEdit->text().toInt() && 0.0 != countEdit->text().toDouble() && 0 != productEdit->text().toInt()
 		&& !dateEdit->text().isEmpty())
 	{
-		DataForm *parentDataForm = (DataForm*)parentWidget();
+		DataForm *parentDataForm = (DataForm*) parentForm;
 		SetJobsheetParams(dateEdit->text(), countEdit->text().toDouble(), productEdit->text().toInt(), employeeEdit->text().toInt());
 		dialogBL->StartTransaction(errorMessage);
 		if (dialogBL->CreateJobsheet(jobsheet, errorMessage))
 		{
-			BusinessLayer::Employee *employee = new BusinessLayer::Employee;
-			BusinessLayer::Product *product = new BusinessLayer::Product;
-			if (!employee->GetEmployeeByID(dialogBL->GetOrmasDal(), jobsheet->GetEmployeeID(), errorMessage)
-				|| product->GetProductByID(dialogBL->GetOrmasDal(), jobsheet->GetProductID(), errorMessage))
+			if (parentDataForm != nullptr)
 			{
-				dialogBL->CancelTransaction(errorMessage);
-				QMessageBox::information(NULL, QString(tr("Warning")),
-					QString(tr(errorMessage.c_str())),
-					QString(tr("Ok")));
-				errorMessage.clear();
-				delete employee;
-				delete product;
-				return;
-			}
-			
-			BusinessLayer::Measure *measure = new BusinessLayer::Measure;
-			if (!measure->GetMeasureByID(dialogBL->GetOrmasDal(), product->GetMeasureID(), errorMessage))
-			{
-				dialogBL->CancelTransaction(errorMessage);
-				QMessageBox::information(NULL, QString(tr("Warning")),
-					QString(tr(errorMessage.c_str())),
-					QString(tr("Ok")));
-				errorMessage.clear();
-				delete measure;
-				return;
-			}
+				if (!parentDataForm->IsClosed())
+				{
+					BusinessLayer::Employee *employee = new BusinessLayer::Employee;
+					BusinessLayer::Product *product = new BusinessLayer::Product;
+					if (!employee->GetEmployeeByID(dialogBL->GetOrmasDal(), jobsheet->GetEmployeeID(), errorMessage)
+						|| !product->GetProductByID(dialogBL->GetOrmasDal(), jobsheet->GetProductID(), errorMessage))
+					{
+						dialogBL->CancelTransaction(errorMessage);
+						QMessageBox::information(NULL, QString(tr("Warning")),
+							QString(tr(errorMessage.c_str())),
+							QString(tr("Ok")));
+						errorMessage.clear();
+						delete employee;
+						delete product;
+						return;
+					}
 
-			QList<QStandardItem*> jobsheetItem;
-			jobsheetItem << new QStandardItem(QString::number(jobsheet->GetID()))
-				<< new QStandardItem(jobsheet->GetDate().c_str())
-				<< new QStandardItem(employee->GetName().c_str())
-				<< new QStandardItem(employee->GetSurname().c_str())
-				<< new QStandardItem(employee->GetPhone().c_str())
-				<< new QStandardItem(product->GetName().c_str())
-				<< new QStandardItem(QString::number(jobsheet->GetCount()))
-				<< new QStandardItem(measure->GetName().c_str())
-				<< new QStandardItem(QString::number(jobsheet->GetProductID()))
-				<< new QStandardItem(QString::number(jobsheet->GetEmployeeID()));
-			QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
-			itemModel->appendRow(jobsheetItem);
-			
+					BusinessLayer::Measure *measure = new BusinessLayer::Measure;
+					if (!measure->GetMeasureByID(dialogBL->GetOrmasDal(), product->GetMeasureID(), errorMessage))
+					{
+						dialogBL->CancelTransaction(errorMessage);
+						QMessageBox::information(NULL, QString(tr("Warning")),
+							QString(tr(errorMessage.c_str())),
+							QString(tr("Ok")));
+						errorMessage.clear();
+						delete measure;
+						return;
+					}
+
+					QList<QStandardItem*> jobsheetItem;
+					jobsheetItem << new QStandardItem(QString::number(jobsheet->GetID()))
+						<< new QStandardItem(jobsheet->GetDate().c_str())
+						<< new QStandardItem(employee->GetName().c_str())
+						<< new QStandardItem(employee->GetSurname().c_str())
+						<< new QStandardItem(employee->GetPhone().c_str())
+						<< new QStandardItem(product->GetName().c_str())
+						<< new QStandardItem(QString::number(jobsheet->GetCount()))
+						<< new QStandardItem(measure->GetName().c_str())
+						<< new QStandardItem(QString::number(jobsheet->GetProductID()))
+						<< new QStandardItem(QString::number(jobsheet->GetEmployeeID()));
+					QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
+					itemModel->appendRow(jobsheetItem);
+
+					delete product;
+					delete employee;
+					delete measure;
+				}
+			}
 			dialogBL->CommitTransaction(errorMessage);
 			
-			delete product;
-			delete employee;
-			delete measure;
-			this->close();
+		
+			Close();
 		}
 		else
 		{
@@ -218,57 +234,63 @@ void CreateJbsDlg::EditJobsheet()
 		if (QString(jobsheet->GetDate().c_str()) != dateEdit->text() || jobsheet->GetEmployeeID() != employeeEdit->text().toInt()
 			|| jobsheet->GetCount() != countEdit->text().toDouble() || jobsheet->GetProductID() != productEdit->text().toInt())
 		{
-			DataForm *parentDataForm = (DataForm*)parentWidget();
+			DataForm *parentDataForm = (DataForm*) parentForm;
 			SetJobsheetParams(dateEdit->text(), countEdit->text().toDouble(), productEdit->text().toInt(), employeeEdit->text().toInt(), jobsheet->GetID());
 			dialogBL->StartTransaction(errorMessage);
 			if (dialogBL->UpdateJobsheet(jobsheet, errorMessage))
 			{
-				BusinessLayer::Employee *employee = new BusinessLayer::Employee;
-				BusinessLayer::Product *product = new BusinessLayer::Product;
-				if (!employee->GetEmployeeByID(dialogBL->GetOrmasDal(), jobsheet->GetEmployeeID(), errorMessage)
-					|| product->GetProductByID(dialogBL->GetOrmasDal(), jobsheet->GetProductID(), errorMessage))
+				if (parentDataForm != nullptr)
 				{
-					dialogBL->CancelTransaction(errorMessage);
-					QMessageBox::information(NULL, QString(tr("Warning")),
-						QString(tr(errorMessage.c_str())),
-						QString(tr("Ok")));
-					errorMessage.clear();
-					delete employee;
-					delete product;
-					return;
-				}
+					if (!parentDataForm->IsClosed())
+					{
+						BusinessLayer::Employee *employee = new BusinessLayer::Employee;
+						BusinessLayer::Product *product = new BusinessLayer::Product;
+						if (!employee->GetEmployeeByID(dialogBL->GetOrmasDal(), jobsheet->GetEmployeeID(), errorMessage)
+							|| !product->GetProductByID(dialogBL->GetOrmasDal(), jobsheet->GetProductID(), errorMessage))
+						{
+							dialogBL->CancelTransaction(errorMessage);
+							QMessageBox::information(NULL, QString(tr("Warning")),
+								QString(tr(errorMessage.c_str())),
+								QString(tr("Ok")));
+							errorMessage.clear();
+							delete employee;
+							delete product;
+							return;
+						}
 
-				BusinessLayer::Measure *measure = new BusinessLayer::Measure;
-				if (!measure->GetMeasureByID(dialogBL->GetOrmasDal(), product->GetMeasureID(), errorMessage))
-				{
-					dialogBL->CancelTransaction(errorMessage);
-					QMessageBox::information(NULL, QString(tr("Warning")),
-						QString(tr(errorMessage.c_str())),
-						QString(tr("Ok")));
-					errorMessage.clear();
-					delete measure;
-					return;
-				}
+						BusinessLayer::Measure *measure = new BusinessLayer::Measure;
+						if (!measure->GetMeasureByID(dialogBL->GetOrmasDal(), product->GetMeasureID(), errorMessage))
+						{
+							dialogBL->CancelTransaction(errorMessage);
+							QMessageBox::information(NULL, QString(tr("Warning")),
+								QString(tr(errorMessage.c_str())),
+								QString(tr("Ok")));
+							errorMessage.clear();
+							delete measure;
+							return;
+						}
 
-				QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
-				QModelIndex mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
-				itemModel->item(mIndex.row(), 1)->setText(jobsheet->GetDate().c_str());
-				itemModel->item(mIndex.row(), 2)->setText(employee->GetName().c_str());
-				itemModel->item(mIndex.row(), 3)->setText(employee->GetSurname().c_str());
-				itemModel->item(mIndex.row(), 4)->setText(employee->GetPhone().c_str());
-				itemModel->item(mIndex.row(), 5)->setText(product->GetName().c_str());
-				itemModel->item(mIndex.row(), 6)->setText(QString::number(jobsheet->GetCount()));
-				itemModel->item(mIndex.row(), 7)->setText(measure->GetName().c_str());
-				itemModel->item(mIndex.row(), 8)->setText(QString::number(jobsheet->GetProductID()));
-				itemModel->item(mIndex.row(), 9)->setText(QString::number(jobsheet->GetEmployeeID()));
-				emit itemModel->dataChanged(mIndex, mIndex);
-				
+						QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
+						QModelIndex mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
+						itemModel->item(mIndex.row(), 1)->setText(jobsheet->GetDate().c_str());
+						itemModel->item(mIndex.row(), 2)->setText(employee->GetName().c_str());
+						itemModel->item(mIndex.row(), 3)->setText(employee->GetSurname().c_str());
+						itemModel->item(mIndex.row(), 4)->setText(employee->GetPhone().c_str());
+						itemModel->item(mIndex.row(), 5)->setText(product->GetName().c_str());
+						itemModel->item(mIndex.row(), 6)->setText(QString::number(jobsheet->GetCount()));
+						itemModel->item(mIndex.row(), 7)->setText(measure->GetName().c_str());
+						itemModel->item(mIndex.row(), 8)->setText(QString::number(jobsheet->GetProductID()));
+						itemModel->item(mIndex.row(), 9)->setText(QString::number(jobsheet->GetEmployeeID()));
+						emit itemModel->dataChanged(mIndex, mIndex);
+						delete product;
+						delete employee;
+						delete measure;
+					}
+				}
 				dialogBL->CommitTransaction(errorMessage);
 				
-				delete product;
-				delete employee;
-				delete measure;
-				this->close();
+				
+				Close();
 			}
 			else
 			{
@@ -281,7 +303,7 @@ void CreateJbsDlg::EditJobsheet()
 		}
 		else
 		{
-			this->close();
+			Close();
 		}
 	}
 	else
@@ -295,7 +317,7 @@ void CreateJbsDlg::EditJobsheet()
 
 void CreateJbsDlg::Close()
 {
-	this->close();
+	this->parentWidget()->close();
 }
 
 void CreateJbsDlg::OpenEmpDlg()
@@ -303,8 +325,6 @@ void CreateJbsDlg::OpenEmpDlg()
 	this->hide();
 	this->setModal(false);
 	this->show();
-	DataForm *userParent = (DataForm *)parent();
-	MainForm *mainForm = (MainForm *)userParent->GetParent();
 	QString message = tr("Loading...");
 	mainForm->statusBar()->showMessage(message);
 	DataForm *dForm = new DataForm(dialogBL, mainForm);
@@ -314,18 +334,21 @@ void CreateJbsDlg::OpenEmpDlg()
 	dForm->FillTable<BusinessLayer::EmployeeView>(errorMessage);
 	if (errorMessage.empty())
 	{
-		dForm->createJbsDlg = this;
+		dForm->parentDialog = this;
 		dForm->setObjectName("employeeForm");
 		dForm->QtConnect<BusinessLayer::EmployeeView>();
 		QMdiSubWindow *employeeWindow = new QMdiSubWindow;
 		employeeWindow->setWidget(dForm);
 		employeeWindow->setAttribute(Qt::WA_DeleteOnClose);
 		mainForm->mdiArea->addSubWindow(employeeWindow);
+		employeeWindow->resize(dForm->size().width() + 18, dForm->size().height() + 30);
 		dForm->topLevelWidget();
 		dForm->activateWindow();
 		QApplication::setActiveWindow(dForm);
+		dForm->HileSomeRow();
 		dForm->show();
 		dForm->raise();
+		dForm->setWindowFlags(dForm->windowFlags() | Qt::WindowStaysOnTopHint);
 		QString message = tr("All employees are shown");
 		mainForm->statusBar()->showMessage(message);
 	}
@@ -346,29 +369,62 @@ void CreateJbsDlg::OpenProdDlg()
 	this->hide();
 	this->setModal(false);
 	this->show();
-	DataForm *productParent = (DataForm *)parent();
-	MainForm *mainForm = (MainForm *)productParent->GetParent();
 	QString message = tr("Loading...");
 	mainForm->statusBar()->showMessage(message);
 	DataForm *dForm = new DataForm(dialogBL, mainForm);
 	dForm->setWindowTitle(tr("Products"));
 	dForm->hide();
 	dForm->setWindowModality(Qt::WindowModal);
-	dForm->FillTable<BusinessLayer::ProductView>(errorMessage);
+
+	BusinessLayer::ProductType *pType = new BusinessLayer::ProductType();
+	pType->SetCode("PRODUCT");
+	std::string pTypeFilter = dialogBL->GenerateFilter<BusinessLayer::ProductType>(pType);
+	std::vector<BusinessLayer::ProductType> pTypeVector = dialogBL->GetAllDataForClass<BusinessLayer::ProductType>(errorMessage, pTypeFilter);
+	if (pTypeVector.size() == 0)
+	{
+		delete pType;
+		QString message = tr("Sorry could not find product type with \"Product\" code!");
+		mainForm->statusBar()->showMessage(message);
+		QMessageBox::information(NULL, QString(tr("Warning")),
+			QString(message),
+			QString(tr("Ok")));
+		errorMessage = "";
+		return;
+	}
+
+	BusinessLayer::Product *product = new BusinessLayer::Product();
+	product->SetProductTypeID(pTypeVector.at(0).GetID());
+	std::string productFilter = dialogBL->GenerateFilter<BusinessLayer::Product>(product);
+	std::vector<BusinessLayer::ProductView> productVector = dialogBL->GetAllDataForClass<BusinessLayer::ProductView>(errorMessage, productFilter);
+	if (productVector.size() == 0)
+	{
+		delete product;
+		QString message = tr("Sorry could not find product with \"product\" code!");
+		mainForm->statusBar()->showMessage(message);
+		QMessageBox::information(NULL, QString(tr("Warning")),
+			QString(message),
+			QString(tr("Ok")));
+		errorMessage = "";
+		return;
+	}
+
+	dForm->FillTable<BusinessLayer::ProductView>(errorMessage, productFilter);
 	if (errorMessage.empty())
 	{
-		dForm->createJbsDlg = this;
+		dForm->parentDialog = this;
 		dForm->setObjectName("productForm");
 		dForm->QtConnect<BusinessLayer::ProductView>();
 		QMdiSubWindow *productWindow = new QMdiSubWindow;
 		productWindow->setWidget(dForm);
 		productWindow->setAttribute(Qt::WA_DeleteOnClose);
 		mainForm->mdiArea->addSubWindow(productWindow);
+		productWindow->resize(dForm->size().width() + 18, dForm->size().height() + 30);
 		dForm->topLevelWidget();
 		dForm->activateWindow();
 		QApplication::setActiveWindow(dForm);
 		dForm->show();
 		dForm->raise();
+		dForm->setWindowFlags(dForm->windowFlags() | Qt::WindowStaysOnTopHint);
 		QString message = tr("All products are shown");
 		mainForm->statusBar()->showMessage(message);
 	}
@@ -383,4 +439,16 @@ void CreateJbsDlg::OpenProdDlg()
 		errorMessage = "";
 	}
 
+}
+
+void CreateJbsDlg::TextEditChanged()
+{
+	if (countEdit->text().contains(","))
+	{
+		countEdit->setText(countEdit->text().replace(",", "."));
+	}
+	if (countEdit->text().contains(".."))
+	{
+		countEdit->setText(countEdit->text().replace("..", "."));
+	}
 }

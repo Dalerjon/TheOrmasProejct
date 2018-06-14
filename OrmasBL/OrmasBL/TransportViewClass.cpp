@@ -65,7 +65,7 @@ namespace BusinessLayer
 	}
 	std::string TransportView::GetStockEmployeePosition()
 	{
-		return stockEmployeePhone;
+		return stockEmployeePosition;
 	}
 	std::string TransportView::GetCurrencyName()
 	{

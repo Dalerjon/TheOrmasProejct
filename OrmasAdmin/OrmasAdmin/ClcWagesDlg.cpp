@@ -1,9 +1,7 @@
 #include "stdafx.h"
 #include "ClcWagesDlg.h"
-#include "MainForm.h"
-#include "ExtraFunctions.h"
-#include <QMessageBox>
-#include <QProgressDialog>
+#include "DataForm.h"
+
 #include <map>
 
 
@@ -12,6 +10,8 @@ ClcWagesDlg::ClcWagesDlg(BusinessLayer::OrmasBL *ormasBL, QWidget *parent) :QDia
 	setupUi(this);
 	setModal(true);
 	dialogBL = ormasBL;
+	parentForm = parent;
+	mainForm = (MainForm *)this->parent();
 
 	QDate currentDate = QDate::currentDate();
 	int day = currentDate.day();
@@ -26,7 +26,7 @@ ClcWagesDlg::ClcWagesDlg(BusinessLayer::OrmasBL *ormasBL, QWidget *parent) :QDia
 	pastMonth += "-";
 	pastMonth += std::to_string(month - 1);
 	pastMonth += "-01";
-	QDate pastMonthDate = (QDate::fromString(pastMonth.c_str(), "yyyy-MM-dd"));
+	QDate pastMonthDate = (QDate::fromString(pastMonth.c_str(), "dd.MM.yyyy"));
 	int coundOfDays = pastMonthDate.daysInMonth();
 
 	
@@ -66,7 +66,7 @@ ClcWagesDlg::ClcWagesDlg(BusinessLayer::OrmasBL *ormasBL, QWidget *parent) :QDia
 	startDate += std::to_string(month);
 	startDate += "-01";
 	endDateEdit->setDate(QDate::currentDate());
-	startDateEdit->setDate(QDate::fromString(startDate.c_str(), "yyyy.MM.dd"));
+	startDateEdit->setDate(QDate::fromString(startDate.c_str(), "dd.MM.yyyy"));
 	if (employeeChkBox->isChecked())
 	{
 		employeeEdit->setText("");
@@ -93,6 +93,13 @@ void ClcWagesDlg::SetID(int ID, QString childName)
 	{
 		if (0 != childName.length())
 		{
+			this->hide();
+			this->setWindowFlags(this->windowFlags() | Qt::WindowStaysOnTopHint);
+			this->show();
+			this->raise();
+			this->activateWindow();
+			QApplication::setActiveWindow(this);
+
 			if (childName == QString("employeeForm"))
 			{
 				employeeEdit->setText(QString::number(ID));
@@ -303,7 +310,7 @@ void ClcWagesDlg::ChangeState()
 
 void ClcWagesDlg::Close()
 {
-	this->close();
+	this->parentWidget()->close();
 }
 
 void ClcWagesDlg::OpenEmpDlg()
@@ -311,7 +318,6 @@ void ClcWagesDlg::OpenEmpDlg()
 	this->hide();
 	this->setModal(false);
 	this->show();
-	MainForm *mainForm = (MainForm *)this->parent();
 	QString message = tr("Loading...");
 	mainForm->statusBar()->showMessage(message);
 	DataForm *dForm = new DataForm(dialogBL, mainForm);
@@ -321,18 +327,21 @@ void ClcWagesDlg::OpenEmpDlg()
 	dForm->FillTable<BusinessLayer::EmployeeView>(errorMessage);
 	if (errorMessage.empty())
 	{
-		dForm->clcWagesDlg = this;
+		dForm->parentDialog = this;
 		dForm->setObjectName("employeeForm");
 		dForm->QtConnect<BusinessLayer::EmployeeView>();
 		QMdiSubWindow *employeeWindow = new QMdiSubWindow;
 		employeeWindow->setWidget(dForm);
 		employeeWindow->setAttribute(Qt::WA_DeleteOnClose);
 		mainForm->mdiArea->addSubWindow(employeeWindow);
+		employeeWindow->resize(dForm->size().width() + 18, dForm->size().height() + 30);
 		dForm->topLevelWidget();
 		dForm->activateWindow();
 		QApplication::setActiveWindow(dForm);
+		dForm->HileSomeRow();
 		dForm->show();
 		dForm->raise();
+		dForm->setWindowFlags(dForm->windowFlags() | Qt::WindowStaysOnTopHint);
 		QString message = tr("All employees are shown");
 		mainForm->statusBar()->showMessage(message);
 	}

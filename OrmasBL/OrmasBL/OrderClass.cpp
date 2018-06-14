@@ -2,8 +2,10 @@
 #include "OrderClass.h"
 #include "BalanceClass.h"
 #include "UserClass.h"
-#include "WithdrawalClass.h"
+#include "EntryClass.h"
 #include "StatusClass.h"
+#include "CompanyAccountRelationClass.h"
+#include "CompanyEmployeeRelationClass.h"
 
 namespace BusinessLayer
 {
@@ -45,7 +47,7 @@ namespace BusinessLayer
 		return employeeID;
 	}
 
-	int Order::GetCount()
+	double Order::GetCount()
 	{
 		return count;
 	}
@@ -86,7 +88,7 @@ namespace BusinessLayer
 		employeeID = oEmployeeID;
 	}
 	
-	void Order::SetCount(int oCount)
+	void Order::SetCount(double oCount)
 	{
 		count = oCount;
 	}
@@ -106,7 +108,7 @@ namespace BusinessLayer
 		currencyID = oCurrencyID;
 	}
 
-	bool Order::CreateOrder(DataLayer::OrmasDal& ormasDal, int uID, std::string oDate, std::string oExecDate, int eID, int oCount, 
+	bool Order::CreateOrder(DataLayer::OrmasDal& ormasDal, int uID, std::string oDate, std::string oExecDate, int eID, double oCount,
 		double oSum, int sID, int cID, std::string& errorMessage)
 	{
 		if (IsDuplicate(ormasDal, uID, oDate, oCount, oSum, cID, errorMessage))
@@ -127,8 +129,16 @@ namespace BusinessLayer
 		{
 			if (statusID == statusMap.find("EXECUTED")->second)
 			{
-				if (!BalanceWithdrawal(ormasDal, clientID, sum, currencyID, executionDate, errorMessage))
+				if (CreateOrderEntry(ormasDal, clientID, employeeID, sum, currencyID, executionDate, errorMessage))
+				{
+					ormasDal.CommitTransaction(errorMessage);
 					return false;
+				}
+				else
+				{
+					ormasDal.CancelTransaction(errorMessage);
+					return false;
+				}
 			}
 			ormasDal.CommitTransaction(errorMessage);
 			return true;
@@ -137,7 +147,7 @@ namespace BusinessLayer
 		{
 			errorMessage = "Warning! ID is 0, or some unexpected error. Please contact with provider.";
 		}
-		ormasDal.StartTransaction(errorMessage);
+		ormasDal.CancelTransaction(errorMessage);
 		return false;
 	}
 
@@ -153,8 +163,16 @@ namespace BusinessLayer
 		{
 			if (statusID == statusMap.find("EXECUTED")->second)
 			{
-				if (!BalanceWithdrawal(ormasDal, clientID, sum, currencyID, executionDate, errorMessage))
+				if (CreateOrderEntry(ormasDal, clientID, employeeID, sum, currencyID, executionDate, errorMessage))
+				{
+					ormasDal.CommitTransaction(errorMessage);
 					return false;
+				}
+				else
+				{
+					ormasDal.CancelTransaction(errorMessage);
+					return false;
+				}
 			}
 			ormasDal.CommitTransaction(errorMessage);
 			return true;
@@ -163,13 +181,26 @@ namespace BusinessLayer
 		{
 			errorMessage = "Warning! ID is 0, or some unexpected error. Please contact with provider.";
 		}
-		ormasDal.StartTransaction(errorMessage);
+		ormasDal.CancelTransaction(errorMessage);
 		return false;
 	}
 	bool Order::DeleteOrder(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
 		if (!ormasDal.StartTransaction(errorMessage))
 			return false;
+		Order ord;
+		if (!ord.GetOrderByID(ormasDal, id, errorMessage))
+		{
+			return false;
+		}
+		std::map<std::string, int> statusMap = BusinessLayer::Status::GetStatusesAsMap(ormasDal, errorMessage);
+		if (0 == statusMap.size())
+			return false;
+		if (ord.GetStatusID() == statusMap.find("EXECUTED")->second)
+		{
+			errorMessage = "Cannot delete document with \"EXECUTED\" status!";
+			return false;
+		}
 		if (ormasDal.DeleteOrder(id, errorMessage))
 		{			
 			if (ormasDal.DeleteListByOrderID(id, errorMessage))
@@ -193,7 +224,7 @@ namespace BusinessLayer
 		}
 		return false;
 	}
-	bool Order::UpdateOrder(DataLayer::OrmasDal& ormasDal, int uID, std::string oDate, std::string oExecnDate, int eID, int oCount,
+	bool Order::UpdateOrder(DataLayer::OrmasDal& ormasDal, int uID, std::string oDate, std::string oExecnDate, int eID, double oCount,
 		double oSum, int sID, int cID, std::string& errorMessage)
 	{
 		std::map<std::string, int> statusMap = BusinessLayer::Status::GetStatusesAsMap(ormasDal, errorMessage);
@@ -208,19 +239,42 @@ namespace BusinessLayer
 		statusID = sID;
 		currencyID = cID;
 		previousSum = GetCurrentSum(ormasDal, id, errorMessage);
+		prevCount = GetCurrentCount(ormasDal, id, errorMessage);
 		previousStatusID = GetCurrentStatusID(ormasDal, id, errorMessage);
 		ormasDal.StartTransaction(errorMessage);
 		if (0 != id && ormasDal.UpdateOrder(id, clientID, date, executionDate, employeeID, count, sum, statusID, currencyID, errorMessage))
 		{
 			if (statusID == statusMap.find("EXECUTED")->second && previousStatusID != statusMap.find("EXECUTED")->second)
 			{
-				if (!BalanceWithdrawal(ormasDal, clientID, sum, currencyID, executionDate, errorMessage))
+				if (CreateOrderEntry(ormasDal, clientID, employeeID, sum, currencyID, executionDate, errorMessage))
+				{
+					ormasDal.CommitTransaction(errorMessage);
+					return true;
+				}
+				else
+				{
+					ormasDal.CancelTransaction(errorMessage);
 					return false;
+				}
 			}
 			if (statusID == statusMap.find("EXECUTED")->second && previousStatusID == statusMap.find("EXECUTED")->second && previousSum != sum)
 			{
-				if (!BalanceWithdrawal(ormasDal, clientID, sum, previousSum, currencyID, executionDate, errorMessage))
-					return false;
+				if (count != prevCount || sum != previousSum)
+				{
+					if (count != prevCount || sum != previousSum)
+					{
+						if (CreateOrderEntry(ormasDal, clientID, employeeID, sum, previousSum, currencyID, executionDate, errorMessage))
+						{
+							ormasDal.CommitTransaction(errorMessage);
+							return true;
+						}
+						else
+						{
+							ormasDal.CancelTransaction(errorMessage);
+							return false;
+						}
+					}
+				}
 			}
 			ormasDal.CommitTransaction(errorMessage);
 			return true;
@@ -239,18 +293,38 @@ namespace BusinessLayer
 			return false;
 		previousSum = GetCurrentSum(ormasDal, id, errorMessage);
 		previousStatusID = GetCurrentStatusID(ormasDal, id, errorMessage);
+		prevCount = GetCurrentCount(ormasDal, id, errorMessage);
 		ormasDal.StartTransaction(errorMessage);
 		if (0 != id && ormasDal.UpdateOrder(id, clientID, date, executionDate, employeeID, count, sum, statusID, currencyID, errorMessage))
 		{
 			if (statusID == statusMap.find("EXECUTED")->second && previousStatusID != statusMap.find("EXECUTED")->second)
 			{
-				if (!BalanceWithdrawal(ormasDal, clientID, sum, currencyID, executionDate, errorMessage))
+				if (CreateOrderEntry(ormasDal, clientID, employeeID, sum, currencyID, executionDate, errorMessage))
+				{
+					ormasDal.CommitTransaction(errorMessage);
+					return true;
+				}
+				else
+				{
+					ormasDal.CancelTransaction(errorMessage);
 					return false;
+				}
 			}
 			if (statusID == statusMap.find("EXECUTED")->second && previousStatusID == statusMap.find("EXECUTED")->second && previousSum != sum)
 			{
-				if (!BalanceWithdrawal(ormasDal, clientID, sum, previousSum, currencyID, executionDate, errorMessage))
-					return false;
+				if (count != prevCount || sum != previousSum)
+				{
+					if (CreateOrderEntry(ormasDal, clientID, employeeID, sum, previousSum, currencyID, executionDate, errorMessage))
+					{
+						ormasDal.CommitTransaction(errorMessage);
+						return true;
+					}
+					else
+					{
+						ormasDal.CancelTransaction(errorMessage);
+						return false;
+					}
+				}
 			}
 			ormasDal.CommitTransaction(errorMessage);
 			return true;
@@ -327,7 +401,7 @@ namespace BusinessLayer
 		currencyID = 0;
 	}
 	
-	bool Order::IsDuplicate(DataLayer::OrmasDal& ormasDal, int clID, std::string oDate, int oCount, double oSum,
+	bool Order::IsDuplicate(DataLayer::OrmasDal& ormasDal, int clID, std::string oDate, double oCount, double oSum,
 		int cID, std::string& errorMessage)
 	{
 		Order order;
@@ -368,34 +442,41 @@ namespace BusinessLayer
 		return true;
 	}
 
-	bool Order::BalanceWithdrawal(DataLayer::OrmasDal& ormasDal, int clID, double oSum, int cID, std::string oExecDate, std::string& errorMessage)
+	bool Order::CreateOrderEntry(DataLayer::OrmasDal& ormasDal, int clID, int eID, double oSum, int cID, std::string oExecDate, std::string& errorMessage)
 	{
-		Withdrawal withdrawal;
-		withdrawal.SetDate(oExecDate);
-		withdrawal.SetUserID(clID);
-		withdrawal.SetValue(oSum);
-		withdrawal.SetCurrencyID(cID);
-		if (withdrawal.CreateWithdrawal(ormasDal, errorMessage))
+		Balance balance;
+		CompanyAccountRelation cAccRel;
+		CompanyEmployeeRelation cEmpRel;
+
+		if(balance.GetBalanceByUserID(ormasDal, clID, errorMessage))
 		{
-			return true;
+			int debAccID = 0;
+			int credAccID = 0;
+			int companyID = cEmpRel.GetCompanyByEmployeeID(ormasDal, eID, errorMessage);
+			debAccID = balance.GetSubaccountID();
+			credAccID = cAccRel.GetAccountIDByCompanyID(ormasDal, companyID, "44010", errorMessage);
+			if (this->CreateEntry(ormasDal, debAccID, oSum, credAccID, oExecDate, errorMessage))
+			{
+				return true;
+			}
 		}
 		return false;
 	}
 
-	bool Order::BalanceWithdrawal(DataLayer::OrmasDal& ormasDal, int clID, double oSum, double prevSum, int cID, std::string oExecDate, std::string& errorMessage)
+	bool Order::CreateOrderEntry(DataLayer::OrmasDal& ormasDal, int clID, int eID, double oSum, double prevSum, int cID, std::string oExecDate, std::string& errorMessage)
 	{
-		Withdrawal withdrawal;
-		withdrawal.SetDate(oExecDate);
-		withdrawal.SetUserID(clID);
-		withdrawal.SetValue(oSum);
-		withdrawal.SetCurrencyID(cID);
-		std::string filter = withdrawal.GenerateFilter(ormasDal);
-		std::vector<DataLayer::withdrawalsViewCollection> withdrawalVector = ormasDal.GetWithdrawals(errorMessage, filter);
-		if (0 != withdrawalVector.size())
+		Balance balance;
+		CompanyAccountRelation cAccRel;
+		CompanyEmployeeRelation cEmpRel;
+
+		if (balance.GetBalanceByUserID(ormasDal, clID, errorMessage))
 		{
-			//get last withdrawal from vector if GetWithdrawals return several rows
-			withdrawal.SetID(std::get<0>(withdrawalVector.at(withdrawalVector.size()-1)));
-			if (withdrawal.UpdateWithdrawal(ormasDal, errorMessage))
+			int debAccID = 0;
+			int credAccID = 0;
+			int companyID = cEmpRel.GetCompanyByEmployeeID(ormasDal, eID, errorMessage);
+			debAccID = balance.GetSubaccountID();
+			credAccID = cAccRel.GetAccountIDByCompanyID(ormasDal, companyID, "44010", errorMessage);
+			if (this->CreateEntry(ormasDal, debAccID, oSum, credAccID, prevSum, oExecDate, errorMessage))
 			{
 				return true;
 			}
@@ -411,11 +492,55 @@ namespace BusinessLayer
 		return 0;
 	}
 
-	double Order::GetCurrentStatusID(DataLayer::OrmasDal& ormasDal, int oID, std::string& errorMessage)
+	double Order::GetCurrentCount(DataLayer::OrmasDal& ormasDal, int oID, std::string& errorMessage)
+	{
+		Order order;
+		if (order.GetOrderByID(ormasDal, oID, errorMessage))
+			return order.GetCount();
+		return 0;
+	}
+
+	int Order::GetCurrentStatusID(DataLayer::OrmasDal& ormasDal, int oID, std::string& errorMessage)
 	{
 		Order order;
 		if (order.GetOrderByID(ormasDal, oID, errorMessage))
 			return order.GetStatusID();
 		return 0;
+	}
+
+	bool Order::CreateEntry(DataLayer::OrmasDal& ormasDal, int debAccID, double currentSum, int credAccID, std::string oExecDate, std::string& errorMessage)
+	{
+		Entry entry;
+		entry.SetDate(oExecDate);
+		entry.SetDebitingAccountID(debAccID);
+		entry.SetValue(currentSum);
+		entry.SetCreditingAccountID(credAccID);
+		if (!entry.CreateEntry(ormasDal, errorMessage))
+		{
+			return false;
+		}
+		return true;
+	}
+	bool Order::CreateEntry(DataLayer::OrmasDal& ormasDal, int debAccID, double currentSum, int credAccID, double previousSum, std::string oExecDate, std::string& errorMessage)
+	{
+		Entry entry;
+		entry.SetDate(oExecDate);
+		entry.SetDebitingAccountID(credAccID);
+		entry.SetValue(previousSum);
+		entry.SetCreditingAccountID(debAccID);
+		if (!entry.CreateEntry(ormasDal, errorMessage, true))
+		{
+			return false;
+		}
+		entry.Clear();
+		entry.SetDate(oExecDate);
+		entry.SetDebitingAccountID(debAccID);
+		entry.SetValue(currentSum);
+		entry.SetCreditingAccountID(credAccID);
+		if (!entry.CreateEntry(ormasDal, errorMessage))
+		{
+			return false;
+		}
+		return true;
 	}
 }

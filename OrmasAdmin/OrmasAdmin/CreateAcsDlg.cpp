@@ -1,9 +1,7 @@
 #include "stdafx.h"
 #include "CreateAcsDlg.h"
-#include <QMessageBox>
-#include "MainForm.h"
 #include "DataForm.h"
-#include "ExtraFunctions.h"
+
 
 
 CreateAcsDlg::CreateAcsDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, QWidget *parent) :QDialog(parent)
@@ -11,6 +9,9 @@ CreateAcsDlg::CreateAcsDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, QWi
 	setupUi(this);
 	setModal(true);
 	dialogBL = ormasBL;
+	parentForm = parent;
+	DataForm *dataFormParent = (DataForm *)this->parentForm;
+	mainForm = (MainForm *)dataFormParent->GetParent();
 	vInt = new QIntValidator(0, 1000000000, this);
 	roleEdit->setValidator(vInt);
 	acsItemEdit->setValidator(vInt);
@@ -39,6 +40,13 @@ void CreateAcsDlg::SetID(int ID, QString childName)
 	{
 		if (0 != childName.length())
 		{
+			this->hide();
+			this->setWindowFlags(this->windowFlags() | Qt::WindowStaysOnTopHint);
+			this->show();
+			this->raise();
+			this->activateWindow();
+			QApplication::setActiveWindow(this);
+
 			if (childName == QString("roleForm"))
 			{
 				roleEdit->setText(QString::number(ID));
@@ -88,42 +96,50 @@ void CreateAcsDlg::CreateAccess()
 	errorMessage.clear();
 	if (!roleEdit->text().isEmpty() && !acsItemEdit->text().isEmpty())
 	{
-		DataForm *parentDataForm = (DataForm*)parentWidget();
+		DataForm *parentDataForm = (DataForm*) parentForm;
 		SetAccessParams(roleEdit->text().toInt(), acsItemEdit->text().toInt());
 		dialogBL->StartTransaction(errorMessage);
 		if (dialogBL->CreateAccess(access, errorMessage))
 		{
-			BusinessLayer::Role *role = new BusinessLayer::Role();
-			BusinessLayer::AccessItem *acItem = new BusinessLayer::AccessItem();
-			if (!role->GetRoleByID(dialogBL->GetOrmasDal(), access->GetRoleID(), errorMessage)
-				|| !acItem->GetAccessItemByID(dialogBL->GetOrmasDal(), access->GetAccessItemID(), errorMessage))
+			if (parentDataForm != nullptr)
 			{
-				dialogBL->CancelTransaction(errorMessage);
-				dialogBL->CancelTransaction(errorMessage);
-				QMessageBox::information(NULL, QString(tr("Warning")),
-					QString(tr(errorMessage.c_str())),
-					QString(tr("Ok")));
+				if (!parentDataForm->IsClosed())
+				{
+					BusinessLayer::Role *role = new BusinessLayer::Role();
+					BusinessLayer::AccessItem *acItem = new BusinessLayer::AccessItem();
+					if (!role->GetRoleByID(dialogBL->GetOrmasDal(), access->GetRoleID(), errorMessage)
+						|| !acItem->GetAccessItemByID(dialogBL->GetOrmasDal(), access->GetAccessItemID(), errorMessage))
+					{
+						dialogBL->CancelTransaction(errorMessage);
+						dialogBL->CancelTransaction(errorMessage);
+						QMessageBox::information(NULL, QString(tr("Warning")),
+							QString(tr(errorMessage.c_str())),
+							QString(tr("Ok")));
 
-				errorMessage.clear();
-				delete role;
-				delete acItem;
-				return;
+						errorMessage.clear();
+						delete role;
+						delete acItem;
+						return;
+					}
+
+					QList<QStandardItem*> accessItem;
+					accessItem << new QStandardItem(QString::number(access->GetID()))
+						<< new QStandardItem(role->GetName().c_str())
+						<< new QStandardItem(acItem->GetNameEng().c_str())
+						<< new QStandardItem(acItem->GetNameRu().c_str())
+						<< new QStandardItem(acItem->GetDivision().c_str())
+						<< new QStandardItem(QString::number(access->GetRoleID()))
+						<< new QStandardItem(QString::number(access->GetAccessItemID()));
+					QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
+					itemModel->appendRow(accessItem);
+					delete role;
+					delete acItem;
+
+				}
 			}
-			QList<QStandardItem*> accessItem;
-			accessItem << new QStandardItem(QString::number(access->GetID())) 
-				<< new QStandardItem(role->GetName().c_str())
-				<< new QStandardItem(acItem->GetNameEng().c_str())
-				<< new QStandardItem(acItem->GetNameRu().c_str())
-				<< new QStandardItem(acItem->GetDivision().c_str())
-				<< new QStandardItem(QString::number(access->GetRoleID()))
-				<< new QStandardItem(QString::number(access->GetAccessItemID()));
-			QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
-			itemModel->appendRow(accessItem);
-			dialogBL->CommitTransaction(errorMessage);
 
-			delete role;
-			delete acItem;
-			this->close();
+			dialogBL->CommitTransaction(errorMessage);
+			Close();
 		}
 		else
 		{
@@ -151,42 +167,50 @@ void CreateAcsDlg::EditAccess()
 	{
 		if (access->GetRoleID() != roleEdit->text().toInt() || access->GetAccessItemID() != acsItemEdit->text().toInt())
 		{
-			DataForm *parentDataForm = (DataForm*)parentWidget();
+			DataForm *parentDataForm = (DataForm*) parentForm;
 			SetAccessParams(roleEdit->text().toInt(), acsItemEdit->text().toInt(), access->GetID());
 			dialogBL->StartTransaction(errorMessage);
 			if (dialogBL->UpdateAccess(access, errorMessage))
 			{
-				BusinessLayer::Role *role = new BusinessLayer::Role();
-				BusinessLayer::AccessItem *acItem = new BusinessLayer::AccessItem();
-				if (!role->GetRoleByID(dialogBL->GetOrmasDal(), access->GetRoleID(), errorMessage)
-					|| !acItem->GetAccessItemByID(dialogBL->GetOrmasDal(), access->GetAccessItemID(), errorMessage))
+				if (parentDataForm != nullptr)
 				{
-					dialogBL->CancelTransaction(errorMessage);
-					dialogBL->CancelTransaction(errorMessage);
-					QMessageBox::information(NULL, QString(tr("Warning")),
-						QString(tr(errorMessage.c_str())),
-						QString(tr("Ok")));
+					if (!parentDataForm->IsClosed())
+					{
+						BusinessLayer::Role *role = new BusinessLayer::Role();
+						BusinessLayer::AccessItem *acItem = new BusinessLayer::AccessItem();
+						if (!role->GetRoleByID(dialogBL->GetOrmasDal(), access->GetRoleID(), errorMessage)
+							|| !acItem->GetAccessItemByID(dialogBL->GetOrmasDal(), access->GetAccessItemID(), errorMessage))
+						{
+							dialogBL->CancelTransaction(errorMessage);
+							dialogBL->CancelTransaction(errorMessage);
+							QMessageBox::information(NULL, QString(tr("Warning")),
+								QString(tr(errorMessage.c_str())),
+								QString(tr("Ok")));
 
-					errorMessage.clear();
-					delete role;
-					delete acItem;
-					return;
+							errorMessage.clear();
+							delete role;
+							delete acItem;
+							return;
+						}
+
+
+						QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
+						QModelIndex mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
+						itemModel->item(mIndex.row(), 1)->setText(role->GetName().c_str());
+						itemModel->item(mIndex.row(), 2)->setText(acItem->GetNameEng().c_str());
+						itemModel->item(mIndex.row(), 3)->setText(acItem->GetNameRu().c_str());
+						itemModel->item(mIndex.row(), 4)->setText(acItem->GetDivision().c_str());
+						itemModel->item(mIndex.row(), 5)->setText(QString::number(access->GetRoleID()));
+						itemModel->item(mIndex.row(), 6)->setText(QString::number(access->GetAccessItemID()));
+						emit itemModel->dataChanged(mIndex, mIndex);
+						delete role;
+						delete acItem;
+					}
 				}
-
-				QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
-				QModelIndex mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
-				itemModel->item(mIndex.row(), 1)->setText(role->GetName().c_str());
-				itemModel->item(mIndex.row(), 2)->setText(acItem->GetNameEng().c_str());
-				itemModel->item(mIndex.row(), 3)->setText(acItem->GetNameRu().c_str());
-				itemModel->item(mIndex.row(), 4)->setText(acItem->GetDivision().c_str());
-				itemModel->item(mIndex.row(), 5)->setText(QString::number(access->GetRoleID()));
-				itemModel->item(mIndex.row(), 6)->setText(QString::number(access->GetAccessItemID()));
-				emit itemModel->dataChanged(mIndex, mIndex);
 				
 				dialogBL->CommitTransaction(errorMessage);
-				delete role;
-				delete acItem;
-				this->close();
+				
+				Close();
 			}
 			else
 			{
@@ -198,7 +222,7 @@ void CreateAcsDlg::EditAccess()
 		}
 		else
 		{
-			this->close();
+			Close();
 		}
 	}
 	else
@@ -212,7 +236,7 @@ void CreateAcsDlg::EditAccess()
 
 void CreateAcsDlg::Close()
 {
-	this->close();
+	this->parentWidget()->close();
 }
 
 void CreateAcsDlg::OpenRoleDlg()
@@ -220,8 +244,6 @@ void CreateAcsDlg::OpenRoleDlg()
 	this->hide();
 	this->setModal(false);
 	this->show();
-	DataForm *userParent = (DataForm *)parent();
-	MainForm *mainForm = (MainForm *)userParent->GetParent();
 	QString message = tr("Loading...");
 	mainForm->statusBar()->showMessage(message);
 	DataForm *dForm = new DataForm(dialogBL, mainForm);
@@ -231,18 +253,20 @@ void CreateAcsDlg::OpenRoleDlg()
 	dForm->FillTable<BusinessLayer::Role>(errorMessage);
 	if (errorMessage.empty())
 	{
-		dForm->createAcsDlg = this;
+		dForm->parentDialog = this;
 		dForm->setObjectName("roleForm");
 		dForm->QtConnect<BusinessLayer::Role>();
 		QMdiSubWindow *roleWindow = new QMdiSubWindow;
 		roleWindow->setWidget(dForm);
 		roleWindow->setAttribute(Qt::WA_DeleteOnClose);
 		mainForm->mdiArea->addSubWindow(roleWindow);
+		roleWindow->resize(dForm->size().width() + 18, dForm->size().height() + 30);
 		dForm->topLevelWidget();
 		dForm->activateWindow();
 		QApplication::setActiveWindow(dForm);
 		dForm->show();
 		dForm->raise();
+		dForm->setWindowFlags(dForm->windowFlags() | Qt::WindowStaysOnTopHint);
 		QString message = tr("All roles are shown");
 		mainForm->statusBar()->showMessage(message);
 	}
@@ -265,8 +289,6 @@ void CreateAcsDlg::OpenAcsItemDlg()
 	this->hide();
 	this->setModal(false);
 	this->show();
-	DataForm *userParent = (DataForm *)parent();
-	MainForm *mainForm = (MainForm *)userParent->GetParent();
 	QString message = tr("Loading...");
 	mainForm->statusBar()->showMessage(message);
 	DataForm *dForm = new DataForm(dialogBL, mainForm);
@@ -276,18 +298,20 @@ void CreateAcsDlg::OpenAcsItemDlg()
 	dForm->FillTable<BusinessLayer::AccessItem>(errorMessage);
 	if (errorMessage.empty())
 	{
-		dForm->createAcsDlg = this;
+		dForm->parentDialog = this;
 		dForm->setObjectName("accessItemForm");
 		dForm->QtConnect<BusinessLayer::AccessItem>();
 		QMdiSubWindow *acsItemWindow = new QMdiSubWindow;
 		acsItemWindow->setWidget(dForm);
 		acsItemWindow->setAttribute(Qt::WA_DeleteOnClose);
 		mainForm->mdiArea->addSubWindow(acsItemWindow);
+		acsItemWindow->resize(dForm->size().width() + 18, dForm->size().height() + 30);
 		dForm->topLevelWidget();
 		dForm->activateWindow();
 		QApplication::setActiveWindow(dForm);
 		dForm->show();
 		dForm->raise();
+		dForm->setWindowFlags(dForm->windowFlags() | Qt::WindowStaysOnTopHint);
 		QString message = tr("All access items are shown");
 		mainForm->statusBar()->showMessage(message);
 	}

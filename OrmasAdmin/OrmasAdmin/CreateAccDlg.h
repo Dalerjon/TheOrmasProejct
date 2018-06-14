@@ -2,6 +2,7 @@
 #define CREATEAccDLG_H
 #include "ui_CreateAccDlg.h"
 #include "OrmasBL.h"
+#include "MainForm.h"
 
 class CreateAccDlg : public QDialog, public Ui::CreateAccount
 {
@@ -17,17 +18,18 @@ public:
 	void EditAccount();
 	void DeleteAccount(){};
 	void Close();
-	void OpenStsDlg();
 	void OpenCOADlg();
+	void TextEditChanged();
 	public slots:
 	void SetID(int ID, QString childName);
 private:
 	BusinessLayer::Account *account = new BusinessLayer::Account();
-	void SetAccountParams(QString, double, double, int, int, QString, QString, QString, int = 0);
-	void FillEditElements(QString, double, double, int, int, QString, QString, QString);
+	void SetAccountParams(QString, double, double, int = 0);
+	void FillEditElements(QString, double, double);
 	QDoubleValidator *vDouble = nullptr;
 	QIntValidator *vInt = nullptr;
-	void InitComboBox();
+	QWidget* parentForm;
+	MainForm* mainForm;
 };
 
 #endif //CREATEACCDLG_H

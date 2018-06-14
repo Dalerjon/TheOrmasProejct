@@ -29,7 +29,7 @@ namespace BusinessLayer
 		return productID;
 	}
 
-	int ReturnList::GetCount()
+	double ReturnList::GetCount()
 	{
 		return count;
 	}
@@ -61,7 +61,7 @@ namespace BusinessLayer
 	{
 		productID = rProductID;
 	}
-	void ReturnList::SetCount(int rCount)
+	void ReturnList::SetCount(double rCount)
 	{
 		count = rCount;
 	}
@@ -78,7 +78,7 @@ namespace BusinessLayer
 		currencyID = rCurrencyID;
 	}
 
-	bool ReturnList::CreateReturnList(DataLayer::OrmasDal& ormasDal, int rID, int pID, int rCount, double rSum,
+	bool ReturnList::CreateReturnList(DataLayer::OrmasDal& ormasDal, int rID, int pID, double rCount, double rSum,
 		int sID, int cID, std::string& errorMessage)
 	{
 		id = ormasDal.GenerateID();
@@ -123,7 +123,7 @@ namespace BusinessLayer
 		}
 		return false;
 	}
-	bool ReturnList::UpdateReturnList(DataLayer::OrmasDal& ormasDal, int rID, int pID, int rCount, double rSum,
+	bool ReturnList::UpdateReturnList(DataLayer::OrmasDal& ormasDal, int rID, int pID, double rCount, double rSum,
 		int sID, int cID, std::string& errorMessage)
 	{
 		returnID = rID;
@@ -197,7 +197,7 @@ namespace BusinessLayer
 		currencyID = 0;
 	}
 
-	bool ReturnList::IsDuplicate(DataLayer::OrmasDal& ormasDal, int rID, int pID, int rlCount, double rlSum,
+	bool ReturnList::IsDuplicate(DataLayer::OrmasDal& ormasDal, int rID, int pID, double rlCount, double rlSum,
 		int cID, std::string& errorMessage)
 	{
 		ReturnList returnList;

@@ -21,6 +21,8 @@ private:
 	BusinessLayer::Position *position = new BusinessLayer::Position();
 	void SetPositionParams(QString, int = 0);
 	void FillEditElements(QString);
+	QWidget* parentForm;
+
 };
 
 #endif //CREATEPOSDLG_H

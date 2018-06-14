@@ -2,6 +2,7 @@
 #define CREATEPSPDLG_H
 #include "ui_CreatePspDlg.h"
 #include "OrmasBL.h"
+#include "MainForm.h"
 
 class CreatePspDlg : public QDialog, public Ui::CreatePayslip
 {
@@ -18,6 +19,7 @@ public:
 	void DeletePayslip(){};
 	void Close();
 	void OpenSlrDlg();
+	void TextEditChanged();
 	public slots:
 	void SetID(int ID, QString childName);
 private:
@@ -27,6 +29,8 @@ private:
 	QDoubleValidator *vDouble = nullptr;
 	QIntValidator *vInt = nullptr;
 	void InitComboBox();
+	QWidget* parentForm;
+	MainForm* mainForm;
 };
 
 #endif //CREATEPspDLG_H

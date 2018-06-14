@@ -1,9 +1,9 @@
 #include "stdafx.h"
-#include <QMessageBox>
+
 #include "CreateLcnDlg.h"
 #include "MainForm.h"
 #include "DataForm.h"
-#include "ExtraFunctions.h"
+
 
 CreateLcnDlg::CreateLcnDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, QWidget *parent) :QDialog(parent)
 {
@@ -14,6 +14,7 @@ CreateLcnDlg::CreateLcnDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, QWi
 	regionNameEdit->setMaxLength(30);
 	cityNameEdit->setMaxLength(30);
 	dialogBL = ormasBL;
+	parentForm = parent;
 	if (true == updateFlag)
 	{
 		QObject::connect(okBtn, &QPushButton::released, this, &CreateLcnDlg::EditLocation);
@@ -70,20 +71,26 @@ void CreateLcnDlg::CreateLocation()
 	if (!(countryNameEdit->text().isEmpty() || countryCodeEdit->text().isEmpty() || regionNameEdit->text().isEmpty()
 		|| cityNameEdit->text().isEmpty()))
 	{
-		DataForm *parentDataForm = (DataForm*)parentWidget();
+		DataForm *parentDataForm = (DataForm*) parentForm;
 		SetLocationParams(countryNameEdit->text(), countryCodeEdit->text(), regionNameEdit->text(), cityNameEdit->text());
 		dialogBL->StartTransaction(errorMessage);
 		if (dialogBL->CreateLocation(location, errorMessage))
 		{
-			QList<QStandardItem*> LocationItem;
-			LocationItem << new QStandardItem(QString::number(location->GetID())) << new QStandardItem(location->GetCountryName().c_str())
-				<< new QStandardItem(location->GetCountryCode().c_str()) << new QStandardItem(location->GetRegionName().c_str())
-				<< new QStandardItem(location->GetCityName().c_str());
-			QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
-			itemModel->appendRow(LocationItem);
+			if (parentDataForm != nullptr)
+			{
+				if (!parentDataForm->IsClosed())
+				{
+					QList<QStandardItem*> LocationItem;
+					LocationItem << new QStandardItem(QString::number(location->GetID())) << new QStandardItem(location->GetCountryName().c_str())
+						<< new QStandardItem(location->GetCountryCode().c_str()) << new QStandardItem(location->GetRegionName().c_str())
+						<< new QStandardItem(location->GetCityName().c_str());
+					QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
+					itemModel->appendRow(LocationItem);
+				}
+			}
 			
 			dialogBL->CommitTransaction(errorMessage);
-			this->close();
+			Close();
 		}
 		else
 		{
@@ -113,22 +120,28 @@ void CreateLcnDlg::EditLocation()
 			|| QString(location->GetRegionName().c_str()) != regionNameEdit->text()
 			|| QString(location->GetCityName().c_str()) != cityNameEdit->text())
 		{
-			DataForm *parentDataForm = (DataForm*)parentWidget();
+			DataForm *parentDataForm = (DataForm*) parentForm;
 			SetLocationParams(countryNameEdit->text(), countryCodeEdit->text(), regionNameEdit->text(), cityNameEdit->text(),
 				location->GetID());
 			dialogBL->StartTransaction(errorMessage);
 			if (dialogBL->UpdateLocation(location, errorMessage))
 			{
-				QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
-				QModelIndex mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
-				itemModel->item(mIndex.row(), 1)->setText(location->GetCountryName().c_str());
-				itemModel->item(mIndex.row(), 2)->setText(location->GetCountryCode().c_str());
-				itemModel->item(mIndex.row(), 3)->setText(location->GetRegionName().c_str());
-				itemModel->item(mIndex.row(), 4)->setText(location->GetCityName().c_str());
-				emit itemModel->dataChanged(mIndex, mIndex);
+				if (parentDataForm != nullptr)
+				{
+					if (!parentDataForm->IsClosed())
+					{
+						QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
+						QModelIndex mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
+						itemModel->item(mIndex.row(), 1)->setText(location->GetCountryName().c_str());
+						itemModel->item(mIndex.row(), 2)->setText(location->GetCountryCode().c_str());
+						itemModel->item(mIndex.row(), 3)->setText(location->GetRegionName().c_str());
+						itemModel->item(mIndex.row(), 4)->setText(location->GetCityName().c_str());
+						emit itemModel->dataChanged(mIndex, mIndex);
+					}
+				}
 				
 				dialogBL->CommitTransaction(errorMessage);
-				this->close();
+				Close();
 			}
 			else
 			{
@@ -140,7 +153,7 @@ void CreateLcnDlg::EditLocation()
 		}
 		else
 		{
-			this->close();
+			Close();
 		}
 	}
 	else
@@ -153,5 +166,5 @@ void CreateLcnDlg::EditLocation()
 
 void CreateLcnDlg::Close()
 {
-	this->close();
+	this->parentWidget()->close();
 }

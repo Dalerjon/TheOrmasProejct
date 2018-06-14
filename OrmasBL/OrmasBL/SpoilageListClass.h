@@ -10,12 +10,12 @@ namespace BusinessLayer
 		int id = 0;
 		int spoilageID = 0;
 		int productID = 0;
-		int count = 0;
+		double count = 0;
 		double sum = 0;
 		int statusID = 0;
 		int currencyID = 0;
 	public:
-		SpoilageList(int slID, int sID, int pID, int slCount, double slSum, int stsID, int cID) :id(slID), spoilageID(sID), 
+		SpoilageList(int slID, int sID, int pID, double slCount, double slSum, int stsID, int cID) :id(slID), spoilageID(sID),
 			productID(pID),	count(slCount), sum(slSum), statusID(stsID), currencyID(cID){};
 		SpoilageList(DataLayer::spoilageListCollection);
 		SpoilageList(){};
@@ -25,7 +25,7 @@ namespace BusinessLayer
 		int GetID();
 		int GetSpoilageID();
 		int GetProductID();
-		int GetCount();
+		double GetCount();
 		double GetSum();
 		int GetStatusID();
 		int GetCurrencyID();
@@ -34,7 +34,7 @@ namespace BusinessLayer
 		void SetID(int);
 		void SetSpoilageID(int);
 		void SetProductID(int);
-		void SetCount(int);
+		void SetCount(double);
 		void SetSum(double);
 		void SetStatusID(int);
 		void SetCurrencyID(int);
@@ -44,9 +44,9 @@ namespace BusinessLayer
 		bool UpdateSpoilageList(DataLayer::OrmasDal& ormasDal, std::string& errorMessage);
 		bool DeleteSpoilageList(DataLayer::OrmasDal& ormasDal, std::string& errorMessage);
 		bool DeleteListBySpoilageID(DataLayer::OrmasDal& ormasDal, int oID, std::string& errorMessage);
-		bool CreateSpoilageList(DataLayer::OrmasDal& ormasDal, int sID, int pID, int slCount, double slSum,
+		bool CreateSpoilageList(DataLayer::OrmasDal& ormasDal, int sID, int pID, double slCount, double slSum,
 			int stsID, int cID, std::string& errorMessage);
-		bool UpdateSpoilageList(DataLayer::OrmasDal& ormasDal, int sID, int pID, int slCount, double slSum,
+		bool UpdateSpoilageList(DataLayer::OrmasDal& ormasDal, int sID, int pID, double slCount, double slSum,
 			int stsID, int cID, std::string& errorMessage);
 
 		//Generate filter string for class

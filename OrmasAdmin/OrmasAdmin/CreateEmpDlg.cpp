@@ -1,15 +1,17 @@
 #include "stdafx.h"
-#include <QMessageBox>
+
 #include "CreateEmpDlg.h"
-#include "MainForm.h"
 #include "DataForm.h"
-#include "ExtraFunctions.h"
+
 
 CreateEmpDlg::CreateEmpDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, QWidget *parent) :QDialog(parent)
 {
 	setupUi(this);
 	setModal(true);
 	dialogBL = ormasBL;
+	parentForm = parent;
+	DataForm *dataFormParent = (DataForm *)this->parentForm;
+	mainForm = (MainForm *)dataFormParent->GetParent();
 	activatedCmbBox->addItem("false");
 	activatedCmbBox->addItem("true");
 	positionEdit->setReadOnly(true);
@@ -49,6 +51,13 @@ void CreateEmpDlg::SetID(int ID, QString childName)
 	{
 		if (0 != childName.length())
 		{
+			this->hide();
+			this->setWindowFlags(this->windowFlags() | Qt::WindowStaysOnTopHint);
+			this->show();
+			this->raise();
+			this->activateWindow();
+			QApplication::setActiveWindow(this);
+
 			if (childName == QString("roleForm"))
 			{
 				roleEdit->setText(QString::number(ID));
@@ -101,8 +110,8 @@ void CreateEmpDlg::FillEditElements(QString eEmail, QString eName, QString eSurn
 	activatedCmbBox->setCurrentIndex(index);
 	roleEdit->setText(QString::number(eRoleID));
 	positionEdit->setText(QString::number(ePositionID));
-	birthDateEdit->setDate(QDate::fromString(eBirthDate, "yyyy-MM-dd"));
-	hireDateEdit->setDate(QDate::fromString(eHireNumber, "yyyy-MM-dd"));
+	birthDateEdit->setDate(QDate::fromString(eBirthDate, "dd.MM.yyyy"));
+	hireDateEdit->setDate(QDate::fromString(eHireNumber, "dd.MM.yyyy"));
 	BusinessLayer::Role role;
 	if (role.GetRoleByID(dialogBL->GetOrmasDal(), eRoleID, errorMessage))
 	{
@@ -158,7 +167,7 @@ void CreateEmpDlg::CreateEmployee()
 		&& !addressEdit->text().isEmpty() && !birthDateEdit->text().isEmpty() && !hireDateEdit->text().isEmpty()
 		&& !passwordEdit->text().isEmpty() && !activatedCmbBox->currentText().isEmpty() && 0 != roleEdit->text().toInt() && 0 != positionEdit->text().toInt())
 	{
-		DataForm *parentDataForm = (DataForm*)parentWidget();
+		DataForm *parentDataForm = (DataForm*) parentForm;
 		
 		BusinessLayer::Role *clientRole = new BusinessLayer::Role();
 		clientRole->SetName("CLIENT");
@@ -189,48 +198,57 @@ void CreateEmpDlg::CreateEmployee()
 
 		SetEmployeeParams(emailEdit->text(), nameEdit->text(), surnameEdit->text(), phoneEdit->text(), addressEdit->text(),
 			roleEdit->text().toInt(), passwordEdit->text(), activatedCmbBox->currentText(), positionEdit->text().toInt(),
-			birthDateEdit->date().toString("yyyy-MM-dd"), hireDateEdit->date().toString("yyyy-MM-dd"));
+			birthDateEdit->date().toString("dd.MM.yyyy"), hireDateEdit->date().toString("dd.MM.yyyy"));
 		dialogBL->StartTransaction(errorMessage);
 		if (dialogBL->CreateEmployee(employee, errorMessage))
 		{
-			BusinessLayer::Role *role = new BusinessLayer::Role();
-			BusinessLayer::Position *position = new BusinessLayer::Position();
-			if (!role->GetRoleByID(dialogBL->GetOrmasDal(), employee->GetRoleID(), errorMessage)
-				|| !position->GetPositionByID(dialogBL->GetOrmasDal(), employee->GetPositionID(), errorMessage))
+			if (parentDataForm != nullptr)
 			{
-				dialogBL->CancelTransaction(errorMessage);
-				dialogBL->CancelTransaction(errorMessage);
-				QMessageBox::information(NULL, QString(tr("Warning")),
-					QString(tr(errorMessage.c_str())),
-					QString(tr("Ok")));
+				if (!parentDataForm->IsClosed())
+				{
 
-				errorMessage.clear();
-				delete position;
-				delete role;
-				return;
+					BusinessLayer::Role *role = new BusinessLayer::Role();
+					BusinessLayer::Position *position = new BusinessLayer::Position();
+					if (!role->GetRoleByID(dialogBL->GetOrmasDal(), employee->GetRoleID(), errorMessage)
+						|| !position->GetPositionByID(dialogBL->GetOrmasDal(), employee->GetPositionID(), errorMessage))
+					{
+						dialogBL->CancelTransaction(errorMessage);
+						dialogBL->CancelTransaction(errorMessage);
+						QMessageBox::information(NULL, QString(tr("Warning")),
+							QString(tr(errorMessage.c_str())),
+							QString(tr("Ok")));
+
+						errorMessage.clear();
+						delete position;
+						delete role;
+						return;
+					}
+					QList<QStandardItem*> EmployeeItem;
+					EmployeeItem << new QStandardItem(QString::number(employee->GetID()))
+						<< new QStandardItem(employee->GetName().c_str())
+						<< new QStandardItem(employee->GetSurname().c_str())
+						<< new QStandardItem(position->GetName().c_str())
+						<< new QStandardItem(employee->GetPhone().c_str())
+						<< new QStandardItem(employee->GetAddress().c_str())
+						<< new QStandardItem(employee->GetBirthDate().c_str())
+						<< new QStandardItem(role->GetName().c_str())
+						<< new QStandardItem(employee->GetHireDate().c_str())
+						<< new QStandardItem(employee->GetPassword().c_str())
+						<< new QStandardItem(employee->GetEmail().c_str())
+						<< new QStandardItem(employee->GetActivated() ? "true" : "false")
+						<< new QStandardItem(QString::number(employee->GetRoleID()))
+						<< new QStandardItem(QString::number(employee->GetPositionID()));
+					QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
+					itemModel->appendRow(EmployeeItem);
+
+					delete position;
+					delete role;
+				}
 			}
-			QList<QStandardItem*> EmployeeItem;
-			EmployeeItem << new QStandardItem(QString::number(employee->GetID()))
-				<< new QStandardItem(employee->GetName().c_str())
-				<< new QStandardItem(employee->GetSurname().c_str())
-				<< new QStandardItem(position->GetName().c_str())
-				<< new QStandardItem(employee->GetPhone().c_str())
-				<< new QStandardItem(employee->GetAddress().c_str())
-				<< new QStandardItem(employee->GetBirthDate().c_str())
-				<< new QStandardItem(role->GetName().c_str())
-				<< new QStandardItem(employee->GetHireDate().c_str())
-				<< new QStandardItem(employee->GetPassword().c_str())
-				<< new QStandardItem(employee->GetEmail().c_str())
-				<< new QStandardItem(employee->GetActivated() ? "true" : "false")
-				<< new QStandardItem(QString::number(employee->GetRoleID()))
-				<< new QStandardItem(QString::number(employee->GetPositionID()));
-			QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
-			itemModel->appendRow(EmployeeItem);
+			
 
-			delete position;
-			delete role;
 			dialogBL->CommitTransaction(errorMessage);
-			this->close();
+			Close();
 		}
 		else
 		{
@@ -265,7 +283,7 @@ void CreateEmpDlg::EditEmployee()
 			employee->GetPositionID() != positionEdit->text().toInt() || QString(employee->GetPassword().c_str()) != passwordEdit->text() ||
 			QString(employee->GetActivated() ? "true" : "false") != activatedCmbBox->currentText())
 		{
-			DataForm *parentDataForm = (DataForm*)parentWidget();
+			DataForm *parentDataForm = (DataForm*) parentForm;
 			
 			BusinessLayer::Role *clientRole = new BusinessLayer::Role();
 			clientRole->SetName("CLIENT");
@@ -296,55 +314,61 @@ void CreateEmpDlg::EditEmployee()
 			
 			SetEmployeeParams(emailEdit->text(), nameEdit->text(), surnameEdit->text(), phoneEdit->text(), addressEdit->text(),
 				roleEdit->text().toInt(), passwordEdit->text(), activatedCmbBox->currentText(), positionEdit->text().toInt(),
-				birthDateEdit->date().toString("yyyy-MM-dd"), hireDateEdit->date().toString("yyyy-MM-dd"), employee->GetID());
+				birthDateEdit->date().toString("dd.MM.yyyy"), hireDateEdit->date().toString("dd.MM.yyyy"), employee->GetID());
 			dialogBL->StartTransaction(errorMessage);
 			if (dialogBL->UpdateEmployee(employee, errorMessage))
 			{
-				//updating Emp data
-				QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
-				QModelIndex mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
-				itemModel->item(mIndex.row(), 1)->setText(employee->GetName().c_str());
-				itemModel->item(mIndex.row(), 2)->setText(employee->GetSurname().c_str());
-				
-
-				//if location of Employee is changed, then update location data fields
-				BusinessLayer::Position *position = new BusinessLayer::Position();
-
-				//if role of Employee is changed, then update location data fields
-				BusinessLayer::Role *role = new BusinessLayer::Role();
-
-				if (!role->GetRoleByID(dialogBL->GetOrmasDal(), employee->GetRoleID(), errorMessage)
-					|| !position->GetPositionByID(dialogBL->GetOrmasDal(), employee->GetPositionID(), errorMessage))
+				if (parentDataForm != nullptr)
 				{
-					dialogBL->CancelTransaction(errorMessage);
-					dialogBL->CancelTransaction(errorMessage);
-					QMessageBox::information(NULL, QString(tr("Warning")),
-						QString(tr(errorMessage.c_str())),
-						QString(tr("Ok")));
+					if (!parentDataForm->IsClosed())
+					{
+						//updating Emp data
+						QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
+						QModelIndex mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
+						itemModel->item(mIndex.row(), 1)->setText(employee->GetName().c_str());
+						itemModel->item(mIndex.row(), 2)->setText(employee->GetSurname().c_str());
 
-					errorMessage.clear();
-					delete position;
-					delete role;
-					return;
+
+						//if location of Employee is changed, then update location data fields
+						BusinessLayer::Position *position = new BusinessLayer::Position();
+
+						//if role of Employee is changed, then update location data fields
+						BusinessLayer::Role *role = new BusinessLayer::Role();
+
+						if (!role->GetRoleByID(dialogBL->GetOrmasDal(), employee->GetRoleID(), errorMessage)
+							|| !position->GetPositionByID(dialogBL->GetOrmasDal(), employee->GetPositionID(), errorMessage))
+						{
+							dialogBL->CancelTransaction(errorMessage);
+							dialogBL->CancelTransaction(errorMessage);
+							QMessageBox::information(NULL, QString(tr("Warning")),
+								QString(tr(errorMessage.c_str())),
+								QString(tr("Ok")));
+
+							errorMessage.clear();
+							delete position;
+							delete role;
+							return;
+						}
+						itemModel->item(mIndex.row(), 3)->setText(position->GetName().c_str());
+						itemModel->item(mIndex.row(), 4)->setText(employee->GetPhone().c_str());
+						itemModel->item(mIndex.row(), 5)->setText(employee->GetAddress().c_str());
+						itemModel->item(mIndex.row(), 6)->setText(employee->GetBirthDate().c_str());
+						itemModel->item(mIndex.row(), 7)->setText(role->GetName().c_str());
+						itemModel->item(mIndex.row(), 8)->setText(employee->GetHireDate().c_str());
+						itemModel->item(mIndex.row(), 9)->setText(employee->GetPassword().c_str());
+						itemModel->item(mIndex.row(), 10)->setText(employee->GetEmail().c_str());
+						itemModel->item(mIndex.row(), 11)->setText(employee->GetActivated() ? "true" : "false");
+						itemModel->item(mIndex.row(), 12)->setText(QString::number(employee->GetRoleID()));
+						itemModel->item(mIndex.row(), 13)->setText(QString::number(employee->GetPositionID()));
+
+						emit itemModel->dataChanged(mIndex, mIndex);
+						delete position;
+						delete role;
+					}
 				}
-				itemModel->item(mIndex.row(), 3)->setText(position->GetName().c_str());
-				itemModel->item(mIndex.row(), 4)->setText(employee->GetPhone().c_str());
-				itemModel->item(mIndex.row(), 5)->setText(employee->GetAddress().c_str());
-				itemModel->item(mIndex.row(), 6)->setText(employee->GetBirthDate().c_str());
-				itemModel->item(mIndex.row(), 7)->setText(role->GetName().c_str());
-				itemModel->item(mIndex.row(), 8)->setText(employee->GetHireDate().c_str());
-				itemModel->item(mIndex.row(), 9)->setText(employee->GetPassword().c_str());
-				itemModel->item(mIndex.row(), 10)->setText(employee->GetEmail().c_str());
-				itemModel->item(mIndex.row(), 11)->setText(employee->GetActivated() ? "true" : "false");
-				itemModel->item(mIndex.row(), 12)->setText(QString::number(employee->GetRoleID()));
-				itemModel->item(mIndex.row(), 13)->setText(QString::number(employee->GetPositionID()));
-
-				emit itemModel->dataChanged(mIndex, mIndex);
 				
-				delete position;
-				delete role;
 				dialogBL->CommitTransaction(errorMessage);
-				this->close();
+				Close();
 
 			}
 			else
@@ -357,7 +381,7 @@ void CreateEmpDlg::EditEmployee()
 		}
 		else
 		{
-			this->close();
+			Close();
 		}
 	}
 	else
@@ -371,7 +395,7 @@ void CreateEmpDlg::EditEmployee()
 
 void CreateEmpDlg::Close()
 {
-	this->close();
+	this->parentWidget()->close();
 }
 
 void CreateEmpDlg::OpenPsnDlg()
@@ -379,8 +403,6 @@ void CreateEmpDlg::OpenPsnDlg()
 	this->hide();
 	this->setModal(false);
 	this->show();
-	DataForm *employeeParent = (DataForm *)parent();
-	MainForm *mainForm = (MainForm *)employeeParent->GetParent();
 	QString message = tr("Loading...");
 	mainForm->statusBar()->showMessage(message);
 	DataForm *dForm = new DataForm(dialogBL, mainForm);
@@ -390,18 +412,20 @@ void CreateEmpDlg::OpenPsnDlg()
 	dForm->FillTable<BusinessLayer::Position>(errorMessage);
 	if (errorMessage.empty())
 	{
-		dForm->createEmpDlg = this;
+		dForm->parentDialog = this;
 		dForm->setObjectName("positionForm");
 		dForm->QtConnect<BusinessLayer::Position>();
 		QMdiSubWindow *positionWindow = new QMdiSubWindow;
 		positionWindow->setWidget(dForm);
 		positionWindow->setAttribute(Qt::WA_DeleteOnClose);
 		mainForm->mdiArea->addSubWindow(positionWindow);
+		positionWindow->resize(dForm->size().width() + 18, dForm->size().height() + 30);
 		dForm->topLevelWidget();
 		dForm->activateWindow();
 		QApplication::setActiveWindow(dForm);
 		dForm->show();
 		dForm->raise();
+		dForm->setWindowFlags(dForm->windowFlags() | Qt::WindowStaysOnTopHint);
 		QString message = tr("All positions are shown");
 		mainForm->statusBar()->showMessage(message);
 	}
@@ -422,8 +446,6 @@ void CreateEmpDlg::OpenRoleDlg()
 	this->hide();
 	this->setModal(false);
 	this->show();
-	DataForm *EmployeeParent = (DataForm *)parent();
-	MainForm *mainForm = (MainForm *)EmployeeParent->GetParent();
 	QString message = tr("Loading...");
 	mainForm->statusBar()->showMessage(message);
 	DataForm *dForm = new DataForm(dialogBL, mainForm);
@@ -433,18 +455,20 @@ void CreateEmpDlg::OpenRoleDlg()
 	dForm->FillTable<BusinessLayer::Role>(errorMessage);
 	if (errorMessage.empty())
 	{
-		dForm->createEmpDlg = this;
+		dForm->parentDialog = this;
 		dForm->setObjectName("roleForm");
 		dForm->QtConnect<BusinessLayer::Role>();
 		QMdiSubWindow *roleWindow = new QMdiSubWindow;
 		roleWindow->setWidget(dForm);
 		roleWindow->setAttribute(Qt::WA_DeleteOnClose);
 		mainForm->mdiArea->addSubWindow(roleWindow);
+		roleWindow->resize(dForm->size().width() + 18, dForm->size().height() + 30);
 		dForm->topLevelWidget();
 		dForm->activateWindow();
 		QApplication::setActiveWindow(dForm);
 		dForm->show();
 		dForm->raise();
+		dForm->setWindowFlags(dForm->windowFlags() | Qt::WindowStaysOnTopHint);
 		QString message = tr("All roles are shown");
 		mainForm->statusBar()->showMessage(message);
 	}

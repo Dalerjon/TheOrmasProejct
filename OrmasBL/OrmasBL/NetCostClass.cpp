@@ -169,9 +169,9 @@ namespace BusinessLayer{
 		return "";
 	}
 
-	bool NetCost::GetNetCostByID(DataLayer::OrmasDal& ormasDal, int bID, std::string& errorMessage)
+	bool NetCost::GetNetCostByID(DataLayer::OrmasDal& ormasDal, int nID, std::string& errorMessage)
 	{
-		id = bID;
+		id = nID;
 		std::string filter = GenerateFilter(ormasDal);
 		std::vector<DataLayer::netCostViewCollection> netCostVector = ormasDal.GetNetCost(errorMessage, filter);
 		if (0 != netCostVector.size())
@@ -187,6 +187,28 @@ namespace BusinessLayer{
 		else
 		{
 			errorMessage = "Cannot find net cost with this id";
+		}
+		return false;
+	}
+
+	bool NetCost::GetNetCostByProductID(DataLayer::OrmasDal& ormasDal, int pID, std::string& errorMessage)
+	{
+		productID = pID;
+		std::string filter = GenerateFilter(ormasDal);
+		std::vector<DataLayer::netCostViewCollection> netCostVector = ormasDal.GetNetCost(errorMessage, filter);
+		if (0 != netCostVector.size())
+		{
+			id = std::get<0>(netCostVector.at(0));
+			date = std::get<1>(netCostVector.at(0));
+			value = std::get<5>(netCostVector.at(0));
+			currencyID = std::get<7>(netCostVector.at(0));
+			productID = std::get<8>(netCostVector.at(0));
+			isOutdated = std::get<9>(netCostVector.at(0));
+			return true;
+		}
+		else
+		{
+			errorMessage = "Cannot find net cost with this product id";
 		}
 		return false;
 	}

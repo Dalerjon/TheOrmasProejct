@@ -51,6 +51,7 @@ public:
         if (CalculateWages->objectName().isEmpty())
             CalculateWages->setObjectName(QStringLiteral("CalculateWages"));
         CalculateWages->resize(400, 162);
+        CalculateWages->setMinimumSize(QSize(400, 0));
         CalculateWages->setLocale(QLocale(QLocale::English, QLocale::UnitedStates));
         CalculateWages->setModal(false);
         gridLayout = new QGridLayout(CalculateWages);

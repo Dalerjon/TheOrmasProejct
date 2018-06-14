@@ -29,7 +29,7 @@ namespace BusinessLayer
 		return productID;
 	}
 
-	int OrderList::GetCount()
+	double OrderList::GetCount()
 	{
 		return count;
 	}
@@ -61,7 +61,7 @@ namespace BusinessLayer
 	{
 		productID = pProductID;
 	}
-	void OrderList::SetCount(int pCount)
+	void OrderList::SetCount(double pCount)
 	{
 		count = pCount;
 	}
@@ -78,7 +78,7 @@ namespace BusinessLayer
 		currencyID = pCurrencyID;
 	}
 
-	bool OrderList::CreateOrderList(DataLayer::OrmasDal& ormasDal, int oID, int pID, int olCount, double olSum,
+	bool OrderList::CreateOrderList(DataLayer::OrmasDal& ormasDal, int oID, int pID, double olCount, double olSum,
 		int sID, int cID, std::string& errorMessage)
 	{
 		id = ormasDal.GenerateID();
@@ -123,7 +123,7 @@ namespace BusinessLayer
 		return false;
 	}
 
-	bool OrderList::UpdateOrderList(DataLayer::OrmasDal& ormasDal, int oID, int pID, int olCount, double olSum,
+	bool OrderList::UpdateOrderList(DataLayer::OrmasDal& ormasDal, int oID, int pID, double olCount, double olSum,
 		int sID, int cID, std::string& errorMessage)
 	{
 		orderID = oID;
@@ -197,7 +197,7 @@ namespace BusinessLayer
 		currencyID = 0;
 	}
 
-	bool OrderList::IsDuplicate(DataLayer::OrmasDal& ormasDal, int oID, int pID, int olCount, double olSum,
+	bool OrderList::IsDuplicate(DataLayer::OrmasDal& ormasDal, int oID, int pID, double olCount, double olSum,
 		int cID, std::string& errorMessage)
 	{
 		OrderList orderList;

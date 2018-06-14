@@ -2,6 +2,7 @@
 #define CREATEACSDLG_H
 #include "ui_CreateAcsDlg.h"
 #include "OrmasBL.h"
+#include "MainForm.h"
 
 class CreateAcsDlg : public QDialog, public Ui::CreateAccess
 {
@@ -26,6 +27,8 @@ private:
 	void SetAccessParams(int, int, int = 0);
 	void FillEditElements(int, int);
 	QIntValidator *vInt = nullptr;
+	QWidget* parentForm;
+	MainForm* mainForm;
 };
 
 #endif //CREATEACSDLG_H

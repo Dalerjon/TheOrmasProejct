@@ -1,9 +1,9 @@
 #include "stdafx.h"
 #include "CreateAccTpDlg.h"
-#include <QMessageBox>
+
 #include "MainForm.h"
 #include "DataForm.h"
-#include "ExtraFunctions.h"
+
 
 
 CreateAccTpDlg::CreateAccTpDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, QWidget *parent) :QDialog(parent)
@@ -11,6 +11,7 @@ CreateAccTpDlg::CreateAccTpDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag,
 	setupUi(this);
 	setModal(true);
 	dialogBL = ormasBL;
+	parentForm = parent;
 	vInt = new QIntValidator(0, 1000000000, this);
 	numberEdit->setValidator(vInt);
 	commentEdit->setMaxLength(100);
@@ -71,21 +72,28 @@ void CreateAccTpDlg::CreateAccountType()
 	errorMessage.clear();
 	if (!nameEdit->text().isEmpty() && 0 != numberEdit->text().toInt())
 	{
-		DataForm *parentDataForm = (DataForm*)parentWidget();
+		DataForm *parentDataForm = (DataForm*) parentForm;
 		SetAccountTypeParams(nameEdit->text(), numberEdit->text().toInt(), commentEdit->text());
 		dialogBL->StartTransaction(errorMessage);
+
 		if (dialogBL->CreateAccountType(accountType, errorMessage))
 		{
-			QList<QStandardItem*> accountTypeItem;
-			accountTypeItem << new QStandardItem(QString::number(accountType->GetID()))
-				<< new QStandardItem(accountType->GetName().c_str())
-				<< new QStandardItem(QString::number(accountType->GetNumber()))
-				<< new QStandardItem(accountType->GetComment().c_str());
-			QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
-			itemModel->appendRow(accountTypeItem);
+			if (parentDataForm != nullptr)
+			{
+				if (!parentDataForm->IsClosed())
+				{
+					QList<QStandardItem*> accountTypeItem;
+					accountTypeItem << new QStandardItem(QString::number(accountType->GetID()))
+						<< new QStandardItem(accountType->GetName().c_str())
+						<< new QStandardItem(QString::number(accountType->GetNumber()))
+						<< new QStandardItem(accountType->GetComment().c_str());
+					QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
+					itemModel->appendRow(accountTypeItem);
+				}
+			}
 
 			dialogBL->CommitTransaction(errorMessage);
-			this->close();
+			Close();
 		}
 		else
 		{
@@ -111,20 +119,26 @@ void CreateAccTpDlg::EditAccountType()
 	{
 		if (QString(accountType->GetName().c_str()) != nameEdit->text() || accountType->GetNumber() != numberEdit->text().toInt())
 		{
-			DataForm *parentDataForm = (DataForm*)parentWidget();
+			DataForm *parentDataForm = (DataForm*) parentForm;
 			SetAccountTypeParams(nameEdit->text(), numberEdit->text().toInt(), commentEdit->text(), accountType->GetID());
 			dialogBL->StartTransaction(errorMessage);
 			if (dialogBL->UpdateAccountType(accountType, errorMessage))
 			{
-				QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
-				QModelIndex mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
-				itemModel->item(mIndex.row(), 1)->setText(accountType->GetName().c_str());
-				itemModel->item(mIndex.row(), 2)->setText(QString::number(numberEdit->text().toInt()));
-				itemModel->item(mIndex.row(), 3)->setText(commentEdit->text());
-				emit itemModel->dataChanged(mIndex, mIndex);
+				if (parentDataForm != nullptr)
+				{
+					if (!parentDataForm->IsClosed())
+					{
+						QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
+						QModelIndex mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
+						itemModel->item(mIndex.row(), 1)->setText(accountType->GetName().c_str());
+						itemModel->item(mIndex.row(), 2)->setText(QString::number(numberEdit->text().toInt()));
+						itemModel->item(mIndex.row(), 3)->setText(commentEdit->text());
+						emit itemModel->dataChanged(mIndex, mIndex);
+					}
+				}
 
 				dialogBL->CommitTransaction(errorMessage);
-				this->close();
+				Close();
 			}
 			else
 			{
@@ -136,7 +150,7 @@ void CreateAccTpDlg::EditAccountType()
 		}
 		else
 		{
-			this->close();
+			Close();
 		}
 	}
 	else
@@ -150,5 +164,5 @@ void CreateAccTpDlg::EditAccountType()
 
 void CreateAccTpDlg::Close()
 {
-	this->close();
+	this->parentWidget()->close();
 }

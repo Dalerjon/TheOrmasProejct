@@ -164,6 +164,46 @@ namespace BusinessLayer{
 		return false;
 	}
 
+	bool AccessItem::GetAccessItemByEngName(DataLayer::OrmasDal& ormasDal, std::string engName, std::string& errorMessage)
+	{
+		nameEng = engName;
+		std::string filter = GenerateFilter(ormasDal);
+		std::vector<DataLayer::accessItemsCollection> accessItemVector = ormasDal.GetAccessItems(errorMessage, filter);
+		if (0 != accessItemVector.size())
+		{
+			id = std::get<0>(accessItemVector.at(0));
+			nameEng = std::get<1>(accessItemVector.at(0));
+			nameRu = std::get<2>(accessItemVector.at(0));
+			division = std::get<3>(accessItemVector.at(0));
+			return true;
+		}
+		else
+		{
+			errorMessage = "Cannot find access item with this id";
+		}
+		return false;
+	}
+
+	bool AccessItem::GetAccessItemByRuName(DataLayer::OrmasDal& ormasDal, std::string ruName, std::string& errorMessage)
+	{
+		nameRu = ruName;
+		std::string filter = GenerateFilter(ormasDal);
+		std::vector<DataLayer::accessItemsCollection> accessItemVector = ormasDal.GetAccessItems(errorMessage, filter);
+		if (0 != accessItemVector.size())
+		{
+			id = std::get<0>(accessItemVector.at(0));
+			nameEng = std::get<1>(accessItemVector.at(0));
+			nameRu = std::get<2>(accessItemVector.at(0));
+			division = std::get<3>(accessItemVector.at(0));
+			return true;
+		}
+		else
+		{
+			errorMessage = "Cannot find access item with this id";
+		}
+		return false;
+	}
+
 	bool AccessItem::IsEmpty()
 	{
 		if (0 == id && nameEng.empty() && nameRu.empty() && division.empty())

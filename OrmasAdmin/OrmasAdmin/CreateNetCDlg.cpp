@@ -1,9 +1,7 @@
 #include "stdafx.h"
 #include "CreateNetCDlg.h"
-#include <QMessageBox>
-#include "MainForm.h"
 #include "DataForm.h"
-#include "ExtraFunctions.h"
+
 
 
 CreateNetCDlg::CreateNetCDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, QWidget *parent) :QDialog(parent)
@@ -11,6 +9,9 @@ CreateNetCDlg::CreateNetCDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, Q
 	setupUi(this);
 	setModal(true);
 	dialogBL = ormasBL;
+	parentForm = parent;
+	DataForm *dataFormParent = (DataForm *)this->parentForm;
+	mainForm = (MainForm *)dataFormParent->GetParent();
 	vDouble = new QDoubleValidator(0.00, 1000000000.00, 3, this);
 	vInt = new QIntValidator(0, 1000000000, this);
 	productEdit->setValidator(vInt);
@@ -29,6 +30,7 @@ CreateNetCDlg::CreateNetCDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, Q
 	}
 	QObject::connect(cancelBtn, &QPushButton::released, this, &CreateNetCDlg::Close);
 	QObject::connect(productBtn, &QPushButton::released, this, &CreateNetCDlg::OpenPrdDlg);
+	QObject::connect(valueEdit, &QLineEdit::textChanged, this, &CreateNetCDlg::TextEditChanged);
 	InitComboBox();
 }
 
@@ -45,6 +47,13 @@ void CreateNetCDlg::SetID(int ID, QString childName)
 	{
 		if (0 != childName.length())
 		{
+			this->hide();
+			this->setWindowFlags(this->windowFlags() | Qt::WindowStaysOnTopHint);
+			this->show();
+			this->raise();
+			this->activateWindow();
+			QApplication::setActiveWindow(this);
+
 			if (childName == QString("productForm"))
 			{
 				productEdit->setText(QString::number(ID));
@@ -53,6 +62,7 @@ void CreateNetCDlg::SetID(int ID, QString childName)
 				{
 					prodNamePh->setText(product.GetName().c_str());
 					volumePh->setText(QString::number(product.GetVolume()));
+					currencyCmb->setCurrentIndex(currencyCmb->findData(QVariant(product.GetCompanyID())));
 					BusinessLayer::Measure measure;
 					if (measure.GetMeasureByID(dialogBL->GetOrmasDal(), product.GetMeasureID(), errorMessage))
 					{
@@ -76,7 +86,7 @@ void CreateNetCDlg::SetNetCostParams(QString nDate, double nValue, int nProductI
 
 void CreateNetCDlg::FillEditElements(QString nDate, double nValue, int nProductID, int nCurrencyID, QString nIsOutdated)
 {
-	dateEdit->setDateTime(QDateTime::fromString(nDate, "yyyy.MM.dd hh:mm:ss"));
+	dateEdit->setDateTime(QDateTime::fromString(nDate, "dd.MM.yyyy hh:mm"));
 	valueEdit->setText(QString::number(nValue));
 	productEdit->setText(QString::number(nProductID));
 	int index = isOutdatedCmb->findText(nIsOutdated);
@@ -125,56 +135,63 @@ void CreateNetCDlg::CreateNetCost()
 	if (0 != productEdit->text().toInt() && 0.0 != valueEdit->text().toDouble() && !currencyCmb->currentText().isEmpty()
 		&& !dateEdit->text().isEmpty())
 	{
-		DataForm *parentDataForm = (DataForm*)parentWidget();
+		DataForm *parentDataForm = (DataForm*) parentForm;
 		SetNetCostParams(dateEdit->text(), valueEdit->text().toDouble(), productEdit->text().toInt(),
 			currencyCmb->currentData().toInt(), isOutdatedCmb->currentText());
 		dialogBL->StartTransaction(errorMessage);
 		if (dialogBL->CreateNetCost(netCost, errorMessage))
 		{
-			BusinessLayer::Product *product = new BusinessLayer::Product;
-			BusinessLayer::Currency *currency = new BusinessLayer::Currency;
-			if (!product->GetProductByID(dialogBL->GetOrmasDal(), netCost->GetProductID(), errorMessage)
-				|| !currency->GetCurrencyByID(dialogBL->GetOrmasDal(), netCost->GetCurrencyID(), errorMessage))
+			if (parentDataForm != nullptr)
 			{
-				dialogBL->CancelTransaction(errorMessage);
-				QMessageBox::information(NULL, QString(tr("Warning")),
-					QString(tr(errorMessage.c_str())),
-					QString(tr("Ok")));
-				errorMessage.clear();
-				delete product;
-				delete currency;
+				if (!parentDataForm->IsClosed())
+				{
+					BusinessLayer::Product *product = new BusinessLayer::Product;
+					BusinessLayer::Currency *currency = new BusinessLayer::Currency;
+					if (!product->GetProductByID(dialogBL->GetOrmasDal(), netCost->GetProductID(), errorMessage)
+						|| !currency->GetCurrencyByID(dialogBL->GetOrmasDal(), netCost->GetCurrencyID(), errorMessage))
+					{
+						dialogBL->CancelTransaction(errorMessage);
+						QMessageBox::information(NULL, QString(tr("Warning")),
+							QString(tr(errorMessage.c_str())),
+							QString(tr("Ok")));
+						errorMessage.clear();
+						delete product;
+						delete currency;
 
-				return;
-			}
-			BusinessLayer::Measure *measure = new BusinessLayer::Measure();
-			if (!measure->GetMeasureByID(dialogBL->GetOrmasDal(), product->GetMeasureID(), errorMessage))
-			{
-				dialogBL->CancelTransaction(errorMessage);
-				QMessageBox::information(NULL, QString(tr("Warning")),
-					QString(tr(errorMessage.c_str())),
-					QString(tr("Ok")));
-				errorMessage.clear();
-				delete measure;
-			}
-			QList<QStandardItem*> NetCostItem;
-			NetCostItem << new QStandardItem(QString::number(netCost->GetID()))
-				<< new QStandardItem(netCost->GetDate().c_str())
-				<< new QStandardItem(product->GetName().c_str())
-				<< new QStandardItem(QString::number(product->GetVolume()))
-				<< new QStandardItem(measure->GetName().c_str())
-				<< new QStandardItem(QString::number(netCost->GetValue()))
-				<< new QStandardItem(currency->GetShortName().c_str())
-				<< new QStandardItem(QString::number(netCost->GetCurrencyID()))
-				<< new QStandardItem(QString::number(netCost->GetProductID()))
-				<< new QStandardItem(netCost->GetIsOutdated() ? "true" : "false");;
-			QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
-			itemModel->appendRow(NetCostItem);
+						return;
+					}
+					BusinessLayer::Measure *measure = new BusinessLayer::Measure();
+					if (!measure->GetMeasureByID(dialogBL->GetOrmasDal(), product->GetMeasureID(), errorMessage))
+					{
+						dialogBL->CancelTransaction(errorMessage);
+						QMessageBox::information(NULL, QString(tr("Warning")),
+							QString(tr(errorMessage.c_str())),
+							QString(tr("Ok")));
+						errorMessage.clear();
+						delete measure;
+					}
+					QList<QStandardItem*> NetCostItem;
+					NetCostItem << new QStandardItem(QString::number(netCost->GetID()))
+						<< new QStandardItem(netCost->GetDate().c_str())
+						<< new QStandardItem(product->GetName().c_str())
+						<< new QStandardItem(QString::number(product->GetVolume()))
+						<< new QStandardItem(measure->GetName().c_str())
+						<< new QStandardItem(QString::number(netCost->GetValue()))
+						<< new QStandardItem(currency->GetShortName().c_str())
+						<< new QStandardItem(QString::number(netCost->GetCurrencyID()))
+						<< new QStandardItem(QString::number(netCost->GetProductID()))
+						<< new QStandardItem(netCost->GetIsOutdated() ? "true" : "false");;
+					QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
+					itemModel->appendRow(NetCostItem);
 
+					delete product;
+					delete currency;
+					delete measure;
+				}
+			}
 			dialogBL->CommitTransaction(errorMessage);
-			delete product;
-			delete currency;
-			delete measure;
-			this->close();
+		
+			Close();
 		}
 		else
 		{
@@ -205,55 +222,61 @@ void CreateNetCDlg::EditNetCost()
 			|| netCost->GetValue() != valueEdit->text().toDouble() || netCost->GetCurrencyID() != currencyCmb->currentData().toInt()
 			|| QString(netCost->GetIsOutdated() ? "true" : "false") != isOutdatedCmb->currentText())
 		{
-			DataForm *parentDataForm = (DataForm*)parentWidget();
+			DataForm *parentDataForm = (DataForm*) parentForm;
 			SetNetCostParams(dateEdit->text(), valueEdit->text().toDouble(), productEdit->text().toInt(),
 				currencyCmb->currentData().toInt(), isOutdatedCmb->currentText(), netCost->GetID());
 			dialogBL->StartTransaction(errorMessage);
 			if (dialogBL->UpdateNetCost(netCost, errorMessage))
 			{
-				BusinessLayer::Product *product = new BusinessLayer::Product;
-				BusinessLayer::Currency *currency = new BusinessLayer::Currency;
-				if (!product->GetProductByID(dialogBL->GetOrmasDal(), netCost->GetProductID(), errorMessage)
-					|| !currency->GetCurrencyByID(dialogBL->GetOrmasDal(), netCost->GetCurrencyID(), errorMessage))
+				if (parentDataForm != nullptr)
 				{
-					dialogBL->CancelTransaction(errorMessage);
-					QMessageBox::information(NULL, QString(tr("Warning")),
-						QString(tr(errorMessage.c_str())),
-						QString(tr("Ok")));
-					errorMessage.clear();
-					delete product;
-					delete currency;
+					if (!parentDataForm->IsClosed())
+					{
+						BusinessLayer::Product *product = new BusinessLayer::Product;
+						BusinessLayer::Currency *currency = new BusinessLayer::Currency;
+						if (!product->GetProductByID(dialogBL->GetOrmasDal(), netCost->GetProductID(), errorMessage)
+							|| !currency->GetCurrencyByID(dialogBL->GetOrmasDal(), netCost->GetCurrencyID(), errorMessage))
+						{
+							dialogBL->CancelTransaction(errorMessage);
+							QMessageBox::information(NULL, QString(tr("Warning")),
+								QString(tr(errorMessage.c_str())),
+								QString(tr("Ok")));
+							errorMessage.clear();
+							delete product;
+							delete currency;
 
-					return;
+							return;
+						}
+						BusinessLayer::Measure *measure = new BusinessLayer::Measure();
+						if (!measure->GetMeasureByID(dialogBL->GetOrmasDal(), product->GetMeasureID(), errorMessage))
+						{
+							dialogBL->CancelTransaction(errorMessage);
+							QMessageBox::information(NULL, QString(tr("Warning")),
+								QString(tr(errorMessage.c_str())),
+								QString(tr("Ok")));
+							errorMessage.clear();
+							delete measure;
+						}
+						QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
+						QModelIndex mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
+						itemModel->item(mIndex.row(), 1)->setText(netCost->GetDate().c_str());
+						itemModel->item(mIndex.row(), 2)->setText(product->GetName().c_str());
+						itemModel->item(mIndex.row(), 3)->setText(QString::number(product->GetVolume()));
+						itemModel->item(mIndex.row(), 4)->setText(measure->GetName().c_str());
+						itemModel->item(mIndex.row(), 5)->setText(QString::number(netCost->GetValue()));
+						itemModel->item(mIndex.row(), 6)->setText(currency->GetShortName().c_str());
+						itemModel->item(mIndex.row(), 7)->setText(QString::number(netCost->GetCurrencyID()));
+						itemModel->item(mIndex.row(), 8)->setText(QString::number(netCost->GetProductID()));
+						itemModel->item(mIndex.row(), 9)->setText(netCost->GetIsOutdated() ? "true" : "false");
+						emit itemModel->dataChanged(mIndex, mIndex);
+						delete product;
+						delete currency;
+						delete measure;
+					}
 				}
-				BusinessLayer::Measure *measure = new BusinessLayer::Measure();
-				if (!measure->GetMeasureByID(dialogBL->GetOrmasDal(), product->GetMeasureID(), errorMessage))
-				{
-					dialogBL->CancelTransaction(errorMessage);
-					QMessageBox::information(NULL, QString(tr("Warning")),
-						QString(tr(errorMessage.c_str())),
-						QString(tr("Ok")));
-					errorMessage.clear();
-					delete measure;
-				}
-				QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
-				QModelIndex mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
-				itemModel->item(mIndex.row(), 1)->setText(netCost->GetDate().c_str());
-				itemModel->item(mIndex.row(), 2)->setText(product->GetName().c_str());
-				itemModel->item(mIndex.row(), 3)->setText(QString::number(product->GetVolume()));
-				itemModel->item(mIndex.row(), 4)->setText(measure->GetName().c_str());
-				itemModel->item(mIndex.row(), 5)->setText(QString::number(netCost->GetValue()));
-				itemModel->item(mIndex.row(), 6)->setText(currency->GetShortName().c_str());
-				itemModel->item(mIndex.row(), 7)->setText(QString::number(netCost->GetCurrencyID()));
-				itemModel->item(mIndex.row(), 8)->setText(QString::number(netCost->GetProductID()));
-				itemModel->item(mIndex.row(), 9)->setText(netCost->GetIsOutdated() ? "true" : "false");
-				emit itemModel->dataChanged(mIndex, mIndex);
-
 				dialogBL->CommitTransaction(errorMessage);
-				delete product;
-				delete currency;
-				delete measure;
-				this->close();
+			
+				Close();
 			}
 			else
 			{
@@ -265,7 +288,7 @@ void CreateNetCDlg::EditNetCost()
 		}
 		else
 		{
-			this->close();
+			Close();
 		}
 	}
 	else
@@ -279,7 +302,7 @@ void CreateNetCDlg::EditNetCost()
 
 void CreateNetCDlg::Close()
 {
-	this->close();
+	this->parentWidget()->close();
 }
 
 void CreateNetCDlg::OpenPrdDlg()
@@ -287,29 +310,60 @@ void CreateNetCDlg::OpenPrdDlg()
 	this->hide();
 	this->setModal(false);
 	this->show();
-	DataForm *userParent = (DataForm *)parent();
-	MainForm *mainForm = (MainForm *)userParent->GetParent();
 	QString message = tr("Loading...");
 	mainForm->statusBar()->showMessage(message);
 	DataForm *dForm = new DataForm(dialogBL, mainForm);
 	dForm->setWindowTitle(tr("Products"));
 	dForm->hide();
 	dForm->setWindowModality(Qt::WindowModal);
-	dForm->FillTable<BusinessLayer::ProductView>(errorMessage);
+	BusinessLayer::ProductType *pType = new BusinessLayer::ProductType();
+	pType->SetCode("PRODUCT");
+	std::string pTypeFilter = dialogBL->GenerateFilter<BusinessLayer::ProductType>(pType);
+	std::vector<BusinessLayer::ProductType> pTypeVector = dialogBL->GetAllDataForClass<BusinessLayer::ProductType>(errorMessage, pTypeFilter);
+	if (pTypeVector.size() == 0)
+	{
+		delete pType;
+		QString message = tr("Sorry could not find product type with \"Product\" code!");
+		mainForm->statusBar()->showMessage(message);
+		QMessageBox::information(NULL, QString(tr("Warning")),
+			QString(message),
+			QString(tr("Ok")));
+		errorMessage = "";
+		return;
+	}
+
+	BusinessLayer::Product *product = new BusinessLayer::Product();
+	product->SetProductTypeID(pTypeVector.at(0).GetID());
+	std::string productFilter = dialogBL->GenerateFilter<BusinessLayer::Product>(product);
+	std::vector<BusinessLayer::ProductView> productVector = dialogBL->GetAllDataForClass<BusinessLayer::ProductView>(errorMessage, productFilter);
+	if (productVector.size() == 0)
+	{
+		delete product;
+		QString message = tr("Sorry could not find product with \"product\" code!");
+		mainForm->statusBar()->showMessage(message);
+		QMessageBox::information(NULL, QString(tr("Warning")),
+			QString(message),
+			QString(tr("Ok")));
+		errorMessage = "";
+		return;
+	}
+	dForm->FillTable<BusinessLayer::ProductView>(errorMessage, productFilter);
 	if (errorMessage.empty())
 	{
-		dForm->createNetCDlg = this;
+		dForm->parentDialog = this;
 		dForm->setObjectName("productForm");
 		dForm->QtConnect<BusinessLayer::ProductView>();
 		QMdiSubWindow *productWindow = new QMdiSubWindow;
 		productWindow->setWidget(dForm);
 		productWindow->setAttribute(Qt::WA_DeleteOnClose);
 		mainForm->mdiArea->addSubWindow(productWindow);
+		productWindow->resize(dForm->size().width() + 18, dForm->size().height() + 30);
 		dForm->topLevelWidget();
 		dForm->activateWindow();
 		QApplication::setActiveWindow(dForm);
 		dForm->show();
 		dForm->raise();
+		dForm->setWindowFlags(dForm->windowFlags() | Qt::WindowStaysOnTopHint);
 		QString message = tr("All products are shown");
 		mainForm->statusBar()->showMessage(message);
 	}
@@ -334,5 +388,17 @@ void CreateNetCDlg::InitComboBox()
 		{
 			currencyCmb->addItem(curVector[i].GetShortName().c_str(), QVariant(curVector[i].GetID()));
 		}
+	}
+}
+
+void CreateNetCDlg::TextEditChanged()
+{
+	if (valueEdit->text().contains(","))
+	{
+		valueEdit->setText(valueEdit->text().replace(",", "."));
+	}
+	if (valueEdit->text().contains(".."))
+	{
+		valueEdit->setText(valueEdit->text().replace("..", "."));
 	}
 }

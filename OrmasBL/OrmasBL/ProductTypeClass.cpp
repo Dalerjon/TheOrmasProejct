@@ -9,6 +9,7 @@ namespace BusinessLayer
 		id = std::get<0>(pTypeCollection);
 		name = std::get<1>(pTypeCollection);
 		shortName = std::get<2>(pTypeCollection);
+		code = std::get<3>(pTypeCollection);
 	}
 
 	int ProductType::GetID()
@@ -24,6 +25,11 @@ namespace BusinessLayer
 	std::string ProductType::GetShortName()
 	{
 		return shortName;
+	}
+
+	std::string ProductType::GetCode()
+	{
+		return code;
 	}
 
 	void ProductType::SetID(int pID)
@@ -42,17 +48,24 @@ namespace BusinessLayer
 			boost::trim(pShortName);
 		shortName = pShortName;
 	}
+	void ProductType::SetCode(std::string pCode)
+	{
+		if (!pCode.empty())
+			boost::trim(pCode);
+		code = boost::to_upper_copy(pCode);
+	}
 
-	bool ProductType::CreateProductType(DataLayer::OrmasDal& ormasDal, std::string pTypeName, std::string pTypeShortName, 
+	bool ProductType::CreateProductType(DataLayer::OrmasDal& ormasDal, std::string pTypeName, std::string pTypeShortName, std::string pTypeCode,
 		std::string& errorMessage)
 	{
-		if (IsDuplicate(ormasDal, pTypeName, pTypeShortName, errorMessage))
+		if (IsDuplicate(ormasDal, pTypeName, pTypeShortName, pTypeCode, errorMessage))
 			return false;
 		id = ormasDal.GenerateID();
-		TrimStrings(pTypeName, pTypeShortName);
+		TrimStrings(pTypeName, pTypeShortName, pTypeCode);
 		name = pTypeName;
 		shortName = pTypeShortName;
-		if (0 != id && ormasDal.CreateProductType(id, name, shortName, errorMessage))
+		code = boost::to_upper_copy(pTypeCode);
+		if (0 != id && ormasDal.CreateProductType(id, name, shortName, code, errorMessage))
 		{
 			return true;
 		}
@@ -67,7 +80,7 @@ namespace BusinessLayer
 		if (IsDuplicate(ormasDal, errorMessage))
 			return false;
 		id = ormasDal.GenerateID();
-		if (0 != id &&ormasDal.CreateProductType(id, name, shortName, errorMessage))
+		if (0 != id &&ormasDal.CreateProductType(id, name, shortName, code, errorMessage))
 		{
 			return true;
 		}
@@ -90,13 +103,14 @@ namespace BusinessLayer
 		}
 		return false;
 	}
-	bool ProductType::UpdateProductType(DataLayer::OrmasDal& ormasDal, std::string pTypeName, std::string pTypeShortName, 
+	bool ProductType::UpdateProductType(DataLayer::OrmasDal& ormasDal, std::string pTypeName, std::string pTypeShortName, std::string pTypeCode,
 		std::string& errorMessage)
 	{
-		TrimStrings(pTypeName, pTypeShortName);
+		TrimStrings(pTypeName, pTypeShortName, pTypeCode);
 		name = pTypeName;
 		shortName = pTypeShortName;
-		if (0 != id &&ormasDal.UpdateProductType(id, name, shortName, errorMessage))
+		code = boost::to_upper_copy(pTypeCode);
+		if (0 != id &&ormasDal.UpdateProductType(id, name, shortName, code, errorMessage))
 		{
 			return true;
 		}
@@ -108,7 +122,7 @@ namespace BusinessLayer
 	}
 	bool ProductType::UpdateProductType(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
-		if (0 != id && ormasDal.UpdateProductType(id, name, shortName, errorMessage))
+		if (0 != id && ormasDal.UpdateProductType(id, name, shortName, code, errorMessage))
 		{
 			return true;
 		}
@@ -121,9 +135,9 @@ namespace BusinessLayer
 
 	std::string ProductType::GenerateFilter(DataLayer::OrmasDal& ormasDal)
 	{
-		if (0 != id || !name.empty() || !shortName.empty())
+		if (0 != id || !name.empty() || !shortName.empty() || !code.empty())
 		{
-			return ormasDal.GetFilterForProductType(id, name, shortName);
+			return ormasDal.GetFilterForProductType(id, name, shortName, code);
 		}
 		return "";
 	}
@@ -138,6 +152,7 @@ namespace BusinessLayer
 			id = std::get<0>(productTypeVector.at(0));
 			name = std::get<1>(productTypeVector.at(0));
 			shortName = std::get<2>(productTypeVector.at(0));
+			code = std::get<3>(productTypeVector.at(0));
 			return true;
 		}
 		else
@@ -149,7 +164,7 @@ namespace BusinessLayer
 	
 	bool ProductType::IsEmpty()
 	{
-		if (0 == id && name == "" && shortName == "")
+		if (0 == id && name == "" && shortName == "" && code == "")
 			return true;
 		return false;
 	}
@@ -159,21 +174,25 @@ namespace BusinessLayer
 		id = 0;
 		name.clear();
 		shortName.clear();
+		code.clear();
 	}
 
-	void ProductType::TrimStrings(std::string& pTypeName, std::string& pTypeShortName)
+	void ProductType::TrimStrings(std::string& pTypeName, std::string& pTypeShortName, std::string& pTypeCode)
 	{
 		if (!pTypeName.empty())
 			boost::trim(pTypeName);
 		if (!pTypeShortName.empty())
 			boost::trim(pTypeShortName);
+		if (!pTypeCode.empty())
+			boost::trim(pTypeCode);
 	}
 
-	bool ProductType::IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string pTypeName, std::string pTypeShortName, std::string& errorMessage)
+	bool ProductType::IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string pTypeName, std::string pTypeShortName, std::string pTypeCode, std::string& errorMessage)
 	{
 		ProductType productType;
 		productType.SetName(pTypeName);
 		productType.SetShortName(pTypeShortName);
+		productType.SetCode(pTypeCode);
 		std::string filter = productType.GenerateFilter(ormasDal);
 		std::vector<DataLayer::productTypeCollection> productTypeVector = ormasDal.GetProductTypes(errorMessage, filter);
 		if (!errorMessage.empty())
@@ -191,6 +210,7 @@ namespace BusinessLayer
 		ProductType productType;
 		productType.SetName(name);
 		productType.SetShortName(shortName);
+		productType.SetCode(code);
 		std::string filter = productType.GenerateFilter(ormasDal);
 		std::vector<DataLayer::productTypeCollection> productTypeVector = ormasDal.GetProductTypes(errorMessage, filter);
 		if (!errorMessage.empty())

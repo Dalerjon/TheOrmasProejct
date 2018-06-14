@@ -43,7 +43,7 @@ namespace BusinessLayer
 		return stockEmployeeID;
 	}
 
-	int Inventorization::GetCount()
+	double Inventorization::GetCount()
 	{
 		return count;
 	}
@@ -84,7 +84,7 @@ namespace BusinessLayer
 		stockEmployeeID = iStockEmployeeID;
 	}
 
-	void Inventorization::SetCount(int iCount)
+	void Inventorization::SetCount(double iCount)
 	{
 		count = iCount;
 	}
@@ -105,7 +105,7 @@ namespace BusinessLayer
 	}
 
 	bool Inventorization::CreateInventorization(DataLayer::OrmasDal& ormasDal, int uID, std::string iDate, std::string iExecDate, 
-		int seID, int iCount, double iSum, int sID, int cID, std::string& errorMessage)
+		int seID, double iCount, double iSum, int sID, int cID, std::string& errorMessage)
 	{
 		if (IsDuplicate(ormasDal, uID, iDate, seID ,iCount, iSum, cID, errorMessage))
 			return false;
@@ -176,7 +176,7 @@ namespace BusinessLayer
 		return false;
 	}
 	bool Inventorization::UpdateInventorization(DataLayer::OrmasDal& ormasDal, int uID, std::string iDate, std::string iExecnDate,
-		int eID, int iCount, double iSum, int sID, int cID, std::string& errorMessage)
+		int eID, double iCount, double iSum, int sID, int cID, std::string& errorMessage)
 	{
 		std::map<std::string, int> statusMap = BusinessLayer::Status::GetStatusesAsMap(ormasDal, errorMessage);
 		if (0 == statusMap.size())
@@ -270,7 +270,7 @@ namespace BusinessLayer
 		currencyID = 0;
 	}
 
-	bool Inventorization::IsDuplicate(DataLayer::OrmasDal& ormasDal, int eID, std::string iDate, int seID, int iCount, double iSum,
+	bool Inventorization::IsDuplicate(DataLayer::OrmasDal& ormasDal, int eID, std::string iDate, int seID, double iCount, double iSum,
 		int cID, std::string& errorMessage)
 	{
 		Inventorization inventorization;

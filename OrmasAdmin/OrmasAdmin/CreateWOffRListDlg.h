@@ -2,6 +2,7 @@
 #define CREATEWOFFRLISTDLG_H
 #include "ui_CreateWOffRListDlg.h"
 #include "OrmasBL.h"
+#include "MainForm.h"
 
 class CreateWOffRListDlg : public QDialog, public Ui::CreateWOffRList
 {
@@ -21,14 +22,19 @@ public:
 	void OpenWOffRDlg();
 	void OpenProdDlg();
 	void OpenStsDlg();
+	void TextEditChanged();
 	public slots:
 	void SetID(int ID, QString childName);
+signals:
+	void DataIsChanged();
 private:
 	BusinessLayer::WriteOffRawList *writeOffRawList = new BusinessLayer::WriteOffRawList();
-	void SetWOffRListParams(int, int, int, double, int, int, int = 0);
-	void FillEditElements(int, int, int, double, int, int);
+	void SetWOffRListParams(int, int, double, double, int, int, int = 0);
+	void FillEditElements(int, int, double, double, int, int);
 	QDoubleValidator *vDouble = nullptr;
 	QIntValidator *vInt = nullptr;
 	void InitComboBox();
+	QWidget* parentForm;
+	MainForm* mainForm;
 };
 #endif //CREATEWOFFRLISTDLG_H

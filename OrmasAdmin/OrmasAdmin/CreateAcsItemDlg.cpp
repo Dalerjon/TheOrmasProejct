@@ -1,15 +1,16 @@
 #include "stdafx.h"
 #include "CreateAcsItemDlg.h"
-#include <QMessageBox>
+
 #include "MainForm.h"
 #include "DataForm.h"
-#include "ExtraFunctions.h"
+
 
 CreateAcsItemDlg::CreateAcsItemDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, QWidget *parent) :QDialog(parent)
 {
 	setupUi(this);
 	setModal(true);
 	dialogBL = ormasBL;
+	parentForm = parent;
 	nameEngEdit->setMaxLength(30);
 	nameRuEdit->setMaxLength(30);
 	divisionEdit->setMaxLength(20);
@@ -65,19 +66,24 @@ void CreateAcsItemDlg::CreateAccessItem()
 	errorMessage.clear();
 	if (!(nameEngEdit->text().isEmpty() || nameRuEdit->text().isEmpty() || divisionEdit->text().isEmpty()))
 	{
-		DataForm *parentDataForm = (DataForm*)parentWidget();
+		DataForm *parentDataForm = (DataForm*) parentForm;
 		SetAccessItemParams(nameEngEdit->text(), nameRuEdit->text(), divisionEdit->text());
 		dialogBL->StartTransaction(errorMessage);
 		if (dialogBL->CreateAccessItem(accessItem, errorMessage))
 		{
-			QList<QStandardItem*> accessListItem;
-			accessListItem << new QStandardItem(QString::number(accessItem->GetID())) << new QStandardItem(accessItem->GetNameEng().c_str())
-				<< new QStandardItem(accessItem->GetNameRu().c_str()) << new QStandardItem(accessItem->GetDivision().c_str());
-			QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
-			itemModel->appendRow(accessListItem);
-			
+			if (parentDataForm != nullptr)
+			{
+				if (!parentDataForm->IsClosed())
+				{
+					QList<QStandardItem*> accessListItem;
+					accessListItem << new QStandardItem(QString::number(accessItem->GetID())) << new QStandardItem(accessItem->GetNameEng().c_str())
+						<< new QStandardItem(accessItem->GetNameRu().c_str()) << new QStandardItem(accessItem->GetDivision().c_str());
+					QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
+					itemModel->appendRow(accessListItem);
+				}
+			}
 			dialogBL->CommitTransaction(errorMessage);
-			this->close();
+			Close();
 		}
 		else
 		{
@@ -106,20 +112,25 @@ void CreateAcsItemDlg::EditAccessItem()
 		if (QString(accessItem->GetNameEng().c_str()) != nameEngEdit->text() || QString(accessItem->GetNameRu().c_str()) != nameRuEdit->text()
 			|| QString(accessItem->GetDivision().c_str()) != divisionEdit->text())
 		{
-			DataForm *parentDataForm = (DataForm*)parentWidget();
+			DataForm *parentDataForm = (DataForm*) parentForm;
 			SetAccessItemParams(nameEngEdit->text(), nameRuEdit->text(), divisionEdit->text(), accessItem->GetID());
 			dialogBL->StartTransaction(errorMessage);
 			if (dialogBL->UpdateAccessItem(accessItem, errorMessage))
 			{
-				QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
-				QModelIndex mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
-				itemModel->item(mIndex.row(), 1)->setText(accessItem->GetNameEng().c_str());
-				itemModel->item(mIndex.row(), 2)->setText(accessItem->GetNameRu().c_str());
-				itemModel->item(mIndex.row(), 3)->setText(accessItem->GetDivision().c_str());
-				emit itemModel->dataChanged(mIndex, mIndex);
-				
+				if (parentDataForm != nullptr)
+				{
+					if (!parentDataForm->IsClosed())
+					{
+						QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
+						QModelIndex mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
+						itemModel->item(mIndex.row(), 1)->setText(accessItem->GetNameEng().c_str());
+						itemModel->item(mIndex.row(), 2)->setText(accessItem->GetNameRu().c_str());
+						itemModel->item(mIndex.row(), 3)->setText(accessItem->GetDivision().c_str());
+						emit itemModel->dataChanged(mIndex, mIndex);
+					}
+				}
 				dialogBL->CommitTransaction(errorMessage);
-				this->close();
+				Close();
 			}
 			else
 			{
@@ -131,7 +142,7 @@ void CreateAcsItemDlg::EditAccessItem()
 		}
 		else
 		{
-			this->close();
+			Close();
 		}
 	}
 	else
@@ -145,5 +156,5 @@ void CreateAcsItemDlg::EditAccessItem()
 
 void CreateAcsItemDlg::Close()
 {
-	this->close();
+	this->parentWidget()->close();
 }

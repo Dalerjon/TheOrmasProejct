@@ -1,17 +1,23 @@
 #include "stdafx.h"
 #include "OrderRawClass.h"
+#include "OrderRawListClass.h"
+#include "BalanceClass.h"
 #include "UserClass.h"
+#include "StockClass.h"
 #include "StatusClass.h"
+#include "CompanyAccountRelationClass.h"
+#include "CompanyEmployeeRelationClass.h"
+
 
 namespace BusinessLayer
 {
 	OrderRaw::OrderRaw(DataLayer::orderRawsCollection oCollection)
 	{
 		id = std::get<0>(oCollection);
-		employeeID = std::get<1>(oCollection);
+		purveyorID = std::get<1>(oCollection);
 		date = std::get<2>(oCollection);
 		executionDate = std::get<3>(oCollection);
-		stockEmployeeID = std::get<4>(oCollection);
+		employeeID = std::get<4>(oCollection);
 		count = std::get<5>(oCollection);
 		sum = std::get<6>(oCollection);
 		statusID = std::get<7>(oCollection);
@@ -23,9 +29,9 @@ namespace BusinessLayer
 		return id;
 	}
 
-	int OrderRaw::GetEmployeeID()
+	int OrderRaw::GetPurveyorID()
 	{
-		return employeeID;
+		return purveyorID;
 	}
 
 	std::string OrderRaw::GetDate()
@@ -38,12 +44,12 @@ namespace BusinessLayer
 		return executionDate;
 	}
 
-	int OrderRaw::GetStockEmployeeID()
+	int OrderRaw::GetEmployeeID()
 	{
-		return stockEmployeeID;
+		return employeeID;
 	}
 
-	int OrderRaw::GetCount()
+	double OrderRaw::GetCount()
 	{
 		return count;
 	}
@@ -67,9 +73,9 @@ namespace BusinessLayer
 	{
 		id = oID;
 	}
-	void OrderRaw::SetEmployeeID(int oEmployeeID)
+	void OrderRaw::SetPurveyorID(int oPurveyorID)
 	{
-		employeeID = oEmployeeID;
+		purveyorID = oPurveyorID;
 	}
 	void OrderRaw::SetDate(std::string oDate)
 	{
@@ -79,12 +85,12 @@ namespace BusinessLayer
 	{
 		executionDate = oExecutionDate;
 	}
-	void OrderRaw::SetStockEmployeeID(int oStockEmployeeID)
+	void OrderRaw::SetEmployeeID(int oEmployeeID)
 	{
-		stockEmployeeID = oStockEmployeeID;
+		employeeID = oEmployeeID;
 	}
 
-	void OrderRaw::SetCount(int oCount)
+	void OrderRaw::SetCount(double oCount)
 	{
 		count = oCount;
 	}
@@ -104,30 +110,46 @@ namespace BusinessLayer
 		currencyID = oCurrencyID;
 	}
 
-	bool OrderRaw::CreateOrderRaw(DataLayer::OrmasDal& ormasDal, int uID, std::string oDate, std::string oExecDate, 
-		int seID, int oCount, double oSum, int sID, int cID, std::string& errorMessage)
+	bool OrderRaw::CreateOrderRaw(DataLayer::OrmasDal& ormasDal, int pID, std::string oDate, std::string oExecDate, 
+		int eID, double oCount, double oSum, int sID, int cID, std::string& errorMessage)
 	{
-		if (IsDuplicate(ormasDal, uID, oDate, seID ,oCount, oSum, cID, errorMessage))
+		if (IsDuplicate(ormasDal, pID, oDate, eID ,oCount, oSum, cID, errorMessage))
 			return false;
 		std::map<std::string, int> statusMap = BusinessLayer::Status::GetStatusesAsMap(ormasDal, errorMessage);
 		if (0 == statusMap.size())
 			return false;
-		employeeID = uID;
+		purveyorID = pID;
 		date = oDate;
 		executionDate = oExecDate;
-		stockEmployeeID = seID;
+		employeeID = eID;
 		count = oCount;
 		sum = oSum;
 		statusID = sID;
 		currencyID = cID;
-		if (0 != id && ormasDal.CreateOrderRaw(id, employeeID, date, executionDate, stockEmployeeID, count, sum, statusID, currencyID, errorMessage))
+		ormasDal.StartTransaction(errorMessage);
+		if (0 != id && ormasDal.CreateOrderRaw(id, purveyorID, date, executionDate, employeeID, count, sum, statusID, currencyID, errorMessage))
 		{
+			if (statusID == statusMap.find("EXECUTED")->second)
+			{
+				if (ChangesAtStock(ormasDal, id, errorMessage))
+				{
+					ormasDal.CommitTransaction(errorMessage);
+					return true;
+				}
+				else
+				{
+					ormasDal.CancelTransaction(errorMessage);
+					return false;
+				}
+			}
+			ormasDal.CommitTransaction(errorMessage);
 			return true;
 		}
 		if (errorMessage.empty())
 		{
 			errorMessage = "Warning! ID is 0, or some unexpected error. Please contact with provider.";
 		}
+		ormasDal.CancelTransaction(errorMessage);
 		return false;
 	}
 
@@ -138,20 +160,49 @@ namespace BusinessLayer
 		std::map<std::string, int> statusMap = BusinessLayer::Status::GetStatusesAsMap(ormasDal, errorMessage);
 		if (0 == statusMap.size())
 			return false;
-		if (0 != id && ormasDal.CreateOrderRaw(id, employeeID, date, executionDate, stockEmployeeID, count, sum, statusID, currencyID, errorMessage))
+		ormasDal.StartTransaction(errorMessage);
+		if (0 != id && ormasDal.CreateOrderRaw(id, purveyorID, date, executionDate, employeeID, count, sum, statusID, currencyID, errorMessage))
 		{
+			if (statusID == statusMap.find("EXECUTED")->second)
+			{
+				if (ChangesAtStock(ormasDal, id, errorMessage))
+				{
+					ormasDal.CommitTransaction(errorMessage);
+					return true;
+				}
+				else
+				{
+					ormasDal.CancelTransaction(errorMessage);
+					return false;
+				}
+			}
+			ormasDal.CommitTransaction(errorMessage);
 			return true;
 		}
 		if (errorMessage.empty())
 		{
 			errorMessage = "Warning! ID is 0, or some unexpected error. Please contact with provider.";
 		}
+		ormasDal.CancelTransaction(errorMessage);
 		return false;
 	}
 	bool OrderRaw::DeleteOrderRaw(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
 		if (!ormasDal.StartTransaction(errorMessage))
 			return false;
+		OrderRaw oRaw;
+		if (!oRaw.GetOrderRawByID(ormasDal, id, errorMessage))
+		{
+			return false;
+		}
+		std::map<std::string, int> statusMap = BusinessLayer::Status::GetStatusesAsMap(ormasDal, errorMessage);
+		if (0 == statusMap.size())
+			return false;
+		if (oRaw.GetStatusID() == statusMap.find("EXECUTED")->second)
+		{
+			errorMessage = "Cannot delete document with \"EXECUTED\" status!";
+			return false;
+		}
 		if (ormasDal.DeleteOrderRaw(id, errorMessage))
 		{
 			if (ormasDal.DeleteListByOrderRawID(id, errorMessage))
@@ -175,28 +226,66 @@ namespace BusinessLayer
 		}
 		return false;
 	}
-	bool OrderRaw::UpdateOrderRaw(DataLayer::OrmasDal& ormasDal, int uID, std::string oDate, std::string oExecnDate,
-		int eID, int oCount, double oSum, int sID, int cID, std::string& errorMessage)
+	bool OrderRaw::UpdateOrderRaw(DataLayer::OrmasDal& ormasDal, int pID, std::string oDate, std::string oExecnDate,
+		int eID, double oCount, double oSum, int sID, int cID, std::string& errorMessage)
 	{
 		std::map<std::string, int> statusMap = BusinessLayer::Status::GetStatusesAsMap(ormasDal, errorMessage);
 		if (0 == statusMap.size())
 			return false;
-		employeeID = uID;
+		std::map<int, double> prodCountMap = GetProductCount(ormasDal, id, errorMessage);
+		if (0 == prodCountMap.size())
+			return false;
+		purveyorID = pID;
 		date = oDate;
 		executionDate = oExecnDate;
-		stockEmployeeID = eID;
+		employeeID = eID;
 		count = oCount;
 		sum = oSum;
 		statusID = sID;
 		currencyID = cID;
-		if (0 != id && ormasDal.UpdateOrderRaw(id, employeeID, date, executionDate, stockEmployeeID, count, sum, statusID, currencyID, errorMessage))
+		previousSum = GetCurrentSum(ormasDal, id, errorMessage);
+		previousCount = GetCurrentCount(ormasDal, id, errorMessage);
+		previousStatusID = GetCurrentStatusID(ormasDal, id, errorMessage);
+		ormasDal.StartTransaction(errorMessage);
+		if (0 != id && ormasDal.UpdateOrderRaw(id, purveyorID, date, executionDate, employeeID, count, sum, statusID, currencyID, errorMessage))
 		{
+			if (statusID == statusMap.find("EXECUTED")->second && previousStatusID != statusMap.find("EXECUTED")->second)
+			{
+				if (ChangesAtStock(ormasDal, id, errorMessage))
+				{
+					ormasDal.CommitTransaction(errorMessage);
+					return true;
+				}
+				else
+				{
+					ormasDal.CancelTransaction(errorMessage);
+					return false;
+				}
+			}
+			if (statusID == statusMap.find("EXECUTED")->second && previousStatusID != statusMap.find("EXECUTED")->second)
+			{
+				if (count != previousCount || sum != previousSum)
+				{
+					if (ChangesAtStock(ormasDal, id, prodCountMap, previousSum, errorMessage))
+					{
+						ormasDal.CommitTransaction(errorMessage);
+						return true;
+					}
+					else
+					{
+						ormasDal.CancelTransaction(errorMessage);
+						return false;
+					}
+				}
+			}
+			ormasDal.CommitTransaction(errorMessage);
 			return true;
 		}
 		if (errorMessage.empty())
 		{
 			errorMessage = "Warning! ID is 0, or some unexpected error. Please contact with provider.";
 		}
+		ormasDal.CancelTransaction(errorMessage);
 		return false;
 	}
 	bool OrderRaw::UpdateOrderRaw(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
@@ -204,22 +293,59 @@ namespace BusinessLayer
 		std::map<std::string, int> statusMap = BusinessLayer::Status::GetStatusesAsMap(ormasDal, errorMessage);
 		if (0 == statusMap.size())
 			return false;
-		if (0 != id && ormasDal.UpdateOrderRaw(id, employeeID, date, executionDate, stockEmployeeID, count, sum, statusID, currencyID, errorMessage))
+		std::map<int, double> prodCountMap = GetProductCount(ormasDal, id, errorMessage);
+		if (0 == prodCountMap.size())
+			return false;
+		previousSum = GetCurrentSum(ormasDal, id, errorMessage);
+		previousStatusID = GetCurrentStatusID(ormasDal, id, errorMessage);
+		ormasDal.StartTransaction(errorMessage);
+		if (0 != id && ormasDal.UpdateOrderRaw(id, purveyorID, date, executionDate, employeeID, count, sum, statusID, currencyID, errorMessage))
 		{
+			if (statusID == statusMap.find("EXECUTED")->second && previousStatusID != statusMap.find("EXECUTED")->second)
+			{
+				if (ChangesAtStock(ormasDal, id, errorMessage))
+				{
+					ormasDal.CommitTransaction(errorMessage);
+					return true;
+				}
+				else
+				{
+					ormasDal.CancelTransaction(errorMessage);
+					return false;
+				}
+			}
+			if (statusID == statusMap.find("EXECUTED")->second && previousStatusID != statusMap.find("EXECUTED")->second)
+			{
+				if (count != previousCount || sum != previousSum)
+				{
+					if (ChangesAtStock(ormasDal, id, prodCountMap, previousSum, errorMessage))
+					{
+						ormasDal.CommitTransaction(errorMessage);
+						return true;
+					}
+					else
+					{
+						ormasDal.CancelTransaction(errorMessage);
+						return false;
+					}
+				}
+			}
+			ormasDal.CommitTransaction(errorMessage);
 			return true;
 		}
 		if (errorMessage.empty())
 		{
 			errorMessage = "Warning! ID is 0, or some unexpected error. Please contact with provider.";
 		}
+		ormasDal.CancelTransaction(errorMessage);
 		return false;
 	}
 
 	std::string OrderRaw::GenerateFilter(DataLayer::OrmasDal& ormasDal)
 	{
-		if (0 != id || 0 != employeeID || !date.empty() || !executionDate.empty() || 0 != stockEmployeeID || 0 != count || 0 != sum || 0 != statusID)
+		if (0 != id || 0 != purveyorID || !date.empty() || !executionDate.empty() || 0 != employeeID || 0 != count || 0 != sum || 0 != statusID)
 		{
-			return ormasDal.GetFilterForOrderRaw(id, employeeID, date, executionDate, stockEmployeeID, count, sum, statusID, currencyID);
+			return ormasDal.GetFilterForOrderRaw(id, purveyorID, date, executionDate, employeeID, count, sum, statusID, currencyID);
 		}
 		return "";
 	}
@@ -236,22 +362,22 @@ namespace BusinessLayer
 			executionDate = std::get<2>(orderRawVector.at(0));
 			count = std::get<13>(orderRawVector.at(0));
 			sum = std::get<14>(orderRawVector.at(0));
-			stockEmployeeID = std::get<16>(orderRawVector.at(0));
-			employeeID = std::get<17>(orderRawVector.at(0));
+			employeeID = std::get<16>(orderRawVector.at(0));
+			purveyorID = std::get<17>(orderRawVector.at(0));
 			statusID = std::get<18>(orderRawVector.at(0));
 			currencyID = std::get<19>(orderRawVector.at(0));
 			return true;
 		}
 		else
 		{
-			errorMessage = "Cannot find consume product with this id";
+			errorMessage = "Cannot find order raw with this id";
 		}
 		return false;
 	}
 
 	bool OrderRaw::IsEmpty()
 	{
-		if (0 == id && date == "" && executionDate == "" && 0 == count && 0 == sum && 0 == stockEmployeeID && 0 == employeeID && 0 == statusID
+		if (0 == id && date == "" && executionDate == "" && 0 == count && 0 == sum && 0 == employeeID && 0 == purveyorID && 0 == statusID
 			&& 0 == currencyID)
 			return false;
 		return true;
@@ -264,19 +390,19 @@ namespace BusinessLayer
 		executionDate.clear();
 		count = 0;
 		sum = 0;
-		stockEmployeeID = 0;
 		employeeID = 0;
+		purveyorID = 0;
 		statusID = 0;
 		currencyID = 0;
 	}
 
-	bool OrderRaw::IsDuplicate(DataLayer::OrmasDal& ormasDal, int eID, std::string oDate, int seID, int oCount, double oSum,
+	bool OrderRaw::IsDuplicate(DataLayer::OrmasDal& ormasDal, int pID, std::string oDate, int eID, double oCount, double oSum,
 		int cID, std::string& errorMessage)
 	{
 		OrderRaw orderRaw;
-		orderRaw.SetEmployeeID(eID);
+		orderRaw.SetPurveyorID(pID);
 		orderRaw.SetDate(oDate);
-		orderRaw.SetStockEmployeeID(seID);
+		orderRaw.SetEmployeeID(eID);
 		orderRaw.SetCount(oCount);
 		orderRaw.SetSum(oSum);
 		orderRaw.SetCurrencyID(cID);
@@ -295,9 +421,9 @@ namespace BusinessLayer
 	bool OrderRaw::IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
 		OrderRaw orderRaw;
-		orderRaw.SetEmployeeID(employeeID);
+		orderRaw.SetPurveyorID(purveyorID);
 		orderRaw.SetDate(date);
-		orderRaw.SetStockEmployeeID(stockEmployeeID);
+		orderRaw.SetEmployeeID(employeeID);
 		orderRaw.SetCount(count);
 		orderRaw.SetSum(sum);
 		orderRaw.SetCurrencyID(currencyID);
@@ -313,4 +439,56 @@ namespace BusinessLayer
 		return true;
 	}
 
+	double OrderRaw::GetCurrentSum(DataLayer::OrmasDal& ormasDal, int oID, std::string& errorMessage)
+	{
+		OrderRaw orderRaw;
+		if (orderRaw.GetOrderRawByID(ormasDal, oID, errorMessage))
+			return orderRaw.GetSum();
+		return 0;
+	}
+
+	int OrderRaw::GetCurrentStatusID(DataLayer::OrmasDal& ormasDal, int oID, std::string& errorMessage)
+	{
+		OrderRaw orderRaw;
+		if (orderRaw.GetOrderRawByID(ormasDal, oID, errorMessage))
+			return orderRaw.GetStatusID();
+		return 0;
+	}
+
+	bool OrderRaw::ChangesAtStock(DataLayer::OrmasDal& ormasDal, int cpID, std::string& errorMessage)
+	{
+		Stock stock;
+		return stock.ChangingByOrderRaw(ormasDal, cpID, errorMessage);
+	}
+
+	bool OrderRaw::ChangesAtStock(DataLayer::OrmasDal& ormasDal, int cpID, std::map<int, double> pProdCountMap, double pSum,  std::string& errorMessage)
+	{
+		Stock stock;
+		return stock.ChangingByOrderRaw(ormasDal, cpID, pProdCountMap, pSum, errorMessage);
+	}
+
+	double OrderRaw::GetCurrentCount(DataLayer::OrmasDal& ormasDal, int cpID, std::string& errorMessage)
+	{
+		OrderRaw rRaw;
+		if (rRaw.GetOrderRawByID(ormasDal, cpID, errorMessage))
+			return rRaw.GetCount();
+		return 0;
+	}
+
+	std::map<int, double> OrderRaw::GetProductCount(DataLayer::OrmasDal& ormasDal, int orID, std::string& errorMessage)
+	{
+		std::map<int, double> mapProdCount;
+		OrderRawList rPList;
+		rPList.SetOrderRawID(orID);
+		std::string filter = rPList.GenerateFilter(ormasDal);
+		std::vector<DataLayer::orderRawListViewCollection> productListVector = ormasDal.GetOrderRawList(errorMessage, filter);
+		if (productListVector.size() > 0)
+		{
+			for each (auto item in productListVector)
+			{
+				mapProdCount.insert(std::make_pair(std::get<11>(item), std::get<7>(item)));
+			}
+		}
+		return mapProdCount;
+	}
 }

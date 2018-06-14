@@ -22,6 +22,7 @@ private:
 	BusinessLayer::Company *company = new BusinessLayer::Company();
 	void SetCompanyParams(QString, QString, QString, QString, int = 0);
 	void FillEditElements(QString, QString, QString, QString);
+	QWidget* parentForm;
 };
 
 #endif //CREATECMPDLG_H

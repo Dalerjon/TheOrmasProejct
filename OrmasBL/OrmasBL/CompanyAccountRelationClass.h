@@ -7,33 +7,40 @@ namespace BusinessLayer{
 	class CompanyAccountRelation
 	{
 	protected:
+		int id = 0;
 		int companyID = 0;
 		int accountID = 0;
 	public:
 		CompanyAccountRelation();
-		CompanyAccountRelation(int cID, int aID) : companyID(cID), accountID(aID){};
+		CompanyAccountRelation(int caID, int cID, int aID) : id(caID), companyID(cID), accountID(aID){};
 		CompanyAccountRelation(DataLayer::companyAccountCollection);
 		~CompanyAccountRelation(){};
 
 		std::string errorMessage = "";
-		//Access class Accessors
+		//Company-Access relation class Accessors
+		int GetID();
 		int GetCompanyID();
 		int GetAccountID();
 
-		//Access class Mutators
+		//Company-Access relation class Mutators
+		void SetID(int);
 		void SetCompanyID(int);
 		void SetAccountID(int);
 
-		// Create, delete and update Access
+		// Create, delete Company-Access relation
 		bool CreateCompanyAccountRelation(DataLayer::OrmasDal &ormasDal, std::string& errorMessage);
 		bool DeleteCompanyAccountRelation(DataLayer::OrmasDal &ormasDal, std::string& errorMessage);
 		bool CreateCompanyAccountRelation(DataLayer::OrmasDal &ormasDal, int cID, int aID, std::string& errorMessage);
+		bool UpdateCompanyAccountRelation(DataLayer::OrmasDal &ormasDal, std::string& errorMessage);
+		bool UpdateCompanyAccountRelation(DataLayer::OrmasDal &ormasDal, int cID, int aID, std::string& errorMessage);
 
 
 		//Generate filter string for class
 		std::string GenerateFilter(DataLayer::OrmasDal& ormasDal);
+		bool GetCompanyAccountByID(DataLayer::OrmasDal& ormasDal, int id, std::string& errorMessage);
 		std::vector<int> GetAllCompanyByAccountID(DataLayer::OrmasDal& ormasDal, int aID, std::string& errorMessage);
 		std::vector<int> GetAllAccountByCompanyID(DataLayer::OrmasDal& ormasDal, int cID, std::string& errorMessage);
+		int GetAccountIDByCompanyID(DataLayer::OrmasDal& ormasDal, int cID, std::string parentNumber, std::string& errorMessage);
 		bool IsEmpty();
 		void Clear();
 	private:

@@ -3,6 +3,7 @@
 
 #include "ui_CreateConRDlg.h"
 #include "OrmasBL.h"
+#include "MainForm.h"
 
 class CreateConRDlg : public QDialog, public Ui::CreateConsumeRaw
 {
@@ -23,17 +24,20 @@ public:
 	void OpenStsDlg();
 	void OpenConRListDlg();
 	void StatusWasChenged();
+	void TextEditChanged();
 	public slots:
 	void SetID(int ID, QString childName);
 signals:
 	void CloseCreatedForms();
 private:
 	BusinessLayer::ConsumeRaw *consumeRaw = new BusinessLayer::ConsumeRaw();
-	void SetConsumeRawParams(int, QString, QString, int, int, double, int, int, int = 0);
-	void FillEditElements(int, QString, QString, int, int, double, int, int);
+	void SetConsumeRawParams(int, QString, QString, int, double, double, int, int, int = 0);
+	void FillEditElements(int, QString, QString, int, double, double, int, int);
 	QDoubleValidator *vDouble = nullptr;
 	QIntValidator *vInt = nullptr;
 	std::map<std::string, int> statusMap;
 	void InitComboBox();
+	QWidget* parentForm;
+	MainForm* mainForm;
 };
 #endif //CREATECONRDLG_H

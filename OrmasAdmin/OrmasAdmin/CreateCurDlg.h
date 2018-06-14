@@ -22,6 +22,7 @@ private:
 	void SetCurrencyParams(int, QString, QString, int, QString, int = 0);
 	void FillEditElements(int, QString, QString, int, QString);
 	QIntValidator *vInt = nullptr;
+	QWidget* parentForm;
 
 };
 #endif //CREATECURDLG_H

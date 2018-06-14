@@ -1,17 +1,25 @@
 #include "stdafx.h"
 #include "CompanyAccountRelationClass.h"
+#include "AccountClass.h"
 
 
 namespace BusinessLayer{
 	CompanyAccountRelation::CompanyAccountRelation(DataLayer::companyAccountCollection caCollection)
 	{
+		id = std::get<0>(caCollection);
 		companyID = std::get<0>(caCollection);
 		accountID = std::get<1>(caCollection);
 	}
 	CompanyAccountRelation::CompanyAccountRelation()
 	{
+		id = 0;
 		companyID = 0;
 		accountID = 0;
+	}
+
+	int CompanyAccountRelation::GetID()
+	{
+		return id;
 	}
 
 	int CompanyAccountRelation::GetCompanyID()
@@ -24,6 +32,10 @@ namespace BusinessLayer{
 		return accountID;
 	}
 
+	void CompanyAccountRelation::SetID(int caID)
+	{
+		id = caID;
+	}
 	void CompanyAccountRelation::SetCompanyID(int cID)
 	{
 		companyID = cID;
@@ -37,10 +49,11 @@ namespace BusinessLayer{
 	{
 		if (IsDuplicate(ormasDal, cID, aID, errorMessage))
 			return false;
+		id = ormasDal.GenerateID();
 		companyID = cID;
 		accountID = aID;
 
-		if (ormasDal.CreateCompanyAccount(companyID, accountID, errorMessage))
+		if (ormasDal.CreateCompanyAccount(id, companyID, accountID, errorMessage))
 		{
 			return true;
 		}
@@ -54,7 +67,8 @@ namespace BusinessLayer{
 	{
 		if (IsDuplicate(ormasDal, errorMessage))
 			return false;
-		if (ormasDal.CreateCompanyAccount(companyID, accountID, errorMessage))
+		id = ormasDal.GenerateID();
+		if (ormasDal.CreateCompanyAccount(id, companyID, accountID, errorMessage))
 		{
 			return true;
 		}
@@ -78,15 +92,56 @@ namespace BusinessLayer{
 		return false;
 	}
 
-
+	bool CompanyAccountRelation::UpdateCompanyAccountRelation(DataLayer::OrmasDal &ormasDal, int cID, int aID, std::string& errorMessage)
+	{
+		companyID = cID;
+		accountID = aID;
+		if (0 != id && ormasDal.UpdateCompanyAccount(id, companyID, accountID, errorMessage))
+		{
+			return true;
+		}
+		if (errorMessage.empty())
+		{
+			errorMessage = "Warning! ID is 0, or some unexpected error. Please contact with provider.";
+		}
+		return false;
+	}
+	bool CompanyAccountRelation::UpdateCompanyAccountRelation(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
+	{
+		if (0 != id && ormasDal.UpdateCompanyAccount(id, companyID, accountID, errorMessage))
+		{
+			return true;
+		}
+		if (errorMessage.empty())
+		{
+			errorMessage = "Warning! ID is 0, or some unexpected error. Please contact with provider.";
+		}
+		return false;
+	}
 
 	std::string CompanyAccountRelation::GenerateFilter(DataLayer::OrmasDal& ormasDal)
 	{
-		if (0 != companyID || 0 != accountID)
+		if (0 != id || 0 != companyID || 0 != accountID)
 		{
-			return ormasDal.GetFilterForCompanyAccount(companyID, accountID);
+			return ormasDal.GetFilterForCompanyAccount(id, companyID, accountID);
 		}
 		return "";
+	}
+
+	bool CompanyAccountRelation::GetCompanyAccountByID(DataLayer::OrmasDal& ormasDal, int id, std::string& errorMessage)
+	{
+		CompanyAccountRelation ceRelation;
+		ceRelation.SetID(id);
+		std::string filter = ceRelation.GenerateFilter(ormasDal);
+		std::vector<DataLayer::companyAccountViewCollection> companyAccountVector = ormasDal.GetCompanyAccount(errorMessage, filter);
+		if (0 != companyAccountVector.size())
+		{
+			id = std::get<0>(companyAccountVector.at(0));
+			companyID = std::get<3>(companyAccountVector.at(0));
+			accountID = std::get<4>(companyAccountVector.at(0));
+			return true;
+		}
+		return false;
 	}
 
 	std::vector<int> CompanyAccountRelation::GetAllCompanyByAccountID(DataLayer::OrmasDal& ormasDal, int aID, std::string& errorMessage)
@@ -96,12 +151,12 @@ namespace BusinessLayer{
 		caRelation.SetAccountID(aID);
 		caRelation.SetCompanyID(0);
 		std::string filter = caRelation.GenerateFilter(ormasDal);
-		std::vector<DataLayer::companyAccountCollection> companyAccountVector = ormasDal.GetCompanyAccount(errorMessage, filter);
+		std::vector<DataLayer::companyAccountViewCollection> companyAccountVector = ormasDal.GetCompanyAccount(errorMessage, filter);
 		if (0 != companyAccountVector.size())
 		{
 			for each (auto item in companyAccountVector)
 			{
-				companyIDVector.push_back(std::get<1>(item));
+				companyIDVector.push_back(std::get<3>(item));
 			}
 		}
 		return companyIDVector;
@@ -114,12 +169,12 @@ namespace BusinessLayer{
 		caRelation.SetAccountID(0);
 		caRelation.SetCompanyID(cID);
 		std::string filter = caRelation.GenerateFilter(ormasDal);
-		std::vector<DataLayer::companyAccountCollection> companyAccountVector = ormasDal.GetCompanyAccount(errorMessage, filter);
+		std::vector<DataLayer::companyAccountViewCollection> companyAccountVector = ormasDal.GetCompanyAccount(errorMessage, filter);
 		if (0 != companyAccountVector.size())
 		{
 			for each (auto item in companyAccountVector)
 			{
-				accountIDVector.push_back(std::get<0>(item));
+				accountIDVector.push_back(std::get<4>(item));
 			}
 		}
 		return accountIDVector;
@@ -145,7 +200,7 @@ namespace BusinessLayer{
 		caRelation.SetCompanyID(cID);
 		caRelation.SetAccountID(aID);
 		std::string filter = caRelation.GenerateFilter(ormasDal);
-		std::vector<DataLayer::companyAccountCollection> companyAccountVector = ormasDal.GetCompanyAccount(errorMessage, filter);
+		std::vector<DataLayer::companyAccountViewCollection> companyAccountVector = ormasDal.GetCompanyAccount(errorMessage, filter);
 		if (!errorMessage.empty())
 			return true;
 		if (0 == companyAccountVector.size())
@@ -162,7 +217,7 @@ namespace BusinessLayer{
 		caRelation.SetCompanyID(companyID);
 		caRelation.SetAccountID(accountID);
 		std::string filter = caRelation.GenerateFilter(ormasDal);
-		std::vector<DataLayer::companyAccountCollection> companyAccountVector = ormasDal.GetCompanyAccount(errorMessage, filter);
+		std::vector<DataLayer::companyAccountViewCollection> companyAccountVector = ormasDal.GetCompanyAccount(errorMessage, filter);
 		if (!errorMessage.empty())
 			return true;
 		if (0 == companyAccountVector.size())
@@ -171,5 +226,27 @@ namespace BusinessLayer{
 		}
 		errorMessage = "Company-Account Relation with this parameters are already exist! Please avoid the duplication!";
 		return true;
+	}
+
+	int CompanyAccountRelation::GetAccountIDByCompanyID(DataLayer::OrmasDal& ormasDal, int cID, std::string parentNumber, std::string& errorMessage)
+	{
+		Account account;
+		std::vector<int> accVec;
+		accVec = GetAllAccountByCompanyID(ormasDal, cID, errorMessage);
+		if (accVec.size() > 0)
+		{
+			for each (int accID in accVec)
+			{
+				account.Clear();
+				if (account.GetAccountByID(ormasDal, accID, errorMessage))
+				{
+					if (0 == account.GetNumber().compare(parentNumber))
+					{
+						return account.GetID();
+					}
+				}
+			}
+		}
+		return 0;
 	}
 }

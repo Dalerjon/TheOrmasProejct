@@ -2,6 +2,7 @@
 #define CREATEWDWDLG_H
 #include "ui_CreateWdwDlg.h"
 #include "OrmasBL.h"
+#include "MainForm.h"
 
 class CreateWdwDlg : public QDialog, public Ui::CreateWithdrawal
 {
@@ -17,7 +18,8 @@ public:
 	void EditWithdrawal();
 	void DeleteWithdrawal(){};
 	void Close();
-	void OpenEmployeeDlg();
+	void TextEditChanged();
+	void OpenUserDlg();
 	public slots:
 	void SetID(int ID, QString childName);
 private:
@@ -27,6 +29,8 @@ private:
 	QDoubleValidator *vDouble = nullptr;
 	QIntValidator *vInt = nullptr;
 	void InitComboBox();
+	QWidget* parentForm;
+	MainForm* mainForm;
 };
 
 #endif //CREATEWDWDLG_H

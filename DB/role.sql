@@ -37,6 +37,18 @@ INSERT INTO "OrmasSchema".roles(
 INSERT INTO "OrmasSchema".roles(
             role_id, role_code, role_name, comment)
     VALUES ((SELECT nextval('"OrmasSchema".id_seq')), '0013', 'CLIENT', 'Client of company');
+INSERT INTO "OrmasSchema".roles(
+            role_id, role_code, role_name, comment)
+    VALUES ((SELECT nextval('"OrmasSchema".id_seq')), '0014', 'STOCK MANAGER', 'Stock employee');
+INSERT INTO "OrmasSchema".roles(
+            role_id, role_code, role_name, comment)
+    VALUES ((SELECT nextval('"OrmasSchema".id_seq')), '0015', 'PURVEYOR', 'Purveyor of company');
+INSERT INTO "OrmasSchema".roles(
+            role_id, role_code, role_name, comment)
+    VALUES ((SELECT nextval('"OrmasSchema".id_seq')), '0016', 'ADMINISTRATORS', 'Admins of ORMAS system');
+INSERT INTO "OrmasSchema".roles(
+            role_id, role_code, role_name, comment)
+    VALUES ((SELECT nextval('"OrmasSchema".id_seq')), '0017', 'ANYKEY', 'This employee do many tasks');
 
 
 

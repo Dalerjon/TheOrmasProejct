@@ -2,6 +2,7 @@
 #define CREATERELDLG_H
 #include "ui_CreateRelDlg.h"
 #include "OrmasBL.h"
+#include "MainForm.h"
 
 class CreateRelDlg : public QDialog, public Ui::CreateRelation
 {
@@ -27,6 +28,8 @@ private:
 	void FillEditElements(int, int, int);
 	QIntValidator *vInt = nullptr;
 	void InitComboBox();
+	QWidget* parentForm;
+	MainForm* mainForm;
 };
 
 #endif //CREATERELDLG_H

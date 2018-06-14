@@ -65,7 +65,7 @@ namespace BusinessLayer
 	}
 	std::string ReceiptRawView::GetStockEmployeePosition()
 	{
-		return stockEmployeePhone;
+		return stockEmployeePosition;
 	}
 	std::string ReceiptRawView::GetCurrencyName()
 	{

@@ -34,11 +34,11 @@ namespace BusinessLayer{
 		void SetCreditingAccountID(int);
 
 		// Create, delete and update Entry
-		bool CreateEntry(DataLayer::OrmasDal &ormasDal, std::string& errorMessage);
-		bool UpdateEntry(DataLayer::OrmasDal &ormasDal, std::string& errorMessage);
+		bool CreateEntry(DataLayer::OrmasDal &ormasDal, std::string& errorMessage, bool corrEntry = false);
+		bool UpdateEntry(DataLayer::OrmasDal &ormasDal, std::string& errorMessage, bool corrEntry = false);
 		bool DeleteEntry(DataLayer::OrmasDal &ormasDal, std::string& errorMessage);
-		bool CreateEntry(DataLayer::OrmasDal &ormasDal, std::string eDate, int daID, double eValue, int caID, std::string& errorMessage);
-		bool UpdateEntry(DataLayer::OrmasDal &ormasDal, std::string eDate, int daID, double eValue, int caID, std::string& errorMessage);
+		bool CreateEntry(DataLayer::OrmasDal &ormasDal, std::string eDate, int daID, double eValue, int caID, std::string& errorMessage, bool corrEntry = false);
+		bool UpdateEntry(DataLayer::OrmasDal &ormasDal, std::string eDate, int daID, double eValue, int caID, std::string& errorMessage, bool corrEntry = false);
 
 		//Generate filter string for class
 		std::string GenerateFilter(DataLayer::OrmasDal& ormasDal);
@@ -48,6 +48,9 @@ namespace BusinessLayer{
 	private:
 		bool IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string eDate, int daID, double eValue, int caID, std::string& errorMessage);
 		bool IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string& errorMessage);
+		bool EntryRoutingValidation(DataLayer::OrmasDal& ormasDal, int daID, int caID, std::string& errorMessage);
+		bool DebitAccount(DataLayer::OrmasDal& ormasDal, int accountID, double value);
+		bool CreditAccount(DataLayer::OrmasDal& ormasDal, int accountID, double value);
 	};
 }
 

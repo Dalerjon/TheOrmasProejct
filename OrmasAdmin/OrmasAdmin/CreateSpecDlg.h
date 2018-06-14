@@ -3,6 +3,7 @@
 
 #include "ui_CreateSpecDlg.h"
 #include "OrmasBL.h"
+#include "MainForm.h"
 
 class CreateSpecDlg : public QDialog, public Ui::CreateSpecification
 {
@@ -21,6 +22,7 @@ public:
 	void OpenProdDlg();
 	void OpenEmpDlg();
 	void OpenSpecListDlg();
+	void TextEditChanged();
 	public slots:
 	void SetID(int ID, QString childName);
 signals:
@@ -32,5 +34,7 @@ private:
 	QDoubleValidator *vDouble = nullptr;
 	QIntValidator *vInt = nullptr;
 	void InitComboBox();
+	QWidget* parentForm;
+	MainForm* mainForm;
 };
 #endif //CreateSpecDLG_H

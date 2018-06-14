@@ -130,7 +130,7 @@ namespace BusinessLayer{
 	}
 	bool Salary::DeleteSalary(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
-		if (ormasDal.DeleteSalary(employeeID, errorMessage))
+		if (ormasDal.DeleteSalary(id, errorMessage))
 		{
 			Clear();
 			return true;

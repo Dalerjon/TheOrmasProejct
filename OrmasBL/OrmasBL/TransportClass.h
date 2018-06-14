@@ -14,12 +14,12 @@ namespace BusinessLayer
 		std::string date = "";
 		std::string executionDate = "";
 		int stockEmployeeID = 0;
-		int count = 0;
+		double count = 0;
 		double sum = 0;
 		int statusID = 0;
 		int currencyID = 0;
 	public:
-		Transport(int tID, int eID, std::string tDate, std::string tExecDate, int seID, int tCount, double tSum, int sID, int cID) :
+		Transport(int tID, int eID, std::string tDate, std::string tExecDate, int seID, double tCount, double tSum, int sID, int cID) :
 			id(tID), employeeID(eID), date(tDate), executionDate(tExecDate), stockEmployeeID(seID), count(tCount), sum(tSum),
 			statusID(sID), currencyID(cID){};
 		Transport(DataLayer::transportsCollection);
@@ -32,7 +32,7 @@ namespace BusinessLayer
 		std::string GetDate();
 		std::string GetExecutionDate();
 		int GetStockEmployeeID();
-		int GetCount();
+		double GetCount();
 		double GetSum();
 		int GetStatusID();
 		int GetCurrencyID();
@@ -43,7 +43,7 @@ namespace BusinessLayer
 		void SetDate(std::string);
 		void SetExecutionDate(std::string);
 		void SetStockEmployeeID(int);
-		void SetCount(int);
+		void SetCount(double);
 		void SetSum(double);
 		void SetStatusID(int);
 		void SetCurrencyID(int);
@@ -53,9 +53,9 @@ namespace BusinessLayer
 		bool UpdateTransport(DataLayer::OrmasDal& ormasDal, std::string& errorMessage);
 		bool DeleteTransport(DataLayer::OrmasDal& ormasDal, std::string& errorMessage);
 		bool CreateTransport(DataLayer::OrmasDal& ormasDal, int eID, std::string tDate, std::string tExecDate, int seID,
-			int tCount, double tSum, int sID, int cID, std::string& errorMessage);
+			double tCount, double tSum, int sID, int cID, std::string& errorMessage);
 		bool UpdateTransport(DataLayer::OrmasDal& ormasDal, int eID, std::string tDate, std::string tExecDate, int seID, 
-			int tCount, double tSum, int sID, int cID, std::string& errorMessage);
+			double tCount, double tSum, int sID, int cID, std::string& errorMessage);
 
 		//Generate filter string for class
 		std::string GenerateFilter(DataLayer::OrmasDal& ormasDal);
@@ -63,7 +63,7 @@ namespace BusinessLayer
 		bool IsEmpty();
 		void Clear();
 	private:
-		bool IsDuplicate(DataLayer::OrmasDal& ormasDal, int eID, std::string tDate, int seID, int tCount, double tSum,
+		bool IsDuplicate(DataLayer::OrmasDal& ormasDal, int eID, std::string tDate, int seID, double tCount, double tSum,
 			int cID, std::string& errorMessage);
 		bool IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string& errorMessage);
 	};

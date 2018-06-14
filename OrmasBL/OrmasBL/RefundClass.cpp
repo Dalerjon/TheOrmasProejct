@@ -3,6 +3,10 @@
 #include "UserClass.h"
 #include "BalanceClass.h"
 #include "BalanceRefundRelationClass.h"
+#include "EntryClass.h"
+#include "CompanyAccountRelationClass.h"
+#include "CompanyEmployeeRelationClass.h"
+#include "CompanyClass.h"
 
 namespace BusinessLayer{
 	Refund::Refund(DataLayer::refundsCollection rCollection)
@@ -271,38 +275,49 @@ namespace BusinessLayer{
 
 	bool Refund::Replenishment(DataLayer::OrmasDal& ormasDal, int uID, int cID, std::string& errorMessage)
 	{
-		User user;
-		user.SetID(uID);
-		int balanceID = user.GetUserAccoutID(ormasDal, cID, errorMessage);
-		if (0 != balanceID && errorMessage.empty())
+		CompanyAccountRelation cAccRel;
+		CompanyEmployeeRelation cEmpRel;
+		Balance balance;
+		Company company;
+		if (balance.GetBalanceByUserID(ormasDal, uID, errorMessage))
 		{
-			BalanceRefundRelation brRelation;
-			Balance balance;
-			if (balance.GetBalanceByID(ormasDal, balanceID, errorMessage))
+			int debAccID = balance.GetSubaccountID();
+			int companyID = company.GetCompanyID(ormasDal, errorMessage);
+			int credAccID = cAccRel.GetAccountIDByCompanyID(ormasDal, companyID, "10110", errorMessage);
+			if (0 == debAccID || 0 == credAccID || 0 == companyID)
 			{
-				brRelation.SetBalanceID(balanceID);
-				brRelation.SetRefundID(id);
-				//balance.SetValue(balance.GetValue() + value);
-				if (balance.UpdateBalance(ormasDal, errorMessage) && brRelation.CreateBalanceRefundRelation(ormasDal, errorMessage))
+				return false;
+			}
+			if (this->CreateEntry(ormasDal, debAccID, value, credAccID, ormasDal.GetSystemDateTime(), errorMessage))
+			{
+				BalanceRefundRelation brRelation;
+				brRelation.SetBalanceID(balance.GetID());
+				brRelation.SetRefundID(this->id);
+				if (brRelation.CreateBalanceRefundRelation(ormasDal, errorMessage))
 					return true;
 			}
 		}
 		return false;
 	}
 
-	bool Refund::Replenishment(DataLayer::OrmasDal& ormasDal, int uID, int cID, double currentValue, std::string& errorMessage)
+	bool Refund::Replenishment(DataLayer::OrmasDal& ormasDal, int uID, int cID, double previousValue, std::string& errorMessage)
 	{
-		User user;
-		user.SetID(uID);
-		int balanceID = user.GetUserAccoutID(ormasDal, cID, errorMessage);
-		if (0 != balanceID && errorMessage.empty())
+		CompanyAccountRelation cAccRel;
+		CompanyEmployeeRelation cEmpRel;
+		Balance balance;
+		Company company;
+		if (balance.GetBalanceByUserID(ormasDal, uID, errorMessage))
 		{
-			Balance balance;
-			if (balance.GetBalanceByID(ormasDal, balanceID, errorMessage))
+			int debAccID = balance.GetSubaccountID();
+			int companyID = company.GetCompanyID(ormasDal, errorMessage);
+			int credAccID = cAccRel.GetAccountIDByCompanyID(ormasDal, companyID, "10110", errorMessage);
+			if (0 == debAccID || 0 == credAccID || 0 == companyID)
 			{
-				//balance.SetValue(balance.GetValue() + (currentValue - value));
-				if(balance.UpdateBalance(ormasDal, errorMessage))
-					return true;
+				return false;
+			}
+			if (this->CreateEntry(ormasDal, debAccID, value, credAccID, previousValue, ormasDal.GetSystemDateTime(), errorMessage))
+			{
+				return true;
 			}
 		}
 		return false;
@@ -310,31 +325,86 @@ namespace BusinessLayer{
 
 	double Refund::GetCurrentValue(DataLayer::OrmasDal& ormasDal, int pID, std::string& errorMessage)
 	{
-		Refund Refund;
-		if (Refund.GetRefundByID(ormasDal, pID, errorMessage))
-			return Refund.GetValue();
+		Refund refund;
+		if (refund.GetRefundByID(ormasDal, pID, errorMessage))
+			return refund.GetValue();
 		return 0;
 	}
 
 	bool Refund::CancelRefund(DataLayer::OrmasDal& ormasDal, int uID, int cID, std::string& errorMessage)
 	{
-		User user;
-		user.SetID(uID);
-		int balanceID = user.GetUserAccoutID(ormasDal, cID, errorMessage);
-		if (0 != balanceID && errorMessage.empty())
+		CompanyAccountRelation cAccRel;
+		CompanyEmployeeRelation cEmpRel;
+		Balance balance;
+		Company company;
+		if (balance.GetBalanceByUserID(ormasDal, uID, errorMessage))
 		{
-			BalanceRefundRelation brRelation;
-			Balance balance;
-			if (balance.GetBalanceByID(ormasDal, balanceID, errorMessage))
+			int debAccID = balance.GetSubaccountID();
+			int companyID = company.GetCompanyID(ormasDal, errorMessage);
+			int credAccID = cAccRel.GetAccountIDByCompanyID(ormasDal, companyID, "10110", errorMessage);
+			if (0 == debAccID || 0 == credAccID || 0 == companyID)
 			{
-				brRelation.SetBalanceID(balanceID);
-				brRelation.SetRefundID(id);
-				//.SetValue(balance.GetValue() - value);
-				if (balance.UpdateBalance(ormasDal, errorMessage) && brRelation.DeleteBalanceRefundRelation(ormasDal, errorMessage))
+				return false;
+			}
+			if (this->CorrectingEntry(ormasDal, debAccID, value, credAccID, ormasDal.GetSystemDateTime(), errorMessage))
+			{
+				BalanceRefundRelation brRelation;
+				brRelation.SetBalanceID(balance.GetID());
+				brRelation.SetRefundID(this->id);
+				if (brRelation.DeleteBalanceRefundRelation(ormasDal, errorMessage))
 					return true;
 			}
 		}
 		return false;
+	}
+
+	bool Refund::CreateEntry(DataLayer::OrmasDal& ormasDal, int debAccID, double currentSum, int credAccID, std::string oExecDate, std::string& errorMessage)
+	{
+		Entry entry;
+		entry.SetDate(oExecDate);
+		entry.SetDebitingAccountID(debAccID);
+		entry.SetValue(currentSum);
+		entry.SetCreditingAccountID(credAccID);
+		if (!entry.CreateEntry(ormasDal, errorMessage))
+		{
+			return false;
+		}
+		return true;
+	}
+	bool Refund::CreateEntry(DataLayer::OrmasDal& ormasDal, int debAccID, double currentSum, int credAccID, double previousSum, std::string oExecDate, std::string& errorMessage)
+	{
+		Entry entry;
+		entry.SetDate(oExecDate);
+		entry.SetDebitingAccountID(credAccID);
+		entry.SetValue(previousSum);
+		entry.SetCreditingAccountID(debAccID);
+		if (!entry.CreateEntry(ormasDal, errorMessage))
+		{
+			return false;
+		}
+		entry.Clear();
+		entry.SetDate(oExecDate);
+		entry.SetDebitingAccountID(debAccID);
+		entry.SetValue(currentSum);
+		entry.SetCreditingAccountID(credAccID);
+		if (!entry.CreateEntry(ormasDal, errorMessage))
+		{
+			return false;
+		}
+		return true;
+	}
+	bool Refund::CorrectingEntry(DataLayer::OrmasDal& ormasDal, int debAccID, double currentSum, int credAccID, std::string oExecDate, std::string& errorMessage)
+	{
+		Entry entry;
+		entry.SetDate(oExecDate);
+		entry.SetDebitingAccountID(credAccID);
+		entry.SetValue(currentSum);
+		entry.SetCreditingAccountID(debAccID);
+		if (!entry.CreateEntry(ormasDal, errorMessage))
+		{
+			return false;
+		}
+		return true;
 	}
 
 }

@@ -1,21 +1,21 @@
 #include "stdafx.h"
-#include <QMessageBox>
 #include "CreateWOffDlg.h"
-#include "MainForm.h"
 #include "DataForm.h"
-#include "ExtraFunctions.h"
 
 CreateWOffDlg::CreateWOffDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, QWidget *parent) :QDialog(parent)
 {
 	setupUi(this);
 	//setModal(true);
 	dialogBL = ormasBL;
+	parentForm = parent;
+	DataForm *dataFormParent = (DataForm *)this->parentForm;
+	mainForm = (MainForm *)dataFormParent->GetParent();
 	dialogBL->StartTransaction(errorMessage);
 	vDouble = new QDoubleValidator(0.00, 1000000000.00, 3, this);
 	vInt = new QIntValidator(0, 1000000000, this);
 	clientEdit->setValidator(vInt);
 	employeeEdit->setValidator(vInt);
-	prodCountEdit->setValidator(vInt);
+	prodCountEdit->setValidator(vDouble);
 	clientEdit->setValidator(vInt);
 	statusEdit->setValidator(vInt);
 	sumEdit->setValidator(vDouble);
@@ -31,9 +31,25 @@ CreateWOffDlg::CreateWOffDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, Q
 		employeeEdit->setText("0");
 		prodCountEdit->setText("0");
 		clientEdit->setText("0");
-		statusEdit->setText("0");
 		sumEdit->setText("0");
 		dateEdit->setDateTime(QDateTime::currentDateTime());
+
+		BusinessLayer::Status *status = new BusinessLayer::Status();
+		status->SetName("WRITE-OFFED");
+		std::string statusFilter = dialogBL->GenerateFilter<BusinessLayer::Status>(status);
+		std::vector<BusinessLayer::Status> statusVector = dialogBL->GetAllDataForClass<BusinessLayer::Status>(errorMessage, statusFilter);
+		delete status;
+		if (statusVector.size() == 0)
+		{
+			QMessageBox::information(NULL, QString(tr("Warning")),
+				QString(tr("Status are empty please contact with Admin")),
+				QString(tr("Ok")));
+			errorMessage.clear();
+			return;
+		}
+		statusEdit->setText(QString::number(statusVector.at(0).GetID()));
+		statusPh->setText(statusVector.at(0).GetName().c_str());
+
 		QObject::connect(okBtn, &QPushButton::released, this, &CreateWOffDlg::CreateWriteOff);
 	}
 	QObject::connect(cancelBtn, &QPushButton::released, this, &CreateWOffDlg::Close);
@@ -41,6 +57,8 @@ CreateWOffDlg::CreateWOffDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, Q
 	QObject::connect(statusBtn, &QPushButton::released, this, &CreateWOffDlg::OpenStsDlg);
 	QObject::connect(employeeBtn, &QPushButton::released, this, &CreateWOffDlg::OpenEmpDlg);
 	QObject::connect(addProdBtn, &QPushButton::released, this, &CreateWOffDlg::OpenWOffListDlg);
+	QObject::connect(prodCountEdit, &QLineEdit::textChanged, this, &CreateWOffDlg::TextEditChanged);
+	QObject::connect(sumEdit, &QLineEdit::textChanged, this, &CreateWOffDlg::TextEditChanged);
 	QObject::connect(this, SIGNAL(CloseCreatedForms()), ((MainForm*)((DataForm*)parent)->GetParent()), SLOT(CloseChildsByName()));
 	InitComboBox();
 }
@@ -53,7 +71,7 @@ CreateWOffDlg::~CreateWOffDlg()
 	dialogBL->CancelTransaction(errorMessage);
 }
 
-void CreateWOffDlg::SetWriteOffParams(int wClientID, QString wDate, int wEmployeeID, int wCount, double wSum, int wStatusID, int wCurrencyID, int id)
+void CreateWOffDlg::SetWriteOffParams(int wClientID, QString wDate, int wEmployeeID, double wCount, double wSum, int wStatusID, int wCurrencyID, int id)
 {
 	writeOff->SetClientID(wClientID);
 	writeOff->SetDate(wDate.toUtf8().constData());
@@ -65,10 +83,10 @@ void CreateWOffDlg::SetWriteOffParams(int wClientID, QString wDate, int wEmploye
 	writeOff->SetID(id);
 }
 
-void CreateWOffDlg::FillEditElements(int wClientID, QString wDate, int wEmployeeID, int wCount, double wSum, int wStatusID, int wCurrencyID)
+void CreateWOffDlg::FillEditElements(int wClientID, QString wDate, int wEmployeeID, double wCount, double wSum, int wStatusID, int wCurrencyID)
 {
 	clientEdit->setText(QString::number(wClientID));
-	dateEdit->setDateTime(QDateTime::fromString(wDate, "yyyy.MM.dd hh:mm:ss"));
+	dateEdit->setDateTime(QDateTime::fromString(wDate, "dd.MM.yyyy hh:mm"));
 	employeeEdit->setText(QString::number(wEmployeeID));
 	prodCountEdit->setText(QString::number(wCount));
 	sumEdit->setText(QString::number(wSum));
@@ -101,6 +119,13 @@ void CreateWOffDlg::SetID(int ID, QString childName)
 	{
 		if (0 != childName.length())
 		{
+			this->hide();
+			this->setWindowFlags(this->windowFlags() | Qt::WindowStaysOnTopHint);
+			this->show();
+			this->raise();
+			this->activateWindow();
+			QApplication::setActiveWindow(this);
+
 			if (childName == QString("clientForm"))
 			{
 				clientEdit->setText(QString::number(ID));
@@ -144,7 +169,7 @@ bool CreateWOffDlg::FillDlgElements(QTableView* cTable)
 		SetWriteOffParams(cTable->model()->data(cTable->model()->index(mIndex.row(), 16)).toInt(),
 			cTable->model()->data(cTable->model()->index(mIndex.row(), 1)).toString().toUtf8().constData(),
 			cTable->model()->data(cTable->model()->index(mIndex.row(), 15)).toInt(),
-			cTable->model()->data(cTable->model()->index(mIndex.row(), 12)).toInt(),
+			cTable->model()->data(cTable->model()->index(mIndex.row(), 12)).toDouble(),
 			cTable->model()->data(cTable->model()->index(mIndex.row(), 13)).toDouble(),
 			cTable->model()->data(cTable->model()->index(mIndex.row(), 17)).toInt(),
 			cTable->model()->data(cTable->model()->index(mIndex.row(), 18)).toInt(),
@@ -152,7 +177,7 @@ bool CreateWOffDlg::FillDlgElements(QTableView* cTable)
 		FillEditElements(cTable->model()->data(cTable->model()->index(mIndex.row(), 16)).toInt(),
 			cTable->model()->data(cTable->model()->index(mIndex.row(), 1)).toString().toUtf8().constData(),
 			cTable->model()->data(cTable->model()->index(mIndex.row(), 15)).toInt(),
-			cTable->model()->data(cTable->model()->index(mIndex.row(), 12)).toInt(),
+			cTable->model()->data(cTable->model()->index(mIndex.row(), 12)).toDouble(),
 			cTable->model()->data(cTable->model()->index(mIndex.row(), 13)).toDouble(),
 			cTable->model()->data(cTable->model()->index(mIndex.row(), 17)).toInt(),
 			cTable->model()->data(cTable->model()->index(mIndex.row(), 18)).toInt());
@@ -168,109 +193,116 @@ void CreateWOffDlg::CreateWriteOff()
 {
 	errorMessage.clear();
 	if (0 != clientEdit->text().toInt() && !dateEdit->text().isEmpty()
-		&& 0 != prodCountEdit->text().toInt() && 0 != sumEdit->text().toInt()
+		&& 0 != prodCountEdit->text().toDouble() && 0 != sumEdit->text().toDouble()
 		&& 0 != statusEdit->text().toInt() && !currencyCmb->currentText().isEmpty())
 	{
-		DataForm *parentDataForm = (DataForm*)parentWidget();
+		DataForm *parentDataForm = (DataForm*) parentForm;
 
-		SetWriteOffParams(clientEdit->text().toInt(), dateEdit->text(), employeeEdit->text().toInt(), prodCountEdit->text().toInt(),
-			sumEdit->text().toInt(), statusEdit->text().toInt(), currencyCmb->currentData().toInt(), writeOff->GetID());
+		SetWriteOffParams(clientEdit->text().toInt(), dateEdit->text(), employeeEdit->text().toInt(), prodCountEdit->text().toDouble(),
+			sumEdit->text().toDouble(), statusEdit->text().toInt(), currencyCmb->currentData().toInt(), writeOff->GetID());
 		
 		if (dialogBL->CreateWriteOff(writeOff, errorMessage))
 		{
-			QList<QStandardItem*> writeOffItem;
-			writeOffItem << new QStandardItem(QString::number(writeOff->GetID()))
-				<< new QStandardItem(writeOff->GetDate().c_str());
-				
-			BusinessLayer::Client *client = new BusinessLayer::Client();
-			BusinessLayer::Employee *employee = new BusinessLayer::Employee();
-			BusinessLayer::Currency *currency = new BusinessLayer::Currency;
-			BusinessLayer::Status *status = new BusinessLayer::Status;
-			if (!client->GetClientByID(dialogBL->GetOrmasDal(), writeOff->GetClientID(), errorMessage)
-				|| !currency->GetCurrencyByID(dialogBL->GetOrmasDal(), writeOff->GetCurrencyID(), errorMessage)
-				|| !status->GetStatusByID(dialogBL->GetOrmasDal(), writeOff->GetStatusID(), errorMessage))
+			if (parentDataForm != nullptr)
 			{
-				dialogBL->CancelTransaction(errorMessage);
-				QMessageBox::information(NULL, QString(tr("Warning")),
-					QString(tr(errorMessage.c_str())),
-					QString(tr("Ok")));
-				errorMessage.clear();
-				delete client;
-				delete currency;
-				delete status;
-				return;
-			}
-
-			writeOffItem << new QStandardItem(status->GetCode().c_str())
-				<< new QStandardItem(status->GetName().c_str());
-
-
-			if (writeOff->GetEmployeeID() > 0)
-			{
-				if (!employee->GetEmployeeByID(dialogBL->GetOrmasDal(), writeOff->GetEmployeeID(), errorMessage))
+				if (!parentDataForm->IsClosed())
 				{
-					dialogBL->CancelTransaction(errorMessage);
-					QMessageBox::information(NULL, QString(tr("Warning")),
-						QString(tr(errorMessage.c_str())),
-						QString(tr("Ok")));
-					errorMessage.clear();
+					QList<QStandardItem*> writeOffItem;
+					writeOffItem << new QStandardItem(QString::number(writeOff->GetID()))
+						<< new QStandardItem(writeOff->GetDate().c_str());
+
+					BusinessLayer::Client *client = new BusinessLayer::Client();
+					BusinessLayer::Employee *employee = new BusinessLayer::Employee();
+					BusinessLayer::Currency *currency = new BusinessLayer::Currency;
+					BusinessLayer::Status *status = new BusinessLayer::Status;
+					if (!client->GetClientByID(dialogBL->GetOrmasDal(), writeOff->GetClientID(), errorMessage)
+						|| !currency->GetCurrencyByID(dialogBL->GetOrmasDal(), writeOff->GetCurrencyID(), errorMessage)
+						|| !status->GetStatusByID(dialogBL->GetOrmasDal(), writeOff->GetStatusID(), errorMessage))
+					{
+						dialogBL->CancelTransaction(errorMessage);
+						QMessageBox::information(NULL, QString(tr("Warning")),
+							QString(tr(errorMessage.c_str())),
+							QString(tr("Ok")));
+						errorMessage.clear();
+						delete client;
+						delete currency;
+						delete status;
+						return;
+					}
+
+					writeOffItem << new QStandardItem(status->GetCode().c_str())
+						<< new QStandardItem(status->GetName().c_str());
+
+
+					if (writeOff->GetEmployeeID() > 0)
+					{
+						if (!employee->GetEmployeeByID(dialogBL->GetOrmasDal(), writeOff->GetEmployeeID(), errorMessage))
+						{
+							dialogBL->CancelTransaction(errorMessage);
+							QMessageBox::information(NULL, QString(tr("Warning")),
+								QString(tr(errorMessage.c_str())),
+								QString(tr("Ok")));
+							errorMessage.clear();
+							delete employee;
+							return;
+						}
+					}
+
+
+					if (0 != writeOff->GetClientID())
+					{
+						writeOffItem << new QStandardItem(client->GetName().c_str())
+							<< new QStandardItem(client->GetSurname().c_str())
+							<< new QStandardItem(client->GetPhone().c_str())
+							<< new QStandardItem(client->GetAddress().c_str())
+							<< new QStandardItem(client->GetFirm().c_str());
+					}
+					else
+					{
+						writeOffItem << new QStandardItem("")
+							<< new QStandardItem("")
+							<< new QStandardItem("")
+							<< new QStandardItem("")
+							<< new QStandardItem("");
+					}
+					if (0 != writeOff->GetEmployeeID())
+					{
+						writeOffItem << new QStandardItem(employee->GetName().c_str())
+							<< new QStandardItem(employee->GetSurname().c_str())
+							<< new QStandardItem(employee->GetPhone().c_str());
+					}
+					else
+					{
+						writeOffItem << new QStandardItem("")
+							<< new QStandardItem("")
+							<< new QStandardItem("");
+					}
+
+					writeOffItem << new QStandardItem(QString::number(writeOff->GetCount()))
+						<< new QStandardItem(QString::number(writeOff->GetSum()))
+						<< new QStandardItem(currency->GetShortName().c_str())
+						<< new QStandardItem(QString::number(writeOff->GetEmployeeID()))
+						<< new QStandardItem(QString::number(writeOff->GetClientID()))
+						<< new QStandardItem(QString::number(writeOff->GetStatusID()))
+						<< new QStandardItem(QString::number(writeOff->GetCurrencyID()));
+
+					QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
+					itemModel->appendRow(writeOffItem);
+					delete client;
 					delete employee;
-					return;
+					delete currency;
+					delete status;
 				}
 			}
-
-
-			if (0 != writeOff->GetClientID())
-			{
-				writeOffItem << new QStandardItem(client->GetName().c_str())
-					<< new QStandardItem(client->GetSurname().c_str())
-					<< new QStandardItem(client->GetPhone().c_str())
-					<< new QStandardItem(client->GetAddress().c_str())
-					<< new QStandardItem(client->GetFirm().c_str());
-			}
-			else
-			{
-				writeOffItem << new QStandardItem("")
-					<< new QStandardItem("")
-					<< new QStandardItem("")
-					<< new QStandardItem("")
-					<< new QStandardItem("");
-			}
-			if (0 != writeOff->GetEmployeeID())
-			{
-				writeOffItem << new QStandardItem(employee->GetName().c_str())
-				<< new QStandardItem(employee->GetSurname().c_str())
-				<< new QStandardItem(employee->GetPhone().c_str());
-			}
-			else
-			{
-				writeOffItem << new QStandardItem("")
-					<< new QStandardItem("")
-					<< new QStandardItem("");
-			}
-
-			writeOffItem << new QStandardItem(QString::number(writeOff->GetCount()))
-				<< new QStandardItem(QString::number(writeOff->GetSum()))
-				<< new QStandardItem(currency->GetShortName().c_str())
-				<< new QStandardItem(QString::number(writeOff->GetEmployeeID()))
-				<< new QStandardItem(QString::number(writeOff->GetClientID()))
-				<< new QStandardItem(QString::number(writeOff->GetStatusID()))
-				<< new QStandardItem(QString::number(writeOff->GetCurrencyID()));
-			
-			QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
-			itemModel->appendRow(writeOffItem);
 			dialogBL->CommitTransaction(errorMessage);
-			delete client;
-			delete employee;
-			delete currency;
-			delete status;
-			this->close();
+			
+			Close();
 		}
 		else
 		{
 			dialogBL->CancelTransaction(errorMessage);
 			QMessageBox::information(NULL, QString(tr("Warning")),
-				QString(tr("Please contact with Administrator, seems DB is not valid!")),
+				QString(tr(errorMessage.c_str())),
 				QString(tr("Ok")));
 		}
 	}
@@ -287,112 +319,117 @@ void CreateWOffDlg::EditWriteOff()
 {
 	errorMessage.clear();
 	if (0 != clientEdit->text().toInt() && !dateEdit->text().isEmpty()
-		&& 0 != prodCountEdit->text().toInt() && 0 != sumEdit->text().toInt()
+		&& 0 != prodCountEdit->text().toDouble() && 0 != sumEdit->text().toDouble()
 		&& 0 != statusEdit->text().toInt() && !currencyCmb->currentText().isEmpty())
 	{
 		if (writeOff->GetClientID() != clientEdit->text().toInt() || QString(writeOff->GetDate().c_str()) != dateEdit->text() ||
-			writeOff->GetEmployeeID() != employeeEdit->text().toInt() || writeOff->GetCount() != prodCountEdit->text().toInt() ||
-			writeOff->GetSum() != sumEdit->text().toInt() || writeOff->GetCurrencyID() != currencyCmb->currentData().toInt())
+			writeOff->GetEmployeeID() != employeeEdit->text().toInt() || writeOff->GetCount() != prodCountEdit->text().toDouble() ||
+			writeOff->GetSum() != sumEdit->text().toDouble() || writeOff->GetCurrencyID() != currencyCmb->currentData().toInt())
 		{
-			DataForm *parentDataForm = (DataForm*)parentWidget();
-			SetWriteOffParams(clientEdit->text().toInt(), dateEdit->text(), employeeEdit->text().toInt(), prodCountEdit->text().toInt(),
-				sumEdit->text().toInt(), statusEdit->text().toInt(), currencyCmb->currentData().toInt(), writeOff->GetID());
+			DataForm *parentDataForm = (DataForm*) parentForm;
+			SetWriteOffParams(clientEdit->text().toInt(), dateEdit->text(), employeeEdit->text().toInt(), prodCountEdit->text().toDouble(),
+				sumEdit->text().toDouble(), statusEdit->text().toInt(), currencyCmb->currentData().toInt(), writeOff->GetID());
 
 			if (dialogBL->UpdateWriteOff(writeOff, errorMessage))
 			{
-				//updating WriteOff data
-				QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
-				QModelIndex mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
-				itemModel->item(mIndex.row(), 1)->setText(writeOff->GetDate().c_str());
-
-				BusinessLayer::Status *status = new BusinessLayer::Status();
-				status->SetID(statusEdit->text().toInt());
-				std::string statusFilter = dialogBL->GenerateFilter<BusinessLayer::Status>(status);
-				std::vector<BusinessLayer::Status> statusVector = dialogBL->GetAllDataForClass<BusinessLayer::Status>(errorMessage, statusFilter);
-				if (statusVector.size() > 0)
+				if (parentDataForm != nullptr)
 				{
-					itemModel->item(mIndex.row(), 2)->setText(statusVector.at(0).GetCode().c_str());
-					itemModel->item(mIndex.row(), 3)->setText(statusVector.at(0).GetName().c_str());
-				}
-				else
-				{
-					dialogBL->CancelTransaction(errorMessage);
-					QMessageBox::information(NULL, QString(tr("Warning")),
-						QString(tr("This status does not valid, cannot create WriteOff!")),
-						QString(tr("Ok")));
-					return;
-				}
-
-				BusinessLayer::Client *client = new BusinessLayer::Client();
-				BusinessLayer::Employee *employee = new BusinessLayer::Employee();
-
-				BusinessLayer::Currency *currency = new BusinessLayer::Currency();
-
-				if (!client->GetClientByID(dialogBL->GetOrmasDal(), writeOff->GetClientID(), errorMessage)
-					|| !currency->GetCurrencyByID(dialogBL->GetOrmasDal(), writeOff->GetCurrencyID(), errorMessage))
-				{
-					dialogBL->CancelTransaction(errorMessage);
-					QMessageBox::information(NULL, QString(tr("Warning")),
-						QString(tr(errorMessage.c_str())),
-						QString(tr("Ok")));
-					errorMessage.clear();
-					delete employee;
-					delete currency;
-					delete client;
-					delete status;
-					return;
-				}
-
-				if (writeOff->GetEmployeeID() > 0)
-				{
-					if (!employee->GetEmployeeByID(dialogBL->GetOrmasDal(), writeOff->GetEmployeeID(), errorMessage))
+					if (!parentDataForm->IsClosed())
 					{
-						dialogBL->CancelTransaction(errorMessage);
-						QMessageBox::information(NULL, QString(tr("Warning")),
-							QString(tr(errorMessage.c_str())),
-							QString(tr("Ok")));
-						errorMessage.clear();
+						//updating WriteOff data
+						QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
+						QModelIndex mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
+						itemModel->item(mIndex.row(), 1)->setText(writeOff->GetDate().c_str());
+
+						BusinessLayer::Status *status = new BusinessLayer::Status();
+						status->SetID(statusEdit->text().toInt());
+						std::string statusFilter = dialogBL->GenerateFilter<BusinessLayer::Status>(status);
+						std::vector<BusinessLayer::Status> statusVector = dialogBL->GetAllDataForClass<BusinessLayer::Status>(errorMessage, statusFilter);
+						if (statusVector.size() > 0)
+						{
+							itemModel->item(mIndex.row(), 2)->setText(statusVector.at(0).GetCode().c_str());
+							itemModel->item(mIndex.row(), 3)->setText(statusVector.at(0).GetName().c_str());
+						}
+						else
+						{
+							dialogBL->CancelTransaction(errorMessage);
+							QMessageBox::information(NULL, QString(tr("Warning")),
+								QString(tr("This status does not valid, cannot create WriteOff!")),
+								QString(tr("Ok")));
+							return;
+						}
+
+						BusinessLayer::Client *client = new BusinessLayer::Client();
+						BusinessLayer::Employee *employee = new BusinessLayer::Employee();
+
+						BusinessLayer::Currency *currency = new BusinessLayer::Currency();
+
+						if (!client->GetClientByID(dialogBL->GetOrmasDal(), writeOff->GetClientID(), errorMessage)
+							|| !currency->GetCurrencyByID(dialogBL->GetOrmasDal(), writeOff->GetCurrencyID(), errorMessage))
+						{
+							dialogBL->CancelTransaction(errorMessage);
+							QMessageBox::information(NULL, QString(tr("Warning")),
+								QString(tr(errorMessage.c_str())),
+								QString(tr("Ok")));
+							errorMessage.clear();
+							delete employee;
+							delete currency;
+							delete client;
+							delete status;
+							return;
+						}
+
+						if (writeOff->GetEmployeeID() > 0)
+						{
+							if (!employee->GetEmployeeByID(dialogBL->GetOrmasDal(), writeOff->GetEmployeeID(), errorMessage))
+							{
+								dialogBL->CancelTransaction(errorMessage);
+								QMessageBox::information(NULL, QString(tr("Warning")),
+									QString(tr(errorMessage.c_str())),
+									QString(tr("Ok")));
+								errorMessage.clear();
+								delete employee;
+								return;
+							}
+						}
+
+						itemModel->item(mIndex.row(), 4)->setText(client->GetName().c_str());
+						itemModel->item(mIndex.row(), 5)->setText(client->GetSurname().c_str());
+						itemModel->item(mIndex.row(), 6)->setText(client->GetPhone().c_str());
+						itemModel->item(mIndex.row(), 7)->setText(client->GetAddress().c_str());
+						itemModel->item(mIndex.row(), 8)->setText(client->GetFirm().c_str());
+						if (writeOff->GetEmployeeID() > 0)
+						{
+							itemModel->item(mIndex.row(), 9)->setText(employee->GetName().c_str());
+							itemModel->item(mIndex.row(), 10)->setText(employee->GetSurname().c_str());
+							itemModel->item(mIndex.row(), 11)->setText(employee->GetPhone().c_str());
+						}
+						else
+						{
+							itemModel->item(mIndex.row(), 9)->setText("");
+							itemModel->item(mIndex.row(), 10)->setText("");
+							itemModel->item(mIndex.row(), 11)->setText("");
+						}
+
+						itemModel->item(mIndex.row(), 12)->setText(QString::number(writeOff->GetCount()));
+						itemModel->item(mIndex.row(), 13)->setText(QString::number(writeOff->GetSum()));
+						itemModel->item(mIndex.row(), 14)->setText(currency->GetShortName().c_str());
+						itemModel->item(mIndex.row(), 15)->setText(QString::number(writeOff->GetEmployeeID()));
+						itemModel->item(mIndex.row(), 16)->setText(QString::number(writeOff->GetClientID()));
+						itemModel->item(mIndex.row(), 17)->setText(QString::number(writeOff->GetStatusID()));
+						itemModel->item(mIndex.row(), 18)->setText(QString::number(writeOff->GetCurrencyID()));
+
+						emit itemModel->dataChanged(mIndex, mIndex);
+						delete client;
 						delete employee;
-						return;
+						delete currency;
+						delete status;
 					}
 				}
-
-				itemModel->item(mIndex.row(), 4)->setText(client->GetName().c_str());
-				itemModel->item(mIndex.row(), 5)->setText(client->GetSurname().c_str());
-				itemModel->item(mIndex.row(), 6)->setText(client->GetPhone().c_str());
-				itemModel->item(mIndex.row(), 7)->setText(client->GetAddress().c_str());
-				itemModel->item(mIndex.row(), 8)->setText(client->GetFirm().c_str());
-				if (writeOff->GetEmployeeID() > 0)
-				{
-					itemModel->item(mIndex.row(), 9)->setText(employee->GetName().c_str());
-					itemModel->item(mIndex.row(), 10)->setText(employee->GetSurname().c_str());
-					itemModel->item(mIndex.row(), 11)->setText(employee->GetPhone().c_str());
-				}
-				else
-				{
-					itemModel->item(mIndex.row(), 9)->setText("");
-					itemModel->item(mIndex.row(), 10)->setText("");
-					itemModel->item(mIndex.row(), 11)->setText("");
-				}
-
-				itemModel->item(mIndex.row(), 12)->setText(QString::number(writeOff->GetCount()));
-				itemModel->item(mIndex.row(), 13)->setText(QString::number(writeOff->GetSum()));
-				itemModel->item(mIndex.row(), 14)->setText(currency->GetShortName().c_str());
-				itemModel->item(mIndex.row(), 15)->setText(QString::number(writeOff->GetEmployeeID()));
-				itemModel->item(mIndex.row(), 16)->setText(QString::number(writeOff->GetClientID()));
-				itemModel->item(mIndex.row(), 17)->setText(QString::number(writeOff->GetStatusID()));
-				itemModel->item(mIndex.row(), 18)->setText(QString::number(writeOff->GetCurrencyID()));
-
-				emit itemModel->dataChanged(mIndex, mIndex);
-				
-
 				dialogBL->CommitTransaction(errorMessage);
 
-				delete client;
-				delete employee;
-				delete currency;
-				delete status;
-				this->close();
+			
+				Close();
 			}
 			else
 			{
@@ -404,7 +441,7 @@ void CreateWOffDlg::EditWriteOff()
 		}
 		else
 		{
-			this->close();
+			Close();
 		}
 	}
 	else
@@ -419,7 +456,7 @@ void CreateWOffDlg::EditWriteOff()
 void CreateWOffDlg::Close()
 {
 	dialogBL->CancelTransaction(errorMessage);
-	this->close();
+	this->parentWidget()->close();
 }
 
 void CreateWOffDlg::OpenCltDlg()
@@ -427,8 +464,6 @@ void CreateWOffDlg::OpenCltDlg()
 	this->hide();
 	this->setModal(false);
 	this->show();
-	DataForm *userParent = (DataForm *)parent();
-	MainForm *mainForm = (MainForm *)userParent->GetParent();
 	QString message = tr("Loading...");
 	mainForm->statusBar()->showMessage(message);
 	DataForm *dForm = new DataForm(dialogBL, mainForm);
@@ -470,18 +505,21 @@ void CreateWOffDlg::OpenCltDlg()
 	dForm->FillTable<BusinessLayer::ClientView>(errorMessage, clientFilter);
 	if (errorMessage.empty())
 	{
-		dForm->createWOffDlg = this;
+		dForm->parentDialog = this;
 		dForm->setObjectName("clientForm");
 		dForm->QtConnect<BusinessLayer::ClientView>();
 		QMdiSubWindow *clientWindow = new QMdiSubWindow;
 		clientWindow->setWidget(dForm);
 		clientWindow->setAttribute(Qt::WA_DeleteOnClose);
 		mainForm->mdiArea->addSubWindow(clientWindow);
+		clientWindow->resize(dForm->size().width() + 18, dForm->size().height() + 30);
 		dForm->topLevelWidget();
 		dForm->activateWindow();
 		QApplication::setActiveWindow(dForm);
+		dForm->HileSomeRow();
 		dForm->show();
 		dForm->raise();
+		dForm->setWindowFlags(dForm->windowFlags() | Qt::WindowStaysOnTopHint);
 		QString message = tr("All clients are shown");
 		mainForm->statusBar()->showMessage(message);
 	}
@@ -502,8 +540,6 @@ void CreateWOffDlg::OpenEmpDlg()
 	this->hide();
 	this->setModal(false);
 	this->show();
-	DataForm *userParent = (DataForm *)parent();
-	MainForm *mainForm = (MainForm *)userParent->GetParent();
 	QString message = tr("Loading...");
 	mainForm->statusBar()->showMessage(message);
 	DataForm *dForm = new DataForm(dialogBL, mainForm);
@@ -547,18 +583,21 @@ void CreateWOffDlg::OpenEmpDlg()
 	dForm->FillTable<BusinessLayer::EmployeeView>(errorMessage, employeeFilter);
 	if (errorMessage.empty())
 	{
-		dForm->createWOffDlg = this;
+		dForm->parentDialog = this;
 		dForm->setObjectName("employeeForm");
 		dForm->QtConnect<BusinessLayer::EmployeeView>();
 		QMdiSubWindow *employeeWindow = new QMdiSubWindow;
 		employeeWindow->setWidget(dForm);
 		employeeWindow->setAttribute(Qt::WA_DeleteOnClose);
 		mainForm->mdiArea->addSubWindow(employeeWindow);
+		employeeWindow->resize(dForm->size().width() + 18, dForm->size().height() + 30);
 		dForm->topLevelWidget();
 		dForm->activateWindow();
 		QApplication::setActiveWindow(dForm);
+		dForm->HileSomeRow();
 		dForm->show();
 		dForm->raise();
+		dForm->setWindowFlags(dForm->windowFlags() | Qt::WindowStaysOnTopHint);
 		QString message = tr("All clients are shown");
 		mainForm->statusBar()->showMessage(message);
 	}
@@ -579,8 +618,6 @@ void CreateWOffDlg::OpenStsDlg()
 	this->hide();
 	this->setModal(false);
 	this->show();
-	DataForm *userParent = (DataForm *)parent();
-	MainForm *mainForm = (MainForm *)userParent->GetParent();
 	QString message = tr("Loading...");
 	mainForm->statusBar()->showMessage(message);
 	DataForm *dForm = new DataForm(dialogBL, mainForm);
@@ -591,18 +628,20 @@ void CreateWOffDlg::OpenStsDlg()
 	dForm->FillTable<BusinessLayer::Status>(errorMessage);
 	if (errorMessage.empty())
 	{
-		dForm->createWOffDlg = this;
+		dForm->parentDialog = this;
 		dForm->setObjectName("statusForm");
 		dForm->QtConnect<BusinessLayer::Status>();
 		QMdiSubWindow *statusWindow = new QMdiSubWindow;
 		statusWindow->setWidget(dForm);
 		statusWindow->setAttribute(Qt::WA_DeleteOnClose);
 		mainForm->mdiArea->addSubWindow(statusWindow);
+		statusWindow->resize(dForm->size().width() + 18, dForm->size().height() + 30);
 		dForm->topLevelWidget();
 		dForm->activateWindow();
 		QApplication::setActiveWindow(dForm);
 		dForm->show();
 		dForm->raise();
+		dForm->setWindowFlags(dForm->windowFlags() | Qt::WindowStaysOnTopHint);
 		QString message = tr("All statuses are shown");
 		mainForm->statusBar()->showMessage(message);
 	}
@@ -623,8 +662,6 @@ void CreateWOffDlg::OpenWOffListDlg()
 	this->hide();
 	this->setModal(false);
 	this->show();
-	DataForm *userParent = (DataForm *)parent();
-	MainForm *mainForm = (MainForm *)userParent->GetParent();
 	QString message = tr("Loading...");
 	mainForm->statusBar()->showMessage(message);
 	DataForm *dForm = new DataForm(dialogBL, mainForm);
@@ -638,18 +675,20 @@ void CreateWOffDlg::OpenWOffListDlg()
 	dForm->FillTable<BusinessLayer::WriteOffListView>(errorMessage, writeOffListFilter);
 	if (errorMessage.empty())
 	{
-		dForm->createWOffDlg = this;
+		dForm->parentDialog = this;
 		dForm->setObjectName("writeOffListForm");
 		dForm->QtConnect<BusinessLayer::WriteOffListView>();
 		QMdiSubWindow *writeOffListWindow = new QMdiSubWindow;
 		writeOffListWindow->setWidget(dForm);
 		writeOffListWindow->setAttribute(Qt::WA_DeleteOnClose);
 		mainForm->mdiArea->addSubWindow(writeOffListWindow);
+		writeOffListWindow->resize(dForm->size().width() + 18, dForm->size().height() + 30);
 		dForm->topLevelWidget();
 		dForm->activateWindow();
 		QApplication::setActiveWindow(dForm);
 		dForm->show();
 		dForm->raise();
+		dForm->setWindowFlags(dForm->windowFlags() | Qt::WindowStaysOnTopHint);
 		QString message = tr("All products are shown");
 		mainForm->statusBar()->showMessage(message);
 	
@@ -676,5 +715,25 @@ void CreateWOffDlg::InitComboBox()
 		{
 			currencyCmb->addItem(curVector[i].GetShortName().c_str(), QVariant(curVector[i].GetID()));
 		}
+	}
+}
+
+void CreateWOffDlg::TextEditChanged()
+{
+	if (prodCountEdit->text().contains(","))
+	{
+		prodCountEdit->setText(prodCountEdit->text().replace(",", "."));
+	}
+	if (prodCountEdit->text().contains(".."))
+	{
+		prodCountEdit->setText(prodCountEdit->text().replace("..", "."));
+	}
+	if (sumEdit->text().contains(","))
+	{
+		sumEdit->setText(sumEdit->text().replace(",", "."));
+	}
+	if (sumEdit->text().contains(".."))
+	{
+		sumEdit->setText(sumEdit->text().replace("..", "."));
 	}
 }

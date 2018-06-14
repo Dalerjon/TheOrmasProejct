@@ -3,6 +3,7 @@
 
 #include "ui_CreateCltDlg.h"
 #include "OrmasBL.h"
+#include "MainForm.h"
 
 class CreateCltDlg : public QDialog, public Ui::CreateClient
 {
@@ -27,6 +28,8 @@ private:
 	void SetClientParams(QString, QString, QString, QString, QString, int, QString, QString, QString, QString, int, int = 0);
 	void FillEditElements(QString, QString, QString, QString, QString, int, QString, QString, QString, QString, int);
 	QIntValidator *vInt = nullptr;
+	QWidget* parentForm;
+	MainForm* mainForm;
 };
 
 #endif //CREATECLTDLG_H

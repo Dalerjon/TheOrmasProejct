@@ -3,6 +3,7 @@
 
 #include "ui_CreateRtrnDlg.h"
 #include "OrmasBL.h"
+#include "MainForm.h"
 
 class CreateRtrnDlg : public QDialog, public Ui::CreateReturn
 {
@@ -23,17 +24,20 @@ public:
 	void OpenStsDlg();
 	void OpenRtrnListDlg();
 	void StatusWasChenged();
+	void TextEditChanged();
 	public slots:
 	void SetID(int ID, QString childName);
 	signals:
 	void CloseCreatedForms();
 private:
 	BusinessLayer::Return *ret = new BusinessLayer::Return();
-	void SetReturnParams(int, QString, QString, int, int, double, int, int, int =0 );
-	void FillEditElements(int, QString, QString, int, int, double, int, int);
+	void SetReturnParams(int, QString, QString, int, double, double, int, int, int = 0);
+	void FillEditElements(int, QString, QString, int, double, double, int, int);
 	QDoubleValidator *vDouble = nullptr;
 	QIntValidator *vInt = nullptr;
 	std::map<std::string, int> statusMap;
 	void InitComboBox();
+	QWidget* parentForm;
+	MainForm* mainForm;
 };
 #endif //CREATERTRNDLG_H

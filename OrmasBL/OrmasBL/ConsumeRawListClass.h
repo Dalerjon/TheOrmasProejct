@@ -10,12 +10,12 @@ namespace BusinessLayer
 		int id = 0;
 		int consumeRawID = 0;
 		int productID = 0;
-		int count = 0;
+		double count = 0;
 		double sum = 0;
 		int statusID = 0;
 		int currencyID = 0;
 	public:
-		ConsumeRawList(int clID, int crID, int pID, int clCount, double clSum, int sID, int cID) :id(clID), consumeRawID(crID),
+		ConsumeRawList(int clID, int crID, int pID, double clCount, double clSum, int sID, int cID) :id(clID), consumeRawID(crID),
 			productID(pID),	count(clCount), sum(clSum), statusID(sID), currencyID(cID){};
 		ConsumeRawList(DataLayer::consumeRawListCollection);
 		ConsumeRawList(){};
@@ -25,7 +25,7 @@ namespace BusinessLayer
 		int GetID();
 		int GetConsumeRawID();
 		int GetProductID();
-		int GetCount();
+		double GetCount();
 		double GetSum();
 		int GetStatusID();
 		int GetCurrencyID();
@@ -34,7 +34,7 @@ namespace BusinessLayer
 		void SetID(int);
 		void SetConsumeRawID(int);
 		void SetProductID(int);
-		void SetCount(int);
+		void SetCount(double);
 		void SetSum(double);
 		void SetStatusID(int);
 		void SetCurrencyID(int);
@@ -44,9 +44,9 @@ namespace BusinessLayer
 		bool UpdateConsumeRawList(DataLayer::OrmasDal& ormasDal, std::string& errorMessage);
 		bool DeleteConsumeRawList(DataLayer::OrmasDal& ormasDal, std::string& errorMessage);
 		bool DeleteListByConsumeRawID(DataLayer::OrmasDal& ormasDal, int cID, std::string& errorMessage);
-		bool CreateConsumeRawList(DataLayer::OrmasDal& ormasDal, int crID, int pID, int clCount, double clSum,
+		bool CreateConsumeRawList(DataLayer::OrmasDal& ormasDal, int crID, int pID, double clCount, double clSum,
 			int sID, int cID, std::string& errorMessage);
-		bool UpdateConsumeRawList(DataLayer::OrmasDal& ormasDal, int crID, int pID, int clCount, double clSum,
+		bool UpdateConsumeRawList(DataLayer::OrmasDal& ormasDal, int crID, int pID, double clCount, double clSum,
 			int sID, int cID, std::string& errorMessage);
 
 		//Generate filter string for class
@@ -55,7 +55,7 @@ namespace BusinessLayer
 		bool IsEmpty();
 		void Clear();
 	private:
-		bool IsDuplicate(DataLayer::OrmasDal& ormasDal, int crID, int pID, int clCount, double clSum,
+		bool IsDuplicate(DataLayer::OrmasDal& ormasDal, int crID, int pID, double clCount, double clSum,
 			int cID, std::string& errorMessage);
 		bool IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string& errorMessage);
 	};

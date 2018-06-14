@@ -14,12 +14,12 @@ namespace BusinessLayer
 		std::string date = "";
 		std::string executionDate = "";
 		int stockEmployeeID = 0;
-		int count = 0;
+		double count = 0;
 		double sum = 0;
 		int statusID = 0;
 		int currencyID = 0;
 	public:
-		ReceiptRaw(int rID, int eID, std::string rDate, std::string rExecDate, int seID, int rCount, double rSum, int sID, int cID) :
+		ReceiptRaw(int rID, int eID, std::string rDate, std::string rExecDate, int seID, double rCount, double rSum, int sID, int cID) :
 			id(rID), employeeID(eID), date(rDate), executionDate(rExecDate), stockEmployeeID(seID), count(rCount), sum(rSum),
 			statusID(sID), currencyID(cID){};
 		ReceiptRaw(DataLayer::receiptRawsCollection);
@@ -32,7 +32,7 @@ namespace BusinessLayer
 		std::string GetDate();
 		std::string GetExecutionDate();
 		int GetStockEmployeeID();
-		int GetCount();
+		double GetCount();
 		double GetSum();
 		int GetStatusID();
 		int GetCurrencyID();
@@ -43,7 +43,7 @@ namespace BusinessLayer
 		void SetDate(std::string);
 		void SetExecutionDate(std::string);
 		void SetStockEmployeeID(int);
-		void SetCount(int);
+		void SetCount(double);
 		void SetSum(double);
 		void SetStatusID(int);
 		void SetCurrencyID(int);
@@ -53,9 +53,9 @@ namespace BusinessLayer
 		bool UpdateReceiptRaw(DataLayer::OrmasDal& ormasDal, std::string& errorMessage);
 		bool DeleteReceiptRaw(DataLayer::OrmasDal& ormasDal, std::string& errorMessage);
 		bool CreateReceiptRaw(DataLayer::OrmasDal& ormasDal, int eID, std::string rDate, std::string rExecDate, int seID,
-			int rCount, double rSum, int sID, int cID, std::string& errorMessage);
+			double rCount, double rSum, int sID, int cID, std::string& errorMessage);
 		bool UpdateReceiptRaw(DataLayer::OrmasDal& ormasDal, int eID, std::string rDate, std::string rExecDate, int seID, 
-			int rCount, double rSum, int sID, int cID, std::string& errorMessage);
+			double rCount, double rSum, int sID, int cID, std::string& errorMessage);
 
 		//Generate filter string for class
 		std::string GenerateFilter(DataLayer::OrmasDal& ormasDal);
@@ -64,14 +64,17 @@ namespace BusinessLayer
 		void Clear();
 	private:
 		double prevSum = 0;
-		int prevCount = 0;
-		bool IsDuplicate(DataLayer::OrmasDal& ormasDal, int eID, std::string rDate, int seID, int rCount, double rSum,
+		double prevCount = 0;
+		int previousStatusID = 0;
+		bool IsDuplicate(DataLayer::OrmasDal& ormasDal, int eID, std::string rDate, int seID, double rCount, double rSum,
 			int cID, std::string& errorMessage);
 		bool IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string& errorMessage);
 		bool ChangesAtStock(DataLayer::OrmasDal& ormasDal, int rrID, std::string& errorMessage);
-		bool ChangesAtStock(DataLayer::OrmasDal& ormasDal, int rID, double pSum, int pCount, std::string& errorMessage);
+		bool ChangesAtStock(DataLayer::OrmasDal& ormasDal, int rID, std::map<int, double> pProdCountMap, double pSum, std::string& errorMessage);
 		double GetCurrentSum(DataLayer::OrmasDal& ormasDal, int rID, std::string& errorMessage);
-		int GetCurrentCount(DataLayer::OrmasDal& ormasDal, int rrID, std::string& errorMessage);
+		double GetCurrentCount(DataLayer::OrmasDal& ormasDal, int rrID, std::string& errorMessage);
+		int GetCurrentStatusID(DataLayer::OrmasDal& ormasDal, int oID, std::string& errorMessage);
+		std::map<int, double> GetProductCount(DataLayer::OrmasDal& ormasDal, int cpID, std::string& errorMessage);
 	};
 }
 #endif //ReceiptRawCLASS_H

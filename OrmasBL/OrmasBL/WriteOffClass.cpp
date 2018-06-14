@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "WriteOffClass.h"
+#include "WriteOffListClass.h"
 #include "StockClass.h"
 
 namespace BusinessLayer
@@ -36,7 +37,7 @@ namespace BusinessLayer
 		return employeeID;
 	}
 
-	int WriteOff::GetCount()
+	double WriteOff::GetCount()
 	{
 		return count;
 	}
@@ -73,7 +74,7 @@ namespace BusinessLayer
 		employeeID = wEmployeeID;
 	}
 
-	void WriteOff::SetCount(int wCount)
+	void WriteOff::SetCount(double wCount)
 	{
 		count = wCount;
 	}
@@ -93,7 +94,7 @@ namespace BusinessLayer
 		currencyID = wCurrencyID;
 	}
 
-	bool WriteOff::CreateWriteOff(DataLayer::OrmasDal& ormasDal, int clID, std::string wDate, int eID, int wCount, double wSum,
+	bool WriteOff::CreateWriteOff(DataLayer::OrmasDal& ormasDal, int clID, std::string wDate, int eID, double wCount, double wSum,
 		int sID, int cID, std::string& errorMessage)
 	{
 		if (IsDuplicate(ormasDal, clID, wDate, wCount, wSum, cID, errorMessage))
@@ -169,9 +170,12 @@ namespace BusinessLayer
 		}
 		return false;
 	}
-	bool WriteOff::UpdateWriteOff(DataLayer::OrmasDal& ormasDal, int clID, std::string wDate, int eID, int wCount, double wSum,
+	bool WriteOff::UpdateWriteOff(DataLayer::OrmasDal& ormasDal, int clID, std::string wDate, int eID, double wCount, double wSum,
 		int sID, int cID, std::string& errorMessage)
 	{
+		std::map<int, double> prodCountMap = GetProductCount(ormasDal, id, errorMessage);
+		if (0 == prodCountMap.size())
+			return false;
 		clientID = clID;
 		date = wDate;
 		employeeID = eID;
@@ -184,7 +188,7 @@ namespace BusinessLayer
 		ormasDal.StartTransaction(errorMessage);
 		if (0 != id && ormasDal.UpdateWriteOff(id, clientID, date, employeeID, count, sum, statusID, currencyID, errorMessage))
 		{
-			if (ChangesAtStock(ormasDal, id, prevSum, prevCount, errorMessage))
+			if (ChangesAtStock(ormasDal, id, prodCountMap, prevSum, errorMessage))
 			{
 				ormasDal.CommitTransaction(errorMessage);
 				return true;
@@ -199,12 +203,15 @@ namespace BusinessLayer
 	}
 	bool WriteOff::UpdateWriteOff(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
+		std::map<int, double> prodCountMap = GetProductCount(ormasDal, id, errorMessage);
+		if (0 == prodCountMap.size())
+			return false;
 		prevSum = GetCurrentSum(ormasDal, id, errorMessage);
 		prevCount = GetCurrentCount(ormasDal, id, errorMessage);
 		ormasDal.StartTransaction(errorMessage);
 		if (0 != id && ormasDal.UpdateWriteOff(id, clientID, date, employeeID, count, sum, statusID, currencyID, errorMessage))
 		{
-			if (ChangesAtStock(ormasDal, id, prevSum, prevCount, errorMessage))
+			if (ChangesAtStock(ormasDal, id, prodCountMap, prevSum, errorMessage))
 			{
 				ormasDal.CommitTransaction(errorMessage);
 				return true;
@@ -269,7 +276,7 @@ namespace BusinessLayer
 		currencyID = 0;
 	}
 
-	bool WriteOff::IsDuplicate(DataLayer::OrmasDal& ormasDal, int clID, std::string wDate, int wCount, double wSum,
+	bool WriteOff::IsDuplicate(DataLayer::OrmasDal& ormasDal, int clID, std::string wDate, double wCount, double wSum,
 		int cID, std::string& errorMessage)
 	{
 		WriteOff writeOff;
@@ -316,10 +323,10 @@ namespace BusinessLayer
 		return stock.ChangingByWriteOff(ormasDal, wID, errorMessage);
 	}
 
-	bool WriteOff::ChangesAtStock(DataLayer::OrmasDal& ormasDal, int wID, double pSum, int pCount, std::string& errorMessage)
+	bool WriteOff::ChangesAtStock(DataLayer::OrmasDal& ormasDal, int wID, std::map<int, double> pProdCountMap, double pSum, std::string& errorMessage)
 	{
 		Stock stock;
-		return stock.ChangingByWriteOff(ormasDal, wID, pSum, pCount, errorMessage);
+		return stock.ChangingByWriteOff(ormasDal, wID, pProdCountMap, pSum, errorMessage);
 	}
 
 	double WriteOff::GetCurrentSum(DataLayer::OrmasDal& ormasDal, int wID, std::string& errorMessage)
@@ -330,11 +337,28 @@ namespace BusinessLayer
 		return 0;
 	}
 
-	int WriteOff::GetCurrentCount(DataLayer::OrmasDal& ormasDal, int wID, std::string& errorMessage)
+	double WriteOff::GetCurrentCount(DataLayer::OrmasDal& ormasDal, int wID, std::string& errorMessage)
 	{
 		WriteOff wProduct;
 		if (wProduct.GetWriteOffByID(ormasDal, wID, errorMessage))
 			return wProduct.GetCount();
 		return 0;
+	}
+
+	std::map<int, double> WriteOff::GetProductCount(DataLayer::OrmasDal& ormasDal, int cpID, std::string& errorMessage)
+	{
+		std::map<int, double> mapProdCount;
+		WriteOffList rPList;
+		rPList.SetWriteOffID(cpID);
+		std::string filter = rPList.GenerateFilter(ormasDal);
+		std::vector<DataLayer::writeOffListViewCollection> productListVector = ormasDal.GetWriteOffList(errorMessage, filter);
+		if (productListVector.size() > 0)
+		{
+			for each (auto item in productListVector)
+			{
+				mapProdCount.insert(std::make_pair(std::get<11>(item), std::get<7>(item)));
+			}
+		}
+		return mapProdCount;
 	}
 }

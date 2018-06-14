@@ -16,7 +16,7 @@ namespace BusinessLayer{
 		return id;
 	}
 
-	int ChartOfAccounts::GetNumber()
+	std::string ChartOfAccounts::GetNumber()
 	{
 		return number;
 	}
@@ -36,8 +36,10 @@ namespace BusinessLayer{
 		id = cID;
 	}
 
-	void ChartOfAccounts::SetNumber(int cNumber)
+	void ChartOfAccounts::SetNumber(std::string cNumber)
 	{
+		if (!cNumber.empty())
+			boost::trim(cNumber);
 		number = cNumber;
 	}
 
@@ -53,12 +55,12 @@ namespace BusinessLayer{
 		accountTypeID = cAccountTypeID;
 	}
 
-	bool ChartOfAccounts::CreateChartOfAccounts(DataLayer::OrmasDal& ormasDal, int cNumber, std::string cName, int cAccountTypeID, std::string& errorMessage)
+	bool ChartOfAccounts::CreateChartOfAccounts(DataLayer::OrmasDal& ormasDal, std::string cNumber, std::string cName, int cAccountTypeID, std::string& errorMessage)
 	{
 		if (IsDuplicate(ormasDal, cNumber, cName, cAccountTypeID, errorMessage))
 			return false;
 		id = ormasDal.GenerateID();
-		TrimStrings(cName);
+		TrimStrings(cNumber, cName);
 		number = cNumber;
 		name = cName;
 		accountTypeID = cAccountTypeID;
@@ -100,9 +102,9 @@ namespace BusinessLayer{
 		}
 		return false;
 	}
-	bool ChartOfAccounts::UpdateChartOfAccounts(DataLayer::OrmasDal& ormasDal, int cNumber, std::string cName, int cAccountTypeID, std::string& errorMessage)
+	bool ChartOfAccounts::UpdateChartOfAccounts(DataLayer::OrmasDal& ormasDal, std::string cNumber, std::string cName, int cAccountTypeID, std::string& errorMessage)
 	{
-		TrimStrings(cName);
+		TrimStrings(cNumber, cName);
 		number = cNumber;
 		name = cName;
 		accountTypeID = cAccountTypeID;
@@ -131,7 +133,7 @@ namespace BusinessLayer{
 
 	std::string ChartOfAccounts::GenerateFilter(DataLayer::OrmasDal& ormasDal)
 	{
-		if (0 != id || !name.empty() || 0 != number || 0 != accountTypeID)
+		if (0 != id || !name.empty() || !number.empty() || 0 != accountTypeID)
 		{
 			return ormasDal.GetFilterForChartOfAccount(id, number, name, accountTypeID);
 		}
@@ -158,7 +160,7 @@ namespace BusinessLayer{
 		return false;
 	}
 
-	bool ChartOfAccounts::GetChartOfAccountsByNumber(DataLayer::OrmasDal& ormasDal, int cNumber, std::string& errorMessage)
+	bool ChartOfAccounts::GetChartOfAccountsByNumber(DataLayer::OrmasDal& ormasDal, std::string cNumber, std::string& errorMessage)
 	{
 		number = cNumber;
 		std::string filter = GenerateFilter(ormasDal);
@@ -180,7 +182,7 @@ namespace BusinessLayer{
 
 	bool ChartOfAccounts::IsEmpty()
 	{
-		if (0 == id && name == "" && 0 == number && 0 == accountTypeID)
+		if (0 == id && name == "" && number == "" && 0 == accountTypeID)
 			return true;
 		return false;
 	}
@@ -188,18 +190,20 @@ namespace BusinessLayer{
 	void ChartOfAccounts::Clear()
 	{
 		id = 0;
-		number = 0;
+		number.clear();
 		name.clear();
 		accountTypeID = 0;
 	}
 
-	void ChartOfAccounts::TrimStrings(std::string& cName)
+	void ChartOfAccounts::TrimStrings(std::string& cNumber, std::string& cName)
 	{
 		if (!cName.empty())
 			boost::trim(cName);
+		if (!cNumber.empty())
+			boost::trim(cNumber);
 	}
 
-	bool ChartOfAccounts::IsDuplicate(DataLayer::OrmasDal& ormasDal, int cNumber, std::string cName, int cAccountTypeID, std::string& errorMessage)
+	bool ChartOfAccounts::IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string cNumber, std::string cName, int cAccountTypeID, std::string& errorMessage)
 	{
 		ChartOfAccounts chartOfAccounts;
 		chartOfAccounts.SetNumber(cNumber);

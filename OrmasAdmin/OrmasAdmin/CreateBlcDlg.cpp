@@ -1,9 +1,7 @@
 #include "stdafx.h"
 #include "CreateBlcDlg.h"
-#include <QMessageBox>
-#include "MainForm.h"
 #include "DataForm.h"
-#include "ExtraFunctions.h"
+
 
 
 CreateBlcDlg::CreateBlcDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, QWidget *parent) :QDialog(parent)
@@ -11,11 +9,11 @@ CreateBlcDlg::CreateBlcDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, QWi
 	setupUi(this);
 	setModal(true);
 	dialogBL = ormasBL;
-	vDouble = new QDoubleValidator(0.00, 1000000000.00, 3, this);
+	parentForm = parent;
+	DataForm *dataFormParent = (DataForm *)this->parentForm;
+	mainForm = (MainForm *)dataFormParent->GetParent();
 	vInt = new QIntValidator(0, 1000000000, this);
 	userEdit->setValidator(vInt);
-	valueEdit->setValidator(vDouble);
-	valueEdit->setMaxLength(17);
 	if (true == updateFlag)
 	{
 		QObject::connect(okBtn, &QPushButton::released, this, &CreateBlcDlg::EditBalance);
@@ -26,13 +24,11 @@ CreateBlcDlg::CreateBlcDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, QWi
 	}
 	QObject::connect(cancelBtn, &QPushButton::released, this, &CreateBlcDlg::Close);
 	QObject::connect(userBtn, &QPushButton::released, this, &CreateBlcDlg::OpenUserDlg);
-	InitComboBox();
 }
 
 CreateBlcDlg::~CreateBlcDlg()
 {
 	delete vInt;
-	delete vDouble;
 }
 
 void CreateBlcDlg::SetID(int ID, QString childName)
@@ -41,6 +37,13 @@ void CreateBlcDlg::SetID(int ID, QString childName)
 	{
 		if (0 != childName.length())
 		{
+			this->hide();
+			this->setWindowFlags(this->windowFlags() | Qt::WindowStaysOnTopHint);
+			this->show();
+			this->raise();
+			this->activateWindow();
+			QApplication::setActiveWindow(this);
+
 			if (childName == QString("userForm"))
 			{
 				userEdit->setText(QString::number(ID));
@@ -56,18 +59,16 @@ void CreateBlcDlg::SetID(int ID, QString childName)
 	}
 }
 
-void CreateBlcDlg::SetBalanceParams(int bUserID, int bAccountID, int id)
+void CreateBlcDlg::SetBalanceParams(int bUserID, int bSubccountID, int id)
 {
 	balance->SetUserID(bUserID);
-	balance->SetAccountID(bAccountID);
+	balance->SetSubaccountID(bSubccountID);
 	balance->SetID(id);
 }
 
 void CreateBlcDlg::FillEditElements(int bUserID, int bAccountID)
 {
 	userEdit->setText(QString::number(bUserID));
-	valueEdit->setText(QString::number(bValue));
-	currencyCmb->setCurrentIndex(currencyCmb->findData(QVariant(bCurrencyID)));
 	BusinessLayer::User user;
 	if (user.GetUserByID(dialogBL->GetOrmasDal(), bUserID, errorMessage))
 	{
@@ -83,11 +84,9 @@ bool CreateBlcDlg::FillDlgElements(QTableView* bTable)
 	if (mIndex.row() >= 0)
 	{
 		SetBalanceParams(bTable->model()->data(bTable->model()->index(mIndex.row(), 5)).toInt(),
-			bTable->model()->data(bTable->model()->index(mIndex.row(), 3)).toDouble(),
 			bTable->model()->data(bTable->model()->index(mIndex.row(), 6)).toInt(),
 			bTable->model()->data(bTable->model()->index(mIndex.row(), 0)).toInt());
 		FillEditElements(bTable->model()->data(bTable->model()->index(mIndex.row(), 5)).toInt(),
-			bTable->model()->data(bTable->model()->index(mIndex.row(), 3)).toDouble(),
 			bTable->model()->data(bTable->model()->index(mIndex.row(), 6)).toInt());
 		return true;
 	}
@@ -100,53 +99,77 @@ bool CreateBlcDlg::FillDlgElements(QTableView* bTable)
 void CreateBlcDlg::CreateBalance()
 {
 	errorMessage.clear();
-	if (0 != userEdit->text().toInt() && !currencyCmb->currentText().isEmpty())
+	if (0 != userEdit->text().toInt())
 	{
-		DataForm *parentDataForm = (DataForm*)parentWidget();
-		SetBalanceParams(userEdit->text().toInt(), valueEdit->text().toDouble(), currencyCmb->currentData().toInt());
 		dialogBL->StartTransaction(errorMessage);
+		int subaccountID = CreateSubaccount();
+		if (0 == subaccountID)
+		{
+			dialogBL->CancelTransaction(errorMessage);
+			QMessageBox::information(NULL, QString(tr("Warning")),
+				QString(tr("Cannot create account for this user. Please contact with Administrator!")),
+				QString(tr("Ok")));
+			errorMessage.clear();
+			return;
+		}
+		DataForm *parentDataForm = (DataForm*) parentForm;
+		SetBalanceParams(userEdit->text().toInt(), subaccountID);
+		
 		if (dialogBL->CreateBalance(balance, errorMessage))
 		{
-			QList<QStandardItem*> balanceItem;
-			BusinessLayer::User *user = new BusinessLayer::User();
-			BusinessLayer::Currency *currency = new BusinessLayer::Currency;
-			if (!user->GetUserByID(dialogBL->GetOrmasDal(), balance->GetUserID(), errorMessage)
-				|| !currency->GetCurrencyByID(dialogBL->GetOrmasDal(), balance->GetCurrencyID(), errorMessage))
+			if (parentDataForm != nullptr)
 			{
-				dialogBL->CancelTransaction(errorMessage);
-				QMessageBox::information(NULL, QString(tr("Warning")),
-					QString(tr(errorMessage.c_str())),
-					QString(tr("Ok")));
-				errorMessage.clear();
-				delete user;
-				delete currency;
-				return;
+				if (!parentDataForm->IsClosed())
+				{
+					QList<QStandardItem*> balanceItem;
+					BusinessLayer::User *user = new BusinessLayer::User();
+					BusinessLayer::Currency *currency = new BusinessLayer::Currency;
+					BusinessLayer::Subaccount *subaccount = new BusinessLayer::Subaccount;
+					if (!user->GetUserByID(dialogBL->GetOrmasDal(), balance->GetUserID(), errorMessage) ||
+						subaccount->GetSubaccountByID(dialogBL->GetOrmasDal(), balance->GetSubaccountID(), errorMessage) ||
+						currency->GetCurrencyByID(dialogBL->GetOrmasDal(), subaccount->GetCurrencyID(), errorMessage))
+					{
+						dialogBL->CancelTransaction(errorMessage);
+						QMessageBox::information(NULL, QString(tr("Warning")),
+							QString(tr(errorMessage.c_str())),
+							QString(tr("Ok")));
+						errorMessage.clear();
+						delete user;
+						delete currency;
+						delete subaccount;
+						return;
+					}
+
+					balanceItem << new QStandardItem(QString::number(balance->GetID()));
+
+					if (0 != balance->GetUserID())
+					{
+						balanceItem << new QStandardItem(user->GetName().c_str())
+							<< new QStandardItem(user->GetSurname().c_str());
+					}
+					else
+					{
+						balanceItem << new QStandardItem("")
+							<< new QStandardItem("");
+					}
+
+					balanceItem << new QStandardItem(QString::number(subaccount->GetCurrentBalance()))
+						<< new QStandardItem(currency->GetShortName().c_str())
+						<< new QStandardItem(QString::number(balance->GetUserID()))
+						<< new QStandardItem(QString::number(balance->GetSubaccountID()));
+
+					QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
+					itemModel->appendRow(balanceItem);
+
+					delete user;
+					delete currency;
+					delete subaccount;
+				}
 			}
-
-			balanceItem << new QStandardItem(QString::number(balance->GetID()));
-
-			if (0 != balance->GetUserID())
-			{
-				balanceItem << new QStandardItem(user->GetName().c_str())
-					<< new QStandardItem(user->GetSurname().c_str());
-			}
-			else
-			{
-				balanceItem << new QStandardItem("")
-					<< new QStandardItem("");
-			}
-
-			balanceItem << new QStandardItem(QString::number(balance->GetValue())) << new QStandardItem(currency->GetShortName().c_str()) 
-				<< new QStandardItem(QString::number(balance->GetUserID()))
-				<< new QStandardItem(QString::number(balance->GetCurrencyID()));
-
-			QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
-			itemModel->appendRow(balanceItem);
 			
 			dialogBL->CommitTransaction(errorMessage);
-			delete user;
-			delete currency;
-			this->close();
+			
+			Close();
 		}
 		else
 		{
@@ -161,7 +184,7 @@ void CreateBlcDlg::CreateBalance()
 	else
 	{
 		QMessageBox::information(NULL, QString(tr("Warning")),
-			QString(tr("Please fill user, value and currency!")),
+			QString(tr("Please select user!")),
 			QString(tr("Ok")));
 	}
 	errorMessage.clear();
@@ -170,54 +193,64 @@ void CreateBlcDlg::CreateBalance()
 void CreateBlcDlg::EditBalance()
 {
 	errorMessage.clear();
-	if (0 != userEdit->text().toInt() && !currencyCmb->currentText().isEmpty())
+	if (0 != userEdit->text().toInt())
 	{
-		if (balance->GetUserID() != userEdit->text().toInt() || balance->GetValue() != valueEdit->text().toDouble()
-			|| balance->GetCurrencyID() != currencyCmb->currentData().toInt())
+		if (balance->GetUserID() != userEdit->text().toInt())
 		{
-			DataForm *parentDataForm = (DataForm*)parentWidget();
-			SetBalanceParams(userEdit->text().toInt(), valueEdit->text().toDouble(), currencyCmb->currentData().toInt(), balance->GetID());
+			DataForm *parentDataForm = (DataForm*) parentForm;
+			SetBalanceParams(userEdit->text().toInt(), balance->GetSubaccountID(), balance->GetID());
 			dialogBL->StartTransaction(errorMessage);
 			if (dialogBL->UpdateBalance(balance, errorMessage))
 			{
-				BusinessLayer::User *user = new BusinessLayer::User();
-				BusinessLayer::Currency *currency = new BusinessLayer::Currency;
-				if (!user->GetUserByID(dialogBL->GetOrmasDal(), balance->GetUserID(), errorMessage)
-					|| !currency->GetCurrencyByID(dialogBL->GetOrmasDal(), balance->GetCurrencyID(), errorMessage))
+				if (parentDataForm != nullptr)
 				{
-					dialogBL->CancelTransaction(errorMessage);
-					QMessageBox::information(NULL, QString(tr("Warning")),
-						QString(tr(errorMessage.c_str())),
-						QString(tr("Ok")));
-					errorMessage.clear();
-					delete user;
-					delete currency;
-					return;
-				}
+					if (!parentDataForm->IsClosed())
+					{
+						BusinessLayer::User *user = new BusinessLayer::User();
+						BusinessLayer::Currency *currency = new BusinessLayer::Currency;
+						BusinessLayer::Subaccount *subaccount = new BusinessLayer::Subaccount;
+						if (!user->GetUserByID(dialogBL->GetOrmasDal(), balance->GetUserID(), errorMessage) ||
+							subaccount->GetSubaccountByID(dialogBL->GetOrmasDal(), balance->GetSubaccountID(), errorMessage) ||
+							currency->GetCurrencyByID(dialogBL->GetOrmasDal(), subaccount->GetCurrencyID(), errorMessage))
+						{
+							dialogBL->CancelTransaction(errorMessage);
+							QMessageBox::information(NULL, QString(tr("Warning")),
+								QString(tr(errorMessage.c_str())),
+								QString(tr("Ok")));
+							errorMessage.clear();
+							delete user;
+							delete currency;
+							delete subaccount;
+							return;
+						}
 
-				QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
-				QModelIndex mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
-				if (0 != balance->GetUserID())
-				{
-					itemModel->item(mIndex.row(), 1)->setText(user->GetName().c_str());
-					itemModel->item(mIndex.row(), 2)->setText(user->GetSurname().c_str());
+						QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
+						QModelIndex mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
+						if (0 != balance->GetUserID())
+						{
+							itemModel->item(mIndex.row(), 1)->setText(user->GetName().c_str());
+							itemModel->item(mIndex.row(), 2)->setText(user->GetSurname().c_str());
+						}
+						else
+						{
+							itemModel->item(mIndex.row(), 1)->setText("");
+							itemModel->item(mIndex.row(), 2)->setText("");
+						}
+
+						itemModel->item(mIndex.row(), 3)->setText(QString::number(subaccount->GetCurrentBalance()));
+						itemModel->item(mIndex.row(), 4)->setText(currency->GetShortName().c_str());
+						itemModel->item(mIndex.row(), 5)->setText(QString::number(balance->GetUserID()));
+						itemModel->item(mIndex.row(), 6)->setText(QString::number(balance->GetSubaccountID()));
+						emit itemModel->dataChanged(mIndex, mIndex);
+
+						delete user;
+						delete currency;
+						delete subaccount;
+					}
 				}
-				else
-				{
-					itemModel->item(mIndex.row(), 1)->setText("");
-					itemModel->item(mIndex.row(), 2)->setText("");
-				}
-				
-				itemModel->item(mIndex.row(), 3)->setText(QString::number(balance->GetValue()));
-				itemModel->item(mIndex.row(), 4)->setText(currency->GetShortName().c_str());
-				itemModel->item(mIndex.row(), 5)->setText(QString::number(balance->GetUserID()));
-				itemModel->item(mIndex.row(), 6)->setText(QString::number(balance->GetCurrencyID()));
-				emit itemModel->dataChanged(mIndex, mIndex);
-				
 				dialogBL->CommitTransaction(errorMessage);
-				delete user;
-				delete currency;
-				this->close();
+				
+				Close();
 			}
 			else
 			{
@@ -229,13 +262,13 @@ void CreateBlcDlg::EditBalance()
 		}
 		else
 		{
-			this->close();
+			Close();
 		}
 	}
 	else
 	{
 		QMessageBox::information(NULL, QString(tr("Warning")),
-			QString(tr("Please fill user, value and currency!")),
+			QString(tr("Please select user")),
 			QString(tr("Ok")));
 	}
 	errorMessage.clear();
@@ -243,7 +276,7 @@ void CreateBlcDlg::EditBalance()
 
 void CreateBlcDlg::Close()
 {
-	this->close();
+	this->parentWidget()->close();
 }
 
 void CreateBlcDlg::OpenUserDlg()
@@ -251,8 +284,6 @@ void CreateBlcDlg::OpenUserDlg()
 	this->hide();
 	this->setModal(false);
 	this->show();
-	DataForm *userParent = (DataForm *)parent();
-	MainForm *mainForm = (MainForm *)userParent->GetParent();
 	QString message = tr("Loading...");
 	mainForm->statusBar()->showMessage(message);
 	DataForm *dForm = new DataForm(dialogBL, mainForm);
@@ -262,18 +293,21 @@ void CreateBlcDlg::OpenUserDlg()
 	dForm->FillTable<BusinessLayer::UserView>(errorMessage);
 	if (errorMessage.empty())
 	{
-		dForm->createBlcDlg = this;
+		dForm->parentDialog = this;
 		dForm->setObjectName("userForm");
 		dForm->QtConnect<BusinessLayer::UserView>();
 		QMdiSubWindow *userWindow = new QMdiSubWindow;
 		userWindow->setWidget(dForm);
 		userWindow->setAttribute(Qt::WA_DeleteOnClose);
 		mainForm->mdiArea->addSubWindow(userWindow);
+		userWindow->resize(dForm->size().width() + 18, dForm->size().height() + 30);
 		dForm->topLevelWidget();
 		dForm->activateWindow();
 		QApplication::setActiveWindow(dForm);
+		dForm->HileSomeRow();
 		dForm->show();
 		dForm->raise();
+		dForm->setWindowFlags(dForm->windowFlags() | Qt::WindowStaysOnTopHint);
 		QString message = tr("All users are shown");
 		mainForm->statusBar()->showMessage(message);
 	}
@@ -289,14 +323,44 @@ void CreateBlcDlg::OpenUserDlg()
 	}
 }
 
-void CreateBlcDlg::InitComboBox()
+int CreateBlcDlg::CreateSubaccount()
 {
-	std::vector<BusinessLayer::Currency> curVector = dialogBL->GetAllDataForClass<BusinessLayer::Currency>(errorMessage);
-	if (!curVector.empty())
+	BusinessLayer::Currency currency;
+	std::string number = "";
+	std::string genAccRawNumber = "";
+	int currID = currency.GetMainTradeCurrencyID(dialogBL->GetOrmasDal(), errorMessage);
+	if (0 != currID)
 	{
-		for (unsigned int i = 0; i < curVector.size(); i++)
+		BusinessLayer::Status status;
+		if (!status.GetStatusByName(dialogBL->GetOrmasDal(), "OPEN", errorMessage))
+			return 0;
+		if (!currency.GetCurrencyByID(dialogBL->GetOrmasDal(), currID, errorMessage))
+			return 0;
+		BusinessLayer::Subaccount subaccount;
+		BusinessLayer::Account account;
+		if (!account.GetAccountByNumber(dialogBL->GetOrmasDal(), std::to_string(10410), errorMessage))
 		{
-			currencyCmb->addItem(curVector[i].GetShortName().c_str(), QVariant(curVector[i].GetID()));
+			return 0;
 		}
+		number = std::to_string(10410);
+		number.append(std::to_string(currency.GetCode()));
+		genAccRawNumber = subaccount.GenerateRawNumber(dialogBL->GetOrmasDal(), errorMessage);
+		if (genAccRawNumber.empty())
+			return 0;
+		number.append(genAccRawNumber);
+		subaccount.SetParentAccountID(account.GetID());
+		subaccount.SetNumber(number);
+		subaccount.SetStartBalance(0.0);
+		subaccount.SetCurrentBalance(0.0);
+		subaccount.SetCurrencyID(currID);
+		subaccount.SetStatusID(status.GetID());
+		subaccount.SetOpenedDate(dialogBL->GetOrmasDal().GetSystemDate());
+		subaccount.SetClosedDate("");
+		subaccount.SetDetails("Generated by system");
+
+		if (!subaccount.CreateSubaccount(dialogBL->GetOrmasDal(), errorMessage))
+			return 0;
+		return subaccount.GetID();
 	}
+	return 0;
 }

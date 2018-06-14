@@ -29,7 +29,7 @@ namespace BusinessLayer
 		return productID;
 	}
 
-	int ProductionPlanList::GetCount()
+	double ProductionPlanList::GetCount()
 	{
 		return count;
 	}
@@ -61,7 +61,7 @@ namespace BusinessLayer
 	{
 		productID = pProductID;
 	}
-	void ProductionPlanList::SetCount(int pCount)
+	void ProductionPlanList::SetCount(double pCount)
 	{
 		count = pCount;
 	}
@@ -78,7 +78,7 @@ namespace BusinessLayer
 		currencyID = pCurrencyID;
 	}
 
-	bool ProductionPlanList::CreateProductionPlanList(DataLayer::OrmasDal& ormasDal, int ppID, int pID, int pplCount, double pplSum,
+	bool ProductionPlanList::CreateProductionPlanList(DataLayer::OrmasDal& ormasDal, int ppID, int pID, double pplCount, double pplSum,
 		int sID, int cID, std::string& errorMessage)
 	{
 		id = ormasDal.GenerateID();
@@ -123,7 +123,7 @@ namespace BusinessLayer
 		return false;
 	}
 
-	bool ProductionPlanList::UpdateProductionPlanList(DataLayer::OrmasDal& ormasDal, int oID, int pID, int olCount, double olSum,
+	bool ProductionPlanList::UpdateProductionPlanList(DataLayer::OrmasDal& ormasDal, int oID, int pID, double olCount, double olSum,
 		int sID, int cID, std::string& errorMessage)
 	{
 		productionPlanID = oID;
@@ -197,7 +197,7 @@ namespace BusinessLayer
 		currencyID = 0;
 	}
 
-	bool ProductionPlanList::IsDuplicate(DataLayer::OrmasDal& ormasDal, int ppID, int pID, int pplCount, double pplSum,
+	bool ProductionPlanList::IsDuplicate(DataLayer::OrmasDal& ormasDal, int ppID, int pID, double pplCount, double pplSum,
 		int cID, std::string& errorMessage)
 	{
 		ProductionPlanList productionPlanList;

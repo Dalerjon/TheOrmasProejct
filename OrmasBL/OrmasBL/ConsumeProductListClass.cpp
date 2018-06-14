@@ -29,7 +29,7 @@ namespace BusinessLayer
 		return productID;
 	}
 
-	int ConsumeProductList::GetCount()
+	double ConsumeProductList::GetCount()
 	{
 		return count;
 	}
@@ -61,7 +61,7 @@ namespace BusinessLayer
 	{
 		productID = cProductID;
 	}
-	void ConsumeProductList::SetCount(int cCount)
+	void ConsumeProductList::SetCount(double cCount)
 	{
 		count = cCount;
 	}
@@ -78,7 +78,7 @@ namespace BusinessLayer
 		currencyID = cCurrencyID;
 	}
 
-	bool ConsumeProductList::CreateConsumeProductList(DataLayer::OrmasDal& ormasDal, int cpID, int pID, int cplCount, double cplSum,
+	bool ConsumeProductList::CreateConsumeProductList(DataLayer::OrmasDal& ormasDal, int cpID, int pID, double cplCount, double cplSum,
 		int sID, int cID, std::string& errorMessage)
 	{
 		id = ormasDal.GenerateID();
@@ -123,7 +123,7 @@ namespace BusinessLayer
 		return false;
 	}
 
-	bool ConsumeProductList::UpdateConsumeProductList(DataLayer::OrmasDal& ormasDal, int cpID, int pID, int cplCount, double cplSum,
+	bool ConsumeProductList::UpdateConsumeProductList(DataLayer::OrmasDal& ormasDal, int cpID, int pID, double cplCount, double cplSum,
 		int sID, int cID, std::string& errorMessage)
 	{
 		consumeProductID = cpID;
@@ -197,7 +197,7 @@ namespace BusinessLayer
 		currencyID = 0;
 	}
 
-	bool ConsumeProductList::IsDuplicate(DataLayer::OrmasDal& ormasDal, int cpID, int pID, int cplCount, double cplSum,
+	bool ConsumeProductList::IsDuplicate(DataLayer::OrmasDal& ormasDal, int cpID, int pID, double cplCount, double cplSum,
 		int cID, std::string& errorMessage)
 	{
 		ConsumeProductList consumeProductList;

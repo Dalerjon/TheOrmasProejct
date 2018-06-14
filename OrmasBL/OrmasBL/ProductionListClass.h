@@ -2,6 +2,7 @@
 #define PRODUCTIONLISTCLASS_H
 
 #include "OrmasDAL.h"
+#include <map>
 
 namespace BusinessLayer
 {
@@ -11,22 +12,23 @@ namespace BusinessLayer
 		int id = 0;
 		int productionID = 0;
 		int productID = 0;
-		int count = 0;
+		double count = 0;
 		double sum = 0;
 		int statusID = 0;
 		int currencyID = 0;
 	public:
-		ProductionList(int plID, int prID, int pID, int plCount, double plSum, int sID, int cID) :id(plID), productionID(prID), productID(pID),
+		ProductionList(int plID, int prID, int pID, double plCount, double plSum, int sID, int cID) :id(plID), productionID(prID), productID(pID),
 			count(plCount), sum(plSum), statusID(sID), currencyID(cID){};
 		ProductionList(DataLayer::productionListCollection);
 		ProductionList(){};
 		~ProductionList(){};
+		std::map<int, double> GetProductCount(DataLayer::OrmasDal& ormasDal, std::string& errorMessage);
 
 		//ProductionList class Accessors
 		int GetID();
 		int GetProductionID();
 		int GetProductID();
-		int GetCount();
+		double GetCount();
 		double GetSum();
 		int GetStatusID();
 		int GetCurrencyID();
@@ -35,7 +37,7 @@ namespace BusinessLayer
 		void SetID(int);
 		void SetProductionID(int);
 		void SetProductID(int);
-		void SetCount(int);
+		void SetCount(double);
 		void SetSum(double);
 		void SetStatusID(int);
 		void SetCurrencyID(int);
@@ -45,9 +47,9 @@ namespace BusinessLayer
 		bool UpdateProductionList(DataLayer::OrmasDal& ormasDal, std::string& errorMessage);
 		bool DeleteProductionList(DataLayer::OrmasDal& ormasDal, std::string& errorMessage);
 		bool DeleteListByProductionID(DataLayer::OrmasDal& ormasDal, int pID, std::string& errorMessage);
-		bool CreateProductionList(DataLayer::OrmasDal& ormasDal, int prID, int pID, int plCount, double plSum,
+		bool CreateProductionList(DataLayer::OrmasDal& ormasDal, int prID, int pID, double plCount, double plSum,
 			int sID, int cID, std::string& errorMessage);
-		bool UpdateProductionList(DataLayer::OrmasDal& ormasDal, int prID, int pID, int plCount, double plSum,
+		bool UpdateProductionList(DataLayer::OrmasDal& ormasDal, int prID, int pID, double plCount, double plSum,
 			int sID, int cID, std::string& errorMessage);
 
 		//Generate filter string for class
@@ -56,9 +58,10 @@ namespace BusinessLayer
 		bool IsEmpty();
 		void Clear();
 	private:
-		bool IsDuplicate(DataLayer::OrmasDal& ormasDal, int prID, int pID, int plCount, double plSum,
+		bool IsDuplicate(DataLayer::OrmasDal& ormasDal, int prID, int pID, double plCount, double plSum,
 			 int cID, std::string& errorMessage);
 		bool IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string& errorMessage);
+		
 	};
 }
 #endif

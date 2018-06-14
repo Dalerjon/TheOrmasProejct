@@ -18,7 +18,6 @@ public:
 private:
 	BusinessLayer::CompanyAccountRelation *caRelation = new BusinessLayer::CompanyAccountRelation();
 	BusinessLayer::Account *account = new BusinessLayer::Account();
-	BusinessLayer::ChartOfAccounts *coAcc = new BusinessLayer::ChartOfAccounts();
 	BusinessLayer::Status *status = new BusinessLayer::Status();
 	void InitComboBox();
 };

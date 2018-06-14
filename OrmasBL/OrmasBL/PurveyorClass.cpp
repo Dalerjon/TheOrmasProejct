@@ -66,7 +66,7 @@ namespace BusinessLayer{
 		{
 			if (ormasDal.CreatePurveyor(userID, companyName, locationID, errorMessage))
 			{
-				if (CreateAccount(ormasDal, errorMessage))
+				if (CreateBalance(ormasDal, errorMessage))
 					return true;
 				return false;
 			}
@@ -88,7 +88,7 @@ namespace BusinessLayer{
 		{
 			if (ormasDal.CreatePurveyor(userID, companyName, locationID, errorMessage))
 			{
-				if (CreateAccount(ormasDal, errorMessage))
+				if (CreateBalance(ormasDal, errorMessage))
 					return true;
 				return false;
 			}
@@ -105,15 +105,11 @@ namespace BusinessLayer{
 			return false;
 		if (ormasDal.DeletePurveyor(id, errorMessage))
 		{
-			if (ormasDal.DeleteUser(id, errorMessage))
+			User user;
+			if (user.GetUserByID(ormasDal, id, errorMessage))
 			{
-				ormasDal.CommitTransaction(errorMessage);
-				if (!errorMessage.empty())
-				{
-					return false;
-				}
-				Clear();
-				return true;
+				if (user.DeleteUser(ormasDal, errorMessage))
+					return true;
 			}
 		}
 		ormasDal.CancelTransaction(errorMessage);
@@ -123,8 +119,12 @@ namespace BusinessLayer{
 		std::string uAddress, int uRoleID, std::string uPassword, bool uActivated, std::string pCompanyName,
 		int lID, std::string& errorMessage)
 	{
-		if (!IsUnique(ormasDal, uPhone, errorMessage))
-			return false;
+		std::string prevPhone = GetCurrentPhone(ormasDal, id, errorMessage);
+		if (0 != prevPhone.compare(uPhone))
+		{
+			if (!IsUnique(ormasDal, uPhone, errorMessage))
+				return false;
+		}
 		TrimStrings(uEmail, uName, uSurname, uPhone, uAddress, uPassword, pCompanyName);
 		email = uEmail;
 		name = uName;
@@ -160,8 +160,12 @@ namespace BusinessLayer{
 	}
 	bool Purveyor::UpdatePurveyor(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
-		if (!IsUnique(ormasDal, phone, errorMessage))
-			return false;
+		std::string prevPhone = GetCurrentPhone(ormasDal, id, errorMessage);
+		if (0 != prevPhone.compare(phone))
+		{
+			if (!IsUnique(ormasDal, phone, errorMessage))
+				return false;
+		}
 		ormasDal.StartTransaction(errorMessage);
 		userID = id;
 		if (!errorMessage.empty())
@@ -333,5 +337,13 @@ namespace BusinessLayer{
 		}
 		errorMessage = "Purveyor with this parameters are already exist! Please avoid the duplication!";
 		return true;
+	}
+
+	std::string Purveyor::GetCurrentPhone(DataLayer::OrmasDal& ormasDal, int uID, std::string& errorMessage)
+	{
+		User user;
+		if (user.GetUserByID(ormasDal, uID, errorMessage))
+			return user.GetPhone();
+		return 0;
 	}
 }

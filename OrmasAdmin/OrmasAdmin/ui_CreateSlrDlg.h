@@ -50,11 +50,11 @@ public:
     QLabel *isBonusLb;
     QLabel *namePh;
     QLabel *phoneLb;
-    QDateTimeEdit *dateEdit;
     QLabel *currencyLb;
     QComboBox *currencyCmb;
     QLabel *salaryTypeNameLb;
     QLabel *salaryTypeNamePh;
+    QDateTimeEdit *dateEdit;
 
     void setupUi(QDialog *CreateSalary)
     {
@@ -179,11 +179,6 @@ public:
 
         gridLayout->addWidget(phoneLb, 2, 5, 1, 1);
 
-        dateEdit = new QDateTimeEdit(CreateSalary);
-        dateEdit->setObjectName(QStringLiteral("dateEdit"));
-
-        gridLayout->addWidget(dateEdit, 12, 2, 1, 1);
-
         currencyLb = new QLabel(CreateSalary);
         currencyLb->setObjectName(QStringLiteral("currencyLb"));
 
@@ -205,6 +200,11 @@ public:
         salaryTypeNamePh->setFont(font);
 
         gridLayout->addWidget(salaryTypeNamePh, 9, 4, 1, 1);
+
+        dateEdit = new QDateTimeEdit(CreateSalary);
+        dateEdit->setObjectName(QStringLiteral("dateEdit"));
+
+        gridLayout->addWidget(dateEdit, 12, 2, 1, 1);
 
         QWidget::setTabOrder(employeeBtn, employeeEdit);
         QWidget::setTabOrder(employeeEdit, valueEdit);

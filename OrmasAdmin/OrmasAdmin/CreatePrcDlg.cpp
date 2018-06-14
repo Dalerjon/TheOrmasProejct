@@ -1,9 +1,7 @@
 #include "stdafx.h"
 #include "CreatePrcDlg.h"
-#include <QMessageBox>
-#include "MainForm.h"
 #include "DataForm.h"
-#include "ExtraFunctions.h"
+
 
 
 CreatePrcDlg::CreatePrcDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, QWidget *parent) :QDialog(parent)
@@ -11,7 +9,10 @@ CreatePrcDlg::CreatePrcDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, QWi
 	setupUi(this);
 	setModal(true);
 	dialogBL = ormasBL;
-	vDouble = new QDoubleValidator(0.00, 1000000000.00, 3, this);
+	parentForm = parent;
+	DataForm *dataFormParent = (DataForm *)this->parentForm;
+	mainForm = (MainForm *)dataFormParent->GetParent();
+	vDouble = new QDoubleValidator(0.00, 1000000000.00, 5, this);
 	vInt = new QIntValidator(0, 1000000000, this);
 	productEdit->setValidator(vInt);
 	valueEdit->setValidator(vDouble);
@@ -29,6 +30,8 @@ CreatePrcDlg::CreatePrcDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, QWi
 	}
 	QObject::connect(cancelBtn, &QPushButton::released, this, &CreatePrcDlg::Close);
 	QObject::connect(productBtn, &QPushButton::released, this, &CreatePrcDlg::OpenPrdDlg);
+	QObject::connect(valueEdit, &QLineEdit::textChanged, this, &CreatePrcDlg::TextEditChanged);
+	
 	InitComboBox();
 }
 
@@ -45,6 +48,13 @@ void CreatePrcDlg::SetID(int ID, QString childName)
 	{
 		if (0 != childName.length())
 		{
+			this->hide();
+			this->setWindowFlags(this->windowFlags() | Qt::WindowStaysOnTopHint);
+			this->show();
+			this->raise();
+			this->activateWindow();
+			QApplication::setActiveWindow(this);
+
 			if (childName == QString("productForm"))
 			{
 				productEdit->setText(QString::number(ID));
@@ -76,7 +86,7 @@ void CreatePrcDlg::SetPriceParams(QString pDate, double pValue, int pProductID, 
 
 void CreatePrcDlg::FillEditElements(QString pDate, double pValue, int pProductID, int pCurrencyID, QString pIsOutdated)
 {
-	dateEdit->setDateTime(QDateTime::fromString(pDate, "yyyy.MM.dd hh:mm:ss"));
+	dateEdit->setDateTime(QDateTime::fromString(pDate, "dd.MM.yyyy hh:mm"));
 	valueEdit->setText(QString::number(pValue));
 	productEdit->setText(QString::number(pProductID));
 	int index = isOutdatedCmb->findText(pIsOutdated);
@@ -125,56 +135,62 @@ void CreatePrcDlg::CreatePrice()
 	if (0 != productEdit->text().toInt() && 0.0 != valueEdit->text().toDouble() && !currencyCmb->currentText().isEmpty()
 		&& !dateEdit->text().isEmpty())
 	{
-		DataForm *parentDataForm = (DataForm*)parentWidget();
+		DataForm *parentDataForm = (DataForm*) parentForm;
 		SetPriceParams(dateEdit->text(), valueEdit->text().toDouble(), productEdit->text().toInt(), 
 			currencyCmb->currentData().toInt(), isOutdatedCmb->currentText());
 		dialogBL->StartTransaction(errorMessage);
 		if (dialogBL->CreatePrice(price, errorMessage))
 		{
-			BusinessLayer::Product *product = new BusinessLayer::Product;
-			BusinessLayer::Currency *currency = new BusinessLayer::Currency;
-			if (!product->GetProductByID(dialogBL->GetOrmasDal(), price->GetProductID(), errorMessage)
-				|| !currency->GetCurrencyByID(dialogBL->GetOrmasDal(), price->GetCurrencyID(), errorMessage))
+			if (parentDataForm != nullptr)
 			{
-				dialogBL->CancelTransaction(errorMessage);
-				QMessageBox::information(NULL, QString(tr("Warning")),
-					QString(tr(errorMessage.c_str())),
-					QString(tr("Ok")));
-				errorMessage.clear();
-				delete product;
-				delete currency;
-				
-				return;
+				if (!parentDataForm->IsClosed())
+				{
+					BusinessLayer::Product *product = new BusinessLayer::Product;
+					BusinessLayer::Currency *currency = new BusinessLayer::Currency;
+					if (!product->GetProductByID(dialogBL->GetOrmasDal(), price->GetProductID(), errorMessage)
+						|| !currency->GetCurrencyByID(dialogBL->GetOrmasDal(), price->GetCurrencyID(), errorMessage))
+					{
+						dialogBL->CancelTransaction(errorMessage);
+						QMessageBox::information(NULL, QString(tr("Warning")),
+							QString(tr(errorMessage.c_str())),
+							QString(tr("Ok")));
+						errorMessage.clear();
+						delete product;
+						delete currency;
+
+						return;
+					}
+					BusinessLayer::Measure *measure = new BusinessLayer::Measure();
+					if (!measure->GetMeasureByID(dialogBL->GetOrmasDal(), product->GetMeasureID(), errorMessage))
+					{
+						dialogBL->CancelTransaction(errorMessage);
+						QMessageBox::information(NULL, QString(tr("Warning")),
+							QString(tr(errorMessage.c_str())),
+							QString(tr("Ok")));
+						errorMessage.clear();
+						delete measure;
+					}
+					QList<QStandardItem*> PriceItem;
+					PriceItem << new QStandardItem(QString::number(price->GetID()))
+						<< new QStandardItem(price->GetDate().c_str())
+						<< new QStandardItem(product->GetName().c_str())
+						<< new QStandardItem(QString::number(product->GetVolume()))
+						<< new QStandardItem(measure->GetName().c_str())
+						<< new QStandardItem(QString::number(price->GetValue()))
+						<< new QStandardItem(currency->GetShortName().c_str())
+						<< new QStandardItem(QString::number(price->GetCurrencyID()))
+						<< new QStandardItem(QString::number(price->GetProductID()))
+						<< new QStandardItem(price->GetIsOutdated() ? "true" : "false");;
+					QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
+					itemModel->appendRow(PriceItem);
+					delete product;
+					delete currency;
+					delete measure;
+				}
 			}
-			BusinessLayer::Measure *measure = new BusinessLayer::Measure();
-			if (!measure->GetMeasureByID(dialogBL->GetOrmasDal(), product->GetMeasureID(), errorMessage))
-			{
-				dialogBL->CancelTransaction(errorMessage);
-				QMessageBox::information(NULL, QString(tr("Warning")),
-					QString(tr(errorMessage.c_str())),
-					QString(tr("Ok")));
-				errorMessage.clear();
-				delete measure;
-			}
-			QList<QStandardItem*> PriceItem;
-			PriceItem << new QStandardItem(QString::number(price->GetID()))
-				<< new QStandardItem(price->GetDate().c_str())
-				<< new QStandardItem(product->GetName().c_str())
-				<< new QStandardItem(QString::number(product->GetVolume()))
-				<< new QStandardItem(measure->GetName().c_str())
-				<< new QStandardItem(QString::number(price->GetValue()))
-				<< new QStandardItem(currency->GetShortName().c_str())
-				<< new QStandardItem(QString::number(price->GetCurrencyID()))
-				<< new QStandardItem(QString::number(price->GetProductID()))
-				<< new QStandardItem(price->GetIsOutdated() ? "true" : "false");;
-			QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
-			itemModel->appendRow(PriceItem);
-			
 			dialogBL->CommitTransaction(errorMessage);
-			delete product;
-			delete currency;
-			delete measure;
-			this->close();
+			
+			Close();
 		}
 		else
 		{
@@ -205,55 +221,62 @@ void CreatePrcDlg::EditPrice()
 			|| price->GetValue() != valueEdit->text().toDouble() || price->GetCurrencyID() != currencyCmb->currentData().toInt()
 			|| QString(price->GetIsOutdated() ? "true" : "false") != isOutdatedCmb->currentText())
 		{
-			DataForm *parentDataForm = (DataForm*)parentWidget();
+			DataForm *parentDataForm = (DataForm*) parentForm;
 			SetPriceParams(dateEdit->text(), valueEdit->text().toDouble(), productEdit->text().toInt(), 
 				currencyCmb->currentData().toInt(), isOutdatedCmb->currentText(), price->GetID());
 			dialogBL->StartTransaction(errorMessage);
 			if (dialogBL->UpdatePrice(price, errorMessage))
 			{
-				BusinessLayer::Product *product = new BusinessLayer::Product;
-				BusinessLayer::Currency *currency = new BusinessLayer::Currency;
-				if (!product->GetProductByID(dialogBL->GetOrmasDal(), price->GetProductID(), errorMessage)
-					|| !currency->GetCurrencyByID(dialogBL->GetOrmasDal(), price->GetCurrencyID(), errorMessage))
+				if (parentDataForm != nullptr)
 				{
-					dialogBL->CancelTransaction(errorMessage);
-					QMessageBox::information(NULL, QString(tr("Warning")),
-						QString(tr(errorMessage.c_str())),
-						QString(tr("Ok")));
-					errorMessage.clear();
-					delete product;
-					delete currency;
+					if (!parentDataForm->IsClosed())
+					{
+						BusinessLayer::Product *product = new BusinessLayer::Product;
+						BusinessLayer::Currency *currency = new BusinessLayer::Currency;
+						if (!product->GetProductByID(dialogBL->GetOrmasDal(), price->GetProductID(), errorMessage)
+							|| !currency->GetCurrencyByID(dialogBL->GetOrmasDal(), price->GetCurrencyID(), errorMessage))
+						{
+							dialogBL->CancelTransaction(errorMessage);
+							QMessageBox::information(NULL, QString(tr("Warning")),
+								QString(tr(errorMessage.c_str())),
+								QString(tr("Ok")));
+							errorMessage.clear();
+							delete product;
+							delete currency;
 
-					return;
+							return;
+						}
+						BusinessLayer::Measure *measure = new BusinessLayer::Measure();
+						if (!measure->GetMeasureByID(dialogBL->GetOrmasDal(), product->GetMeasureID(), errorMessage))
+						{
+							dialogBL->CancelTransaction(errorMessage);
+							QMessageBox::information(NULL, QString(tr("Warning")),
+								QString(tr(errorMessage.c_str())),
+								QString(tr("Ok")));
+							errorMessage.clear();
+							delete measure;
+						}
+						QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
+						QModelIndex mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
+						itemModel->item(mIndex.row(), 1)->setText(price->GetDate().c_str());
+						itemModel->item(mIndex.row(), 2)->setText(product->GetName().c_str());
+						itemModel->item(mIndex.row(), 3)->setText(QString::number(product->GetVolume()));
+						itemModel->item(mIndex.row(), 4)->setText(measure->GetName().c_str());
+						itemModel->item(mIndex.row(), 5)->setText(QString::number(price->GetValue()));
+						itemModel->item(mIndex.row(), 6)->setText(currency->GetShortName().c_str());
+						itemModel->item(mIndex.row(), 7)->setText(QString::number(price->GetCurrencyID()));
+						itemModel->item(mIndex.row(), 8)->setText(QString::number(price->GetProductID()));
+						itemModel->item(mIndex.row(), 9)->setText(price->GetIsOutdated() ? "true" : "false");
+						emit itemModel->dataChanged(mIndex, mIndex);
+						delete product;
+						delete currency;
+						delete measure;
+					}
 				}
-				BusinessLayer::Measure *measure = new BusinessLayer::Measure();
-				if (!measure->GetMeasureByID(dialogBL->GetOrmasDal(), product->GetMeasureID(), errorMessage))
-				{
-					dialogBL->CancelTransaction(errorMessage);
-					QMessageBox::information(NULL, QString(tr("Warning")),
-						QString(tr(errorMessage.c_str())),
-						QString(tr("Ok")));
-					errorMessage.clear();
-					delete measure;
-				}
-				QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
-				QModelIndex mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
-				itemModel->item(mIndex.row(), 1)->setText(price->GetDate().c_str());
-				itemModel->item(mIndex.row(), 2)->setText(product->GetName().c_str());
-				itemModel->item(mIndex.row(), 3)->setText(QString::number(product->GetVolume()));
-				itemModel->item(mIndex.row(), 4)->setText(measure->GetName().c_str());
-				itemModel->item(mIndex.row(), 5)->setText(QString::number(price->GetValue()));
-				itemModel->item(mIndex.row(), 6)->setText(currency->GetShortName().c_str());
-				itemModel->item(mIndex.row(), 7)->setText(QString::number(price->GetCurrencyID()));
-				itemModel->item(mIndex.row(), 8)->setText(QString::number(price->GetProductID()));
-				itemModel->item(mIndex.row(), 9)->setText(price->GetIsOutdated() ? "true" : "false");
-				emit itemModel->dataChanged(mIndex, mIndex);
-				
+
 				dialogBL->CommitTransaction(errorMessage);
-				delete product;
-				delete currency;
-				delete measure;
-				this->close();
+				
+				Close();
 			}
 			else
 			{
@@ -265,7 +288,7 @@ void CreatePrcDlg::EditPrice()
 		}
 		else
 		{
-			this->close();
+			Close();
 		}
 	}
 	else
@@ -279,7 +302,7 @@ void CreatePrcDlg::EditPrice()
 
 void CreatePrcDlg::Close()
 {
-	this->close();
+	this->parentWidget()->close();
 }
 
 void CreatePrcDlg::OpenPrdDlg()
@@ -287,8 +310,6 @@ void CreatePrcDlg::OpenPrdDlg()
 	this->hide();
 	this->setModal(false);
 	this->show();
-	DataForm *userParent = (DataForm *)parent();
-	MainForm *mainForm = (MainForm *)userParent->GetParent();
 	QString message = tr("Loading...");
 	mainForm->statusBar()->showMessage(message);
 	DataForm *dForm = new DataForm(dialogBL, mainForm);
@@ -298,18 +319,20 @@ void CreatePrcDlg::OpenPrdDlg()
 	dForm->FillTable<BusinessLayer::ProductView>(errorMessage);
 	if (errorMessage.empty())
 	{
-		dForm->createPrcDlg = this;
+		dForm->parentDialog = this;
 		dForm->setObjectName("productForm");
 		dForm->QtConnect<BusinessLayer::ProductView>();
 		QMdiSubWindow *productWindow = new QMdiSubWindow;
 		productWindow->setWidget(dForm);
 		productWindow->setAttribute(Qt::WA_DeleteOnClose);
 		mainForm->mdiArea->addSubWindow(productWindow);
+		productWindow->resize(dForm->size().width() + 18, dForm->size().height() + 30);
 		dForm->topLevelWidget();
 		dForm->activateWindow();
 		QApplication::setActiveWindow(dForm);
 		dForm->show();
 		dForm->raise();
+		dForm->setWindowFlags(dForm->windowFlags() | Qt::WindowStaysOnTopHint);
 		QString message = tr("All products are shown");
 		mainForm->statusBar()->showMessage(message);
 	}
@@ -334,5 +357,17 @@ void CreatePrcDlg::InitComboBox()
 		{
 			currencyCmb->addItem(curVector[i].GetShortName().c_str(), QVariant(curVector[i].GetID()));
 		}
+	}
+}
+
+void CreatePrcDlg::TextEditChanged()
+{
+	if (valueEdit->text().contains(","))
+	{
+		valueEdit->setText(valueEdit->text().replace(",", "."));
+	}
+	if (valueEdit->text().contains(".."))
+	{
+		valueEdit->setText(valueEdit->text().replace("..", "."));
 	}
 }

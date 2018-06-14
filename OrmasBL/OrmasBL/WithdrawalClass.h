@@ -52,10 +52,13 @@ namespace BusinessLayer{
 		bool IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string wDate, double wValue, int uID, int cID,
 			std::string& errorMessage);
 		bool IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string& errorMessage);
-		bool Credit(DataLayer::OrmasDal& ormasDal, int uID, int cID, std::string& errorMessage);
-		bool Credit(DataLayer::OrmasDal& ormasDal, int uID, int cID, double previousValue, std::string& errorMessage);
+		bool Payout(DataLayer::OrmasDal& ormasDal, int uID, int cID, std::string& errorMessage);
+		bool Payout(DataLayer::OrmasDal& ormasDal, int uID, int cID, double previousValue, std::string& errorMessage);
 		double GetCurrentValue(DataLayer::OrmasDal& ormasDal, int pID, std::string& errorMessage);
-		bool CancelCredit(DataLayer::OrmasDal& ormasDal, int uID, int cID, std::string& errorMessage);
+		bool CancelWithdrawal(DataLayer::OrmasDal& ormasDal, int sID, int cID, std::string& errorMessage);
+		bool CreateEntry(DataLayer::OrmasDal& ormasDal, int debAccID, double currentSum, int credAccID, std::string oExecDate, std::string& errorMessage);
+		bool CreateEntry(DataLayer::OrmasDal& ormasDal, int debAccID, double currentSum, int credAccID, double previousSum, std::string oExecDate, std::string& errorMessage);
+		bool CorrectingEntry(DataLayer::OrmasDal& ormasDal, int debAccID, double currentSum, int credAccID, std::string oExecDate, std::string& errorMessage);
 	};
 }
 

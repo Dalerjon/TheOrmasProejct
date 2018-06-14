@@ -2,6 +2,7 @@
 #define CREATEJBSDLG_H
 #include "ui_CreateJbsDlg.h"
 #include "OrmasBL.h"
+#include "MainForm.h"
 
 class CreateJbsDlg : public QDialog, public Ui::CreateJobsheet
 {
@@ -19,6 +20,7 @@ public:
 	void Close();
 	void OpenEmpDlg();
 	void OpenProdDlg();
+	void TextEditChanged();
 	public slots:
 	void SetID(int ID, QString childName);
 private:
@@ -27,6 +29,8 @@ private:
 	void FillEditElements(QString, double, int, int);
 	QDoubleValidator *vDouble = nullptr;
 	QIntValidator *vInt = nullptr;
+	QWidget* parentForm;
+	MainForm* mainForm;
 };
 
 #endif //CREATEJBSDLG_H

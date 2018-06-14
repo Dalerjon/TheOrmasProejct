@@ -14,12 +14,12 @@ namespace BusinessLayer
 		std::string date = "";
 		std::string executionDate = "";
 		int stockEmployeeID = 0;
-		int count = 0;
+		double count = 0;
 		double sum = 0;
 		int statusID = 0;
 		int currencyID = 0;
 	public:
-		Inventorization(int iID, int eID, std::string iDate, std::string iExecDate, int seID, int iCount, double iSum, int sID, int cID) :
+		Inventorization(int iID, int eID, std::string iDate, std::string iExecDate, int seID, double iCount, double iSum, int sID, int cID) :
 			id(iID), employeeID(eID), date(iDate), executionDate(iExecDate), stockEmployeeID(seID), count(iCount), sum(iSum),
 			statusID(sID), currencyID(cID){};
 		Inventorization(DataLayer::inventorizationsCollection);
@@ -32,7 +32,7 @@ namespace BusinessLayer
 		std::string GetDate();
 		std::string GetExecutionDate();
 		int GetStockEmployeeID();
-		int GetCount();
+		double GetCount();
 		double GetSum();
 		int GetStatusID();
 		int GetCurrencyID();
@@ -43,7 +43,7 @@ namespace BusinessLayer
 		void SetDate(std::string);
 		void SetExecutionDate(std::string);
 		void SetStockEmployeeID(int);
-		void SetCount(int);
+		void SetCount(double);
 		void SetSum(double);
 		void SetStatusID(int);
 		void SetCurrencyID(int);
@@ -53,9 +53,9 @@ namespace BusinessLayer
 		bool UpdateInventorization(DataLayer::OrmasDal& ormasDal, std::string& errorMessage);
 		bool DeleteInventorization(DataLayer::OrmasDal& ormasDal, std::string& errorMessage);
 		bool CreateInventorization(DataLayer::OrmasDal& ormasDal, int eID, std::string iDate, std::string iExecDate, int seID,
-			int iCount, double iSum, int sID, int cID, std::string& errorMessage);
+			double iCount, double iSum, int sID, int cID, std::string& errorMessage);
 		bool UpdateInventorization(DataLayer::OrmasDal& ormasDal, int eID, std::string iDate, std::string iExecDate, int seID, 
-			int iCount, double iSum, int sID, int cID, std::string& errorMessage);
+			double iCount, double iSum, int sID, int cID, std::string& errorMessage);
 
 		//Generate filter string for class
 		std::string GenerateFilter(DataLayer::OrmasDal& ormasDal);
@@ -63,7 +63,7 @@ namespace BusinessLayer
 		bool IsEmpty();
 		void Clear();
 	private:
-		bool IsDuplicate(DataLayer::OrmasDal& ormasDal, int eID, std::string iDate, int seID, int iCount, double iSum,
+		bool IsDuplicate(DataLayer::OrmasDal& ormasDal, int eID, std::string iDate, int seID, double iCount, double iSum,
 			int cID, std::string& errorMessage);
 		bool IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string& errorMessage);
 	};

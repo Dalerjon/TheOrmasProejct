@@ -2,6 +2,7 @@
 #define CREATEORDLISTDLG_H
 #include "ui_CreateOrdListDlg.h"
 #include "OrmasBL.h"
+#include "MainForm.h"
 
 class CreateOrdListDlg : public QDialog, public Ui::CreateOrdList
 {
@@ -21,14 +22,19 @@ public:
 	void OpenOrdDlg();
 	void OpenProdDlg();
 	void OpenStsDlg();
+	void TextEditChanged();
 	public slots:
 	void SetID(int ID, QString childName);
+signals:
+	void DataIsChanged();
 private:
 	BusinessLayer::OrderList *orderList = new BusinessLayer::OrderList();
-	void SetOrderListParams(int, int, int, double, int, int, int = 0);
-	void FillEditElements(int, int, int, double, int, int);
+	void SetOrderListParams(int, int, double, double, int, int, int = 0);
+	void FillEditElements(int, int, double, double, int, int);
 	QDoubleValidator *vDouble = nullptr;
 	QIntValidator *vInt = nullptr;
 	void InitComboBox();
+	QWidget* parentForm;
+	MainForm* mainForm;
 };
 #endif //CREATEORDLITDLG_H

@@ -3,6 +3,7 @@
 
 #include "ui_GenerateOneAccDlg.h"
 #include "OrmasBL.h"
+#include "MainForm.h"
 
 class GenerateOneAcc : public QDialog, public Ui::GenerateOneAccount
 {
@@ -22,9 +23,11 @@ public:
 	void CloseCreatedForms();
 private:
 	BusinessLayer::CompanyAccountRelation *caRelation = new BusinessLayer::CompanyAccountRelation();
-	BusinessLayer::Account *account = new BusinessLayer::Account();
+	BusinessLayer::Subaccount *subaccount = new BusinessLayer::Subaccount();
 	BusinessLayer::Status *status = new BusinessLayer::Status();
 	QIntValidator *vInt = nullptr;
 	void InitComboBox();
+	QWidget* parentForm;
+	MainForm* mainForm;
 };
 #endif

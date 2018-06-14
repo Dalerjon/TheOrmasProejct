@@ -2,6 +2,7 @@
 #define EXTRAFUNCTIONS_H
 #include "QTWidgets/QMdiSubWindow"
 #include <QString>
+#include <QTableView>
 
 inline QWidget* IsWindowExist(QList <QMdiSubWindow *> mList, QString formName)
 {

@@ -1,21 +1,23 @@
 #include "stdafx.h"
-#include <QMessageBox>
+
 #include "CreateConPListDlg.h"
-#include "MainForm.h"
 #include "DataForm.h"
-#include "ExtraFunctions.h"
+
 
 CreateConPListDlg::CreateConPListDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, QWidget *parent) :QDialog(parent)
 {
 	setupUi(this);
 	//setModal(true);
 	dialogBL = ormasBL;
+	parentForm = parent;
+	DataForm *dataFormParent = (DataForm *)this->parentForm;
+	mainForm = (MainForm *)dataFormParent->GetParent();
 	consumeProductID = ((DataForm*)parent)->consumeProductID;
 	vDouble = new QDoubleValidator(0.00, 1000000000.00, 3, this);
 	vInt = new QIntValidator(0, 1000000000, this);
 	productEdit->setValidator(vInt);
-	countEdit->setValidator(vInt);
-	countEdit->setMaxLength(10);
+	countEdit->setValidator(vDouble);
+	countEdit->setMaxLength(20);
 	consumeProductEdit->setValidator(vInt);
 	statusEdit->setValidator(vInt);
 	sumEdit->setValidator(vDouble);
@@ -38,6 +40,9 @@ CreateConPListDlg::CreateConPListDlg(BusinessLayer::OrmasBL *ormasBL, bool updat
 	QObject::connect(consumeProductBtn, &QPushButton::released, this, &CreateConPListDlg::OpenConPDlg);
 	QObject::connect(productBtn, &QPushButton::released, this, &CreateConPListDlg::OpenProdDlg);
 	QObject::connect(statusBtn, &QPushButton::released, this, &CreateConPListDlg::OpenStsDlg);
+	QObject::connect(this, SIGNAL(DataIsChanged()), ((DataForm*)parent), SLOT(OnRowsNumberChanged()));
+	QObject::connect(countEdit, &QLineEdit::textChanged, this, &CreateConPListDlg::TextEditChanged);
+	QObject::connect(sumEdit, &QLineEdit::textChanged, this, &CreateConPListDlg::TextEditChanged);
 	InitComboBox();
 }
 
@@ -53,6 +58,13 @@ void CreateConPListDlg::SetID(int ID, QString childName)
 	{
 		if (0 != childName.length())
 		{
+			this->hide();
+			this->setWindowFlags(this->windowFlags() | Qt::WindowStaysOnTopHint);
+			this->show();
+			this->raise();
+			this->activateWindow();
+			QApplication::setActiveWindow(this);
+
 			if (childName == QString("productForm"))
 			{
 				productEdit->setText(QString::number(ID));
@@ -85,7 +97,7 @@ void CreateConPListDlg::SetID(int ID, QString childName)
 	}
 }
 
-void CreateConPListDlg::SetConPListParams(int cConsumeProductID, int cProductID, int cCount, double cSum, int cStatusID, int cCurrencyID, int id)
+void CreateConPListDlg::SetConPListParams(int cConsumeProductID, int cProductID, double cCount, double cSum, int cStatusID, int cCurrencyID, int id)
 {
 	consumeProductList->SetConsumeProductID(cConsumeProductID);
 	consumeProductList->SetProductID(cProductID);
@@ -96,7 +108,7 @@ void CreateConPListDlg::SetConPListParams(int cConsumeProductID, int cProductID,
 	consumeProductList->SetID(id);
 }
 
-void CreateConPListDlg::FillEditElements(int cConsumeProductID, int cProductID, int cCount, double cSum, int cStatusID, int cCurrencyID)
+void CreateConPListDlg::FillEditElements(int cConsumeProductID, int cProductID, double cCount, double cSum, int cStatusID, int cCurrencyID)
 {
 	consumeProductEdit->setText(QString::number(cConsumeProductID));
 	productEdit->setText(QString::number(cProductID));
@@ -151,9 +163,9 @@ bool CreateConPListDlg::FillDlgElements(QTableView* oTable)
 void CreateConPListDlg::AddProductToList()
 {
 	errorMessage.clear();
-	if (0 != productEdit->text().toInt() || 0 != countEdit->text().toInt())
+	if (0 != productEdit->text().toInt() || 0 != countEdit->text().toDouble())
 	{
-		DataForm *parentDataForm = (DataForm*)parentWidget();
+		DataForm *parentDataForm = (DataForm*) parentForm;
 		BusinessLayer::Status *status = new BusinessLayer::Status();
 		status->SetName("CONSUMED");
 		std::string statusFilter = dialogBL->GenerateFilter<BusinessLayer::Status>(status);
@@ -176,6 +188,7 @@ void CreateConPListDlg::AddProductToList()
 
 		BusinessLayer::Currency *currency = new BusinessLayer::Currency();
 		BusinessLayer::Currency *sumCurrency = new BusinessLayer::Currency();
+		BusinessLayer::NetCost *nCost = new BusinessLayer::NetCost();
 
 		if (!product->GetProductByID(dialogBL->GetOrmasDal(), productEdit->text().toInt(), errorMessage))
 		{
@@ -186,13 +199,15 @@ void CreateConPListDlg::AddProductToList()
 			delete product;
 			delete measure;
 			delete currency;
+			delete nCost;
 			return;
 		}
 		else
 		{
 			if (!measure->GetMeasureByID(dialogBL->GetOrmasDal(), product->GetMeasureID(), errorMessage)
 				|| !currency->GetCurrencyByID(dialogBL->GetOrmasDal(), product->GetCurrencyID(), errorMessage)
-				|| !sumCurrency->GetCurrencyByID(dialogBL->GetOrmasDal(), consumeProductList->GetCurrencyID(), errorMessage))
+				|| !sumCurrency->GetCurrencyByID(dialogBL->GetOrmasDal(), consumeProductList->GetCurrencyID(), errorMessage)
+				|| !nCost->GetNetCostByProductID(dialogBL->GetOrmasDal(), product->GetID(), errorMessage))
 			{
 				QMessageBox::information(NULL, QString(tr("Warning")),
 					QString(tr(errorMessage.c_str())),
@@ -201,45 +216,52 @@ void CreateConPListDlg::AddProductToList()
 				delete product;
 				delete measure;
 				delete currency;
+				delete nCost;
 				return;
 			}
 		}
 
 		SetConPListParams(consumeProductID, productEdit->text().toInt(),
-			countEdit->text().toInt(), (countEdit->text().toInt() * product->GetPrice()),
+			countEdit->text().toDouble(), (countEdit->text().toDouble() * nCost->GetValue()),
 			statusVector.at(0).GetID(), product->GetCurrencyID());
 
 		if (dialogBL->CreateConsumeProductList(consumeProductList, errorMessage))
 		{
-			QList<QStandardItem*> productListItem;
-			productListItem << new QStandardItem(QString::number(consumeProductList->GetID()));
-			if (0 != consumeProductID)
+			if (parentDataForm != nullptr)
 			{
-				productListItem << new QStandardItem(QString::number(consumeProductID));
+				if (!parentDataForm->IsClosed())
+				{
+					QList<QStandardItem*> productListItem;
+					productListItem << new QStandardItem(QString::number(consumeProductList->GetID()));
+					if (0 != consumeProductID)
+					{
+						productListItem << new QStandardItem(QString::number(consumeProductID));
+					}
+					else
+					{
+						productListItem << new QStandardItem(QString::number(0));
+					}
+					productListItem << new QStandardItem(product->GetName().c_str())
+						<< new QStandardItem(QString::number(product->GetPrice()))
+						<< new QStandardItem(currency->GetShortName().c_str())
+						<< new QStandardItem(QString::number(product->GetVolume()))
+						<< new QStandardItem(measure->GetName().c_str())
+						<< new QStandardItem(QString::number(consumeProductList->GetCount()))
+						<< new QStandardItem(QString::number(consumeProductList->GetSum()))
+						<< new QStandardItem(sumCurrency->GetShortName().c_str())
+						<< new QStandardItem(statusVector.at(0).GetName().c_str())
+						<< new QStandardItem(QString::number(consumeProductList->GetProductID()))
+						<< new QStandardItem(QString::number(consumeProductList->GetStatusID()))
+						<< new QStandardItem(QString::number(consumeProductList->GetCurrencyID()));
+					QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
+					itemModel->appendRow(productListItem);
+				}
 			}
-			else
-			{
-				productListItem << new QStandardItem(QString::number(0));
-			}
-			productListItem << new QStandardItem(product->GetName().c_str())
-				<< new QStandardItem(QString::number(product->GetPrice()))
-				<< new QStandardItem(currency->GetShortName().c_str())
-				<< new QStandardItem(QString::number(product->GetVolume()))
-				<< new QStandardItem(measure->GetName().c_str())
-				<< new QStandardItem(QString::number(consumeProductList->GetCount()))
-				<< new QStandardItem(QString::number(consumeProductList->GetSum()))
-				<< new QStandardItem(sumCurrency->GetShortName().c_str())
-				<< new QStandardItem(statusVector.at(0).GetName().c_str())
-				<< new QStandardItem(QString::number(consumeProductList->GetProductID()))
-				<< new QStandardItem(QString::number(consumeProductList->GetStatusID()))
-				<< new QStandardItem(QString::number(consumeProductList->GetCurrencyID()));
-			QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
-			itemModel->appendRow(productListItem);
-
 			delete measure;
 			delete product;
 			delete currency;
-			this->close();
+			delete nCost;
+			Close();
 		}
 		else
 		{
@@ -260,10 +282,10 @@ void CreateConPListDlg::AddProductToList()
 void CreateConPListDlg::EditProductInList()
 {
 	errorMessage.clear();
-	if (0 != productEdit->text().toInt() || 0 != countEdit->text().toInt())
+	if (0 != productEdit->text().toInt() || 0 != countEdit->text().toDouble())
 	{
-		if (productEdit->text().toInt() != consumeProductList->GetProductID() || countEdit->text().toInt() != consumeProductList->GetCount()
-			|| consumeProductEdit->text().toInt() != consumeProductList->GetConsumeProductID() || sumEdit->text().toInt() != consumeProductList->GetSum()
+		if (productEdit->text().toInt() != consumeProductList->GetProductID() || countEdit->text().toDouble() != consumeProductList->GetCount()
+			|| consumeProductEdit->text().toInt() != consumeProductList->GetConsumeProductID() || sumEdit->text().toDouble() != consumeProductList->GetSum()
 			|| statusEdit->text().toInt() != consumeProductList->GetStatusID() || currencyCmb->currentData().toInt() != consumeProductList->GetCurrencyID())
 		{
 			BusinessLayer::Product *product = new BusinessLayer::Product();
@@ -276,58 +298,79 @@ void CreateConPListDlg::EditProductInList()
 				delete product;
 				return;
 			}
-			if (countEdit->text().toInt() != consumeProductList->GetCount())
+			BusinessLayer::NetCost *nCost = new BusinessLayer::NetCost();
+			if (!nCost->GetNetCostByProductID(dialogBL->GetOrmasDal(), product->GetID(), errorMessage))
 			{
-				sumEdit->setText(QString::number(countEdit->text().toInt() * product->GetPrice()));
+				QMessageBox::information(NULL, QString(tr("Warning")),
+					QString(tr(errorMessage.c_str())),
+					QString(tr("Ok")));
+				errorMessage.clear();
+				delete product;
+				delete nCost;
+				return;
 			}
-			DataForm *parentDataForm = (DataForm*)parentWidget();
+			if (countEdit->text().toDouble() != consumeProductList->GetCount())
+			{
+				sumEdit->setText(QString::number(countEdit->text().toDouble() * nCost->GetValue()));
+			}
+			DataForm *parentDataForm = (DataForm*) parentForm;
 			SetConPListParams(consumeProductEdit->text().toInt(),
-				productEdit->text().toInt(), countEdit->text().toInt(), sumEdit->text().toDouble(), statusEdit->text().toInt(),
+				productEdit->text().toInt(), countEdit->text().toDouble(), sumEdit->text().toDouble(), statusEdit->text().toInt(),
 				consumeProductList->GetCurrencyID(), consumeProductList->GetID());
 			if (dialogBL->UpdateConsumeProductList(consumeProductList, errorMessage))
 			{
-				BusinessLayer::Measure *measure = new BusinessLayer::Measure();
-				BusinessLayer::Status *status = new BusinessLayer::Status();
-				BusinessLayer::Currency *currency = new BusinessLayer::Currency();
-				BusinessLayer::Currency *sumCurrency = new BusinessLayer::Currency();
-				if (!measure->GetMeasureByID(dialogBL->GetOrmasDal(), product->GetMeasureID(), errorMessage)
-					|| !currency->GetCurrencyByID(dialogBL->GetOrmasDal(), product->GetCurrencyID(), errorMessage)
-					|| !sumCurrency->GetCurrencyByID(dialogBL->GetOrmasDal(), currencyCmb->currentData().toInt(), errorMessage)
-					|| !status->GetStatusByID(dialogBL->GetOrmasDal(), statusEdit->text().toInt(), errorMessage))
+				if (parentDataForm != nullptr)
 				{
-					QMessageBox::information(NULL, QString(tr("Warning")),
-						QString(tr(errorMessage.c_str())),
-						QString(tr("Ok")));
-					errorMessage.clear();
-					delete product;
-					delete measure;
-					delete status;
-					delete currency;
-					return;
+					if (!parentDataForm->IsClosed())
+					{
+						BusinessLayer::Measure *measure = new BusinessLayer::Measure();
+						BusinessLayer::Status *status = new BusinessLayer::Status();
+						BusinessLayer::Currency *currency = new BusinessLayer::Currency();
+						BusinessLayer::Currency *sumCurrency = new BusinessLayer::Currency();
+						if (!measure->GetMeasureByID(dialogBL->GetOrmasDal(), product->GetMeasureID(), errorMessage)
+							|| !currency->GetCurrencyByID(dialogBL->GetOrmasDal(), product->GetCurrencyID(), errorMessage)
+							|| !sumCurrency->GetCurrencyByID(dialogBL->GetOrmasDal(), currencyCmb->currentData().toInt(), errorMessage)
+							|| !status->GetStatusByID(dialogBL->GetOrmasDal(), statusEdit->text().toInt(), errorMessage))
+						{
+							QMessageBox::information(NULL, QString(tr("Warning")),
+								QString(tr(errorMessage.c_str())),
+								QString(tr("Ok")));
+							errorMessage.clear();
+							delete product;
+							delete measure;
+							delete status;
+							delete currency;
+							delete nCost;
+							return;
+						}
+
+						QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
+						QModelIndex mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
+						itemModel->item(mIndex.row(), 1)->setText(QString::number(consumeProductList->GetConsumeProductID()));
+						itemModel->item(mIndex.row(), 2)->setText(product->GetName().c_str());
+						itemModel->item(mIndex.row(), 3)->setText(QString::number(product->GetPrice()));
+						itemModel->item(mIndex.row(), 4)->setText(currency->GetShortName().c_str());
+						itemModel->item(mIndex.row(), 5)->setText(QString::number(product->GetVolume()));
+						itemModel->item(mIndex.row(), 6)->setText(measure->GetName().c_str());
+						itemModel->item(mIndex.row(), 7)->setText(QString::number(consumeProductList->GetCount()));
+						itemModel->item(mIndex.row(), 8)->setText(QString::number(consumeProductList->GetSum()));
+						itemModel->item(mIndex.row(), 9)->setText(sumCurrency->GetShortName().c_str());
+						itemModel->item(mIndex.row(), 10)->setText(status->GetName().c_str());
+						itemModel->item(mIndex.row(), 11)->setText(QString::number(consumeProductList->GetStatusID()));
+						itemModel->item(mIndex.row(), 12)->setText(QString::number(product->GetMeasureID()));
+						itemModel->item(mIndex.row(), 13)->setText(QString::number(consumeProductList->GetCurrencyID()));
+
+						emit itemModel->dataChanged(mIndex, mIndex);
+						emit DataIsChanged();
+						delete measure;
+						delete status;
+						delete currency;
+					}
 				}
-
-				QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
-				QModelIndex mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
-				itemModel->item(mIndex.row(), 1)->setText(QString::number(consumeProductList->GetConsumeProductID()));
-				itemModel->item(mIndex.row(), 2)->setText(product->GetName().c_str());
-				itemModel->item(mIndex.row(), 3)->setText(QString::number(product->GetPrice()));
-				itemModel->item(mIndex.row(), 4)->setText(currency->GetShortName().c_str());
-				itemModel->item(mIndex.row(), 5)->setText(QString::number(product->GetVolume()));
-				itemModel->item(mIndex.row(), 6)->setText(measure->GetName().c_str());
-				itemModel->item(mIndex.row(), 7)->setText(QString::number(consumeProductList->GetCount()));
-				itemModel->item(mIndex.row(), 8)->setText(QString::number(consumeProductList->GetSum()));
-				itemModel->item(mIndex.row(), 9)->setText(sumCurrency->GetShortName().c_str());
-				itemModel->item(mIndex.row(), 10)->setText(status->GetName().c_str());
-				itemModel->item(mIndex.row(), 11)->setText(QString::number(consumeProductList->GetStatusID()));
-				itemModel->item(mIndex.row(), 12)->setText(QString::number(product->GetMeasureID()));
-				itemModel->item(mIndex.row(), 13)->setText(QString::number(consumeProductList->GetCurrencyID()));
-
-				emit itemModel->dataChanged(mIndex, mIndex);
-				this->close();
 				delete product;
-				delete measure;
-				delete status;
-				delete currency;
+			
+				delete nCost;
+				Close();
 			}
 			else
 			{
@@ -338,7 +381,7 @@ void CreateConPListDlg::EditProductInList()
 		}
 		else
 		{
-			this->close();
+			Close();
 		}
 	}
 	else
@@ -352,7 +395,7 @@ void CreateConPListDlg::EditProductInList()
 
 void CreateConPListDlg::Close()
 {
-	this->close();
+	this->parentWidget()->close();
 }
 
 void CreateConPListDlg::OpenStsDlg()
@@ -360,8 +403,6 @@ void CreateConPListDlg::OpenStsDlg()
 	this->hide();
 	this->setModal(false);
 	this->show();
-	DataForm *productParent = (DataForm *)parent();
-	MainForm *mainForm = (MainForm *)productParent->GetParent();
 	QString message = tr("Loading...");
 	mainForm->statusBar()->showMessage(message);
 	DataForm *dForm = new DataForm(dialogBL, mainForm);
@@ -371,18 +412,20 @@ void CreateConPListDlg::OpenStsDlg()
 	dForm->FillTable<BusinessLayer::Status>(errorMessage);
 	if (errorMessage.empty())
 	{
-		dForm->createConPListDlg = this;
+		dForm->parentDialog = this;
 		dForm->setObjectName("statusForm");
 		dForm->QtConnect<BusinessLayer::Measure>();
 		QMdiSubWindow *statusWindow = new QMdiSubWindow;
 		statusWindow->setWidget(dForm);
 		statusWindow->setAttribute(Qt::WA_DeleteOnClose);
 		mainForm->mdiArea->addSubWindow(statusWindow);
+		statusWindow->resize(dForm->size().width() + 18, dForm->size().height() + 30);
 		dForm->topLevelWidget();
 		dForm->activateWindow();
 		QApplication::setActiveWindow(dForm);
 		dForm->show();
 		dForm->raise();
+		dForm->setWindowFlags(dForm->windowFlags() | Qt::WindowStaysOnTopHint);
 		QString message = tr("All measures are shown");
 		mainForm->statusBar()->showMessage(message);
 	}
@@ -404,29 +447,62 @@ void CreateConPListDlg::OpenProdDlg()
 	this->hide();
 	this->setModal(false);
 	this->show();
-	DataForm *productParent = (DataForm *)parent();
-	MainForm *mainForm = (MainForm *)productParent->GetParent();
 	QString message = tr("Loading...");
 	mainForm->statusBar()->showMessage(message);
 	DataForm *dForm = new DataForm(dialogBL, mainForm);
 	dForm->setWindowTitle(tr("Products"));
 	dForm->hide();
 	dForm->setWindowModality(Qt::WindowModal);
-	dForm->FillTable<BusinessLayer::ProductView>(errorMessage);
+
+	BusinessLayer::ProductType *pType = new BusinessLayer::ProductType();
+	pType->SetCode("PRODUCT");
+	std::string pTypeFilter = dialogBL->GenerateFilter<BusinessLayer::ProductType>(pType);
+	std::vector<BusinessLayer::ProductType> pTypeVector = dialogBL->GetAllDataForClass<BusinessLayer::ProductType>(errorMessage, pTypeFilter);
+	if (pTypeVector.size() == 0)
+	{
+		delete pType;
+		QString message = tr("Sorry could not find product type with \"Product\" code!");
+		mainForm->statusBar()->showMessage(message);
+		QMessageBox::information(NULL, QString(tr("Warning")),
+			QString(message),
+			QString(tr("Ok")));
+		errorMessage = "";
+		return;
+	}
+
+	BusinessLayer::Product *product = new BusinessLayer::Product();
+	product->SetProductTypeID(pTypeVector.at(0).GetID());
+	std::string productFilter = dialogBL->GenerateFilter<BusinessLayer::Product>(product);
+	std::vector<BusinessLayer::ProductView> productVector = dialogBL->GetAllDataForClass<BusinessLayer::ProductView>(errorMessage, productFilter);
+	if (productVector.size() == 0)
+	{
+		delete product;
+		QString message = tr("Sorry could not find product with \"Product\" code!");
+		mainForm->statusBar()->showMessage(message);
+		QMessageBox::information(NULL, QString(tr("Warning")),
+			QString(message),
+			QString(tr("Ok")));
+		errorMessage = "";
+		return;
+	}
+
+	dForm->FillTable<BusinessLayer::ProductView>(errorMessage, productFilter);
 	if (errorMessage.empty())
 	{
-		dForm->createConPListDlg = this;
+		dForm->parentDialog = this;
 		dForm->setObjectName("productForm");
 		dForm->QtConnect<BusinessLayer::ProductView>();
 		QMdiSubWindow *productWindow = new QMdiSubWindow;
 		productWindow->setWidget(dForm);
 		productWindow->setAttribute(Qt::WA_DeleteOnClose);
 		mainForm->mdiArea->addSubWindow(productWindow);
+		productWindow->resize(dForm->size().width() + 18, dForm->size().height() + 30);
 		dForm->topLevelWidget();
 		dForm->activateWindow();
 		QApplication::setActiveWindow(dForm);
 		dForm->show();
 		dForm->raise();
+		dForm->setWindowFlags(dForm->windowFlags() | Qt::WindowStaysOnTopHint);
 		QString message = tr("All products are shown");
 		mainForm->statusBar()->showMessage(message);
 	}
@@ -449,8 +525,6 @@ void CreateConPListDlg::OpenConPDlg()
 	this->hide();
 	this->setModal(false);
 	this->show();
-	DataForm *productParent = (DataForm *)parent();
-	MainForm *mainForm = (MainForm *)productParent->GetParent();
 	QString message = tr("Loading...");
 	mainForm->statusBar()->showMessage(message);
 	DataForm *dForm = new DataForm(dialogBL, mainForm);
@@ -460,18 +534,20 @@ void CreateConPListDlg::OpenConPDlg()
 	dForm->FillTable<BusinessLayer::ConsumeProductView>(errorMessage);
 	if (errorMessage.empty())
 	{
-		dForm->createConPListDlg = this;
+		dForm->parentDialog = this;
 		dForm->setObjectName("consumeProductForm");
 		dForm->QtConnect<BusinessLayer::ConsumeProductView>();
 		QMdiSubWindow *consumeProductWindow = new QMdiSubWindow;
 		consumeProductWindow->setWidget(dForm);
 		consumeProductWindow->setAttribute(Qt::WA_DeleteOnClose);
 		mainForm->mdiArea->addSubWindow(consumeProductWindow);
+		consumeProductWindow->resize(dForm->size().width() + 18, dForm->size().height() + 30);
 		dForm->topLevelWidget();
 		dForm->activateWindow();
 		QApplication::setActiveWindow(dForm);
 		dForm->show();
 		dForm->raise();
+		dForm->setWindowFlags(dForm->windowFlags() | Qt::WindowStaysOnTopHint);
 		QString message = tr("All consume products are shown");
 		mainForm->statusBar()->showMessage(message);
 	}
@@ -497,5 +573,25 @@ void CreateConPListDlg::InitComboBox()
 		{
 			currencyCmb->addItem(curVector[i].GetShortName().c_str(), QVariant(curVector[i].GetID()));
 		}
+	}
+}
+
+void CreateConPListDlg::TextEditChanged()
+{
+	if (countEdit->text().contains(","))
+	{
+		countEdit->setText(countEdit->text().replace(",", "."));
+	}
+	if (countEdit->text().contains(".."))
+	{
+		countEdit->setText(countEdit->text().replace("..", "."));
+	}
+	if (sumEdit->text().contains(","))
+	{
+		sumEdit->setText(sumEdit->text().replace(",", "."));
+	}
+	if (sumEdit->text().contains(".."))
+	{
+		sumEdit->setText(sumEdit->text().replace("..", "."));
 	}
 }

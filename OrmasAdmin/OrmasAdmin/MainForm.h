@@ -3,10 +3,6 @@
 
 #include "ui_MainForm.h"
 #include "OrmasBL.h"
-#include "DataForm.h"
-#include "ClcWagesDlg.h"
-#include "GenerateAccDlg.h"
-#include "GenerateOneAccDlg.h"
 
 class MainForm : public QMainWindow, public Ui::MainWindow
 {
@@ -17,6 +13,7 @@ public:
 	~MainForm();
 	BusinessLayer::OrmasBL *oBL;
 	QMdiSubWindow* GetWindowByName(QString);
+	BusinessLayer::User* GetLoggedUser();
 	std::string errorMessage = "";
 	std::vector<int> rights;
 private slots :
@@ -24,6 +21,7 @@ private slots :
 	void OpenClientForm();
 	void OpenEmployeeForm();
 	void OpenPurveyorForm();
+	void OpenCompanyEmployeeForm();
 	void OpenAccessForm();
 	void OpenAccessItemForm();
 	void OpenUserPhotoForm(); 
@@ -34,6 +32,8 @@ private slots :
 	void OpenProductPhotoForm();
 	void OpenSpecificationForm();
 	void OpenSpecificationListForm();
+	void OpenPriceForm();
+	void OpenNetCostForm();
 
 	void OpenOrderForm();	
 	void OpenOrderListForm();
@@ -43,35 +43,39 @@ private slots :
 
 	void OpenProductionForm();
 	void OpenProductionListForm();
+	void OpenProductionStockForm();
+	void OpenProductionConsumeRawForm();
+	void OpenProductionPlanForm();
+	void OpenProductionPlanListForm();
 	void OpenJobpriceForm();
 	void OpenJobsheetForm();
 	void OpenPercentRateForm();
 	void OpenTimesheetForm();
-	void OpenProductionPlanForm();
-	void OpenProductionPlanListForm();
 	void OpenSpoilageForm();
 	void OpenSpoilageListForm();
+	void ReworkRawForm();
 
 	void OpenWriteOffForm();
 	void OpenWriteOffListForm();
 
 	void OpenBalanceForm();
-	void OpenPaymentForm();
-	void OpenRefundForm();
-	void OpenPriceForm();
-	void OpenNetCostForm();
+	void OpenAccountForm();
+	void OpenSubaccountForm();
+	void GenerateAccountsForm();
+	void GenerateOneAccountForm();	
 	void OpenSalaryForm();
 	void OpenSalaryTypeForm();
 	void OpenPayrollForm();
-	void OpenWithdrawalForm();
-	void OpenPayslipForm();
-	void OpenAccountForm();
 	void OpenAccountTypeForm();
 	void OpenChartOfAccountsForm();
 	void OpenCompanyAccountForm();
 	void OpenEntryForm();
-	void GenerateAccountsForm();
-	void GenerateOneAccountForm();
+	void OpenEntryRoutingForm();
+	
+	void OpenPaymentForm();
+	void OpenRefundForm();
+	void OpenWithdrawalForm();
+	void OpenPayslipForm();
 
 	void OpenStockForm();
 	void OpenOrderRawForm();
@@ -83,12 +87,15 @@ private slots :
 	void OpenConsumeProductForm();
 	void OpenInventorizationForm();
 
+	void CompanyBalanceInfo();
+
 	void OpenCompanyForm();
 	void OpenCurrencyForm();
 	void OpenMeasureForm();
 	void OpenLocationForm();
 	void OpenRoleForm();
 	void OpenStatusForm();
+	void OpenStatusRuleForm();
 	void OpenRelationForm();
 	void OpenRelationTypeForm();
 	

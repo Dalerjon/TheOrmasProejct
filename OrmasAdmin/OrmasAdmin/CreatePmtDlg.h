@@ -2,6 +2,7 @@
 #define CREATEPMTDLG_H
 #include "ui_CreatePmtDlg.h"
 #include "OrmasBL.h"
+#include "MainForm.h"
 
 class CreatePmtDlg : public QDialog, public Ui::CreatePayment
 {
@@ -16,6 +17,7 @@ public:
 	void CreatePayment();
 	void EditPayment();
 	void DeletePayment(){};
+	void TextEditChanged();
 	void Close();
 	void OpenUserDlg();
 	public slots:
@@ -27,6 +29,8 @@ private:
 	QDoubleValidator *vDouble = nullptr;
 	QIntValidator *vInt = nullptr;
 	void InitComboBox();
+	QWidget* parentForm;
+	MainForm* mainForm;
 };
 
 #endif //CREATEPMTDLG_H

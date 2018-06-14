@@ -3,6 +3,10 @@
 #include "UserClass.h"
 #include "BalanceClass.h"
 #include "BalanceWithdrawalRelationClass.h"
+#include "EntryClass.h"
+#include "CompanyAccountRelationClass.h"
+#include "CompanyEmployeeRelationClass.h"
+#include "CompanyClass.h"
 
 namespace BusinessLayer{
 	Withdrawal::Withdrawal(DataLayer::withdrawalsCollection wCollection)
@@ -82,7 +86,7 @@ namespace BusinessLayer{
 		ormasDal.StartTransaction(errorMessage);
 		if (0 != id && ormasDal.CreateWithdrawal(id, date, value, userID, currencyID, errorMessage))
 		{
-			if (Credit(ormasDal, userID, currencyID, errorMessage))
+			if (Payout(ormasDal, userID, currencyID, errorMessage))
 			{
 				ormasDal.CommitTransaction(errorMessage);
 				return true;
@@ -103,7 +107,7 @@ namespace BusinessLayer{
 		ormasDal.StartTransaction(errorMessage);
 		if (0 != id && ormasDal.CreateWithdrawal(id, date, value, userID, currencyID, errorMessage))
 		{
-			if (Credit(ormasDal, userID, currencyID, errorMessage))
+			if (Payout(ormasDal, userID, currencyID, errorMessage))
 			{
 				ormasDal.CommitTransaction(errorMessage);
 				return true;
@@ -122,7 +126,7 @@ namespace BusinessLayer{
 			return false;
 		if (ormasDal.DeleteWithdrawal(id, errorMessage))
 		{
-			if (CancelCredit(ormasDal, userID, currencyID, errorMessage))
+			if (CancelWithdrawal(ormasDal, userID, currencyID, errorMessage))
 			{
 				Clear();
 				return true;
@@ -146,7 +150,7 @@ namespace BusinessLayer{
 		ormasDal.StartTransaction(errorMessage);
 		if (0 != id && ormasDal.UpdateWithdrawal(id, date, value, userID, currencyID, errorMessage))
 		{
-			if (Credit(ormasDal, userID, currencyID, currentValue, errorMessage))
+			if (Payout(ormasDal, userID, currencyID, currentValue, errorMessage))
 			{
 				ormasDal.CommitTransaction(errorMessage);
 				currentValue = 0.0;
@@ -166,7 +170,7 @@ namespace BusinessLayer{
 		ormasDal.StartTransaction(errorMessage);
 		if (0 != id && ormasDal.UpdateWithdrawal(id, date, value, userID, currencyID, errorMessage))
 		{
-			if (Credit(ormasDal, userID, currencyID, currentValue, errorMessage))
+			if (Payout(ormasDal, userID, currencyID, currentValue, errorMessage))
 			{
 				ormasDal.CommitTransaction(errorMessage);
 				currentValue = 0.0;
@@ -266,40 +270,51 @@ namespace BusinessLayer{
 		return true;
 	}
 
-	bool Withdrawal::Credit(DataLayer::OrmasDal& ormasDal, int uID, int cID, std::string& errorMessage)
+	bool Withdrawal::Payout(DataLayer::OrmasDal& ormasDal, int uID, int cID, std::string& errorMessage)
 	{
-		User user;
-		user.SetID(uID);
-		int balanceID = user.GetUserAccoutID(ormasDal, cID, errorMessage);
-		if (0 != balanceID && errorMessage.empty())
+		CompanyAccountRelation cAccRel;
+		CompanyEmployeeRelation cEmpRel;
+		Balance balance;
+		Company company;
+		if (balance.GetBalanceByUserID(ormasDal, uID, errorMessage))
 		{
-			BalanceWithdrawalRelation bwRelation;
-			Balance balance;
-			if (balance.GetBalanceByID(ormasDal, balanceID, errorMessage))
+			int debAccID = balance.GetSubaccountID();
+			int companyID = company.GetCompanyID(ormasDal, errorMessage);
+			int credAccID = cAccRel.GetAccountIDByCompanyID(ormasDal, companyID, "10110", errorMessage);
+			if (0 == debAccID || 0 == credAccID || 0 == companyID)
 			{
-				bwRelation.SetBalanceID(balanceID);
-				bwRelation.SetWithdrawalID(id);
-				//balance.SetValue(balance.GetValue() - value);
-				if (balance.UpdateBalance(ormasDal, errorMessage) && bwRelation.CreateBalanceWithdrawalRelation(ormasDal, errorMessage))
+				return false;
+			}
+			if (this->CreateEntry(ormasDal, debAccID, value, credAccID, ormasDal.GetSystemDateTime(), errorMessage))
+			{
+				BalanceWithdrawalRelation bwRelation;
+				bwRelation.SetBalanceID(balance.GetID());
+				bwRelation.SetWithdrawalID(this->id);
+				if (bwRelation.CreateBalanceWithdrawalRelation(ormasDal, errorMessage))
 					return true;
 			}
 		}
 		return false;
 	}
 
-	bool Withdrawal::Credit(DataLayer::OrmasDal& ormasDal, int uID, int cID, double currentValue, std::string& errorMessage)
+	bool Withdrawal::Payout(DataLayer::OrmasDal& ormasDal, int uID, int cID, double previousValue, std::string& errorMessage)
 	{
-		User user;
-		user.SetID(uID);
-		int balanceID = user.GetUserAccoutID(ormasDal, cID, errorMessage);
-		if (0 != balanceID && errorMessage.empty())
+		CompanyAccountRelation cAccRel;
+		CompanyEmployeeRelation cEmpRel;
+		Balance balance;
+		Company company;
+		if (balance.GetBalanceByUserID(ormasDal, uID, errorMessage))
 		{
-			Balance balance;
-			if (balance.GetBalanceByID(ormasDal, balanceID, errorMessage))
+			int debAccID = balance.GetSubaccountID();
+			int companyID = company.GetCompanyID(ormasDal, errorMessage);
+			int credAccID = cAccRel.GetAccountIDByCompanyID(ormasDal, companyID, "10110", errorMessage);
+			if (0 == debAccID || 0 == credAccID || 0 == companyID)
 			{
-				//balance.SetValue(balance.GetValue() - (value - currentValue));
-				if(balance.UpdateBalance(ormasDal, errorMessage))
-					return true;
+				return false;
+			}
+			if (this->CreateEntry(ormasDal, debAccID, value, credAccID, previousValue, ormasDal.GetSystemDateTime(), errorMessage))
+			{
+				return true;
 			}
 		}
 		return false;
@@ -307,30 +322,85 @@ namespace BusinessLayer{
 
 	double Withdrawal::GetCurrentValue(DataLayer::OrmasDal& ormasDal, int pID, std::string& errorMessage)
 	{
-		Withdrawal withdrawal;
-		if (withdrawal.GetWithdrawalByID(ormasDal, pID, errorMessage))
-			return withdrawal.GetValue();
+		Withdrawal payslip;
+		if (payslip.GetWithdrawalByID(ormasDal, pID, errorMessage))
+			return payslip.GetValue();
 		return 0;
 	}
 
-	bool Withdrawal::CancelCredit(DataLayer::OrmasDal& ormasDal, int uID, int cID, std::string& errorMessage)
+	bool Withdrawal::CancelWithdrawal(DataLayer::OrmasDal& ormasDal, int uID, int cID, std::string& errorMessage)
 	{
-		User user;
-		user.SetID(uID);
-		int balanceID = user.GetUserAccoutID(ormasDal, cID, errorMessage);
-		if (0 != balanceID && errorMessage.empty())
+		CompanyAccountRelation cAccRel;
+		CompanyEmployeeRelation cEmpRel;
+		Balance balance;
+		Company company;
+		if (balance.GetBalanceByUserID(ormasDal, uID, errorMessage))
 		{
-			BalanceWithdrawalRelation bwRelation;
-			Balance balance;
-			if (balance.GetBalanceByID(ormasDal, balanceID, errorMessage))
+			int debAccID = balance.GetSubaccountID();
+			int companyID = company.GetCompanyID(ormasDal, errorMessage);
+			int credAccID = cAccRel.GetAccountIDByCompanyID(ormasDal, companyID, "10110", errorMessage);
+			if (0 == debAccID || 0 == credAccID || 0 == companyID)
 			{
-				bwRelation.SetBalanceID(balanceID);
-				bwRelation.SetWithdrawalID(id);
-				//balance.SetValue(balance.GetValue() + value);
-				if (balance.UpdateBalance(ormasDal, errorMessage) && bwRelation.DeleteBalanceWithdrawalRelation(ormasDal, errorMessage))
+				return false;
+			}
+			if (this->CorrectingEntry(ormasDal, credAccID, value, debAccID, ormasDal.GetSystemDateTime(), errorMessage))
+			{
+				BalanceWithdrawalRelation bwRelation;
+				bwRelation.SetBalanceID(balance.GetID());
+				bwRelation.SetWithdrawalID(this->id);
+				if (bwRelation.DeleteBalanceWithdrawalRelation(ormasDal, errorMessage))
 					return true;
 			}
 		}
 		return false;
+	}
+
+	bool Withdrawal::CreateEntry(DataLayer::OrmasDal& ormasDal, int debAccID, double currentSum, int credAccID, std::string oExecDate, std::string& errorMessage)
+	{
+		Entry entry;
+		entry.SetDate(oExecDate);
+		entry.SetDebitingAccountID(debAccID);
+		entry.SetValue(currentSum);
+		entry.SetCreditingAccountID(credAccID);
+		if (!entry.CreateEntry(ormasDal, errorMessage))
+		{
+			return false;
+		}
+		return true;
+	}
+	bool Withdrawal::CreateEntry(DataLayer::OrmasDal& ormasDal, int debAccID, double currentSum, int credAccID, double previousSum, std::string oExecDate, std::string& errorMessage)
+	{
+		Entry entry;
+		entry.SetDate(oExecDate);
+		entry.SetDebitingAccountID(credAccID);
+		entry.SetValue(previousSum);
+		entry.SetCreditingAccountID(debAccID);
+		if (!entry.CreateEntry(ormasDal, errorMessage))
+		{
+			return false;
+		}
+		entry.Clear();
+		entry.SetDate(oExecDate);
+		entry.SetDebitingAccountID(debAccID);
+		entry.SetValue(currentSum);
+		entry.SetCreditingAccountID(credAccID);
+		if (!entry.CreateEntry(ormasDal, errorMessage))
+		{
+			return false;
+		}
+		return true;
+	}
+	bool Withdrawal::CorrectingEntry(DataLayer::OrmasDal& ormasDal, int debAccID, double currentSum, int credAccID, std::string oExecDate, std::string& errorMessage)
+	{
+		Entry entry;
+		entry.SetDate(oExecDate);
+		entry.SetDebitingAccountID(credAccID);
+		entry.SetValue(currentSum);
+		entry.SetCreditingAccountID(debAccID);
+		if (!entry.CreateEntry(ormasDal, errorMessage))
+		{
+			return false;
+		}
+		return true;
 	}
 }

@@ -2,6 +2,7 @@
 #define CREATERFDDLG_H
 #include "ui_CreateRfdDlg.h"
 #include "OrmasBL.h"
+#include "MainForm.h"
 
 class CreateRfdDlg : public QDialog, public Ui::CreateRefund
 {
@@ -18,6 +19,7 @@ public:
 	void DeleteRefund(){};
 	void Close();
 	void OpenUserDlg();
+	void TextEditChanged();
 	public slots:
 	void SetID(int ID, QString childName);
 private:
@@ -27,6 +29,8 @@ private:
 	QDoubleValidator *vDouble = nullptr;
 	QIntValidator *vInt = nullptr;
 	void InitComboBox();
+	QWidget* parentForm;
+	MainForm* mainForm;
 };
 
 #endif //CREATERfdDLG_H

@@ -22,5 +22,6 @@ private:
 	BusinessLayer::Role *role = new BusinessLayer::Role();
 	void SetRoleParams(QString, QString ,QString, int = 0);
 	void FillEditElements(QString, QString, QString);
+	QWidget* parentForm;
 };
 #endif //CREATEROLEDLG_H

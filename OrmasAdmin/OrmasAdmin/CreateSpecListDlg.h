@@ -2,6 +2,7 @@
 #define CREATESPECLISTDLG_H
 #include "ui_CreateSpecListDlg.h"
 #include "OrmasBL.h"
+#include "MainForm.h"
 
 class CreateSpecListDlg : public QDialog, public Ui::CreateSpecList
 {
@@ -20,13 +21,18 @@ public:
 	void Close();
 	void OpenSpecDlg();
 	void OpenProdDlg();
+	void TextEditChanged();
 	public slots:
 	void SetID(int ID, QString childName);
+signals:
+	void DataIsChanged();
 private:
 	BusinessLayer::SpecificationList *specificationList = new BusinessLayer::SpecificationList();
 	void SetSpecificationListParams(int, int, double, int = 0);
 	void FillEditElements(int, int, double);
 	QDoubleValidator *vDouble = nullptr;
 	QIntValidator *vInt = nullptr;
+	QWidget* parentForm;
+	MainForm* mainForm;
 };
 #endif //CREATESPECLISTDLG_H

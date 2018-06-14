@@ -1,9 +1,8 @@
 #include "stdafx.h"
-#include <QMessageBox>
+
 #include "CreateSpecDlg.h"
-#include "MainForm.h"
 #include "DataForm.h"
-#include "ExtraFunctions.h"
+
 #include <map>
 
 CreateSpecDlg::CreateSpecDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, QWidget *parent) :QDialog(parent)
@@ -11,6 +10,9 @@ CreateSpecDlg::CreateSpecDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, Q
 	setupUi(this);
 	//setModal(true);
 	dialogBL = ormasBL;
+	parentForm = parent;
+	DataForm *dataFormParent = (DataForm *)this->parentForm;
+	mainForm = (MainForm *)dataFormParent->GetParent();
 	vDouble = new QDoubleValidator(0.00, 1000000000.00, 3, this);
 	vInt = new QIntValidator(0, 1000000000, this);
 	employeeEdit->setValidator(vInt);
@@ -35,6 +37,7 @@ CreateSpecDlg::CreateSpecDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, Q
 	QObject::connect(employeeBtn, &QPushButton::released, this, &CreateSpecDlg::OpenEmpDlg);
 	QObject::connect(productBtn, &QPushButton::released, this, &CreateSpecDlg::OpenProdDlg);
 	QObject::connect(addProdBtn, &QPushButton::released, this, &CreateSpecDlg::OpenSpecListDlg);
+	QObject::connect(sumEdit, &QLineEdit::textChanged, this, &CreateSpecDlg::TextEditChanged);
 	QObject::connect(this, SIGNAL(CloseCreatedForms()), ((MainForm*)((DataForm*)parent)->GetParent()), SLOT(CloseChildsByName()));
 	InitComboBox();
 }
@@ -62,7 +65,7 @@ void CreateSpecDlg::FillEditElements(int pID, double sSum, int cID, int eID, QSt
 	productEdit->setText(QString::number(pID));
 	sumEdit->setText(QString::number(sSum));
 	employeeEdit->setText(QString::number(eID));
-	dateEdit->setDateTime(QDateTime::fromString(sDate, "yyyy.MM.dd hh:mm:ss"));
+	dateEdit->setDateTime(QDateTime::fromString(sDate, "dd.MM.yyyy hh:mm"));
 	currencyCmb->setCurrentIndex(currencyCmb->findData(QVariant(cID)));
 	BusinessLayer::User user;
 	if (user.GetUserByID(dialogBL->GetOrmasDal(), eID, errorMessage))
@@ -90,6 +93,13 @@ void CreateSpecDlg::SetID(int ID, QString childName)
 	{
 		if (0 != childName.length())
 		{
+			this->hide();
+			this->setWindowFlags(this->windowFlags() | Qt::WindowStaysOnTopHint);
+			this->show();
+			this->raise();
+			this->activateWindow();
+			QApplication::setActiveWindow(this);
+
 			if (childName == QString("productForm"))
 			{
 				productEdit->setText(QString::number(ID));
@@ -147,74 +157,81 @@ bool CreateSpecDlg::FillDlgElements(QTableView* cTable)
 void CreateSpecDlg::CreateSpecification()
 {
 	errorMessage.clear();
-	if (0 != productEdit->text().toInt() && 0 != sumEdit->text().toInt()
+	if (0 != productEdit->text().toInt() && 0 != sumEdit->text().toDouble()
 		&& !currencyCmb->currentText().isEmpty() && 0 != employeeEdit->text().toInt() && !dateEdit->text().isEmpty())
 	{
-		DataForm *parentDataForm = (DataForm*)parentWidget();
-		SetSpecificationParams(productEdit->text().toInt(), sumEdit->text().toInt(), currencyCmb->currentData().toInt(),
+		DataForm *parentDataForm = (DataForm*) parentForm;
+		SetSpecificationParams(productEdit->text().toInt(), sumEdit->text().toDouble(), currencyCmb->currentData().toInt(),
 			employeeEdit->text().toInt(), dateEdit->text(), specification->GetID());
 
 		if (dialogBL->CreateSpecification(specification, errorMessage))
 		{
-			BusinessLayer::Product *product = new BusinessLayer::Product;
-			BusinessLayer::Employee *employee = new BusinessLayer::Employee();
-			BusinessLayer::Currency *currency = new BusinessLayer::Currency;
-
-			if (!product->GetProductByID(dialogBL->GetOrmasDal(), specification->GetProductID(), errorMessage)
-				|| !employee->GetEmployeeByID(dialogBL->GetOrmasDal(), specification->GetEmployeeID(), errorMessage)
-				|| !currency->GetCurrencyByID(dialogBL->GetOrmasDal(), specification->GetCurrencyID(), errorMessage))
+			if (parentDataForm != nullptr)
 			{
-				dialogBL->CancelTransaction(errorMessage);
-				QMessageBox::information(NULL, QString(tr("Warning")),
-					QString(tr(errorMessage.c_str())),
-					QString(tr("Ok")));
-				errorMessage.clear();
-				delete product;
-				delete employee;
-				delete currency;
-				return;
-			}
+				if (!parentDataForm->IsClosed())
+				{
+					BusinessLayer::Product *product = new BusinessLayer::Product;
+					BusinessLayer::Employee *employee = new BusinessLayer::Employee();
+					BusinessLayer::Currency *currency = new BusinessLayer::Currency;
 
-			BusinessLayer::Position *position = new BusinessLayer::Position;
-			if (!position->GetPositionByID(dialogBL->GetOrmasDal(), employee->GetPositionID(), errorMessage))
-			{
-				dialogBL->CancelTransaction(errorMessage);
-				QMessageBox::information(NULL, QString(tr("Warning")),
-					QString(tr(errorMessage.c_str())),
-					QString(tr("Ok")));
-				errorMessage.clear();
-				delete position;
-				return;
-			}
-			
-			QList<QStandardItem*> specificationItem;
-			specificationItem << new QStandardItem(QString::number(specification->GetID()))
-				<< new QStandardItem(specification->GetDate().c_str())
-				<< new QStandardItem(product->GetName().c_str())
-				<< new QStandardItem(QString::number(specification->GetSum()))
-				<< new QStandardItem(currency->GetShortName().c_str())
-				<< new QStandardItem(employee->GetName().c_str())
-				<< new QStandardItem(employee->GetSurname().c_str())
-				<< new QStandardItem(employee->GetPhone().c_str())
-				<< new QStandardItem(position->GetName().c_str())
-				<< new QStandardItem(QString::number(specification->GetProductID()))
-				<< new QStandardItem(QString::number(specification->GetCurrencyID())) 
-				<< new QStandardItem(QString::number(specification->GetEmployeeID()));
+					if (!product->GetProductByID(dialogBL->GetOrmasDal(), specification->GetProductID(), errorMessage)
+						|| !employee->GetEmployeeByID(dialogBL->GetOrmasDal(), specification->GetEmployeeID(), errorMessage)
+						|| !currency->GetCurrencyByID(dialogBL->GetOrmasDal(), specification->GetCurrencyID(), errorMessage))
+					{
+						dialogBL->CancelTransaction(errorMessage);
+						QMessageBox::information(NULL, QString(tr("Warning")),
+							QString(tr(errorMessage.c_str())),
+							QString(tr("Ok")));
+						errorMessage.clear();
+						delete product;
+						delete employee;
+						delete currency;
+						return;
+					}
 
-			QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
-			itemModel->appendRow(specificationItem);
+					BusinessLayer::Position *position = new BusinessLayer::Position;
+					if (!position->GetPositionByID(dialogBL->GetOrmasDal(), employee->GetPositionID(), errorMessage))
+					{
+						dialogBL->CancelTransaction(errorMessage);
+						QMessageBox::information(NULL, QString(tr("Warning")),
+							QString(tr(errorMessage.c_str())),
+							QString(tr("Ok")));
+						errorMessage.clear();
+						delete position;
+						return;
+					}
+
+					QList<QStandardItem*> specificationItem;
+					specificationItem << new QStandardItem(QString::number(specification->GetID()))
+						<< new QStandardItem(specification->GetDate().c_str())
+						<< new QStandardItem(product->GetName().c_str())
+						<< new QStandardItem(QString::number(specification->GetSum()))
+						<< new QStandardItem(currency->GetShortName().c_str())
+						<< new QStandardItem(employee->GetName().c_str())
+						<< new QStandardItem(employee->GetSurname().c_str())
+						<< new QStandardItem(employee->GetPhone().c_str())
+						<< new QStandardItem(position->GetName().c_str())
+						<< new QStandardItem(QString::number(specification->GetProductID()))
+						<< new QStandardItem(QString::number(specification->GetCurrencyID()))
+						<< new QStandardItem(QString::number(specification->GetEmployeeID()));
+
+					QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
+					itemModel->appendRow(specificationItem);
+					delete product;
+					delete employee;
+					delete currency;
+				}
+			}
 			dialogBL->CommitTransaction(errorMessage);
-			delete product;
-			delete employee;
-			delete currency;
-			delete product;
-			this->close();
+			
+			
+			Close();
 		}
 		else
 		{
 			dialogBL->CancelTransaction(errorMessage);
 			QMessageBox::information(NULL, QString(tr("Warning")),
-				QString(tr("Please contact with Administrator, seems DB is not valid!")),
+				QString(tr(errorMessage.c_str())),
 				QString(tr("Ok")));
 		}
 	}
@@ -230,73 +247,80 @@ void CreateSpecDlg::CreateSpecification()
 void CreateSpecDlg::EditSpecification()
 {
 	errorMessage.clear();
-	if (0 != productEdit->text().toInt() && 0 != sumEdit->text().toInt()
+	if (0 != productEdit->text().toInt() && 0 != sumEdit->text().toDouble()
 		&& !currencyCmb->currentText().isEmpty() && 0 != employeeEdit->text().toInt() && !dateEdit->text().isEmpty())
 	{
 		if (specification->GetProductID() != productEdit->text().toInt() || QString(specification->GetDate().c_str()) != dateEdit->text() ||
-			specification->GetEmployeeID() != employeeEdit->text().toInt() || specification->GetSum() != sumEdit->text().toInt()
+			specification->GetEmployeeID() != employeeEdit->text().toInt() || specification->GetSum() != sumEdit->text().toDouble()
 			|| specification->GetCurrencyID() != currencyCmb->currentData().toInt())
 		{
-			DataForm *parentDataForm = (DataForm*)parentWidget();
-			SetSpecificationParams(productEdit->text().toInt(), sumEdit->text().toInt(), currencyCmb->currentData().toInt(),
+			DataForm *parentDataForm = (DataForm*) parentForm;
+			SetSpecificationParams(productEdit->text().toInt(), sumEdit->text().toDouble(), currencyCmb->currentData().toInt(),
 				employeeEdit->text().toInt(), dateEdit->text(), specification->GetID());
 
 			if (dialogBL->UpdateSpecification(specification, errorMessage))
 			{
-				//updating Specification data
-				BusinessLayer::Product *product = new BusinessLayer::Product;
-				BusinessLayer::Employee *employee = new BusinessLayer::Employee();
-				BusinessLayer::Currency *currency = new BusinessLayer::Currency;
-
-				if (!product->GetProductByID(dialogBL->GetOrmasDal(), specification->GetProductID(), errorMessage)
-					|| !employee->GetEmployeeByID(dialogBL->GetOrmasDal(), specification->GetEmployeeID(), errorMessage)
-					|| !currency->GetCurrencyByID(dialogBL->GetOrmasDal(), specification->GetCurrencyID(), errorMessage))
+				if (parentDataForm != nullptr)
 				{
-					dialogBL->CancelTransaction(errorMessage);
-					QMessageBox::information(NULL, QString(tr("Warning")),
-						QString(tr(errorMessage.c_str())),
-						QString(tr("Ok")));
-					errorMessage.clear();
-					delete product;
-					delete employee;
-					delete currency;
-					return;
-				}
+					if (!parentDataForm->IsClosed())
+					{
+						//updating Specification data
+						BusinessLayer::Product *product = new BusinessLayer::Product;
+						BusinessLayer::Employee *employee = new BusinessLayer::Employee();
+						BusinessLayer::Currency *currency = new BusinessLayer::Currency;
 
-				BusinessLayer::Position *position = new BusinessLayer::Position;
-				if (!position->GetPositionByID(dialogBL->GetOrmasDal(), employee->GetPositionID(), errorMessage))
-				{
-					dialogBL->CancelTransaction(errorMessage);
-					QMessageBox::information(NULL, QString(tr("Warning")),
-						QString(tr(errorMessage.c_str())),
-						QString(tr("Ok")));
-					errorMessage.clear();
-					delete position;
-					return;
-				}
-				
-				QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
-				QModelIndex mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
-				itemModel->item(mIndex.row(), 1)->setText(specification->GetDate().c_str());
-				itemModel->item(mIndex.row(), 2)->setText(product->GetName().c_str());
-				itemModel->item(mIndex.row(), 3)->setText(QString::number(specification->GetSum()));
-				itemModel->item(mIndex.row(), 4)->setText(currency->GetShortName().c_str());
-				itemModel->item(mIndex.row(), 5)->setText(employee->GetName().c_str());
-				itemModel->item(mIndex.row(), 6)->setText(employee->GetSurname().c_str());
-				itemModel->item(mIndex.row(), 7)->setText(employee->GetPhone().c_str());
-				itemModel->item(mIndex.row(), 8)->setText(position->GetName().c_str());
-				itemModel->item(mIndex.row(), 9)->setText(QString::number(specification->GetProductID()));
-				itemModel->item(mIndex.row(), 10)->setText(QString::number(specification->GetCurrencyID()));
-				itemModel->item(mIndex.row(), 11)->setText(QString::number(specification->GetEmployeeID()));
+						if (!product->GetProductByID(dialogBL->GetOrmasDal(), specification->GetProductID(), errorMessage)
+							|| !employee->GetEmployeeByID(dialogBL->GetOrmasDal(), specification->GetEmployeeID(), errorMessage)
+							|| !currency->GetCurrencyByID(dialogBL->GetOrmasDal(), specification->GetCurrencyID(), errorMessage))
+						{
+							dialogBL->CancelTransaction(errorMessage);
+							QMessageBox::information(NULL, QString(tr("Warning")),
+								QString(tr(errorMessage.c_str())),
+								QString(tr("Ok")));
+							errorMessage.clear();
+							delete product;
+							delete employee;
+							delete currency;
+							return;
+						}
 
-				emit itemModel->dataChanged(mIndex, mIndex);
+						BusinessLayer::Position *position = new BusinessLayer::Position;
+						if (!position->GetPositionByID(dialogBL->GetOrmasDal(), employee->GetPositionID(), errorMessage))
+						{
+							dialogBL->CancelTransaction(errorMessage);
+							QMessageBox::information(NULL, QString(tr("Warning")),
+								QString(tr(errorMessage.c_str())),
+								QString(tr("Ok")));
+							errorMessage.clear();
+							delete position;
+							return;
+						}
+
+						QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
+						QModelIndex mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
+						itemModel->item(mIndex.row(), 1)->setText(specification->GetDate().c_str());
+						itemModel->item(mIndex.row(), 2)->setText(product->GetName().c_str());
+						itemModel->item(mIndex.row(), 3)->setText(QString::number(specification->GetSum()));
+						itemModel->item(mIndex.row(), 4)->setText(currency->GetShortName().c_str());
+						itemModel->item(mIndex.row(), 5)->setText(employee->GetName().c_str());
+						itemModel->item(mIndex.row(), 6)->setText(employee->GetSurname().c_str());
+						itemModel->item(mIndex.row(), 7)->setText(employee->GetPhone().c_str());
+						itemModel->item(mIndex.row(), 8)->setText(position->GetName().c_str());
+						itemModel->item(mIndex.row(), 9)->setText(QString::number(specification->GetProductID()));
+						itemModel->item(mIndex.row(), 10)->setText(QString::number(specification->GetCurrencyID()));
+						itemModel->item(mIndex.row(), 11)->setText(QString::number(specification->GetEmployeeID()));
+
+						emit itemModel->dataChanged(mIndex, mIndex);
+						delete product;
+						delete employee;
+						delete currency;
+					}
+				}
 				dialogBL->CommitTransaction(errorMessage);
 				
-				delete product;
-				delete employee;
-				delete currency;
 				
-				this->close();
+				
+				Close();
 			}
 			else
 			{
@@ -308,7 +332,7 @@ void CreateSpecDlg::EditSpecification()
 		}
 		else
 		{
-			this->close();
+			Close();
 		}
 	}
 	else
@@ -323,7 +347,7 @@ void CreateSpecDlg::EditSpecification()
 void CreateSpecDlg::Close()
 {
 	dialogBL->CancelTransaction(errorMessage);
-	this->close();
+	this->parentWidget()->close();
 }
 
 void CreateSpecDlg::OpenEmpDlg()
@@ -331,8 +355,6 @@ void CreateSpecDlg::OpenEmpDlg()
 	this->hide();
 	this->setModal(false);
 	this->show();
-	DataForm *userParent = (DataForm *)parent();
-	MainForm *mainForm = (MainForm *)userParent->GetParent();
 	QString message = tr("Loading...");
 	mainForm->statusBar()->showMessage(message);
 	DataForm *dForm = new DataForm(dialogBL, mainForm);
@@ -341,7 +363,7 @@ void CreateSpecDlg::OpenEmpDlg()
 	dForm->setWindowModality(Qt::WindowModal);
 
 	BusinessLayer::Role *role = new BusinessLayer::Role();
-	role->SetName("EXPEDITOR");
+	role->SetName("PRODUCT MANAGER");
 	std::string roleFilter = dialogBL->GenerateFilter<BusinessLayer::Role>(role);
 	std::vector<BusinessLayer::Role> roleVector = dialogBL->GetAllDataForClass<BusinessLayer::Role>(errorMessage, roleFilter);
 
@@ -364,7 +386,7 @@ void CreateSpecDlg::OpenEmpDlg()
 	if (employeeVector.size() == 0)
 	{
 		delete role;
-		QString message = tr("Sorry could not find employee with \"expeditor\" role!");
+		QString message = tr("Sorry could not find employee with \"product manager\" role!");
 		mainForm->statusBar()->showMessage(message);
 		QMessageBox::information(NULL, QString(tr("Warning")),
 			QString(message),
@@ -376,18 +398,21 @@ void CreateSpecDlg::OpenEmpDlg()
 	dForm->FillTable<BusinessLayer::EmployeeView>(errorMessage, employeeFilter);
 	if (errorMessage.empty())
 	{
-		dForm->createSpecDlg = this;
+		dForm->parentDialog = this;
 		dForm->setObjectName("employeeForm");
 		dForm->QtConnect<BusinessLayer::EmployeeView>();
 		QMdiSubWindow *employeeWindow = new QMdiSubWindow;
 		employeeWindow->setWidget(dForm);
 		employeeWindow->setAttribute(Qt::WA_DeleteOnClose);
 		mainForm->mdiArea->addSubWindow(employeeWindow);
+		employeeWindow->resize(dForm->size().width() + 18, dForm->size().height() + 30);
 		dForm->topLevelWidget();
 		dForm->activateWindow();
 		QApplication::setActiveWindow(dForm);
+		dForm->HileSomeRow();
 		dForm->show();
 		dForm->raise();
+		dForm->setWindowFlags(dForm->windowFlags() | Qt::WindowStaysOnTopHint);
 		QString message = tr("All clients are shown");
 		mainForm->statusBar()->showMessage(message);
 	}
@@ -408,30 +433,62 @@ void CreateSpecDlg::OpenProdDlg()
 	this->hide();
 	this->setModal(false);
 	this->show();
-	DataForm *userParent = (DataForm *)parent();
-	MainForm *mainForm = (MainForm *)userParent->GetParent();
 	QString message = tr("Loading...");
 	mainForm->statusBar()->showMessage(message);
 	DataForm *dForm = new DataForm(dialogBL, mainForm);
 	dForm->setWindowTitle(tr("Products"));
 	dForm->hide();
 	dForm->setWindowModality(Qt::WindowModal);
+	
+	BusinessLayer::ProductType *pType = new BusinessLayer::ProductType();
+	pType->SetCode("PRODUCT");
+	std::string pTypeFilter = dialogBL->GenerateFilter<BusinessLayer::ProductType>(pType);
+	std::vector<BusinessLayer::ProductType> pTypeVector = dialogBL->GetAllDataForClass<BusinessLayer::ProductType>(errorMessage, pTypeFilter);
+	if (pTypeVector.size() == 0)
+	{
+		delete pType;
+		QString message = tr("Sorry could not find product type with \"Product\" code!");
+		mainForm->statusBar()->showMessage(message);
+		QMessageBox::information(NULL, QString(tr("Warning")),
+			QString(message),
+			QString(tr("Ok")));
+		errorMessage = "";
+		return;
+	}
 
-	dForm->FillTable<BusinessLayer::ProductView>(errorMessage);
+	BusinessLayer::Product *product = new BusinessLayer::Product();
+	product->SetProductTypeID(pTypeVector.at(0).GetID());
+	std::string productFilter = dialogBL->GenerateFilter<BusinessLayer::Product>(product);
+	std::vector<BusinessLayer::ProductView> productVector = dialogBL->GetAllDataForClass<BusinessLayer::ProductView>(errorMessage, productFilter);
+	if (productVector.size() == 0)
+	{
+		delete product;
+		QString message = tr("Sorry could not find product with \"Product\" code!");
+		mainForm->statusBar()->showMessage(message);
+		QMessageBox::information(NULL, QString(tr("Warning")),
+			QString(message),
+			QString(tr("Ok")));
+		errorMessage = "";
+		return;
+	}
+	
+	dForm->FillTable<BusinessLayer::ProductView>(errorMessage, productFilter);
 	if (errorMessage.empty())
 	{
-		dForm->createSpecDlg = this;
+		dForm->parentDialog = this;
 		dForm->setObjectName("productForm");
 		dForm->QtConnect<BusinessLayer::ProductView>();
 		QMdiSubWindow *productWindow = new QMdiSubWindow;
 		productWindow->setWidget(dForm);
 		productWindow->setAttribute(Qt::WA_DeleteOnClose);
 		mainForm->mdiArea->addSubWindow(productWindow);
+		productWindow->resize(dForm->size().width() + 18, dForm->size().height() + 30);
 		dForm->topLevelWidget();
 		dForm->activateWindow();
 		QApplication::setActiveWindow(dForm);
 		dForm->show();
 		dForm->raise();
+		dForm->setWindowFlags(dForm->windowFlags() | Qt::WindowStaysOnTopHint);
 		QString message = tr("All products are shown");
 		mainForm->statusBar()->showMessage(message);
 	}
@@ -452,8 +509,6 @@ void CreateSpecDlg::OpenSpecListDlg()
 	this->hide();
 	this->setModal(false);
 	this->show();
-	DataForm *userParent = (DataForm *)parent();
-	MainForm *mainForm = (MainForm *)userParent->GetParent();
 	QString message = tr("Loading...");
 	mainForm->statusBar()->showMessage(message);
 	DataForm *dForm = new DataForm(dialogBL, mainForm);
@@ -467,18 +522,20 @@ void CreateSpecDlg::OpenSpecListDlg()
 	dForm->FillTable<BusinessLayer::SpecificationListView>(errorMessage, specificationListFilter);
 	if (errorMessage.empty())
 	{
-		dForm->createSpecDlg = this;
+		dForm->parentDialog = this;
 		dForm->setObjectName("specificationListForm");
 		dForm->QtConnect<BusinessLayer::SpecificationListView>();
 		QMdiSubWindow *specificationListWindow = new QMdiSubWindow;
 		specificationListWindow->setWidget(dForm);
 		specificationListWindow->setAttribute(Qt::WA_DeleteOnClose);
 		mainForm->mdiArea->addSubWindow(specificationListWindow);
+		specificationListWindow->resize(dForm->size().width() + 18, dForm->size().height() + 30);
 		dForm->topLevelWidget();
 		dForm->activateWindow();
 		QApplication::setActiveWindow(dForm);
 		dForm->show();
 		dForm->raise();
+		dForm->setWindowFlags(dForm->windowFlags() | Qt::WindowStaysOnTopHint);
 		QString message = tr("All products are shown");
 		mainForm->statusBar()->showMessage(message);
 	}
@@ -507,3 +564,14 @@ void CreateSpecDlg::InitComboBox()
 	}
 }
 
+void CreateSpecDlg::TextEditChanged()
+{
+	if (sumEdit->text().contains(","))
+	{
+		sumEdit->setText(sumEdit->text().replace(",", "."));
+	}
+	if (sumEdit->text().contains(".."))
+	{
+		sumEdit->setText(sumEdit->text().replace("..", "."));
+	}
+}

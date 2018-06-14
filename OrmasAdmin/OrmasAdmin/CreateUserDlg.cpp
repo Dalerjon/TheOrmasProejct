@@ -1,15 +1,16 @@
 #include "stdafx.h"
-#include <QMessageBox>
 #include "CreateUserDlg.h"
-#include "MainForm.h"
 #include "DataForm.h"
-#include "ExtraFunctions.h"
+
 
 CreateUserDlg::CreateUserDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, QWidget *parent) :QDialog(parent)
 {
 	setupUi(this);
 	setModal(true);
 	dialogBL = ormasBL;
+	parentForm = parent;
+	DataForm *dataFormParent = (DataForm *)this->parentForm;
+	mainForm = (MainForm *)dataFormParent->GetParent();
 	activatedCmbBox->addItem("false");
 	activatedCmbBox->addItem("true");
 	nameEdit->setMaxLength(30);
@@ -48,6 +49,13 @@ void CreateUserDlg::SetID(int ID, QString childName)
 	{
 		if (0 != childName.length())
 		{
+			this->hide();
+			this->setWindowFlags(this->windowFlags() | Qt::WindowStaysOnTopHint);
+			this->show();
+			this->raise();
+			this->activateWindow();
+			QApplication::setActiveWindow(this);
+
 			if (childName == QString("roleForm"))
 			{
 				roleEdit->setText(QString::number(ID));
@@ -131,37 +139,48 @@ void CreateUserDlg::CreateUser()
 		surnameEdit->text().isEmpty() || passwordEdit->text().isEmpty()	|| activatedCmbBox->currentText().isEmpty()) &&
 		0 != roleEdit->text().toInt())
 	{
-		DataForm *parentDataForm = (DataForm*)parentWidget();
+		DataForm *parentDataForm = (DataForm*) parentForm;
 		SetUserParams(emailEdit->text(), nameEdit->text(), surnameEdit->text(), phoneEdit->text(), addressEdit->text(),
 			roleEdit->text().toInt(), passwordEdit->text(), activatedCmbBox->currentText());
 		dialogBL->StartTransaction(errorMessage);
 		if (dialogBL->CreateUser(user, errorMessage))
 		{
-			BusinessLayer::Role *role = new BusinessLayer::Role();
-			if (!role->GetRoleByID(dialogBL->GetOrmasDal(),user->GetRoleID(),errorMessage))
+			if (parentDataForm != nullptr)
 			{
-				dialogBL->CancelTransaction(errorMessage);
-				QMessageBox::information(NULL, QString(tr("Warning")),
-					QString(tr(errorMessage.c_str())),
-					QString(tr("Ok")));
+				if (!parentDataForm->IsClosed())
+				{
+					BusinessLayer::Role *role = new BusinessLayer::Role();
+					if (!role->GetRoleByID(dialogBL->GetOrmasDal(), user->GetRoleID(), errorMessage))
+					{
+						dialogBL->CancelTransaction(errorMessage);
+						QMessageBox::information(NULL, QString(tr("Warning")),
+							QString(tr(errorMessage.c_str())),
+							QString(tr("Ok")));
 
-				errorMessage.clear();
-				delete role;
-				return;
+						errorMessage.clear();
+						delete role;
+						return;
+					}
+					QList<QStandardItem*> UserItem;
+					UserItem << new QStandardItem(QString::number(user->GetID()))
+						<< new QStandardItem(user->GetEmail().c_str())
+						<< new QStandardItem(user->GetName().c_str())
+						<< new QStandardItem(user->GetSurname().c_str())
+						<< new QStandardItem(user->GetPhone().c_str())
+						<< new QStandardItem(user->GetAddress().c_str())
+						<< new QStandardItem(role->GetName().c_str())
+						<< new QStandardItem(user->GetPassword().c_str())
+						<< new QStandardItem(user->GetActivated() ? "true" : "false")
+						<< new QStandardItem(QString::number(user->GetRoleID()));
+					QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
+					itemModel->appendRow(UserItem);
+					delete role;
+				}
 			}
-			QList<QStandardItem*> UserItem;
-			UserItem << new QStandardItem(QString::number(user->GetID())) << new QStandardItem(user->GetEmail().c_str())
-				<< new QStandardItem(user->GetName().c_str()) << new QStandardItem(user->GetSurname().c_str())
-				<< new QStandardItem(user->GetPhone().c_str()) << new QStandardItem(user->GetAddress().c_str())
-				<< new QStandardItem(role->GetName().c_str()) << new QStandardItem(user->GetPassword().c_str())
-				<< new QStandardItem(user->GetActivated() ? "true" : "false") << new QStandardItem(QString::number(user->GetRoleID()));
-			QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
-			itemModel->appendRow(UserItem);
-					
 			
-			delete role;
+			
 			dialogBL->CommitTransaction(errorMessage);
-			this->close();
+			Close();
 		}
 		else
 		{
@@ -194,45 +213,52 @@ void CreateUserDlg::EditUser()
 			QString(user->GetEmail().c_str()) != emailEdit->text() || user->GetRoleID() != roleEdit->text().toInt() ||
 			QString(user->GetPassword().c_str()) != passwordEdit->text() ||	QString(user->GetActivated()? "true":"false") != activatedCmbBox->currentText())
 		{
-			DataForm *parentDataForm = (DataForm*)parentWidget();
+			DataForm *parentDataForm = (DataForm*) parentForm;
 			SetUserParams(emailEdit->text(), nameEdit->text(), surnameEdit->text(), phoneEdit->text(), addressEdit->text(),
 				roleEdit->text().toInt(), passwordEdit->text(), activatedCmbBox->currentText(), user->GetID());
 			dialogBL->StartTransaction(errorMessage);
 			if (dialogBL->UpdateUser(user, errorMessage))
 			{
-				//updating user data
-				QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
-				QModelIndex mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
-				itemModel->item(mIndex.row(), 1)->setText(user->GetName().c_str());
-				itemModel->item(mIndex.row(), 9)->setText(user->GetEmail().c_str());
-				itemModel->item(mIndex.row(), 10)->setText(user->GetSurname().c_str());
-				itemModel->item(mIndex.row(), 2)->setText(user->GetAddress().c_str());
-				itemModel->item(mIndex.row(), 3)->setText(user->GetPhone().c_str());
-				
-				//if role of user is changed, then update location data fields
-				BusinessLayer::Role *role = new BusinessLayer::Role();
-				if (!role->GetRoleByID(dialogBL->GetOrmasDal(), user->GetRoleID(), errorMessage))
+				if (parentDataForm != nullptr)
 				{
-					dialogBL->CancelTransaction(errorMessage);
-					QMessageBox::information(NULL, QString(tr("Warning")),
-						QString(tr(errorMessage.c_str())),
-						QString(tr("Ok")));
+					if (!parentDataForm->IsClosed())
+					{
+						//updating user data
+						QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
+						QModelIndex mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
+						itemModel->item(mIndex.row(), 1)->setText(user->GetEmail().c_str());
+						itemModel->item(mIndex.row(), 2)->setText(user->GetName().c_str());
+						itemModel->item(mIndex.row(), 3)->setText(user->GetSurname().c_str());
+						itemModel->item(mIndex.row(), 4)->setText(user->GetPhone().c_str());
+						itemModel->item(mIndex.row(), 5)->setText(user->GetAddress().c_str());
 
-					errorMessage.clear();
-					delete role;
-					return;
+
+						//if role of user is changed, then update location data fields
+						BusinessLayer::Role *role = new BusinessLayer::Role();
+						if (!role->GetRoleByID(dialogBL->GetOrmasDal(), user->GetRoleID(), errorMessage))
+						{
+							dialogBL->CancelTransaction(errorMessage);
+							QMessageBox::information(NULL, QString(tr("Warning")),
+								QString(tr(errorMessage.c_str())),
+								QString(tr("Ok")));
+
+							errorMessage.clear();
+							delete role;
+							return;
+						}
+						itemModel->item(mIndex.row(), 6)->setText(role->GetName().c_str());
+						itemModel->item(mIndex.row(), 7)->setText(user->GetPassword().c_str());
+						itemModel->item(mIndex.row(), 8)->setText(user->GetActivated() ? "true" : "false");
+						itemModel->item(mIndex.row(), 9)->setText(QString::number(user->GetRoleID()));
+
+						emit itemModel->dataChanged(mIndex, mIndex);
+
+
+						delete role;
+					}
 				}
-				itemModel->item(mIndex.row(), 8)->setText(role->GetName().c_str());
-				itemModel->item(mIndex.row(), 11)->setText(passwordEdit->text());
-				itemModel->item(mIndex.row(), 12)->setText(user->GetActivated() ? "true" : "false");
-				itemModel->item(mIndex.row(), 13)->setText(QString::number(user->GetRoleID()));
-						
-				emit itemModel->dataChanged(mIndex, mIndex);
-				
-				
-				delete role;
 				dialogBL->CommitTransaction(errorMessage);
-				this->close();
+				Close();
 			}
 			else
 			{
@@ -244,7 +270,7 @@ void CreateUserDlg::EditUser()
 		}
 		else
 		{
-			this->close();
+			Close();
 		}
 	}
 	else
@@ -258,7 +284,7 @@ void CreateUserDlg::EditUser()
 
 void CreateUserDlg::Close()
 {
-	this->close();
+	this->parentWidget()->close();
 }
 
 void CreateUserDlg::OpenRoleDlg()
@@ -266,8 +292,6 @@ void CreateUserDlg::OpenRoleDlg()
 	this->hide();
 	this->setModal(false);
 	this->show();
-	DataForm *userParent = (DataForm *)parent();
-	MainForm *mainForm = (MainForm *)userParent->GetParent();
 	QString message = tr("Loading...");
 	mainForm->statusBar()->showMessage(message);
 	DataForm *dForm = new DataForm(dialogBL, mainForm);
@@ -277,18 +301,20 @@ void CreateUserDlg::OpenRoleDlg()
 	dForm->FillTable<BusinessLayer::Role>(errorMessage);
 	if (errorMessage.empty())
 	{
-		dForm->createUserDlg = this;
+		dForm->parentDialog = this;
 		dForm->setObjectName("roleForm");
 		dForm->QtConnect<BusinessLayer::Role>();
 		QMdiSubWindow *roleWindow = new QMdiSubWindow;
 		roleWindow->setWidget(dForm);
 		roleWindow->setAttribute(Qt::WA_DeleteOnClose);
 		mainForm->mdiArea->addSubWindow(roleWindow);
+		roleWindow->resize(dForm->size().width() + 18, dForm->size().height() + 30);
 		dForm->topLevelWidget();
 		dForm->activateWindow();
 		QApplication::setActiveWindow(dForm);
 		dForm->show();
 		dForm->raise();
+		dForm->setWindowFlags(dForm->windowFlags() | Qt::WindowStaysOnTopHint);
 		QString message = tr("All roles are shown");
 		mainForm->statusBar()->showMessage(message);
 	}

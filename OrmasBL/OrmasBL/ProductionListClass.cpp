@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "ProductionListClass.h"
 
+
 namespace BusinessLayer
 {
 	ProductionList::ProductionList(DataLayer::productionListCollection pListCollection)
@@ -29,7 +30,7 @@ namespace BusinessLayer
 		return productID;
 	}
 
-	int ProductionList::GetCount()
+	double ProductionList::GetCount()
 	{
 		return count;
 	}
@@ -61,7 +62,7 @@ namespace BusinessLayer
 	{
 		productID = pProductID;
 	}
-	void ProductionList::SetCount(int pCount)
+	void ProductionList::SetCount(double pCount)
 	{
 		count = pCount;
 	}
@@ -78,7 +79,7 @@ namespace BusinessLayer
 		currencyID = pCurrencyID;
 	}
 
-	bool ProductionList::CreateProductionList(DataLayer::OrmasDal& ormasDal, int prID, int pID, int prCount, double prSum,
+	bool ProductionList::CreateProductionList(DataLayer::OrmasDal& ormasDal, int prID, int pID, double prCount, double prSum,
 		int sID, int cID, std::string& errorMessage)
 	{
 		id = ormasDal.GenerateID();
@@ -122,7 +123,7 @@ namespace BusinessLayer
 		}
 		return false;
 	}
-	bool ProductionList::UpdateProductionList(DataLayer::OrmasDal& ormasDal, int prID, int pID, int prCount, double prSum,
+	bool ProductionList::UpdateProductionList(DataLayer::OrmasDal& ormasDal, int prID, int pID, double prCount, double prSum,
 		int sID, int cID, std::string& errorMessage)
 	{
 		productionID = prID;
@@ -196,7 +197,7 @@ namespace BusinessLayer
 		currencyID = 0;
 	}
 
-	bool ProductionList::IsDuplicate(DataLayer::OrmasDal& ormasDal, int prID, int pID, int plCount, double plSum,
+	bool ProductionList::IsDuplicate(DataLayer::OrmasDal& ormasDal, int prID, int pID, double plCount, double plSum,
 		int cID, std::string& errorMessage)
 	{
 		ProductionList productionList;
@@ -235,5 +236,22 @@ namespace BusinessLayer
 		}
 		errorMessage = "Production list with this parameters are already exist! Please avoid the duplication!";
 		return true;
+	}
+
+	std::map<int, double> ProductionList::GetProductCount(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
+	{
+		std::map<int, double> mapProdCount;
+		ProductionList rPList;
+		rPList.SetProductionID(productionID);
+		std::string filter = rPList.GenerateFilter(ormasDal);
+		std::vector<DataLayer::productionListViewCollection> productListVector = ormasDal.GetProductionList(errorMessage, filter);
+		if (productListVector.size() > 0)
+		{
+			for each (auto item in productListVector)
+			{
+				mapProdCount.insert(std::make_pair(std::get<11>(item), std::get<7>(item)));
+			}
+		}
+		return mapProdCount;
 	}
 }

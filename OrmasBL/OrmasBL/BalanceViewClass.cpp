@@ -10,7 +10,7 @@ namespace BusinessLayer{
 		currentBalance = std::get<3>(bCollection);
 		currencyName = std::get<4>(bCollection);
 		userID = std::get<5>(bCollection);
-		accountID = std::get<6>(bCollection);
+		subaccountID = std::get<6>(bCollection);
 	}
 
 	std::string BalanceView::GetUsername()

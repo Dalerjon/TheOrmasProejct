@@ -3,6 +3,7 @@
 
 #include "ui_CreateBlcDlg.h"
 #include "OrmasBL.h"
+#include "MainForm.h"
 
 class CreateBlcDlg : public QDialog, public Ui::CreateBalance
 {
@@ -25,9 +26,10 @@ private:
 	BusinessLayer::Balance *balance = new BusinessLayer::Balance();
 	void SetBalanceParams(int, int, int = 0);
 	void FillEditElements(int, int);
-	QDoubleValidator *vDouble = nullptr;
 	QIntValidator *vInt = nullptr;
-	void InitComboBox();
+	int CreateSubaccount();
+	QWidget* parentForm;
+	MainForm* mainForm;
 };
 
 #endif //CREATEBLCDLG_H

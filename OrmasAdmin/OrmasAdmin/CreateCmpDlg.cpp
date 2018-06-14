@@ -1,9 +1,9 @@
 #include "stdafx.h"
-#include <QMessageBox>
+
 #include "CreateCmpDlg.h"
 #include "MainForm.h"
 #include "DataForm.h"
-#include "ExtraFunctions.h"
+
 
 
 CreateCmpDlg::CreateCmpDlg(BusinessLayer::OrmasBL *ormasBL,bool updateFlag ,QWidget *parent) :QDialog(parent)
@@ -14,6 +14,7 @@ CreateCmpDlg::CreateCmpDlg(BusinessLayer::OrmasBL *ormasBL,bool updateFlag ,QWid
 	addressEdit->setMaxLength(40);
 	phoneEdit->setMaxLength(20);
 	dialogBL = ormasBL;
+	parentForm = parent;
 	if (true == updateFlag)
 	{
 		QObject::connect(okBtn, &QPushButton::released, this, &CreateCmpDlg::EditCompany);
@@ -70,20 +71,26 @@ void CreateCmpDlg::CreateCompany()
 	errorMessage.clear();
 	if (!(nameEdit->text().isEmpty() || phoneEdit->text().isEmpty() || addressEdit->text().isEmpty()))
 	{
-		DataForm *parentDataForm = (DataForm*)parentWidget();
+		DataForm *parentDataForm = (DataForm*) parentForm;
 		SetCompanyParams(nameEdit->text(), phoneEdit->text(), addressEdit->text(), commentTextEdit->toPlainText());
 		dialogBL->StartTransaction(errorMessage);
 		if (dialogBL->CreateCompany(company,errorMessage))
 		{
-			QList<QStandardItem*> companyItem;
-			companyItem << new QStandardItem(QString::number(company->GetID())) << new QStandardItem(company->GetName().c_str())
-				<< new QStandardItem(company->GetAddress().c_str()) << new QStandardItem(company->GetPhone().c_str())
-				<< new QStandardItem(company->GetComment().c_str());
-			QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
-			itemModel->appendRow(companyItem);
+			if (parentDataForm != nullptr)
+			{
+				if (!parentDataForm->IsClosed())
+				{
+					QList<QStandardItem*> companyItem;
+					companyItem << new QStandardItem(QString::number(company->GetID())) << new QStandardItem(company->GetName().c_str())
+						<< new QStandardItem(company->GetAddress().c_str()) << new QStandardItem(company->GetPhone().c_str())
+						<< new QStandardItem(company->GetComment().c_str());
+					QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
+					itemModel->appendRow(companyItem);
+				}
+			}
 			
 			dialogBL->CommitTransaction(errorMessage);
-			this->close();
+			Close();
 		}
 		else
 		{
@@ -113,21 +120,27 @@ void CreateCmpDlg::EditCompany()
 			|| QString(company->GetPhone().c_str()) != phoneEdit->text()
 			|| QString(company->GetComment().c_str()) != commentTextEdit->toPlainText())
 		{
-			DataForm *parentDataForm = (DataForm*)parentWidget();
+			DataForm *parentDataForm = (DataForm*) parentForm;
 			SetCompanyParams(nameEdit->text(), phoneEdit->text(), addressEdit->text(), commentTextEdit->toPlainText(), company->GetID());
 			dialogBL->StartTransaction(errorMessage);
 			if (dialogBL->UpdateCompany(company, errorMessage))
 			{
-				QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
-				QModelIndex mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
-				itemModel->item(mIndex.row(), 1)->setText(company->GetName().c_str());
-				itemModel->item(mIndex.row(), 2)->setText(company->GetAddress().c_str());
-				itemModel->item(mIndex.row(), 3)->setText(company->GetPhone().c_str());
-				itemModel->item(mIndex.row(), 4)->setText(company->GetComment().c_str());
-				emit itemModel->dataChanged(mIndex, mIndex);
+				if (parentDataForm != nullptr)
+				{
+					if (!parentDataForm->IsClosed())
+					{
+						QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
+						QModelIndex mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
+						itemModel->item(mIndex.row(), 1)->setText(company->GetName().c_str());
+						itemModel->item(mIndex.row(), 2)->setText(company->GetAddress().c_str());
+						itemModel->item(mIndex.row(), 3)->setText(company->GetPhone().c_str());
+						itemModel->item(mIndex.row(), 4)->setText(company->GetComment().c_str());
+						emit itemModel->dataChanged(mIndex, mIndex);
+					}
+				}
 				
 				dialogBL->CommitTransaction(errorMessage);
-				this->close();
+				Close();
 			}
 			else
 			{
@@ -139,7 +152,7 @@ void CreateCmpDlg::EditCompany()
 		}
 		else
 		{
-			this->close();
+			Close();
 		}
 	}
 	else
@@ -153,7 +166,7 @@ void CreateCmpDlg::EditCompany()
 
 void CreateCmpDlg::Close()
 {
-	this->close();
+	this->parentWidget()->close();
 }
 
 void CreateCmpDlg::TextEditChanged()

@@ -2,6 +2,7 @@
 #define CREATETMSDLG_H
 #include "ui_CreateTmsDlg.h"
 #include "OrmasBL.h"
+#include "MainForm.h"
 
 class CreateTmsDlg : public QDialog, public Ui::CreateTimesheet
 {
@@ -18,6 +19,7 @@ public:
 	void DeleteTimesheet(){};
 	void Close();
 	void OpenSlrDlg();
+	void TextEditChanged();
 	public slots:
 	void SetID(int ID, QString childName);
 private:
@@ -26,6 +28,8 @@ private:
 	void FillEditElements(int, double, QString);
 	QDoubleValidator *vDouble = nullptr;
 	QIntValidator *vInt = nullptr;
+	QWidget* parentForm;
+	MainForm* mainForm;
 };
 
 #endif //CREATETMSDLG_H

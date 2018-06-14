@@ -3,6 +3,7 @@
 
 #include "ui_CreateWOffRDlg.h"
 #include "OrmasBL.h"
+#include "MainForm.h"
 
 class CreateWOffRDlg : public QDialog, public Ui::CreateWriteOffR
 {
@@ -21,19 +22,21 @@ public:
 	void OpenEmpDlg();
 	void OpenSkEmpDlg();
 	void OpenStsDlg();
+	void TextEditChanged();
 	void OpenWOffRListDlg();
-	void StatusWasChenged();
 	public slots:
 	void SetID(int ID, QString childName);
 signals:
 	void CloseCreatedForms();
 private:
 	BusinessLayer::WriteOffRaw *writeOffRaw = new BusinessLayer::WriteOffRaw();
-	void SetWriteOffRawParams(int, QString, int, int, double, int, int, int = 0);
-	void FillEditElements(int, QString, int, int, double, int, int);
+	void SetWriteOffRawParams(int, QString, int, double, double, int, int, int = 0);
+	void FillEditElements(int, QString, int, double, double, int, int);
 	QDoubleValidator *vDouble = nullptr;
 	QIntValidator *vInt = nullptr;
 	std::map<std::string, int> statusMap;
 	void InitComboBox();
+	QWidget* parentForm;
+	MainForm* mainForm;
 };
 #endif //CREATEWOFFRDLG_H

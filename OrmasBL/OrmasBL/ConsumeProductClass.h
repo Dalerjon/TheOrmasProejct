@@ -14,12 +14,12 @@ namespace BusinessLayer
 		std::string date = "";
 		std::string executionDate = "";
 		int stockEmployeeID = 0;
-		int count = 0;
+		double count = 0;
 		double sum = 0;
 		int statusID = 0;
 		int currencyID = 0;
 	public:
-		ConsumeProduct(int cpID, int eID, std::string cpDate, std::string cpExecDate, int seID, int cpCount, double cpSum, int sID, int cID) :
+		ConsumeProduct(int cpID, int eID, std::string cpDate, std::string cpExecDate, int seID, double cpCount, double cpSum, int sID, int cID) :
 			id(cpID), employeeID(eID), date(cpDate), executionDate(cpExecDate), stockEmployeeID(seID), count(cpCount), sum(cpSum),
 			statusID(sID), currencyID(cID){};
 		ConsumeProduct(DataLayer::consumeProductsCollection);
@@ -32,7 +32,7 @@ namespace BusinessLayer
 		std::string GetDate();
 		std::string GetExecutionDate();
 		int GetStockEmployeeID();
-		int GetCount();
+		double GetCount();
 		double GetSum();
 		int GetStatusID();
 		int GetCurrencyID();
@@ -43,7 +43,7 @@ namespace BusinessLayer
 		void SetDate(std::string);
 		void SetExecutionDate(std::string);
 		void SetStockEmployeeID(int);
-		void SetCount(int);
+		void SetCount(double);
 		void SetSum(double);
 		void SetStatusID(int);
 		void SetCurrencyID(int);
@@ -53,9 +53,9 @@ namespace BusinessLayer
 		bool UpdateConsumeProduct(DataLayer::OrmasDal& ormasDal, std::string& errorMessage);
 		bool DeleteConsumeProduct(DataLayer::OrmasDal& ormasDal, std::string& errorMessage);
 		bool CreateConsumeProduct(DataLayer::OrmasDal& ormasDal, int eID, std::string cpDate, std::string cpExecDate, int seID,
-			int cpCount, double cpSum, int sID, int cID, std::string& errorMessage);
+			double cpCount, double cpSum, int sID, int cID, std::string& errorMessage);
 		bool UpdateConsumeProduct(DataLayer::OrmasDal& ormasDal, int eID, std::string cpDate, std::string cpExecDate, int seID, 
-			int cpCount, double cpSum, int sID, int cID, std::string& errorMessage);
+			double cpCount, double cpSum, int sID, int cID, std::string& errorMessage);
 
 		//Generate filter string for class
 		std::string GenerateFilter(DataLayer::OrmasDal& ormasDal);
@@ -64,14 +64,17 @@ namespace BusinessLayer
 		void Clear();
 	private:
 		double prevSum = 0;
-		int prevCount = 0;
-		bool IsDuplicate(DataLayer::OrmasDal& ormasDal, int eID, std::string cpDate, int seID, int cpCount, double cpSum,
+		double prevCount = 0;
+		int previousStatusID = 0;
+		bool IsDuplicate(DataLayer::OrmasDal& ormasDal, int eID, std::string cpDate, int seID, double cpCount, double cpSum,
 			int cID, std::string& errorMessage);
 		bool IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string& errorMessage);
 		bool ChangesAtStock(DataLayer::OrmasDal& ormasDal, int cpID, std::string& errorMessage);
-		bool ChangesAtStock(DataLayer::OrmasDal& ormasDal, int cpID, double pSum, int pCount, std::string& errorMessage);
+		bool ChangesAtStock(DataLayer::OrmasDal& ormasDal, int cpID, std::map<int, double> pProdCountMap, double pSum, std::string& errorMessage);
 		double GetCurrentSum(DataLayer::OrmasDal& ormasDal, int cpID, std::string& errorMessage);
-		int GetCurrentCount(DataLayer::OrmasDal& ormasDal, int cpID, std::string& errorMessage);
+		double GetCurrentCount(DataLayer::OrmasDal& ormasDal, int cpID, std::string& errorMessage);
+		int GetCurrentStatusID(DataLayer::OrmasDal& ormasDal, int oID, std::string& errorMessage);
+		std::map<int, double> GetProductCount(DataLayer::OrmasDal& ormasDal, int cpID, std::string& errorMessage);
 	};
 }
 #endif //CONSUMEPRODUCTCLASS_H

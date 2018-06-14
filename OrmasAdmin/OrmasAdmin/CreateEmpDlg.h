@@ -3,6 +3,7 @@
 
 #include "ui_CreateEmpDlg.h"
 #include "OrmasBL.h"
+#include "MainForm.h"
 
 class CreateEmpDlg : public QDialog, public Ui::CreateEmployee
 {
@@ -27,6 +28,8 @@ private:
 	void SetEmployeeParams(QString, QString, QString, QString, QString, int, QString, QString, int, QString, QString, int = 0);
 	void FillEditElements(QString, QString, QString, QString, QString, int, QString, QString, int, QString, QString);
 	QIntValidator *vInt = nullptr;
+	QWidget* parentForm;
+	MainForm* mainForm;
 };
 
 #endif //CREATEEMPDLG_H

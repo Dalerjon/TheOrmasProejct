@@ -29,7 +29,7 @@ namespace BusinessLayer
 		return productID;
 	}
 
-	int ReceiptRawList::GetCount()
+	double ReceiptRawList::GetCount()
 	{
 		return count;
 	}
@@ -61,7 +61,7 @@ namespace BusinessLayer
 	{
 		productID = rProductID;
 	}
-	void ReceiptRawList::SetCount(int rCount)
+	void ReceiptRawList::SetCount(double rCount)
 	{
 		count = rCount;
 	}
@@ -78,7 +78,7 @@ namespace BusinessLayer
 		currencyID = rCurrencyID;
 	}
 
-	bool ReceiptRawList::CreateReceiptRawList(DataLayer::OrmasDal& ormasDal, int rID, int pID, int rlCount, double rlSum,
+	bool ReceiptRawList::CreateReceiptRawList(DataLayer::OrmasDal& ormasDal, int rID, int pID, double rlCount, double rlSum,
 		int sID, int cID, std::string& errorMessage)
 	{
 		id = ormasDal.GenerateID();
@@ -123,7 +123,7 @@ namespace BusinessLayer
 		return false;
 	}
 
-	bool ReceiptRawList::UpdateReceiptRawList(DataLayer::OrmasDal& ormasDal, int rID, int pID, int rlCount, double rlSum,
+	bool ReceiptRawList::UpdateReceiptRawList(DataLayer::OrmasDal& ormasDal, int rID, int pID, double rlCount, double rlSum,
 		int sID, int cID, std::string& errorMessage)
 	{
 		receiptRawID = rID;
@@ -198,7 +198,7 @@ namespace BusinessLayer
 		currencyID = 0;
 	}
 
-	bool ReceiptRawList::IsDuplicate(DataLayer::OrmasDal& ormasDal, int rID, int pID, int rlCount, double rlSum,
+	bool ReceiptRawList::IsDuplicate(DataLayer::OrmasDal& ormasDal, int rID, int pID, double rlCount, double rlSum,
 		int cID, std::string& errorMessage)
 	{
 		ReceiptRawList receiptRawList;

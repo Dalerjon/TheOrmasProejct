@@ -10,17 +10,17 @@ namespace BusinessLayer
 	{
 	protected:
 		int id = 0;
-		int employeeID = 0;
+		int purveyorID = 0;
 		std::string date = "";
 		std::string executionDate = "";
-		int stockEmployeeID = 0;
-		int count = 0;
+		int employeeID = 0;
+		double count = 0;
 		double sum = 0;
 		int statusID = 0;
 		int currencyID = 0;
 	public:
-		OrderRaw(int oID, int eID, std::string oDate, std::string oExecDate, int seID, int oCount, double oSum, int sID, int cID) :
-			id(oID), employeeID(eID), date(oDate), executionDate(oExecDate), stockEmployeeID(seID), count(oCount), sum(oSum),
+		OrderRaw(int oID, int pID, std::string oDate, std::string oExecDate, int eID, double oCount, double oSum, int sID, int cID) :
+			id(oID), purveyorID(pID), date(oDate), executionDate(oExecDate), employeeID(eID), count(oCount), sum(oSum),
 			statusID(sID), currencyID(cID){};
 		OrderRaw(DataLayer::orderRawsCollection);
 		OrderRaw(){};
@@ -28,22 +28,22 @@ namespace BusinessLayer
 
 		//Consume Product class Accessors
 		int GetID();
-		int GetEmployeeID();
+		int GetPurveyorID();
 		std::string GetDate();
 		std::string GetExecutionDate();
-		int GetStockEmployeeID();
-		int GetCount();
+		int GetEmployeeID();
+		double GetCount();
 		double GetSum();
 		int GetStatusID();
 		int GetCurrencyID();
 
 		//Consume Product class Mutators
 		void SetID(int);
-		void SetEmployeeID(int);
+		void SetPurveyorID(int);
 		void SetDate(std::string);
 		void SetExecutionDate(std::string);
-		void SetStockEmployeeID(int);
-		void SetCount(int);
+		void SetEmployeeID(int);
+		void SetCount(double);
 		void SetSum(double);
 		void SetStatusID(int);
 		void SetCurrencyID(int);
@@ -52,10 +52,10 @@ namespace BusinessLayer
 		bool CreateOrderRaw(DataLayer::OrmasDal& ormasDal, std::string& errorMessage);
 		bool UpdateOrderRaw(DataLayer::OrmasDal& ormasDal, std::string& errorMessage);
 		bool DeleteOrderRaw(DataLayer::OrmasDal& ormasDal, std::string& errorMessage);
-		bool CreateOrderRaw(DataLayer::OrmasDal& ormasDal, int eID, std::string oDate, std::string oExecDate, int seID,
-			int oCount, double oSum, int sID, int cID, std::string& errorMessage);
-		bool UpdateOrderRaw(DataLayer::OrmasDal& ormasDal, int eID, std::string oDate, std::string oExecDate, int seID, 
-			int oCount, double oSum, int sID, int cID, std::string& errorMessage);
+		bool CreateOrderRaw(DataLayer::OrmasDal& ormasDal, int pID, std::string oDate, std::string oExecDate, int eID,
+			double oCount, double oSum, int sID, int cID, std::string& errorMessage);
+		bool UpdateOrderRaw(DataLayer::OrmasDal& ormasDal, int pID, std::string oDate, std::string oExecDate, int eID, 
+			double oCount, double oSum, int sID, int cID, std::string& errorMessage);
 
 		//Generate filter string for class
 		std::string GenerateFilter(DataLayer::OrmasDal& ormasDal);
@@ -63,9 +63,18 @@ namespace BusinessLayer
 		bool IsEmpty();
 		void Clear();
 	private:
-		bool IsDuplicate(DataLayer::OrmasDal& ormasDal, int eID, std::string oDate, int seID, int oCount, double oSum,
+		double previousSum = 0.0;
+		int previousStatusID = 0;
+		double previousCount = 0;
+		bool IsDuplicate(DataLayer::OrmasDal& ormasDal, int pID, std::string oDate, int eID, double oCount, double oSum,
 			int cID, std::string& errorMessage);
 		bool IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string& errorMessage);
+		double GetCurrentSum(DataLayer::OrmasDal& ormasDal, int oID, std::string& errorMessage);
+		int GetCurrentStatusID(DataLayer::OrmasDal& ormasDal, int oID, std::string& errorMessage);
+		bool ChangesAtStock(DataLayer::OrmasDal& ormasDal, int rrID, std::string& errorMessage);
+		bool ChangesAtStock(DataLayer::OrmasDal& ormasDal, int rID, std::map<int, double> pProdCountMap, double pSum, std::string& errorMessage);
+		double GetCurrentCount(DataLayer::OrmasDal& ormasDal, int rrID, std::string& errorMessage);
+		std::map<int, double> GetProductCount(DataLayer::OrmasDal& ormasDal, int cpID, std::string& errorMessage);
 	};
 }
 #endif //OrderRawCLASS_H

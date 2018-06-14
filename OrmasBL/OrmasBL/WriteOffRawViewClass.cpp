@@ -64,7 +64,7 @@ namespace BusinessLayer
 	}
 	std::string WriteOffRawView::GetStockEmployeePosition()
 	{
-		return stockEmployeePhone;
+		return stockEmployeePosition;
 	}
 	std::string WriteOffRawView::GetCurrencyName()
 	{

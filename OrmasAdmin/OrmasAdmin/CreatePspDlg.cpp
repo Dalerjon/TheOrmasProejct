@@ -1,9 +1,7 @@
 #include "stdafx.h"
 #include "CreatePspDlg.h"
-#include <QMessageBox>
-#include "MainForm.h"
 #include "DataForm.h"
-#include "ExtraFunctions.h"
+
 
 
 CreatePspDlg::CreatePspDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, QWidget *parent) :QDialog(parent)
@@ -11,6 +9,9 @@ CreatePspDlg::CreatePspDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, QWi
 	setupUi(this);
 	setModal(true);
 	dialogBL = ormasBL;
+	parentForm = parent;
+	DataForm *dataFormParent = (DataForm *)this->parentForm;
+	mainForm = (MainForm *)dataFormParent->GetParent();
 	vDouble = new QDoubleValidator(0.00, 1000000000.00, 3, this);
 	vInt = new QIntValidator(0, 1000000000, this);
 	salaryEdit->setValidator(vInt);
@@ -27,6 +28,7 @@ CreatePspDlg::CreatePspDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, QWi
 	}
 	QObject::connect(cancelBtn, &QPushButton::released, this, &CreatePspDlg::Close);
 	QObject::connect(salaryBtn, &QPushButton::released, this, &CreatePspDlg::OpenSlrDlg);
+	QObject::connect(valueEdit, &QLineEdit::textChanged, this, &CreatePspDlg::TextEditChanged);
 	InitComboBox();
 }
 
@@ -42,6 +44,13 @@ void CreatePspDlg::SetID(int ID, QString childName)
 	{
 		if (0 != childName.length())
 		{
+			this->hide();
+			this->setWindowFlags(this->windowFlags() | Qt::WindowStaysOnTopHint);
+			this->show();
+			this->raise();
+			this->activateWindow();
+			QApplication::setActiveWindow(this);
+
 			if (childName == QString("salaryForm"))
 			{
 				salaryEdit->setText(QString::number(ID));
@@ -54,6 +63,11 @@ void CreatePspDlg::SetID(int ID, QString childName)
 						namePh->setText(user.GetName().c_str());
 						surnamePh->setText(user.GetSurname().c_str());
 						phonePh->setText(user.GetPhone().c_str());
+					}
+					BusinessLayer::Currency currency;
+					if (currency.GetCurrencyByID(dialogBL->GetOrmasDal(), salary.GetCurrencyID(), errorMessage))
+					{
+						currencyCmb->setCurrentIndex(currencyCmb->findData(QVariant(currency.GetID())));
 					}
 				}
 			}
@@ -72,7 +86,7 @@ void CreatePspDlg::SetPayslipParams(QString pDate, double pValue, int pSalaryID,
 
 void CreatePspDlg::FillEditElements(QString pDate, double pValue, int pSalaryID, int pCurrencyID)
 {
-	dateEdit->setDateTime(QDateTime::fromString(pDate, "yyyy.MM.dd hh:mm:ss"));
+	dateEdit->setDateTime(QDateTime::fromString(pDate, "dd.MM.yyyy hh:mm"));
 	valueEdit->setText(QString::number(pValue));
 	salaryEdit->setText(QString::number(pSalaryID));
 	currencyCmb->setCurrentIndex(currencyCmb->findData(QVariant(pCurrencyID)));
@@ -117,35 +131,41 @@ void CreatePspDlg::CreatePayslip()
 	if (0 != salaryEdit->text().toInt() && 0.0 != valueEdit->text().toDouble() && !currencyCmb->currentText().isEmpty()
 		&& !dateEdit->text().isEmpty())
 	{
-		DataForm *parentDataForm = (DataForm*)parentWidget();
+		DataForm *parentDataForm = (DataForm*) parentForm;
 		SetPayslipParams(dateEdit->text(), valueEdit->text().toDouble(), salaryEdit->text().toInt(), currencyCmb->currentData().toInt());
 		dialogBL->StartTransaction(errorMessage);
 		if (dialogBL->CreatePayslip(payslip, errorMessage))
 		{
-			BusinessLayer::Currency *currency = new BusinessLayer::Currency;
-			if (!currency->GetCurrencyByID(dialogBL->GetOrmasDal(), payslip->GetCurrencyID(), errorMessage))
+			if (parentDataForm != nullptr)
 			{
-				dialogBL->CancelTransaction(errorMessage);
-				QMessageBox::information(NULL, QString(tr("Warning")),
-					QString(tr(errorMessage.c_str())),
-					QString(tr("Ok")));
-				errorMessage.clear();
-				delete currency;
-				return;
+				if (!parentDataForm->IsClosed())
+				{
+					BusinessLayer::Currency *currency = new BusinessLayer::Currency;
+					if (!currency->GetCurrencyByID(dialogBL->GetOrmasDal(), payslip->GetCurrencyID(), errorMessage))
+					{
+						dialogBL->CancelTransaction(errorMessage);
+						QMessageBox::information(NULL, QString(tr("Warning")),
+							QString(tr(errorMessage.c_str())),
+							QString(tr("Ok")));
+						errorMessage.clear();
+						delete currency;
+						return;
+					}
+					QList<QStandardItem*> payslipItem;
+					payslipItem << new QStandardItem(QString::number(payslip->GetID()))
+						<< new QStandardItem(payslip->GetDate().c_str())
+						<< new QStandardItem(QString::number(payslip->GetValue()))
+						<< new QStandardItem(currency->GetShortName().c_str())
+						<< new QStandardItem(QString::number(payslip->GetSalaryID()))
+						<< new QStandardItem(QString::number(payslip->GetCurrencyID()));
+					QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
+					itemModel->appendRow(payslipItem);
+					delete currency;
+				}
 			}
-			QList<QStandardItem*> payslipItem;
-			payslipItem << new QStandardItem(QString::number(payslip->GetID()))
-				<< new QStandardItem(payslip->GetDate().c_str())
-				<< new QStandardItem(QString::number(payslip->GetValue()))
-				<< new QStandardItem(currency->GetShortName().c_str())
-				<< new QStandardItem(QString::number(payslip->GetSalaryID()))
-				<< new QStandardItem(QString::number(payslip->GetCurrencyID()));
-			QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
-			itemModel->appendRow(payslipItem);
-			
 			dialogBL->CommitTransaction(errorMessage);
-			delete currency;
-			this->close();
+			
+			Close();
 		}
 		else
 		{
@@ -176,34 +196,40 @@ void CreatePspDlg::EditPayslip()
 		if (QString(payslip->GetDate().c_str()) != dateEdit->text() || payslip->GetSalaryID() != salaryEdit->text().toInt()
 			|| payslip->GetValue() != valueEdit->text().toDouble() || payslip->GetCurrencyID() != currencyCmb->currentData().toInt())
 		{
-			DataForm *parentDataForm = (DataForm*)parentWidget();
+			DataForm *parentDataForm = (DataForm*) parentForm;
 			SetPayslipParams(dateEdit->text(), valueEdit->text().toDouble(), salaryEdit->text().toInt(), currencyCmb->currentData().toInt(), payslip->GetID());
 			dialogBL->StartTransaction(errorMessage);
 			if (dialogBL->UpdatePayslip(payslip, errorMessage))
 			{
-				BusinessLayer::Currency *currency = new BusinessLayer::Currency;
-				if (!currency->GetCurrencyByID(dialogBL->GetOrmasDal(), payslip->GetCurrencyID(), errorMessage))
+				if (parentDataForm != nullptr)
 				{
-					dialogBL->CancelTransaction(errorMessage);
-					QMessageBox::information(NULL, QString(tr("Warning")),
-						QString(tr(errorMessage.c_str())),
-						QString(tr("Ok")));
-					errorMessage.clear();
-					delete currency;
-					return;
+					if (!parentDataForm->IsClosed())
+					{
+						BusinessLayer::Currency *currency = new BusinessLayer::Currency;
+						if (!currency->GetCurrencyByID(dialogBL->GetOrmasDal(), payslip->GetCurrencyID(), errorMessage))
+						{
+							dialogBL->CancelTransaction(errorMessage);
+							QMessageBox::information(NULL, QString(tr("Warning")),
+								QString(tr(errorMessage.c_str())),
+								QString(tr("Ok")));
+							errorMessage.clear();
+							delete currency;
+							return;
+						}
+						QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
+						QModelIndex mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
+						itemModel->item(mIndex.row(), 1)->setText(payslip->GetDate().c_str());
+						itemModel->item(mIndex.row(), 2)->setText(QString::number(payslip->GetValue()));
+						itemModel->item(mIndex.row(), 3)->setText(currency->GetShortName().c_str());
+						itemModel->item(mIndex.row(), 4)->setText(QString::number(payslip->GetSalaryID()));
+						itemModel->item(mIndex.row(), 5)->setText(QString::number(payslip->GetCurrencyID()));
+						emit itemModel->dataChanged(mIndex, mIndex);
+						delete currency;
+					}
 				}
-				QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
-				QModelIndex mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
-				itemModel->item(mIndex.row(), 1)->setText(payslip->GetDate().c_str());
-				itemModel->item(mIndex.row(), 2)->setText(QString::number(payslip->GetValue()));
-				itemModel->item(mIndex.row(), 3)->setText(currency->GetShortName().c_str());
-				itemModel->item(mIndex.row(), 4)->setText(QString::number(payslip->GetSalaryID()));
-				itemModel->item(mIndex.row(), 5)->setText(QString::number(payslip->GetCurrencyID()));
-				emit itemModel->dataChanged(mIndex, mIndex);
-				
 				dialogBL->CommitTransaction(errorMessage);
-				delete currency;
-				this->close();
+				
+				Close();
 			}
 			else
 			{
@@ -216,7 +242,7 @@ void CreatePspDlg::EditPayslip()
 		}
 		else
 		{
-			this->close();
+			Close();
 		}
 	}
 	else
@@ -230,7 +256,7 @@ void CreatePspDlg::EditPayslip()
 
 void CreatePspDlg::Close()
 {
-	this->close();
+	this->parentWidget()->close();
 }
 
 void CreatePspDlg::OpenSlrDlg()
@@ -238,8 +264,6 @@ void CreatePspDlg::OpenSlrDlg()
 	this->hide();
 	this->setModal(false);
 	this->show();
-	DataForm *userParent = (DataForm *)parent();
-	MainForm *mainForm = (MainForm *)userParent->GetParent();
 	QString message = tr("Loading...");
 	mainForm->statusBar()->showMessage(message);
 	DataForm *dForm = new DataForm(dialogBL, mainForm);
@@ -249,18 +273,20 @@ void CreatePspDlg::OpenSlrDlg()
 	dForm->FillTable<BusinessLayer::SalaryView>(errorMessage);
 	if (errorMessage.empty())
 	{
-		dForm->createPspDlg = this;
+		dForm->parentDialog = this;
 		dForm->setObjectName("salaryForm");
-		dForm->QtConnect<BusinessLayer::UserView>();
+		dForm->QtConnect<BusinessLayer::SalaryView>();
 		QMdiSubWindow *salaryWindow = new QMdiSubWindow;
 		salaryWindow->setWidget(dForm);
 		salaryWindow->setAttribute(Qt::WA_DeleteOnClose);
 		mainForm->mdiArea->addSubWindow(salaryWindow);
+		salaryWindow->resize(dForm->size().width() + 18, dForm->size().height() + 30);
 		dForm->topLevelWidget();
 		dForm->activateWindow();
 		QApplication::setActiveWindow(dForm);
 		dForm->show();
 		dForm->raise();
+		dForm->setWindowFlags(dForm->windowFlags() | Qt::WindowStaysOnTopHint);
 		QString message = tr("All users are shown");
 		mainForm->statusBar()->showMessage(message);
 	}
@@ -285,5 +311,17 @@ void CreatePspDlg::InitComboBox()
 		{
 			currencyCmb->addItem(curVector[i].GetShortName().c_str(), QVariant(curVector[i].GetID()));
 		}
+	}
+}
+
+void CreatePspDlg::TextEditChanged()
+{
+	if (valueEdit->text().contains(","))
+	{
+		valueEdit->setText(valueEdit->text().replace(",", "."));
+	}
+	if (valueEdit->text().contains(".."))
+	{
+		valueEdit->setText(valueEdit->text().replace("..", "."));
 	}
 }

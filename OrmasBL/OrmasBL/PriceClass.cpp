@@ -191,6 +191,28 @@ namespace BusinessLayer{
 		return false;
 	}
 
+	bool Price::GetPriceByProductID(DataLayer::OrmasDal& ormasDal, int pID, std::string& errorMessage)
+	{
+		productID = pID;
+		std::string filter = GenerateFilter(ormasDal);
+		std::vector<DataLayer::pricesViewCollection> priceVector = ormasDal.GetPrices(errorMessage, filter);
+		if (0 != priceVector.size())
+		{
+			id = std::get<0>(priceVector.at(0));
+			date = std::get<1>(priceVector.at(0));
+			value = std::get<5>(priceVector.at(0));
+			currencyID = std::get<7>(priceVector.at(0));
+			productID = std::get<8>(priceVector.at(0));
+			isOutdated = std::get<9>(priceVector.at(0));
+			return true;
+		}
+		else
+		{
+			errorMessage = "Cannot find price with this product id";
+		}
+		return false;
+	}
+
 	bool Price::IsEmpty()
 	{
 		if (0 == id && date.empty() && 0.0 == value && 0 == currencyID && 0 == productID && isOutdated == true)

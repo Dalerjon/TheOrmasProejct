@@ -158,6 +158,26 @@ namespace BusinessLayer{
 		return false;
 	}
 
+	bool AccountType::GetAccountTypeByNumber(DataLayer::OrmasDal& ormasDal, int aNumber, std::string& errorMessage)
+	{
+		number = aNumber;
+		std::string filter = GenerateFilter(ormasDal);
+		std::vector<DataLayer::accountTypeCollection> accountTypesVector = ormasDal.GetAccountType(errorMessage, filter);
+		if (0 != accountTypesVector.size())
+		{
+			id = std::get<0>(accountTypesVector.at(0));
+			name = std::get<1>(accountTypesVector.at(0));
+			number = std::get<2>(accountTypesVector.at(0));
+			comment = std::get<3>(accountTypesVector.at(0));
+			return true;
+		}
+		else
+		{
+			errorMessage = "Cannot find account type with this number";
+		}
+		return false;
+	}
+
 	bool AccountType::IsEmpty()
 	{
 		if (0 == id && name == "" && comment == "" && 0 == number)

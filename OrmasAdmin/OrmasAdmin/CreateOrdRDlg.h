@@ -3,6 +3,7 @@
 
 #include "ui_CreateOrdRDlg.h"
 #include "OrmasBL.h"
+#include "MainForm.h"
 
 class CreateOrdRDlg : public QDialog, public Ui::CreateOrderRaw
 {
@@ -19,21 +20,24 @@ public:
 	void DeleteOrderRaw(){};
 	void Close();
 	void OpenEmpDlg();
-	void OpenSkEmpDlg();
+	void OpenPurDlg();
 	void OpenStsDlg();
 	void OpenOrdRListDlg();
 	void StatusWasChenged();
+	void TextEditChanged();
 	public slots:
 	void SetID(int ID, QString childName);
 signals:
 	void CloseCreatedForms();
 private:
 	BusinessLayer::OrderRaw *orderRaw = new BusinessLayer::OrderRaw();
-	void SetOrderRawParams(int, QString, QString, int, int, double, int, int, int = 0);
-	void FillEditElements(int, QString, QString, int, int, double, int, int);
+	void SetOrderRawParams(int, QString, QString, int, double, double, int, int, int = 0);
+	void FillEditElements(int, QString, QString, int, double, double, int, int);
 	QDoubleValidator *vDouble = nullptr;
 	QIntValidator *vInt = nullptr;
 	std::map<std::string, int> statusMap;
 	void InitComboBox();
+	QWidget* parentForm;
+	MainForm* mainForm;
 };
 #endif //CREATEORDRDLG_H

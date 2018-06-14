@@ -1,8 +1,10 @@
 #include "stdafx.h"
 #include "ReceiptProductClass.h"
+#include "ReceiptProductListClass.h"
 #include "UserClass.h"
 #include "StatusClass.h"
 #include "StockClass.h"
+#include "ProductionStockClass.h"
 
 namespace BusinessLayer
 {
@@ -44,7 +46,7 @@ namespace BusinessLayer
 		return stockEmployeeID;
 	}
 
-	int ReceiptProduct::GetCount()
+	double ReceiptProduct::GetCount()
 	{
 		return count;
 	}
@@ -85,7 +87,7 @@ namespace BusinessLayer
 		stockEmployeeID = rStockEmployeeID;
 	}
 
-	void ReceiptProduct::SetCount(int rCount)
+	void ReceiptProduct::SetCount(double rCount)
 	{
 		count = rCount;
 	}
@@ -106,7 +108,7 @@ namespace BusinessLayer
 	}
 
 	bool ReceiptProduct::CreateReceiptProduct(DataLayer::OrmasDal& ormasDal, int uID, std::string rpDate, std::string rpExecDate, 
-		int seID, int rpCount, double rpSum, int sID, int cID, std::string& errorMessage)
+		int seID, double rpCount, double rpSum, int sID, int cID, std::string& errorMessage)
 	{
 		if (IsDuplicate(ormasDal, uID, rpDate, seID ,rpCount, rpSum, cID, errorMessage))
 			return false;
@@ -124,11 +126,29 @@ namespace BusinessLayer
 		ormasDal.StartTransaction(errorMessage);
 		if (0 != id && ormasDal.CreateReceiptProduct(id, employeeID, date, executionDate, stockEmployeeID, count, sum, statusID, currencyID, errorMessage))
 		{
-			if (ChangesAtStock(ormasDal, id, errorMessage))
+			if (statusID == statusMap.find("EXECUTED")->second)
 			{
-				ormasDal.CommitTransaction(errorMessage);
-				return true;
+				if (ChangesAtProdStock(ormasDal, id, errorMessage))
+				{
+					if (ChangesAtStock(ormasDal, id, errorMessage))
+					{
+						ormasDal.CommitTransaction(errorMessage);
+						return true;
+					}
+					else
+					{
+						ormasDal.CancelTransaction(errorMessage);
+						return false;
+					}
+				}
+				else
+				{
+					ormasDal.CancelTransaction(errorMessage);
+					return false;
+				}
 			}
+			ormasDal.CommitTransaction(errorMessage);
+			return true;
 		}
 		if (errorMessage.empty())
 		{
@@ -148,11 +168,29 @@ namespace BusinessLayer
 		ormasDal.StartTransaction(errorMessage);
 		if (0 != id && ormasDal.CreateReceiptProduct(id, employeeID, date, executionDate, stockEmployeeID, count, sum, statusID, currencyID, errorMessage))
 		{
-			if (ChangesAtStock(ormasDal, id, errorMessage))
+			if (statusID == statusMap.find("EXECUTED")->second)
 			{
-				ormasDal.CommitTransaction(errorMessage);
-				return true;
+				if (ChangesAtProdStock(ormasDal, id, errorMessage))
+				{
+					if (ChangesAtStock(ormasDal, id, errorMessage))
+					{
+						ormasDal.CommitTransaction(errorMessage);
+						return true;
+					}
+					else
+					{
+						ormasDal.CancelTransaction(errorMessage);
+						return false;
+					}
+				}
+				else
+				{
+					ormasDal.CancelTransaction(errorMessage);
+					return false;
+				}
 			}
+			ormasDal.CommitTransaction(errorMessage);
+			return true;
 		}
 		if (errorMessage.empty())
 		{
@@ -165,6 +203,19 @@ namespace BusinessLayer
 	{
 		if (!ormasDal.StartTransaction(errorMessage))
 			return false;
+		ReceiptProduct rProduct;
+		if (!rProduct.GetReceiptProductByID(ormasDal, id, errorMessage))
+		{
+			return false;
+		}
+		std::map<std::string, int> statusMap = BusinessLayer::Status::GetStatusesAsMap(ormasDal, errorMessage);
+		if (0 == statusMap.size())
+			return false;
+		if (rProduct.GetStatusID() == statusMap.find("EXECUTED")->second)
+		{
+			errorMessage = "Cannot delete document with \"EXECUTED\" status!";
+			return false;
+		}
 		if (ormasDal.DeleteReceiptProduct(id, errorMessage))
 		{
 			if (ormasDal.DeleteListByReceiptProductID(id, errorMessage))
@@ -189,10 +240,13 @@ namespace BusinessLayer
 		return false;
 	}
 	bool ReceiptProduct::UpdateReceiptProduct(DataLayer::OrmasDal& ormasDal, int uID, std::string rpDate, std::string rpExecnDate,
-		int eID, int rpCount, double rpSum, int sID, int cID, std::string& errorMessage)
+		int eID, double rpCount, double rpSum, int sID, int cID, std::string& errorMessage)
 	{
 		std::map<std::string, int> statusMap = BusinessLayer::Status::GetStatusesAsMap(ormasDal, errorMessage);
 		if (0 == statusMap.size())
+			return false;
+		std::map<int, double> prodCountMap = GetProductCount(ormasDal, id, errorMessage);
+		if (0 == prodCountMap.size())
 			return false;
 		employeeID = uID;
 		date = rpDate;
@@ -204,14 +258,62 @@ namespace BusinessLayer
 		currencyID = cID;
 		prevSum = GetCurrentSum(ormasDal, id, errorMessage);
 		prevCount = GetCurrentCount(ormasDal, id, errorMessage);
+		previousStatusID = GetCurrentStatusID(ormasDal, id, errorMessage);
 		ormasDal.StartTransaction(errorMessage);
 		if (0 != id && ormasDal.UpdateReceiptProduct(id, employeeID, date, executionDate, stockEmployeeID, count, sum, statusID, currencyID, errorMessage))
 		{
-			if (ChangesAtStock(ormasDal, id, prevSum, prevCount, errorMessage))
+			if (statusID == statusMap.find("EXECUTED")->second && previousStatusID != statusMap.find("EXECUTED")->second)
 			{
-				ormasDal.CommitTransaction(errorMessage);
-				return true;
+				if (ChangesAtProdStock(ormasDal, id, errorMessage))
+				{
+					if (ChangesAtStock(ormasDal, id, errorMessage))
+					{
+						ormasDal.CommitTransaction(errorMessage);
+						return true;
+					}
+					else
+					{
+						ormasDal.CancelTransaction(errorMessage);
+						return false;
+					}
+				}
+				else
+				{
+					ormasDal.CancelTransaction(errorMessage);
+					return false;
+				}
 			}
+			if (statusID == statusMap.find("EXECUTED")->second && previousStatusID == statusMap.find("EXECUTED")->second)
+			{
+				if (count != prevCount || sum != prevSum)
+				{
+					if (ChangesAtProdStock(ormasDal, id, prodCountMap, prevSum, errorMessage))
+					{
+						if (ChangesAtStock(ormasDal, id, prodCountMap, prevSum,  errorMessage))
+						{
+							ormasDal.CommitTransaction(errorMessage);
+							return true;
+						}
+						else
+						{
+							ormasDal.CancelTransaction(errorMessage);
+							return false;
+						}
+					}
+					else
+					{
+						ormasDal.CancelTransaction(errorMessage);
+						return false;
+					}
+				}
+				else
+				{
+					ormasDal.CommitTransaction(errorMessage);
+					return true;
+				}
+			}
+			ormasDal.CommitTransaction(errorMessage);
+			return true;
 		}
 		if (errorMessage.empty())
 		{
@@ -225,16 +327,67 @@ namespace BusinessLayer
 		std::map<std::string, int> statusMap = BusinessLayer::Status::GetStatusesAsMap(ormasDal, errorMessage);
 		if (0 == statusMap.size())
 			return false;
+		std::map<int, double> prodCountMap = GetProductCount(ormasDal, id, errorMessage);
+		if (0 == prodCountMap.size())
+			return false;
 		prevSum = GetCurrentSum(ormasDal, id, errorMessage);
 		prevCount = GetCurrentCount(ormasDal, id, errorMessage);
+		previousStatusID = GetCurrentStatusID(ormasDal, id, errorMessage);
 		ormasDal.StartTransaction(errorMessage);
 		if (0 != id && ormasDal.UpdateReceiptProduct(id, employeeID, date, executionDate, stockEmployeeID, count, sum, statusID, currencyID, errorMessage))
 		{
-			if (ChangesAtStock(ormasDal, id, prevSum, prevCount, errorMessage))
+			if (statusID == statusMap.find("EXECUTED")->second && previousStatusID != statusMap.find("EXECUTED")->second)
 			{
-				ormasDal.CommitTransaction(errorMessage);
-				return true;
+				if (ChangesAtProdStock(ormasDal, id, errorMessage))
+				{
+					if (ChangesAtStock(ormasDal, id, errorMessage))
+					{
+						ormasDal.CommitTransaction(errorMessage);
+						return true;
+					}
+					else
+					{
+						ormasDal.CancelTransaction(errorMessage);
+						return false;
+					}
+				}
+				else
+				{
+					ormasDal.CancelTransaction(errorMessage);
+					return false;
+				}
 			}
+			if (statusID == statusMap.find("EXECUTED")->second && previousStatusID == statusMap.find("EXECUTED")->second)
+			{
+				if (count != prevCount || sum != prevSum)
+				{
+					if (ChangesAtProdStock(ormasDal, id, prodCountMap, prevSum, errorMessage))
+					{
+						if (ChangesAtStock(ormasDal, id, prodCountMap, prevSum, errorMessage))
+						{
+							ormasDal.CommitTransaction(errorMessage);
+							return true;
+						}
+						else
+						{
+							ormasDal.CancelTransaction(errorMessage);
+							return false;
+						}
+					}
+					else
+					{
+						ormasDal.CancelTransaction(errorMessage);
+						return false;
+					}
+				}
+				else
+				{
+					ormasDal.CommitTransaction(errorMessage);
+					return true;
+				}
+			}
+			ormasDal.CommitTransaction(errorMessage);
+			return true;
 		}
 		if (errorMessage.empty())
 		{
@@ -299,7 +452,7 @@ namespace BusinessLayer
 		currencyID = 0;
 	}
 
-	bool ReceiptProduct::IsDuplicate(DataLayer::OrmasDal& ormasDal, int eID, std::string rDate, int seID, int rCount, double rSum,
+	bool ReceiptProduct::IsDuplicate(DataLayer::OrmasDal& ormasDal, int eID, std::string rDate, int seID, double rCount, double rSum,
 		int cID, std::string& errorMessage)
 	{
 		ReceiptProduct receiptProduct;
@@ -342,16 +495,28 @@ namespace BusinessLayer
 		return true;
 	}
 
+	bool ReceiptProduct::ChangesAtProdStock(DataLayer::OrmasDal& ormasDal, int crID, std::string& errorMessage)
+	{
+		ProductionStock pStock;
+		return pStock.ChangingByConsumeProduct(ormasDal, crID, errorMessage);
+	}
+
+	bool ReceiptProduct::ChangesAtProdStock(DataLayer::OrmasDal& ormasDal, int crID, std::map<int, double> pProdCountMap, double pSum, std::string& errorMessage)
+	{
+		ProductionStock pStock;
+		return pStock.ChangingByConsumeProduct(ormasDal, crID, pProdCountMap, pSum, errorMessage);
+	}
+
 	bool ReceiptProduct::ChangesAtStock(DataLayer::OrmasDal& ormasDal, int rpID, std::string& errorMessage)
 	{
 		Stock stock;
 		return stock.ChangingByReceiptProduct(ormasDal, rpID, errorMessage);
 	}
 
-	bool ReceiptProduct::ChangesAtStock(DataLayer::OrmasDal& ormasDal, int rpID, double pSum, int pCount, std::string& errorMessage)
+	bool ReceiptProduct::ChangesAtStock(DataLayer::OrmasDal& ormasDal, int rpID, std::map<int, double> pProdCountMap, double pSum, std::string& errorMessage)
 	{
 		Stock stock;
-		return stock.ChangingByReceiptProduct(ormasDal, rpID, pSum, pCount, errorMessage);
+		return stock.ChangingByReceiptProduct(ormasDal, rpID, pProdCountMap, pSum, errorMessage);
 	}
 
 	double ReceiptProduct::GetCurrentSum(DataLayer::OrmasDal& ormasDal, int rpID, std::string& errorMessage)
@@ -362,11 +527,36 @@ namespace BusinessLayer
 		return 0;
 	}
 
-	int ReceiptProduct::GetCurrentCount(DataLayer::OrmasDal& ormasDal, int rpID, std::string& errorMessage)
+	double ReceiptProduct::GetCurrentCount(DataLayer::OrmasDal& ormasDal, int rpID, std::string& errorMessage)
 	{
 		ReceiptProduct rProduct;
 		if (rProduct.GetReceiptProductByID(ormasDal, rpID, errorMessage))
 			return rProduct.GetCount();
 		return 0;
+	}
+
+	int ReceiptProduct::GetCurrentStatusID(DataLayer::OrmasDal& ormasDal, int cID, std::string& errorMessage)
+	{
+		ReceiptProduct rProduct;
+		if (rProduct.GetReceiptProductByID(ormasDal, cID, errorMessage))
+			return rProduct.GetStatusID();
+		return 0;
+	}
+
+	std::map<int, double> ReceiptProduct::GetProductCount(DataLayer::OrmasDal& ormasDal, int cpID, std::string& errorMessage)
+	{
+		std::map<int, double> mapProdCount;
+		ReceiptProductList rPList;
+		rPList.SetReceiptProductID(cpID);
+		std::string filter = rPList.GenerateFilter(ormasDal);
+		std::vector<DataLayer::receiptProductListViewCollection> productListVector = ormasDal.GetReceiptProductList(errorMessage, filter);
+		if (productListVector.size() > 0)
+		{
+			for each (auto item in productListVector)
+			{
+				mapProdCount.insert(std::make_pair(std::get<11>(item), std::get<7>(item)));
+			}
+		}
+		return mapProdCount;
 	}
 }
