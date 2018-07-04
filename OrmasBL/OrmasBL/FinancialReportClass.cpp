@@ -17,10 +17,11 @@ namespace BusinessLayer{
 		account66040_66140 = std::get<10>(jCollection);
 		account66050_66150 = std::get<11>(jCollection);
 		account66060_66160 = std::get<12>(jCollection);
-		account66070_66170 = std::get<13>(jCollection);
-		tax = std::get<14>(jCollection);
-		fromDate = std::get<15>(jCollection);
-		tillDate = std::get<16>(jCollection);
+		account66130 = std::get<13>(jCollection);
+		account66070_66170 = std::get<14>(jCollection);
+		tax = std::get<15>(jCollection);
+		fromDate = std::get<16>(jCollection);
+		tillDate = std::get<17>(jCollection);
 	}
 	FinancialReport::FinancialReport()
 	{
@@ -37,6 +38,7 @@ namespace BusinessLayer{
 		account66040_66140 = 0;
 		account66050_66150 = 0;
 		account66060_66160 = 0;
+		account66130 = 0;
 		account66070_66170 = 0;
 		tax = 0;
 		fromDate = "";
@@ -106,6 +108,11 @@ namespace BusinessLayer{
 	double FinancialReport::GetAccount66060_66160()
 	{
 		return account66060_66160;
+	}
+
+	double FinancialReport::GetAccount66130()
+	{
+		return account66130;
 	}
 
 	double FinancialReport::GetAccount66070_66170()
@@ -193,6 +200,11 @@ namespace BusinessLayer{
 		account66060_66160 = fAccount66060_66160;
 	}
 
+	void FinancialReport::SetAccount66130(double fAccount66130)
+	{
+		account66130 = fAccount66130;
+	}
+
 	void FinancialReport::SetAccount66070_66170(double fAccount66070_66170)
 	{
 		account66070_66170 = fAccount66070_66170;
@@ -215,7 +227,7 @@ namespace BusinessLayer{
 
 	bool FinancialReport::CreateFinancialReport(DataLayer::OrmasDal &ormasDal, double fAccount44010, double fAccount55010, double fAccount552, double fAccount55270,
 		double fAccount553, double fAccount55321, double fAccount44020_90, double fAccount66010_66110, double fAccount66020_66120,
-		double fAccount66040_66140, double fAccount66050_66150, double fAccount66060_66160, double fAccount66070_66170,
+		double fAccount66040_66140, double fAccount66050_66150, double fAccount66060_66160, double fAccount66130, double fAccount66070_66170,
 		double fTax, std::string fFromDate, std::string fTillDate, std::string& errorMessage)
 	{
 		if (IsDuplicate(ormasDal, fFromDate, fTillDate, errorMessage))
@@ -233,13 +245,14 @@ namespace BusinessLayer{
 		account66040_66140 = fAccount66040_66140;
 		account66050_66150 = fAccount66050_66150;
 		account66060_66160 = fAccount66060_66160;
+		account66130 = fAccount66130;
 		account66070_66170 = fAccount66070_66170;
 		tax = fTax;
 		fromDate = fFromDate;
 		tillDate = fTillDate;
 		if (0 != id && ormasDal.CreateFinancialReport(id, account44010, account55010, account552, account55270, account553, 
 			account55321, account44020_90, account66010_66110, account66020_66120, account66040_66140, account66050_66150,
-			account66060_66160, account66070_66170, tax, fromDate, tillDate, errorMessage))
+			account66060_66160, account66130, account66070_66170, tax, fromDate, tillDate, errorMessage))
 		{
 			return true;
 		}
@@ -256,7 +269,7 @@ namespace BusinessLayer{
 		id = ormasDal.GenerateID();
 		if (0 != id && ormasDal.CreateFinancialReport(id, account44010, account55010, account552, account55270, account553,
 			account55321, account44020_90, account66010_66110, account66020_66120, account66040_66140, account66050_66150,
-			account66060_66160, account66070_66170, tax, fromDate, tillDate, errorMessage))
+			account66060_66160, account66130, account66070_66170, tax, fromDate, tillDate, errorMessage))
 		{
 			return true;
 		}
@@ -282,7 +295,7 @@ namespace BusinessLayer{
 
 	bool FinancialReport::UpdateFinancialReport(DataLayer::OrmasDal &ormasDal, double fAccount44010, double fAccount55010, double fAccount552, double fAccount55270,
 		double fAccount553, double fAccount55321, double fAccount44020_90, double fAccount66010_66110, double fAccount66020_66120,
-		double fAccount66040_66140, double fAccount66050_66150, double fAccount66060_66160, double fAccount66070_66170,
+		double fAccount66040_66140, double fAccount66050_66150, double fAccount66060_66160, double fAccount66130, double fAccount66070_66170,
 		double fTax, std::string fFromDate, std::string fTillDate, std::string& errorMessage)
 	{
 		account44010 = fAccount44010;
@@ -297,13 +310,14 @@ namespace BusinessLayer{
 		account66040_66140 = fAccount66040_66140;
 		account66050_66150 = fAccount66050_66150;
 		account66060_66160 = fAccount66060_66160;
+		account66130 = fAccount66130;
 		account66070_66170 = fAccount66070_66170;
 		tax = fTax;
 		fromDate = fFromDate;
 		tillDate = fTillDate;
 		if (0 != id && ormasDal.UpdateFinancialReport(id, account44010, account55010, account552, account55270, account553,
 			account55321, account44020_90, account66010_66110, account66020_66120, account66040_66140, account66050_66150,
-			account66060_66160, account66070_66170, tax, fromDate, tillDate, errorMessage))
+			account66060_66160, account66130, account66070_66170, tax, fromDate, tillDate, errorMessage))
 		{
 			return true;
 		}
@@ -317,7 +331,7 @@ namespace BusinessLayer{
 	{
 		if (0 != id && ormasDal.UpdateFinancialReport(id, account44010, account55010, account552, account55270, account553,
 			account55321, account44020_90, account66010_66110, account66020_66120, account66040_66140, account66050_66150,
-			account66060_66160, account66070_66170, tax, fromDate, tillDate, errorMessage)) 
+			account66060_66160, account66130, account66070_66170, tax, fromDate, tillDate, errorMessage))
 		{
 			return true;
 		}
@@ -332,11 +346,11 @@ namespace BusinessLayer{
 	{
 		if (0 != id || 0 != account44010 || 0 != account55010 || 0 != account552 || 0 != account55270 || 0 != account553 
 			|| 0 != account55321 || 0 != account44020_90 || 0 != account66010_66110 || 0 != account66020_66120 || 0 != account66040_66140 
-			|| 0 != account66050_66150 || 0 != account66060_66160 || 0 != account66070_66170 || 0 != tax || !fromDate.empty() || !tillDate.empty())
+			|| 0 != account66050_66150 || 0 != account66060_66160 || 0 != account66130 || 0 != account66070_66170 || 0 != tax || !fromDate.empty() || !tillDate.empty())
 		{
 			return ormasDal.GetFilterForFinancialReport(id, account44010, account55010, account552, account55270, account553,
 				account55321, account44020_90, account66010_66110, account66020_66120, account66040_66140, account66050_66150,
-				account66060_66160, account66070_66170, tax, fromDate, tillDate);
+				account66060_66160, account66130, account66070_66170, tax, fromDate, tillDate);
 		}
 		return "";
 	}
@@ -361,10 +375,11 @@ namespace BusinessLayer{
 			account66040_66140 = std::get<10>(financialReportVector.at(0));
 			account66050_66150 = std::get<11>(financialReportVector.at(0));
 			account66060_66160 = std::get<12>(financialReportVector.at(0));
-			account66070_66170 = std::get<13>(financialReportVector.at(0));
-			tax = std::get<14>(financialReportVector.at(0));
-			fromDate = std::get<15>(financialReportVector.at(0));
-			tillDate = std::get<16>(financialReportVector.at(0));
+			account66130 = std::get<13>(financialReportVector.at(0));
+			account66070_66170 = std::get<14>(financialReportVector.at(0));
+			tax = std::get<15>(financialReportVector.at(0));
+			fromDate = std::get<16>(financialReportVector.at(0));
+			tillDate = std::get<17>(financialReportVector.at(0));
 			return true;
 		}
 		else
@@ -378,7 +393,7 @@ namespace BusinessLayer{
 	{
 		if (0 == id || 0 == account44010 || 0 == account55010 || 0 == account552 || 0 == account55270 || 0 == account553
 			|| 0 == account55321 || 0 == account44020_90 || 0 == account66010_66110 || 0 == account66020_66120 || 0 == account66040_66140
-			|| 0 == account66050_66150 || 0 == account66060_66160 || 0 == account66070_66170 || 0 == tax || fromDate.empty() || tillDate.empty())
+			|| 0 == account66050_66150 || 0 == account66060_66160 || 0 == account66130 || 0 == account66070_66170 || 0 == tax || fromDate.empty() || tillDate.empty())
 			return true;
 		return false;
 	}
@@ -398,6 +413,7 @@ namespace BusinessLayer{
 		account66040_66140 = 0;
 		account66050_66150 = 0;
 		account66060_66160 = 0;
+		account66130 = 0;
 		account66070_66170 = 0;
 		tax = 0;
 		fromDate = "";

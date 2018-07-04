@@ -53,7 +53,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(QTDIR)\include;$(QTDIR)\include\QtCore;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtWidgets;$(QTDIR)\include\QtPlatformSupport;..\..\includes\OrmasBL;..\..\includes\OrmasDal;..\..\includes\boost 1.61;..\..\includes\libpq</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(QTDIR)\include\QtPositioning;$(QTDIR)\include\QtNetwork;$(QTDIR)\include\QtQml;$(QTDIR)\include\QtQuic;$(QTDIR)\include\QtWebChannel;$(QTDIR)\include\QtWebEngineCore;$(QTDIR)\include\QtWebEngine;$(QTDIR)\include\QtWebEngineWidgets;$(QTDIR)\include;$(QTDIR)\include\QtCore;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtWidgets;$(QTDIR)\include\QtPlatformSupport;..\..\includes\OrmasBL;..\..\includes\OrmasDal;..\..\includes\boost 1.61;..\..\includes\libpq</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <MultiProcessorCompilation>false</MultiProcessorCompilation>
@@ -63,7 +63,7 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(QTDIR)\lib;..\..\libs</AdditionalLibraryDirectories>
-      <AdditionalDependencies>qtmaind.lib;Qt5Cored.lib;Qt5Guid.lib;Qt5Widgetsd.lib;Qt5PlatformSupport.lib;OrmasBLD.lib;OrmasDALD.lib;boost\libboost_system-vc120-mt-gd-1_61.lib;boost\libboost_filesystem-vc120-mt-gd-1_61.lib;libpqxx\libpq.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>qtmaind.lib;Qt5Cored.lib;Qt5WebEngineWidgetsd.lib;Qt5WebEngineCored.lib;Qt5WebChanneld.lib;Qt5WebEngined.lib;Qt5Networkd.lib;Qt5Positioningd.lib;Qt5Qmld.lib;Qt5Quickd.lib;Qt5Guid.lib;Qt5Widgetsd.lib;Qt5PlatformSupport.lib;OrmasBLD.lib;OrmasDALD.lib;boost\libboost_system-vc120-mt-gd-1_61.lib;boost\libboost_filesystem-vc120-mt-gd-1_61.lib;libpqxx\libpq.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -75,7 +75,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(QTDIR)\include;$(QTDIR)\include\QtCore;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtWidgets;$(QTDIR)\include\QtPlatformSupport;..\..\includes\OrmasBL;..\..\includes\OrmasDal;..\..\includes\boost 1.61;..\..\includes\libpq</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(QTDIR)\include\QtPositioning;$(QTDIR)\include\QtNetwork;$(QTDIR)\include\QtQml;$(QTDIR)\include\QtQuic;$(QTDIR)\include\QtWebChannel;$(QTDIR)\include\QtWebEngineCore;$(QTDIR)\include\QtWebEngine;$(QTDIR)\include\QtWebEngineWidgets;$(QTDIR)\include;$(QTDIR)\include\QtCore;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtWidgets;$(QTDIR)\include\QtPlatformSupport;..\..\includes\OrmasBL;..\..\includes\OrmasDal;..\..\includes\boost 1.61;..\..\includes\libpq</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -83,7 +83,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>$(QTDIR)\lib;..\..\libs</AdditionalLibraryDirectories>
-      <AdditionalDependencies>qtmain.lib;Qt5Core.lib;Qt5Gui.lib;Qt5Widgets.lib;Qt5PlatformSupport.lib;OrmasBL.lib;OrmasDAL.lib;boost\libboost_system-vc120-mt-1_61.lib;boost\libboost_filesystem-vc120-mt-1_61.lib;libpqxx\libpq.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>qtmain.lib;Qt5Core.lib;Qt5WebEngineWidgets.lib;Qt5WebEngineCore.lib;Qt5WebChannel.lib;Qt5WebEngine.lib;Qt5Network.lib;Qt5Positioning.lib;Qt5Qml.lib;Qt5Quick.lib;Qt5Gui.lib;Qt5Widgets.lib;Qt5PlatformSupport.lib;OrmasBL.lib;OrmasDAL.lib;boost\libboost_system-vc120-mt-1_61.lib;boost\libboost_filesystem-vc120-mt-1_61.lib;libpqxx\libpq.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -122,9 +122,36 @@
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Geterating moc file form CreateTaxDlg.h...</Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">moc_CreateTaxDlg.cpp</Outputs>
     </CustomBuild>
+    <CustomBuild Include="DocForm.h">
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\moc.exe"  "DocForm.h" -o "moc_DocForm.cpp"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\moc.exe"  "DocForm.h" -o "moc_DocForm.cpp"</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Geterating moc file form DocForm.h...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Geterating moc file form DocForm.h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">moc_DocForm.cpp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">moc_DocForm.cpp</Outputs>
+    </CustomBuild>
+    <CustomBuild Include="GenerateFinRepDlg.h">
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\moc.exe"  "GenerateFinRepDlg.h" -o "moc_GenerateFinRepDlg.cpp"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\moc.exe"  "GenerateFinRepDlg.h" -o "moc_GenerateFinRepDlg.cpp"</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Geterating moc file form GenerateFinRepDlg.h...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Geterating moc file form GenerateFinRepDlg.h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">moc_GenerateFinRepDlg.cpp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">moc_GenerateFinRepDlg.cpp</Outputs>
+    </CustomBuild>
+    <CustomBuild Include="GenerateCmpBlcDlg.h">
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\moc.exe"  "GenerateCmpBlcDlg.h" -o "moc_GenerateCmpBlcDlg.cpp"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\moc.exe"  "GenerateCmpBlcDlg.h" -o "moc_GenerateCmpBlcDlg.cpp"</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Geterating moc file form GenerateCmpBlcDlg.h...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Geterating moc file form GenerateCmpBlcDlg.h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">moc_GenerateCmpBlcDlg.cpp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">moc_GenerateCmpBlcDlg.cpp</Outputs>
+    </CustomBuild>
     <ClInclude Include="ui_CloseOfMonthDlg.h" />
     <ClInclude Include="ui_CloseOfMonthInfoDlg.h" />
     <ClInclude Include="ui_CreateTaxDlg.h" />
+    <ClInclude Include="ui_DocForm.h" />
+    <ClInclude Include="ui_GenerateCmpBlcDlg.h" />
+    <ClInclude Include="ui_GenerateFinRepDlg.h" />
     <ClInclude Include="ui_ReworkRawDlg.h" />
     <CustomBuild Include="DataForm.h">
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Geterating moc file form DataForm.h...</Message>
@@ -941,7 +968,10 @@
     <ClCompile Include="CreateWOffRDlg.cpp" />
     <ClCompile Include="CreateWOffRListDlg.cpp" />
     <ClCompile Include="DataForm.cpp" />
+    <ClCompile Include="DocForm.cpp" />
     <ClCompile Include="GenerateAccDlg.cpp" />
+    <ClCompile Include="GenerateCmpBlcDlg.cpp" />
+    <ClCompile Include="GenerateFinRepDlg.cpp" />
     <ClCompile Include="GenerateOneAccDlg.cpp" />
     <ClCompile Include="InfoForm.cpp" />
     <ClCompile Include="LoginForm.cpp" />
@@ -1262,7 +1292,19 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="moc_DocForm.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="moc_GenerateAccDlg.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="moc_GenerateCmpBlcDlg.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="moc_GenerateFinRepDlg.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
     </ClCompile>
@@ -2112,6 +2154,39 @@
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\uic.exe"  "CreateTaxDlg.ui" -o "ui_CreateTaxDlg.h"</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Generating ui_CreateTaxDlg.h file...</Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">ui_CreateTaxDlg.h</Outputs>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="DocForm.ui">
+      <FileType>Document</FileType>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\uic.exe"  "DocForm.ui" -o "ui_DocForm.h"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\uic.exe"  "DocForm.ui" -o "ui_DocForm.h"</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Generating ui_DocForm.h file...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Generating ui_DocForm.h file...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">ui_DocForm.h</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">ui_DocForm.h</Outputs>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="GenerateFinRepDlg.ui">
+      <FileType>Document</FileType>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\uic.exe"  "GenerateFinRepDlg.ui" -o "ui_GenerateFinRepDlg.h"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\uic.exe"  "GenerateFinRepDlg.ui" -o "ui_GenerateFinRepDlg.h"</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Generating ui_GenerateFinRepDlg.h file...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Generating ui_GenerateFinRepDlg.h file...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">ui_GenerateFinRepDlg.h</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">ui_GenerateFinRepDlg.h</Outputs>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="GenerateCmpBlcDlg.ui">
+      <FileType>Document</FileType>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\uic.exe"  "GenerateCmpBlcDlg.ui" -o "ui_GenerateCmpBlcDlg.h"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\uic.exe"  "GenerateCmpBlcDlg.ui" -o "ui_GenerateCmpBlcDlg.h"</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Generating ui_GenerateCmpBlcDlg.h file...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Generating ui_GenerateCmpBlcDlg.h file...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">ui_GenerateCmpBlcDlg.h</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">ui_GenerateCmpBlcDlg.h</Outputs>
     </CustomBuild>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

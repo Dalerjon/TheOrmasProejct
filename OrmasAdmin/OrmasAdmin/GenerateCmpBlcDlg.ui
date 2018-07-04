@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>CloseOfMonth</class>
- <widget class="QDialog" name="CloseOfMonth">
+ <class>GenerateCompanyBalance</class>
+ <widget class="QDialog" name="GenerateCompanyBalance">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
     <width>501</width>
-    <height>96</height>
+    <height>73</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Close of month</string>
+   <string>Generate company balance</string>
   </property>
   <property name="locale">
    <locale language="English" country="UnitedStates"/>
@@ -32,7 +32,10 @@
    <property name="bottomMargin">
     <number>11</number>
    </property>
-   <item row="2" column="1" colspan="4">
+   <item row="0" column="4">
+    <widget class="QDateEdit" name="tillDateEdit"/>
+   </item>
+   <item row="1" column="1" colspan="4">
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
       <spacer name="horizontalSpacer">
@@ -63,9 +66,6 @@
      </item>
     </layout>
    </item>
-   <item row="0" column="4">
-    <widget class="QDateEdit" name="tillDateEdit"/>
-   </item>
    <item row="0" column="3">
     <widget class="QLabel" name="label_2">
      <property name="text">
@@ -80,20 +80,6 @@
     <widget class="QLabel" name="fromLb">
      <property name="text">
       <string>From date:</string>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="1">
-    <widget class="QLabel" name="calcTaxLb">
-     <property name="text">
-      <string>Claculate taxes?</string>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="2">
-    <widget class="QCheckBox" name="taxYesCbx">
-     <property name="text">
-      <string>Yes</string>
      </property>
     </widget>
    </item>

@@ -111,7 +111,7 @@ void ClcWagesDlg::SetID(int ID, QString childName)
 
 void ClcWagesDlg::Calculate()
 {
-	if (employeeChkBox->isChecked())
+	/*if (employeeChkBox->isChecked())
 	{
 		QProgressDialog progressDialog(this);
 		std::vector<BusinessLayer::EmployeeView> employeeVector = dialogBL->GetAllDataForClass<BusinessLayer::EmployeeView>(errorMessage);
@@ -292,7 +292,7 @@ void ClcWagesDlg::Calculate()
 				}
 			}			
 		}
-	}
+	}*/
 }
 
 void ClcWagesDlg::ChangeState()

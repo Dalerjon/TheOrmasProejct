@@ -67,6 +67,12 @@ namespace DataLayer{
 	
 	typedef std::tuple<int, int, std::string, std::string, int, bool> currenciesCollection;
 
+	typedef std::tuple<int, int, int, std::string> divisionAccountCollection;
+
+	typedef std::tuple<int, int, int, bool> divisionEmployeeCollection;
+
+	typedef std::tuple<int, int, std::string> divisionsCollection;
+
 	typedef std::tuple<int, int, std::string, std::string> employeesCollection;
 
 	typedef std::tuple<int, std::string, std::string, std::string, std::string, std::string, std::string, std::string, 
@@ -79,7 +85,7 @@ namespace DataLayer{
 	typedef std::tuple<int, int> entrySubaccountCollection;
 
 	typedef std::tuple<int, double, double, double, double, double, double, double, double, double, double, double, double, double, 
-		double, std::string, std::string> financialReportCollection;
+		double,	double, std::string, std::string> financialReportCollection;
 
 	typedef std::tuple<int, std::string, std::string, double, std::string, int, int> entriesViewCollection;
 

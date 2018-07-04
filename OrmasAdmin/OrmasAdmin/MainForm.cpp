@@ -6,6 +6,9 @@
 #include "ClcWagesDlg.h"
 #include "InfoForm.h"
 #include "ReworkRawDlg.h"
+#include "CloseOfMonthDlg.h"
+#include "GenerateFinRepDlg.h"
+#include "GenerateCmpBlcDlg.h"
 
 
 MainForm::MainForm(BusinessLayer::OrmasBL *ormasBL, BusinessLayer::User* user)
@@ -153,6 +156,7 @@ void MainForm::SetAllMenuInvisible()
 	actionCompanyAccounts->setVisible(false);
 	actionEntry->setVisible(false);
 	actionEntryRouting->setVisible(false);
+	actionCloseOfMonth->setVisible(false);
 		
 	//actions in menu cash
 	actionPayments->setVisible(false);
@@ -173,6 +177,8 @@ void MainForm::SetAllMenuInvisible()
 	
 	//actions in menu reports
 	actionCompanyBalanceInfo->setVisible(false);
+	actionFinancialReport->setVisible(false);
+	actionCompanyBalance->setVisible(false);
 
 	//actions in menu reference
 	actionCompany->setVisible(false);
@@ -265,6 +271,7 @@ void MainForm::SetAllMenuVisible()
 	actionCompanyAccounts->setVisible(true);
 	actionEntry->setVisible(true);
 	actionEntryRouting->setVisible(true);
+	actionCloseOfMonth->setVisible(true);
 
 	//actions in menu cash
 	actionPayments->setVisible(true);
@@ -285,6 +292,8 @@ void MainForm::SetAllMenuVisible()
 
 	//actions in menu reports
 	actionCompanyBalanceInfo->setVisible(true);
+	actionFinancialReport->setVisible(true);
+	actionCompanyBalance->setVisible(true);
 
 	//actions in menu reference
 	actionCompany->setVisible(true);
@@ -401,6 +410,7 @@ void MainForm::CreateConnections()
 	QObject::connect(actionCompanyAccounts, &QAction::triggered, this, &MainForm::OpenCompanyAccountForm);
 	QObject::connect(actionEntry, &QAction::triggered, this, &MainForm::OpenEntryForm);
 	QObject::connect(actionEntryRouting, &QAction::triggered, this, &MainForm::OpenEntryRoutingForm);
+	QObject::connect(actionCloseOfMonth, &QAction::triggered, this, &MainForm::OpenCloseOfMonthForm);
 		
 	QObject::connect(actionPayments, &QAction::triggered, this, &MainForm::OpenPaymentForm);
 	QObject::connect(actionRefund, &QAction::triggered, this, &MainForm::OpenRefundForm);
@@ -418,6 +428,8 @@ void MainForm::CreateConnections()
 	QObject::connect(actionInventorization, &QAction::triggered, this, &MainForm::OpenInventorizationForm);
 
 	QObject::connect(actionCompanyBalanceInfo, &QAction::triggered, this, &MainForm::CompanyBalanceInfo);
+	QObject::connect(actionFinancialReport, &QAction::triggered, this, &MainForm::FinancialReportForm);
+	QObject::connect(actionCompanyBalance, &QAction::triggered, this, &MainForm::CompanyBalanceForm);
 	
 	QObject::connect(actionCompany, &QAction::triggered, this, &MainForm::OpenCompanyForm);
 	QObject::connect(actionCurrency, &QAction::triggered, this, &MainForm::OpenCurrencyForm);
@@ -2231,6 +2243,7 @@ void MainForm::OpenSubaccountForm()
 	}
 
 }
+
 void MainForm::GenerateAccountsForm()
 {
 	GenerateAcc *generateAccDlg = new GenerateAcc(oBL, this);
@@ -2602,6 +2615,18 @@ void MainForm::OpenEntryRoutingForm()
 		statusBar()->showMessage(message);
 	}
 
+}
+
+void MainForm::OpenCloseOfMonthForm()
+{
+	CloseOfMonthDlg *closeOfMonthDlg = new CloseOfMonthDlg(oBL, this);
+	closeOfMonthDlg->setAttribute(Qt::WA_DeleteOnClose);
+	closeOfMonthDlg->setWindowTitle(tr("Close of month"));
+	QMdiSubWindow *closeOfMonthWindow = new QMdiSubWindow;
+	closeOfMonthWindow->setWidget(closeOfMonthDlg);
+	closeOfMonthWindow->setAttribute(Qt::WA_DeleteOnClose);
+	mdiArea->addSubWindow(closeOfMonthWindow);
+	closeOfMonthDlg->show();
 }
 
 void MainForm::OpenPaymentForm()
@@ -3252,6 +3277,31 @@ void MainForm::CompanyBalanceInfo()
 	}
 	errorMessage = "";
 }
+
+void MainForm::FinancialReportForm()
+{
+	GenerateFinRep *generateFinRepDlg = new GenerateFinRep(oBL, this);
+	generateFinRepDlg->setAttribute(Qt::WA_DeleteOnClose);
+	generateFinRepDlg->setWindowTitle(tr("Generate financial report"));
+	QMdiSubWindow *generateFinRepWindow = new QMdiSubWindow;
+	generateFinRepWindow->setWidget(generateFinRepDlg);
+	generateFinRepWindow->setAttribute(Qt::WA_DeleteOnClose);
+	mdiArea->addSubWindow(generateFinRepWindow);
+	generateFinRepDlg->show();
+}
+
+void MainForm::CompanyBalanceForm()
+{
+	GenerateCmpBlc *generateFinCmpBlc = new GenerateCmpBlc(oBL, this);
+	generateFinCmpBlc->setAttribute(Qt::WA_DeleteOnClose);
+	generateFinCmpBlc->setWindowTitle(tr("Generate financial report"));
+	QMdiSubWindow *generateCmpBlcWindow = new QMdiSubWindow;
+	generateCmpBlcWindow->setWidget(generateFinCmpBlc);
+	generateCmpBlcWindow->setAttribute(Qt::WA_DeleteOnClose);
+	mdiArea->addSubWindow(generateCmpBlcWindow);
+	generateFinCmpBlc->show();
+}
+
 
 void MainForm::OpenCompanyForm()
 {

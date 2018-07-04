@@ -297,6 +297,15 @@
     <ClInclude Include="ui_CreateTaxDlg.h">
       <Filter>Header Files\UI Headers</Filter>
     </ClInclude>
+    <ClInclude Include="ui_DocForm.h">
+      <Filter>Header Files\UI Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="ui_GenerateFinRepDlg.h">
+      <Filter>Header Files\UI Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="ui_GenerateCmpBlcDlg.h">
+      <Filter>Header Files\UI Headers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -815,6 +824,24 @@
     <ClCompile Include="moc_CloseOfMonthinfoDlg.cpp">
       <Filter>MOC Files</Filter>
     </ClCompile>
+    <ClCompile Include="DocForm.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="moc_DocForm.cpp">
+      <Filter>MOC Files</Filter>
+    </ClCompile>
+    <ClCompile Include="moc_GenerateFinRepDlg.cpp">
+      <Filter>MOC Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GenerateFinRepDlg.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="moc_GenerateCmpBlcDlg.cpp">
+      <Filter>MOC Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GenerateCmpBlcDlg.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="MainForm.ui">
@@ -1328,6 +1355,24 @@
       <Filter>Header Files</Filter>
     </CustomBuild>
     <CustomBuild Include="CreateTaxDlg.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="DocForm.ui">
+      <Filter>User Interface</Filter>
+    </CustomBuild>
+    <CustomBuild Include="GenerateFinRepDlg.ui">
+      <Filter>User Interface</Filter>
+    </CustomBuild>
+    <CustomBuild Include="GenerateFinRepDlg.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="DocForm.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="GenerateCmpBlcDlg.ui">
+      <Filter>User Interface</Filter>
+    </CustomBuild>
+    <CustomBuild Include="GenerateCmpBlcDlg.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
   </ItemGroup>

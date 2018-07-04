@@ -19,6 +19,7 @@ namespace BusinessLayer{
 		double account66040_66140 = 0.0;
 		double account66050_66150 = 0.0;
 		double account66060_66160 = 0.0;
+		double account66130 = 0.0;
 		double account66070_66170 = 0.0;
 		double tax = 0.0;
 		std::string fromDate = "";
@@ -27,12 +28,12 @@ namespace BusinessLayer{
 		FinancialReport();
 		FinancialReport(int aID, double fAccount44010, double fAccount55010, double fAccount552, double fAccount55270,
 			double fAccount553, double fAccount55321, double fAccount44020_90, double fAccount66010_66110, double fAccount66020_66120,
-			double fAccount66040_66140, double fAccount66050_66150, double fAccount66060_66160, double fAccount66070_66170, 
+			double fAccount66040_66140, double fAccount66050_66150, double fAccount66060_66160, double fAccount66130, double fAccount66070_66170,
 			double fTax, std::string fFromDate, std::string fTillDate) :id(aID), account44010(fAccount44010), account55010(fAccount55010),
 			account552(fAccount552), account55270(fAccount55270), account553(fAccount553), account55321(fAccount55321),
 			account44020_90(fAccount44020_90), account66010_66110(fAccount66010_66110), account66020_66120(fAccount66020_66120),
 			account66040_66140(fAccount66040_66140), account66050_66150(fAccount66050_66150), account66060_66160(fAccount66060_66160),
-			account66070_66170(fAccount66070_66170), tax(fTax), fromDate(fFromDate), tillDate(fTillDate){};
+			account66130(fAccount66130), account66070_66170(fAccount66070_66170), tax(fTax), fromDate(fFromDate), tillDate(fTillDate){};
 		FinancialReport(DataLayer::financialReportCollection);
 		~FinancialReport(){};
 
@@ -52,6 +53,7 @@ namespace BusinessLayer{
 		double GetAccount66040_66140();
 		double GetAccount66050_66150();
 		double GetAccount66060_66160();
+		double GetAccount66130();
 		double GetAccount66070_66170();
 		double GetTax();
 		std::string GetFromDate();
@@ -71,6 +73,7 @@ namespace BusinessLayer{
 		void SetAccount66040_66140(double);
 		void SetAccount66050_66150(double);
 		void SetAccount66060_66160(double);
+		void SetAccount66130(double);
 		void SetAccount66070_66170(double);
 		void SetTax(double);
 		void SetFromDate(std::string);
@@ -82,11 +85,11 @@ namespace BusinessLayer{
 		bool DeleteFinancialReport(DataLayer::OrmasDal &ormasDal, std::string& errorMessage);
 		bool CreateFinancialReport(DataLayer::OrmasDal &ormasDal, double fAccount44010, double fAccount55010, double fAccount552, double fAccount55270,
 			double fAccount553, double fAccount55321, double fAccount44020_90, double fAccount66010_66110, double fAccount66020_66120,
-			double fAccount66040_66140, double fAccount66050_66150, double fAccount66060_66160, double fAccount66070_66170,
-			double fTax, std::string fFromDate, std::string fTillDate, std::string& errorMessage);
+			double fAccount66040_66140, double fAccount66050_66150, double fAccount66060_66160, double fAccount66130, 
+			double fAccount66070_66170,	double fTax, std::string fFromDate, std::string fTillDate, std::string& errorMessage);
 		bool UpdateFinancialReport(DataLayer::OrmasDal &ormasDal, double fAccount44010, double fAccount55010, double fAccount552, double fAccount55270,
 			double fAccount553, double fAccount55321, double fAccount44020_90, double fAccount66010_66110, double fAccount66020_66120,
-			double fAccount66040_66140, double fAccount66050_66150, double fAccount66060_66160, double fAccount66070_66170,
+			double fAccount66040_66140, double fAccount66050_66150, double fAccount66060_66160, double fAccount66130, double fAccount66070_66170,
 			double fTax, std::string fFromDate, std::string fTillDate, std::string& errorMessage);
 
 		//Generate filter string for class

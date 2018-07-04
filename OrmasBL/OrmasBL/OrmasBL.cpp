@@ -5,7 +5,7 @@
 #include "OrmasBL.h"
 #include <typeinfo>
 #include <math.h>
-
+#include <algorithm>
 namespace BusinessLayer{
 	
 	OrmasBL::OrmasBL()
@@ -49,87 +49,6 @@ namespace BusinessLayer{
 	bool OrmasBL::CancelTransaction(std::string& errorMessage)
 	{
 		return ormasDal.CancelTransaction(errorMessage);
-	}
-
-	//Close of month
-	void OrmasBL::CloseOfMonth(std::string fromDate, std::string tillDate)
-	{
-		std::string errorMessage = "";
-		ormasDal.StartTransaction(errorMessage);
-		if(!SaveAccountState(fromDate, tillDate))
-			ormasDal.CancelTransaction(errorMessage);
-		CalculateEmployeeSalary(fromDate, tillDate);
-		CalculateCloseOfMonth(fromDate, tillDate);
-		GenerateReports(fromDate, tillDate);
-		ormasDal.CommitTransaction(errorMessage);
-	}
-
-	bool OrmasBL::SaveAccountState(std::string fromDate, std::string tillDate)
-	{
-		//save state of accounts
-		std::string errorMessage = "";
-		std::vector<Account> vecForAccount;
-		std::vector<DataLayer::accountsCollection> accCollection;
-		accCollection = ormasDal.GetAccounts(errorMessage);
-		if (!accCollection.empty()){
-			for (auto data : accCollection)
-			{
-				vecForAccount.push_back(Account(data));
-			}
-		}
-		AccountHistory accHis;
-		for each (auto item in vecForAccount)
-		{
-			accHis.Clear();
-			accHis.SetID(ormasDal.GenerateID());
-			accHis.SetNumber(item.GetNumber());
-			accHis.SetStartBalance(item.GetStartBalance());
-			accHis.SetCurrentBalance(item.GetCurrentBalance());
-			accHis.SetFromDate(fromDate);
-			accHis.SetTillDate(tillDate);
-			if (!accHis.CreateAccountHistory(ormasDal, errorMessage))
-				return false;
-		}
-		
-		//save state of subaccounts
-		std::vector<SubaccountHistory> vecForSubaccountHis;
-		std::vector<DataLayer::subaccountHistoryCollection> subaccCollection;
-		subaccCollection = ormasDal.GetSubaccountHistory(errorMessage);
-		if (!subaccCollection.empty()){
-			for (auto data : subaccCollection)
-			{
-				vecForSubaccountHis.push_back(SubaccountHistory(data));
-			}
-		}
-		SubaccountHistory saccHis;
-		for each (auto item in vecForAccount)
-		{
-			saccHis.Clear();
-			saccHis.SetID(ormasDal.GenerateID());
-			saccHis.SetSubaccountID(item.GetID());
-			saccHis.SetStartBalance(item.GetStartBalance());
-			saccHis.SetCurrentBalance(item.GetCurrentBalance());
-			accHis.SetFromDate(fromDate);
-			accHis.SetTillDate(tillDate);
-			if (!saccHis.CreateSubaccountHistory(ormasDal, errorMessage))
-				return false;
-		}
-		return true;
-	}
-
-	bool OrmasBL::CalculateEmployeeSalary(std::string fromDate, std::string tillDate)
-	{
-
-	}
-
-	bool OrmasBL::CalculateCloseOfMonth(std::string fromDate, std::string tillDate)
-	{
-
-	}
-
-	bool OrmasBL::GenerateReports(std::string fromDate, std::string tillDate)
-	{
-
 	}
 
 	template<>
@@ -7117,4 +7036,844 @@ namespace BusinessLayer{
 		return false;
 	}
 
+
+	//Close of month functions
+	//Close of month
+	bool OrmasBL::CloseOfMonth(std::string fromDate, std::string tillDate)
+	{
+		std::string errorMessage = "";
+		//if (!NormalizationOfAccounts())
+		//	return false;
+		ormasDal.StartTransaction(errorMessage);
+		if (CalculateEmployeeSalary(fromDate, tillDate))
+		{
+			ormasDal.CommitTransaction(errorMessage);
+		}
+		else
+		{
+			ormasDal.CancelTransaction(errorMessage);
+			return false;
+		}
+		ormasDal.StartTransaction(errorMessage);
+		if (!SaveAccountState(fromDate, ""))
+		{
+			ormasDal.CancelTransaction(errorMessage);
+			return false;
+		}
+		if (!CorrectingEntries())
+		{
+			ormasDal.CancelTransaction(errorMessage);
+			return false;
+		}
+		if (!GenerateReports(fromDate, tillDate))
+		{
+			ormasDal.CancelTransaction(errorMessage);
+			return false;
+		}
+		if (!CalculateTax(fromDate, tillDate))
+		{
+			ormasDal.CancelTransaction(errorMessage);
+			return false;
+		}
+		if (!RecalculateNetCost(fromDate, tillDate))
+		{
+			ormasDal.CancelTransaction(errorMessage);
+			return false;
+		}
+		if (!CalculateCloseOfMonth(fromDate, tillDate))
+		{
+			ormasDal.CancelTransaction(errorMessage);
+			return false;
+		}
+		ormasDal.CommitTransaction(errorMessage);
+		CloseOfAccount70000();
+		if (!SaveAccountState("", tillDate))
+		{
+			return false;
+		}
+		return true;
+	}
+
+	bool OrmasBL::SaveAccountState(std::string fromDate, std::string tillDate)
+	{
+		std::string errorMessage = "";
+		if (tillDate.empty())
+		{
+			//save state of accounts
+			std::vector<Account> vecForAccount;
+			std::vector<DataLayer::accountsCollection> accCollection;
+			accCollection = ormasDal.GetAccounts(errorMessage);
+			if (!accCollection.empty()){
+				for (auto data : accCollection)
+				{
+					vecForAccount.push_back(Account(data));
+				}
+			}
+			AccountHistory accHis;
+			for each (auto item in vecForAccount)
+			{
+				accHis.Clear();
+				accHis.SetID(ormasDal.GenerateID());
+				accHis.SetAccountID(item.GetID());
+				accHis.SetNumber(item.GetNumber());
+				accHis.SetStartBalance(item.GetStartBalance());
+				accHis.SetCurrentBalance(item.GetCurrentBalance());
+				accHis.SetFromDate(fromDate);
+				accHis.SetTillDate(fromDate);
+				if (!accHis.CreateAccountHistory(ormasDal, errorMessage))
+					return false;
+			}
+
+			//save state of subaccounts
+			std::vector<SubaccountView> vecForSubaccountHis;
+			std::vector<DataLayer::subaccountsViewCollection> subaccCollection;
+			subaccCollection = ormasDal.GetSubaccounts(errorMessage);
+			if (!subaccCollection.empty()){
+				for (auto data : subaccCollection)
+				{
+					vecForSubaccountHis.push_back(SubaccountView(data));
+				}
+			}
+			SubaccountHistory saccHis;
+			for each (auto item in vecForSubaccountHis)
+			{
+				saccHis.Clear();
+				saccHis.SetID(ormasDal.GenerateID());
+				saccHis.SetSubaccountID(item.GetID());
+				saccHis.SetStartBalance(item.GetStartBalance());
+				saccHis.SetCurrentBalance(item.GetCurrentBalance());
+				saccHis.SetFromDate(fromDate);
+				saccHis.SetTillDate(fromDate);
+				if (!saccHis.CreateSubaccountHistory(ormasDal, errorMessage))
+					return false;
+			}
+		}
+		if (fromDate.empty())
+		{
+			//save state of accounts
+			std::vector<Account> vecForAccount;
+			std::vector<DataLayer::accountsCollection> accCollection;
+			accCollection = ormasDal.GetAccounts(errorMessage);
+			if (!accCollection.empty()){
+				for (auto data : accCollection)
+				{
+					vecForAccount.push_back(Account(data));
+				}
+			}
+			AccountHistory accHis;
+			for each (auto item in vecForAccount)
+			{
+				accHis.Clear();
+				accHis.SetID(ormasDal.GenerateID());
+				accHis.SetAccountID(item.GetID());
+				accHis.SetNumber(item.GetNumber());
+				accHis.SetStartBalance(item.GetStartBalance());
+				accHis.SetCurrentBalance(item.GetCurrentBalance());
+				accHis.SetFromDate(tillDate);
+				accHis.SetTillDate(tillDate);
+				if (!accHis.CreateAccountHistory(ormasDal, errorMessage))
+					return false;
+			}
+
+			//save state of subaccounts
+			std::vector<SubaccountView> vecForSubaccountHis;
+			std::vector<DataLayer::subaccountsViewCollection> subaccCollection;
+			subaccCollection = ormasDal.GetSubaccounts(errorMessage);
+			if (!subaccCollection.empty()){
+				for (auto data : subaccCollection)
+				{
+					vecForSubaccountHis.push_back(SubaccountView(data));
+				}
+			}
+			SubaccountHistory saccHis;
+			for each (auto item in vecForSubaccountHis)
+			{
+				saccHis.Clear();
+				saccHis.SetID(ormasDal.GenerateID());
+				saccHis.SetSubaccountID(item.GetID());
+				saccHis.SetStartBalance(item.GetStartBalance());
+				saccHis.SetCurrentBalance(item.GetCurrentBalance());
+				saccHis.SetFromDate(tillDate);
+				saccHis.SetTillDate(tillDate);
+				if (!saccHis.CreateSubaccountHistory(ormasDal, errorMessage))
+					return false;
+			}
+		}
+		return true;
+	}
+
+	bool OrmasBL::CalculateEmployeeSalary(std::string fromDate, std::string tillDate)
+	{
+		std::string errorMessage = "";
+		double sum = 0;
+		double count = 0;
+		std::vector<EmployeeView> employeeVector = this->GetAllDataForClass<EmployeeView>(errorMessage);
+		if (employeeVector.size() > 0)
+		{
+			Salary salary;
+			std::string salaryFilter;
+			std::vector<SalaryView> salaryVector;
+			std::map<std::string, int> salaryTypeMap = SalaryType::GetSalaryTypesAsMap(ormasDal, errorMessage);
+			std::map<std::string, int> statusMap = Status::GetStatusesAsMap(ormasDal, errorMessage);
+			Payslip payslip;
+			Order order;
+			Timesheet timesheet;
+			Jobsheet jobsheet;
+			Jobprice jobprice;
+			std::string orderFilter;
+			std::string timesheetFilter;
+			std::string jobsheetFilter;
+			std::vector<OrderView> orderVector;
+			std::vector<TimesheetView> timesheetVector;
+			std::vector<JobsheetView> jobsheetVector;
+			std::map<int, double> workedPieceMap;
+
+			for each (auto employeeItem in employeeVector)
+			{
+				if (!employeeItem.IsEmpty())
+				{
+					errorMessage = "";
+					salary.Clear();
+					salary.SetEmployeeID(employeeItem.GetID());
+					salaryFilter = salary.GenerateFilter(ormasDal);
+					salaryVector.clear();
+					salaryVector = this->GetAllDataForClass<SalaryView>(errorMessage, salaryFilter);
+					if (errorMessage.empty())
+					{
+						if (1 <= salaryVector.size())
+						{
+							if (salaryTypeMap.size() > 0 && statusMap.size() > 0)
+							{
+								for each (auto salaryItem in salaryVector)
+								{
+									try
+									{
+										if (salaryItem.GetSalaryTypeID() == salaryTypeMap.find("FIXED")->second)
+										{
+											payslip.Clear();
+											payslip.SetDate(ormasDal.GetSystemDateTime());
+											payslip.SetSalaryID(salaryItem.GetID());
+											payslip.SetCurrencyID(salaryItem.GetCurrencyID());
+											payslip.SetValue(salaryItem.GetValue());
+											if (!payslip.CreatePayslip(ormasDal, errorMessage))
+												return false;
+										}
+										if (salaryItem.GetSalaryTypeID() == salaryTypeMap.find("PERCENT")->second)
+										{
+											order.Clear();
+											order.SetEmployeeID(salary.GetEmployeeID());
+											order.SetStatusID(statusMap.find("EXECUTED")->second);
+											orderFilter.clear();
+											orderFilter = order.GenerateFilterForPeriod(ormasDal, fromDate, tillDate);
+											orderVector.clear();
+											orderVector = this->GetAllDataForClass<OrderView>(errorMessage, orderFilter);
+											sum = 0;
+											if (orderVector.size() > 0)
+											{
+												for each (auto orderItem in orderVector)
+												{
+													sum += orderItem.GetSum();
+												}
+											}
+											if (sum > 0)
+											{
+												payslip.Clear();
+												payslip.SetDate(ormasDal.GetSystemDateTime());
+												payslip.SetSalaryID(salaryItem.GetID());
+												payslip.SetCurrencyID(salaryItem.GetCurrencyID());
+												payslip.SetValue(sum * salaryItem.GetValue() / 1000);
+												if (!payslip.CreatePayslip(ormasDal, errorMessage))
+													return false;
+											}
+										}
+										if (salaryItem.GetSalaryTypeID() == salaryTypeMap.find("HOURLY")->second)
+										{
+											timesheet.Clear();
+											timesheet.SetSalaryID(salary.GetID());
+											timesheetFilter.clear();
+											timesheetFilter = timesheet.GenerateFilterForPeriod(ormasDal, fromDate, tillDate);
+											timesheetVector.clear();
+											timesheetVector = this->GetAllDataForClass<TimesheetView>(errorMessage, timesheetFilter);
+											count = 0;
+											if (timesheetVector.size() > 0)
+											{
+												for each (auto timesheetItem in timesheetVector)
+												{
+													count += timesheetItem.GetWorkedTime();
+												}
+											}
+											if (count > 0)
+											{
+												payslip.Clear();
+												payslip.SetDate(ormasDal.GetSystemDateTime());
+												payslip.SetSalaryID(salaryItem.GetID());
+												payslip.SetCurrencyID(salaryItem.GetCurrencyID());
+												payslip.SetValue(std::round(salaryItem.GetValue()* count * 100) / 100);
+												if (!payslip.CreatePayslip(ormasDal, errorMessage))
+													return false;
+											}
+										}
+										if (salaryItem.GetSalaryTypeID() == salaryTypeMap.find("SHIFT")->second)
+										{
+											/*payslip.Clear();
+											payslip.SetDate(ormasDal.GetSystemDateTime());
+											payslip.SetSalaryID(salaryItem.GetID());
+											payslip.SetCurrencyID(salaryItem.GetCurrencyID());
+											payslip.SetValue(salaryItem.GetValue());
+											if (!payslip.CreatePayslip(ormasDal, errorMessage))
+												return false;*/
+										}
+										if (salaryItem.GetSalaryTypeID() == salaryTypeMap.find("PIECE")->second)
+										{
+											jobsheet.Clear();
+											jobsheet.SetEmployeeID(salary.GetEmployeeID());
+											jobsheetFilter.clear();
+											jobsheetFilter = jobsheet.GenerateFilterForPeriod(ormasDal, fromDate, tillDate);
+											jobsheetVector.clear();
+											jobsheetVector = this->GetAllDataForClass<JobsheetView>(errorMessage, timesheetFilter);
+											if (jobsheetVector.size() > 0)
+											{
+												for each (auto jobsheetItem in jobsheetVector)
+												{
+													if (workedPieceMap.find(jobsheetItem.GetProductID()) == workedPieceMap.end())
+													{
+														workedPieceMap.insert(std::make_pair(jobsheetItem.GetProductID(), jobsheetItem.GetCount()));
+													}
+													else
+													{
+														workedPieceMap.find(jobsheetItem.GetProductID())->second = workedPieceMap.find(jobsheetItem.GetProductID())->second + jobsheetItem.GetCount();
+													}
+												}
+											}
+											if (workedPieceMap.size() > 0)
+											{
+												sum = 0;
+												for each (auto workedPieceItem in workedPieceMap)
+												{
+													jobprice.Clear();
+													if (!jobprice.GetJobpriceByID(ormasDal, workedPieceItem.first, errorMessage))
+														return false;
+													sum += std::round(jobprice.GetValue() * workedPieceItem.second * 100) / 100;
+												}
+											}
+											payslip.Clear();
+											payslip.SetDate(ormasDal.GetSystemDateTime());
+											payslip.SetSalaryID(salaryItem.GetID());
+											payslip.SetCurrencyID(salaryItem.GetCurrencyID());
+											payslip.SetValue(sum);
+											if (!payslip.CreatePayslip(ormasDal, errorMessage))
+												return false;
+										}
+									}
+									catch (...)
+									{
+										return false;
+									}
+								}
+							}
+							else
+							{
+								return false;
+							}
+						}
+					}
+					else
+					{
+						return false;
+					}
+				}
+			}
+			return true;
+		}
+		return false;
+	}
+
+	bool OrmasBL::CorrectingEntries()
+	{
+		std::string errorMessage = "";
+		std::vector<ProductionStockView> vecForPStock;
+		std::vector<DataLayer::productionStockViewCollection> pStockCollection;
+		pStockCollection = ormasDal.GetProductionStock(errorMessage);
+		if (!pStockCollection.empty()){
+			for (auto data : pStockCollection)
+			{
+				vecForPStock.push_back(ProductionStockView(data));
+			}
+		}
+		double productSum = 0;
+		for each (auto item in vecForPStock)
+		{
+			productSum += item.GetSum();
+		}
+
+		Account account10730;
+		Account account55020;
+		if (!account10730.GetAccountByNumber(ormasDal, "10730", errorMessage))
+			return false;
+		if (!account55020.GetAccountByNumber(ormasDal, "55020", errorMessage))
+			return false;
+		double correctingValue = 0;
+		double correctingStockValue = 0;
+		double temp = account10730.GetCurrentBalance();
+		correctingValue = std::round((account10730.GetCurrentBalance() - productSum) * 10000)/10000;
+		correctingStockValue = account55020.GetCurrentBalance();
+		Entry entry;
+		CompanyAccountRelation cAccRel;
+		Company company;
+		int companyID = company.GetCompanyID(ormasDal, errorMessage);
+		int acc55010 = cAccRel.GetAccountIDByCompanyID(ormasDal, companyID, "55010", errorMessage);
+
+		if (correctingValue > 0)
+		{
+			entry.Clear();
+			entry.SetID(ormasDal.GenerateID());
+			entry.SetDebitingAccountID(acc55010);
+			entry.SetValue(correctingValue);
+			entry.SetCreditingAccountID(account10730.GetID());
+			entry.SetDate(ormasDal.GetSystemDateTime());
+			if (!entry.CreateEntry(ormasDal, errorMessage))
+				return false;
+		}
+		else if (correctingValue < 0)
+		{
+			entry.Clear();
+			entry.SetID(ormasDal.GenerateID());
+			entry.SetDebitingAccountID(account10730.GetID());
+			entry.SetValue(correctingValue * (-1));
+			entry.SetCreditingAccountID(acc55010);
+			entry.SetDate(ormasDal.GetSystemDateTime());
+			if (!entry.CreateEntry(ormasDal, errorMessage))
+				return false;
+		}
+		if (correctingStockValue > 0)
+		{
+			entry.Clear();
+			entry.SetID(ormasDal.GenerateID());
+			entry.SetDebitingAccountID(acc55010);
+			entry.SetValue(correctingStockValue);
+			entry.SetCreditingAccountID(account55020.GetID());
+			entry.SetDate(ormasDal.GetSystemDateTime());
+			if (!entry.CreateEntry(ormasDal, errorMessage))
+				return false;
+		}
+		else if (correctingStockValue < 0)
+		{
+			entry.Clear();
+			entry.SetID(ormasDal.GenerateID());
+			entry.SetDebitingAccountID(account55020.GetID());
+			entry.SetValue(correctingStockValue * (-1));
+			entry.SetCreditingAccountID(acc55010);
+			entry.SetDate(ormasDal.GetSystemDateTime());
+			if (!entry.CreateEntry(ormasDal, errorMessage))
+				return false;
+		}
+		return true;
+	}
+
+	bool OrmasBL::CalculateTax(std::string fromDate, std::string tillDate)
+	{
+		//to do list
+		return true;
+	}
+
+	bool OrmasBL::RecalculateNetCost(std::string fromDate, std::string tillDate)
+	{
+		//Get all produced products ID  as vector<int productionID>
+		std::string errorMessage = "";
+		std::vector<Production> vecForProd;
+		std::vector<DataLayer::productionCollection> pCollection;
+		Production production;
+		std::string filter = production.GenerateFilterForPeriod(ormasDal, fromDate, tillDate);
+		pCollection = ormasDal.GetProduction(errorMessage, filter);
+		if (!pCollection.empty()){
+			for (auto data : pCollection)
+			{
+				vecForProd.push_back(Production(data));
+			}
+		}
+		std::vector<int> vecProductionID;
+		for each (auto item in vecForProd)
+		{
+			vecProductionID.push_back(item.GetID());
+		}
+
+		if (vecProductionID.size() == 0)
+			return false;
+
+		//Get all produced products ID  as map<int productID, double count>
+		ProductionList pList;
+		std::string pListFilter = pList.GenerateFilterForEnum(ormasDal, vecProductionID);
+		std::vector<ProductionListView> vecForProdList;
+		std::vector<DataLayer::productionListViewCollection> pListCollection;
+		pListCollection = ormasDal.GetProductionList(errorMessage, pListFilter);
+		if (!pListCollection.empty()){
+			for (auto data : pListCollection)
+			{
+				vecForProdList.push_back(ProductionListView(data));
+			}
+		}
+		std::map<int, double> mapProducedProducts;
+		for each (auto item in vecForProdList)
+		{
+			std::map<int, double>::iterator it = mapProducedProducts.find(item.GetProductID());
+			if (it != mapProducedProducts.end())
+			{
+				it->second += item.GetCount();
+			}
+			else
+			{
+				mapProducedProducts.insert(std::make_pair(item.GetProductID(), item.GetCount()));
+			}
+		}
+
+		//Get pure net cost from specification list as map<int productID, double netCost>
+		std::vector<SpecificationView> vecForSpec;
+		std::vector<DataLayer::specificationsViewCollection> pSpecCollection;
+		pSpecCollection = ormasDal.GetSpecifications(errorMessage);
+		if (!pSpecCollection.empty()){
+			for (auto data : pSpecCollection)
+			{
+				vecForSpec.push_back(SpecificationView(data));
+			}
+		}
+		std::map<double, int> mapNetCost;
+		for each (auto item in vecForSpec)
+		{
+			mapNetCost.insert(std::make_pair(item.GetSum(), item.GetProductID()));
+		}
+
+		//Calculate product coificient
+		std::map<int, double> coif;
+
+		int i = 0;
+		double divide = 0;
+		divide = mapNetCost.begin()->first;
+		for each (auto item in mapNetCost)
+		{
+			if (i == 0)
+				coif.insert(std::make_pair(item.second, 1));
+			coif.insert(std::make_pair(item.second, (item.first / divide)));
+			i++;
+		}
+
+
+		//Calculate tolal count
+		double totalCount = 0;
+		for each (auto item in mapProducedProducts)
+		{
+			if (coif.find(item.first) != coif.end())
+			{
+				totalCount += item.second * coif.find(item.first)->second;
+			}
+			else
+			{
+				return false;
+			}
+		}
+
+		Account account55010;
+		if (!account55010.GetAccountByNumber(ormasDal, "55010", errorMessage))
+			return false;
+
+		double totalNetCost = 0;
+		totalNetCost = account55010.GetCurrentBalance() / totalCount;
+
+		NetCost nCost;
+		for each (auto item in mapProducedProducts)
+		{
+			nCost.Clear();
+			if (!nCost.GetNetCostByProductID(ormasDal, item.first, errorMessage))
+				return false;
+			if (coif.find(item.first) != coif.end())
+				nCost.SetValue(std::round(totalNetCost * coif.find(item.first)->second * 100) / 100);
+			if (!nCost.UpdateNetCost(ormasDal, errorMessage))
+				return false;
+		}
+
+		return true;
+	}
+
+	bool OrmasBL::GenerateReports(std::string fromDate, std::string tillDate)
+	{
+		std::string errorMessage = "";
+		FinancialReport fReport;
+		Company company;
+		Account account44010;
+		Account account55010;
+		Account account55200;
+		Account account55300;
+		Account account55270;
+		Account account55321;
+		Account account44020;
+		Account account44090;
+		double account66010 = 0;
+		double account66020 = 0;
+		double account66040 = 0;
+		double account66050 = 0;
+		double account66060 = 0;
+		double account66070 = 0;
+		double account66110 = 0;
+		double account66120 = 0;
+		double account66140 = 0;
+		double account66150 = 0;
+		double account66160 = 0;
+		double account66170 = 0;
+		double account66130 = 0;
+		int companyID = company.GetCompanyID(ormasDal, errorMessage);
+		account44010.Clear();
+		if (!account44010.GetAccountByNumber(ormasDal, "44010", errorMessage))
+			return false;
+		account55010.Clear();
+		if (!account55010.GetAccountByNumber(ormasDal, "55010", errorMessage))
+			return false;
+		account55200.Clear();
+		if (!account55200.GetAccountByNumber(ormasDal, "55200", errorMessage))
+			return false;
+		account55300.Clear();
+		if (!account55300.GetAccountByNumber(ormasDal, "55300", errorMessage))
+			return false;
+		account55270.Clear();
+		if (!account55270.GetAccountByNumber(ormasDal, "55270", errorMessage))
+			return false;
+		account55321.Clear();
+		if (!account55321.GetAccountByNumber(ormasDal, "55321", errorMessage))
+			return false;
+		account44020.Clear();
+		if (!account44020.GetAccountByNumber(ormasDal, "44020", errorMessage))
+			return false;
+		account44020.Clear();
+		if (!account44090.GetAccountByNumber(ormasDal, "44090", errorMessage))
+			return false;
+
+		std::vector<Account> vecForAccount;
+		std::vector<DataLayer::accountsCollection> accCollection;
+		accCollection = ormasDal.GetAccounts(errorMessage);
+		if (!accCollection.empty()){
+			for (auto data : accCollection)
+			{
+				vecForAccount.push_back(Account(data));
+			}
+		}
+		for each (auto item in vecForAccount)
+		{
+			if (0 == item.GetNumber().substr(0, 1).compare("6"))
+			{
+				if (0 == item.GetNumber().compare("66010"))
+					account66010 = item.GetCurrentBalance();
+				if (0 == item.GetNumber().compare("66020"))
+					account66020 = item.GetCurrentBalance();
+				if (0 == item.GetNumber().compare("66040"))
+					account66040 = item.GetCurrentBalance();
+				if (0 == item.GetNumber().compare("66050"))
+					account66050 = item.GetCurrentBalance();
+				if (0 == item.GetNumber().compare("66060"))
+					account66060 = item.GetCurrentBalance();
+				if (0 == item.GetNumber().compare("66070"))
+					account66070 = item.GetCurrentBalance();
+				if (0 == item.GetNumber().compare("66110"))
+					account66110 = item.GetCurrentBalance();
+				if (0 == item.GetNumber().compare("66120"))
+					account66120 = item.GetCurrentBalance();
+				if (0 == item.GetNumber().compare("66140"))
+					account66140 = item.GetCurrentBalance();
+				if (0 == item.GetNumber().compare("66150"))
+					account66150 = item.GetCurrentBalance();
+				if (0 == item.GetNumber().compare("66160"))
+					account66160 = item.GetCurrentBalance();
+				if (0 == item.GetNumber().compare("66170"))
+					account66170 = item.GetCurrentBalance();
+				if (0 == item.GetNumber().compare("66130"))
+					account66130 = item.GetCurrentBalance();
+			}
+		}
+
+		fReport.SetAccount44010(std::round(account44010.GetCurrentBalance() * 100) / 100);
+		fReport.SetAccount55010(std::round(account55010.GetCurrentBalance() * 100) / 100);
+		fReport.SetAccount552(std::round(account55200.GetCurrentBalance() * 100) / 100);
+		fReport.SetAccount55270(std::round(account55270.GetCurrentBalance() * 100) / 100);
+		fReport.SetAccount553(std::round(account55300.GetCurrentBalance() * 100) / 100);
+		fReport.SetAccount55321(std::round(account55321.GetCurrentBalance() * 100) / 100);
+		fReport.SetAccount44020_90(std::round((account44020.GetCurrentBalance() + account44090.GetCurrentBalance()) * 100) / 100);
+		fReport.SetAccount66010_66110(std::round((account66010 + account66110) * 100) / 100);
+		fReport.SetAccount66020_66120(std::round((account66020 + account66120) * 100) / 100);
+		fReport.SetAccount66040_66140(std::round((account66040 + account66140) * 100) / 100);
+		fReport.SetAccount66050_66150(std::round((account66050 + account66150) * 100) / 100);
+		fReport.SetAccount66060_66160(std::round((account66060 + account66160) * 100) / 100);
+		fReport.SetAccount66130(std::round((account66130) * 100) / 100);
+		fReport.SetAccount66070_66170(std::round((account66070 + account66170) * 100) / 100);
+		fReport.SetFromDate(fromDate);
+		fReport.SetTillDate(tillDate);
+		if (!fReport.CreateFinancialReport(ormasDal, errorMessage))
+			return false;
+		return true;
+	}
+
+	bool OrmasBL::CalculateCloseOfMonth(std::string fromDate, std::string tillDate)
+	{
+		//save state of accounts
+		std::string errorMessage = "";
+		std::vector<Account> vecForAccount;
+		std::vector<DataLayer::accountsCollection> accCollection;
+		accCollection = ormasDal.GetAccounts(errorMessage);
+		Entry entry;
+		CompanyAccountRelation cAccRel;
+		Company company;
+		int companyID = company.GetCompanyID(ormasDal, errorMessage);
+		int acc70000 = cAccRel.GetAccountIDByCompanyID(ormasDal, companyID, "70000", errorMessage);
+		if (!accCollection.empty()){
+			for (auto data : accCollection)
+			{
+				vecForAccount.push_back(Account(data));
+			}
+		}
+		for each (auto item in vecForAccount)
+		{
+			if (0 == item.GetNumber().substr(0, 1).compare("4") || 0 == item.GetNumber().substr(0, 1).compare("5")
+				|| 0 == item.GetNumber().substr(0, 1).compare("6"))
+			{
+				if (0 == acc70000)
+					return false;
+				if (0 == item.GetNumber().compare("44000") || 0 == item.GetNumber().compare("55000") || 0 == item.GetNumber().compare("55200")
+					|| 0 == item.GetNumber().compare("55300") || 0 == item.GetNumber().compare("66000") || 0 == item.GetNumber().compare("66100"))
+				{					
+				}
+				else
+				{
+					if (item.GetCurrentBalance() > 0)
+					{
+						entry.Clear();
+						entry.SetID(ormasDal.GenerateID());
+						entry.SetDebitingAccountID(acc70000);
+						entry.SetValue(item.GetCurrentBalance());
+						entry.SetCreditingAccountID(item.GetID());
+						entry.SetDate(ormasDal.GetSystemDateTime());
+						if (!entry.CreateEntry(ormasDal, errorMessage))
+							return false;
+					}
+					else if (item.GetCurrentBalance() < 0)
+					{
+						entry.Clear();
+						entry.SetID(ormasDal.GenerateID());
+						entry.SetDebitingAccountID(item.GetID());
+						entry.SetValue(item.GetCurrentBalance() * (-1));
+						entry.SetCreditingAccountID(acc70000);
+						entry.SetDate(ormasDal.GetSystemDateTime());
+						if (!entry.CreateEntry(ormasDal, errorMessage))
+							return false;
+					}
+				}
+			}
+			else
+			{
+				if (0 == item.GetNumber().substr(0, 1).compare("7"))
+				{
+				}
+				else
+				{
+					item.SetStartBalance(item.GetCurrentBalance());
+					if (!item.UpdateAccount(ormasDal, errorMessage))
+						return false;
+				}
+			}
+		}
+
+		std::vector<SubaccountView> vecForSubaccountHis;
+		std::vector<DataLayer::subaccountsViewCollection> subaccCollection;
+		subaccCollection = ormasDal.GetSubaccounts(errorMessage);
+		if (!subaccCollection.empty()){
+			for (auto data : subaccCollection)
+			{
+				vecForSubaccountHis.push_back(SubaccountView(data));
+			}
+		}
+		for each (auto item in vecForSubaccountHis)
+		{
+			item.SetStartBalance(item.GetCurrentBalance());
+			if (!item.UpdateSubaccount(ormasDal, errorMessage))
+				return false;
+		}
+		return true;
+	}
+
+	bool OrmasBL::CloseOfAccount70000()
+	{
+		std::string errorMessage = "";
+		Account account70000;
+		if (!account70000.GetAccountByNumber(ormasDal, "70000", errorMessage))
+			return false;
+		Account account33210;
+		if (!account33210.GetAccountByNumber(ormasDal, "33210", errorMessage))
+			return false;
+		double correctingValue = 0;
+		correctingValue = account70000.GetCurrentBalance()*(-1);
+
+		Entry entry;
+		CompanyAccountRelation cAccRel;
+		Company company;
+		int companyID = company.GetCompanyID(ormasDal, errorMessage);
+		
+		if (correctingValue > 0)
+		{
+			entry.Clear();
+			entry.SetID(ormasDal.GenerateID());
+			entry.SetDebitingAccountID(account70000.GetID());
+			entry.SetValue(correctingValue);
+			entry.SetCreditingAccountID(account33210.GetID());
+			entry.SetDate(ormasDal.GetSystemDateTime());
+			if (!entry.CreateEntry(ormasDal, errorMessage))
+				return false;
+		}
+		else if (correctingValue < 0)
+		{
+			entry.Clear();
+			entry.SetID(ormasDal.GenerateID());
+			entry.SetDebitingAccountID(account33210.GetID());
+			entry.SetValue(correctingValue * (-1));
+			entry.SetCreditingAccountID(account70000.GetID());
+			entry.SetDate(ormasDal.GetSystemDateTime());
+			if (!entry.CreateEntry(ormasDal, errorMessage))
+				return false;
+		}
+		
+		account33210.SetStartBalance(account33210.GetCurrentBalance());
+		if (!account33210.UpdateAccount(ormasDal, errorMessage))
+			return false;
+		return true;
+	}
+
+	/*bool OrmasBL::NormalizationOfAccounts()
+	{
+		std::string errorMessage ="";
+		std::vector<Account> vecForAccount;
+		std::vector<DataLayer::accountsCollection> accCollection;
+		accCollection = ormasDal.GetAccounts(errorMessage);
+		if (!accCollection.empty()){
+			for (auto data : accCollection)
+			{
+				vecForAccount.push_back(Account(data));
+			}
+		}
+		std::string parentNumber = "";
+		Account acc;
+		for each (auto item in vecForAccount)
+		{
+			if (0 == item.GetNumber().substr(3, 2).compare("00"))
+			{
+				parentNumber = item.GetNumber();
+			}
+			else
+			{
+				if (0 == item.GetNumber().substr(0, 3).compare(parentNumber.substr(0, 3)))
+				{
+					acc.Clear();
+					if (!acc.GetAccountByNumber(ormasDal, parentNumber, errorMessage))
+						return false;
+					acc.SetCurrentBalance(acc.GetCurrentBalance() + item.GetCurrentBalance());
+					if (!acc.UpdateAccount(ormasDal, errorMessage))
+						return false;
+				}
+			}
+		}
+		return true;
+	}*/
 }

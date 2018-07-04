@@ -723,7 +723,7 @@ INSERT INTO "OrmasSchema".chart_of_accounts(
 INSERT INTO "OrmasSchema".chart_of_accounts(
             chart_of_account_id, number_of_account, name_of_account, account_type_id)
     VALUES ((SELECT nextval('"OrmasSchema".id_seq')), '44000', 'Доходы от операционной деятельности', (SELECT account_type_id from "OrmasSchema".account_type 
-																				WHERE account_type_name = 'PASSIVE/PASSIVE') );
+																				WHERE account_type_name = 'ACTIVE/PASSIVE') );
 INSERT INTO "OrmasSchema".chart_of_accounts(
             chart_of_account_id, number_of_account, name_of_account, account_type_id)
     VALUES ((SELECT nextval('"OrmasSchema".id_seq')), '44010', 'Доходы от реализации', (SELECT account_type_id from "OrmasSchema".account_type 

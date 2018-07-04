@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "PayslipClass.h"
 #include "UserClass.h"
+#include "RoleClass.h"
 #include "SalaryClass.h"
 #include "BalanceClass.h"
 #include "BalancePayslipRelationClass.h"
@@ -279,6 +280,8 @@ namespace BusinessLayer{
 		Balance balance;
 		Company company;
 		Salary salary;
+		User user;
+		Role role;
 		if (!salary.GetSalaryByID(ormasDal, sID, errorMessage))
 		{
 			if (errorMessage.empty())
@@ -288,7 +291,24 @@ namespace BusinessLayer{
 		if (balance.GetBalanceByUserID(ormasDal, salary.GetEmployeeID(), errorMessage))
 		{
 			int companyID = company.GetCompanyID(ormasDal, errorMessage);
-			int debAccID = cAccRel.GetAccountIDByCompanyID(ormasDal, companyID, "10730", errorMessage);
+			if (!user.GetUserByID(ormasDal, salary.GetEmployeeID(), errorMessage))
+				return false;
+			if (!role.GetRoleByID(ormasDal, user.GetRoleID(), errorMessage))
+				return false;
+			int debAccID = 0;
+			if (0 == role.GetName().compare("EXPEDITOR") || 0 == role.GetName().compare("DRIVER"))
+			{
+				debAccID = cAccRel.GetAccountIDByCompanyID(ormasDal, companyID, "55220", errorMessage);
+			}
+			else if (0 == role.GetName().compare("PRODUCT MANAGER") || 0 == role.GetName().compare("CHIEF ACCOUNTANT") ||
+				0 == role.GetName().compare("ACCOUNTANT"))
+			{
+				debAccID = cAccRel.GetAccountIDByCompanyID(ormasDal, companyID, "55310", errorMessage);
+			}
+			else
+			{
+				debAccID = cAccRel.GetAccountIDByCompanyID(ormasDal, companyID, "10730", errorMessage);
+			}
 			int credAccID = balance.GetSubaccountID(); 
 			if (0 == debAccID || 0 == credAccID || 0 == companyID)
 			{
@@ -313,6 +333,8 @@ namespace BusinessLayer{
 		Balance balance;
 		Company company;
 		Salary salary;
+		User user;
+		Role role;
 		if (!salary.GetSalaryByID(ormasDal, sID, errorMessage))
 		{
 			if (errorMessage.empty())
@@ -322,7 +344,24 @@ namespace BusinessLayer{
 		if (balance.GetBalanceByUserID(ormasDal, salary.GetEmployeeID(), errorMessage))
 		{
 			int companyID = company.GetCompanyID(ormasDal, errorMessage);
-			int debAccID = cAccRel.GetAccountIDByCompanyID(ormasDal, companyID, "10730", errorMessage);
+			if (!user.GetUserByID(ormasDal, salary.GetEmployeeID(), errorMessage))
+				return false;
+			if (!role.GetRoleByID(ormasDal, user.GetRoleID(), errorMessage))
+				return false;
+			int debAccID = 0;
+			if (0 == role.GetName().compare("EXPEDITOR") || 0 == role.GetName().compare("DRIVER"))
+			{
+				debAccID = cAccRel.GetAccountIDByCompanyID(ormasDal, companyID, "55220", errorMessage);
+			}
+			else if (0 == role.GetName().compare("PRODUCT MANAGER") || 0 == role.GetName().compare("CHIEF ACCOUNTANT") ||
+				0 == role.GetName().compare("ACCOUNTANT"))
+			{
+				debAccID = cAccRel.GetAccountIDByCompanyID(ormasDal, companyID, "55310", errorMessage);
+			}
+			else
+			{
+				debAccID = cAccRel.GetAccountIDByCompanyID(ormasDal, companyID, "10730", errorMessage);
+			}
 			int credAccID = balance.GetSubaccountID();
 			if (0 == debAccID || 0 == credAccID || 0 == companyID)
 			{

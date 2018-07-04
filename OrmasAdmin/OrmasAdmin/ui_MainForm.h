@@ -103,6 +103,9 @@ public:
     QAction *actionProductionConsumeRaws;
     QAction *actionCompanyBalanceInfo;
     QAction *actionReworkRaws;
+    QAction *actionCloseOfMonth;
+    QAction *actionFinancialReport;
+    QAction *actionCompanyBalance;
     QWidget *centrWidget;
     QGridLayout *gridLayout;
     QMdiArea *mdiArea;
@@ -278,6 +281,12 @@ public:
         actionCompanyBalanceInfo->setObjectName(QStringLiteral("actionCompanyBalanceInfo"));
         actionReworkRaws = new QAction(MainWindow);
         actionReworkRaws->setObjectName(QStringLiteral("actionReworkRaws"));
+        actionCloseOfMonth = new QAction(MainWindow);
+        actionCloseOfMonth->setObjectName(QStringLiteral("actionCloseOfMonth"));
+        actionFinancialReport = new QAction(MainWindow);
+        actionFinancialReport->setObjectName(QStringLiteral("actionFinancialReport"));
+        actionCompanyBalance = new QAction(MainWindow);
+        actionCompanyBalance->setObjectName(QStringLiteral("actionCompanyBalance"));
         centrWidget = new QWidget(MainWindow);
         centrWidget->setObjectName(QStringLiteral("centrWidget"));
         gridLayout = new QGridLayout(centrWidget);
@@ -396,6 +405,7 @@ public:
         menuAccountings->addAction(actionCompanyAccounts);
         menuAccountings->addAction(actionEntry);
         menuAccountings->addAction(actionEntryRouting);
+        menuAccountings->addAction(actionCloseOfMonth);
         menuStock->addAction(actionStock);
         menuStock->addAction(actionOrderRaws);
         menuStock->addAction(actionReceiptRaws);
@@ -410,6 +420,8 @@ public:
         menuCash->addAction(actionRefund);
         menuCash->addAction(actionWithdrawal);
         menuReports->addAction(actionCompanyBalanceInfo);
+        menuReports->addAction(actionFinancialReport);
+        menuReports->addAction(actionCompanyBalance);
 
         retranslateUi(MainWindow);
 
@@ -494,6 +506,9 @@ public:
         actionProductionConsumeRaws->setText(QApplication::translate("MainWindow", "Consume raws", 0));
         actionCompanyBalanceInfo->setText(QApplication::translate("MainWindow", "Company balance info", 0));
         actionReworkRaws->setText(QApplication::translate("MainWindow", "Rework raws", 0));
+        actionCloseOfMonth->setText(QApplication::translate("MainWindow", "Close of month", 0));
+        actionFinancialReport->setText(QApplication::translate("MainWindow", "Financial report", 0));
+        actionCompanyBalance->setText(QApplication::translate("MainWindow", "Company balance", 0));
         menuUsers->setTitle(QApplication::translate("MainWindow", "Users", 0));
         menuProducts->setTitle(QApplication::translate("MainWindow", "Products", 0));
         menuOrders->setTitle(QApplication::translate("MainWindow", "Orders", 0));

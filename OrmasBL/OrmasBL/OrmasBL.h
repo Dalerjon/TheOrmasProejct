@@ -289,11 +289,17 @@ namespace BusinessLayer
 		bool UpdateWriteOffRaw(BusinessLayer::WriteOffRaw*, std::string&);
 		bool UpdateWriteOffRawList(BusinessLayer::WriteOffRawList*, std::string&);
 
-		void CloseOfMonth(std::string, std::string);
+		//bool NormalizationOfAccounts();
+		bool CloseOfMonth(std::string, std::string);
+		bool CloseOfAccount70000();
 		bool SaveAccountState(std::string, std::string);
 		bool CalculateEmployeeSalary(std::string, std::string);
 		bool CalculateCloseOfMonth(std::string, std::string);
+		bool CalculateTax(std::string, std::string);
+		bool RecalculateNetCost(std::string fromDate, std::string tillDate);
 		bool GenerateReports(std::string, std::string);
+		bool CorrectingEntries();
+		
 	};
 }
 #endif

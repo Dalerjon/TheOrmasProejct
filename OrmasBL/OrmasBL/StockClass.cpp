@@ -1582,7 +1582,7 @@ namespace BusinessLayer
 		}
 
 		CompanyAccountRelation caRel;
-		int debAccID = caRel.GetAccountIDByCompanyID(ormasDal, companyID, "55040", errorMessage);
+		int debAccID = caRel.GetAccountIDByCompanyID(ormasDal, companyID, "44090", errorMessage);
 		int credAccID = caRel.GetAccountIDByCompanyID(ormasDal, companyID, "10740", errorMessage);
 		if (0 == debAccID || 0 == credAccID)
 		{
@@ -1684,7 +1684,7 @@ namespace BusinessLayer
 			return false;
 		}
 		CompanyAccountRelation caRel;
-		int debAccID = caRel.GetAccountIDByCompanyID(ormasDal, companyID, "55040", errorMessage);
+		int debAccID = caRel.GetAccountIDByCompanyID(ormasDal, companyID, "44090", errorMessage);
 		int credAccID = caRel.GetAccountIDByCompanyID(ormasDal, companyID, "10740", errorMessage);
 		if (0 == debAccID || 0 == credAccID)
 		{
@@ -1786,7 +1786,7 @@ namespace BusinessLayer
 			return false;
 		}
 		CompanyAccountRelation caRel;
-		int debAccID = caRel.GetAccountIDByCompanyID(ormasDal, companyID, "55040", errorMessage);
+		int debAccID = caRel.GetAccountIDByCompanyID(ormasDal, companyID, "44090", errorMessage);
 		int credAccID = caRel.GetAccountIDByCompanyID(ormasDal, companyID, "10720", errorMessage);
 		if (0 == debAccID || 0 == credAccID)
 		{
@@ -1888,7 +1888,7 @@ namespace BusinessLayer
 			return false;
 		}
 		CompanyAccountRelation caRel;
-		int debAccID = caRel.GetAccountIDByCompanyID(ormasDal, companyID, "55040", errorMessage);
+		int debAccID = caRel.GetAccountIDByCompanyID(ormasDal, companyID, "44090", errorMessage);
 		int credAccID = caRel.GetAccountIDByCompanyID(ormasDal, companyID, "10720", errorMessage);
 		if (0 == debAccID || 0 == credAccID)
 		{

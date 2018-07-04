@@ -135,9 +135,18 @@ namespace BusinessLayer{
 
 	std::string Timesheet::GenerateFilter(DataLayer::OrmasDal& ormasDal)
 	{
-		if (0 != id || 0 != salaryID ||  0 != workedTime || date.empty())
+		if (0 != id || 0 != salaryID ||  0 != workedTime || !date.empty())
 		{
 			return ormasDal.GetFilterForTimesheet(id, salaryID, workedTime, date);
+		}
+		return "";
+	}
+
+	std::string Timesheet::GenerateFilterForPeriod(DataLayer::OrmasDal& ormasDal, std::string fromDate, std::string tilDate)
+	{
+		if (!fromDate.empty() && !tilDate.empty())
+		{
+			return ormasDal.GetFilterForTimesheetForPeriod(id, salaryID, workedTime, date, fromDate, tilDate);
 		}
 		return "";
 	}

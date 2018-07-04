@@ -13,11 +13,17 @@
 
 namespace DataLayer{
 
-	OrmasDal::OrmasDal(ConnectionString conn, PGconn *dbCon)
+	OrmasDal::OrmasDal(ConnectionString connection, PGconn *dbConnection)
 	{
-		this->connString = conn;
-		this->dbCon = dbCon;
+		this->connectionString = connection;
+		this->dbConnection = dbConnection;
 	}
+
+	OrmasDal::OrmasDal(const OrmasDal &ormasDAL)
+	{
+		dbConnection = ormasDal.dbConnection; connectionString = ormasDal.connectionString;
+	}
+
 	OrmasDal::OrmasDal()
 	{
 
@@ -29,21 +35,21 @@ namespace DataLayer{
 
 	PGconn* OrmasDal::GetConnection()
 	{
-		if (PQstatus(dbCon) != CONNECTION_OK)
+		if (PQstatus(dbConnection) != CONNECTION_OK)
 		{
-			PQfinish(dbCon);
+			PQfinish(dbConnection);
 			return nullptr;
 		}
-		return dbCon;
+		return dbConnection;
 	}
 
 	bool OrmasDal::ConnectToDB(std::string dbname, std::string username, std::string password, std::string host, int port)
 	{
 		SetDBParams(dbname, username, password, host, port);
-		dbCon = PQconnectdb(connString.GetConString().c_str());
-		if (PQstatus(dbCon) != CONNECTION_OK)
+		dbConnection = PQconnectdb(connectionString.GetConString().c_str());
+		if (PQstatus(dbConnection) != CONNECTION_OK)
 		{
-			PQfinish(dbCon);
+			PQfinish(dbConnection);
 			return false;
 		}
 		return true;
@@ -51,21 +57,21 @@ namespace DataLayer{
 
 	void OrmasDal::InitFromConfigFile(std::string path)
 	{
-		connString.InitFromConfigFile(path);
+		connectionString.InitFromConfigFile(path);
 	}
 
 	void OrmasDal::SetDBParams(std::string dbname, std::string username, std::string password, std::string host, int port)
 	{
-		connString.SetDBParams(dbname, username, password, host, port);
+		connectionString.SetDBParams(dbname, username, password, host, port);
 	}
 
 	int OrmasDal::GenerateID()
 	{
 		int id = 0;
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 			return id; // return id as 0, just use 0 for logical statements in your functions, for example for canceling some actions
 		PGresult * result;
-		result = PQexec(dbCon, "SELECT nextval('\"OrmasSchema\".id_seq');");
+		result = PQexec(dbConnection, "SELECT nextval('\"OrmasSchema\".id_seq');");
 		if (PQresultStatus(result) == PGRES_TUPLES_OK)
 		{
 			if (PQntuples(result) > 0)
@@ -84,10 +90,10 @@ namespace DataLayer{
 	int OrmasDal::GenerateAccountID()
 	{
 		int id = 0;
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 			return id; // return id as 0, just use 0 for logical statements in your functions, for example for canceling some actions
 		PGresult * result;
-		result = PQexec(dbCon, "SELECT nextval('\"OrmasSchema\".acc_seq');");
+		result = PQexec(dbConnection, "SELECT nextval('\"OrmasSchema\".acc_seq');");
 		if (PQresultStatus(result) == PGRES_TUPLES_OK)
 		{
 			if (PQntuples(result) > 0)
@@ -106,10 +112,10 @@ namespace DataLayer{
 	std::string OrmasDal::GetSystemDateTime()
 	{
 		std::string currentDate = "";
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 			return currentDate;
 		PGresult * result;
-		result = PQexec(dbCon, "SELECT to_char(now()::timestamp(0), 'yyyy.MM.dd hh:mm:ss')");
+		result = PQexec(dbConnection, "SELECT to_char(now()::timestamp(0), 'yyyy.MM.dd hh:mm:ss')");
 		if (PQresultStatus(result) == PGRES_TUPLES_OK)
 		{
 			if (PQntuples(result) > 0)
@@ -128,10 +134,10 @@ namespace DataLayer{
 	std::string OrmasDal::GetSystemDate()
 	{
 		std::string currentDate = "";
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 			return currentDate;
 		PGresult * result;
-		result = PQexec(dbCon, "SELECT to_char(DATE(now()::timestamp(0)), 'yyyy.MM.dd')");
+		result = PQexec(dbConnection, "SELECT to_char(DATE(now()::timestamp(0)), 'yyyy.MM.dd')");
 		if (PQresultStatus(result) == PGRES_TUPLES_OK)
 		{
 			if (PQntuples(result) > 0)
@@ -150,7 +156,7 @@ namespace DataLayer{
 	//transaction functions
 	bool OrmasDal::StartTransaction(std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -159,7 +165,7 @@ namespace DataLayer{
 
 		//start transaction
 		std::string sqlCommand = "BEGIN;";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
 			std::string logStr = PQresultErrorMessage(result);
@@ -173,7 +179,7 @@ namespace DataLayer{
 	
 	bool OrmasDal::CommitTransaction(std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -182,7 +188,7 @@ namespace DataLayer{
 
 		//start transaction
 		std::string sqlCommand = "COMMIT;";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
 			std::string logStr = PQresultErrorMessage(result);
@@ -196,7 +202,7 @@ namespace DataLayer{
 	
 	bool OrmasDal::CancelTransaction(std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -205,7 +211,7 @@ namespace DataLayer{
 
 		//start transaction
 		std::string sqlCommand = "ROLLBACK;";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
 			std::string logStr = PQresultErrorMessage(result);
@@ -223,7 +229,7 @@ namespace DataLayer{
 	{
 		accessItemsCollection rowTuple;
 		std::vector<accessItemsCollection> resultVector;
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 		}
@@ -233,7 +239,7 @@ namespace DataLayer{
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".access_items_view";
 			sqlCommand += filter;
 			sqlCommand += ";";
-			result = PQexec(dbCon, sqlCommand.c_str());
+			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
 			{
@@ -273,7 +279,7 @@ namespace DataLayer{
 	{
 		accessesViewCollection rowTuple;
 		std::vector<accessesViewCollection> resultVector;
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 		}
@@ -283,7 +289,7 @@ namespace DataLayer{
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".accesses_view";
 			sqlCommand += filter;
 			sqlCommand += ";";
-			result = PQexec(dbCon, sqlCommand.c_str());
+			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
 			{
@@ -328,7 +334,7 @@ namespace DataLayer{
 	{
 		accountTypeCollection rowTuple;
 		std::vector<accountTypeCollection> resultVector;
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 		}
@@ -338,7 +344,7 @@ namespace DataLayer{
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".account_type_view";
 			sqlCommand += filter;
 			sqlCommand += ";";
-			result = PQexec(dbCon, sqlCommand.c_str());
+			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
 			{
@@ -379,7 +385,7 @@ namespace DataLayer{
 	{
 		accountsCollection rowTuple;
 		std::vector<accountsCollection> resultVector;
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 		}
@@ -388,8 +394,8 @@ namespace DataLayer{
 			PGresult* result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".accounts_view";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY account_id ASC;";
-			result = PQexec(dbCon, sqlCommand.c_str());
+			sqlCommand += " ORDER BY account_number ASC;";
+			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
 			{
@@ -429,7 +435,7 @@ namespace DataLayer{
 	{
 		accountHistoryCollection rowTuple;
 		std::vector<accountHistoryCollection> resultVector;
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 		}
@@ -439,7 +445,7 @@ namespace DataLayer{
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".account_history_view";
 			sqlCommand += filter;
 			sqlCommand += " ORDER BY account_history_id ASC;";
-			result = PQexec(dbCon, sqlCommand.c_str());
+			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
 			{
@@ -482,7 +488,7 @@ namespace DataLayer{
 	{
 		balancePaymentCollection rowTuple;
 		std::vector<balancePaymentCollection> resultVector;
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 		}
@@ -492,7 +498,7 @@ namespace DataLayer{
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".balance_payment_view";
 			sqlCommand += filter;
 			sqlCommand += ";";
-			result = PQexec(dbCon, sqlCommand.c_str());
+			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
 			{
@@ -532,7 +538,7 @@ namespace DataLayer{
 	{
 		balancePayslipCollection rowTuple;
 		std::vector<balancePayslipCollection> resultVector;
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 		}
@@ -542,7 +548,7 @@ namespace DataLayer{
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".balance_payslip_view";
 			sqlCommand += filter;
 			sqlCommand += ";";
-			result = PQexec(dbCon, sqlCommand.c_str());
+			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
 			{
@@ -581,7 +587,7 @@ namespace DataLayer{
 	{
 		balanceRefundCollection rowTuple;
 		std::vector<balanceRefundCollection> resultVector;
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 		}
@@ -591,7 +597,7 @@ namespace DataLayer{
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".balance_refund_view";
 			sqlCommand += filter;
 			sqlCommand += ";";
-			result = PQexec(dbCon, sqlCommand.c_str());
+			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
 			{
@@ -630,7 +636,7 @@ namespace DataLayer{
 	{
 		balanceWithdrawalCollection rowTuple;
 		std::vector<balanceWithdrawalCollection> resultVector;
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 		}
@@ -640,7 +646,7 @@ namespace DataLayer{
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".balance_withdrawal_view";
 			sqlCommand += filter;
 			sqlCommand += ";";
-			result = PQexec(dbCon, sqlCommand.c_str());
+			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
 			{
@@ -679,7 +685,7 @@ namespace DataLayer{
 	{
 		balancesViewCollection rowTuple;
 		std::vector<balancesViewCollection> resultVector;
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 		}
@@ -689,7 +695,7 @@ namespace DataLayer{
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".balances_view";
 			sqlCommand += filter;
 			sqlCommand += " ORDER BY balance_id DESC;";
-			result = PQexec(dbCon, sqlCommand.c_str());
+			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
 			{
@@ -733,7 +739,7 @@ namespace DataLayer{
 	{
 		chartOfAccountsViewCollection rowTuple;
 		std::vector<chartOfAccountsViewCollection> resultVector;
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 		}
@@ -742,8 +748,8 @@ namespace DataLayer{
 			PGresult* result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".chart_of_accounts_view";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY chart_of_account_id ASC;";
-			result = PQexec(dbCon, sqlCommand.c_str());
+			sqlCommand += " ORDER BY number_of_account ASC;";
+			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
 			{
@@ -784,7 +790,7 @@ namespace DataLayer{
 	{
 		clientsViewCollection rowTuple;
 		std::vector<clientsViewCollection> resultVector;
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 		}
@@ -794,7 +800,7 @@ namespace DataLayer{
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".clients_view";
 			sqlCommand += filter;
 			sqlCommand += " ORDER BY user_id DESC;";
-			result = PQexec(dbCon, sqlCommand.c_str());
+			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
 			{
@@ -849,7 +855,7 @@ namespace DataLayer{
 	{
 		companiesCollection rowTuple;
 		std::vector<companiesCollection> resultVector;
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 		}
@@ -859,7 +865,7 @@ namespace DataLayer{
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".companies_view";
 			sqlCommand += filter;
 			sqlCommand += ";";
-			result = PQexec(dbCon, sqlCommand.c_str());
+			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
 			{
@@ -901,7 +907,7 @@ namespace DataLayer{
 	{
 		companyAccountViewCollection rowTuple;
 		std::vector<companyAccountViewCollection> resultVector;
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 		}
@@ -911,7 +917,7 @@ namespace DataLayer{
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".company_account_view";
 			sqlCommand += filter;
 			sqlCommand += ";";
-			result = PQexec(dbCon, sqlCommand.c_str());
+			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
 			{
@@ -952,7 +958,7 @@ namespace DataLayer{
 	{
 		companyEmployeeViewCollection rowTuple;
 		std::vector<companyEmployeeViewCollection> resultVector;
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 		}
@@ -962,7 +968,7 @@ namespace DataLayer{
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".company_employee_view";
 			sqlCommand += filter;
 			sqlCommand += ";";
-			result = PQexec(dbCon, sqlCommand.c_str());
+			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
 			{
@@ -1006,7 +1012,7 @@ namespace DataLayer{
 	{
 		consumeProductListViewCollection rowTuple;
 		std::vector<consumeProductListViewCollection> resultVector;
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 		}
@@ -1016,7 +1022,7 @@ namespace DataLayer{
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".consume_product_list_view";
 			sqlCommand += filter;
 			sqlCommand += " ORDER BY consume_product_id DESC;";
-			result = PQexec(dbCon, sqlCommand.c_str());
+			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
 			{
@@ -1067,7 +1073,7 @@ namespace DataLayer{
 	{
 		consumeProductsViewCollection rowTuple;
 		std::vector<consumeProductsViewCollection> resultVector;
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 		}
@@ -1077,7 +1083,7 @@ namespace DataLayer{
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".consume_products_view";
 			sqlCommand += filter;
 			sqlCommand += " ORDER BY consume_product_id DESC;";
-			result = PQexec(dbCon, sqlCommand.c_str());
+			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
 			{
@@ -1137,7 +1143,7 @@ namespace DataLayer{
 	{
 		consumeRawListViewCollection rowTuple;
 		std::vector<consumeRawListViewCollection> resultVector;
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 		}
@@ -1147,7 +1153,7 @@ namespace DataLayer{
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".consume_raw_list_view";
 			sqlCommand += filter;
 			sqlCommand += " ORDER BY consume_raw_id DESC;";
-			result = PQexec(dbCon, sqlCommand.c_str());
+			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
 			{
@@ -1198,7 +1204,7 @@ namespace DataLayer{
 	{
 		consumeRawsViewCollection rowTuple;
 		std::vector<consumeRawsViewCollection> resultVector;
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 		}
@@ -1208,7 +1214,7 @@ namespace DataLayer{
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".consume_raws_view";
 			sqlCommand += filter;
 			sqlCommand += " ORDER BY consume_raw_id DESC;";
-			result = PQexec(dbCon, sqlCommand.c_str());
+			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
 			{
@@ -1268,7 +1274,7 @@ namespace DataLayer{
 	{
 		currenciesCollection rowTuple;
 		std::vector<currenciesCollection> resultVector;
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 		}
@@ -1278,7 +1284,7 @@ namespace DataLayer{
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".currencies_view";
 			sqlCommand += filter;
 			sqlCommand += ";";
-			result = PQexec(dbCon, sqlCommand.c_str());
+			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
 			{
@@ -1321,7 +1327,7 @@ namespace DataLayer{
 	{
 		employeesViewCollection rowTuple;
 		std::vector<employeesViewCollection> resultVector;
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 		}
@@ -1331,7 +1337,7 @@ namespace DataLayer{
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".employees_view";
 			sqlCommand += filter;
 			sqlCommand += " ORDER BY user_id DESC;";
-			result = PQexec(dbCon, sqlCommand.c_str());
+			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
 			{
@@ -1383,7 +1389,7 @@ namespace DataLayer{
 	{
 		entriesViewCollection rowTuple;
 		std::vector<entriesViewCollection> resultVector;
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 		}
@@ -1393,7 +1399,7 @@ namespace DataLayer{
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".entries_view";
 			sqlCommand += filter;
 			sqlCommand += " ORDER BY entry_id DESC;";
-			result = PQexec(dbCon, sqlCommand.c_str());
+			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
 			{
@@ -1437,7 +1443,7 @@ namespace DataLayer{
 	{
 		entryRoutingCollection rowTuple;
 		std::vector<entryRoutingCollection> resultVector;
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 		}
@@ -1447,7 +1453,7 @@ namespace DataLayer{
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".entry_routing_view";
 			sqlCommand += filter;
 			sqlCommand += ";";
-			result = PQexec(dbCon, sqlCommand.c_str());
+			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
 			{
@@ -1487,7 +1493,7 @@ namespace DataLayer{
 	{
 		entrySubaccountCollection rowTuple;
 		std::vector<entrySubaccountCollection> resultVector;
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 		}
@@ -1497,7 +1503,7 @@ namespace DataLayer{
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".entry_subaccount_view";
 			sqlCommand += filter;
 			sqlCommand += ";";
-			result = PQexec(dbCon, sqlCommand.c_str());
+			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
 			{
@@ -1536,7 +1542,7 @@ namespace DataLayer{
 	{
 		financialReportCollection rowTuple;
 		std::vector<financialReportCollection> resultVector;
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 		}
@@ -1546,7 +1552,7 @@ namespace DataLayer{
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".financial_report_view";
 			sqlCommand += filter;
 			sqlCommand += ";";
-			result = PQexec(dbCon, sqlCommand.c_str());
+			result = PQexec(dbConnection, sqlCommand.c_str());
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
 			{
 				if (PQntuples(result) > 0)
@@ -1566,13 +1572,14 @@ namespace DataLayer{
 						double acc_66040_66140 = std::stod(std::string(PQgetvalue(result, i, 10)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 10)));
 						double acc_66050_66150 = std::stod(std::string(PQgetvalue(result, i, 11)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 11)));
 						double acc_66060_66160 = std::stod(std::string(PQgetvalue(result, i, 12)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 12)));
-						double acc_66070_66170 = std::stod(std::string(PQgetvalue(result, i, 13)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 13)));
-						double tax = std::stod(std::string(PQgetvalue(result, i, 14)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 14)));
-						std::string fromDate = PQgetvalue(result, i, 15);
-						std::string tillDate = PQgetvalue(result, i, 16);
+						double acc_66130 = std::stod(std::string(PQgetvalue(result, i, 13)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 13)));
+						double acc_66070_66170 = std::stod(std::string(PQgetvalue(result, i, 14)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 14)));
+						double tax = std::stod(std::string(PQgetvalue(result, i, 15)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 15)));
+						std::string fromDate = PQgetvalue(result, i, 16);
+						std::string tillDate = PQgetvalue(result, i, 17);
 						rowTuple = std::make_tuple(financialReportID, acc_44010, acc_55010, acc_552, acc_55270, acc_553, acc_55321,
 							acc_44020_90, acc_66010_66110, acc_66020_66120, acc_66040_66140, acc_66050_66150, acc_66060_66160,
-							acc_66070_66170, tax, fromDate, tillDate);
+							acc_66130, acc_66070_66170, tax, fromDate, tillDate);
 						resultVector.push_back(rowTuple);
 					}
 					PQclear(result);
@@ -1601,7 +1608,7 @@ namespace DataLayer{
 	{
 		inventorizationListViewCollection rowTuple;
 		std::vector<inventorizationListViewCollection> resultVector;
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 		}
@@ -1611,7 +1618,7 @@ namespace DataLayer{
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".inventorization_list_view";
 			sqlCommand += filter;
 			sqlCommand += " ORDER BY inventorization_id DESC;";
-			result = PQexec(dbCon, sqlCommand.c_str());
+			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
 			{
@@ -1662,7 +1669,7 @@ namespace DataLayer{
 	{
 		inventorizationsViewCollection rowTuple;
 		std::vector<inventorizationsViewCollection> resultVector;
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 		}
@@ -1672,7 +1679,7 @@ namespace DataLayer{
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".inventorizations_view";
 			sqlCommand += filter;
 			sqlCommand += " ORDER BY inventorization_id DESC;";
-			result = PQexec(dbCon, sqlCommand.c_str());
+			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
 			{
@@ -1732,7 +1739,7 @@ namespace DataLayer{
 	{
 		jobpriceViewCollection rowTuple;
 		std::vector<jobpriceViewCollection> resultVector;
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 		}
@@ -1742,7 +1749,7 @@ namespace DataLayer{
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".jobprice_view";
 			sqlCommand += filter;
 			sqlCommand += " ORDER BY jobprice_id DESC;";
-			result = PQexec(dbCon, sqlCommand.c_str());
+			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
 			{
@@ -1790,7 +1797,7 @@ namespace DataLayer{
 	{
 		jobsheetViewCollection rowTuple;
 		std::vector<jobsheetViewCollection> resultVector;
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 		}
@@ -1800,7 +1807,7 @@ namespace DataLayer{
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".jobsheet_view";
 			sqlCommand += filter;
 			sqlCommand += " ORDER BY jobsheet_id DESC;";
-			result = PQexec(dbCon, sqlCommand.c_str());
+			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
 			{
@@ -1847,7 +1854,7 @@ namespace DataLayer{
 	{
 		locationsCollection rowTuple;
 		std::vector<locationsCollection> resultVector;
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 		}
@@ -1857,7 +1864,7 @@ namespace DataLayer{
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".locations_view";
 			sqlCommand += filter;
 			sqlCommand += ";";
-			result = PQexec(dbCon, sqlCommand.c_str());
+			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
 			{
@@ -1898,7 +1905,7 @@ namespace DataLayer{
 	{
 		measuresCollection rowTuple;
 		std::vector<measuresCollection> resultVector;
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 		}
@@ -1908,7 +1915,7 @@ namespace DataLayer{
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".measures_view";
 			sqlCommand += filter;
 			sqlCommand += ";";
-			result = PQexec(dbCon, sqlCommand.c_str());
+			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
 			{
@@ -1949,7 +1956,7 @@ namespace DataLayer{
 	{
 		netCostViewCollection rowTuple;
 		std::vector<netCostViewCollection> resultVector;
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 		}
@@ -1959,7 +1966,7 @@ namespace DataLayer{
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".net_cost_view";
 			sqlCommand += filter;
 			sqlCommand += " ORDER BY net_cost_id DESC;";
-			result = PQexec(dbCon, sqlCommand.c_str());
+			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
 			{
@@ -2007,7 +2014,7 @@ namespace DataLayer{
 	{
 		orderListViewCollection rowTuple;
 		std::vector<orderListViewCollection> resultVector;
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 		}
@@ -2017,7 +2024,7 @@ namespace DataLayer{
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".order_list_view";
 			sqlCommand += filter;
 			sqlCommand += " ORDER BY order_id DESC;";
-			result = PQexec(dbCon, sqlCommand.c_str());
+			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
 			{
@@ -2068,7 +2075,7 @@ namespace DataLayer{
 	{
 		ordersViewCollection rowTuple;
 		std::vector<ordersViewCollection> resultVector;
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 		}
@@ -2078,7 +2085,7 @@ namespace DataLayer{
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".orders_view";
 			sqlCommand += filter;
 			sqlCommand += " ORDER BY order_id DESC;";
-			result = PQexec(dbCon, sqlCommand.c_str());
+			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
 			{
@@ -2137,7 +2144,7 @@ namespace DataLayer{
 	{
 		orderRawListViewCollection rowTuple;
 		std::vector<orderRawListViewCollection> resultVector;
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 		}
@@ -2147,7 +2154,7 @@ namespace DataLayer{
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".order_raw_list_view";
 			sqlCommand += filter;
 			sqlCommand += " ORDER BY order_raw_id DESC;";
-			result = PQexec(dbCon, sqlCommand.c_str());
+			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
 			{
@@ -2198,7 +2205,7 @@ namespace DataLayer{
 	{
 		orderRawsViewCollection rowTuple;
 		std::vector<orderRawsViewCollection> resultVector;
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 		}
@@ -2208,7 +2215,7 @@ namespace DataLayer{
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".order_raws_view";
 			sqlCommand += filter;
 			sqlCommand += " ORDER BY order_raw_id DESC;";
-			result = PQexec(dbCon, sqlCommand.c_str());
+			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
 			{
@@ -2268,7 +2275,7 @@ namespace DataLayer{
 	{
 		paymentsViewCollection rowTuple;
 		std::vector<paymentsViewCollection> resultVector;
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 		}
@@ -2278,7 +2285,7 @@ namespace DataLayer{
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".payments_view";
 			sqlCommand += filter;
 			sqlCommand += " ORDER BY payment_id DESC;";
-			result = PQexec(dbCon, sqlCommand.c_str());
+			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
 			{
@@ -2320,7 +2327,7 @@ namespace DataLayer{
 	{
 		payslipsViewCollection rowTuple;
 		std::vector<payslipsViewCollection> resultVector;
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 		}
@@ -2330,7 +2337,7 @@ namespace DataLayer{
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".payslips_view";
 			sqlCommand += filter;
 			sqlCommand += " ORDER BY payslip_id DESC;";
-			result = PQexec(dbCon, sqlCommand.c_str());
+			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
 			{
@@ -2372,7 +2379,7 @@ namespace DataLayer{
 	{
 		payslipOrderCollection rowTuple;
 		std::vector<payslipOrderCollection> resultVector;
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 		}
@@ -2382,7 +2389,7 @@ namespace DataLayer{
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".payslip_order_view";
 			sqlCommand += filter;
 			sqlCommand += ";";
-			result = PQexec(dbCon, sqlCommand.c_str());
+			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
 			{
@@ -2421,7 +2428,7 @@ namespace DataLayer{
 	{
 		percentRateCollection rowTuple;
 		std::vector<percentRateCollection> resultVector;
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 		}
@@ -2431,7 +2438,7 @@ namespace DataLayer{
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".percent_rate_view";
 			sqlCommand += filter;
 			sqlCommand += ";";
-			result = PQexec(dbCon, sqlCommand.c_str());
+			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
 			{
@@ -2471,7 +2478,7 @@ namespace DataLayer{
 	{
 		photosCollection rowTuple;
 		std::vector<photosCollection> resultVector;
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 		}
@@ -2481,7 +2488,7 @@ namespace DataLayer{
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".photos_view";
 			sqlCommand += filter;
 			sqlCommand += ";";
-			result = PQexec(dbCon, sqlCommand.c_str());
+			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
 			{
@@ -2521,7 +2528,7 @@ namespace DataLayer{
 	{
 		positionsCollection rowTuple;
 		std::vector<positionsCollection> resultVector;
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 		}
@@ -2531,7 +2538,7 @@ namespace DataLayer{
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".positions_view";
 			sqlCommand += filter;
 			sqlCommand += ";";
-			result = PQexec(dbCon, sqlCommand.c_str());
+			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
 			{
@@ -2569,7 +2576,7 @@ namespace DataLayer{
 	{
 		pricesViewCollection rowTuple;
 		std::vector<pricesViewCollection> resultVector;
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 		}
@@ -2579,7 +2586,7 @@ namespace DataLayer{
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".prices_view";
 			sqlCommand += filter;
 			sqlCommand += ";";
-			result = PQexec(dbCon, sqlCommand.c_str());
+			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
 			{
@@ -2627,7 +2634,7 @@ namespace DataLayer{
 	{
 		productTypeCollection rowTuple;
 		std::vector<productTypeCollection> resultVector;
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 		}
@@ -2637,7 +2644,7 @@ namespace DataLayer{
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".product_types_view";
 			sqlCommand += filter;
 			sqlCommand += ";";
-			result = PQexec(dbCon, sqlCommand.c_str());
+			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
 			{
@@ -2677,7 +2684,7 @@ namespace DataLayer{
 	{
 		productionCollection rowTuple;
 		std::vector<productionCollection> resultVector;
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 		}
@@ -2687,7 +2694,7 @@ namespace DataLayer{
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".production_view";
 			sqlCommand += filter;
 			sqlCommand += " ORDER BY production_id DESC;";
-			result = PQexec(dbCon, sqlCommand.c_str());
+			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
 			{
@@ -2728,7 +2735,7 @@ namespace DataLayer{
 	{
 		productionListViewCollection rowTuple;
 		std::vector<productionListViewCollection> resultVector;
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 		}
@@ -2738,7 +2745,7 @@ namespace DataLayer{
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".production_list_view";
 			sqlCommand += filter;
 			sqlCommand += "  ORDER BY production_id DESC;";
-			result = PQexec(dbCon, sqlCommand.c_str());
+			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
 			{
@@ -2789,7 +2796,7 @@ namespace DataLayer{
 	{
 		productionConsumeRawListViewCollection rowTuple;
 		std::vector<productionConsumeRawListViewCollection> resultVector;
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 		}
@@ -2799,7 +2806,7 @@ namespace DataLayer{
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".production_consume_raw_list_view";
 			sqlCommand += filter;
 			sqlCommand += "  ORDER BY consume_raw_id DESC;";
-			result = PQexec(dbCon, sqlCommand.c_str());
+			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
 			{
@@ -2850,7 +2857,7 @@ namespace DataLayer{
 	{
 		productionConsumeRawsViewCollection rowTuple;
 		std::vector<productionConsumeRawsViewCollection> resultVector;
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 		}
@@ -2860,7 +2867,7 @@ namespace DataLayer{
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".production_consume_raws_view";
 			sqlCommand += filter;
 			sqlCommand += " ORDER BY consume_raw_id DESC;";
-			result = PQexec(dbCon, sqlCommand.c_str());
+			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
 			{
@@ -2920,7 +2927,7 @@ namespace DataLayer{
 	{
 		productionPlanListViewCollection rowTuple;
 		std::vector<productionPlanListViewCollection> resultVector;
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 		}
@@ -2930,7 +2937,7 @@ namespace DataLayer{
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".production_plan_list_view";
 			sqlCommand += filter;
 			sqlCommand += " ORDER BY production_plan_id DESC;";
-			result = PQexec(dbCon, sqlCommand.c_str());
+			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
 			{
@@ -2981,7 +2988,7 @@ namespace DataLayer{
 	{
 		productionPlanViewCollection rowTuple;
 		std::vector<productionPlanViewCollection> resultVector;
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 		}
@@ -2991,7 +2998,7 @@ namespace DataLayer{
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".production_plan_view";
 			sqlCommand += filter;
 			sqlCommand += " ORDER BY production_plan_id DESC;";
-			result = PQexec(dbCon, sqlCommand.c_str());
+			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
 			{
@@ -3042,7 +3049,7 @@ namespace DataLayer{
 	{
 		productionStockViewCollection rowTuple;
 		std::vector<productionStockViewCollection> resultVector;
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 		}
@@ -3052,7 +3059,7 @@ namespace DataLayer{
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".production_stock_view";
 			sqlCommand += filter;
 			sqlCommand += " ORDER BY production_stock_id ASC;";
-			result = PQexec(dbCon, sqlCommand.c_str());
+			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
 			{
@@ -3102,7 +3109,7 @@ namespace DataLayer{
 	{
 		productsViewCollection rowTuple;
 		std::vector<productsViewCollection> resultVector;
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 		}
@@ -3112,7 +3119,7 @@ namespace DataLayer{
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".products_view";
 			sqlCommand += filter;
 			sqlCommand += " ORDER BY product_id DESC;";
-			result = PQexec(dbCon, sqlCommand.c_str());
+			result = PQexec(dbConnection, sqlCommand.c_str());
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
 			{
 				if (PQntuples(result) > 0)
@@ -3162,7 +3169,7 @@ namespace DataLayer{
 	{
 		purveyorsViewCollection rowTuple;
 		std::vector<purveyorsViewCollection> resultVector;
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 		}
@@ -3172,7 +3179,7 @@ namespace DataLayer{
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".purveyors_view";
 			sqlCommand += filter;
 			sqlCommand += " ORDER BY user_id DESC;";
-			result = PQexec(dbCon, sqlCommand.c_str());
+			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
 			{
@@ -3226,7 +3233,7 @@ namespace DataLayer{
 	{
 		receiptProductListViewCollection rowTuple;
 		std::vector<receiptProductListViewCollection> resultVector;
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 		}
@@ -3236,7 +3243,7 @@ namespace DataLayer{
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".receipt_product_list_view";
 			sqlCommand += filter;
 			sqlCommand += " ORDER BY receipt_product_id DESC;";
-			result = PQexec(dbCon, sqlCommand.c_str());
+			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
 			{
@@ -3287,7 +3294,7 @@ namespace DataLayer{
 	{
 		receiptProductsViewCollection rowTuple;
 		std::vector<receiptProductsViewCollection> resultVector;
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 		}
@@ -3297,7 +3304,7 @@ namespace DataLayer{
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".receipt_products_view";
 			sqlCommand += filter;
 			sqlCommand += " ORDER BY receipt_product_id DESC;";
-			result = PQexec(dbCon, sqlCommand.c_str());
+			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
 			{
@@ -3357,7 +3364,7 @@ namespace DataLayer{
 	{
 		receiptRawListViewCollection rowTuple;
 		std::vector<receiptRawListViewCollection> resultVector;
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 		}
@@ -3367,7 +3374,7 @@ namespace DataLayer{
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".receipt_raw_list_view";
 			sqlCommand += filter;
 			sqlCommand += " ORDER BY receipt_raw_id DESC;";
-			result = PQexec(dbCon, sqlCommand.c_str());
+			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
 			{
@@ -3418,7 +3425,7 @@ namespace DataLayer{
 	{
 		receiptRawsViewCollection rowTuple;
 		std::vector<receiptRawsViewCollection> resultVector;
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 		}
@@ -3428,7 +3435,7 @@ namespace DataLayer{
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".receipt_raws_view";
 			sqlCommand += filter;
 			sqlCommand += " ORDER BY receipt_raw_id DESC;";
-			result = PQexec(dbCon, sqlCommand.c_str());
+			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
 			{
@@ -3488,7 +3495,7 @@ namespace DataLayer{
 	{
 		refundsViewCollection rowTuple;
 		std::vector<refundsViewCollection> resultVector;
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 		}
@@ -3498,7 +3505,7 @@ namespace DataLayer{
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".refunds_view";
 			sqlCommand += filter;
 			sqlCommand += ";";
-			result = PQexec(dbCon, sqlCommand.c_str());
+			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
 			{
@@ -3540,7 +3547,7 @@ namespace DataLayer{
 	{
 		relationTypeCollection rowTuple;
 		std::vector<relationTypeCollection> resultVector;
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 		}
@@ -3550,7 +3557,7 @@ namespace DataLayer{
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".relation_type_view";
 			sqlCommand += filter;
 			sqlCommand += ";";
-			result = PQexec(dbCon, sqlCommand.c_str());
+			result = PQexec(dbConnection, sqlCommand.c_str());
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
 			{
 				if (PQntuples(result) > 0)
@@ -3588,7 +3595,7 @@ namespace DataLayer{
 	{
 		relationsViewCollection rowTuple;
 		std::vector<relationsViewCollection> resultVector;
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 		}
@@ -3598,7 +3605,7 @@ namespace DataLayer{
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".relations_view";
 			sqlCommand += filter;
 			sqlCommand += " ORDER BY user_id_1 ASC;";
-			result = PQexec(dbCon, sqlCommand.c_str());
+			result = PQexec(dbConnection, sqlCommand.c_str());
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
 			{
 				if (PQntuples(result) > 0)
@@ -3647,7 +3654,7 @@ namespace DataLayer{
 	{
 		returnListViewCollection rowTuple;
 		std::vector<returnListViewCollection> resultVector;
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 		}
@@ -3657,7 +3664,7 @@ namespace DataLayer{
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".return_list_view";
 			sqlCommand += filter;
 			sqlCommand += " ORDER BY return_id DESC;";
-			result = PQexec(dbCon, sqlCommand.c_str());
+			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
 			{
@@ -3708,7 +3715,7 @@ namespace DataLayer{
 	{
 		returnsViewCollection rowTuple;
 		std::vector<returnsViewCollection> resultVector;
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 		}
@@ -3718,7 +3725,7 @@ namespace DataLayer{
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".returns_view";
 			sqlCommand += filter;
 			sqlCommand += " ORDER BY return_id DESC;";
-			result = PQexec(dbCon, sqlCommand.c_str());
+			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
 			{
@@ -3777,7 +3784,7 @@ namespace DataLayer{
 	{
 		rolesCollection rowTuple;
 		std::vector<rolesCollection> resultVector;
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 		}
@@ -3787,7 +3794,7 @@ namespace DataLayer{
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".roles_view";
 			sqlCommand += filter;
 			sqlCommand += " ORDER BY role_id ASC;";
-			result = PQexec(dbCon, sqlCommand.c_str());
+			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
 			{
@@ -3827,7 +3834,7 @@ namespace DataLayer{
 	{
 		salariesViewCollection rowTuple;
 		std::vector<salariesViewCollection> resultVector;
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 		}
@@ -3837,7 +3844,7 @@ namespace DataLayer{
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".salaries_view";
 			sqlCommand += filter;
 			sqlCommand += " ORDER BY salary_id DESC;";
-			result = PQexec(dbCon, sqlCommand.c_str());
+			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
 			{
@@ -3887,7 +3894,7 @@ namespace DataLayer{
 	{
 		salaryTypeCollection rowTuple;
 		std::vector<salaryTypeCollection> resultVector;
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 		}
@@ -3897,7 +3904,7 @@ namespace DataLayer{
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".salary_type_view";
 			sqlCommand += filter;
 			sqlCommand += " ;";
-			result = PQexec(dbCon, sqlCommand.c_str());
+			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
 			{
@@ -3937,7 +3944,7 @@ namespace DataLayer{
 	{
 		specificationListViewCollection rowTuple;
 		std::vector<specificationListViewCollection> resultVector;
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 		}
@@ -3947,7 +3954,7 @@ namespace DataLayer{
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".specification_list_view";
 			sqlCommand += filter;
 			sqlCommand += " ORDER BY specification_id DESC;";
-			result = PQexec(dbCon, sqlCommand.c_str());
+			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
 			{
@@ -3989,7 +3996,7 @@ namespace DataLayer{
 	{
 		specificationsViewCollection rowTuple;
 		std::vector<specificationsViewCollection> resultVector;
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 		}
@@ -3999,7 +4006,7 @@ namespace DataLayer{
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".specifications_view";
 			sqlCommand += filter;
 			sqlCommand += " ORDER BY specification_id DESC;";
-			result = PQexec(dbCon, sqlCommand.c_str());
+			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
 			{
@@ -4049,7 +4056,7 @@ namespace DataLayer{
 	{
 		spoilageListViewCollection rowTuple;
 		std::vector<spoilageListViewCollection> resultVector;
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 		}
@@ -4059,7 +4066,7 @@ namespace DataLayer{
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".spoilage_list_view";
 			sqlCommand += filter;
 			sqlCommand += " ORDER BY spoilage_id DESC;";
-			result = PQexec(dbCon, sqlCommand.c_str());
+			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
 			{
@@ -4110,7 +4117,7 @@ namespace DataLayer{
 	{
 		spoilageViewCollection rowTuple;
 		std::vector<spoilageViewCollection> resultVector;
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 		}
@@ -4120,7 +4127,7 @@ namespace DataLayer{
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".spoilage_view";
 			sqlCommand += filter;
 			sqlCommand += " ORDER BY spoilage_id DESC;";
-			result = PQexec(dbCon, sqlCommand.c_str());
+			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
 			{
@@ -4171,7 +4178,7 @@ namespace DataLayer{
 	{
 		stateCollection rowTuple;
 		std::vector<stateCollection> resultVector;
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 		}
@@ -4181,7 +4188,7 @@ namespace DataLayer{
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".state_view";
 			sqlCommand += filter;
 			sqlCommand += ";";
-			result = PQexec(dbCon, sqlCommand.c_str());
+			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
 			{
@@ -4221,7 +4228,7 @@ namespace DataLayer{
 	{
 		statusCollection rowTuple;
 		std::vector<statusCollection> resultVector;
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 		}
@@ -4231,7 +4238,7 @@ namespace DataLayer{
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".status_view";
 			sqlCommand += filter;
 			sqlCommand += ";";
-			result = PQexec(dbCon, sqlCommand.c_str());
+			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
 			{
@@ -4271,7 +4278,7 @@ namespace DataLayer{
 	{
 		statusRuleViewCollection rowTuple;
 		std::vector<statusRuleViewCollection> resultVector;
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 		}
@@ -4281,7 +4288,7 @@ namespace DataLayer{
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".status_rule_view";
 			sqlCommand += filter;
 			sqlCommand += ";";
-			result = PQexec(dbCon, sqlCommand.c_str());
+			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
 			{
@@ -4321,7 +4328,7 @@ namespace DataLayer{
 	{
 		stockViewCollection rowTuple;
 		std::vector<stockViewCollection> resultVector;
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 		}
@@ -4331,7 +4338,7 @@ namespace DataLayer{
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".stock_view";
 			sqlCommand += filter;
 			sqlCommand += " ORDER BY stock_id ASC;";
-			result = PQexec(dbCon, sqlCommand.c_str());
+			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
 			{
@@ -4381,7 +4388,7 @@ namespace DataLayer{
 	{
 		subaccountsViewCollection rowTuple;
 		std::vector<subaccountsViewCollection> resultVector;
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 		}
@@ -4391,7 +4398,7 @@ namespace DataLayer{
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".subaccounts_view";
 			sqlCommand += filter;
 			sqlCommand += " ORDER BY subaccount_id DESC;";
-			result = PQexec(dbCon, sqlCommand.c_str());
+			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
 			{
@@ -4441,7 +4448,7 @@ namespace DataLayer{
 	{
 		subaccountHistoryCollection rowTuple;
 		std::vector<subaccountHistoryCollection> resultVector;
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 		}
@@ -4451,7 +4458,7 @@ namespace DataLayer{
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".subaccount_history_view";
 			sqlCommand += filter;
 			sqlCommand += " ORDER BY subaccount_history_id DESC;";
-			result = PQexec(dbCon, sqlCommand.c_str());
+			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
 			{
@@ -4493,7 +4500,7 @@ namespace DataLayer{
 	{
 		taxesCollection rowTuple;
 		std::vector<taxesCollection> resultVector;
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 		}
@@ -4503,7 +4510,7 @@ namespace DataLayer{
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".taxes_view";
 			sqlCommand += filter;
 			sqlCommand += " ORDER BY taxes_id DESC;";
-			result = PQexec(dbCon, sqlCommand.c_str());
+			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
 			{
@@ -4545,7 +4552,7 @@ namespace DataLayer{
 	{
 		timesheetViewCollection rowTuple;
 		std::vector<timesheetViewCollection> resultVector;
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 		}
@@ -4555,7 +4562,7 @@ namespace DataLayer{
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".timesheet_view";
 			sqlCommand += filter;
 			sqlCommand += " ORDER BY timesheet_id DESC;";
-			result = PQexec(dbCon, sqlCommand.c_str());
+			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
 			{
@@ -4598,7 +4605,7 @@ namespace DataLayer{
 	{
 		transportListViewCollection rowTuple;
 		std::vector<transportListViewCollection> resultVector;
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 		}
@@ -4608,7 +4615,7 @@ namespace DataLayer{
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".transport_list_view";
 			sqlCommand += filter;
 			sqlCommand += " ORDER BY transport_id DESC;";
-			result = PQexec(dbCon, sqlCommand.c_str());
+			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
 			{
@@ -4659,7 +4666,7 @@ namespace DataLayer{
 	{
 		transportsViewCollection rowTuple;
 		std::vector<transportsViewCollection> resultVector;
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 		}
@@ -4669,7 +4676,7 @@ namespace DataLayer{
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".transports_view";
 			sqlCommand += filter;
 			sqlCommand += " ORDER BY transport_id DESC;";
-			result = PQexec(dbCon, sqlCommand.c_str());
+			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
 			{
@@ -4729,7 +4736,7 @@ namespace DataLayer{
 	{
 		usersViewCollection rowTuple;
 		std::vector<usersViewCollection> resultVector;
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 		}
@@ -4739,7 +4746,7 @@ namespace DataLayer{
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".users_view";
 			sqlCommand += filter;
 			sqlCommand += " ORDER BY user_id DESC;";
-			result = PQexec(dbCon, sqlCommand.c_str());
+			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
 			{
@@ -4787,7 +4794,7 @@ namespace DataLayer{
 	{
 		withdrawalsViewCollection rowTuple;
 		std::vector<withdrawalsViewCollection> resultVector;
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 		}
@@ -4797,7 +4804,7 @@ namespace DataLayer{
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".withdrawals_view";
 			sqlCommand += filter;
 			sqlCommand += " ORDER BY withdrawal_id DESC;";
-			result = PQexec(dbCon, sqlCommand.c_str());
+			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
 			{
@@ -4839,7 +4846,7 @@ namespace DataLayer{
 	{
 		writeOffListViewCollection rowTuple;
 		std::vector<writeOffListViewCollection> resultVector;
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 		}
@@ -4849,7 +4856,7 @@ namespace DataLayer{
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".write_off_list_view";
 			sqlCommand += filter;
 			sqlCommand += " ORDER BY write_off_id DESC;";
-			result = PQexec(dbCon, sqlCommand.c_str());
+			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
 			{
@@ -4900,7 +4907,7 @@ namespace DataLayer{
 	{
 		writeOffsViewCollection rowTuple;
 		std::vector<writeOffsViewCollection> resultVector;
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 		}
@@ -4910,7 +4917,7 @@ namespace DataLayer{
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".write_offs_view";
 			sqlCommand += filter;
 			sqlCommand += " ORDER BY write_off_id DESC;";
-			result = PQexec(dbCon, sqlCommand.c_str());
+			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
 			{
@@ -4968,7 +4975,7 @@ namespace DataLayer{
 	{
 		writeOffRawListViewCollection rowTuple;
 		std::vector<writeOffRawListViewCollection> resultVector;
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 		}
@@ -4978,7 +4985,7 @@ namespace DataLayer{
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".write_off_raw_list_view";
 			sqlCommand += filter;
 			sqlCommand += " ORDER BY write_off_raw_id DESC;";
-			result = PQexec(dbCon, sqlCommand.c_str());
+			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
 			{
@@ -5029,7 +5036,7 @@ namespace DataLayer{
 	{
 		writeOffRawsViewCollection rowTuple;
 		std::vector<writeOffRawsViewCollection> resultVector;
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 		}
@@ -5039,7 +5046,7 @@ namespace DataLayer{
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".write_off_raws_view";
 			sqlCommand += filter;
 			sqlCommand += " ORDER BY write_off_raw_id DESC;";
-			result = PQexec(dbCon, sqlCommand.c_str());
+			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
 			{
@@ -5097,7 +5104,7 @@ namespace DataLayer{
 	// Create access item
 	bool OrmasDal::CreateAccessItem(int aID, std::string aItenEng, std::string aItemRu,std::string aDivision, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -5112,7 +5119,7 @@ namespace DataLayer{
 		sqlCommand += "', '";
 		sqlCommand += aDivision;
 		sqlCommand += "');";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -5129,7 +5136,7 @@ namespace DataLayer{
 	// Create access
 	bool OrmasDal::CreateAccess(int aID, int rID, int aiID, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -5142,7 +5149,7 @@ namespace DataLayer{
 		sqlCommand += ", ";
 		sqlCommand += boost::lexical_cast<std::string>(aiID);
 		sqlCommand += ");";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -5159,7 +5166,7 @@ namespace DataLayer{
 	// Create account type
 	bool OrmasDal::CreateAccountType(int atID, std::string atName, int atNumber, std::string atComment, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -5175,7 +5182,7 @@ namespace DataLayer{
 		sqlCommand += ", '";
 		sqlCommand += atComment;
 		sqlCommand += "');";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -5192,7 +5199,7 @@ namespace DataLayer{
 	// Create account
 	bool OrmasDal::CreateAccount(int aID, std::string aNumber, double aStartBalance, double aCurrentBalance, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -5207,7 +5214,7 @@ namespace DataLayer{
 		sqlCommand += ", ";
 		sqlCommand += boost::lexical_cast<std::string>(aCurrentBalance);
 		sqlCommand += ");";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -5224,7 +5231,7 @@ namespace DataLayer{
 	// Create account history
 	bool OrmasDal::CreateAccountHistory(int ahID, int aID, std::string aNumber, double aStartBalance, double aCurrentBalance, std::string ahFrom, std::string ahTill, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -5242,10 +5249,10 @@ namespace DataLayer{
 		sqlCommand += boost::lexical_cast<std::string>(aCurrentBalance);
 		sqlCommand += ", '";
 		sqlCommand += ahFrom;
-		sqlCommand += ", '";
+		sqlCommand += "', '";
 		sqlCommand += ahTill;
-		sqlCommand += ");";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		sqlCommand += "');";
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -5262,7 +5269,7 @@ namespace DataLayer{
 	// Create Balance-Payment relation
 	bool OrmasDal::CreateBalancePayment(int bID, int pID, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -5273,7 +5280,7 @@ namespace DataLayer{
 		sqlCommand += ", ";
 		sqlCommand += boost::lexical_cast<std::string>(pID);
 		sqlCommand += ");";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -5290,7 +5297,7 @@ namespace DataLayer{
 	// Create Balance-Payslip relation
 	bool OrmasDal::CreateBalancePayslip(int bID, int pID, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -5301,7 +5308,7 @@ namespace DataLayer{
 		sqlCommand += ", ";
 		sqlCommand += boost::lexical_cast<std::string>(pID);
 		sqlCommand += ");";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -5318,7 +5325,7 @@ namespace DataLayer{
 	// Create Balance-Refund relation
 	bool OrmasDal::CreateBalanceRefund(int bID, int rID, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -5329,7 +5336,7 @@ namespace DataLayer{
 		sqlCommand += ", ";
 		sqlCommand += boost::lexical_cast<std::string>(rID);
 		sqlCommand += ");";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -5346,7 +5353,7 @@ namespace DataLayer{
 	// Create Balance-Withdrawal relation
 	bool OrmasDal::CreateBalanceWithdrawal(int bID, int wID, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -5357,7 +5364,7 @@ namespace DataLayer{
 		sqlCommand += ", ";
 		sqlCommand += boost::lexical_cast<std::string>(wID);
 		sqlCommand += ");";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -5374,7 +5381,7 @@ namespace DataLayer{
 	// Create balance
 	bool OrmasDal::CreateBalance(int bID, int uID, int saID, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -5387,7 +5394,7 @@ namespace DataLayer{
 		sqlCommand += ", ";
 		sqlCommand += boost::lexical_cast<std::string>(saID);
 		sqlCommand += ");";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -5404,7 +5411,7 @@ namespace DataLayer{
 	// Create char of account
 	bool OrmasDal::CreateChartOfAccount(int coaID, std::string caoNumber, std::string caoNameOfAccount, int atID, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -5420,7 +5427,7 @@ namespace DataLayer{
 		sqlCommand += "', ";
 		sqlCommand += boost::lexical_cast<std::string>(atID);
 		sqlCommand += ");";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -5437,7 +5444,7 @@ namespace DataLayer{
 	// Create client
 	bool OrmasDal::CreateClient(int uID, std::string cFirm, std::string cFirmNumber, int lID, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -5452,7 +5459,7 @@ namespace DataLayer{
 		sqlCommand += "', ";
 		sqlCommand += boost::lexical_cast<std::string>(lID);
 		sqlCommand += ");";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -5470,7 +5477,7 @@ namespace DataLayer{
 	bool OrmasDal::CreateCompany(int cID, std::string cName, std::string cAddress, std::string cPhone, std::string cComment, 
 		std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -5488,7 +5495,7 @@ namespace DataLayer{
 		sqlCommand += "', '";
 		sqlCommand += cComment;
 		sqlCommand += "');";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -5505,7 +5512,7 @@ namespace DataLayer{
 	// Create company-account
 	bool OrmasDal::CreateCompanyAccount(int caID, int cID, int aID, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -5518,7 +5525,7 @@ namespace DataLayer{
 		sqlCommand += ", ";
 		sqlCommand += boost::lexical_cast<std::string>(aID);
 		sqlCommand += ");";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -5535,7 +5542,7 @@ namespace DataLayer{
 	// Create company-employee
 	bool OrmasDal::CreateCompanyEmployee(int ceID, int cID, int eID, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -5548,7 +5555,7 @@ namespace DataLayer{
 		sqlCommand += ", ";
 		sqlCommand += boost::lexical_cast<std::string>(eID);
 		sqlCommand += ");";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -5565,7 +5572,7 @@ namespace DataLayer{
 	// Create an item in consume product list
 	bool OrmasDal::CreateConsumeProductList(int clID, int cpID, int pID, double clCount, double clSum, int sID, int cID, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -5587,7 +5594,7 @@ namespace DataLayer{
 		sqlCommand += ", ";
 		sqlCommand += boost::lexical_cast<std::string>(cID);
 		sqlCommand += ");";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -5604,7 +5611,7 @@ namespace DataLayer{
 	bool OrmasDal::CreateConsumeProduct(int cID, int uID, std::string cDate, std::string cExecDate, int eID, double cCount, double cSum, int sID, int curID,
 		std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -5639,7 +5646,7 @@ namespace DataLayer{
 		sqlCommand += ", ";
 		sqlCommand += boost::lexical_cast<std::string>(curID);
 		sqlCommand += ");";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -5656,7 +5663,7 @@ namespace DataLayer{
 	// Create an item in consume raw list
 	bool OrmasDal::CreateConsumeRawList(int clID, int cpID, int pID, double clCount, double clSum, int sID, int cID, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -5678,7 +5685,7 @@ namespace DataLayer{
 		sqlCommand += ", ";
 		sqlCommand += boost::lexical_cast<std::string>(cID);
 		sqlCommand += ");";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -5695,7 +5702,7 @@ namespace DataLayer{
 	bool OrmasDal::CreateConsumeRaw(int cID, int uID, std::string cDate, std::string cExecDate, int eID, double cCount, double cSum, int sID, int curID,
 		std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -5730,7 +5737,7 @@ namespace DataLayer{
 		sqlCommand += ", ";
 		sqlCommand += boost::lexical_cast<std::string>(curID);
 		sqlCommand += ");";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -5747,7 +5754,7 @@ namespace DataLayer{
 	bool OrmasDal::CreateCurrency(int cID, int cCode, std::string cShortName, std::string cName, int cUnit, bool cMainTrade,
 		std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -5767,7 +5774,7 @@ namespace DataLayer{
 		sqlCommand += ", ";
 		sqlCommand += cMainTrade ? "TRUE" : "FALSE";
 		sqlCommand += ");";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -5784,7 +5791,7 @@ namespace DataLayer{
 	// Create employee
 	bool OrmasDal::CreateEmployee(int uID, int pID, std::string eBirthDate, std::string eHireDate, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -5799,7 +5806,7 @@ namespace DataLayer{
 		sqlCommand += "', '";
 		sqlCommand += eHireDate;
 		sqlCommand += "');";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -5816,7 +5823,7 @@ namespace DataLayer{
 	// Create entry
 	bool OrmasDal::CreateEntry(int eID, std::string eDate, int daID, double eValue, int caID, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -5833,7 +5840,7 @@ namespace DataLayer{
 		sqlCommand += ", ";
 		sqlCommand += boost::lexical_cast<std::string>(caID);
 		sqlCommand += ");";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -5850,7 +5857,7 @@ namespace DataLayer{
 	// Create entry routing
 	bool OrmasDal::CreateEntryRouting(int erID, std::string eOperation, int daNumber, int caNumber, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -5865,7 +5872,7 @@ namespace DataLayer{
 		sqlCommand += ", ";
 		sqlCommand += boost::lexical_cast<std::string>(caNumber);
 		sqlCommand += ");";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -5882,7 +5889,7 @@ namespace DataLayer{
 	// Create entry-subaccount
 	bool OrmasDal::CreateEntrySubaccount(int eID, int sID, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -5893,7 +5900,7 @@ namespace DataLayer{
 		sqlCommand += ", ";
 		sqlCommand += boost::lexical_cast<std::string>(sID);
 		sqlCommand += ");";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -5910,17 +5917,17 @@ namespace DataLayer{
 	// Create financial report 
 	bool OrmasDal::CreateFinancialReport(int fID, double acc_44010, double acc_55010, double acc_552, double acc_55270, double acc_553,
 		double acc_55321, double acc_44020_90, double acc_66010_66110, double acc_66020_66120, double acc_66040_66140,
-		double acc_66050_66150, double acc_66060_66160, double acc_66070_66170, double tax, std::string ahFrom, std::string ahTill, std::string& errorMessage)
+		double acc_66050_66150, double acc_66060_66160, double acc_66130, double acc_66070_66170, double tax, std::string ahFrom, std::string ahTill, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
 		}
 		PGresult * result;
-		std::string sqlCommand = "INSERT INTO \"OrmasSchema\".financial_report(financial_report_id, acc_44010, acc_55010, acc_552 \
+		std::string sqlCommand = "INSERT INTO \"OrmasSchema\".financial_report(financial_report_id, acc_44010, acc_55010, acc_552, \
 								 acc_55270, acc_553, acc_55321, acc_44020_90, acc_66010_66110, acc_66020_66120, acc_66040_66140,\
-								 acc_66050_66150, acc_66060_66160, acc_66070_66170, tax, from_date, till_date) VALUES(";
+								 acc_66050_66150, acc_66060_66160, acc_66130, acc_66070_66170, tax, from_date, till_date) VALUES(";
 		sqlCommand += boost::lexical_cast<std::string>(fID);
 		sqlCommand += ", ";
 		sqlCommand += boost::lexical_cast<std::string>(acc_44010);
@@ -5947,6 +5954,8 @@ namespace DataLayer{
 		sqlCommand += ", ";
 		sqlCommand += boost::lexical_cast<std::string>(acc_66060_66160);
 		sqlCommand += ", ";
+		sqlCommand += boost::lexical_cast<std::string>(acc_66130);
+		sqlCommand += ", ";
 		sqlCommand += boost::lexical_cast<std::string>(acc_66070_66170);
 		sqlCommand += ", ";
 		sqlCommand += boost::lexical_cast<std::string>(tax);
@@ -5955,7 +5964,7 @@ namespace DataLayer{
 		sqlCommand += "', '";
 		sqlCommand += ahTill;
 		sqlCommand += "');";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -5972,7 +5981,7 @@ namespace DataLayer{
 	// Create an item in inventorization list
 	bool OrmasDal::CreateInventorizationList(int ilID, int iID, int pID, double ilCount, double ilSum, int sID, int cID, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -5994,7 +6003,7 @@ namespace DataLayer{
 		sqlCommand += ", ";
 		sqlCommand += boost::lexical_cast<std::string>(cID);
 		sqlCommand += ");";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -6011,7 +6020,7 @@ namespace DataLayer{
 	bool OrmasDal::CreateInventorization(int iID, int uID, std::string iDate, std::string iExecDate, int eID, double iCount, double iSum, int sID, int curID,
 		std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -6046,7 +6055,7 @@ namespace DataLayer{
 		sqlCommand += ", ";
 		sqlCommand += boost::lexical_cast<std::string>(curID);
 		sqlCommand += ");";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -6062,7 +6071,7 @@ namespace DataLayer{
 
 	bool OrmasDal::CreateJobprice(int jID, int pID, double jValue, int cID, double jVolume, int mID, int psID, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -6084,7 +6093,7 @@ namespace DataLayer{
 		sqlCommand += ", ";
 		sqlCommand += boost::lexical_cast<std::string>(psID);
 		sqlCommand += ");";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -6100,7 +6109,7 @@ namespace DataLayer{
 
 	bool OrmasDal::CreateJobsheet(int jID, std::string jDate, double jCount, int pID, int eID, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -6117,7 +6126,7 @@ namespace DataLayer{
 		sqlCommand += ", ";
 		sqlCommand += boost::lexical_cast<std::string>(eID);
 		sqlCommand += ");";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -6134,7 +6143,7 @@ namespace DataLayer{
 	bool OrmasDal::CreateLocation(int rID, std::string lCountryName, std::string lCountryCode, std::string lRegionName,
 		std::string lCityName, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -6152,7 +6161,7 @@ namespace DataLayer{
 		sqlCommand += "', '";
 		sqlCommand += lCityName;
 		sqlCommand += "');";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -6168,7 +6177,7 @@ namespace DataLayer{
 
 	bool OrmasDal::CreateMeasure(int mID, std::string mName, std::string mShortName, int mUnit, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -6183,7 +6192,7 @@ namespace DataLayer{
 		sqlCommand += "', ";
 		sqlCommand += boost::lexical_cast<std::string>(mUnit);
 		sqlCommand += ");";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -6200,7 +6209,7 @@ namespace DataLayer{
 	// Create net cost
 	bool OrmasDal::CreateNetCost(int ncID, std::string ncDate, double ncValue, int cID, int pID, bool ncIsOutdated, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -6220,7 +6229,7 @@ namespace DataLayer{
 		sqlCommand += ", ";
 		sqlCommand += ncIsOutdated ? "TRUE" : "FALSE";
 		sqlCommand += ");";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -6237,7 +6246,7 @@ namespace DataLayer{
 	// Create an item in order list
 	bool OrmasDal::CreateOrderList(int olID, int oID, int pID, double olCount, double olSum, int sID, int cID, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -6259,7 +6268,7 @@ namespace DataLayer{
 		sqlCommand += ", ";
 		sqlCommand += boost::lexical_cast<std::string>(cID);
 		sqlCommand += ");";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -6276,7 +6285,7 @@ namespace DataLayer{
 	bool OrmasDal::CreateOrder(int oID, int pID, std::string oDate, std::string oExecDate, int eID, double oCount, double oSum, int sID, int cID,
 		std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -6311,7 +6320,7 @@ namespace DataLayer{
 		sqlCommand += ", ";
 		sqlCommand += boost::lexical_cast<std::string>(cID);
 		sqlCommand += ");";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -6328,7 +6337,7 @@ namespace DataLayer{
 	// Create an item in order raw list
 	bool OrmasDal::CreateOrderRawList(int olID, int oID, int pID, double olCount, double olSum, int sID, int cID, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -6350,7 +6359,7 @@ namespace DataLayer{
 		sqlCommand += ", ";
 		sqlCommand += boost::lexical_cast<std::string>(cID);
 		sqlCommand += ");";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -6367,7 +6376,7 @@ namespace DataLayer{
 	bool OrmasDal::CreateOrderRaw(int oID, int uID, std::string oDate, std::string oExecDate, int eID, double oCount, double oSum, int sID, int curID,
 		std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -6402,7 +6411,7 @@ namespace DataLayer{
 		sqlCommand += ", ";
 		sqlCommand += boost::lexical_cast<std::string>(curID);
 		sqlCommand += ");";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -6419,7 +6428,7 @@ namespace DataLayer{
 	// Create payment
 	bool OrmasDal::CreatePayment(int pID, std::string pDate, double pValue, int uID, int cID, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -6436,7 +6445,7 @@ namespace DataLayer{
 		sqlCommand += ", ";
 		sqlCommand += boost::lexical_cast<std::string>(cID);
 		sqlCommand += ");";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -6453,7 +6462,7 @@ namespace DataLayer{
 	// Create payslip
 	bool OrmasDal::CreatePayslip(int pID, std::string pDate, double pValue, int sID, int cID, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -6470,7 +6479,7 @@ namespace DataLayer{
 		sqlCommand += ", ";
 		sqlCommand += boost::lexical_cast<std::string>(cID);
 		sqlCommand += ");";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -6487,7 +6496,7 @@ namespace DataLayer{
 	// Create Payslip-Order relation
 	bool OrmasDal::CreatePayslipOrder(int pID, int oID, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -6498,7 +6507,7 @@ namespace DataLayer{
 		sqlCommand += ", ";
 		sqlCommand += boost::lexical_cast<std::string>(oID);
 		sqlCommand += ");";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -6515,7 +6524,7 @@ namespace DataLayer{
 	// Create percent rate
 	bool OrmasDal::CreatePercentRate(int prID, double prValue, std::string prCondition, int psID, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -6530,7 +6539,7 @@ namespace DataLayer{
 		sqlCommand += "', ";
 		sqlCommand += boost::lexical_cast<std::string>(psID);
 		sqlCommand += ");";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -6547,7 +6556,7 @@ namespace DataLayer{
 	// Create photo
 	bool OrmasDal::CreatePhoto(int pID, int uID, int prodId, std::string pSource, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -6562,7 +6571,7 @@ namespace DataLayer{
 		sqlCommand += ", '";
 		sqlCommand += pSource;
 		sqlCommand += "');";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -6579,7 +6588,7 @@ namespace DataLayer{
 	// Create postion
 	bool OrmasDal::CreatePosition(int pID, std::string pName, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -6590,7 +6599,7 @@ namespace DataLayer{
 		sqlCommand += ", '";
 		sqlCommand += pName;
 		sqlCommand += "');";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -6607,7 +6616,7 @@ namespace DataLayer{
 	// Create prices
 	bool OrmasDal::CreatePrice(int pID, std::string pDate, double pValue, int cID, int prodID, bool pIsOutdated, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -6626,7 +6635,7 @@ namespace DataLayer{
 		sqlCommand += ", ";
 		sqlCommand += pIsOutdated ? "TRUE" : "FALSE";
 		sqlCommand += ");";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -6642,7 +6651,7 @@ namespace DataLayer{
 
 	bool OrmasDal::CreateProductType(int pTypeID, std::string pTypeName, std::string pTypeShortName, std::string pTypeCode, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -6658,7 +6667,7 @@ namespace DataLayer{
 		sqlCommand += "', '";
 		sqlCommand += pTypeCode;
 		sqlCommand += "');";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -6675,7 +6684,7 @@ namespace DataLayer{
 	bool OrmasDal::CreateProduction(int pID, std::string pProductionDate, std::string pExpiryDate, std::string pSessionStart,
 		std::string pSessionEnd, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -6693,7 +6702,7 @@ namespace DataLayer{
 		sqlCommand += "', '";
 		sqlCommand += pSessionEnd;
 		sqlCommand += "');";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -6710,7 +6719,7 @@ namespace DataLayer{
 	// Create item in production list
 	bool OrmasDal::CreateProductionList(int plID, int pID, int prodID, double plCount, double plSum, int sID, int cID, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -6732,7 +6741,7 @@ namespace DataLayer{
 		sqlCommand += ", ";
 		sqlCommand += boost::lexical_cast<std::string>(cID);
 		sqlCommand += ");";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -6749,7 +6758,7 @@ namespace DataLayer{
 	// Create an item in production consume raw list
 	bool OrmasDal::CreateProductionConsumeRawList(int clID, int cpID, int pID, double clCount, double clSum, int sID, int cID, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -6771,7 +6780,7 @@ namespace DataLayer{
 		sqlCommand += ", ";
 		sqlCommand += boost::lexical_cast<std::string>(cID);
 		sqlCommand += ");";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -6788,7 +6797,7 @@ namespace DataLayer{
 	bool OrmasDal::CreateProductionConsumeRaw(int cID, int uID, std::string cDate, std::string cExecDate, int eID, double cCount, double cSum, int sID, int curID,
 		std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -6823,7 +6832,7 @@ namespace DataLayer{
 		sqlCommand += ", ";
 		sqlCommand += boost::lexical_cast<std::string>(curID);
 		sqlCommand += ");";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -6840,7 +6849,7 @@ namespace DataLayer{
 	// Create an item in production plan list
 	bool OrmasDal::CreateProductionPlanList(int pplID, int ppID, int pID, double pplCount, double pplSum, int sID, int cID, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -6862,7 +6871,7 @@ namespace DataLayer{
 		sqlCommand += ", ";
 		sqlCommand += boost::lexical_cast<std::string>(cID);
 		sqlCommand += ");";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -6878,7 +6887,7 @@ namespace DataLayer{
 
 	bool OrmasDal::CreateProductionPlan(int pID, std::string pDate, int eID, double pCount, double pSum, int sID, int cID, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -6900,7 +6909,7 @@ namespace DataLayer{
 		sqlCommand += ", ";
 		sqlCommand += boost::lexical_cast<std::string>(cID);
 		sqlCommand += ");";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -6917,7 +6926,7 @@ namespace DataLayer{
 	// Create production stock
 	bool OrmasDal::CreateProductionStock(int psID, int pID, double psCount, double psSum, int stsID, int cID, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -6937,7 +6946,7 @@ namespace DataLayer{
 		sqlCommand += ", ";
 		sqlCommand += boost::lexical_cast<std::string>(cID);
 		sqlCommand += ");";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -6954,7 +6963,7 @@ namespace DataLayer{
 	bool OrmasDal::CreateProduct(int pID, int cID, std::string pName, double vol, int mID, double price, int pTypeID, int pShelfLife, 
 		int pCur, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -6980,7 +6989,7 @@ namespace DataLayer{
 		sqlCommand += ",";
 		sqlCommand += boost::lexical_cast<std::string>(pCur);
 		sqlCommand += ");";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -6997,7 +7006,7 @@ namespace DataLayer{
 	// Create purveyor
 	bool OrmasDal::CreatePurveyor(int pID, std::string pCompanyName, int lID, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -7010,7 +7019,7 @@ namespace DataLayer{
 		sqlCommand += "', ";
 		sqlCommand += boost::lexical_cast<std::string>(lID);
 		sqlCommand += ");";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -7027,7 +7036,7 @@ namespace DataLayer{
 	// Create an item in consume product list
 	bool OrmasDal::CreateReceiptProductList(int rlID, int rID, int pID, double rlCount, double rlSum, int sID, int cID, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -7049,7 +7058,7 @@ namespace DataLayer{
 		sqlCommand += ", ";
 		sqlCommand += boost::lexical_cast<std::string>(cID);
 		sqlCommand += ");";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -7066,7 +7075,7 @@ namespace DataLayer{
 	bool OrmasDal::CreateReceiptProduct(int rID, int uID, std::string rDate, std::string rExecDate, int eID, double rCount, double rSum, int sID, int curID,
 		std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -7101,7 +7110,7 @@ namespace DataLayer{
 		sqlCommand += ", ";
 		sqlCommand += boost::lexical_cast<std::string>(curID);
 		sqlCommand += ");";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -7118,7 +7127,7 @@ namespace DataLayer{
 	// Create an item in consume raw list
 	bool OrmasDal::CreateReceiptRawList(int rlID, int rID, int pID, double rlCount, double rlSum, int sID, int cID, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -7140,7 +7149,7 @@ namespace DataLayer{
 		sqlCommand += ", ";
 		sqlCommand += boost::lexical_cast<std::string>(cID);
 		sqlCommand += ");";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -7157,7 +7166,7 @@ namespace DataLayer{
 	bool OrmasDal::CreateReceiptRaw(int rID, int uID, std::string rDate, std::string rExecDate, int eID, double rCount, double rSum, int sID, int curID,
 		std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -7192,7 +7201,7 @@ namespace DataLayer{
 		sqlCommand += ", ";
 		sqlCommand += boost::lexical_cast<std::string>(curID);
 		sqlCommand += ");";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -7209,7 +7218,7 @@ namespace DataLayer{
 	// Create refund
 	bool OrmasDal::CreateRefund(int rID, std::string rDate, double rValue, int uID, int cID, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -7226,7 +7235,7 @@ namespace DataLayer{
 		sqlCommand += ", ";
 		sqlCommand += boost::lexical_cast<std::string>(cID);
 		sqlCommand += ");";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -7243,7 +7252,7 @@ namespace DataLayer{
 	// Create relation type
 	bool OrmasDal::CreateRelationType(int rID, std::string rName, std::string rComment, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -7256,7 +7265,7 @@ namespace DataLayer{
 		sqlCommand += "', '";
 		sqlCommand += rComment;
 		sqlCommand += "');";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -7273,7 +7282,7 @@ namespace DataLayer{
 	// Create relation
 	bool OrmasDal::CreateRelation(int rID, int uID1, int uID2, int rtID, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -7288,7 +7297,7 @@ namespace DataLayer{
 		sqlCommand += ", ";
 		sqlCommand += boost::lexical_cast<std::string>(rtID);
 		sqlCommand += ");";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -7304,7 +7313,7 @@ namespace DataLayer{
 
 	bool OrmasDal::CreateReturnList(int rlID, int rID, int pID, double rlCount, double rlSum, int sID, int cID, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -7326,7 +7335,7 @@ namespace DataLayer{
 		sqlCommand += ", ";
 		sqlCommand += boost::lexical_cast<std::string>(cID);
 		sqlCommand += ");";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -7343,7 +7352,7 @@ namespace DataLayer{
 	bool OrmasDal::CreateReturn(int rID, int uID, std::string rDate, std::string rExecDate, int eID, double oCount, double oSum, int sID, int cID,
 		std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			errorMessage = "SQL command for creation company is failed, please contact with application provider!";
@@ -7379,7 +7388,7 @@ namespace DataLayer{
 		sqlCommand += ", ";
 		sqlCommand += boost::lexical_cast<std::string>(cID);
 		sqlCommand += ");";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -7395,7 +7404,7 @@ namespace DataLayer{
 	
 	bool OrmasDal::CreateRole(int rID, std::string rCode, std::string rName, std::string rComment, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -7410,7 +7419,7 @@ namespace DataLayer{
 		sqlCommand += "', '";
 		sqlCommand += rComment;
 		sqlCommand += "');";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -7426,7 +7435,7 @@ namespace DataLayer{
 
 	bool OrmasDal::CreateSpecificationList(int slID, int sID, int pID, double tlCount, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -7442,7 +7451,7 @@ namespace DataLayer{
 		sqlCommand += ", ";
 		sqlCommand += boost::lexical_cast<std::string>(tlCount);
 		sqlCommand += ");";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -7458,7 +7467,7 @@ namespace DataLayer{
 
 	bool OrmasDal::CreateSpecification(int sID, int pID, double sSum, int cID, int eID, std::string sDate, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -7478,7 +7487,7 @@ namespace DataLayer{
 		sqlCommand += ", '";
 		sqlCommand += sDate;
 		sqlCommand += "');";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -7494,7 +7503,7 @@ namespace DataLayer{
 	
 	bool OrmasDal::CreateSalary(int sID, int uID, double sValue, int cID, int stID, std::string sDate, bool sBonus, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -7516,7 +7525,7 @@ namespace DataLayer{
 		sqlCommand += "', ";
 		sqlCommand += sBonus ? "TRUE" : "FALSE";
 		sqlCommand += ");";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -7532,7 +7541,7 @@ namespace DataLayer{
 
 	bool OrmasDal::CreateSalaryType(int sID, std::string sCode, std::string sName, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -7545,7 +7554,7 @@ namespace DataLayer{
 		sqlCommand += "', '";
 		sqlCommand += sName;
 		sqlCommand += "');";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -7562,7 +7571,7 @@ namespace DataLayer{
 	// Create an item in spoilage list
 	bool OrmasDal::CreateSpoilageList(int slID, int sID, int pID, double slCount, double slSum, int stsID, int cID, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -7584,7 +7593,7 @@ namespace DataLayer{
 		sqlCommand += ", ";
 		sqlCommand += boost::lexical_cast<std::string>(cID);
 		sqlCommand += ");";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -7600,7 +7609,7 @@ namespace DataLayer{
 
 	bool OrmasDal::CreateSpoilage(int sID, std::string sDate, int eID, double sCount, double sSum, int stsID, int cID, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -7622,7 +7631,7 @@ namespace DataLayer{
 		sqlCommand += ", ";
 		sqlCommand += boost::lexical_cast<std::string>(cID);
 		sqlCommand += ");";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -7639,7 +7648,7 @@ namespace DataLayer{
 	//Create state
 	bool OrmasDal::CreateState(int sID, int unID, int stsID, std::string sLastChange, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -7654,7 +7663,7 @@ namespace DataLayer{
 		sqlCommand += ", '";
 		sqlCommand += sLastChange;
 		sqlCommand += "');";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -7670,7 +7679,7 @@ namespace DataLayer{
 
 	bool OrmasDal::CreateStatus(int sID, std::string sCode, std::string sName, std::string sComment, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -7685,7 +7694,7 @@ namespace DataLayer{
 		sqlCommand += "', '";
 		sqlCommand += sComment;
 		sqlCommand += "');";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -7702,7 +7711,7 @@ namespace DataLayer{
 	//Create status rule
 	bool OrmasDal::CreateStatusRule(int sID, std::string sOperation, int stsID, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -7715,7 +7724,7 @@ namespace DataLayer{
 		sqlCommand += "', ";
 		sqlCommand += boost::lexical_cast<std::string>(stsID);
 		sqlCommand += ");";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -7732,7 +7741,7 @@ namespace DataLayer{
 	// Create stock
 	bool OrmasDal::CreateStock(int sID, int pID, double sCount, double sSum, int stsID, int cID, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -7752,7 +7761,7 @@ namespace DataLayer{
 		sqlCommand += ", ";
 		sqlCommand += boost::lexical_cast<std::string>(cID);
 		sqlCommand += ");";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -7770,7 +7779,7 @@ namespace DataLayer{
 	bool OrmasDal::CreateSubaccount(int saID, int aID, std::string saNumber, double saStartBalance, double saCurrentBalance, int cID, int sID,
 		std::string saOpenDate, std::string saCloseDate, std::string saDetails, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -7807,7 +7816,7 @@ namespace DataLayer{
 		}
 		sqlCommand += saDetails;
 		sqlCommand += "');";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -7825,7 +7834,7 @@ namespace DataLayer{
 	bool OrmasDal::CreateSubaccountHistory(int shID, int saID, double saStartBalance, double saCurrentBalance, std::string fromDate,
 		std::string tillDate, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -7845,7 +7854,7 @@ namespace DataLayer{
 		sqlCommand += "', '";
 		sqlCommand += tillDate;
 		sqlCommand += "');";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -7863,7 +7872,7 @@ namespace DataLayer{
 	bool OrmasDal::CreateTax(int tID, std::string taxName, std::string taxCode, double fixedValue, int percentValue,
 		std::string formulaValue, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -7883,7 +7892,7 @@ namespace DataLayer{
 		sqlCommand += ", '";
 		sqlCommand += formulaValue;
 		sqlCommand += "');";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -7900,7 +7909,7 @@ namespace DataLayer{
 	// Create timesheet
 	bool OrmasDal::CreateTimesheet(int tID, int sID, double tWorkedTime, std::string tDate, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -7915,7 +7924,7 @@ namespace DataLayer{
 		sqlCommand += ", '";
 		sqlCommand += tDate;
 		sqlCommand += "');";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -7932,7 +7941,7 @@ namespace DataLayer{
 	// Create an item in transport list
 	bool OrmasDal::CreateTransportList(int tlID, int tID, int pID, double tlCount, double tlSum, int sID, int cID, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -7954,7 +7963,7 @@ namespace DataLayer{
 		sqlCommand += ", ";
 		sqlCommand += boost::lexical_cast<std::string>(cID);
 		sqlCommand += ");";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -7971,7 +7980,7 @@ namespace DataLayer{
 	bool OrmasDal::CreateTransport(int tID, int uID, std::string tDate, std::string tExecDate, int eID, double tCount, double tSum, int sID, int curID,
 		std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -8006,7 +8015,7 @@ namespace DataLayer{
 		sqlCommand += ", ";
 		sqlCommand += boost::lexical_cast<std::string>(curID);
 		sqlCommand += ");";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -8023,7 +8032,7 @@ namespace DataLayer{
 	bool OrmasDal::CreateUser(int uID, std::string uEmail, std::string uName, std::string uSurname, std::string uPhone, std::string uAddress,
 		int uRoleID, std::string uPassword, bool uActivated, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -8049,7 +8058,7 @@ namespace DataLayer{
 		sqlCommand += "', ";
 		sqlCommand += uActivated?"TRUE":"FALSE";
 		sqlCommand += ");";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -8066,7 +8075,7 @@ namespace DataLayer{
 	// Create withdrawal
 	bool OrmasDal::CreateWithdrawal(int wID, std::string wDate, double wValue, int uID, int cID, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -8083,7 +8092,7 @@ namespace DataLayer{
 		sqlCommand += ", ";
 		sqlCommand += boost::lexical_cast<std::string>(cID);
 		sqlCommand += ");";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -8100,7 +8109,7 @@ namespace DataLayer{
 	// Create an item in write-off list
 	bool OrmasDal::CreateWriteOffList(int wlID, int wID, int pID, double wlCount, double wlSum, int sID, int cID, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -8122,7 +8131,7 @@ namespace DataLayer{
 		sqlCommand += ", ";
 		sqlCommand += boost::lexical_cast<std::string>(cID);
 		sqlCommand += ");";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -8139,7 +8148,7 @@ namespace DataLayer{
 	bool OrmasDal::CreateWriteOff(int wID, int uID, std::string wDate, int eID, double wCount, double wSum, int sID, int cID,
 		std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -8163,7 +8172,7 @@ namespace DataLayer{
 		sqlCommand += ", ";
 		sqlCommand += boost::lexical_cast<std::string>(cID);
 		sqlCommand += ");";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -8180,7 +8189,7 @@ namespace DataLayer{
 	// Create an item in write-off raw list
 	bool OrmasDal::CreateWriteOffRawList(int wlID, int wID, int pID, double wlCount, double wlSum, int sID, int cID, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -8202,7 +8211,7 @@ namespace DataLayer{
 		sqlCommand += ", ";
 		sqlCommand += boost::lexical_cast<std::string>(cID);
 		sqlCommand += ");";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -8219,7 +8228,7 @@ namespace DataLayer{
 	bool OrmasDal::CreateWriteOffRaw(int wID, int uID, std::string wDate, int eID, double wCount, double wSum, int sID, int curID,
 		std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -8243,7 +8252,7 @@ namespace DataLayer{
 		sqlCommand += ", ";
 		sqlCommand += boost::lexical_cast<std::string>(curID);
 		sqlCommand += ");";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -8262,7 +8271,7 @@ namespace DataLayer{
 	// Delete access item
 	bool OrmasDal::DeleteAccessItem(int id, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -8271,7 +8280,7 @@ namespace DataLayer{
 		std::string sqlCommand = "DELETE FROM \"OrmasSchema\".access_items where access_item_id=";
 		sqlCommand += boost::lexical_cast<std::string>(id);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) == PGRES_COMMAND_OK)
 		{
@@ -8291,7 +8300,7 @@ namespace DataLayer{
 	// Delete access 
 	bool OrmasDal::DeleteAccess(int id, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -8300,7 +8309,7 @@ namespace DataLayer{
 		std::string sqlCommand = "DELETE FROM \"OrmasSchema\".accesses where access_id=";
 		sqlCommand += boost::lexical_cast<std::string>(id);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) == PGRES_COMMAND_OK)
 		{
@@ -8322,7 +8331,7 @@ namespace DataLayer{
 	// Delete account type
 	bool OrmasDal::DeleteAccountType(int id, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -8331,7 +8340,7 @@ namespace DataLayer{
 		std::string sqlCommand = "DELETE FROM \"OrmasSchema\".account_type where account_type_id=";
 		sqlCommand += boost::lexical_cast<std::string>(id);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) == PGRES_COMMAND_OK)
 		{
@@ -8351,7 +8360,7 @@ namespace DataLayer{
 	// Delete account
 	bool OrmasDal::DeleteAccount(int id, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -8360,7 +8369,7 @@ namespace DataLayer{
 		std::string sqlCommand = "DELETE FROM \"OrmasSchema\".accounts where account_id=";
 		sqlCommand += boost::lexical_cast<std::string>(id);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) == PGRES_COMMAND_OK)
 		{
@@ -8380,7 +8389,7 @@ namespace DataLayer{
 	// Delete account history
 	bool OrmasDal::DeleteAccountHistory(int id, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -8389,7 +8398,7 @@ namespace DataLayer{
 		std::string sqlCommand = "DELETE FROM \"OrmasSchema\".account_history where account_history_id = ";
 		sqlCommand += boost::lexical_cast<std::string>(id);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) == PGRES_COMMAND_OK)
 		{
@@ -8409,7 +8418,7 @@ namespace DataLayer{
 	// Delete balance-payment
 	bool OrmasDal::DeleteBalancePayment(int bID, int pID, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -8437,7 +8446,7 @@ namespace DataLayer{
 			sqlCommand += boost::lexical_cast<std::string>(pID);
 			sqlCommand += ";";
 		}
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) == PGRES_COMMAND_OK)
 		{
@@ -8457,7 +8466,7 @@ namespace DataLayer{
 	// Delete balance-payslip
 	bool OrmasDal::DeleteBalancePayslip(int bID, int pID, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -8485,7 +8494,7 @@ namespace DataLayer{
 			sqlCommand += boost::lexical_cast<std::string>(pID);
 			sqlCommand += ";";
 		}
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) == PGRES_COMMAND_OK)
 		{
@@ -8505,7 +8514,7 @@ namespace DataLayer{
 	// Delete balance-refund
 	bool OrmasDal::DeleteBalanceRefund(int bID, int rID, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -8533,7 +8542,7 @@ namespace DataLayer{
 			sqlCommand += boost::lexical_cast<std::string>(rID);
 			sqlCommand += ";";
 		}
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) == PGRES_COMMAND_OK)
 		{
@@ -8553,7 +8562,7 @@ namespace DataLayer{
 	// Delete balance-withdrawal
 	bool OrmasDal::DeleteBalanceWithdrawal(int bID, int wID, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -8581,7 +8590,7 @@ namespace DataLayer{
 			sqlCommand += boost::lexical_cast<std::string>(wID);
 			sqlCommand += ";";
 		}
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) == PGRES_COMMAND_OK)
 		{
@@ -8601,7 +8610,7 @@ namespace DataLayer{
 	// Delete balance
 	bool OrmasDal::DeleteBalance(int id, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -8610,7 +8619,7 @@ namespace DataLayer{
 		std::string sqlCommand = "DELETE FROM \"OrmasSchema\".balances where balance_id=";
 		sqlCommand += boost::lexical_cast<std::string>(id);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) == PGRES_COMMAND_OK)
 		{
@@ -8630,7 +8639,7 @@ namespace DataLayer{
 	// Delete chart of account
 	bool OrmasDal::DeleteChartOfAccount(int id, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -8639,7 +8648,7 @@ namespace DataLayer{
 		std::string sqlCommand = "DELETE FROM \"OrmasSchema\".chart_of_accounts where chart_of_account_id=";
 		sqlCommand += boost::lexical_cast<std::string>(id);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) == PGRES_COMMAND_OK)
 		{
@@ -8659,7 +8668,7 @@ namespace DataLayer{
 	// Delete clients
 	bool OrmasDal::DeleteClient(int id, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -8668,7 +8677,7 @@ namespace DataLayer{
 		std::string sqlCommand = "DELETE FROM \"OrmasSchema\".clients where user_id=";
 		sqlCommand += boost::lexical_cast<std::string>(id);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) == PGRES_COMMAND_OK)
 		{
@@ -8687,7 +8696,7 @@ namespace DataLayer{
 	// Delete company
 	bool OrmasDal::DeleteCompany(int id, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -8696,7 +8705,7 @@ namespace DataLayer{
 		std::string sqlCommand = "DELETE FROM \"OrmasSchema\".companies where company_id=";
 		sqlCommand += boost::lexical_cast<std::string>(id);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) == PGRES_COMMAND_OK)
 		{
@@ -8716,7 +8725,7 @@ namespace DataLayer{
 	// Delete company-account
 	bool OrmasDal::DeleteCompanyAccount(int cID, int aID, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -8744,7 +8753,7 @@ namespace DataLayer{
 			sqlCommand += boost::lexical_cast<std::string>(aID);
 			sqlCommand += ";";
 		}
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) == PGRES_COMMAND_OK)
 		{
@@ -8764,7 +8773,7 @@ namespace DataLayer{
 	// Delete company-employee
 	bool OrmasDal::DeleteCompanyEmployee(int cID, int eID, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -8792,7 +8801,7 @@ namespace DataLayer{
 			sqlCommand += boost::lexical_cast<std::string>(eID);
 			sqlCommand += ";";
 		}
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) == PGRES_COMMAND_OK)
 		{
@@ -8812,7 +8821,7 @@ namespace DataLayer{
 	// Delete item in consume product list
 	bool OrmasDal::DeleteItemInConsumeProductList(int id, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -8821,7 +8830,7 @@ namespace DataLayer{
 		std::string sqlCommand = "DELETE FROM \"OrmasSchema\".consume_product_list where consume_product_list_id=";
 		sqlCommand += boost::lexical_cast<std::string>(id);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) == PGRES_COMMAND_OK)
 		{
@@ -8841,7 +8850,7 @@ namespace DataLayer{
 	// Delete list in consume product list by consume product id
 	bool OrmasDal::DeleteListByConsumeProductID(int id, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -8850,7 +8859,7 @@ namespace DataLayer{
 		std::string sqlCommand = "DELETE FROM \"OrmasSchema\".consume_product_list where consume_product_id=";
 		sqlCommand += boost::lexical_cast<std::string>(id);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) == PGRES_COMMAND_OK)
 		{
@@ -8870,7 +8879,7 @@ namespace DataLayer{
 	// Delete consume product
 	bool OrmasDal::DeleteConsumeProduct(int id, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -8880,7 +8889,7 @@ namespace DataLayer{
 		std::string sqlCommand = "DELETE FROM \"OrmasSchema\".consume_products where consume_product_id=";
 		sqlCommand += boost::lexical_cast<std::string>(id);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
 			std::string logStr = PQresultErrorMessage(result);
@@ -8897,7 +8906,7 @@ namespace DataLayer{
 	// Delete item in consume raw list
 	bool OrmasDal::DeleteItemInConsumeRawList(int id, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -8906,7 +8915,7 @@ namespace DataLayer{
 		std::string sqlCommand = "DELETE FROM \"OrmasSchema\".consume_raw_list where consume_raw_list_id=";
 		sqlCommand += boost::lexical_cast<std::string>(id);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) == PGRES_COMMAND_OK)
 		{
@@ -8926,7 +8935,7 @@ namespace DataLayer{
 	// Delete list in consume raw list by consume raw id
 	bool OrmasDal::DeleteListByConsumeRawID(int id, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -8935,7 +8944,7 @@ namespace DataLayer{
 		std::string sqlCommand = "DELETE FROM \"OrmasSchema\".consume_raw_list where consume_raw_id=";
 		sqlCommand += boost::lexical_cast<std::string>(id);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) == PGRES_COMMAND_OK)
 		{
@@ -8955,7 +8964,7 @@ namespace DataLayer{
 	// Delete consume raw
 	bool OrmasDal::DeleteConsumeRaw(int id, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -8965,7 +8974,7 @@ namespace DataLayer{
 		std::string sqlCommand = "DELETE FROM \"OrmasSchema\".consume_raws where consume_raw_id=";
 		sqlCommand += boost::lexical_cast<std::string>(id);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
 			std::string logStr = PQresultErrorMessage(result);
@@ -8981,7 +8990,7 @@ namespace DataLayer{
 	// Delete currency
 	bool OrmasDal::DeleteCurrency(int id, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -8990,7 +8999,7 @@ namespace DataLayer{
 		std::string sqlCommand = "DELETE FROM \"OrmasSchema\".currencies where currency_id=";
 		sqlCommand += boost::lexical_cast<std::string>(id);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) == PGRES_COMMAND_OK)
 		{
@@ -9009,7 +9018,7 @@ namespace DataLayer{
 	// Delete employee
 	bool OrmasDal::DeleteEmployee(int id, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -9018,7 +9027,7 @@ namespace DataLayer{
 		std::string sqlCommand = "DELETE FROM \"OrmasSchema\".employees where user_id=";
 		sqlCommand += boost::lexical_cast<std::string>(id);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) == PGRES_COMMAND_OK)
 		{
@@ -9038,7 +9047,7 @@ namespace DataLayer{
 	// Delete entries
 	bool OrmasDal::DeleteEntry(int id, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -9047,7 +9056,7 @@ namespace DataLayer{
 		std::string sqlCommand = "DELETE FROM \"OrmasSchema\".entries where entry_id=";
 		sqlCommand += boost::lexical_cast<std::string>(id);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) == PGRES_COMMAND_OK)
 		{
@@ -9067,7 +9076,7 @@ namespace DataLayer{
 	// Delete entry routing
 	bool OrmasDal::DeleteEntryRouting(int id, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -9076,7 +9085,7 @@ namespace DataLayer{
 		std::string sqlCommand = "DELETE FROM \"OrmasSchema\".entry_routing where entry_routing_id=";
 		sqlCommand += boost::lexical_cast<std::string>(id);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) == PGRES_COMMAND_OK)
 		{
@@ -9096,7 +9105,7 @@ namespace DataLayer{
 	// Delete entry-subaccount 
 	bool OrmasDal::DeleteEntrySubaccount(int eID, int sID, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -9124,7 +9133,7 @@ namespace DataLayer{
 			sqlCommand += boost::lexical_cast<std::string>(eID);
 			sqlCommand += ";";
 		}
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) == PGRES_COMMAND_OK)
 		{
@@ -9144,7 +9153,7 @@ namespace DataLayer{
 	// Delete financial report
 	bool OrmasDal::DeleteFinancialReport(int id, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -9153,7 +9162,7 @@ namespace DataLayer{
 		std::string sqlCommand = "DELETE FROM \"OrmasSchema\".financial_report where financial_report_id=";
 		sqlCommand += boost::lexical_cast<std::string>(id);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) == PGRES_COMMAND_OK)
 		{
@@ -9173,7 +9182,7 @@ namespace DataLayer{
 	// Delete item in inventorization list
 	bool OrmasDal::DeleteItemInInventorizationList(int id, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -9182,7 +9191,7 @@ namespace DataLayer{
 		std::string sqlCommand = "DELETE FROM \"OrmasSchema\".inventorization_list where inventorization_list_id=";
 		sqlCommand += boost::lexical_cast<std::string>(id);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) == PGRES_COMMAND_OK)
 		{
@@ -9202,7 +9211,7 @@ namespace DataLayer{
 	// Delete list in inventorization list by inventorization id
 	bool OrmasDal::DeleteListByInventorizationID(int id, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -9211,7 +9220,7 @@ namespace DataLayer{
 		std::string sqlCommand = "DELETE FROM \"OrmasSchema\".inventorization_list where inventorization_id=";
 		sqlCommand += boost::lexical_cast<std::string>(id);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) == PGRES_COMMAND_OK)
 		{
@@ -9231,7 +9240,7 @@ namespace DataLayer{
 	// Delete inventorization
 	bool OrmasDal::DeleteInventorization(int id, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -9241,7 +9250,7 @@ namespace DataLayer{
 		std::string sqlCommand = "DELETE FROM \"OrmasSchema\".inventorizations where inventorization_id=";
 		sqlCommand += boost::lexical_cast<std::string>(id);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
 			std::string logStr = PQresultErrorMessage(result);
@@ -9257,7 +9266,7 @@ namespace DataLayer{
 	// Delete jobprice
 	bool OrmasDal::DeleteJobprice(int id, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -9266,7 +9275,7 @@ namespace DataLayer{
 		std::string sqlCommand = "DELETE FROM \"OrmasSchema\".jobprice where jobprice_id=";
 		sqlCommand += boost::lexical_cast<std::string>(id);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) == PGRES_COMMAND_OK)
 		{
@@ -9286,7 +9295,7 @@ namespace DataLayer{
 	// Delete jobsheet
 	bool OrmasDal::DeleteJobsheet(int id, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -9295,7 +9304,7 @@ namespace DataLayer{
 		std::string sqlCommand = "DELETE FROM \"OrmasSchema\".jobsheet where jobsheet_id=";
 		sqlCommand += boost::lexical_cast<std::string>(id);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) == PGRES_COMMAND_OK)
 		{
@@ -9315,7 +9324,7 @@ namespace DataLayer{
 	// Delete Location
 	bool OrmasDal::DeleteLocation(int id, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -9324,7 +9333,7 @@ namespace DataLayer{
 		std::string sqlCommand = "DELETE FROM \"OrmasSchema\".locations where location_id=";
 		sqlCommand += boost::lexical_cast<std::string>(id);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) == PGRES_COMMAND_OK)
 		{
@@ -9346,7 +9355,7 @@ namespace DataLayer{
 	// Delete measure
 	bool OrmasDal::DeleteMeasure(int id, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -9355,7 +9364,7 @@ namespace DataLayer{
 		std::string sqlCommand = "DELETE FROM \"OrmasSchema\".measures where measure_id=";
 		sqlCommand += boost::lexical_cast<std::string>(id);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) == PGRES_COMMAND_OK)
 		{
@@ -9375,7 +9384,7 @@ namespace DataLayer{
 	// Delete net cost
 	bool OrmasDal::DeleteNetCost(int id, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -9384,7 +9393,7 @@ namespace DataLayer{
 		std::string sqlCommand = "DELETE FROM \"OrmasSchema\".net_cost where net_cost_id=";
 		sqlCommand += boost::lexical_cast<std::string>(id);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) == PGRES_COMMAND_OK)
 		{
@@ -9404,7 +9413,7 @@ namespace DataLayer{
 	// Delete item in order list
 	bool OrmasDal::DeleteItemInOrderList(int id, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -9413,7 +9422,7 @@ namespace DataLayer{
 		std::string sqlCommand = "DELETE FROM \"OrmasSchema\".order_list where order_list_id=";
 		sqlCommand += boost::lexical_cast<std::string>(id);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) == PGRES_COMMAND_OK)
 		{
@@ -9433,7 +9442,7 @@ namespace DataLayer{
 	// Delete list in order list by order id
 	bool OrmasDal::DeleteListByOrderID(int id, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -9442,7 +9451,7 @@ namespace DataLayer{
 		std::string sqlCommand = "DELETE FROM \"OrmasSchema\".order_list where order_id=";
 		sqlCommand += boost::lexical_cast<std::string>(id);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) == PGRES_COMMAND_OK)
 		{
@@ -9462,7 +9471,7 @@ namespace DataLayer{
 	// Delete order
 	bool OrmasDal::DeleteOrder(int id, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -9472,7 +9481,7 @@ namespace DataLayer{
 		std::string sqlCommand = "DELETE FROM \"OrmasSchema\".orders where order_id=";
 		sqlCommand += boost::lexical_cast<std::string>(id);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
 			std::string logStr = PQresultErrorMessage(result);
@@ -9488,7 +9497,7 @@ namespace DataLayer{
 	// Delete item in order raw list
 	bool OrmasDal::DeleteItemInOrderRawList(int id, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -9497,7 +9506,7 @@ namespace DataLayer{
 		std::string sqlCommand = "DELETE FROM \"OrmasSchema\".order_raw_list where order_raw_list_id=";
 		sqlCommand += boost::lexical_cast<std::string>(id);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) == PGRES_COMMAND_OK)
 		{
@@ -9517,7 +9526,7 @@ namespace DataLayer{
 	// Delete list in order raw list by order raw id
 	bool OrmasDal::DeleteListByOrderRawID(int id, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -9526,7 +9535,7 @@ namespace DataLayer{
 		std::string sqlCommand = "DELETE FROM \"OrmasSchema\".order_raw_list where order_raw_id=";
 		sqlCommand += boost::lexical_cast<std::string>(id);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) == PGRES_COMMAND_OK)
 		{
@@ -9546,7 +9555,7 @@ namespace DataLayer{
 	// Delete order
 	bool OrmasDal::DeleteOrderRaw(int id, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -9556,7 +9565,7 @@ namespace DataLayer{
 		std::string sqlCommand = "DELETE FROM \"OrmasSchema\".order_raws where order_raw_id=";
 		sqlCommand += boost::lexical_cast<std::string>(id);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
 			std::string logStr = PQresultErrorMessage(result);
@@ -9572,7 +9581,7 @@ namespace DataLayer{
 	// Delete payment
 	bool OrmasDal::DeletePayment(int id, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -9581,7 +9590,7 @@ namespace DataLayer{
 		std::string sqlCommand = "DELETE FROM \"OrmasSchema\".payments where payment_id=";
 		sqlCommand += boost::lexical_cast<std::string>(id);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) == PGRES_COMMAND_OK)
 		{
@@ -9601,7 +9610,7 @@ namespace DataLayer{
 	// Delete payment
 	bool OrmasDal::DeletePayslip(int id, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -9610,7 +9619,7 @@ namespace DataLayer{
 		std::string sqlCommand = "DELETE FROM \"OrmasSchema\".payslips where payslip_id=";
 		sqlCommand += boost::lexical_cast<std::string>(id);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) == PGRES_COMMAND_OK)
 		{
@@ -9630,7 +9639,7 @@ namespace DataLayer{
 	// Delete payslip-order
 	bool OrmasDal::DeletePayslipOrder(int pID, int oID, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -9658,7 +9667,7 @@ namespace DataLayer{
 			sqlCommand += boost::lexical_cast<std::string>(oID);
 			sqlCommand += ";";
 		}
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) == PGRES_COMMAND_OK)
 		{
@@ -9678,7 +9687,7 @@ namespace DataLayer{
 	// Delete percent rate
 	bool OrmasDal::DeletePercentRate(int id, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -9687,7 +9696,7 @@ namespace DataLayer{
 		std::string sqlCommand = "DELETE FROM \"OrmasSchema\".percent_rate where percent_rate_id=";
 		sqlCommand += boost::lexical_cast<std::string>(id);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) == PGRES_COMMAND_OK)
 		{
@@ -9707,7 +9716,7 @@ namespace DataLayer{
 	// Delete photo
 	bool OrmasDal::DeletePhoto(int id, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -9716,7 +9725,7 @@ namespace DataLayer{
 		std::string sqlCommand = "DELETE FROM \"OrmasSchema\".photos where photo_id=";
 		sqlCommand += boost::lexical_cast<std::string>(id);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) == PGRES_COMMAND_OK)
 		{
@@ -9736,7 +9745,7 @@ namespace DataLayer{
 	// Delete position
 	bool OrmasDal::DeletePosition(int id, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -9745,7 +9754,7 @@ namespace DataLayer{
 		std::string sqlCommand = "DELETE FROM \"OrmasSchema\".positions where position_id=";
 		sqlCommand += boost::lexical_cast<std::string>(id);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) == PGRES_COMMAND_OK)
 		{
@@ -9765,7 +9774,7 @@ namespace DataLayer{
 	// Delete price
 	bool OrmasDal::DeletePrice(int id, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -9774,7 +9783,7 @@ namespace DataLayer{
 		std::string sqlCommand = "DELETE FROM \"OrmasSchema\".prices where price_id=";
 		sqlCommand += boost::lexical_cast<std::string>(id);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) == PGRES_COMMAND_OK)
 		{
@@ -9795,7 +9804,7 @@ namespace DataLayer{
 	// Delete product type
 	bool OrmasDal::DeleteProductType(int id, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -9804,7 +9813,7 @@ namespace DataLayer{
 		std::string sqlCommand = "DELETE FROM \"OrmasSchema\".product_type where product_type_id=";
 		sqlCommand += boost::lexical_cast<std::string>(id);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 		
 		if (PQresultStatus(result) == PGRES_COMMAND_OK)
 		{
@@ -9824,7 +9833,7 @@ namespace DataLayer{
 	// Delete production
 	bool OrmasDal::DeleteProduction(int id, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -9833,7 +9842,7 @@ namespace DataLayer{
 		std::string sqlCommand = "DELETE FROM \"OrmasSchema\".production where production_id=";
 		sqlCommand += boost::lexical_cast<std::string>(id);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) == PGRES_COMMAND_OK)
 		{
@@ -9853,7 +9862,7 @@ namespace DataLayer{
 	// Delete item in production list
 	bool OrmasDal::DeleteItemInProductionList(int id, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -9862,7 +9871,7 @@ namespace DataLayer{
 		std::string sqlCommand = "DELETE FROM \"OrmasSchema\".production_list where production_list_id=";
 		sqlCommand += boost::lexical_cast<std::string>(id);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) == PGRES_COMMAND_OK)
 		{
@@ -9882,7 +9891,7 @@ namespace DataLayer{
 	// Delete item in production consume raw list
 	bool OrmasDal::DeleteItemInProductionConsumeRawList(int id, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -9891,7 +9900,7 @@ namespace DataLayer{
 		std::string sqlCommand = "DELETE FROM \"OrmasSchema\".production_consume_raw_list where consume_raw_list_id=";
 		sqlCommand += boost::lexical_cast<std::string>(id);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) == PGRES_COMMAND_OK)
 		{
@@ -9911,7 +9920,7 @@ namespace DataLayer{
 	// Delete list in production consume raw list by consume raw id
 	bool OrmasDal::DeleteListByProductionConsumeRawID(int id, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -9920,7 +9929,7 @@ namespace DataLayer{
 		std::string sqlCommand = "DELETE FROM \"OrmasSchema\".production_consume_raw_list where consume_raw_id=";
 		sqlCommand += boost::lexical_cast<std::string>(id);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) == PGRES_COMMAND_OK)
 		{
@@ -9940,7 +9949,7 @@ namespace DataLayer{
 	// Delete production consume raw
 	bool OrmasDal::DeleteProductionConsumeRaw(int id, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -9950,7 +9959,7 @@ namespace DataLayer{
 		std::string sqlCommand = "DELETE FROM \"OrmasSchema\".production_consume_raws where consume_raw_id=";
 		sqlCommand += boost::lexical_cast<std::string>(id);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
 			std::string logStr = PQresultErrorMessage(result);
@@ -9966,7 +9975,7 @@ namespace DataLayer{
 	// Delete list in production list by production id
 	bool OrmasDal::DeleteListByProductionID(int id, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -9975,7 +9984,7 @@ namespace DataLayer{
 		std::string sqlCommand = "DELETE FROM \"OrmasSchema\".production_list where production_id=";
 		sqlCommand += boost::lexical_cast<std::string>(id);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) == PGRES_COMMAND_OK)
 		{
@@ -9995,7 +10004,7 @@ namespace DataLayer{
 	// Delete item in production plan list
 	bool OrmasDal::DeleteItemInProductionPlanList(int id, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -10004,7 +10013,7 @@ namespace DataLayer{
 		std::string sqlCommand = "DELETE FROM \"OrmasSchema\".production_plan_list where production_plan_list_id=";
 		sqlCommand += boost::lexical_cast<std::string>(id);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) == PGRES_COMMAND_OK)
 		{
@@ -10024,7 +10033,7 @@ namespace DataLayer{
 	// Delete list in production plan list by order id
 	bool OrmasDal::DeleteListByProductionPlanID(int id, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -10033,7 +10042,7 @@ namespace DataLayer{
 		std::string sqlCommand = "DELETE FROM \"OrmasSchema\".production_plan_list where production_plan_id=";
 		sqlCommand += boost::lexical_cast<std::string>(id);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) == PGRES_COMMAND_OK)
 		{
@@ -10053,7 +10062,7 @@ namespace DataLayer{
 	// Delete order
 	bool OrmasDal::DeleteProductionPlan(int id, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -10063,7 +10072,7 @@ namespace DataLayer{
 		std::string sqlCommand = "DELETE FROM \"OrmasSchema\".production_plan where production_plan_id=";
 		sqlCommand += boost::lexical_cast<std::string>(id);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
 			std::string logStr = PQresultErrorMessage(result);
@@ -10079,7 +10088,7 @@ namespace DataLayer{
 	// Delete item in production stock
 	bool OrmasDal::DeleteProductionStock(int id, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -10088,7 +10097,7 @@ namespace DataLayer{
 		std::string sqlCommand = "DELETE FROM \"OrmasSchema\".production_stock where production_stock_id=";
 		sqlCommand += boost::lexical_cast<std::string>(id);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) == PGRES_COMMAND_OK)
 		{
@@ -10108,7 +10117,7 @@ namespace DataLayer{
 	// Delete product
 	bool OrmasDal::DeleteProduct(int id, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -10117,7 +10126,7 @@ namespace DataLayer{
 		std::string sqlCommand = "DELETE FROM \"OrmasSchema\".products where product_id=";
 		sqlCommand += boost::lexical_cast<std::string>(id);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 		
 		if (PQresultStatus(result) == PGRES_COMMAND_OK)
 		{
@@ -10137,7 +10146,7 @@ namespace DataLayer{
 	// Delete product
 	bool OrmasDal::DeletePurveyor(int id, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -10146,7 +10155,7 @@ namespace DataLayer{
 		std::string sqlCommand = "DELETE FROM \"OrmasSchema\".purveyors where user_id=";
 		sqlCommand += boost::lexical_cast<std::string>(id);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) == PGRES_COMMAND_OK)
 		{
@@ -10166,7 +10175,7 @@ namespace DataLayer{
 	// Delete item in receipt product list
 	bool OrmasDal::DeleteItemInReceiptProductList(int id, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -10175,7 +10184,7 @@ namespace DataLayer{
 		std::string sqlCommand = "DELETE FROM \"OrmasSchema\".receipt_product_list where receipt_product_list_id=";
 		sqlCommand += boost::lexical_cast<std::string>(id);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) == PGRES_COMMAND_OK)
 		{
@@ -10195,7 +10204,7 @@ namespace DataLayer{
 	// Delete list in receipt product list by receipt product id
 	bool OrmasDal::DeleteListByReceiptProductID(int id, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -10204,7 +10213,7 @@ namespace DataLayer{
 		std::string sqlCommand = "DELETE FROM \"OrmasSchema\".receipt_product_list where receipt_product_id=";
 		sqlCommand += boost::lexical_cast<std::string>(id);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) == PGRES_COMMAND_OK)
 		{
@@ -10224,7 +10233,7 @@ namespace DataLayer{
 	// Delete consume product
 	bool OrmasDal::DeleteReceiptProduct(int id, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -10234,7 +10243,7 @@ namespace DataLayer{
 		std::string sqlCommand = "DELETE FROM \"OrmasSchema\".receipt_products where receipt_product_id=";
 		sqlCommand += boost::lexical_cast<std::string>(id);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
 			std::string logStr = PQresultErrorMessage(result);
@@ -10251,7 +10260,7 @@ namespace DataLayer{
 	// Delete list in receipt raw list by receipt raw id
 	bool OrmasDal::DeleteListByReceiptRawID(int id, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -10260,7 +10269,7 @@ namespace DataLayer{
 		std::string sqlCommand = "DELETE FROM \"OrmasSchema\".receipt_raw_list where receipt_raw_id=";
 		sqlCommand += boost::lexical_cast<std::string>(id);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) == PGRES_COMMAND_OK)
 		{
@@ -10280,7 +10289,7 @@ namespace DataLayer{
 	// Delete item in receipt raw list
 	bool OrmasDal::DeleteItemInReceiptRawList(int id, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -10289,7 +10298,7 @@ namespace DataLayer{
 		std::string sqlCommand = "DELETE FROM \"OrmasSchema\".receipt_raw_list where receipt_raw_list_id=";
 		sqlCommand += boost::lexical_cast<std::string>(id);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) == PGRES_COMMAND_OK)
 		{
@@ -10309,7 +10318,7 @@ namespace DataLayer{
 	// Delete receipt raw
 	bool OrmasDal::DeleteReceiptRaw(int id, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -10319,7 +10328,7 @@ namespace DataLayer{
 		std::string sqlCommand = "DELETE FROM \"OrmasSchema\".receipt_raws where receipt_raw_id=";
 		sqlCommand += boost::lexical_cast<std::string>(id);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
 			std::string logStr = PQresultErrorMessage(result);
@@ -10335,7 +10344,7 @@ namespace DataLayer{
 	// Delete refund
 	bool OrmasDal::DeleteRefund(int id, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -10344,7 +10353,7 @@ namespace DataLayer{
 		std::string sqlCommand = "DELETE FROM \"OrmasSchema\".refunds where payslip_id=";
 		sqlCommand += boost::lexical_cast<std::string>(id);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) == PGRES_COMMAND_OK)
 		{
@@ -10364,7 +10373,7 @@ namespace DataLayer{
 	// Delete relation type
 	bool OrmasDal::DeleteRelationType(int id, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -10373,7 +10382,7 @@ namespace DataLayer{
 		std::string sqlCommand = "DELETE FROM \"OrmasSchema\".relation_type where relation_type_id=";
 		sqlCommand += boost::lexical_cast<std::string>(id);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) == PGRES_COMMAND_OK)
 		{
@@ -10393,7 +10402,7 @@ namespace DataLayer{
 	// Delete relation
 	bool OrmasDal::DeleteRelation(int id, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -10402,7 +10411,7 @@ namespace DataLayer{
 		std::string sqlCommand = "DELETE FROM \"OrmasSchema\".relations where relation_id=";
 		sqlCommand += boost::lexical_cast<std::string>(id);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) == PGRES_COMMAND_OK)
 		{
@@ -10422,7 +10431,7 @@ namespace DataLayer{
 	// Delete item in return list
 	bool OrmasDal::DeleteItemInReturnList(int id, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -10431,7 +10440,7 @@ namespace DataLayer{
 		std::string sqlCommand = "DELETE FROM \"OrmasSchema\".return_list where return_list_id=";
 		sqlCommand += boost::lexical_cast<std::string>(id);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) == PGRES_COMMAND_OK)
 		{
@@ -10450,7 +10459,7 @@ namespace DataLayer{
 	// Delete list in return list by return id
 	bool OrmasDal::DeleteListByReturnID(int id, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -10459,7 +10468,7 @@ namespace DataLayer{
 		std::string sqlCommand = "DELETE FROM \"OrmasSchema\".return_list where return_id=";
 		sqlCommand += boost::lexical_cast<std::string>(id);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) == PGRES_COMMAND_OK)
 		{
@@ -10479,7 +10488,7 @@ namespace DataLayer{
 	// Delete return
 	bool OrmasDal::DeleteReturn(int id, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -10490,7 +10499,7 @@ namespace DataLayer{
 		std::string sqlCommand = "DELETE FROM \"OrmasSchema\".returns where return_id=";
 		sqlCommand += boost::lexical_cast<std::string>(id);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
 			std::string logStr = PQresultErrorMessage(result);
@@ -10506,7 +10515,7 @@ namespace DataLayer{
 	// Delete role
 	bool OrmasDal::DeleteRole(int id, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -10515,7 +10524,7 @@ namespace DataLayer{
 		std::string sqlCommand = "DELETE FROM \"OrmasSchema\".roles where role_id=";
 		sqlCommand += boost::lexical_cast<std::string>(id);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 		
 		if (PQresultStatus(result) == PGRES_COMMAND_OK)
 		{
@@ -10535,7 +10544,7 @@ namespace DataLayer{
 	// Delete salary
 	bool OrmasDal::DeleteSalary(int id, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -10544,7 +10553,7 @@ namespace DataLayer{
 		std::string sqlCommand = "DELETE FROM \"OrmasSchema\".salaries where salary_id=";
 		sqlCommand += boost::lexical_cast<std::string>(id);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) == PGRES_COMMAND_OK)
 		{
@@ -10564,7 +10573,7 @@ namespace DataLayer{
 	// Delete salary type
 	bool OrmasDal::DeleteSalaryType(int id, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -10573,7 +10582,7 @@ namespace DataLayer{
 		std::string sqlCommand = "DELETE FROM \"OrmasSchema\".salary_type where salary_type_id=";
 		sqlCommand += boost::lexical_cast<std::string>(id);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) == PGRES_COMMAND_OK)
 		{
@@ -10593,7 +10602,7 @@ namespace DataLayer{
 	// Delete item in specification list
 	bool OrmasDal::DeleteItemInSpecificationList(int id, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -10602,7 +10611,7 @@ namespace DataLayer{
 		std::string sqlCommand = "DELETE FROM \"OrmasSchema\".specification_list where specification_list_id=";
 		sqlCommand += boost::lexical_cast<std::string>(id);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) == PGRES_COMMAND_OK)
 		{
@@ -10621,7 +10630,7 @@ namespace DataLayer{
 	// Delete list in specification list by specification id
 	bool OrmasDal::DeleteListBySpecificationID(int id, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -10630,7 +10639,7 @@ namespace DataLayer{
 		std::string sqlCommand = "DELETE FROM \"OrmasSchema\".specification_list where specification_id=";
 		sqlCommand += boost::lexical_cast<std::string>(id);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) == PGRES_COMMAND_OK)
 		{
@@ -10650,7 +10659,7 @@ namespace DataLayer{
 	// Delete return
 	bool OrmasDal::DeleteSpecification(int id, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -10661,7 +10670,7 @@ namespace DataLayer{
 		std::string sqlCommand = "DELETE FROM \"OrmasSchema\".specifications where specification_id=";
 		sqlCommand += boost::lexical_cast<std::string>(id);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
 			std::string logStr = PQresultErrorMessage(result);
@@ -10678,7 +10687,7 @@ namespace DataLayer{
 	// Delete item in spoilage list
 	bool OrmasDal::DeleteItemInSpoilageList(int id, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -10687,7 +10696,7 @@ namespace DataLayer{
 		std::string sqlCommand = "DELETE FROM \"OrmasSchema\".spoilage_list where spoilage_list_id=";
 		sqlCommand += boost::lexical_cast<std::string>(id);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) == PGRES_COMMAND_OK)
 		{
@@ -10707,7 +10716,7 @@ namespace DataLayer{
 	// Delete list in spoilage list by order id
 	bool OrmasDal::DeleteListBySpoilageID(int id, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -10716,7 +10725,7 @@ namespace DataLayer{
 		std::string sqlCommand = "DELETE FROM \"OrmasSchema\".spoilage_list where spoilage_id=";
 		sqlCommand += boost::lexical_cast<std::string>(id);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) == PGRES_COMMAND_OK)
 		{
@@ -10736,7 +10745,7 @@ namespace DataLayer{
 	// Delete spoilage
 	bool OrmasDal::DeleteSpoilage(int id, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -10746,7 +10755,7 @@ namespace DataLayer{
 		std::string sqlCommand = "DELETE FROM \"OrmasSchema\".spoilage where spoilage_id=";
 		sqlCommand += boost::lexical_cast<std::string>(id);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
 			std::string logStr = PQresultErrorMessage(result);
@@ -10762,7 +10771,7 @@ namespace DataLayer{
 	// Delete state
 	bool OrmasDal::DeleteState(int id, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -10771,7 +10780,7 @@ namespace DataLayer{
 		std::string sqlCommand = "DELETE FROM \"OrmasSchema\".state where state_id=";
 		sqlCommand += boost::lexical_cast<std::string>(id);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) == PGRES_COMMAND_OK)
 		{
@@ -10791,7 +10800,7 @@ namespace DataLayer{
 	// Delete status
 	bool OrmasDal::DeleteStatus(int id, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -10800,7 +10809,7 @@ namespace DataLayer{
 		std::string sqlCommand = "DELETE FROM \"OrmasSchema\".status where status_id=";
 		sqlCommand += boost::lexical_cast<std::string>(id);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 		
 		if (PQresultStatus(result) == PGRES_COMMAND_OK)
 		{
@@ -10819,7 +10828,7 @@ namespace DataLayer{
 
 	bool OrmasDal::DeleteStatusRule(int id, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -10828,7 +10837,7 @@ namespace DataLayer{
 		std::string sqlCommand = "DELETE FROM \"OrmasSchema\".status_rule where status_rule_id=";
 		sqlCommand += boost::lexical_cast<std::string>(id);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) == PGRES_COMMAND_OK)
 		{
@@ -10848,7 +10857,7 @@ namespace DataLayer{
 	// Delete item in stock
 	bool OrmasDal::DeleteStock(int id, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -10857,7 +10866,7 @@ namespace DataLayer{
 		std::string sqlCommand = "DELETE FROM \"OrmasSchema\".stock where stock_id=";
 		sqlCommand += boost::lexical_cast<std::string>(id);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) == PGRES_COMMAND_OK)
 		{
@@ -10877,7 +10886,7 @@ namespace DataLayer{
 	// Delete subaccount
 	bool OrmasDal::DeleteSubaccount(int id, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -10886,7 +10895,7 @@ namespace DataLayer{
 		std::string sqlCommand = "DELETE FROM \"OrmasSchema\".subaccounts where subaccount_id=";
 		sqlCommand += boost::lexical_cast<std::string>(id);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) == PGRES_COMMAND_OK)
 		{
@@ -10906,7 +10915,7 @@ namespace DataLayer{
 	// Delete subaccount history
 	bool OrmasDal::DeleteSubaccountHistory(int id, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -10915,7 +10924,7 @@ namespace DataLayer{
 		std::string sqlCommand = "DELETE FROM \"OrmasSchema\".subaccount_history where subaccount_history_id=";
 		sqlCommand += boost::lexical_cast<std::string>(id);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) == PGRES_COMMAND_OK)
 		{
@@ -10935,7 +10944,7 @@ namespace DataLayer{
 	// Delete tax
 	bool OrmasDal::DeleteTax(int id, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -10944,7 +10953,7 @@ namespace DataLayer{
 		std::string sqlCommand = "DELETE FROM \"OrmasSchema\".taxes where tax_id=";
 		sqlCommand += boost::lexical_cast<std::string>(id);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) == PGRES_COMMAND_OK)
 		{
@@ -10964,7 +10973,7 @@ namespace DataLayer{
 	// Delete timesheet
 	bool OrmasDal::DeleteTimesheet(int id, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -10973,7 +10982,7 @@ namespace DataLayer{
 		std::string sqlCommand = "DELETE FROM \"OrmasSchema\".timesheet where timesheet_id=";
 		sqlCommand += boost::lexical_cast<std::string>(id);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) == PGRES_COMMAND_OK)
 		{
@@ -10993,7 +11002,7 @@ namespace DataLayer{
 	// Delete item in transport list
 	bool OrmasDal::DeleteItemInTransportList(int id, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -11002,7 +11011,7 @@ namespace DataLayer{
 		std::string sqlCommand = "DELETE FROM \"OrmasSchema\".transport_list where transport_list_id=";
 		sqlCommand += boost::lexical_cast<std::string>(id);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) == PGRES_COMMAND_OK)
 		{
@@ -11022,7 +11031,7 @@ namespace DataLayer{
 	// Delete list in transport list by transport id
 	bool OrmasDal::DeleteListByTransportID(int id, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -11031,7 +11040,7 @@ namespace DataLayer{
 		std::string sqlCommand = "DELETE FROM \"OrmasSchema\".transport_list where transport_id=";
 		sqlCommand += boost::lexical_cast<std::string>(id);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) == PGRES_COMMAND_OK)
 		{
@@ -11051,7 +11060,7 @@ namespace DataLayer{
 	// Delete transport
 	bool OrmasDal::DeleteTransport(int id, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -11061,7 +11070,7 @@ namespace DataLayer{
 		std::string sqlCommand = "DELETE FROM \"OrmasSchema\".transports where transport_id=";
 		sqlCommand += boost::lexical_cast<std::string>(id);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
 			std::string logStr = PQresultErrorMessage(result);
@@ -11077,7 +11086,7 @@ namespace DataLayer{
 	// Delete user
 	bool OrmasDal::DeleteUser(int id, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -11086,7 +11095,7 @@ namespace DataLayer{
 		std::string sqlCommand = "DELETE FROM \"OrmasSchema\".users where user_id=";
 		sqlCommand += boost::lexical_cast<std::string>(id);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 		
 		if (PQresultStatus(result) == PGRES_COMMAND_OK)
 		{
@@ -11106,7 +11115,7 @@ namespace DataLayer{
 	// Delete payment
 	bool OrmasDal::DeleteWithdrawal(int id, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -11115,7 +11124,7 @@ namespace DataLayer{
 		std::string sqlCommand = "DELETE FROM \"OrmasSchema\".withdrawals where withdrawal_id=";
 		sqlCommand += boost::lexical_cast<std::string>(id);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) == PGRES_COMMAND_OK)
 		{
@@ -11135,7 +11144,7 @@ namespace DataLayer{
 	// Delete item in write-off list
 	bool OrmasDal::DeleteItemInWriteOffList(int id, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -11144,7 +11153,7 @@ namespace DataLayer{
 		std::string sqlCommand = "DELETE FROM \"OrmasSchema\".write_off_list where write_off_list_id=";
 		sqlCommand += boost::lexical_cast<std::string>(id);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) == PGRES_COMMAND_OK)
 		{
@@ -11163,7 +11172,7 @@ namespace DataLayer{
 
 	bool OrmasDal::DeleteListByWriteOffID(int id, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -11172,7 +11181,7 @@ namespace DataLayer{
 		std::string sqlCommand = "DELETE FROM \"OrmasSchema\".write_off_list where write_off_id=";
 		sqlCommand += boost::lexical_cast<std::string>(id);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) == PGRES_COMMAND_OK)
 		{
@@ -11192,7 +11201,7 @@ namespace DataLayer{
 	// Delete write-off
 	bool OrmasDal::DeleteWriteOff(int id, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -11202,7 +11211,7 @@ namespace DataLayer{
 		std::string sqlCommand = "DELETE FROM \"OrmasSchema\".write_offs where write_off_id=";
 		sqlCommand += boost::lexical_cast<std::string>(id);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
 			std::string logStr = PQresultErrorMessage(result);
@@ -11217,7 +11226,7 @@ namespace DataLayer{
 
 	bool OrmasDal::DeleteListByWriteOffRawID(int id, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -11226,7 +11235,7 @@ namespace DataLayer{
 		std::string sqlCommand = "DELETE FROM \"OrmasSchema\".write_off_raw_list where write_off_raw_id=";
 		sqlCommand += boost::lexical_cast<std::string>(id);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) == PGRES_COMMAND_OK)
 		{
@@ -11247,7 +11256,7 @@ namespace DataLayer{
 	// Delete item in write-off raw list
 	bool OrmasDal::DeleteItemInWriteOffRawList(int id, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -11256,7 +11265,7 @@ namespace DataLayer{
 		std::string sqlCommand = "DELETE FROM \"OrmasSchema\".write_off_raw_list where write_off_raw_list_id=";
 		sqlCommand += boost::lexical_cast<std::string>(id);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) == PGRES_COMMAND_OK)
 		{
@@ -11276,7 +11285,7 @@ namespace DataLayer{
 	// Delete transport
 	bool OrmasDal::DeleteWriteOffRaw(int id, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -11286,7 +11295,7 @@ namespace DataLayer{
 		std::string sqlCommand = "DELETE FROM \"OrmasSchema\".write_off_raws where write_off_raw_id=";
 		sqlCommand += boost::lexical_cast<std::string>(id);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
 			std::string logStr = PQresultErrorMessage(result);
@@ -11303,7 +11312,7 @@ namespace DataLayer{
 	
 	bool OrmasDal::UpdateAccessItem(int aID, std::string aItemEng, std::string aItemRu, std::string aDivision, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -11318,7 +11327,7 @@ namespace DataLayer{
 		sqlCommand += "') WHERE access_item_id=";
 		sqlCommand += boost::lexical_cast<std::string>(aID);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -11337,7 +11346,7 @@ namespace DataLayer{
 	//Update access
 	bool OrmasDal::UpdateAccess(int aID, int rID, int aiID, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -11350,7 +11359,7 @@ namespace DataLayer{
 		sqlCommand += ") WHERE access_id=";
 		sqlCommand += boost::lexical_cast<std::string>(aID);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -11369,7 +11378,7 @@ namespace DataLayer{
 	//Update account type
 	bool OrmasDal::UpdateAccountType(int aID, std::string aName, int  aNumber, std::string aComment, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -11384,7 +11393,7 @@ namespace DataLayer{
 		sqlCommand += "') WHERE account_type_id=";
 		sqlCommand += boost::lexical_cast<std::string>(aID);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -11403,7 +11412,7 @@ namespace DataLayer{
 	//Update account
 	bool OrmasDal::UpdateAccount(int aID, std::string aNumber, double aStartBalance, double aCurrentBalance, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -11419,7 +11428,7 @@ namespace DataLayer{
 		sqlCommand += ") WHERE account_id=";
 		sqlCommand += boost::lexical_cast<std::string>(aID);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -11439,7 +11448,7 @@ namespace DataLayer{
 	bool OrmasDal::UpdateAccountHistory(int ahID, int aID, std::string aNumber, double aStartBalance, double aCurrentBalance,
 		std::string ahFrom, std::string ahTill, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -11462,7 +11471,7 @@ namespace DataLayer{
 		sqlCommand += "') WHERE account_history_id=";
 		sqlCommand += boost::lexical_cast<std::string>(ahID);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -11481,7 +11490,7 @@ namespace DataLayer{
 	//Update balance
 	bool OrmasDal::UpdateBalance(int bID, int uID, int saID, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -11494,7 +11503,7 @@ namespace DataLayer{
 		sqlCommand += ") WHERE balance_id=";
 		sqlCommand += boost::lexical_cast<std::string>(bID);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -11513,7 +11522,7 @@ namespace DataLayer{
 	//Update chart of accounts
 	bool OrmasDal::UpdateChartOfAccount(int coaID, std::string caoNumber, std::string caoNameOfAccount, int atID, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -11528,7 +11537,7 @@ namespace DataLayer{
 		sqlCommand += ") WHERE chart_of_account_id=";
 		sqlCommand += boost::lexical_cast<std::string>(coaID);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -11546,7 +11555,7 @@ namespace DataLayer{
 	
 	bool OrmasDal::UpdateClient(int uID, std::string cFirm, std::string cFirmNumber, int lID, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -11561,7 +11570,7 @@ namespace DataLayer{
 		sqlCommand += ") WHERE user_id=";
 		sqlCommand += boost::lexical_cast<std::string>(uID);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -11581,7 +11590,7 @@ namespace DataLayer{
 	bool OrmasDal::UpdateCompany(int cID, std::string cName, std::string cAddress, std::string cPhone, std::string cComment, 
 		std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -11599,7 +11608,7 @@ namespace DataLayer{
 		sqlCommand += "') WHERE company_id=";
 		sqlCommand += boost::lexical_cast<std::string>(cID);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -11618,7 +11627,7 @@ namespace DataLayer{
 	// Update company-employee
 	bool OrmasDal::UpdateCompanyAccount(int caID, int cID, int aID, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -11631,7 +11640,7 @@ namespace DataLayer{
 		sqlCommand += ") WHERE company_account_id=";
 		sqlCommand += boost::lexical_cast<std::string>(caID);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -11650,7 +11659,7 @@ namespace DataLayer{
 	// Update company-employee
 	bool OrmasDal::UpdateCompanyEmployee(int ceID, int cID, int eID, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -11663,7 +11672,7 @@ namespace DataLayer{
 		sqlCommand += ") WHERE company_employee_id=";
 		sqlCommand += boost::lexical_cast<std::string>(ceID);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -11681,7 +11690,7 @@ namespace DataLayer{
 	
 	bool OrmasDal::UpdateConsumeProductList(int clID, int cpID, int pID, double clCount, double clSum, int sID, int cID, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -11702,7 +11711,7 @@ namespace DataLayer{
 		sqlCommand += ") WHERE consume_product_list_id=";
 		sqlCommand += boost::lexical_cast<std::string>(clID);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -11721,7 +11730,7 @@ namespace DataLayer{
 	bool OrmasDal::UpdateConsumeProduct(int cID, int uID, std::string cDate, std::string cExecDate, int eID, 
 		double cCount, double cSum, int sID, int currID, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -11755,7 +11764,7 @@ namespace DataLayer{
 		sqlCommand += ") WHERE consume_product_id=";
 		sqlCommand += boost::lexical_cast<std::string>(cID);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -11773,7 +11782,7 @@ namespace DataLayer{
 
 	bool OrmasDal::UpdateConsumeRawList(int clID, int cpID, int pID, double clCount, double clSum, int sID, int cID, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -11794,7 +11803,7 @@ namespace DataLayer{
 		sqlCommand += ") WHERE consume_raw_list_id=";
 		sqlCommand += boost::lexical_cast<std::string>(clID);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -11813,7 +11822,7 @@ namespace DataLayer{
 	bool OrmasDal::UpdateConsumeRaw(int cID, int uID, std::string cDate, std::string cExecDate, int eID,
 		double cCount, double cSum, int sID, int currID, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -11847,7 +11856,7 @@ namespace DataLayer{
 		sqlCommand += ") WHERE consume_raw_id=";
 		sqlCommand += boost::lexical_cast<std::string>(cID);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -11866,7 +11875,7 @@ namespace DataLayer{
 	bool OrmasDal::UpdateCurrency(int cID, int cCode, std::string cShortName, std::string cName, int cUnit, bool cMainTrade,
 		std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -11886,7 +11895,7 @@ namespace DataLayer{
 		sqlCommand += ") WHERE currency_id=";
 		sqlCommand += boost::lexical_cast<std::string>(cID);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -11904,7 +11913,7 @@ namespace DataLayer{
 	
 	bool OrmasDal::UpdateEmployee(int uID, int pID, std::string eBirthDate, std::string eHireDate, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -11919,7 +11928,7 @@ namespace DataLayer{
 		sqlCommand += "') WHERE user_id=";
 		sqlCommand += boost::lexical_cast<std::string>(uID);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -11937,7 +11946,7 @@ namespace DataLayer{
 
 	bool OrmasDal::UpdateEntry(int eID, std::string eDate, int daID, double eValue, int caID, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -11954,7 +11963,7 @@ namespace DataLayer{
 		sqlCommand += ") WHERE entry_id=";
 		sqlCommand += boost::lexical_cast<std::string>(eID);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -11972,7 +11981,7 @@ namespace DataLayer{
 
 	bool OrmasDal::UpdateEntryRouting(int erID, std::string eOperation, int daNumber, int caNumber, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -11987,7 +11996,7 @@ namespace DataLayer{
 		sqlCommand += ") WHERE entry_routing_id=";
 		sqlCommand += boost::lexical_cast<std::string>(erID);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -12005,10 +12014,10 @@ namespace DataLayer{
 
 	bool OrmasDal::UpdateFinancialReport(int fID, double acc_44010, double acc_55010, double acc_552, double acc_55270, 
 		double acc_553, double acc_55321, double acc_44020_90, double acc_66010_66110, double acc_66020_66120, double acc_66040_66140,
-		double acc_66050_66150, double acc_66060_66160, double acc_66070_66170, double tax, std::string ahFrom, std::string ahTill,
+		double acc_66050_66150, double acc_66060_66160, double acc_66130, double acc_66070_66170, double tax, std::string ahFrom, std::string ahTill,
 		std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -12016,7 +12025,7 @@ namespace DataLayer{
 		PGresult * result;
 		std::string sqlCommand = "UPDATE \"OrmasSchema\".financial_report SET(acc_44010, acc_55010, acc_552, acc_55270, acc_553, \
 								 acc_55321, acc_44020_90, acc_66010_66110, acc_66020_66120, acc_66040_66140, acc_66050_66150,\
-								 acc_66060_66160, acc_66070_66170, tax, from_date, till_date) = (";
+								 acc_66060_66160, acc_66130,acc_66070_66170, tax, from_date, till_date) = (";
 		sqlCommand += boost::lexical_cast<std::string>(acc_44010);
 		sqlCommand += ", ";
 		sqlCommand += boost::lexical_cast<std::string>(acc_55010);
@@ -12041,6 +12050,8 @@ namespace DataLayer{
 		sqlCommand += ", ";
 		sqlCommand += boost::lexical_cast<std::string>(acc_66060_66160);
 		sqlCommand += ", ";
+		sqlCommand += boost::lexical_cast<std::string>(acc_66130);
+		sqlCommand += ", ";
 		sqlCommand += boost::lexical_cast<std::string>(acc_66070_66170);
 		sqlCommand += ", ";
 		sqlCommand += boost::lexical_cast<std::string>(tax);
@@ -12051,7 +12062,7 @@ namespace DataLayer{
 		sqlCommand += "') WHERE financial_report_id=";
 		sqlCommand += boost::lexical_cast<std::string>(fID);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -12069,7 +12080,7 @@ namespace DataLayer{
 
 	bool OrmasDal::UpdateInventorizationList(int ilID, int iID, int pID, double ilCount, double ilSum, int sID, int cID, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -12090,7 +12101,7 @@ namespace DataLayer{
 		sqlCommand += ") WHERE inventorization_list_id=";
 		sqlCommand += boost::lexical_cast<std::string>(ilID);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -12109,7 +12120,7 @@ namespace DataLayer{
 	bool OrmasDal::UpdateInventorization(int iID, int uID, std::string iDate, std::string iExecDate, int eID,
 		double iCount, double iSum, int sID, int cID, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -12143,7 +12154,7 @@ namespace DataLayer{
 		sqlCommand += ") WHERE inventorization_id=";
 		sqlCommand += boost::lexical_cast<std::string>(iID);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -12161,7 +12172,7 @@ namespace DataLayer{
 
 	bool OrmasDal::UpdateJobprice(int jID, int pID, double jValue, int cID, double jVolume, int mID, int psID, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -12183,7 +12194,7 @@ namespace DataLayer{
 		sqlCommand += ") WHERE jobprice_id=";
 		sqlCommand += boost::lexical_cast<std::string>(jID);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -12201,7 +12212,7 @@ namespace DataLayer{
 
 	bool OrmasDal::UpdateJobsheet(int jID, std::string jDate, double jCount, int pID, int eID, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -12218,7 +12229,7 @@ namespace DataLayer{
 		sqlCommand += ") WHERE jobsheet_id=";
 		sqlCommand += boost::lexical_cast<std::string>(jID);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -12237,7 +12248,7 @@ namespace DataLayer{
 	bool OrmasDal::UpdateLocation(int rID, std::string lCountryName, std::string lCountryCode, std::string lRegionName,
 		std::string lCityName, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -12255,7 +12266,7 @@ namespace DataLayer{
 		sqlCommand += "') WHERE location_id=";
 		sqlCommand += boost::lexical_cast<std::string>(rID);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -12274,7 +12285,7 @@ namespace DataLayer{
 
 	bool OrmasDal::UpdateMeasure(int mID, std::string mName, std::string mShortName, int mUnit, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -12289,7 +12300,7 @@ namespace DataLayer{
 		sqlCommand += ") WHERE measure_id=";
 		sqlCommand += boost::lexical_cast<std::string>(mID);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -12307,7 +12318,7 @@ namespace DataLayer{
 
 	bool OrmasDal::UpdateNetCost(int ncID, std::string ncDate, double ncValue, int cID, int pID, bool ncIsOutdated, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -12326,7 +12337,7 @@ namespace DataLayer{
 		sqlCommand += ") WHERE net_cost_id=";
 		sqlCommand += boost::lexical_cast<std::string>(ncID);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -12344,7 +12355,7 @@ namespace DataLayer{
 
 	bool OrmasDal::UpdateOrderList(int olID, int oID, int pID, double olCount, double olSum, int sID, int cID, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -12365,7 +12376,7 @@ namespace DataLayer{
 		sqlCommand += ") WHERE order_list_id=";
 		sqlCommand += boost::lexical_cast<std::string>(olID);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -12384,7 +12395,7 @@ namespace DataLayer{
 	bool OrmasDal::UpdateOrder(int oID, int uID, std::string oDate, std::string oExecDate, int eID, double oCount, double oSum, int sID, int cID,
 		std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -12418,7 +12429,7 @@ namespace DataLayer{
 		sqlCommand += ") WHERE order_id=";
 		sqlCommand += boost::lexical_cast<std::string>(oID);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -12436,7 +12447,7 @@ namespace DataLayer{
 
 	bool OrmasDal::UpdateOrderRawList(int olID, int oID, int pID, double olCount, double olSum, int sID, int cID, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -12457,7 +12468,7 @@ namespace DataLayer{
 		sqlCommand += ") WHERE order_raw_list_id=";
 		sqlCommand += boost::lexical_cast<std::string>(olID);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -12476,7 +12487,7 @@ namespace DataLayer{
 	bool OrmasDal::UpdateOrderRaw(int oID, int pID, std::string oDate, std::string oExecDate, int eID,
 		double oCount, double oSum, int sID, int cID, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -12510,7 +12521,7 @@ namespace DataLayer{
 		sqlCommand += ") WHERE order_raw_id=";
 		sqlCommand += boost::lexical_cast<std::string>(oID);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -12529,7 +12540,7 @@ namespace DataLayer{
 	
 	bool OrmasDal::UpdatePayment(int pID, std::string pDate, double pValue, int uID, int cID, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -12546,7 +12557,7 @@ namespace DataLayer{
 		sqlCommand += ") WHERE payment_id=";
 		sqlCommand += boost::lexical_cast<std::string>(pID);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -12564,7 +12575,7 @@ namespace DataLayer{
 
 	bool OrmasDal::UpdatePayslip(int pID, std::string pDate, double pValue, int sID, int cID, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -12581,7 +12592,7 @@ namespace DataLayer{
 		sqlCommand += ") WHERE payslip_id=";
 		sqlCommand += boost::lexical_cast<std::string>(pID);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -12599,7 +12610,7 @@ namespace DataLayer{
 
 	bool OrmasDal::UpdatePercentRate(int prID, double prValue, std::string prCondition, int psID, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -12614,7 +12625,7 @@ namespace DataLayer{
 		sqlCommand += ") WHERE percent_rate_id=";
 		sqlCommand += boost::lexical_cast<std::string>(prID);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -12632,7 +12643,7 @@ namespace DataLayer{
 
 	bool OrmasDal::UpdatePhoto(int pID, int uID, int prodId, std::string pSource, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -12647,7 +12658,7 @@ namespace DataLayer{
 		sqlCommand += "') WHERE photo_id=";
 		sqlCommand += boost::lexical_cast<std::string>(pID);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -12666,7 +12677,7 @@ namespace DataLayer{
 
 	bool OrmasDal::UpdatePosition(int pID, std::string pName, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -12677,7 +12688,7 @@ namespace DataLayer{
 		sqlCommand += "') WHERE position_id=";
 		sqlCommand += boost::lexical_cast<std::string>(pID);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -12695,7 +12706,7 @@ namespace DataLayer{
 
 	bool OrmasDal::UpdatePrice(int pID, std::string pDate, double pValue, int cID, int prodID, bool aIsOutdated, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -12714,7 +12725,7 @@ namespace DataLayer{
 		sqlCommand += ") WHERE price_id=";
 		sqlCommand += boost::lexical_cast<std::string>(pID);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -12732,7 +12743,7 @@ namespace DataLayer{
 
 	bool OrmasDal::UpdateProductType(int pTypeID, std::string pTypeName, std::string pTypeShortName, std::string pTypeCode, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -12748,7 +12759,7 @@ namespace DataLayer{
 		sqlCommand += "') WHERE product_type_id=";
 		sqlCommand += boost::lexical_cast<std::string>(pTypeID);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -12767,7 +12778,7 @@ namespace DataLayer{
 	bool OrmasDal::UpdateProduction(int pID, std::string pProductionDate, std::string pExpiryDate, std::string pSessionStart,
 		std::string pSessionEnd, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -12785,7 +12796,7 @@ namespace DataLayer{
 		sqlCommand += "') WHERE production_id=";
 		sqlCommand += boost::lexical_cast<std::string>(pID);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -12803,7 +12814,7 @@ namespace DataLayer{
 	
 	bool OrmasDal::UpdateProductionList(int plID, int pID, int prodID, double plCount, double plSum, int sID, int cID, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -12824,7 +12835,7 @@ namespace DataLayer{
 		sqlCommand += ") WHERE production_list_id=";
 		sqlCommand += boost::lexical_cast<std::string>(plID);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -12842,7 +12853,7 @@ namespace DataLayer{
 
 	bool OrmasDal::UpdateProductionConsumeRawList(int clID, int cpID, int pID, double clCount, double clSum, int sID, int cID, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -12863,7 +12874,7 @@ namespace DataLayer{
 		sqlCommand += ") WHERE consume_raw_list_id=";
 		sqlCommand += boost::lexical_cast<std::string>(clID);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -12882,7 +12893,7 @@ namespace DataLayer{
 	bool OrmasDal::UpdateProductionConsumeRaw(int cID, int uID, std::string cDate, std::string cExecDate, int eID,
 		double cCount, double cSum, int sID, int currID, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -12916,7 +12927,7 @@ namespace DataLayer{
 		sqlCommand += ") WHERE consume_raw_id=";
 		sqlCommand += boost::lexical_cast<std::string>(cID);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -12934,7 +12945,7 @@ namespace DataLayer{
 
 	bool OrmasDal::UpdateProductionPlanList(int pplID, int ppID, int pID, double pplCount, double pplSum, int sID, int cID, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -12955,7 +12966,7 @@ namespace DataLayer{
 		sqlCommand += ") WHERE production_plan_list_id=";
 		sqlCommand += boost::lexical_cast<std::string>(pplID);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -12973,7 +12984,7 @@ namespace DataLayer{
 
 	bool OrmasDal::UpdateProductionPlan(int pID, std::string pDate, int eID, double pCount, double pSum, int sID, int cID, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -12994,7 +13005,7 @@ namespace DataLayer{
 		sqlCommand += ") WHERE production_plan_id=";
 		sqlCommand += boost::lexical_cast<std::string>(pID);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -13012,7 +13023,7 @@ namespace DataLayer{
 
 	bool OrmasDal::UpdateProductionStock(int psID, int pID, double psCount, double psSum, int stsID, int cID, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -13031,7 +13042,7 @@ namespace DataLayer{
 		sqlCommand += ") WHERE production_stock_id=";
 		sqlCommand += boost::lexical_cast<std::string>(psID);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -13050,7 +13061,7 @@ namespace DataLayer{
 	bool OrmasDal::UpdateProduct(int pID, int cID, std::string pName, double vol, int mID, double price, int pTypeID, int pShelfLife, 
 		int pCur,std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -13074,7 +13085,7 @@ namespace DataLayer{
 		sqlCommand += ") WHERE product_id=";
 		sqlCommand += boost::lexical_cast<std::string>(pID);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -13092,7 +13103,7 @@ namespace DataLayer{
 
 	bool OrmasDal::UpdatePurveyor(int uID, std::string pCompanyName, int lID, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -13105,7 +13116,7 @@ namespace DataLayer{
 		sqlCommand += ") WHERE user_id=";
 		sqlCommand += boost::lexical_cast<std::string>(uID);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -13123,7 +13134,7 @@ namespace DataLayer{
 	
 	bool OrmasDal::UpdateReceiptProductList(int rlID, int rID, int pID, double rlCount, double rlSum, int sID, int cID, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -13144,7 +13155,7 @@ namespace DataLayer{
 		sqlCommand += ") WHERE receipt_product_list_id=";
 		sqlCommand += boost::lexical_cast<std::string>(rlID);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -13163,7 +13174,7 @@ namespace DataLayer{
 	bool OrmasDal::UpdateReceiptProduct(int rID, int uID, std::string rDate, std::string rExecDate, int eID,
 		double rCount, double rSum, int sID, int cID, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -13197,7 +13208,7 @@ namespace DataLayer{
 		sqlCommand += ") WHERE receipt_product_id=";
 		sqlCommand += boost::lexical_cast<std::string>(rID);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -13215,7 +13226,7 @@ namespace DataLayer{
 
 	bool OrmasDal::UpdateReceiptRawList(int rlID, int rID, int pID, double rlCount, double rlSum, int sID, int cID, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -13236,7 +13247,7 @@ namespace DataLayer{
 		sqlCommand += ") WHERE receipt_raw_list_id=";
 		sqlCommand += boost::lexical_cast<std::string>(rlID);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -13255,7 +13266,7 @@ namespace DataLayer{
 	bool OrmasDal::UpdateReceiptRaw(int rID, int uID, std::string rDate, std::string rExecDate, int eID,
 		double rCount, double rSum, int sID, int cID, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -13289,7 +13300,7 @@ namespace DataLayer{
 		sqlCommand += ") WHERE receipt_raw_id=";
 		sqlCommand += boost::lexical_cast<std::string>(rID);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -13307,7 +13318,7 @@ namespace DataLayer{
 
 	bool OrmasDal::UpdateRefund(int rID, std::string rDate, double rValue, int uID, int cID, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -13324,7 +13335,7 @@ namespace DataLayer{
 		sqlCommand += ") WHERE refund_id=";
 		sqlCommand += boost::lexical_cast<std::string>(rID);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -13342,7 +13353,7 @@ namespace DataLayer{
 
 	bool OrmasDal::UpdateRelationType(int rID, std::string rName, std::string rComment, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -13355,7 +13366,7 @@ namespace DataLayer{
 		sqlCommand += "') WHERE relation_type_id=";
 		sqlCommand += boost::lexical_cast<std::string>(rID);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -13373,7 +13384,7 @@ namespace DataLayer{
 
 	bool OrmasDal::UpdateRelation(int rID, int uID1, int uID2, int rtID, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -13388,7 +13399,7 @@ namespace DataLayer{
 		sqlCommand += ") WHERE relation_id=";
 		sqlCommand += boost::lexical_cast<std::string>(rID);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -13406,7 +13417,7 @@ namespace DataLayer{
 
 	bool OrmasDal::UpdateReturnList(int rlID, int rID, int pID, double rlCount, double rlSum, int sID, int cID, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -13427,7 +13438,7 @@ namespace DataLayer{
 		sqlCommand += ") WHERE return_list_id=";
 		sqlCommand += boost::lexical_cast<std::string>(rlID);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -13446,7 +13457,7 @@ namespace DataLayer{
 	bool OrmasDal::UpdateReturn(int rID, int uID, std::string rDate, std::string rExecDate, int eID, double oCount, double oSum, int sID, int cID,
 		std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -13480,7 +13491,7 @@ namespace DataLayer{
 		sqlCommand += ") WHERE return_id=";
 		sqlCommand += boost::lexical_cast<std::string>(rID);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -13498,7 +13509,7 @@ namespace DataLayer{
 	
 	bool OrmasDal::UpdateRole(int rID, std::string rCode,std::string rName, std::string rComment, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -13513,7 +13524,7 @@ namespace DataLayer{
 		sqlCommand += "') WHERE role_id=";
 		sqlCommand += boost::lexical_cast<std::string>(rID);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -13531,7 +13542,7 @@ namespace DataLayer{
 
 	bool OrmasDal::UpdateSalary(int sID, int uID, double sValue, int cID, int stID, std::string sDate, bool sBonus, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -13552,7 +13563,7 @@ namespace DataLayer{
 		sqlCommand += ") WHERE salary_id=";
 		sqlCommand += boost::lexical_cast<std::string>(sID);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -13570,7 +13581,7 @@ namespace DataLayer{
 
 	bool OrmasDal::UpdateSalaryType(int sID, std::string sCode, std::string sName, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -13583,7 +13594,7 @@ namespace DataLayer{
 		sqlCommand += "') WHERE salary_type_id=";
 		sqlCommand += boost::lexical_cast<std::string>(sID);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -13601,7 +13612,7 @@ namespace DataLayer{
 
 	bool OrmasDal::UpdateSpecificationList(int slID, int sID, int pID, double tlCount, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -13616,7 +13627,7 @@ namespace DataLayer{
 		sqlCommand += ") WHERE specification_list_id=";
 		sqlCommand += boost::lexical_cast<std::string>(slID);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -13634,7 +13645,7 @@ namespace DataLayer{
 
 	bool OrmasDal::UpdateSpecification(int sID, int pID, double sSum, int cID, int eID, std::string sDate, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -13653,7 +13664,7 @@ namespace DataLayer{
 		sqlCommand += "') WHERE specification_id=";
 		sqlCommand += boost::lexical_cast<std::string>(sID);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -13671,7 +13682,7 @@ namespace DataLayer{
 
 	bool OrmasDal::UpdateSpoilageList(int slID, int sID, int pID, double slCount, double slSum, int stsID, int cID, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -13692,7 +13703,7 @@ namespace DataLayer{
 		sqlCommand += ") WHERE spoilage_list_id=";
 		sqlCommand += boost::lexical_cast<std::string>(slID);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -13710,7 +13721,7 @@ namespace DataLayer{
 
 	bool OrmasDal::UpdateSpoilage(int sID, std::string sDate, int eID, double sCount, double sSum, int stsID, int cID, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -13731,7 +13742,7 @@ namespace DataLayer{
 		sqlCommand += ") WHERE spoilage_id=";
 		sqlCommand += boost::lexical_cast<std::string>(sID);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -13749,7 +13760,7 @@ namespace DataLayer{
 
 	bool OrmasDal::UpdateState(int sID, int unID, int stsID, std::string sLastChange, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -13764,7 +13775,7 @@ namespace DataLayer{
 		sqlCommand += "') WHERE state_id=";
 		sqlCommand += boost::lexical_cast<std::string>(sID);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -13782,7 +13793,7 @@ namespace DataLayer{
 
 	bool OrmasDal::UpdateStatus(int sID, std::string sCode, std::string sName, std::string sComment, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -13797,7 +13808,7 @@ namespace DataLayer{
 		sqlCommand += "') WHERE status_id=";
 		sqlCommand += boost::lexical_cast<std::string>(sID);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -13815,7 +13826,7 @@ namespace DataLayer{
 
 	bool OrmasDal::UpdateStatusRule(int srID, std::string srOperation, int sID, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -13828,7 +13839,7 @@ namespace DataLayer{
 		sqlCommand += ") WHERE status_rule_id=";
 		sqlCommand += boost::lexical_cast<std::string>(srID);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -13846,7 +13857,7 @@ namespace DataLayer{
 	
 	bool OrmasDal::UpdateStock(int sID, int pID, double sCount, double sSum, int stsID, int cID, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -13865,7 +13876,7 @@ namespace DataLayer{
 		sqlCommand += ") WHERE stock_id=";
 		sqlCommand += boost::lexical_cast<std::string>(sID);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -13885,7 +13896,7 @@ namespace DataLayer{
 	bool OrmasDal::UpdateSubaccount(int saID, int aID, std::string saNumber, double saStartBalance, double saCurrentBalance, int cID, int sID,
 		std::string saOpenDate, std::string saCloseDate, std::string saDetails, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -13922,7 +13933,7 @@ namespace DataLayer{
 		sqlCommand += "') WHERE subaccount_id=";
 		sqlCommand += boost::lexical_cast<std::string>(saID);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -13942,7 +13953,7 @@ namespace DataLayer{
 	bool OrmasDal::UpdateSubaccountHistory(int shID, int saID, double saStartBalance, double saCurrentBalance,
 		std::string ahFrom, std::string ahTill, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -13962,7 +13973,7 @@ namespace DataLayer{
 		sqlCommand += "') WHERE subaccount_history_id=";
 		sqlCommand += boost::lexical_cast<std::string>(shID);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -13982,7 +13993,7 @@ namespace DataLayer{
 	bool OrmasDal::UpdateTax(int tID, std::string taxName, std::string taxCode, double fixedValue, int percentValue,
 		std::string formulaValue, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -14002,7 +14013,7 @@ namespace DataLayer{
 		sqlCommand += "') WHERE tax_id=";
 		sqlCommand += boost::lexical_cast<std::string>(tID);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -14020,7 +14031,7 @@ namespace DataLayer{
 
 	bool OrmasDal::UpdateTimesheet(int tID, int sID, double tWorkedTime, std::string tDate, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -14035,7 +14046,7 @@ namespace DataLayer{
 		sqlCommand += "') WHERE timesheet_id=";
 		sqlCommand += boost::lexical_cast<std::string>(tID);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -14053,7 +14064,7 @@ namespace DataLayer{
 
 	bool OrmasDal::UpdateTransportList(int tlID, int tID, int pID, double tlCount, double tlSum, int sID, int cID, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -14074,7 +14085,7 @@ namespace DataLayer{
 		sqlCommand += ") WHERE transport_list_id=";
 		sqlCommand += boost::lexical_cast<std::string>(tlID);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -14093,7 +14104,7 @@ namespace DataLayer{
 	bool OrmasDal::UpdateTransport(int tID, int uID, std::string tDate, std::string tExecDate, int eID,
 		double tCount, double tSum, int sID, int cID, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -14127,7 +14138,7 @@ namespace DataLayer{
 		sqlCommand += ") WHERE transport_id=";
 		sqlCommand += boost::lexical_cast<std::string>(tID);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -14146,7 +14157,7 @@ namespace DataLayer{
 	bool OrmasDal::UpdateUser(int uID, std::string uEmail, std::string uName, std::string uSurname, std::string uPhone, std::string uAddress,
 		int uRoleID, std::string uPassword, bool uActivated, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -14172,7 +14183,7 @@ namespace DataLayer{
 		sqlCommand += ") WHERE user_id=";
 		sqlCommand += boost::lexical_cast<std::string>(uID);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -14190,7 +14201,7 @@ namespace DataLayer{
 
 	bool OrmasDal::UpdateWithdrawal(int wID, std::string wDate, double wValue, int uID, int cID, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -14207,7 +14218,7 @@ namespace DataLayer{
 		sqlCommand += ") WHERE withdrawal_id=";
 		sqlCommand += boost::lexical_cast<std::string>(wID);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -14225,7 +14236,7 @@ namespace DataLayer{
 
 	bool OrmasDal::UpdateWriteOffList(int wlID, int wID, int pID, double wlCount, double wlSum, int sID, int cID, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -14246,7 +14257,7 @@ namespace DataLayer{
 		sqlCommand += ") WHERE write_off_list_id=";
 		sqlCommand += boost::lexical_cast<std::string>(wlID);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -14265,7 +14276,7 @@ namespace DataLayer{
 	bool OrmasDal::UpdateWriteOff(int wID, int uID, std::string wDate, int eID, double wCount, double wSum, int sID, int cID,
 		std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -14288,7 +14299,7 @@ namespace DataLayer{
 		sqlCommand += ") WHERE write_off_id=";
 		sqlCommand += boost::lexical_cast<std::string>(wID);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -14306,7 +14317,7 @@ namespace DataLayer{
 
 	bool OrmasDal::UpdateWriteOffRawList(int wlID, int wID, int pID, double wlCount, double wlSum, int sID, int cID, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -14327,7 +14338,7 @@ namespace DataLayer{
 		sqlCommand += ") WHERE write_off_raw_list_id=";
 		sqlCommand += boost::lexical_cast<std::string>(wlID);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -14346,7 +14357,7 @@ namespace DataLayer{
 	bool OrmasDal::UpdateWriteOffRaw(int wID, int uID, std::string wDate, int eID,
 		double wCount, double wSum, int sID, int cID, std::string& errorMessage)
 	{
-		if (PQstatus(dbCon) == CONNECTION_BAD)
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
 			errorMessage = "DB connection was lost! Please restart application!";
 			return false;
@@ -14369,7 +14380,7 @@ namespace DataLayer{
 		sqlCommand += ") WHERE write_off_raw_id=";
 		sqlCommand += boost::lexical_cast<std::string>(wID);
 		sqlCommand += ";";
-		result = PQexec(dbCon, sqlCommand.c_str());
+		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
 		{
@@ -15782,7 +15793,7 @@ namespace DataLayer{
 
 	std::string OrmasDal::GetFilterForFinancialReport(int fID, double acc_44010, double acc_55010, double acc_552, double acc_55270, double acc_553,
 		double acc_55321, double acc_44020_90, double acc_66010_66110, double acc_66020_66120, double acc_66040_66140,
-		double acc_66050_66150, double acc_66060_66160, double acc_66070_66170, double tax, std::string ahFrom, std::string ahTill)
+		double acc_66050_66150, double acc_66060_66160, double acc_66130, double acc_66070_66170, double tax, std::string ahFrom, std::string ahTill)
 	{
 		std::string tempString = "";
 		std::string filter = " where ";
@@ -15805,91 +15816,98 @@ namespace DataLayer{
 		{
 			tempString = "";
 			tempString += " acc_55010 = ";
-			tempString += boost::lexical_cast<std::string>(acc_44010);
+			tempString += boost::lexical_cast<std::string>(acc_55010);
 			conditionVec.push_back(tempString);
 		}
 		if (0 != acc_552)
 		{
 			tempString = "";
 			tempString += " acc_552 = ";
-			tempString += boost::lexical_cast<std::string>(acc_44010);
+			tempString += boost::lexical_cast<std::string>(acc_552);
 			conditionVec.push_back(tempString);
 		}
 		if (0 != acc_55270)
 		{
 			tempString = "";
 			tempString += " acc_55270 = ";
-			tempString += boost::lexical_cast<std::string>(acc_44010);
+			tempString += boost::lexical_cast<std::string>(acc_55270);
 			conditionVec.push_back(tempString);
 		}
 		if (0 != acc_553)
 		{
 			tempString = "";
 			tempString += " acc_553 = ";
-			tempString += boost::lexical_cast<std::string>(acc_44010);
+			tempString += boost::lexical_cast<std::string>(acc_553);
 			conditionVec.push_back(tempString);
 		}
 		if (0 != acc_55321)
 		{
 			tempString = "";
 			tempString += " acc_55321 = ";
-			tempString += boost::lexical_cast<std::string>(acc_44010);
+			tempString += boost::lexical_cast<std::string>(acc_55321);
 			conditionVec.push_back(tempString);
 		}
 		if (0 != acc_44020_90)
 		{
 			tempString = "";
 			tempString += " acc_44020_90 = ";
-			tempString += boost::lexical_cast<std::string>(acc_44010);
+			tempString += boost::lexical_cast<std::string>(acc_44020_90);
 			conditionVec.push_back(tempString);
 		}
 		if (0 != acc_66010_66110)
 		{
 			tempString = "";
 			tempString += " acc_66010_66110 = ";
-			tempString += boost::lexical_cast<std::string>(acc_44010);
+			tempString += boost::lexical_cast<std::string>(acc_66010_66110);
 			conditionVec.push_back(tempString);
 		}
 		if (0 != acc_66020_66120)
 		{
 			tempString = "";
 			tempString += " acc_66020_66120 = ";
-			tempString += boost::lexical_cast<std::string>(acc_44010);
+			tempString += boost::lexical_cast<std::string>(acc_66020_66120);
 			conditionVec.push_back(tempString);
 		}
 		if (0 != acc_66040_66140)
 		{
 			tempString = "";
 			tempString += " acc_66040_66140 = ";
-			tempString += boost::lexical_cast<std::string>(acc_44010);
+			tempString += boost::lexical_cast<std::string>(acc_66040_66140);
 			conditionVec.push_back(tempString);
 		}
 		if (0 != acc_66050_66150)
 		{
 			tempString = "";
 			tempString += " acc_66050_66150 = ";
-			tempString += boost::lexical_cast<std::string>(acc_44010);
+			tempString += boost::lexical_cast<std::string>(acc_66050_66150);
 			conditionVec.push_back(tempString);
 		}
 		if (0 != acc_66060_66160)
 		{
 			tempString = "";
 			tempString += " acc_66060_66160 = ";
-			tempString += boost::lexical_cast<std::string>(acc_44010);
+			tempString += boost::lexical_cast<std::string>(acc_66060_66160);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != acc_66130)
+		{
+			tempString = "";
+			tempString += " acc_66130 = ";
+			tempString += boost::lexical_cast<std::string>(acc_66130);
 			conditionVec.push_back(tempString);
 		}
 		if (0 != acc_66070_66170)
 		{
 			tempString = "";
 			tempString += " acc_66070_66170 = ";
-			tempString += boost::lexical_cast<std::string>(acc_44010);
+			tempString += boost::lexical_cast<std::string>(acc_66070_66170);
 			conditionVec.push_back(tempString);
 		}
 		if (0 != tax)
 		{
 			tempString = "";
 			tempString += " tax = ";
-			tempString += boost::lexical_cast<std::string>(acc_44010);
+			tempString += boost::lexical_cast<std::string>(tax);
 			conditionVec.push_back(tempString);
 		}
 		if (!ahFrom.empty())
@@ -16208,6 +16226,80 @@ namespace DataLayer{
 		return filter;
 	}
 
+	std::string OrmasDal::GetFilterForJobsheetForPeriod(int jID, std::string jDate, double jCount, int pID, int eID, std::string fromDate, std::string toDate)
+	{
+		std::string tempString = "";
+		std::string filter = " where ";
+		std::vector<std::string> conditionVec;
+		if (0 != jID)
+		{
+			tempString = "";
+			tempString += " jobsheet_id = ";
+			tempString += boost::lexical_cast<std::string>(jID);
+			conditionVec.push_back(tempString);
+		}
+		if (!jDate.empty())
+		{
+			tempString = "";
+			tempString += " jobsheet_date = '";
+			tempString += jDate;
+			tempString += "'";
+			conditionVec.push_back(tempString);
+		}
+		if (0 != jCount)
+		{
+			tempString = "";
+			tempString += " count = ";
+			tempString += boost::lexical_cast<std::string>(jCount);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != pID)
+		{
+			tempString = "";
+			tempString += " product_id = ";
+			tempString += boost::lexical_cast<std::string>(pID);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != eID)
+		{
+			tempString = "";
+			tempString += " employee_id = ";
+			tempString += boost::lexical_cast<std::string>(eID);
+			conditionVec.push_back(tempString);
+		}
+		if (!fromDate.empty() && !toDate.empty())
+		{
+			tempString = "";
+			tempString += " (DATE(jobsheet_date) BETWEEN '";
+			tempString += fromDate;
+			tempString += "' AND '";
+			if (toDate.empty())
+			{
+				tempString += GetSystemDate();
+			}
+			else
+			{
+				tempString += toDate;
+			}
+			tempString += "')";
+			conditionVec.push_back(tempString);
+		}
+		if (conditionVec.size() >= 1)
+		{
+			filter += conditionVec.at(0);
+			for (unsigned int i = 1; i < conditionVec.size(); i++)
+			{
+				filter += " AND ";
+				filter += conditionVec.at(i);
+			}
+		}
+		else
+		{
+			return "";
+		}
+		return filter;
+	}
+
 	std::string OrmasDal::GetFilterForLocation(int lID, std::string lCountryName, std::string lCountryCode, std::string lRegionName
 		, std::string lCityName)
 	{
@@ -16482,7 +16574,7 @@ namespace DataLayer{
 		return filter;
 	}
 
-	std::string OrmasDal::GetFilterForOrder(int oID, int uID, std::string oDate, std::string oExecDate, int eID, double oCount,
+	std::string OrmasDal::GetFilterForOrderForPeriod(int oID, int uID, std::string oDate, std::string oExecDate, int eID, double oCount,
 		double oSum, int sID, int cID, std::string fromDate, std::string toDate)
 	{
 		std::string tempString = "";
@@ -16502,7 +16594,7 @@ namespace DataLayer{
 			tempString += boost::lexical_cast<std::string>(uID);
 			conditionVec.push_back(tempString);
 		}
-		if (!fromDate.empty())
+		if (!fromDate.empty() && !toDate.empty())
 		{
 			tempString = "";
 			tempString += " (DATE(execution_date) BETWEEN '";
@@ -17234,6 +17326,83 @@ namespace DataLayer{
 		return filter;
 	}
 
+	std::string OrmasDal::GetFilterForProductionForPeriod(int pID, std::string pProductionDate, std::string pExpiryDate, std::string pSessionStart,
+		std::string pSessionEnd, std::string fromDate, std::string toDate)
+	{
+		std::string tempString = "";
+		std::string filter = " where ";
+		std::vector<std::string> conditionVec;
+		if (0 != pID)
+		{
+			tempString = "";
+			tempString += " production_id = ";
+			tempString += boost::lexical_cast<std::string>(pID);
+			conditionVec.push_back(tempString);
+		}
+		if (!pProductionDate.empty())
+		{
+			tempString = "";
+			tempString += " production_date = '";
+			tempString += pProductionDate;
+			tempString += "'";
+			conditionVec.push_back(tempString);
+		}
+		if (!pExpiryDate.empty())
+		{
+			tempString = "";
+			tempString += " expiry_date = '";
+			tempString += pExpiryDate;
+			tempString += "'";
+			conditionVec.push_back(tempString);
+		}
+		if (!pSessionStart.empty())
+		{
+			tempString = "";
+			tempString += " session_start = '";
+			tempString += pSessionStart;
+			tempString += "'";
+			conditionVec.push_back(tempString);
+		}
+		if (!pSessionEnd.empty())
+		{
+			tempString = "";
+			tempString += " session_end = '";
+			tempString += pSessionEnd;
+			tempString += "'";
+			conditionVec.push_back(tempString);
+		}
+		if (!fromDate.empty() && !toDate.empty())
+		{
+			tempString = "";
+			tempString += " (DATE(production_date) BETWEEN '";
+			tempString += fromDate;
+			tempString += "' AND '";
+			if (toDate.empty())
+			{
+				tempString += GetSystemDate();
+			}
+			else
+			{
+				tempString += toDate;
+			}
+			tempString += "')";
+			conditionVec.push_back(tempString);
+		}
+		if (conditionVec.size() >= 1)
+		{
+			filter += conditionVec.at(0);
+			for (unsigned int i = 1; i < conditionVec.size(); i++)
+			{
+				filter += " AND ";
+				filter += conditionVec.at(i);
+			}
+		}
+		else
+		{
+			return "";
+		}
+		return filter;
+	}
 
 	std::string OrmasDal::GetFilterForProductionList(int plID, int pID, int prodID, double plCount, double plSum, int sID, int cID)
 	{
@@ -17286,6 +17455,84 @@ namespace DataLayer{
 			tempString = "";
 			tempString += " currency_id = ";
 			tempString += boost::lexical_cast<std::string>(cID);
+			conditionVec.push_back(tempString);
+		}
+		if (conditionVec.size() >= 1)
+		{
+			filter += conditionVec.at(0);
+			for (unsigned int i = 1; i < conditionVec.size(); i++)
+			{
+				filter += " AND ";
+				filter += conditionVec.at(i);
+			}
+		}
+		else
+		{
+			return "";
+		}
+		return filter;
+	}
+
+	std::string OrmasDal::GetFilterForProductionListInEnum(int plID, int pID, int prodID, double plCount, double plSum, int sID, int cID, std::vector<int> vecProdID)
+	{
+		std::string tempString = "";
+		std::string filter = " where ";
+		std::vector<std::string> conditionVec;
+		if (0 != plID)
+		{
+			tempString = "";
+			tempString += " production_list_id = ";
+			tempString += boost::lexical_cast<std::string>(plID);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != prodID)
+		{
+			tempString = "";
+			tempString += " product_id = ";
+			tempString += boost::lexical_cast<std::string>(prodID);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != plCount)
+		{
+			tempString = "";
+			tempString += " count = ";
+			tempString += boost::lexical_cast<std::string>(plCount);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != plSum)
+		{
+			tempString = "";
+			tempString += " sum = ";
+			tempString += boost::lexical_cast<std::string>(plSum);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != sID)
+		{
+			tempString = "";
+			tempString += " status_id = ";
+			tempString += boost::lexical_cast<std::string>(sID);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != cID)
+		{
+			tempString = "";
+			tempString += " currency_id = ";
+			tempString += boost::lexical_cast<std::string>(cID);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != vecProdID.size())
+		{
+			tempString = "";
+			tempString += " production_id in (";
+			for (unsigned int i = 0; i < vecProdID.size(); i++)
+			{
+				tempString += boost::lexical_cast<std::string>(vecProdID[i]);
+				if (i < vecProdID.size() - 1)
+				{
+					tempString += ", ";
+				}
+			}
+			tempString += ")";
 			conditionVec.push_back(tempString);
 		}
 		if (conditionVec.size() >= 1)
@@ -19355,6 +19602,73 @@ namespace DataLayer{
 			tempString += " timesheet_date = '";
 			tempString += tDate;
 			tempString += "'";
+			conditionVec.push_back(tempString);
+		}
+		if (conditionVec.size() >= 1)
+		{
+			filter += conditionVec.at(0);
+			for (unsigned int i = 1; i < conditionVec.size(); i++)
+			{
+				filter += " AND ";
+				filter += conditionVec.at(i);
+			}
+		}
+		else
+		{
+			return "";
+		}
+		return filter;
+	}
+
+	std::string OrmasDal::GetFilterForTimesheetForPeriod(int tID, int sID, double tWorkedTime, std::string tDate, std::string fromDate, std::string toDate)
+	{
+		std::string tempString = "";
+		std::string filter = " where ";
+		std::vector<std::string> conditionVec;
+		if (0 != tID)
+		{
+			tempString = "";
+			tempString += " timesheet_id = ";
+			tempString += boost::lexical_cast<std::string>(tID);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != sID)
+		{
+			tempString = "";
+			tempString += " salary_id = ";
+			tempString += boost::lexical_cast<std::string>(sID);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != tWorkedTime)
+		{
+			tempString = "";
+			tempString += " worked_time = ";
+			tempString += boost::lexical_cast<std::string>(tWorkedTime);
+			conditionVec.push_back(tempString);
+		}
+		if (!tDate.empty())
+		{
+			tempString = "";
+			tempString += " timesheet_date = '";
+			tempString += tDate;
+			tempString += "'";
+			conditionVec.push_back(tempString);
+		}
+		if (!fromDate.empty() && !toDate.empty())
+		{
+			tempString = "";
+			tempString += " (DATE(timesheet_date) BETWEEN '";
+			tempString += fromDate;
+			tempString += "' AND '";
+			if (toDate.empty())
+			{
+				tempString += GetSystemDate();
+			}
+			else
+			{
+				tempString += toDate;
+			}
+			tempString += "')";
 			conditionVec.push_back(tempString);
 		}
 		if (conditionVec.size() >= 1)

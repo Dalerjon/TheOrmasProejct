@@ -19,8 +19,8 @@
 
 QT_BEGIN_MOC_NAMESPACE
 struct qt_meta_stringdata_MainForm_t {
-    QByteArrayData data[75];
-    char stringdata0[1365];
+    QByteArrayData data[78];
+    char stringdata0[1425];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
@@ -79,31 +79,34 @@ QT_MOC_LITERAL(46, 838, 23), // "OpenChartOfAccountsForm"
 QT_MOC_LITERAL(47, 862, 22), // "OpenCompanyAccountForm"
 QT_MOC_LITERAL(48, 885, 13), // "OpenEntryForm"
 QT_MOC_LITERAL(49, 899, 20), // "OpenEntryRoutingForm"
-QT_MOC_LITERAL(50, 920, 15), // "OpenPaymentForm"
-QT_MOC_LITERAL(51, 936, 14), // "OpenRefundForm"
-QT_MOC_LITERAL(52, 951, 18), // "OpenWithdrawalForm"
-QT_MOC_LITERAL(53, 970, 15), // "OpenPayslipForm"
-QT_MOC_LITERAL(54, 986, 13), // "OpenStockForm"
-QT_MOC_LITERAL(55, 1000, 16), // "OpenOrderRawForm"
-QT_MOC_LITERAL(56, 1017, 18), // "OpenReceiptRawForm"
-QT_MOC_LITERAL(57, 1036, 18), // "OpenConsumeRawForm"
-QT_MOC_LITERAL(58, 1055, 19), // "OpenWriteOffRawForm"
-QT_MOC_LITERAL(59, 1075, 17), // "OpenTransportForm"
-QT_MOC_LITERAL(60, 1093, 22), // "OpenReceiptProductForm"
-QT_MOC_LITERAL(61, 1116, 22), // "OpenConsumeProductForm"
-QT_MOC_LITERAL(62, 1139, 23), // "OpenInventorizationForm"
-QT_MOC_LITERAL(63, 1163, 18), // "CompanyBalanceInfo"
-QT_MOC_LITERAL(64, 1182, 15), // "OpenCompanyForm"
-QT_MOC_LITERAL(65, 1198, 16), // "OpenCurrencyForm"
-QT_MOC_LITERAL(66, 1215, 15), // "OpenMeasureForm"
-QT_MOC_LITERAL(67, 1231, 16), // "OpenLocationForm"
-QT_MOC_LITERAL(68, 1248, 12), // "OpenRoleForm"
-QT_MOC_LITERAL(69, 1261, 14), // "OpenStatusForm"
-QT_MOC_LITERAL(70, 1276, 18), // "OpenStatusRuleForm"
-QT_MOC_LITERAL(71, 1295, 16), // "OpenRelationForm"
-QT_MOC_LITERAL(72, 1312, 20), // "OpenRelationTypeForm"
-QT_MOC_LITERAL(73, 1333, 13), // "OpenAboutForm"
-QT_MOC_LITERAL(74, 1347, 17) // "CloseChildsByName"
+QT_MOC_LITERAL(50, 920, 20), // "OpenCloseOfMonthForm"
+QT_MOC_LITERAL(51, 941, 15), // "OpenPaymentForm"
+QT_MOC_LITERAL(52, 957, 14), // "OpenRefundForm"
+QT_MOC_LITERAL(53, 972, 18), // "OpenWithdrawalForm"
+QT_MOC_LITERAL(54, 991, 15), // "OpenPayslipForm"
+QT_MOC_LITERAL(55, 1007, 13), // "OpenStockForm"
+QT_MOC_LITERAL(56, 1021, 16), // "OpenOrderRawForm"
+QT_MOC_LITERAL(57, 1038, 18), // "OpenReceiptRawForm"
+QT_MOC_LITERAL(58, 1057, 18), // "OpenConsumeRawForm"
+QT_MOC_LITERAL(59, 1076, 19), // "OpenWriteOffRawForm"
+QT_MOC_LITERAL(60, 1096, 17), // "OpenTransportForm"
+QT_MOC_LITERAL(61, 1114, 22), // "OpenReceiptProductForm"
+QT_MOC_LITERAL(62, 1137, 22), // "OpenConsumeProductForm"
+QT_MOC_LITERAL(63, 1160, 23), // "OpenInventorizationForm"
+QT_MOC_LITERAL(64, 1184, 18), // "CompanyBalanceInfo"
+QT_MOC_LITERAL(65, 1203, 19), // "FinancialReportForm"
+QT_MOC_LITERAL(66, 1223, 18), // "CompanyBalanceForm"
+QT_MOC_LITERAL(67, 1242, 15), // "OpenCompanyForm"
+QT_MOC_LITERAL(68, 1258, 16), // "OpenCurrencyForm"
+QT_MOC_LITERAL(69, 1275, 15), // "OpenMeasureForm"
+QT_MOC_LITERAL(70, 1291, 16), // "OpenLocationForm"
+QT_MOC_LITERAL(71, 1308, 12), // "OpenRoleForm"
+QT_MOC_LITERAL(72, 1321, 14), // "OpenStatusForm"
+QT_MOC_LITERAL(73, 1336, 18), // "OpenStatusRuleForm"
+QT_MOC_LITERAL(74, 1355, 16), // "OpenRelationForm"
+QT_MOC_LITERAL(75, 1372, 20), // "OpenRelationTypeForm"
+QT_MOC_LITERAL(76, 1393, 13), // "OpenAboutForm"
+QT_MOC_LITERAL(77, 1407, 17) // "CloseChildsByName"
 
     },
     "MainForm\0OpenUserForm\0\0OpenClientForm\0"
@@ -131,19 +134,21 @@ QT_MOC_LITERAL(74, 1347, 17) // "CloseChildsByName"
     "OpenSalaryTypeForm\0OpenPayrollForm\0"
     "OpenAccountTypeForm\0OpenChartOfAccountsForm\0"
     "OpenCompanyAccountForm\0OpenEntryForm\0"
-    "OpenEntryRoutingForm\0OpenPaymentForm\0"
-    "OpenRefundForm\0OpenWithdrawalForm\0"
-    "OpenPayslipForm\0OpenStockForm\0"
-    "OpenOrderRawForm\0OpenReceiptRawForm\0"
-    "OpenConsumeRawForm\0OpenWriteOffRawForm\0"
-    "OpenTransportForm\0OpenReceiptProductForm\0"
-    "OpenConsumeProductForm\0OpenInventorizationForm\0"
-    "CompanyBalanceInfo\0OpenCompanyForm\0"
-    "OpenCurrencyForm\0OpenMeasureForm\0"
-    "OpenLocationForm\0OpenRoleForm\0"
-    "OpenStatusForm\0OpenStatusRuleForm\0"
-    "OpenRelationForm\0OpenRelationTypeForm\0"
-    "OpenAboutForm\0CloseChildsByName"
+    "OpenEntryRoutingForm\0OpenCloseOfMonthForm\0"
+    "OpenPaymentForm\0OpenRefundForm\0"
+    "OpenWithdrawalForm\0OpenPayslipForm\0"
+    "OpenStockForm\0OpenOrderRawForm\0"
+    "OpenReceiptRawForm\0OpenConsumeRawForm\0"
+    "OpenWriteOffRawForm\0OpenTransportForm\0"
+    "OpenReceiptProductForm\0OpenConsumeProductForm\0"
+    "OpenInventorizationForm\0CompanyBalanceInfo\0"
+    "FinancialReportForm\0CompanyBalanceForm\0"
+    "OpenCompanyForm\0OpenCurrencyForm\0"
+    "OpenMeasureForm\0OpenLocationForm\0"
+    "OpenRoleForm\0OpenStatusForm\0"
+    "OpenStatusRuleForm\0OpenRelationForm\0"
+    "OpenRelationTypeForm\0OpenAboutForm\0"
+    "CloseChildsByName"
 };
 #undef QT_MOC_LITERAL
 
@@ -153,7 +158,7 @@ static const uint qt_meta_data_MainForm[] = {
        7,       // revision
        0,       // classname
        0,    0, // classinfo
-      73,   14, // methods
+      76,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -161,81 +166,87 @@ static const uint qt_meta_data_MainForm[] = {
        0,       // signalCount
 
  // slots: name, argc, parameters, tag, flags
-       1,    0,  379,    2, 0x08 /* Private */,
-       3,    0,  380,    2, 0x08 /* Private */,
-       4,    0,  381,    2, 0x08 /* Private */,
-       5,    0,  382,    2, 0x08 /* Private */,
-       6,    0,  383,    2, 0x08 /* Private */,
-       7,    0,  384,    2, 0x08 /* Private */,
-       8,    0,  385,    2, 0x08 /* Private */,
-       9,    0,  386,    2, 0x08 /* Private */,
-      10,    0,  387,    2, 0x08 /* Private */,
-      11,    0,  388,    2, 0x08 /* Private */,
-      12,    0,  389,    2, 0x08 /* Private */,
-      13,    0,  390,    2, 0x08 /* Private */,
-      14,    0,  391,    2, 0x08 /* Private */,
-      15,    0,  392,    2, 0x08 /* Private */,
-      16,    0,  393,    2, 0x08 /* Private */,
-      17,    0,  394,    2, 0x08 /* Private */,
-      18,    0,  395,    2, 0x08 /* Private */,
-      19,    0,  396,    2, 0x08 /* Private */,
-      20,    0,  397,    2, 0x08 /* Private */,
-      21,    0,  398,    2, 0x08 /* Private */,
-      22,    0,  399,    2, 0x08 /* Private */,
-      23,    0,  400,    2, 0x08 /* Private */,
-      24,    0,  401,    2, 0x08 /* Private */,
-      25,    0,  402,    2, 0x08 /* Private */,
-      26,    0,  403,    2, 0x08 /* Private */,
-      27,    0,  404,    2, 0x08 /* Private */,
-      28,    0,  405,    2, 0x08 /* Private */,
-      29,    0,  406,    2, 0x08 /* Private */,
-      30,    0,  407,    2, 0x08 /* Private */,
-      31,    0,  408,    2, 0x08 /* Private */,
-      32,    0,  409,    2, 0x08 /* Private */,
-      33,    0,  410,    2, 0x08 /* Private */,
-      34,    0,  411,    2, 0x08 /* Private */,
-      35,    0,  412,    2, 0x08 /* Private */,
-      36,    0,  413,    2, 0x08 /* Private */,
-      37,    0,  414,    2, 0x08 /* Private */,
-      38,    0,  415,    2, 0x08 /* Private */,
-      39,    0,  416,    2, 0x08 /* Private */,
-      40,    0,  417,    2, 0x08 /* Private */,
-      41,    0,  418,    2, 0x08 /* Private */,
-      42,    0,  419,    2, 0x08 /* Private */,
-      43,    0,  420,    2, 0x08 /* Private */,
-      44,    0,  421,    2, 0x08 /* Private */,
-      45,    0,  422,    2, 0x08 /* Private */,
-      46,    0,  423,    2, 0x08 /* Private */,
-      47,    0,  424,    2, 0x08 /* Private */,
-      48,    0,  425,    2, 0x08 /* Private */,
-      49,    0,  426,    2, 0x08 /* Private */,
-      50,    0,  427,    2, 0x08 /* Private */,
-      51,    0,  428,    2, 0x08 /* Private */,
-      52,    0,  429,    2, 0x08 /* Private */,
-      53,    0,  430,    2, 0x08 /* Private */,
-      54,    0,  431,    2, 0x08 /* Private */,
-      55,    0,  432,    2, 0x08 /* Private */,
-      56,    0,  433,    2, 0x08 /* Private */,
-      57,    0,  434,    2, 0x08 /* Private */,
-      58,    0,  435,    2, 0x08 /* Private */,
-      59,    0,  436,    2, 0x08 /* Private */,
-      60,    0,  437,    2, 0x08 /* Private */,
-      61,    0,  438,    2, 0x08 /* Private */,
-      62,    0,  439,    2, 0x08 /* Private */,
-      63,    0,  440,    2, 0x08 /* Private */,
-      64,    0,  441,    2, 0x08 /* Private */,
-      65,    0,  442,    2, 0x08 /* Private */,
-      66,    0,  443,    2, 0x08 /* Private */,
-      67,    0,  444,    2, 0x08 /* Private */,
-      68,    0,  445,    2, 0x08 /* Private */,
-      69,    0,  446,    2, 0x08 /* Private */,
-      70,    0,  447,    2, 0x08 /* Private */,
-      71,    0,  448,    2, 0x08 /* Private */,
-      72,    0,  449,    2, 0x08 /* Private */,
-      73,    0,  450,    2, 0x08 /* Private */,
-      74,    0,  451,    2, 0x08 /* Private */,
+       1,    0,  394,    2, 0x08 /* Private */,
+       3,    0,  395,    2, 0x08 /* Private */,
+       4,    0,  396,    2, 0x08 /* Private */,
+       5,    0,  397,    2, 0x08 /* Private */,
+       6,    0,  398,    2, 0x08 /* Private */,
+       7,    0,  399,    2, 0x08 /* Private */,
+       8,    0,  400,    2, 0x08 /* Private */,
+       9,    0,  401,    2, 0x08 /* Private */,
+      10,    0,  402,    2, 0x08 /* Private */,
+      11,    0,  403,    2, 0x08 /* Private */,
+      12,    0,  404,    2, 0x08 /* Private */,
+      13,    0,  405,    2, 0x08 /* Private */,
+      14,    0,  406,    2, 0x08 /* Private */,
+      15,    0,  407,    2, 0x08 /* Private */,
+      16,    0,  408,    2, 0x08 /* Private */,
+      17,    0,  409,    2, 0x08 /* Private */,
+      18,    0,  410,    2, 0x08 /* Private */,
+      19,    0,  411,    2, 0x08 /* Private */,
+      20,    0,  412,    2, 0x08 /* Private */,
+      21,    0,  413,    2, 0x08 /* Private */,
+      22,    0,  414,    2, 0x08 /* Private */,
+      23,    0,  415,    2, 0x08 /* Private */,
+      24,    0,  416,    2, 0x08 /* Private */,
+      25,    0,  417,    2, 0x08 /* Private */,
+      26,    0,  418,    2, 0x08 /* Private */,
+      27,    0,  419,    2, 0x08 /* Private */,
+      28,    0,  420,    2, 0x08 /* Private */,
+      29,    0,  421,    2, 0x08 /* Private */,
+      30,    0,  422,    2, 0x08 /* Private */,
+      31,    0,  423,    2, 0x08 /* Private */,
+      32,    0,  424,    2, 0x08 /* Private */,
+      33,    0,  425,    2, 0x08 /* Private */,
+      34,    0,  426,    2, 0x08 /* Private */,
+      35,    0,  427,    2, 0x08 /* Private */,
+      36,    0,  428,    2, 0x08 /* Private */,
+      37,    0,  429,    2, 0x08 /* Private */,
+      38,    0,  430,    2, 0x08 /* Private */,
+      39,    0,  431,    2, 0x08 /* Private */,
+      40,    0,  432,    2, 0x08 /* Private */,
+      41,    0,  433,    2, 0x08 /* Private */,
+      42,    0,  434,    2, 0x08 /* Private */,
+      43,    0,  435,    2, 0x08 /* Private */,
+      44,    0,  436,    2, 0x08 /* Private */,
+      45,    0,  437,    2, 0x08 /* Private */,
+      46,    0,  438,    2, 0x08 /* Private */,
+      47,    0,  439,    2, 0x08 /* Private */,
+      48,    0,  440,    2, 0x08 /* Private */,
+      49,    0,  441,    2, 0x08 /* Private */,
+      50,    0,  442,    2, 0x08 /* Private */,
+      51,    0,  443,    2, 0x08 /* Private */,
+      52,    0,  444,    2, 0x08 /* Private */,
+      53,    0,  445,    2, 0x08 /* Private */,
+      54,    0,  446,    2, 0x08 /* Private */,
+      55,    0,  447,    2, 0x08 /* Private */,
+      56,    0,  448,    2, 0x08 /* Private */,
+      57,    0,  449,    2, 0x08 /* Private */,
+      58,    0,  450,    2, 0x08 /* Private */,
+      59,    0,  451,    2, 0x08 /* Private */,
+      60,    0,  452,    2, 0x08 /* Private */,
+      61,    0,  453,    2, 0x08 /* Private */,
+      62,    0,  454,    2, 0x08 /* Private */,
+      63,    0,  455,    2, 0x08 /* Private */,
+      64,    0,  456,    2, 0x08 /* Private */,
+      65,    0,  457,    2, 0x08 /* Private */,
+      66,    0,  458,    2, 0x08 /* Private */,
+      67,    0,  459,    2, 0x08 /* Private */,
+      68,    0,  460,    2, 0x08 /* Private */,
+      69,    0,  461,    2, 0x08 /* Private */,
+      70,    0,  462,    2, 0x08 /* Private */,
+      71,    0,  463,    2, 0x08 /* Private */,
+      72,    0,  464,    2, 0x08 /* Private */,
+      73,    0,  465,    2, 0x08 /* Private */,
+      74,    0,  466,    2, 0x08 /* Private */,
+      75,    0,  467,    2, 0x08 /* Private */,
+      76,    0,  468,    2, 0x08 /* Private */,
+      77,    0,  469,    2, 0x08 /* Private */,
 
  // slots: parameters
+    QMetaType::Void,
+    QMetaType::Void,
+    QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void,
@@ -367,31 +378,34 @@ void MainForm::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, vo
         case 45: _t->OpenCompanyAccountForm(); break;
         case 46: _t->OpenEntryForm(); break;
         case 47: _t->OpenEntryRoutingForm(); break;
-        case 48: _t->OpenPaymentForm(); break;
-        case 49: _t->OpenRefundForm(); break;
-        case 50: _t->OpenWithdrawalForm(); break;
-        case 51: _t->OpenPayslipForm(); break;
-        case 52: _t->OpenStockForm(); break;
-        case 53: _t->OpenOrderRawForm(); break;
-        case 54: _t->OpenReceiptRawForm(); break;
-        case 55: _t->OpenConsumeRawForm(); break;
-        case 56: _t->OpenWriteOffRawForm(); break;
-        case 57: _t->OpenTransportForm(); break;
-        case 58: _t->OpenReceiptProductForm(); break;
-        case 59: _t->OpenConsumeProductForm(); break;
-        case 60: _t->OpenInventorizationForm(); break;
-        case 61: _t->CompanyBalanceInfo(); break;
-        case 62: _t->OpenCompanyForm(); break;
-        case 63: _t->OpenCurrencyForm(); break;
-        case 64: _t->OpenMeasureForm(); break;
-        case 65: _t->OpenLocationForm(); break;
-        case 66: _t->OpenRoleForm(); break;
-        case 67: _t->OpenStatusForm(); break;
-        case 68: _t->OpenStatusRuleForm(); break;
-        case 69: _t->OpenRelationForm(); break;
-        case 70: _t->OpenRelationTypeForm(); break;
-        case 71: _t->OpenAboutForm(); break;
-        case 72: _t->CloseChildsByName(); break;
+        case 48: _t->OpenCloseOfMonthForm(); break;
+        case 49: _t->OpenPaymentForm(); break;
+        case 50: _t->OpenRefundForm(); break;
+        case 51: _t->OpenWithdrawalForm(); break;
+        case 52: _t->OpenPayslipForm(); break;
+        case 53: _t->OpenStockForm(); break;
+        case 54: _t->OpenOrderRawForm(); break;
+        case 55: _t->OpenReceiptRawForm(); break;
+        case 56: _t->OpenConsumeRawForm(); break;
+        case 57: _t->OpenWriteOffRawForm(); break;
+        case 58: _t->OpenTransportForm(); break;
+        case 59: _t->OpenReceiptProductForm(); break;
+        case 60: _t->OpenConsumeProductForm(); break;
+        case 61: _t->OpenInventorizationForm(); break;
+        case 62: _t->CompanyBalanceInfo(); break;
+        case 63: _t->FinancialReportForm(); break;
+        case 64: _t->CompanyBalanceForm(); break;
+        case 65: _t->OpenCompanyForm(); break;
+        case 66: _t->OpenCurrencyForm(); break;
+        case 67: _t->OpenMeasureForm(); break;
+        case 68: _t->OpenLocationForm(); break;
+        case 69: _t->OpenRoleForm(); break;
+        case 70: _t->OpenStatusForm(); break;
+        case 71: _t->OpenStatusRuleForm(); break;
+        case 72: _t->OpenRelationForm(); break;
+        case 73: _t->OpenRelationTypeForm(); break;
+        case 74: _t->OpenAboutForm(); break;
+        case 75: _t->CloseChildsByName(); break;
         default: ;
         }
     }
@@ -425,13 +439,13 @@ int MainForm::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 73)
+        if (_id < 76)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 73;
+        _id -= 76;
     } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 73)
+        if (_id < 76)
             *reinterpret_cast<int*>(_a[0]) = -1;
-        _id -= 73;
+        _id -= 76;
     }
     return _id;
 }

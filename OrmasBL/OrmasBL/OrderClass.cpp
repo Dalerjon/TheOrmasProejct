@@ -346,11 +346,11 @@ namespace BusinessLayer
 		return "";
 	}
 
-	std::string Order::GenerateFilter(DataLayer::OrmasDal& ormasDal, std::string fromDate, std::string toDate)
+	std::string Order::GenerateFilterForPeriod(DataLayer::OrmasDal& ormasDal, std::string fromDate, std::string toDate)
 	{
-		if (0 != id || 0 != clientID || !date.empty() || !executionDate.empty() || 0 != employeeID || 0 != count || 0 != sum || 0 != statusID)
+		if (!toDate.empty() && !fromDate.empty())
 		{
-			return ormasDal.GetFilterForOrder(id, clientID, date, executionDate, employeeID, count, sum, statusID, currencyID, fromDate, toDate);
+			return ormasDal.GetFilterForOrderForPeriod(id, clientID, date, executionDate, employeeID, count, sum, statusID, currencyID, fromDate, toDate);
 		}
 		return "";
 	}

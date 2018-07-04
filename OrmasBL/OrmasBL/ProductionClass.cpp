@@ -204,6 +204,16 @@ namespace BusinessLayer
 		}
 		return "";
 	}
+
+	std::string Production::GenerateFilterForPeriod(DataLayer::OrmasDal& ormasDal, std::string fromDate, std::string toDate)
+	{
+		if (!toDate.empty() && !fromDate.empty())
+		{
+			return ormasDal.GetFilterForProductionForPeriod(id, productionDate, expiryDate, sessionStart, sessionEnd, fromDate, toDate);
+		}
+		return "";
+	}
+
 	bool Production::GetProductionByID(DataLayer::OrmasDal& ormasDal, int pID, std::string& errorMessage)
 	{
 		id = pID;

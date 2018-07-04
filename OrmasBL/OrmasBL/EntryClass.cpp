@@ -119,6 +119,8 @@ namespace BusinessLayer{
 		{
 			if (DebitAccount(ormasDal, debitingAccountID, value) && CreditAccount(ormasDal, creditingAccountID, value))
 			{
+				if (!ReCalculateParentAccount(ormasDal, debitingAccountID, creditingAccountID,  value, errorMessage))
+					return false;
 				EntrySubaccountRelation debRelation;
 				EntrySubaccountRelation credRelation;
 				if (!dSAcc.IsEmpty())
@@ -192,6 +194,8 @@ namespace BusinessLayer{
 		{
 			if (DebitAccount(ormasDal, debitingAccountID, value) && CreditAccount(ormasDal, creditingAccountID, value))
 			{
+				if (!ReCalculateParentAccount(ormasDal, debitingAccountID, creditingAccountID, value, errorMessage))
+					return false;
 				EntrySubaccountRelation debRelation;
 				EntrySubaccountRelation credRelation;
 				debRelation.SetSubaccountID(debitingAccountID);
@@ -381,7 +385,6 @@ namespace BusinessLayer{
 				if (dAcc.UpdateAccount(ormasDal, errorMessage))
 					return true;
 			}
-			
 		}
 		else if(subAcc.GetSubaccountByID(ormasDal, accountID, errorMessage))
 		{
@@ -415,6 +418,7 @@ namespace BusinessLayer{
 		Subaccount subAcc;
 		Account cAcc;
 		AccountType atype;
+		std::string parentNumber = "";
 		if (cAcc.GetAccountByID(ormasDal, accountID, errorMessage))
 		{
 			/*if (atype.GetAccountTypeByNumber(ormasDal, cAcc.GetAccountTypeNumber(ormasDal), errorMessage))
@@ -428,12 +432,9 @@ namespace BusinessLayer{
 					cAcc.SetCurrentBalance(cAcc.GetCurrentBalance() + value);
 				}
 			}*/
-			if (cAcc.AccountOperationValidation(ormasDal, cAcc.GetCurrentBalance() - value))
-			{
-				cAcc.SetCurrentBalance(cAcc.GetCurrentBalance() - value);
-				if (cAcc.UpdateAccount(ormasDal, errorMessage))
-					return true;
-			}
+			cAcc.SetCurrentBalance(cAcc.GetCurrentBalance() - value);
+			if (cAcc.UpdateAccount(ormasDal, errorMessage))
+				return true;
 		}
 		else if (subAcc.GetSubaccountByID(ormasDal, accountID, errorMessage))
 		{
@@ -450,7 +451,7 @@ namespace BusinessLayer{
 			}*/
 			if (cAcc.GetAccountByID(ormasDal, subAcc.GetParentAccountID(), errorMessage))
 			{
-				if (cAcc.AccountOperationValidation(ormasDal, cAcc.GetCurrentBalance() - value))
+				if (cAcc.AccountOperationValidation(ormasDal, cAcc.GetCurrentBalance() + value))
 				{
 					cAcc.SetCurrentBalance(cAcc.GetCurrentBalance() - value);
 					subAcc.SetCurrentBalance(subAcc.GetCurrentBalance() - value);
@@ -472,6 +473,80 @@ namespace BusinessLayer{
 			return eRouting.CheckEntryRouting(ormasDal, std::stoi(dAcc.GetNumber()), std::stoi(cAcc.GetNumber()), errorMessage);
 		}
 		return false;*/
+		return true;
+	}
+
+	bool Entry::ReCalculateParentAccount(DataLayer::OrmasDal& ormasDal, int dAccID, int cAccID, double value, std::string& errorMessage)
+	{
+		Account dAcc;
+		Account cAcc;
+		Account dParentAcc;
+		Account cParentAcc;
+		Subaccount dSubAcc;
+		Subaccount cSubAcc;
+		std::string dParentNumber = "";
+		std::string cParentNumber = "";
+		dAcc.Clear();
+		if (!dAcc.GetAccountByID(ormasDal, dAccID, errorMessage))
+		{
+			if (!dSubAcc.GetSubaccountByID(ormasDal, dAccID, errorMessage))
+			{
+				return false;
+			}
+			else
+			{
+				if (!dAcc.GetAccountByID(ormasDal, dSubAcc.GetParentAccountID(), errorMessage))
+					return false;
+			}
+		}		
+		cAcc.Clear();
+		if (!cAcc.GetAccountByID(ormasDal, cAccID, errorMessage))
+		{
+			if (!cSubAcc.GetSubaccountByID(ormasDal, cAccID, errorMessage))
+			{
+				return false;
+			}
+			else
+			{
+				if (!cAcc.GetAccountByID(ormasDal, cSubAcc.GetParentAccountID(), errorMessage))
+					return false;
+			}
+		}
+		if (dAcc.GetNumber().substr(0, 3) != cAcc.GetNumber().substr(0, 3))
+		{
+			dParentNumber += dAcc.GetNumber().substr(0, 3);
+			dParentNumber += "00";
+			cParentNumber += cAcc.GetNumber().substr(0, 3);
+			cParentNumber += "00";
+			if (dAcc.GetNumber() != dParentNumber && cAcc.GetNumber() != cParentNumber)
+			{
+				if (!dParentAcc.GetAccountByNumber(ormasDal, dParentNumber, errorMessage))
+					return false;
+				if (!cParentAcc.GetAccountByNumber(ormasDal, cParentNumber, errorMessage))
+					return false;
+				dParentAcc.SetCurrentBalance(dParentAcc.GetCurrentBalance() + value);
+				cParentAcc.SetCurrentBalance(cParentAcc.GetCurrentBalance() - value);
+				if (!dParentAcc.UpdateAccount(ormasDal, errorMessage) || !cParentAcc.UpdateAccount(ormasDal, errorMessage))
+					return false;
+			}
+			else if (dAcc.GetNumber() != dParentNumber)
+			{
+				if (!dParentAcc.GetAccountByNumber(ormasDal, dParentNumber, errorMessage))
+					return false;
+				dParentAcc.SetCurrentBalance(dParentAcc.GetCurrentBalance() + value);
+				if (!dParentAcc.UpdateAccount(ormasDal, errorMessage))
+					return false;
+			}
+			else if (cAcc.GetNumber() != cParentNumber)
+			{
+				if (!cParentAcc.GetAccountByNumber(ormasDal, cParentNumber, errorMessage))
+					return false;
+				cParentAcc.SetCurrentBalance(cParentAcc.GetCurrentBalance() - value);
+				if (!cParentAcc.UpdateAccount(ormasDal, errorMessage))
+					return false;
+			}
+		}
+		errorMessage = "";
 		return true;
 	}
 }

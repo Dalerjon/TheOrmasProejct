@@ -154,6 +154,15 @@ namespace BusinessLayer{
 		return "";
 	}
 
+	std::string Jobsheet::GenerateFilterForPeriod(DataLayer::OrmasDal& ormasDal, std::string fromDate, std::string tilDate)
+	{
+		if (!fromDate.empty() && !tilDate.empty())
+		{
+			return ormasDal.GetFilterForJobsheetForPeriod(id, date, count, productID, employeeID, fromDate, tilDate);
+		}
+		return "";
+	}
+
 	bool Jobsheet::GetJobsheetByID(DataLayer::OrmasDal& ormasDal, int bID, std::string& errorMessage)
 	{
 		id = bID;

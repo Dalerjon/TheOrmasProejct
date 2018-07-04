@@ -1,16 +1,16 @@
 /****************************************************************************
-** Meta object code from reading C++ file 'CloseOfMonthDlg.h'
+** Meta object code from reading C++ file 'GenerateFinRepDlg.h'
 **
 ** Created by: The Qt Meta Object Compiler version 67 (Qt 5.6.2)
 **
 ** WARNING! All changes made in this file will be lost!
 *****************************************************************************/
 
-#include "CloseOfMonthDlg.h"
+#include "GenerateFinRepDlg.h"
 #include <QtCore/qbytearray.h>
 #include <QtCore/qmetatype.h>
 #if !defined(Q_MOC_OUTPUT_REVISION)
-#error "The header file 'CloseOfMonthDlg.h' doesn't include <QObject>."
+#error "The header file 'GenerateFinRepDlg.h' doesn't include <QObject>."
 #elif Q_MOC_OUTPUT_REVISION != 67
 #error "This file was generated using the moc from 5.6.2. It"
 #error "cannot be used with the include files from this version of Qt."
@@ -18,28 +18,28 @@
 #endif
 
 QT_BEGIN_MOC_NAMESPACE
-struct qt_meta_stringdata_CloseOfMonthDlg_t {
+struct qt_meta_stringdata_GenerateFinRep_t {
     QByteArrayData data[4];
-    char stringdata0[33];
+    char stringdata0[31];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
-    qptrdiff(offsetof(qt_meta_stringdata_CloseOfMonthDlg_t, stringdata0) + ofs \
+    qptrdiff(offsetof(qt_meta_stringdata_GenerateFinRep_t, stringdata0) + ofs \
         - idx * sizeof(QByteArrayData)) \
     )
-static const qt_meta_stringdata_CloseOfMonthDlg_t qt_meta_stringdata_CloseOfMonthDlg = {
+static const qt_meta_stringdata_GenerateFinRep_t qt_meta_stringdata_GenerateFinRep = {
     {
-QT_MOC_LITERAL(0, 0, 15), // "CloseOfMonthDlg"
-QT_MOC_LITERAL(1, 16, 9), // "Calculate"
-QT_MOC_LITERAL(2, 26, 0), // ""
-QT_MOC_LITERAL(3, 27, 5) // "Close"
+QT_MOC_LITERAL(0, 0, 14), // "GenerateFinRep"
+QT_MOC_LITERAL(1, 15, 8), // "Generate"
+QT_MOC_LITERAL(2, 24, 0), // ""
+QT_MOC_LITERAL(3, 25, 5) // "Close"
 
     },
-    "CloseOfMonthDlg\0Calculate\0\0Close"
+    "GenerateFinRep\0Generate\0\0Close"
 };
 #undef QT_MOC_LITERAL
 
-static const uint qt_meta_data_CloseOfMonthDlg[] = {
+static const uint qt_meta_data_GenerateFinRep[] = {
 
  // content:
        7,       // revision
@@ -63,13 +63,13 @@ static const uint qt_meta_data_CloseOfMonthDlg[] = {
        0        // eod
 };
 
-void CloseOfMonthDlg::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **_a)
+void GenerateFinRep::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **_a)
 {
     if (_c == QMetaObject::InvokeMetaMethod) {
-        CloseOfMonthDlg *_t = static_cast<CloseOfMonthDlg *>(_o);
+        GenerateFinRep *_t = static_cast<GenerateFinRep *>(_o);
         Q_UNUSED(_t)
         switch (_id) {
-        case 0: _t->Calculate(); break;
+        case 0: _t->Generate(); break;
         case 1: _t->Close(); break;
         default: ;
         }
@@ -77,28 +77,28 @@ void CloseOfMonthDlg::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int 
     Q_UNUSED(_a);
 }
 
-const QMetaObject CloseOfMonthDlg::staticMetaObject = {
-    { &QDialog::staticMetaObject, qt_meta_stringdata_CloseOfMonthDlg.data,
-      qt_meta_data_CloseOfMonthDlg,  qt_static_metacall, Q_NULLPTR, Q_NULLPTR}
+const QMetaObject GenerateFinRep::staticMetaObject = {
+    { &QDialog::staticMetaObject, qt_meta_stringdata_GenerateFinRep.data,
+      qt_meta_data_GenerateFinRep,  qt_static_metacall, Q_NULLPTR, Q_NULLPTR}
 };
 
 
-const QMetaObject *CloseOfMonthDlg::metaObject() const
+const QMetaObject *GenerateFinRep::metaObject() const
 {
     return QObject::d_ptr->metaObject ? QObject::d_ptr->dynamicMetaObject() : &staticMetaObject;
 }
 
-void *CloseOfMonthDlg::qt_metacast(const char *_clname)
+void *GenerateFinRep::qt_metacast(const char *_clname)
 {
     if (!_clname) return Q_NULLPTR;
-    if (!strcmp(_clname, qt_meta_stringdata_CloseOfMonthDlg.stringdata0))
-        return static_cast<void*>(const_cast< CloseOfMonthDlg*>(this));
-    if (!strcmp(_clname, "Ui::CloseOfMonth"))
-        return static_cast< Ui::CloseOfMonth*>(const_cast< CloseOfMonthDlg*>(this));
+    if (!strcmp(_clname, qt_meta_stringdata_GenerateFinRep.stringdata0))
+        return static_cast<void*>(const_cast< GenerateFinRep*>(this));
+    if (!strcmp(_clname, "Ui::GenerateFinancialReport"))
+        return static_cast< Ui::GenerateFinancialReport*>(const_cast< GenerateFinRep*>(this));
     return QDialog::qt_metacast(_clname);
 }
 
-int CloseOfMonthDlg::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
+int GenerateFinRep::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
 {
     _id = QDialog::qt_metacall(_c, _id, _a);
     if (_id < 0)

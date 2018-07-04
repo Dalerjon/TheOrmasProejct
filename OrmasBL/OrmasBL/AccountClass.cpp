@@ -290,17 +290,23 @@ namespace BusinessLayer{
 		if (0 != accountVector.size())
 		{
 			double curBalance = 0;
+			std::string number = "";
 			for each (auto item in accountVector)
 			{
 				curBalance = 0;
+				number = "";
 				curBalance = std::get<3>(item);
-				if (curBalance > 0)
+				number = std::get<1>(item);
+				if (0 == number.substr(3, 2).compare("00"))
 				{
-					active += curBalance;
-				}
-				else
-				{
-					passive += curBalance;
+					if (curBalance > 0)
+					{
+						active += curBalance;
+					}
+					else
+					{
+						passive += curBalance;
+					}
 				}
 			}
 		}

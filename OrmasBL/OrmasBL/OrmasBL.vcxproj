@@ -87,6 +87,7 @@
     <ClInclude Include="AccessViewClass.h" />
     <ClInclude Include="AccountClass.h" />
     <ClInclude Include="AccountHistoryClass.h" />
+    <ClInclude Include="CloseOfMonth.h" />
     <ClInclude Include="EntrySubccountRelationClass.h" />
     <ClInclude Include="AccountTypeClass.h" />
     <ClInclude Include="AllClassHeaders.h" />
@@ -337,6 +338,7 @@
     <ClCompile Include="SalaryClass.cpp" />
     <ClCompile Include="SalaryTypeClass.cpp" />
     <ClCompile Include="SalaryViewClass.cpp" />
+    <ClCompile Include="CloseOfMonth.cpp" />
     <ClCompile Include="SpecificationClass.cpp" />
     <ClCompile Include="SpecificationListClass.cpp" />
     <ClCompile Include="SpecificationListViewClass.cpp" />

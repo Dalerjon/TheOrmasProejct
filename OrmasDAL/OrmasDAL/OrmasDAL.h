@@ -11,8 +11,8 @@ namespace DataLayer{
 	class OrmasDal{
 	public:
 		//class constructors
-		OrmasDal(ConnectionString conn, PGconn *dbCon);
-		OrmasDal(const OrmasDal &oDAL){ dbCon = oDAL.dbCon; connString = oDAL.connString; }
+		OrmasDal(ConnectionString connection, PGconn *dbConection);
+		OrmasDal(const OrmasDal &ormasDAL);
 		OrmasDal();
 		~OrmasDal();
 		
@@ -52,6 +52,9 @@ namespace DataLayer{
 		std::vector<consumeRawListViewCollection> GetConsumeRawList(std::string& errorMessage, std::string filter = std::string());
 		std::vector<consumeRawsViewCollection> GetConsumeRaws(std::string& errorMessage, std::string filter = std::string());
 		std::vector<currenciesCollection> GetCurrencies(std::string& errorMessage, std::string filter = std::string());
+		std::vector<divisionAccountCollection> GetDivisionAccount(std::string& errorMessage, std::string filter = std::string());
+		std::vector<divisionEmployeeCollection> GetDivisionEmployee(std::string& errorMessage, std::string filter = std::string());
+		std::vector<divisionsCollection> GetDivisions(std::string& errorMessage, std::string filter = std::string());
 		std::vector<employeesViewCollection> GetEmployees(std::string& errorMessage, std::string filter = std::string());
 		std::vector<entriesViewCollection> GetEntries(std::string& errorMessage, std::string filter = std::string());
 		std::vector<entrySubaccountCollection> GetEntrySubaccount(std::string& errorMessage, std::string filter = std::string());
@@ -140,13 +143,14 @@ namespace DataLayer{
 		bool CreateConsumeRawList(int clID, int cpID, int pID, double clCount, double clSum, int sID, int cID, std::string& errorMessage);
 		bool CreateConsumeRaw(int cID, int uID, std::string cDate, std::string cExecDate, int seID, double cCount, double cSum, int sID, int curID, std::string& errorMessage);
 		bool CreateCurrency(int cID, int cCode, std::string cShortName, std::string cName, int cUnit, bool cMainTrade, std::string& errorMessage);
+		bool CreateDivisionAccount(int daID, int dID, int aID,  std::string cShortName, std::string cName, int cUnit, bool cMainTrade, std::string& errorMessage);
 		bool CreateEmployee(int uID, int pID, std::string eBirthDate, std::string eHireDate, std::string& errorMessage);
 		bool CreateEntry(int eID, std::string eDate, int daID, double eValue, int caID, std::string& errorMessage);
 		bool CreateEntryRouting(int erID, std::string eOperation, int daNumber, int caNumber, std::string& errorMessage);
 		bool CreateEntrySubaccount(int eID, int sID, std::string& errorMessage);
 		bool CreateFinancialReport(int fID, double acc_44010, double acc_55010, double acc_552, double acc_55270, double acc_553,
 			double acc_55321, double acc_44020_90, double acc_66010_66110, double acc_66020_66120, double acc_66040_66140,
-			double acc_66050_66150, double acc_66060_66160, double acc_66070_66170, double tax, std::string ahFrom, std::string ahTill, std::string& errorMessage);
+			double acc_66050_66150, double acc_66060_66160, double acc_66130, double acc_66070_66170, double tax, std::string ahFrom, std::string ahTill, std::string& errorMessage);
 		bool CreateInventorizationList(int ilID, int iID, int pID, double ilCount, double ilSum, int sID, int cID, std::string& errorMessage);
 		bool CreateInventorization(int iID, int uID, std::string iDate, std::string iExecDate, int seID, double iCount, double iSum, int sID, int cID, std::string& errorMessage);
 		bool CreateJobprice(int jID, int pID, double jValue, int cID, double jVolume, int mID, int psID, std::string& errorMessage);
@@ -341,7 +345,7 @@ namespace DataLayer{
 		bool UpdateEntryRouting(int erID, std::string eOperation, int daNumber, int caNumber, std::string& errorMessage);
 		bool UpdateFinancialReport(int fID, double acc_44010, double acc_55010, double acc_552, double acc_55270, double acc_553,
 			double acc_55321, double acc_44020_90, double acc_66010_66110, double acc_66020_66120, double acc_66040_66140,
-			double acc_66050_66150, double acc_66060_66160, double acc_66070_66170, double tax, std::string ahFrom, std::string ahTill, std::string& errorMessage);
+			double acc_66050_66150, double acc_66060_66160, double acc_66130, double acc_66070_66170, double tax, std::string ahFrom, std::string ahTill, std::string& errorMessage);
 		bool UpdateInventorizationList(int ilID, int iID, int pID, double ilCount, double ilSum, int sID, int cID, std::string& errorMessage);
 		bool UpdateInventorization(int iID, int uID, std::string iDate, std::string iExecDate, int seID, double iCount, double iSum, int sID, int cID, std::string& errorMessage);
 		bool UpdateJobprice(int jID, int pID, double jValue, int cID, double jVolume, int mID, int psID, std::string& errorMessage);
@@ -440,18 +444,19 @@ namespace DataLayer{
 		std::string GetFilterForEntrySubaccount(int eID, int saID);
 		std::string GetFilterForFinancialReport(int fID, double acc_44010, double acc_55010, double acc_552, double acc_55270, double acc_553,
 			double acc_55321, double acc_44020_90, double acc_66010_66110, double acc_66020_66120, double acc_66040_66140,
-			double acc_66050_66150, double acc_66060_66160, double acc_66070_66170, double tax, std::string ahFrom, std::string ahTill);
+			double acc_66050_66150, double acc_66060_66160, double acc_66130, double acc_66070_66170, double tax, std::string ahFrom, std::string ahTill);
 		std::string GetFilterForInventorizationList(int ilID, int iID, int pID, double ilCount, double ilSum, int sID, int cID);
 		std::string GetFilterForInventorization(int iID, int uID, std::string iDate, std::string iExecDate, int seID, double iCount, double iSum, int sID, int cID);
 		std::string GetFilterForJobprice(int jID, int pID, double jValue, int cID, double jVolume, int mID, int psID);
 		std::string GetFilterForJobsheet(int jID, std::string jDate, double jCount, int pID, int eID);
+		std::string GetFilterForJobsheetForPeriod(int jID, std::string jDate, double jCount, int pID, int eID, std::string fromDate, std::string toDate);
 		std::string GetFilterForLocation(int lID, std::string lCountryName, std::string lCountryCode, std::string lRegionName
 			, std::string lCityName);
 		std::string GetFilterForMeasure(int mID, std::string mName, std::string mShortName, int mUnit);
 		std::string GetFilterForNetCost(int ncID, std::string ncDate, double ncValue, int cID, int pID, bool ncIsOutdated);
 		std::string GetFilterForOrderList(int olID, int oID, int pID, double olCount, double olSum, int sID, int cID);
 		std::string GetFilterForOrder(int oID, int uID, std::string oDate, std::string oExecDate, int eID, double oCount, double oSum, int sID, int cID);
-		std::string GetFilterForOrder(int oID, int uID, std::string oDate, std::string oExecDate, int eID, double oCount, double oSum, int sID, int cID, std::string fromDate, std::string toDate);
+		std::string GetFilterForOrderForPeriod(int oID, int uID, std::string oDate, std::string oExecDate, int eID, double oCount, double oSum, int sID, int cID, std::string fromDate, std::string toDate);
 		std::string GetFilterForOrderRawList(int olID, int oID, int pID, double olCount, double olSum, int sID, int cID);
 		std::string GetFilterForOrderRaw(int oID, int pID, std::string oDate, std::string oExecDate, int eID, double oCount, double oSum, int sID, int cID);
 		std::string GetFilterForPayment(int pID, std::string pDate, double pValue, int uID, int cID);
@@ -464,7 +469,10 @@ namespace DataLayer{
 		std::string GetFilterForProductType(int pTypeID, std::string pTypeName, std::string pTypeShortName, std::string pTypeCode);
 		std::string GetFilterForProduction(int pID, std::string pProductionDate, std::string pExpiryDate, std::string pSessionStart,
 			std::string pSessionEnd);
+		std::string GetFilterForProductionForPeriod(int pID, std::string pProductionDate, std::string pExpiryDate, std::string pSessionStart,
+			std::string pSessionEnd, std::string fromDate, std::string toDate);
 		std::string GetFilterForProductionList(int plID, int pID, int prodID, double plCount, double plSum, int sID, int cID);
+		std::string GetFilterForProductionListInEnum(int plID, int pID, int prodID, double plCount, double plSum, int sID, int cID, std::vector<int> vecProdID);
 		std::string GetFilterForProductionConsumeRawList(int clID, int cpID, int pID, double clCount, double clSum, int sID, int cID);
 		std::string GetFilterForProductionConsumeRaw(int cID, int uID, std::string cDate, std::string cExecDate, int seID, double cCount, double cSum, int sID, int curID);
 		std::string GetFilterForProductionPlanList(int pplID, int ppID, int pID, double pplCount, double pplSum, int sID, int cID);
@@ -502,6 +510,7 @@ namespace DataLayer{
 		std::string GetFilterForTax(int tID, std::string taxName, std::string taxCode, double fixedValue, int percentValue,
 			std::string formulaValue);
 		std::string GetFilterForTimesheet(int tID, int sID, double tWorkedTime, std::string tDate);
+		std::string GetFilterForTimesheetForPeriod(int tID, int sID, double tWorkedTime, std::string tDate, std::string fromDate, std::string toDate);
 		std::string GetFilterForTransportList(int tlID, int tID, int pID, double tlCount, double tlSum, int sID, int cID);
 		std::string GetFilterForTransport(int tID, int uID, std::string tDate, std::string tExecDate, int seID, double tCount, double tSum, int sID, int cID);
 		std::string GetFilterForUser(int uID, std::string uEmail, std::string uName, std::string uSurname, std::string uPhone, std::string uAddress,
@@ -513,22 +522,22 @@ namespace DataLayer{
 		std::string GetFilterForWriteOffRaw(int tID, int uID, std::string rDate, int seID, double rCount, double rSum, int sID, int cID);
 
 		//overloaded  operators
-		OrmasDal& operator=(const OrmasDal& od)
+		OrmasDal& operator=(const OrmasDal& ormasDal)
 		{
-			if (this == &od)
+			if (this == &ormasDal)
 			{
 				return *this;
 			}
 			else
 			{
-				dbCon = od.dbCon;
-				connString = od.connString;
+				dbConection = ormasDal.dbConection;
+				connectionString = ormasDal.connectionString;
 			}
 			return *this;
 		}
 	private:
-		PGconn *dbCon;
-		ConnectionString connString;
+		PGconn *dbConection;
+		ConnectionString connectionString;
 	};
 }
 

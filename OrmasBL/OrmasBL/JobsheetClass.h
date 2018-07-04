@@ -42,6 +42,7 @@ namespace BusinessLayer{
 
 		//Generate filter string for class
 		std::string GenerateFilter(DataLayer::OrmasDal& ormasDal);
+		std::string GenerateFilterForPeriod(DataLayer::OrmasDal& ormasDal, std::string fromDate, std::string toDate);
 		bool GetJobsheetByID(DataLayer::OrmasDal& ormasDal, int jID, std::string& errorMessage);
 		bool IsEmpty();
 		void Clear();

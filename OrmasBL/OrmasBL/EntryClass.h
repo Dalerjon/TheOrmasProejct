@@ -51,6 +51,7 @@ namespace BusinessLayer{
 		bool EntryRoutingValidation(DataLayer::OrmasDal& ormasDal, int daID, int caID, std::string& errorMessage);
 		bool DebitAccount(DataLayer::OrmasDal& ormasDal, int accountID, double value);
 		bool CreditAccount(DataLayer::OrmasDal& ormasDal, int accountID, double value);
+		bool ReCalculateParentAccount(DataLayer::OrmasDal& ormasDal, int dAccID, int cAccID, double value, std::string& errorMessage);
 	};
 }
 

@@ -71,6 +71,7 @@ private slots :
 	void OpenCompanyAccountForm();
 	void OpenEntryForm();
 	void OpenEntryRoutingForm();
+	void OpenCloseOfMonthForm();
 	
 	void OpenPaymentForm();
 	void OpenRefundForm();
@@ -88,6 +89,8 @@ private slots :
 	void OpenInventorizationForm();
 
 	void CompanyBalanceInfo();
+	void FinancialReportForm();
+	void CompanyBalanceForm();
 
 	void OpenCompanyForm();
 	void OpenCurrencyForm();

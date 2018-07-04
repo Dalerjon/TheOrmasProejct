@@ -40,6 +40,7 @@ public:
     QLabel *maxCountLb;
     QPushButton *nextBtn;
     QSpacerItem *horizontalSpacer;
+    QPushButton *viewBtn;
     QPushButton *createBtn;
     QPushButton *editBtn;
     QPushButton *deleteBtn;
@@ -125,6 +126,11 @@ public:
         horizontalSpacer = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
 
         horizontalLayout->addItem(horizontalSpacer);
+
+        viewBtn = new QPushButton(DataForm);
+        viewBtn->setObjectName(QStringLiteral("viewBtn"));
+
+        horizontalLayout->addWidget(viewBtn);
 
         createBtn = new QPushButton(DataForm);
         createBtn->setObjectName(QStringLiteral("createBtn"));
@@ -279,6 +285,7 @@ public:
         fromLb->setText(QApplication::translate("DataForm", "from", 0));
         maxCountLb->setText(QString());
         nextBtn->setText(QApplication::translate("DataForm", ">", 0));
+        viewBtn->setText(QApplication::translate("DataForm", "View", 0));
         createBtn->setText(QApplication::translate("DataForm", "Create", 0));
         editBtn->setText(QApplication::translate("DataForm", "Edit", 0));
         deleteBtn->setText(QApplication::translate("DataForm", "Delete", 0));

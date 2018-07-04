@@ -192,6 +192,9 @@ INSERT INTO "OrmasSchema".access_items(
 INSERT INTO "OrmasSchema".access_items(
             access_item_id, access_item_eng, access_item_ru, access_division)
     VALUES ((SELECT nextval('"OrmasSchema".id_seq')), 'actionEntryRouting', 'actionEntryRouting', 'MENUITEM');
+INSERT INTO "OrmasSchema".access_items(
+            access_item_id, access_item_eng, access_item_ru, access_division)
+    VALUES ((SELECT nextval('"OrmasSchema".id_seq')), 'actionCloseOfMonth', 'actionCloseOfMonth', 'MENUITEM');
 ---------------------------------------------------------------------------------------------------
 INSERT INTO "OrmasSchema".access_items(
             access_item_id, access_item_eng, access_item_ru, access_division)
@@ -237,6 +240,12 @@ INSERT INTO "OrmasSchema".access_items(
 INSERT INTO "OrmasSchema".access_items(
             access_item_id, access_item_eng, access_item_ru, access_division)
     VALUES ((SELECT nextval('"OrmasSchema".id_seq')), 'actionCompanyBalanceInfo', 'actionCompanyBalanceInfo', 'MENUITEM');
+INSERT INTO "OrmasSchema".access_items(
+            access_item_id, access_item_eng, access_item_ru, access_division)
+    VALUES ((SELECT nextval('"OrmasSchema".id_seq')), 'actionFinancialReport', 'actionFinancialReport', 'MENUITEM');
+INSERT INTO "OrmasSchema".access_items(
+            access_item_id, access_item_eng, access_item_ru, access_division)
+    VALUES ((SELECT nextval('"OrmasSchema".id_seq')), 'actionCompanyBalance', 'actionCompanyBalance', 'MENUITEM');
 -------------------------------------------------------------------------------------------------------------	
 INSERT INTO "OrmasSchema".access_items(
             access_item_id, access_item_eng, access_item_ru, access_division)

@@ -161,6 +161,7 @@
     <addaction name="actionCompanyAccounts"/>
     <addaction name="actionEntry"/>
     <addaction name="actionEntryRouting"/>
+    <addaction name="actionCloseOfMonth"/>
    </widget>
    <widget class="QMenu" name="menuStock">
     <property name="title">
@@ -190,6 +191,8 @@
      <string>Reports</string>
     </property>
     <addaction name="actionCompanyBalanceInfo"/>
+    <addaction name="actionFinancialReport"/>
+    <addaction name="actionCompanyBalance"/>
    </widget>
    <addaction name="menuUsers"/>
    <addaction name="menuProducts"/>
@@ -578,6 +581,21 @@
   <action name="actionReworkRaws">
    <property name="text">
     <string>Rework raws</string>
+   </property>
+  </action>
+  <action name="actionCloseOfMonth">
+   <property name="text">
+    <string>Close of month</string>
+   </property>
+  </action>
+  <action name="actionFinancialReport">
+   <property name="text">
+    <string>Financial report</string>
+   </property>
+  </action>
+  <action name="actionCompanyBalance">
+   <property name="text">
+    <string>Company balance</string>
    </property>
   </action>
  </widget>

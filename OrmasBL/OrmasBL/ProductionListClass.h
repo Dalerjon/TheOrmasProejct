@@ -54,6 +54,7 @@ namespace BusinessLayer
 
 		//Generate filter string for class
 		std::string GenerateFilter(DataLayer::OrmasDal& ormasDal);
+		std::string GenerateFilterForEnum(DataLayer::OrmasDal& ormasDal, std::vector<int> vecProdnID);
 		bool GetProductionListByID(DataLayer::OrmasDal& ormasDal, int pID, std::string& errorMessage);
 		bool IsEmpty();
 		void Clear();

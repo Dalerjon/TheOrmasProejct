@@ -155,6 +155,15 @@ namespace BusinessLayer
 		}
 		return "";
 	}
+	
+	std::string ProductionList::GenerateFilterForEnum(DataLayer::OrmasDal& ormasDal, std::vector<int> vecProdnID)
+	{
+		if (vecProdnID.size()>0)
+		{
+			return ormasDal.GetFilterForProductionListInEnum(id, productionID, productID, count, sum, statusID, currencyID, vecProdnID);
+		}
+		return "";
+	}
 
 	bool ProductionList::GetProductionListByID(DataLayer::OrmasDal& ormasDal, int pID, std::string& errorMessage)
 	{
