@@ -7,20 +7,23 @@ namespace BusinessLayer{
 	class BalancePaymentRelation
 	{
 	protected:
+		int id = 0;
 		int balanceID = 0;
 		int paymentID = 0;
 	public:
 		BalancePaymentRelation();
-		BalancePaymentRelation(int bID, int pID) : balanceID(bID), paymentID(pID){};
+		BalancePaymentRelation(int bpID, int bID, int pID) :id(bpID), balanceID(bID), paymentID(pID){};
 		BalancePaymentRelation(DataLayer::balancePaymentCollection);
 		~BalancePaymentRelation(){};
 
 		std::string errorMessage = "";
 		//Access class Accessors
+		int GetID();
 		int GetBalanceID();
 		int GetPaymentID();
 
 		//Access class Mutators
+		void SetID(int);
 		void SetBalanceID(int);
 		void SetPaymentID(int);
 

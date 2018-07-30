@@ -5,13 +5,20 @@
 namespace BusinessLayer{
 	BalanceWithdrawalRelation::BalanceWithdrawalRelation(DataLayer::balanceWithdrawalCollection bwCollection)
 	{
-		balanceID = std::get<0>(bwCollection);
-		withdrawalID = std::get<1>(bwCollection);
+		id = std::get<0>(bwCollection);
+		balanceID = std::get<1>(bwCollection);
+		withdrawalID = std::get<2>(bwCollection);
 	}
 	BalanceWithdrawalRelation::BalanceWithdrawalRelation()
 	{
+		id = 0;
 		balanceID = 0;
 		withdrawalID = 0;
+	}
+
+	int BalanceWithdrawalRelation::GetID()
+	{
+		return id;
 	}
 
 	int BalanceWithdrawalRelation::GetBalanceID()
@@ -24,6 +31,10 @@ namespace BusinessLayer{
 		return withdrawalID;
 	}
 
+	void BalanceWithdrawalRelation::SetID(int bwID)
+	{
+		id = bwID;
+	}
 	void BalanceWithdrawalRelation::SetBalanceID(int bID)
 	{
 		balanceID = bID;
@@ -37,10 +48,11 @@ namespace BusinessLayer{
 	{
 		if (IsDuplicate(ormasDal, bID, wID, errorMessage))
 			return false;
+		id = ormasDal.GenerateID();
 		balanceID = bID;
 		withdrawalID = wID;
 
-		if (ormasDal.CreateBalanceWithdrawal(balanceID, withdrawalID, errorMessage))
+		if (ormasDal.CreateBalanceWithdrawal(id, balanceID, withdrawalID, errorMessage))
 		{
 			return true;
 		}
@@ -54,7 +66,8 @@ namespace BusinessLayer{
 	{
 		if (IsDuplicate(ormasDal, errorMessage))
 			return false;
-		if (ormasDal.CreateBalanceWithdrawal(balanceID, withdrawalID, errorMessage))
+		id = ormasDal.GenerateID();
+		if (ormasDal.CreateBalanceWithdrawal(id, balanceID, withdrawalID, errorMessage))
 		{
 			return true;
 		}
@@ -82,9 +95,9 @@ namespace BusinessLayer{
 
 	std::string BalanceWithdrawalRelation::GenerateFilter(DataLayer::OrmasDal& ormasDal)
 	{
-		if (0 != balanceID || 0 != withdrawalID)
+		if ( 0 != id || 0 != balanceID || 0 != withdrawalID)
 		{
-			return ormasDal.GetFilterForBalanceWithdrawal(balanceID, withdrawalID);
+			return ormasDal.GetFilterForBalanceWithdrawal(id, balanceID, withdrawalID);
 		}
 		return "";
 	}
@@ -128,13 +141,14 @@ namespace BusinessLayer{
 
 	bool BalanceWithdrawalRelation::IsEmpty()
 	{
-		if (0 == balanceID && 0 == withdrawalID)
+		if (0 == id && 0 == balanceID && 0 == withdrawalID)
 			return true;
 		return false;
 	}
 
 	void BalanceWithdrawalRelation::Clear()
 	{
+		id = 0;
 		balanceID = 0;
 		withdrawalID = 0;
 	}

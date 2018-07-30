@@ -14,6 +14,7 @@ namespace BusinessLayer{
 		debitingAccountID = std::get<2>(eCollection);
 		value = std::get<3>(eCollection);
 		creditingAccountID = std::get<4>(eCollection);
+		description = std::get<5>(eCollection);
 	}
 	Entry::Entry()
 	{
@@ -21,6 +22,7 @@ namespace BusinessLayer{
 		debitingAccountID = 0;
 		value = 0.0;
 		creditingAccountID = 0;
+		description = "";
 	}
 	int Entry::GetID()
 	{
@@ -45,6 +47,11 @@ namespace BusinessLayer{
 	int Entry::GetCreditingAccountID()
 	{
 		return creditingAccountID;
+	}
+
+	std::string Entry::GetDescription()
+	{
+		return description;
 	}
 
 	void Entry::SetID(int eID)
@@ -72,9 +79,14 @@ namespace BusinessLayer{
 		creditingAccountID = caID;
 	}
 
+	void Entry::SetDescription(std::string eDescription)
+	{
+		description = eDescription;
+	}
+
 
 	bool Entry::CreateEntry(DataLayer::OrmasDal &ormasDal, std::string eDate, int daID, double eValue, int caID, 
-		std::string& errorMessage, bool corrEntry)
+		std::string eDescription, std::string& errorMessage, bool corrEntry)
 	{
 		if (IsDuplicate(ormasDal, eDate, daID, eValue, caID, errorMessage))
 			return false;
@@ -88,6 +100,7 @@ namespace BusinessLayer{
 		debitingAccountID = daID;
 		value = eValue;
 		creditingAccountID = caID;
+		description = eDescription;
 		ormasDal.StartTransaction(errorMessage);
 		Subaccount dSAcc;
 		Subaccount cSAcc;
@@ -115,7 +128,7 @@ namespace BusinessLayer{
 			cSAccParentID = cSAcc.GetParentAccountID();
 			errorMessage.clear();
 		}
-		if (0 != id && ormasDal.CreateEntry(id, date, dSAccParentID, value, cSAccParentID, errorMessage))
+		if (0 != id && ormasDal.CreateEntry(id, date, dSAccParentID, value, cSAccParentID, eDescription, errorMessage))
 		{
 			if (DebitAccount(ormasDal, debitingAccountID, value) && CreditAccount(ormasDal, creditingAccountID, value))
 			{
@@ -190,7 +203,7 @@ namespace BusinessLayer{
 			cSAccParentID = cSAcc.GetParentAccountID();
 			errorMessage.clear();
 		}
-		if (0 != id && ormasDal.CreateEntry(id, date, dSAccParentID, value, cSAccParentID, errorMessage))
+		if (0 != id && ormasDal.CreateEntry(id, date, dSAccParentID, value, cSAccParentID, description, errorMessage))
 		{
 			if (DebitAccount(ormasDal, debitingAccountID, value) && CreditAccount(ormasDal, creditingAccountID, value))
 			{
@@ -246,14 +259,15 @@ namespace BusinessLayer{
 	}
 
 	bool Entry::UpdateEntry(DataLayer::OrmasDal &ormasDal, std::string eDate, int daID, double eValue, int caID, 
-		std::string& errorMessage, bool corrEntry)
+		std::string eDescription, std::string& errorMessage, bool corrEntry)
 	{
 		date = eDate;
 		debitingAccountID = daID;
 		value = eValue;
 		creditingAccountID = caID;
+		description = eDescription;
 		ormasDal.StartTransaction(errorMessage);
-		if (0 != id && ormasDal.UpdateEntry(id, date, debitingAccountID, value, creditingAccountID, errorMessage))
+		if (0 != id && ormasDal.UpdateEntry(id, date, debitingAccountID, value, creditingAccountID, description, errorMessage))
 		{
 			ormasDal.CommitTransaction(errorMessage);
 			return true;
@@ -268,7 +282,7 @@ namespace BusinessLayer{
 	bool Entry::UpdateEntry(DataLayer::OrmasDal& ormasDal, std::string& errorMessage, bool corrEntry)
 	{
 		ormasDal.StartTransaction(errorMessage);
-		if (0 != id && ormasDal.UpdateEntry(id, date, debitingAccountID, value, creditingAccountID, errorMessage))
+		if (0 != id && ormasDal.UpdateEntry(id, date, debitingAccountID, value, creditingAccountID, description, errorMessage))
 		{
 			ormasDal.CommitTransaction(errorMessage);
 			return true;
@@ -283,9 +297,9 @@ namespace BusinessLayer{
 
 	std::string Entry::GenerateFilter(DataLayer::OrmasDal& ormasDal)
 	{
-		if (0 != id || date.empty() || 0.0 != value || 0 != debitingAccountID || 0 != creditingAccountID)
+		if (0 != id || !date.empty() || 0.0 != value || 0 != debitingAccountID || 0 != creditingAccountID || !description.empty())
 		{
-			return ormasDal.GetFilterForEntry(id, date, debitingAccountID, value, creditingAccountID);
+			return ormasDal.GetFilterForEntry(id, date, debitingAccountID, value, creditingAccountID, description);
 		}
 		return "";
 	}
@@ -302,6 +316,7 @@ namespace BusinessLayer{
 			debitingAccountID = std::get<5>(entryVector.at(0));
 			value = std::get<3>(entryVector.at(0));
 			creditingAccountID = std::get<6>(entryVector.at(0));
+			description = std::get<7>(entryVector.at(0));
 			return true;
 		}
 		else
@@ -313,7 +328,7 @@ namespace BusinessLayer{
 
 	bool Entry::IsEmpty()
 	{
-		if (0 == id && date.empty() && 0.0 == value && 0 == debitingAccountID && 0 == creditingAccountID)
+		if (0 == id && date.empty() && 0.0 == value && 0 == debitingAccountID && 0 == creditingAccountID && description.empty())
 			return true;
 		return false;
 	}
@@ -325,6 +340,7 @@ namespace BusinessLayer{
 		value = 0;
 		debitingAccountID = 0;
 		creditingAccountID = 0;
+		description.clear();
 	}
 
 	bool Entry::IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string eDate, int daID, double eValue, int caID, std::string& errorMessage)

@@ -7,20 +7,23 @@ namespace BusinessLayer{
 	class BalanceWithdrawalRelation
 	{
 	protected:
+		int id = 0;
 		int balanceID = 0;
 		int withdrawalID = 0;
 	public:
 		BalanceWithdrawalRelation();
-		BalanceWithdrawalRelation(int bID, int wID) : balanceID(bID), withdrawalID(wID){};
+		BalanceWithdrawalRelation(int bwID, int bID, int wID) : id(bwID), balanceID(bID), withdrawalID(wID){};
 		BalanceWithdrawalRelation(DataLayer::balanceWithdrawalCollection);
 		~BalanceWithdrawalRelation(){};
 
 		std::string errorMessage = "";
 		//Access class Accessors
+		int GetID();
 		int GetBalanceID();
 		int GetWithdrawalID();
 
 		//Access class Mutators
+		void SetID(int);
 		void SetBalanceID(int);
 		void SetWithdrawalID(int);
 

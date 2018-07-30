@@ -111,6 +111,10 @@ private slots:
 	void UdpCurDlg();
 	void DelCurDlg();
 
+	void CrtDivDlg();
+	void UdpDivDlg();
+	void DelDivDlg();
+
 	void CrtEmpDlg();
 	void UdpEmpDlg();
 	void DelEmpDlg();

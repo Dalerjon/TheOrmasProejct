@@ -29,8 +29,8 @@ public:
 	void SetID(int ID, QString childName);
 private:
 	BusinessLayer::Entry *entry = new BusinessLayer::Entry();
-	void SetEntryParams(QString, int, double, int, int = 0);
-	void FillEditElements(QString, int, double, int);
+	void SetEntryParams(QString, int, double, int, QString, int = 0);
+	void FillEditElements(QString, int, double, int, QString);
 	QDoubleValidator *vDouble = nullptr;
 	QIntValidator *vInt = nullptr;
 	QWidget* parentForm;

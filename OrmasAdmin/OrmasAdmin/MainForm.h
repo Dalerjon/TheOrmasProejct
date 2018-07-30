@@ -101,6 +101,7 @@ private slots :
 	void OpenStatusRuleForm();
 	void OpenRelationForm();
 	void OpenRelationTypeForm();
+	void OpenDivisionForm();
 	
 	void OpenAboutForm();
 

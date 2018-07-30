@@ -18,6 +18,9 @@ namespace BusinessLayer{
 		activated = std::get<11>(cCollection);
 		roleID = std::get<12>(cCollection);
 		positionID = std::get<13>(cCollection);
+		divisionEmployeeID = std::get<14>(cCollection);
+		divisionID = std::get<15>(cCollection);
+		isContract = std::get<16>(cCollection);
 	}
 
 	std::string EmployeeView::GetPositionName()
@@ -27,5 +30,20 @@ namespace BusinessLayer{
 	std::string EmployeeView::GetRoleName()
 	{
 		return roleName;
+	}
+
+	int EmployeeView::GetDivisionEmployeeID()
+	{
+		return divisionEmployeeID;
+	}
+
+	int EmployeeView::GetDivisionID()
+	{
+		return divisionID;
+	}
+
+	bool EmployeeView::GetIsContract()
+	{
+		return isContract;
 	}
 }

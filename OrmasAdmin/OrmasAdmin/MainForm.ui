@@ -110,6 +110,7 @@
     <addaction name="actionStatusRule"/>
     <addaction name="actionRelation"/>
     <addaction name="actionRelationType"/>
+    <addaction name="actionDivision"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
@@ -596,6 +597,11 @@
   <action name="actionCompanyBalance">
    <property name="text">
     <string>Company balance</string>
+   </property>
+  </action>
+  <action name="actionDivision">
+   <property name="text">
+    <string>Division</string>
    </property>
   </action>
  </widget>

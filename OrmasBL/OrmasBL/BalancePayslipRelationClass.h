@@ -6,20 +6,23 @@ namespace BusinessLayer{
 	class BalancePayslipRelation
 	{
 	protected:
+		int id = 0;
 		int balanceID = 0;
 		int payslipID = 0;
 	public:
 		BalancePayslipRelation();
-		BalancePayslipRelation(int bID, int pID) : balanceID(bID), payslipID(pID){};
+		BalancePayslipRelation(int bpID, int bID, int pID) :id(bpID), balanceID(bID), payslipID(pID){};
 		BalancePayslipRelation(DataLayer::balancePayslipCollection);
 		~BalancePayslipRelation(){};
 
 		std::string errorMessage = "";
 		//Access class Accessors
+		int GetID();
 		int GetBalanceID();
 		int GetPayslipID();
 
 		//Access class Mutators
+		void SetID(int);
 		void SetBalanceID(int);
 		void SetPayslipID(int);
 

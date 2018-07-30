@@ -5,13 +5,20 @@
 namespace BusinessLayer{
 	EntrySubaccountRelation::EntrySubaccountRelation(DataLayer::entrySubaccountCollection aeCollection)
 	{
-		entryID = std::get<0>(aeCollection);
-		subaccountID = std::get<1>(aeCollection);
+		id = std::get<0>(aeCollection);
+		entryID = std::get<1>(aeCollection);
+		subaccountID = std::get<2>(aeCollection);
 	}
 	EntrySubaccountRelation::EntrySubaccountRelation()
 	{
+		id = 0;
 		entryID = 0;
 		subaccountID = 0;
+	}
+
+	int EntrySubaccountRelation::GetID()
+	{
+		return id;
 	}
 
 	int EntrySubaccountRelation::GetSubaccountID()
@@ -24,6 +31,10 @@ namespace BusinessLayer{
 		return entryID;
 	}
 
+	void EntrySubaccountRelation::SetID(int esID)
+	{
+		id = esID;
+	}
 	void EntrySubaccountRelation::SetSubaccountID(int sID)
 	{
 		subaccountID = sID;
@@ -37,10 +48,11 @@ namespace BusinessLayer{
 	{
 		if (IsDuplicate(ormasDal, eID, sID, errorMessage))
 			return false;
+		id = ormasDal.GenerateID();
 		subaccountID = sID;
 		entryID = eID;
 
-		if (ormasDal.CreateEntrySubaccount(entryID, subaccountID, errorMessage))
+		if (ormasDal.CreateEntrySubaccount(id, entryID, subaccountID, errorMessage))
 		{
 			return true;
 		}
@@ -54,7 +66,8 @@ namespace BusinessLayer{
 	{
 		if (IsDuplicate(ormasDal, errorMessage))
 			return false;
-		if (ormasDal.CreateEntrySubaccount(entryID, subaccountID, errorMessage))
+		id = ormasDal.GenerateID();
+		if (ormasDal.CreateEntrySubaccount(id, entryID, subaccountID, errorMessage))
 		{
 			return true;
 		}
@@ -82,9 +95,9 @@ namespace BusinessLayer{
 
 	std::string EntrySubaccountRelation::GenerateFilter(DataLayer::OrmasDal& ormasDal)
 	{
-		if (0 != subaccountID || 0 != entryID)
+		if (0 != id || 0 != subaccountID || 0 != entryID)
 		{
-			return ormasDal.GetFilterForEntrySubaccount(entryID, subaccountID);
+			return ormasDal.GetFilterForEntrySubaccount(id, entryID, subaccountID);
 		}
 		return "";
 	}
@@ -128,13 +141,14 @@ namespace BusinessLayer{
 
 	bool EntrySubaccountRelation::IsEmpty()
 	{
-		if (0 == subaccountID && 0 == entryID)
+		if (0 == id && 0 == subaccountID && 0 == entryID)
 			return true;
 		return false;
 	}
 
 	void EntrySubaccountRelation::Clear()
 	{
+		id = 0;
 		subaccountID = 0;
 		entryID = 0;
 	}

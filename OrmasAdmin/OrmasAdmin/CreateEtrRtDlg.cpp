@@ -36,8 +36,8 @@ CreateEtrRtDlg::~CreateEtrRtDlg()
 void CreateEtrRtDlg::SetEntryRoutingParams(QString eOperation, int eDebit, int eCredit, int id)
 {
 	entryRouting->SetOperation(eOperation.toUtf8().constData());
-	entryRouting->SetDebit(eDebit);
-	entryRouting->SetCredit(eCredit);
+	entryRouting->SetDebitAccountID(eDebit);
+	entryRouting->SetCreditAccountID(eCredit);
 	entryRouting->SetID(id);
 }
 
@@ -85,8 +85,8 @@ void CreateEtrRtDlg::CreateEntryRouting()
 					QList<QStandardItem*> entryRoutingItem;
 					entryRoutingItem << new QStandardItem(QString::number(entryRouting->GetID()))
 						<< new QStandardItem(entryRouting->GetOperation().c_str())
-						<< new QStandardItem(QString::number(entryRouting->GetDebit()))
-						<< new QStandardItem(QString::number(entryRouting->GetCredit()));
+						<< new QStandardItem(QString::number(entryRouting->GetDebitAccountID()))
+						<< new QStandardItem(QString::number(entryRouting->GetCreditAccountID()));
 					QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
 					itemModel->appendRow(entryRoutingItem);
 				}
@@ -120,8 +120,8 @@ void CreateEtrRtDlg::EditEntryRouting()
 	errorMessage.clear();
 	if (0 != debitEdit->text().toInt() && 0 != creditEdit->text().toInt() && !operationEdit->text().isEmpty())
 	{
-		if (QString(entryRouting->GetOperation().c_str()) != operationEdit->text() || entryRouting->GetCredit() != creditEdit->text().toInt()
-			|| entryRouting->GetDebit() != debitEdit->text().toInt())
+		if (QString(entryRouting->GetOperation().c_str()) != operationEdit->text() || entryRouting->GetDebitAccountID() != creditEdit->text().toInt()
+			|| entryRouting->GetCreditAccountID() != debitEdit->text().toInt())
 		{
 			DataForm *parentDataForm = (DataForm*) parentForm;
 			SetEntryRoutingParams(operationEdit->text(), debitEdit->text().toInt(), creditEdit->text().toInt(), entryRouting->GetID());
@@ -135,8 +135,8 @@ void CreateEtrRtDlg::EditEntryRouting()
 						QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
 						QModelIndex mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
 						itemModel->item(mIndex.row(), 1)->setText(entryRouting->GetOperation().c_str());
-						itemModel->item(mIndex.row(), 2)->setText(QString::number(entryRouting->GetDebit()));
-						itemModel->item(mIndex.row(), 3)->setText(QString::number(entryRouting->GetCredit()));
+						itemModel->item(mIndex.row(), 2)->setText(QString::number(entryRouting->GetDebitAccountID()));
+						itemModel->item(mIndex.row(), 3)->setText(QString::number(entryRouting->GetCreditAccountID()));
 						emit itemModel->dataChanged(mIndex, mIndex);
 					}
 				}

@@ -193,7 +193,7 @@ namespace BusinessLayer
 	{
 		if (0 != id || 0 != code || !name.empty() || !shortName.empty())
 		{
-			return ormasDal.GetFilterForCurrency(id, code, shortName, name, unit);
+			return ormasDal.GetFilterForCurrency(id, code, shortName, name, unit, mainTrade);
 		}
 		return "";
 	}

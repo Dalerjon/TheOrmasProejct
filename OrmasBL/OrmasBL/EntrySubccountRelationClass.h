@@ -7,20 +7,23 @@ namespace BusinessLayer{
 	class EntrySubaccountRelation
 	{
 	protected:
+		int id = 0;
 		int entryID = 0;
 		int subaccountID = 0;
 	public:
 		EntrySubaccountRelation();
-		EntrySubaccountRelation(int eID, int saID) : entryID(eID), subaccountID(saID){};
+		EntrySubaccountRelation(int esID, int eID, int saID) : id(esID), entryID(eID), subaccountID(saID){};
 		EntrySubaccountRelation(DataLayer::entrySubaccountCollection);
 		~EntrySubaccountRelation(){};
 
 		std::string errorMessage = "";
 		//Access class Accessors
+		int GetID();
 		int GetSubaccountID();
 		int GetEntryID();
 
 		//Access class Mutators
+		void SetID(int);
 		void SetSubaccountID(int);
 		void SetEntryID(int);
 

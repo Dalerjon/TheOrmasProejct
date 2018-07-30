@@ -11,10 +11,12 @@ namespace BusinessLayer{
 		int debitingAccountID = 0;
 		double value = 0.0;
 		int creditingAccountID = 0;
+		std::string description = "";
 	public:
 		Entry();
-		Entry(int eID, std::string eDate, int eDebitingAccountID, double eValue, int eCreditingAccountID) :id(eID), date(eDate), 
-			debitingAccountID(eDebitingAccountID), value(eValue), creditingAccountID(eCreditingAccountID){};
+		Entry(int eID, std::string eDate, int eDebitingAccountID, double eValue, int eCreditingAccountID, std::string eDescription) :
+			id(eID), date(eDate), debitingAccountID(eDebitingAccountID), value(eValue), creditingAccountID(eCreditingAccountID),
+			description(eDescription){};
 		Entry(DataLayer::entriesCollection);
 		~Entry(){};
 
@@ -25,6 +27,7 @@ namespace BusinessLayer{
 		int GetDebitingAccountID();
 		double GetValue();
 		int GetCreditingAccountID();
+		std::string GetDescription();
 
 		//Entry class Mutators
 		void SetID(int);
@@ -32,13 +35,14 @@ namespace BusinessLayer{
 		void SetDebitingAccountID(int);
 		void SetValue(double);
 		void SetCreditingAccountID(int);
+		void SetDescription(std::string);
 
 		// Create, delete and update Entry
 		bool CreateEntry(DataLayer::OrmasDal &ormasDal, std::string& errorMessage, bool corrEntry = false);
 		bool UpdateEntry(DataLayer::OrmasDal &ormasDal, std::string& errorMessage, bool corrEntry = false);
 		bool DeleteEntry(DataLayer::OrmasDal &ormasDal, std::string& errorMessage);
-		bool CreateEntry(DataLayer::OrmasDal &ormasDal, std::string eDate, int daID, double eValue, int caID, std::string& errorMessage, bool corrEntry = false);
-		bool UpdateEntry(DataLayer::OrmasDal &ormasDal, std::string eDate, int daID, double eValue, int caID, std::string& errorMessage, bool corrEntry = false);
+		bool CreateEntry(DataLayer::OrmasDal &ormasDal, std::string eDate, int daID, double eValue, int caID, std::string eDescription, std::string& errorMessage, bool corrEntry = false);
+		bool UpdateEntry(DataLayer::OrmasDal &ormasDal, std::string eDate, int daID, double eValue, int caID, std::string eDescription, std::string& errorMessage, bool corrEntry = false);
 
 		//Generate filter string for class
 		std::string GenerateFilter(DataLayer::OrmasDal& ormasDal);

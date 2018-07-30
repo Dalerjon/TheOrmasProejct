@@ -65,6 +65,10 @@
       <AdditionalLibraryDirectories>$(QTDIR)\lib;..\..\libs</AdditionalLibraryDirectories>
       <AdditionalDependencies>qtmaind.lib;Qt5Cored.lib;Qt5WebEngineWidgetsd.lib;Qt5WebEngineCored.lib;Qt5WebChanneld.lib;Qt5WebEngined.lib;Qt5Networkd.lib;Qt5Positioningd.lib;Qt5Qmld.lib;Qt5Quickd.lib;Qt5Guid.lib;Qt5Widgetsd.lib;Qt5PlatformSupport.lib;OrmasBLD.lib;OrmasDALD.lib;boost\libboost_system-vc120-mt-gd-1_61.lib;boost\libboost_filesystem-vc120-mt-gd-1_61.lib;libpqxx\libpq.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PostBuildEvent>
+      <Command>
+      </Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -146,8 +150,20 @@
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">moc_GenerateCmpBlcDlg.cpp</Outputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">moc_GenerateCmpBlcDlg.cpp</Outputs>
     </CustomBuild>
+    <ClInclude Include="ConfigParser.h" />
+    <CustomBuild Include="CreateDivDlg.h">
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\moc.exe"  "CreateDivDlg.h" -o "moc_CreateDivDlg.cpp"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\moc.exe"  "CreateDivDlg.h" -o "moc_CreateDivDlg.cpp"</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Geterating moc file form CreateDivDlg.h...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Geterating moc file form CreateDivDlg.h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">moc_CreateDivDlg.cpp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">moc_CreateDivDlg.cpp</Outputs>
+    </CustomBuild>
+    <ClInclude Include="TinyXML\tinystr.h" />
+    <ClInclude Include="TinyXML\tinyxml.h" />
     <ClInclude Include="ui_CloseOfMonthDlg.h" />
     <ClInclude Include="ui_CloseOfMonthInfoDlg.h" />
+    <ClInclude Include="ui_CreateDivDlg.h" />
     <ClInclude Include="ui_CreateTaxDlg.h" />
     <ClInclude Include="ui_DocForm.h" />
     <ClInclude Include="ui_GenerateCmpBlcDlg.h" />
@@ -892,6 +908,7 @@
     <ClCompile Include="ClcWagesDlg.cpp" />
     <ClCompile Include="CloseOfMonthDlg.cpp" />
     <ClCompile Include="CloseOfMonthInfoDlg.cpp" />
+    <ClCompile Include="ConfigParser.cpp" />
     <ClCompile Include="CreateAccDlg.cpp" />
     <ClCompile Include="CreateAccTpDlg.cpp" />
     <ClCompile Include="CreateAcsDlg.cpp" />
@@ -907,6 +924,7 @@
     <ClCompile Include="CreateConRDlg.cpp" />
     <ClCompile Include="CreateConRListDlg.cpp" />
     <ClCompile Include="CreateCurDlg.cpp" />
+    <ClCompile Include="CreateDivDlg.cpp" />
     <ClCompile Include="CreateEmpDlg.cpp" />
     <ClCompile Include="CreateEtrDlg.cpp" />
     <ClCompile Include="CreateEtrRtDlg.cpp" />
@@ -1045,6 +1063,10 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="moc_CreateCurDlg.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="moc_CreateDivDlg.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
     </ClCompile>
@@ -1333,6 +1355,18 @@
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="TinyXML\tinystr.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="TinyXML\tinyxml.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="TinyXML\tinyxmlerror.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="TinyXML\tinyxmlparser.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -2187,6 +2221,17 @@
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Generating ui_GenerateCmpBlcDlg.h file...</Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">ui_GenerateCmpBlcDlg.h</Outputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">ui_GenerateCmpBlcDlg.h</Outputs>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="CreateDivDlg.ui">
+      <FileType>Document</FileType>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\uic.exe"  "CreateDivDlg.ui" -o "ui_CreateDivDlg.h"</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Generating ui_CreateDivDlg.h file...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">ui_CreateDivDlg.h</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\uic.exe"  "CreateDivDlg.ui" -o "ui_CreateDivDlg.h"</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Generating ui_CreateDivDlg.h file...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">ui_CreateDivDlg.h</Outputs>
     </CustomBuild>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

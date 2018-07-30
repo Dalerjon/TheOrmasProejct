@@ -274,6 +274,9 @@ INSERT INTO "OrmasSchema".access_items(
 INSERT INTO "OrmasSchema".access_items(
             access_item_id, access_item_eng, access_item_ru, access_division)
     VALUES ((SELECT nextval('"OrmasSchema".id_seq')), 'actionRelationType', 'actionRelationType', 'MENUITEM');
+INSERT INTO "OrmasSchema".access_items(
+            access_item_id, access_item_eng, access_item_ru, access_division)
+    VALUES ((SELECT nextval('"OrmasSchema".id_seq')), 'actionDivision', 'actionDivision', 'MENUITEM');
 -------------------------------------------------------------------------------------------------------------
 INSERT INTO "OrmasSchema".access_items(
             access_item_id, access_item_eng, access_item_ru, access_division)

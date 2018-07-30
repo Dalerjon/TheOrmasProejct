@@ -6,20 +6,23 @@ namespace BusinessLayer{
 	class BalanceRefundRelation
 	{
 	protected:
+		int id = 0;
 		int balanceID = 0;
 		int refundID = 0;
 	public:
 		BalanceRefundRelation();
-		BalanceRefundRelation(int bID, int rID) : balanceID(bID), refundID(rID){};
+		BalanceRefundRelation(int brID, int bID, int rID) :id(brID), balanceID(bID), refundID(rID){};
 		BalanceRefundRelation(DataLayer::balanceRefundCollection);
 		~BalanceRefundRelation(){};
 
 		std::string errorMessage = "";
 		//Access class Accessors
+		int GetID();
 		int GetBalanceID();
 		int GetRefundID();
 
 		//Access class Mutators
+		void SetID(int);
 		void SetBalanceID(int);
 		void SetRefundID(int);
 

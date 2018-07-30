@@ -37,6 +37,7 @@ CreateEmpDlg::CreateEmpDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, QWi
 	QObject::connect(cancelBtn, &QPushButton::released, this, &CreateEmpDlg::Close);
 	QObject::connect(positionBtn, &QPushButton::released, this, &CreateEmpDlg::OpenPsnDlg);
 	QObject::connect(roleBtn, &QPushButton::released, this, &CreateEmpDlg::OpenRoleDlg);
+	InitComboBox();
 }
 
 CreateEmpDlg::~CreateEmpDlg()
@@ -97,6 +98,14 @@ void CreateEmpDlg::SetEmployeeParams(QString eEmail, QString eName, QString eSur
 	employee->SetID(id);
 }
 
+void CreateEmpDlg::SetDivisionEmployeeParams(int divisionID, int employeeID, QString isContract, int id)
+{
+	divisionEmployee->SetDivisionID(divisionID);
+	divisionEmployee->SetEmployeeID(employeeID);
+	divisionEmployee->SetIsContract(isContract == "true" ? true : false);
+	divisionEmployee->SetID(id);
+}
+
 void CreateEmpDlg::FillEditElements(QString eEmail, QString eName, QString eSurname, QString ePhone, QString eAddress,
 	int eRoleID, QString ePassword, QString eActivated, int ePositionID, QString eBirthDate, QString eHireNumber)
 {
@@ -124,6 +133,12 @@ void CreateEmpDlg::FillEditElements(QString eEmail, QString eName, QString eSurn
 	}
 }
 
+void CreateEmpDlg::FillEditElements(int divisionID, QString eIsContract)
+{
+	divisionCmbBox->setCurrentIndex(divisionID);
+	isContractChkBox->setChecked(eIsContract.compare("true") == 0 ? true : false);
+}
+
 bool CreateEmpDlg::FillDlgElements(QTableView* eTable)
 {
 	QModelIndex mIndex = eTable->selectionModel()->currentIndex();
@@ -141,6 +156,10 @@ bool CreateEmpDlg::FillDlgElements(QTableView* eTable)
 			eTable->model()->data(eTable->model()->index(mIndex.row(), 6)).toString().toUtf8().constData(),
 			eTable->model()->data(eTable->model()->index(mIndex.row(), 8)).toString().toUtf8().constData(),
 			eTable->model()->data(eTable->model()->index(mIndex.row(), 0)).toInt());
+		SetDivisionEmployeeParams(eTable->model()->data(eTable->model()->index(mIndex.row(), 15)).toInt(),
+			eTable->model()->data(eTable->model()->index(mIndex.row(), 0)).toInt(),
+			eTable->model()->data(eTable->model()->index(mIndex.row(), 16)).toString().toUtf8().constData(),
+			eTable->model()->data(eTable->model()->index(mIndex.row(), 14)).toInt());
 		FillEditElements(eTable->model()->data(eTable->model()->index(mIndex.row(), 10)).toString().toUtf8().constData(),
 			eTable->model()->data(eTable->model()->index(mIndex.row(), 1)).toString().toUtf8().constData(),
 			eTable->model()->data(eTable->model()->index(mIndex.row(), 2)).toString().toUtf8().constData(),
@@ -152,6 +171,8 @@ bool CreateEmpDlg::FillDlgElements(QTableView* eTable)
 			eTable->model()->data(eTable->model()->index(mIndex.row(), 13)).toInt(),
 			eTable->model()->data(eTable->model()->index(mIndex.row(), 6)).toString().toUtf8().constData(),
 			eTable->model()->data(eTable->model()->index(mIndex.row(), 8)).toString().toUtf8().constData());
+		FillEditElements(eTable->model()->data(eTable->model()->index(mIndex.row(), 15)).toInt(),
+			eTable->model()->data(eTable->model()->index(mIndex.row(), 16)).toString().toUtf8().constData());
 		return true;
 	}
 	else
@@ -163,7 +184,7 @@ bool CreateEmpDlg::FillDlgElements(QTableView* eTable)
 void CreateEmpDlg::CreateEmployee()
 {
 	errorMessage.clear();
-	if (!nameEdit->text().isEmpty() && !surnameEdit->text().isEmpty() && !phoneEdit->text().isEmpty()
+	if (!nameEdit->text().isEmpty() && !surnameEdit->text().isEmpty() && !phoneEdit->text().isEmpty() && !divisionCmbBox->currentText().isEmpty()
 		&& !addressEdit->text().isEmpty() && !birthDateEdit->text().isEmpty() && !hireDateEdit->text().isEmpty()
 		&& !passwordEdit->text().isEmpty() && !activatedCmbBox->currentText().isEmpty() && 0 != roleEdit->text().toInt() && 0 != positionEdit->text().toInt())
 	{
@@ -202,6 +223,25 @@ void CreateEmpDlg::CreateEmployee()
 		dialogBL->StartTransaction(errorMessage);
 		if (dialogBL->CreateEmployee(employee, errorMessage))
 		{
+			//division section
+			SetDivisionEmployeeParams(divisionCmbBox->currentData().toInt(), employee->GetID(), isContractChkBox->isChecked()? "true" : "false");
+			if (!dialogBL->CreateDivisionEmployeeRelation(divisionEmployee, errorMessage))
+			{
+				dialogBL->CancelTransaction(errorMessage);
+				if (errorMessage.empty())
+				{
+					QMessageBox::information(NULL, QString(tr("Warning")),
+						QString(tr("Divsion is not correct!")),
+						QString(tr("Ok")));
+				}
+				else
+				{
+					QMessageBox::information(NULL, QString(tr("Warning")),
+						QString(tr(errorMessage.c_str())),
+						QString(tr("Ok")));
+				}
+				return;
+			}
 			if (parentDataForm != nullptr)
 			{
 				if (!parentDataForm->IsClosed())
@@ -212,7 +252,6 @@ void CreateEmpDlg::CreateEmployee()
 					if (!role->GetRoleByID(dialogBL->GetOrmasDal(), employee->GetRoleID(), errorMessage)
 						|| !position->GetPositionByID(dialogBL->GetOrmasDal(), employee->GetPositionID(), errorMessage))
 					{
-						dialogBL->CancelTransaction(errorMessage);
 						dialogBL->CancelTransaction(errorMessage);
 						QMessageBox::information(NULL, QString(tr("Warning")),
 							QString(tr(errorMessage.c_str())),
@@ -237,7 +276,10 @@ void CreateEmpDlg::CreateEmployee()
 						<< new QStandardItem(employee->GetEmail().c_str())
 						<< new QStandardItem(employee->GetActivated() ? "true" : "false")
 						<< new QStandardItem(QString::number(employee->GetRoleID()))
-						<< new QStandardItem(QString::number(employee->GetPositionID()));
+						<< new QStandardItem(QString::number(employee->GetPositionID()))
+						<< new QStandardItem(QString::number(divisionEmployee->GetID()))
+						<< new QStandardItem(QString::number(divisionEmployee->GetDivisionID()))
+						<< new QStandardItem(divisionEmployee->GetIsContract()? "true" : "false");
 					QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
 					itemModel->appendRow(EmployeeItem);
 
@@ -272,7 +314,7 @@ void CreateEmpDlg::CreateEmployee()
 void CreateEmpDlg::EditEmployee()
 {
 	errorMessage.clear();
-	if (!nameEdit->text().isEmpty() && !surnameEdit->text().isEmpty() && !phoneEdit->text().isEmpty()
+	if (!nameEdit->text().isEmpty() && !surnameEdit->text().isEmpty() && !phoneEdit->text().isEmpty() && !divisionCmbBox->currentText().isEmpty()
 		&& !addressEdit->text().isEmpty() && !birthDateEdit->text().isEmpty() && !hireDateEdit->text().isEmpty()
 		&& !passwordEdit->text().isEmpty() && !activatedCmbBox->currentText().isEmpty() && 0 != roleEdit->text().toInt() && 0 != positionEdit->text().toInt())
 	{
@@ -281,7 +323,8 @@ void CreateEmpDlg::EditEmployee()
 			QString(employee->GetPhone().c_str()) != phoneEdit->text() || QString(employee->GetBirthDate().c_str()) != birthDateEdit->date().toString("dd.MM.yyyy") ||
 			QString(employee->GetHireDate().c_str()) != hireDateEdit->date().toString("dd.MM.yyyy") || employee->GetRoleID() != roleEdit->text().toInt() ||
 			employee->GetPositionID() != positionEdit->text().toInt() || QString(employee->GetPassword().c_str()) != passwordEdit->text() ||
-			QString(employee->GetActivated() ? "true" : "false") != activatedCmbBox->currentText())
+			QString(employee->GetActivated() ? "true" : "false") != activatedCmbBox->currentText()
+			|| divisionEmployee->GetDivisionID() != divisionCmbBox->currentData().toInt())
 		{
 			DataForm *parentDataForm = (DataForm*) parentForm;
 			
@@ -318,6 +361,24 @@ void CreateEmpDlg::EditEmployee()
 			dialogBL->StartTransaction(errorMessage);
 			if (dialogBL->UpdateEmployee(employee, errorMessage))
 			{
+				SetDivisionEmployeeParams(divisionCmbBox->currentData().toInt(), employee->GetID(), isContractChkBox->isChecked() ? "true" : "false", divisionEmployee->GetID());
+				if (!dialogBL->CreateDivisionEmployeeRelation(divisionEmployee, errorMessage))
+				{
+					dialogBL->CancelTransaction(errorMessage);
+					if (errorMessage.empty())
+					{
+						QMessageBox::information(NULL, QString(tr("Warning")),
+							QString(tr("Divsion is not correct!")),
+							QString(tr("Ok")));
+					}
+					else
+					{
+						QMessageBox::information(NULL, QString(tr("Warning")),
+							QString(tr(errorMessage.c_str())),
+							QString(tr("Ok")));
+					}
+					return;
+				}
 				if (parentDataForm != nullptr)
 				{
 					if (!parentDataForm->IsClosed())
@@ -360,7 +421,9 @@ void CreateEmpDlg::EditEmployee()
 						itemModel->item(mIndex.row(), 11)->setText(employee->GetActivated() ? "true" : "false");
 						itemModel->item(mIndex.row(), 12)->setText(QString::number(employee->GetRoleID()));
 						itemModel->item(mIndex.row(), 13)->setText(QString::number(employee->GetPositionID()));
-
+						itemModel->item(mIndex.row(), 14)->setText(QString::number(divisionEmployee->GetID()));
+						itemModel->item(mIndex.row(), 15)->setText(QString::number(divisionEmployee->GetDivisionID()));
+						itemModel->item(mIndex.row(), 16)->setText(divisionEmployee->GetIsContract() ? "true" : "false");
 						emit itemModel->dataChanged(mIndex, mIndex);
 						delete position;
 						delete role;
@@ -396,6 +459,18 @@ void CreateEmpDlg::EditEmployee()
 void CreateEmpDlg::Close()
 {
 	this->parentWidget()->close();
+}
+
+void CreateEmpDlg::InitComboBox()
+{
+	std::vector<BusinessLayer::Division> divVector = dialogBL->GetAllDataForClass<BusinessLayer::Division>(errorMessage);
+	if (!divVector.empty())
+	{
+		for (unsigned int i = 0; i < divVector.size(); i++)
+		{
+			divisionCmbBox->addItem(divVector[i].GetName().c_str(), QVariant(divVector[i].GetID()));
+		}
+	}
 }
 
 void CreateEmpDlg::OpenPsnDlg()

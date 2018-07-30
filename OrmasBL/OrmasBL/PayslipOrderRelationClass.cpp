@@ -5,13 +5,20 @@
 namespace BusinessLayer{
 	PayslipOrderRelation::PayslipOrderRelation(DataLayer::payslipOrderCollection poCollection)
 	{
-		payslipID = std::get<0>(poCollection);
-		orderID = std::get<1>(poCollection);
+		id = std::get<0>(poCollection);
+		payslipID = std::get<1>(poCollection);
+		orderID = std::get<2>(poCollection);
 	}
 	PayslipOrderRelation::PayslipOrderRelation()
 	{
+		id = 0;
 		payslipID = 0;
 		orderID = 0;
+	}
+
+	int PayslipOrderRelation::GetID()
+	{
+		return id;
 	}
 
 	int PayslipOrderRelation::GetOrderID()
@@ -24,6 +31,10 @@ namespace BusinessLayer{
 		return payslipID;
 	}
 
+	void PayslipOrderRelation::SetID(int poID)
+	{
+		id = poID;
+	}
 	void PayslipOrderRelation::SetOrderID(int oID)
 	{
 		orderID = oID;
@@ -37,10 +48,11 @@ namespace BusinessLayer{
 	{
 		if (IsDuplicate(ormasDal, pID, oID, errorMessage))
 			return false;
+		id = ormasDal.GenerateID();
 		orderID = oID;
 		payslipID = pID;
 
-		if (ormasDal.CreatePayslipOrder(payslipID, orderID, errorMessage))
+		if (ormasDal.CreatePayslipOrder(id, payslipID, orderID, errorMessage))
 		{
 			return true;
 		}
@@ -54,7 +66,8 @@ namespace BusinessLayer{
 	{
 		if (IsDuplicate(ormasDal, errorMessage))
 			return false;
-		if (ormasDal.CreatePayslipOrder(payslipID, orderID, errorMessage))
+		id = ormasDal.GenerateID();
+		if (ormasDal.CreatePayslipOrder(id, payslipID, orderID, errorMessage))
 		{
 			return true;
 		}
@@ -82,9 +95,9 @@ namespace BusinessLayer{
 
 	std::string PayslipOrderRelation::GenerateFilter(DataLayer::OrmasDal& ormasDal)
 	{
-		if (0 != orderID || 0 != payslipID)
+		if (0 != id || 0 != orderID || 0 != payslipID)
 		{
-			return ormasDal.GetFilterForPayslipOrder(payslipID, orderID);
+			return ormasDal.GetFilterForPayslipOrder(id, payslipID, orderID);
 		}
 		return "";
 	}
@@ -128,13 +141,14 @@ namespace BusinessLayer{
 
 	bool PayslipOrderRelation::IsEmpty()
 	{
-		if (0 == orderID && 0 == payslipID)
+		if (0 == id && 0 == orderID && 0 == payslipID)
 			return true;
 		return false;
 	}
 
 	void PayslipOrderRelation::Clear()
 	{
+		id = 0;
 		orderID = 0;
 		payslipID = 0;
 	}

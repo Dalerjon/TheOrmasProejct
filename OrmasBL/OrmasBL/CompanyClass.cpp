@@ -55,13 +55,13 @@ namespace BusinessLayer{
 			boost::trim(cName);
 		name = cName;
 	}
-	void Company::SetAddress(std::string cPhone)
+	void Company::SetPhone(std::string cPhone)
 	{
 		if (!cPhone.empty())
 			boost::trim(cPhone);
 		phone = cPhone;
 	}
-	void Company::SetPhone(std::string cAddress)
+	void Company::SetAddress(std::string cAddress)
 	{
 		if (!cAddress.empty())
 			boost::trim(cAddress);

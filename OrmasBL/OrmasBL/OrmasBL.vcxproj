@@ -88,6 +88,10 @@
     <ClInclude Include="AccountClass.h" />
     <ClInclude Include="AccountHistoryClass.h" />
     <ClInclude Include="CloseOfMonth.h" />
+    <ClInclude Include="DivisionAccountRelationClass.h" />
+    <ClInclude Include="DivisionAccountRelationViewClass.h" />
+    <ClInclude Include="DivisionClass.h" />
+    <ClInclude Include="DivisionEmployeeRelationClass.h" />
     <ClInclude Include="EntrySubccountRelationClass.h" />
     <ClInclude Include="AccountTypeClass.h" />
     <ClInclude Include="AllClassHeaders.h" />
@@ -236,6 +240,10 @@
     <ClCompile Include="AccessViewClass.cpp" />
     <ClCompile Include="AccountClass.cpp" />
     <ClCompile Include="AccountHistoryClass.cpp" />
+    <ClCompile Include="DivisionAccountRelationClass.cpp" />
+    <ClCompile Include="DivisionAccountRelationViewClass.cpp" />
+    <ClCompile Include="DivisionClass.cpp" />
+    <ClCompile Include="DivisionEmployeeRelationClass.cpp" />
     <ClCompile Include="EntrySubccountRelationClass.cpp" />
     <ClCompile Include="AccountTypeClass.cpp" />
     <ClCompile Include="BalanceClass.cpp" />

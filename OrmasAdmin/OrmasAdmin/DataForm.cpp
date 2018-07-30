@@ -2033,6 +2033,65 @@ void DataForm::DelCurDlg()
 	}
 }
 
+void DataForm::CrtDivDlg()
+{
+	CreateDivDlg *divisionDlg = new CreateDivDlg(dataFormBL, false, this);
+	divisionDlg->setAttribute(Qt::WA_DeleteOnClose);
+	divisionDlg->setWindowTitle(tr("Create division"));
+	QMdiSubWindow *divisionWindow = new QMdiSubWindow;
+	divisionWindow->setWidget(divisionDlg);
+	divisionWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(divisionWindow);
+	divisionDlg->show();
+}
+void DataForm::UdpDivDlg()
+{
+	CreateDivDlg *divisionDlg = new CreateDivDlg(dataFormBL, false, this);
+	divisionDlg->setAttribute(Qt::WA_DeleteOnClose);
+	divisionDlg->setWindowTitle(tr("Update division"));
+	QMdiSubWindow *divisionWindow = new QMdiSubWindow;
+	divisionWindow->setWidget(divisionDlg);
+	divisionWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(divisionWindow);
+	if (divisionDlg->FillDlgElements(tableView))
+	{
+		divisionDlg->show();
+	}
+	else
+	{
+		QMessageBox::information(NULL, QString(tr("Warning")),
+			QString(tr("Please select one row at first!")),
+			QString(tr("Ok")));
+	}
+}
+void DataForm::DelDivDlg()
+{
+	std::string errorMessage = "";
+	int id = GetIDFromTable(tableView, errorMessage);
+	BusinessLayer::Division division;
+	division.SetID(id);
+	if (0 != id)
+	{
+		if (dataFormBL->DeleteDivision(&division, errorMessage))
+		{
+			tableView->model()->removeRow(tableView->selectionModel()->currentIndex().row());
+			ChangeBtnState();
+		}
+		else
+		{
+			QMessageBox::information(NULL, QString(tr("Warning")),
+				QString(tr(errorMessage.c_str())),
+				QString(tr("Ok")));
+		}
+	}
+	else
+	{
+		QMessageBox::information(NULL, QString(tr("Warning")),
+			QString(tr("Division with this id does not exist!")),
+			QString(tr("Ok")));
+	}
+}
+
 void DataForm::CrtEmpDlg()
 {
 	CreateEmpDlg *employeeDlg = new CreateEmpDlg(dataFormBL, false, this);
@@ -5727,13 +5786,22 @@ QStringList DataForm::GetTableHeader<BusinessLayer::Currency>()
 }
 
 template<>
+QStringList DataForm::GetTableHeader<BusinessLayer::Division>()
+{
+	QStringList header;
+	header << QObject::tr("ID") << QObject::tr("Name") << QObject::tr("Code");
+	return header;
+}
+
+template<>
 QStringList DataForm::GetTableHeader<BusinessLayer::EmployeeView>()
 {
 	QStringList header;
 	header << QObject::tr("ID") << QObject::tr("Name") << QObject::tr("Surname") << QObject::tr("Position name") 
 		<< QObject::tr("Phone") << QObject::tr("Address") << QObject::tr("Birth date") << QObject::tr("Role name") 
 		<< QObject::tr("Hire date") << QObject::tr("Password") << QObject::tr("Email")
-		<< QObject::tr("Avtivated") << QObject::tr("Role ID") << QObject::tr("Position ID");
+		<< QObject::tr("Avtivated") << QObject::tr("Role ID") << QObject::tr("Position ID")
+		<< QObject::tr("Division-Employee-ID") << QObject::tr("Division ID") << QObject::tr("Is contract?");
 	return header;
 }
 
@@ -5742,7 +5810,8 @@ QStringList DataForm::GetTableHeader<BusinessLayer::EntryView>()
 {
 	QStringList header;
 	header << QObject::tr("ID") << QObject::tr("Date") << QObject::tr("Debiting account number") << QObject::tr("Value")
-		<< QObject::tr("Crediting account number") << QObject::tr("Debiting account ID") << QObject::tr("Crediting account ID");
+		<< QObject::tr("Crediting account number") << QObject::tr("Debiting account ID") << QObject::tr("Crediting account ID")
+		<< QObject::tr("Description");
 	return header;
 }
 
@@ -6578,6 +6647,15 @@ QList<QStandardItem*> DataForm::GetDataFromClass<BusinessLayer::Currency>(Busine
 }
 
 template<>
+QList<QStandardItem*> DataForm::GetDataFromClass<BusinessLayer::Division>(BusinessLayer::Division& data)
+{
+	QList<QStandardItem*> items;
+	items << new QStandardItem(QString::number(data.GetID()))
+		<< new QStandardItem(data.GetName().c_str()) << new QStandardItem(data.GetCode().c_str());
+	return items;
+}
+
+template<>
 QList<QStandardItem*> DataForm::GetDataFromClass<BusinessLayer::EmployeeView>(BusinessLayer::EmployeeView& data)
 {
 	QList<QStandardItem*> items;
@@ -6594,7 +6672,10 @@ QList<QStandardItem*> DataForm::GetDataFromClass<BusinessLayer::EmployeeView>(Bu
 		<< new QStandardItem(data.GetEmail().c_str())
 		<< new QStandardItem(data.GetActivated() ? "true" : "false")
 		<< new QStandardItem(QString::number(data.GetRoleID()))
-		<< new QStandardItem(QString::number(data.GetPositionID()));
+		<< new QStandardItem(QString::number(data.GetPositionID()))
+		<< new QStandardItem(QString::number(data.GetDivisionEmployeeID()))
+		<< new QStandardItem(QString::number(data.GetDivisionID()))
+		<< new QStandardItem(data.GetIsContract() ? "true" : "false");
 	return items;
 }
 
@@ -6608,7 +6689,8 @@ QList<QStandardItem*> DataForm::GetDataFromClass<BusinessLayer::EntryView>(Busin
 		<< new QStandardItem(QString::number(data.GetValue(), 'f', 3))
 		<< new QStandardItem(data.GetCreditingAccountNumber().c_str())
 		<< new QStandardItem(QString::number(data.GetDebitingAccountID()))
-		<< new QStandardItem(QString::number(data.GetCreditingAccountID()));
+		<< new QStandardItem(QString::number(data.GetCreditingAccountID()))
+		<< new QStandardItem(data.GetDescription().c_str());
 	return items;
 }
 
@@ -6618,8 +6700,8 @@ QList<QStandardItem*> DataForm::GetDataFromClass<BusinessLayer::EntryRouting>(Bu
 	QList<QStandardItem*> items;
 	items << new QStandardItem(QString::number(data.GetID()))
 		<< new QStandardItem(data.GetOperation().c_str())
-		<< new QStandardItem(QString::number(data.GetDebit()))
-		<< new QStandardItem(QString::number(data.GetCredit()));
+		<< new QStandardItem(QString::number(data.GetDebitAccountID()))
+		<< new QStandardItem(QString::number(data.GetCreditAccountID()));
 	return items;
 }
 
@@ -8433,6 +8515,43 @@ void DataForm::QtConnect<BusinessLayer::EmployeeView>()
 		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
 		connect(this, SIGNAL(SendID(int, QString)), ((ClcWagesDlg*)parentDialog), SLOT(SetID(int, QString)));
 	}
+}
+
+template<>
+void DataForm::QtConnect<BusinessLayer::Division>()
+{
+	BusinessLayer::Access access;
+	std::string crud = access.GetCRUDAccess(&dataFormBL->GetOrmasDal(), loggedUser, "actionDivision");
+	std::size_t pos = crud.find("C");
+	if (pos != std::string::npos)
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::CrtDivDlg);
+	}
+	else
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("U");
+	if (pos != std::string::npos)
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::UdpDivDlg);
+	}
+	else
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("D");
+	if (pos != std::string::npos)
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::DelDivDlg);
+	}
+	else
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+
+	connect(closeBtn, &QPushButton::released, this, &DataForm::CloseDataForm);
+	connect(tableView->selectionModel(), SIGNAL(currentRowChanged(QModelIndex, QModelIndex)), this, SLOT(ChangeBtnState()));
 }
 
 template<>

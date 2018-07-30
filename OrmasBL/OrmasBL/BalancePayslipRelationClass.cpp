@@ -5,13 +5,20 @@
 namespace BusinessLayer{
 	BalancePayslipRelation::BalancePayslipRelation(DataLayer::balancePayslipCollection bpCollection)
 	{
-		balanceID = std::get<0>(bpCollection);
-		payslipID = std::get<1>(bpCollection);
+		id = std::get<0>(bpCollection);
+		balanceID = std::get<1>(bpCollection);
+		payslipID = std::get<2>(bpCollection);
 	}
 	BalancePayslipRelation::BalancePayslipRelation()
 	{
+		id = 0;
 		balanceID = 0;
 		payslipID = 0;
+	}
+
+	int BalancePayslipRelation::GetID()
+	{
+		return id;
 	}
 
 	int BalancePayslipRelation::GetBalanceID()
@@ -24,6 +31,10 @@ namespace BusinessLayer{
 		return payslipID;
 	}
 
+	void BalancePayslipRelation::SetID(int bpID)
+	{
+		id = bpID;
+	}
 	void BalancePayslipRelation::SetBalanceID(int bID)
 	{
 		balanceID = bID;
@@ -37,10 +48,11 @@ namespace BusinessLayer{
 	{
 		if (IsDuplicate(ormasDal, bID, pID, errorMessage))
 			return false;
+		id = ormasDal.GenerateID();
 		balanceID = bID;
 		payslipID = pID;
 
-		if (ormasDal.CreateBalancePayslip(balanceID, payslipID, errorMessage))
+		if (ormasDal.CreateBalancePayslip(id, balanceID, payslipID, errorMessage))
 		{
 			return true;
 		}
@@ -54,7 +66,8 @@ namespace BusinessLayer{
 	{
 		if (IsDuplicate(ormasDal, errorMessage))
 			return false;
-		if (ormasDal.CreateBalancePayslip(balanceID, payslipID, errorMessage))
+		id = ormasDal.GenerateID();
+		if (ormasDal.CreateBalancePayslip(id, balanceID, payslipID, errorMessage))
 		{
 			return true;
 		}
@@ -82,9 +95,9 @@ namespace BusinessLayer{
 
 	std::string BalancePayslipRelation::GenerateFilter(DataLayer::OrmasDal& ormasDal)
 	{
-		if (0 != balanceID || 0 != payslipID)
+		if (0 != id || 0 != balanceID || 0 != payslipID)
 		{
-			return ormasDal.GetFilterForBalancePayslip(balanceID, payslipID);
+			return ormasDal.GetFilterForBalancePayslip(id, balanceID, payslipID);
 		}
 		return "";
 	}
@@ -128,13 +141,14 @@ namespace BusinessLayer{
 
 	bool BalancePayslipRelation::IsEmpty()
 	{
-		if (0 == balanceID && 0 == payslipID)
+		if (0 == id && 0 == balanceID && 0 == payslipID)
 			return true;
 		return false;
 	}
 
 	void BalancePayslipRelation::Clear()
 	{
+		id = 0;
 		balanceID = 0;
 		payslipID = 0;
 	}

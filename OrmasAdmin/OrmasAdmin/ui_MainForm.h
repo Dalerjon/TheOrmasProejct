@@ -106,6 +106,7 @@ public:
     QAction *actionCloseOfMonth;
     QAction *actionFinancialReport;
     QAction *actionCompanyBalance;
+    QAction *actionDivision;
     QWidget *centrWidget;
     QGridLayout *gridLayout;
     QMdiArea *mdiArea;
@@ -287,6 +288,8 @@ public:
         actionFinancialReport->setObjectName(QStringLiteral("actionFinancialReport"));
         actionCompanyBalance = new QAction(MainWindow);
         actionCompanyBalance->setObjectName(QStringLiteral("actionCompanyBalance"));
+        actionDivision = new QAction(MainWindow);
+        actionDivision->setObjectName(QStringLiteral("actionDivision"));
         centrWidget = new QWidget(MainWindow);
         centrWidget->setObjectName(QStringLiteral("centrWidget"));
         gridLayout = new QGridLayout(centrWidget);
@@ -374,6 +377,7 @@ public:
         menuReferences->addAction(actionStatusRule);
         menuReferences->addAction(actionRelation);
         menuReferences->addAction(actionRelationType);
+        menuReferences->addAction(actionDivision);
         menuHelp->addAction(actionAbout);
         menuProductions->addAction(actionProduction);
         menuProductions->addAction(actionProductionList);
@@ -509,6 +513,7 @@ public:
         actionCloseOfMonth->setText(QApplication::translate("MainWindow", "Close of month", 0));
         actionFinancialReport->setText(QApplication::translate("MainWindow", "Financial report", 0));
         actionCompanyBalance->setText(QApplication::translate("MainWindow", "Company balance", 0));
+        actionDivision->setText(QApplication::translate("MainWindow", "Division", 0));
         menuUsers->setTitle(QApplication::translate("MainWindow", "Users", 0));
         menuProducts->setTitle(QApplication::translate("MainWindow", "Products", 0));
         menuOrders->setTitle(QApplication::translate("MainWindow", "Orders", 0));

@@ -459,6 +459,18 @@
     <ClInclude Include="CloseOfMonth.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="DivisionClass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DivisionAccountRelationClass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DivisionEmployeeRelationClass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DivisionAccountRelationViewClass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -894,6 +906,18 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="CloseOfMonth.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DivisionClass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DivisionEmployeeRelationClass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DivisionAccountRelationClass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DivisionAccountRelationViewClass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

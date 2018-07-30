@@ -8,12 +8,12 @@ namespace BusinessLayer{
 	protected:
 		int id = 0;
 		std::string operation = "";
-		int debit = 0;
-		int credit = 0;
+		int debitAccountID = 0;
+		int creditAccountID = 0;
 	public:
 		EntryRouting();
 		EntryRouting(int eID, std::string eOperation, int eDebit,int eCredit) :id(eID), operation(eOperation),
-			debit(eDebit), credit(eCredit){};
+			debitAccountID(eDebit), creditAccountID(eCredit){};
 		EntryRouting(DataLayer::entryRoutingCollection);
 		~EntryRouting(){};
 
@@ -21,30 +21,30 @@ namespace BusinessLayer{
 		//EntryRouting class EntryRoutingors
 		int GetID();
 		std::string GetOperation();
-		int GetDebit();
-		int GetCredit();
+		int GetDebitAccountID();
+		int GetCreditAccountID();
 
 		//EntryRouting class Mutators
 		void SetID(int);
 		void SetOperation(std::string);
-		void SetDebit(int);
-		void SetCredit(int);
+		void SetDebitAccountID(int);
+		void SetCreditAccountID(int);
 
 		// Create, delete and update EntryRouting
 		bool CreateEntryRouting(DataLayer::OrmasDal &ormasDal, std::string& errorMessage);
 		bool UpdateEntryRouting(DataLayer::OrmasDal &ormasDal, std::string& errorMessage);
 		bool DeleteEntryRouting(DataLayer::OrmasDal &ormasDal, std::string& errorMessage);
-		bool CreateEntryRouting(DataLayer::OrmasDal &ormasDal, std::string eOperation, int eDebit, int eCredit, std::string& errorMessage);
-		bool UpdateEntryRouting(DataLayer::OrmasDal &ormasDal, std::string eOperation, int eDebit, int eCredit, std::string& errorMessage);
+		bool CreateEntryRouting(DataLayer::OrmasDal &ormasDal, std::string eOperation, int eDebitAccountID, int eCreditAccountID, std::string& errorMessage);
+		bool UpdateEntryRouting(DataLayer::OrmasDal &ormasDal, std::string eOperation, int eDebitAccountID, int eCreditAccountID, std::string& errorMessage);
 
 		//Generate filter string for class
 		std::string GenerateFilter(DataLayer::OrmasDal& ormasDal);
 		bool GetEntryRoutingByID(DataLayer::OrmasDal& ormasDal, int eID, std::string& errorMessage);
 		bool IsEmpty();
 		void Clear();
-		bool CheckEntryRouting(DataLayer::OrmasDal& ormasDal, int eDebit, int eCredit, std::string& errorMessage);
+		bool CheckEntryRouting(DataLayer::OrmasDal& ormasDal, int eDebitAccountID, int eCreditAccountID, std::string& errorMessage);
 	private:
-		bool IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string eOperation, int eDebit, int eCredit, std::string& errorMessage);
+		bool IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string eOperation, int eDebitAccountID, int eCreditAccountID, std::string& errorMessage);
 		bool IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string& errorMessage);
 	};
 }

@@ -65,6 +65,9 @@ namespace BusinessLayer
 		bool CreateConsumeRaw(BusinessLayer::ConsumeRaw*, std::string&);
 		bool CreateConsumeRawList(BusinessLayer::ConsumeRawList*, std::string&);
 		bool CreateCurrency(BusinessLayer::Currency*, std::string&);
+		bool CreateDivisionAccountRelation(BusinessLayer::DivisionAccountRelation*, std::string&);
+		bool CreateDivisionEmployeeRelation(BusinessLayer::DivisionEmployeeRelation*, std::string&);
+		bool CreateDivision(BusinessLayer::Division*, std::string&);
 		bool CreateEmployee(BusinessLayer::Employee*, std::string&);
 		bool CreateEntry(BusinessLayer::Entry*, std::string&);
 		bool CreateEntryRouting(BusinessLayer::EntryRouting*, std::string&);
@@ -145,6 +148,9 @@ namespace BusinessLayer
 		bool DeleteConsumeRaw(BusinessLayer::ConsumeRaw*, std::string&);
 		bool DeleteConsumeRawList(BusinessLayer::ConsumeRawList*, std::string&);
 		bool DeleteCurrency(BusinessLayer::Currency*, std::string&);
+		bool DeleteDivisionAccountRelation(BusinessLayer::DivisionAccountRelation*, std::string&);
+		bool DeleteDivisionEmployeeRelation(BusinessLayer::DivisionEmployeeRelation*, std::string&);
+		bool DeleteDivision(BusinessLayer::Division*, std::string&);
 		bool DeleteEmployee(BusinessLayer::Employee*, std::string&);
 		bool DeleteEntry(BusinessLayer::Entry*, std::string&);
 		bool DeleteEntryRouting(BusinessLayer::EntryRouting*, std::string&);
@@ -225,6 +231,9 @@ namespace BusinessLayer
 		bool UpdateConsumeRaw(BusinessLayer::ConsumeRaw*, std::string&);
 		bool UpdateConsumeRawList(BusinessLayer::ConsumeRawList*, std::string&);
 		bool UpdateCurrency(BusinessLayer::Currency*, std::string&);
+		bool UpdateDivisionAccountRelation(BusinessLayer::DivisionAccountRelation*, std::string&);
+		bool UpdateDivisionEmployeeRelation(BusinessLayer::DivisionEmployeeRelation*, std::string&);
+		bool UpdateDivision(BusinessLayer::Division*, std::string&);
 		bool UpdateEmployee(BusinessLayer::Employee*, std::string&);
 		bool UpdateEntry(BusinessLayer::Entry*, std::string&);
 		bool UpdateEntryRouting(BusinessLayer::EntryRouting*, std::string&);

@@ -35,6 +35,7 @@ CreateEtrDlg::CreateEtrDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, QWi
 	QObject::connect(daNumberEdit, &QLineEdit::textChanged, this, &CreateEtrDlg::DATextChanged);
 	QObject::connect(caNumberEdit, &QLineEdit::textChanged, this, &CreateEtrDlg::CATextChanged);
 	QObject::connect(valueEdit, &QLineEdit::textChanged, this, &CreateEtrDlg::TextEditChanged);
+	QObject::connect(descriptionTextEdit, &QTextEdit::textChanged, this, &CreateEtrDlg::TextEditChanged);
 }
 
 CreateEtrDlg::~CreateEtrDlg()
@@ -100,21 +101,23 @@ void CreateEtrDlg::SetID(int ID, QString childName)
 	}
 }
 
-void CreateEtrDlg::SetEntryParams(QString eDate, int daID, double eValue, int caID, int id)
+void CreateEtrDlg::SetEntryParams(QString eDate, int daID, double eValue, int caID, QString eDescription, int id)
 {
 	entry->SetDate(eDate.toUtf8().constData());
 	entry->SetDebitingAccountID(daID);
 	entry->SetValue(eValue);
 	entry->SetCreditingAccountID(caID);
+	entry->SetDescription(eDescription.toUtf8().constData());
 	entry->SetID(id);
 }
 
-void CreateEtrDlg::FillEditElements(QString eDate, int daID, double eValue, int caID)
+void CreateEtrDlg::FillEditElements(QString eDate, int daID, double eValue, int caID, QString eDescription)
 {
 	dateEdit->setDate(QDate::fromString(eDate, "dd.MM.yyyy"));
 	daIDEdit->setText(QString::number(daID));
 	valueEdit->setText(QString::number(eValue));
 	caIDEdit->setText(QString::number(caID));
+	descriptionTextEdit->setText(eDescription);
 	BusinessLayer::Account account1;
 	if (account1.GetAccountByID(dialogBL->GetOrmasDal(), daID, errorMessage))
 	{
@@ -147,14 +150,16 @@ bool CreateEtrDlg::FillDlgElements(QTableView* pTable)
 	if (mIndex.row() >= 0)
 	{
 		SetEntryParams(pTable->model()->data(pTable->model()->index(mIndex.row(), 1)).toString().toUtf8().constData(),
-			pTable->model()->data(pTable->model()->index(mIndex.row(), 6)).toDouble(),
-			pTable->model()->data(pTable->model()->index(mIndex.row(), 8)).toInt(),
-			pTable->model()->data(pTable->model()->index(mIndex.row(), 9)).toInt(),
+			pTable->model()->data(pTable->model()->index(mIndex.row(), 5)).toInt(),
+			pTable->model()->data(pTable->model()->index(mIndex.row(), 3)).toDouble(),
+			pTable->model()->data(pTable->model()->index(mIndex.row(), 6)).toInt(),
+			pTable->model()->data(pTable->model()->index(mIndex.row(), 7)).toString().toUtf8().constData(),
 			pTable->model()->data(pTable->model()->index(mIndex.row(), 0)).toInt());
 		FillEditElements(pTable->model()->data(pTable->model()->index(mIndex.row(), 1)).toString().toUtf8().constData(),
-			pTable->model()->data(pTable->model()->index(mIndex.row(), 6)).toDouble(),
-			pTable->model()->data(pTable->model()->index(mIndex.row(), 8)).toInt(),
-			pTable->model()->data(pTable->model()->index(mIndex.row(), 9)).toInt());
+			pTable->model()->data(pTable->model()->index(mIndex.row(), 5)).toInt(),
+			pTable->model()->data(pTable->model()->index(mIndex.row(), 3)).toDouble(),
+			pTable->model()->data(pTable->model()->index(mIndex.row(), 6)).toInt(),
+			pTable->model()->data(pTable->model()->index(mIndex.row(), 7)).toString().toUtf8().constData());
 		return true;
 	}
 	else
@@ -170,7 +175,7 @@ void CreateEtrDlg::CreateEntry()
 		&& !dateEdit->text().isEmpty())
 	{
 		DataForm *parentDataForm = (DataForm*) parentForm;
-		SetEntryParams(dateEdit->text(), daIDEdit->text().toInt(), valueEdit->text().toDouble(), caIDEdit->text().toInt());
+		SetEntryParams(dateEdit->text(), daIDEdit->text().toInt(), valueEdit->text().toDouble(), caIDEdit->text().toInt(), descriptionTextEdit->toPlainText());
 		dialogBL->StartTransaction(errorMessage);
 		if (dialogBL->CreateEntry(entry, errorMessage))
 		{
@@ -230,7 +235,8 @@ void CreateEtrDlg::CreateEntry()
 						entryItem << new QStandardItem(cSAccount->GetSubaccountParentNumber(dialogBL->GetOrmasDal()).c_str());
 					}
 					entryItem << new QStandardItem(QString::number(entry->GetDebitingAccountID()))
-						<< new QStandardItem(QString::number(entry->GetCreditingAccountID()));
+						<< new QStandardItem(QString::number(entry->GetCreditingAccountID()))
+						<< new QStandardItem(entry->GetDescription().c_str());
 					QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
 					itemModel->appendRow(entryItem);
 
@@ -275,7 +281,7 @@ void CreateEtrDlg::EditEntry()
 			|| entry->GetValue() != valueEdit->text().toDouble() || entry->GetDebitingAccountID() != daIDEdit->text().toInt())
 		{
 			DataForm *parentDataForm = (DataForm*) parentForm;
-			SetEntryParams(dateEdit->text(), daIDEdit->text().toInt(), valueEdit->text().toDouble(), caIDEdit->text().toInt(), entry->GetID());
+			SetEntryParams(dateEdit->text(), daIDEdit->text().toInt(), valueEdit->text().toDouble(), caIDEdit->text().toInt(), descriptionTextEdit->toPlainText(), entry->GetID());
 			dialogBL->StartTransaction(errorMessage);
 			if (dialogBL->UpdateEntry(entry, errorMessage))
 			{
@@ -336,6 +342,7 @@ void CreateEtrDlg::EditEntry()
 						}
 						itemModel->item(mIndex.row(), 5)->setText(QString::number(entry->GetDebitingAccountID()));
 						itemModel->item(mIndex.row(), 6)->setText(QString::number(entry->GetCreditingAccountID()));
+						itemModel->item(mIndex.row(), 7)->setText(entry->GetDescription().c_str());
 						emit itemModel->dataChanged(mIndex, mIndex);
 						delete dAccount;
 						delete dSAccount;
@@ -636,5 +643,12 @@ void CreateEtrDlg::TextEditChanged()
 	if (valueEdit->text().contains(".."))
 	{
 		valueEdit->setText(valueEdit->text().replace("..", "."));
+	}
+	if (descriptionTextEdit->toPlainText().length()> 100) {
+		descriptionTextEdit->setPlainText(descriptionTextEdit->toPlainText().left(descriptionTextEdit->toPlainText().length() - 1));
+		descriptionTextEdit->moveCursor(QTextCursor::End);
+		QMessageBox::information(NULL, QString(tr("Warning")),
+			QString(tr("Warning: no more then ")) + QString::number(100) + QString(tr(" characters in this field")),
+			QString(tr("Ok")));
 	}
 }

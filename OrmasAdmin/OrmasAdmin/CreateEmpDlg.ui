@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>389</height>
+    <width>381</width>
+    <height>448</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -38,15 +38,15 @@
    <property name="bottomMargin">
     <number>11</number>
    </property>
-   <item row="6" column="1">
-    <widget class="QDateEdit" name="hireDateEdit">
-     <property name="toolTip">
-      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Enter your hire date&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-     </property>
-    </widget>
-   </item>
    <item row="8" column="1">
     <widget class="QComboBox" name="activatedCmbBox"/>
+   </item>
+   <item row="3" column="0">
+    <widget class="QLabel" name="addressLb">
+     <property name="text">
+      <string>Address:</string>
+     </property>
+    </widget>
    </item>
    <item row="0" column="0">
     <widget class="QLabel" name="nameLb">
@@ -61,10 +61,10 @@
      </property>
     </widget>
    </item>
-   <item row="3" column="0">
-    <widget class="QLabel" name="addressLb">
+   <item row="11" column="0">
+    <widget class="QPushButton" name="positionBtn">
      <property name="text">
-      <string>Address:</string>
+      <string>Select position</string>
      </property>
     </widget>
    </item>
@@ -78,10 +78,10 @@
      </property>
     </widget>
    </item>
-   <item row="11" column="0">
-    <widget class="QPushButton" name="positionBtn">
-     <property name="text">
-      <string>Select position</string>
+   <item row="0" column="1">
+    <widget class="QLineEdit" name="nameEdit">
+     <property name="toolTip">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;For expamle: John&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
     </widget>
    </item>
@@ -102,10 +102,68 @@
      </property>
     </widget>
    </item>
-   <item row="5" column="0">
-    <widget class="QLabel" name="birthLb">
+   <item row="7" column="0">
+    <widget class="QLabel" name="passworLb">
      <property name="text">
-      <string>Birth date:</string>
+      <string>Password:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1">
+    <widget class="QLineEdit" name="surnameEdit">
+     <property name="toolTip">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;For example: Doe&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+    </widget>
+   </item>
+   <item row="12" column="1">
+    <widget class="QLabel" name="positionNamePh">
+     <property name="font">
+      <font>
+       <family>Times New Roman</family>
+       <pointsize>12</pointsize>
+       <weight>75</weight>
+       <italic>true</italic>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
+   </item>
+   <item row="12" column="0">
+    <widget class="QLabel" name="positionNameLb">
+     <property name="text">
+      <string>Position name:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="6" column="0">
+    <widget class="QLabel" name="hireLb">
+     <property name="text">
+      <string>Hire date:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="10" column="0">
+    <widget class="QLabel" name="roleNameLb">
+     <property name="text">
+      <string>Role name:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="1">
+    <widget class="QDateEdit" name="birthDateEdit">
+     <property name="toolTip">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Enter your birth date:&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+    </widget>
+   </item>
+   <item row="9" column="0">
+    <widget class="QPushButton" name="roleBtn">
+     <property name="text">
+      <string>Select role</string>
      </property>
     </widget>
    </item>
@@ -119,10 +177,47 @@
      </property>
     </widget>
    </item>
-   <item row="9" column="0">
-    <widget class="QPushButton" name="roleBtn">
+   <item row="5" column="0">
+    <widget class="QLabel" name="birthLb">
      <property name="text">
-      <string>Select role</string>
+      <string>Birth date:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="6" column="1">
+    <widget class="QDateEdit" name="hireDateEdit">
+     <property name="toolTip">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Enter your hire date&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="1">
+    <widget class="QLineEdit" name="emailEdit">
+     <property name="toolTip">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;For example: John.Doe@gmail.com (not a mandatory field)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+    </widget>
+   </item>
+   <item row="10" column="1">
+    <widget class="QLabel" name="roleNamePh">
+     <property name="font">
+      <font>
+       <family>Times New Roman</family>
+       <pointsize>12</pointsize>
+       <weight>75</weight>
+       <italic>true</italic>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="0">
+    <widget class="QLabel" name="phoneLb">
+     <property name="text">
+      <string>Phone:</string>
      </property>
     </widget>
    </item>
@@ -133,7 +228,31 @@
      </property>
     </widget>
    </item>
-   <item row="13" column="0" colspan="2">
+   <item row="1" column="0">
+    <widget class="QLabel" name="surnameLb">
+     <property name="text">
+      <string>Surname:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="1">
+    <widget class="QLineEdit" name="phoneEdit">
+     <property name="toolTip">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;For example: 929999999 (only digits)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+     <property name="inputMethodHints">
+      <set>Qt::ImhDigitsOnly|Qt::ImhPreferNumbers</set>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="0">
+    <widget class="QLabel" name="emailLb">
+     <property name="text">
+      <string>Email:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="15" column="0" colspan="2">
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
       <spacer name="horizontalSpacer">
@@ -164,122 +283,27 @@
      </item>
     </layout>
    </item>
-   <item row="4" column="0">
-    <widget class="QLabel" name="phoneLb">
+   <item row="13" column="1">
+    <widget class="QComboBox" name="divisionCmbBox"/>
+   </item>
+   <item row="13" column="0">
+    <widget class="QLabel" name="divisionLb">
      <property name="text">
-      <string>Phone:</string>
+      <string>Division:</string>
      </property>
     </widget>
    </item>
-   <item row="10" column="0">
-    <widget class="QLabel" name="roleNameLb">
+   <item row="14" column="0">
+    <widget class="QLabel" name="label">
      <property name="text">
-      <string>Role name:</string>
+      <string>Is contract?</string>
      </property>
     </widget>
    </item>
-   <item row="10" column="1">
-    <widget class="QLabel" name="roleNamePh">
-     <property name="font">
-      <font>
-       <family>Times New Roman</family>
-       <pointsize>12</pointsize>
-       <weight>75</weight>
-       <italic>true</italic>
-       <bold>true</bold>
-      </font>
-     </property>
+   <item row="14" column="1">
+    <widget class="QCheckBox" name="isContractChkBox">
      <property name="text">
-      <string/>
-     </property>
-    </widget>
-   </item>
-   <item row="5" column="1">
-    <widget class="QDateEdit" name="birthDateEdit">
-     <property name="toolTip">
-      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Enter your birth date:&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="0">
-    <widget class="QLabel" name="surnameLb">
-     <property name="text">
-      <string>Surname:</string>
-     </property>
-    </widget>
-   </item>
-   <item row="4" column="1">
-    <widget class="QLineEdit" name="phoneEdit">
-     <property name="toolTip">
-      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;For example: 929999999 (only digits)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-     </property>
-     <property name="inputMethodHints">
-      <set>Qt::ImhDigitsOnly|Qt::ImhPreferNumbers</set>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="1">
-    <widget class="QLineEdit" name="surnameEdit">
-     <property name="toolTip">
-      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;For example: Doe&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-     </property>
-    </widget>
-   </item>
-   <item row="2" column="1">
-    <widget class="QLineEdit" name="emailEdit">
-     <property name="toolTip">
-      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;For example: John.Doe@gmail.com (not a mandatory field)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-     </property>
-    </widget>
-   </item>
-   <item row="2" column="0">
-    <widget class="QLabel" name="emailLb">
-     <property name="text">
-      <string>Email:</string>
-     </property>
-    </widget>
-   </item>
-   <item row="6" column="0">
-    <widget class="QLabel" name="hireLb">
-     <property name="text">
-      <string>Hire date:</string>
-     </property>
-    </widget>
-   </item>
-   <item row="7" column="0">
-    <widget class="QLabel" name="passworLb">
-     <property name="text">
-      <string>Password:</string>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="1">
-    <widget class="QLineEdit" name="nameEdit">
-     <property name="toolTip">
-      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;For expamle: John&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-     </property>
-    </widget>
-   </item>
-   <item row="12" column="0">
-    <widget class="QLabel" name="positionNameLb">
-     <property name="text">
-      <string>Position name:</string>
-     </property>
-    </widget>
-   </item>
-   <item row="12" column="1">
-    <widget class="QLabel" name="positionNamePh">
-     <property name="font">
-      <font>
-       <family>Times New Roman</family>
-       <pointsize>12</pointsize>
-       <weight>75</weight>
-       <italic>true</italic>
-       <bold>true</bold>
-      </font>
-     </property>
-     <property name="text">
-      <string/>
+      <string>Yes</string>
      </property>
     </widget>
    </item>

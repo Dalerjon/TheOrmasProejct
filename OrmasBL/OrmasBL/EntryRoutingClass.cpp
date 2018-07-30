@@ -6,14 +6,14 @@ namespace BusinessLayer{
 	{
 		id = std::get<0>(eCollection);
 		operation = std::get<1>(eCollection);
-		debit = std::get<2>(eCollection);
-		credit = std::get<3>(eCollection);
+		debitAccountID = std::get<2>(eCollection);
+		creditAccountID = std::get<3>(eCollection);
 	}
 	EntryRouting::EntryRouting()
 	{
 		operation = "";
-		debit = 0;
-		credit = 0;
+		debitAccountID = 0;
+		creditAccountID = 0;
 	}
 	int EntryRouting::GetID()
 	{
@@ -25,14 +25,14 @@ namespace BusinessLayer{
 		return operation;
 	}
 
-	int EntryRouting::GetDebit()
+	int EntryRouting::GetDebitAccountID()
 	{
-		return debit;
+		return debitAccountID;
 	}
 
-	int EntryRouting::GetCredit()
+	int EntryRouting::GetCreditAccountID()
 	{
-		return credit;
+		return creditAccountID;
 	}
 
 	void EntryRouting::SetID(int eID)
@@ -45,26 +45,26 @@ namespace BusinessLayer{
 		operation = eOperation;
 	}
 
-	void EntryRouting::SetDebit(int eDebit)
+	void EntryRouting::SetDebitAccountID(int eDebitAccountID)
 	{
-		debit = eDebit;
+		debitAccountID = eDebitAccountID;
 	}
 
-	void EntryRouting::SetCredit(int eCredit)
+	void EntryRouting::SetCreditAccountID(int eCreditAccountID)
 	{
-		credit = eCredit;
+		creditAccountID = eCreditAccountID;
 	}
 
 
-	bool EntryRouting::CreateEntryRouting(DataLayer::OrmasDal &ormasDal, std::string eOperation, int eDebit, int eCredit, std::string& errorMessage)
+	bool EntryRouting::CreateEntryRouting(DataLayer::OrmasDal &ormasDal, std::string eOperation, int eDebitAccountID, int eCreditAccountID, std::string& errorMessage)
 	{
-		if (IsDuplicate(ormasDal, eOperation, eDebit, eCredit, errorMessage))
+		if (IsDuplicate(ormasDal, eOperation, eDebitAccountID, eCreditAccountID, errorMessage))
 			return false;
 		id = ormasDal.GenerateID();
 		operation = eOperation;
-		debit = eDebit;
-		credit = eCredit;
-		if (0 != id && ormasDal.CreateEntryRouting(id, operation, debit, credit, errorMessage))
+		debitAccountID = eDebitAccountID;
+		creditAccountID = eCreditAccountID;
+		if (0 != id && ormasDal.CreateEntryRouting(id, operation, debitAccountID, creditAccountID, errorMessage))
 		{
 			return true;
 		}
@@ -79,7 +79,7 @@ namespace BusinessLayer{
 		if (IsDuplicate(ormasDal, errorMessage))
 			return false;
 		id = ormasDal.GenerateID();
-		if (0 != id && ormasDal.CreateEntryRouting(id, operation, debit, credit, errorMessage))
+		if (0 != id && ormasDal.CreateEntryRouting(id, operation, debitAccountID, creditAccountID, errorMessage))
 		{
 			return true;
 		}
@@ -103,12 +103,12 @@ namespace BusinessLayer{
 		return false;
 	}
 
-	bool EntryRouting::UpdateEntryRouting(DataLayer::OrmasDal &ormasDal, std::string eOperation, int eDebit, int eCredit, std::string& errorMessage)
+	bool EntryRouting::UpdateEntryRouting(DataLayer::OrmasDal &ormasDal, std::string eOperation, int eDebitAccountID, int eCreditAccountID, std::string& errorMessage)
 	{
 		operation = eOperation;
-		debit = eDebit;
-		credit = eCredit;
-		if (0 != id && ormasDal.UpdateEntryRouting(id, operation, debit, credit, errorMessage))
+		debitAccountID = eDebitAccountID;
+		creditAccountID = eCreditAccountID;
+		if (0 != id && ormasDal.UpdateEntryRouting(id, operation, debitAccountID, creditAccountID, errorMessage))
 		{
 			return true;
 		}
@@ -120,7 +120,7 @@ namespace BusinessLayer{
 	}
 	bool EntryRouting::UpdateEntryRouting(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
-		if (0 != id && ormasDal.UpdateEntryRouting(id, operation, debit, credit, errorMessage))
+		if (0 != id && ormasDal.UpdateEntryRouting(id, operation, debitAccountID, creditAccountID, errorMessage))
 		{
 			return true;
 		}
@@ -133,9 +133,9 @@ namespace BusinessLayer{
 
 	std::string EntryRouting::GenerateFilter(DataLayer::OrmasDal& ormasDal)
 	{
-		if (0 != id || operation.empty() || 0 != debit || 0 != credit)
+		if (0 != id || operation.empty() || 0 != debitAccountID || 0 != creditAccountID)
 		{
-			return ormasDal.GetFilterForEntryRouting(id, operation, debit, credit);
+			return ormasDal.GetFilterForEntryRouting(id, operation, debitAccountID, creditAccountID);
 		}
 		return "";
 	}
@@ -149,8 +149,8 @@ namespace BusinessLayer{
 		{
 			id = std::get<0>(entryRoutingVector.at(0));
 			operation = std::get<1>(entryRoutingVector.at(0));
-			debit = std::get<2>(entryRoutingVector.at(0));
-			credit = std::get<3>(entryRoutingVector.at(0));
+			debitAccountID = std::get<2>(entryRoutingVector.at(0));
+			creditAccountID = std::get<3>(entryRoutingVector.at(0));
 			return true;
 		}
 		else
@@ -162,7 +162,7 @@ namespace BusinessLayer{
 
 	bool EntryRouting::IsEmpty()
 	{
-		if (0 == id && operation.empty()  && 0 == debit && 0 == credit)
+		if (0 == id && operation.empty()  && 0 == debitAccountID && 0 == creditAccountID)
 			return true;
 		return false;
 	}
@@ -171,16 +171,16 @@ namespace BusinessLayer{
 	{
 		id = 0;
 		operation.clear();
-		debit = 0;
-		credit = 0;
+		debitAccountID = 0;
+		creditAccountID = 0;
 	}
 
-	bool EntryRouting::IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string eOperation, int eDebit, int eCredit, std::string& errorMessage)
+	bool EntryRouting::IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string eOperation, int eDebitAccountID, int eCreditAccountID, std::string& errorMessage)
 	{
 		EntryRouting entryRouting;
 		entryRouting.SetOperation(eOperation);
-		entryRouting.SetDebit(eDebit);
-		entryRouting.SetCredit(eCredit);
+		entryRouting.SetDebitAccountID(eDebitAccountID);
+		entryRouting.SetCreditAccountID(eCreditAccountID);
 		std::string filter = entryRouting.GenerateFilter(ormasDal);
 		errorMessage.clear();
 		std::vector<DataLayer::entryRoutingCollection> entryRoutingVector = ormasDal.GetEntryRouting(errorMessage, filter);
@@ -198,8 +198,8 @@ namespace BusinessLayer{
 	{
 		EntryRouting EntryRouting;
 		EntryRouting.SetOperation(operation);
-		EntryRouting.SetDebit(debit);
-		EntryRouting.SetCredit(credit);
+		EntryRouting.SetDebitAccountID(debitAccountID);
+		EntryRouting.SetCreditAccountID(creditAccountID);
 		std::string filter = EntryRouting.GenerateFilter(ormasDal);
 		errorMessage.clear();
 		std::vector<DataLayer::entryRoutingCollection> entryRoutingVector = ormasDal.GetEntryRouting(errorMessage, filter);
@@ -213,11 +213,11 @@ namespace BusinessLayer{
 		return true;
 	}
 
-	bool EntryRouting::CheckEntryRouting(DataLayer::OrmasDal& ormasDal, int eDebit, int eCredit, std::string& errorMessage)
+	bool EntryRouting::CheckEntryRouting(DataLayer::OrmasDal& ormasDal, int eDebitAccountID, int eCreditAccountID, std::string& errorMessage)
 	{
 		EntryRouting entryRouting;
-		entryRouting.SetDebit(eDebit);
-		entryRouting.SetCredit(eCredit);
+		entryRouting.SetDebitAccountID(eDebitAccountID);
+		entryRouting.SetCreditAccountID(eCreditAccountID);
 		std::string filter = entryRouting.GenerateFilter(ormasDal);
 		errorMessage.clear();
 		std::vector<DataLayer::entryRoutingCollection> entryRoutingVector = ormasDal.GetEntryRouting(errorMessage, filter);

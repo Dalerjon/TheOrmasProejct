@@ -5,13 +5,20 @@
 namespace BusinessLayer{
 	BalanceRefundRelation::BalanceRefundRelation(DataLayer::balanceRefundCollection brCollection)
 	{
-		balanceID = std::get<0>(brCollection);
-		refundID = std::get<1>(brCollection);
+		id = std::get<0>(brCollection);
+		balanceID = std::get<1>(brCollection);
+		refundID = std::get<2>(brCollection);
 	}
 	BalanceRefundRelation::BalanceRefundRelation()
 	{
+		id = 0;
 		balanceID = 0;
 		refundID = 0;
+	}
+
+	int BalanceRefundRelation::GetID()
+	{
+		return id;
 	}
 
 	int BalanceRefundRelation::GetBalanceID()
@@ -24,6 +31,10 @@ namespace BusinessLayer{
 		return refundID;
 	}
 
+	void BalanceRefundRelation::SetID(int brID)
+	{
+		id = brID;
+	}
 	void BalanceRefundRelation::SetBalanceID(int bID)
 	{
 		balanceID = bID;
@@ -37,10 +48,11 @@ namespace BusinessLayer{
 	{
 		if (IsDuplicate(ormasDal, bID, rID, errorMessage))
 			return false;
+		id = ormasDal.GenerateID();
 		balanceID = bID;
 		refundID = rID;
 
-		if (ormasDal.CreateBalanceRefund(balanceID, refundID, errorMessage))
+		if (ormasDal.CreateBalanceRefund(id, balanceID, refundID, errorMessage))
 		{
 			return true;
 		}
@@ -54,7 +66,8 @@ namespace BusinessLayer{
 	{
 		if (IsDuplicate(ormasDal, errorMessage))
 			return false;
-		if (ormasDal.CreateBalanceRefund(balanceID, refundID, errorMessage))
+		id = ormasDal.GenerateID();
+		if (ormasDal.CreateBalanceRefund(id, balanceID, refundID, errorMessage))
 		{
 			return true;
 		}
@@ -82,9 +95,9 @@ namespace BusinessLayer{
 
 	std::string BalanceRefundRelation::GenerateFilter(DataLayer::OrmasDal& ormasDal)
 	{
-		if (0 != balanceID || 0 != refundID)
+		if (0 != id || 0 != balanceID || 0 != refundID)
 		{
-			return ormasDal.GetFilterForBalanceRefund(balanceID, refundID);
+			return ormasDal.GetFilterForBalanceRefund(id, balanceID, refundID);
 		}
 		return "";
 	}
@@ -128,13 +141,14 @@ namespace BusinessLayer{
 
 	bool BalanceRefundRelation::IsEmpty()
 	{
-		if (0 == balanceID && 0 == refundID)
+		if (0 == id && 0 == balanceID && 0 == refundID)
 			return true;
 		return false;
 	}
 
 	void BalanceRefundRelation::Clear()
 	{
+		id = 0;
 		balanceID = 0;
 		refundID = 0;
 	}

@@ -22,6 +22,12 @@
     <Filter Include="MOC Files">
       <UniqueIdentifier>{67338fcf-eaff-4dc7-8f06-3bd76c38e0dc}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\TinyXML">
+      <UniqueIdentifier>{d4bdeddd-ee62-4180-95c4-30c929b976ec}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\TinyXML">
+      <UniqueIdentifier>{9221703d-7b3f-459c-988a-2551edd28d03}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -304,6 +310,18 @@
       <Filter>Header Files\UI Headers</Filter>
     </ClInclude>
     <ClInclude Include="ui_GenerateCmpBlcDlg.h">
+      <Filter>Header Files\UI Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="ConfigParser.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TinyXML\tinystr.h">
+      <Filter>Header Files\TinyXML</Filter>
+    </ClInclude>
+    <ClInclude Include="TinyXML\tinyxml.h">
+      <Filter>Header Files\TinyXML</Filter>
+    </ClInclude>
+    <ClInclude Include="ui_CreateDivDlg.h">
       <Filter>Header Files\UI Headers</Filter>
     </ClInclude>
   </ItemGroup>
@@ -842,6 +860,27 @@
     <ClCompile Include="GenerateCmpBlcDlg.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="TinyXML\tinystr.cpp">
+      <Filter>Source Files\TinyXML</Filter>
+    </ClCompile>
+    <ClCompile Include="TinyXML\tinyxml.cpp">
+      <Filter>Source Files\TinyXML</Filter>
+    </ClCompile>
+    <ClCompile Include="TinyXML\tinyxmlerror.cpp">
+      <Filter>Source Files\TinyXML</Filter>
+    </ClCompile>
+    <ClCompile Include="TinyXML\tinyxmlparser.cpp">
+      <Filter>Source Files\TinyXML</Filter>
+    </ClCompile>
+    <ClCompile Include="ConfigParser.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="moc_CreateDivDlg.cpp">
+      <Filter>MOC Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CreateDivDlg.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="MainForm.ui">
@@ -1373,6 +1412,12 @@
       <Filter>User Interface</Filter>
     </CustomBuild>
     <CustomBuild Include="GenerateCmpBlcDlg.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="CreateDivDlg.ui">
+      <Filter>User Interface</Filter>
+    </CustomBuild>
+    <CustomBuild Include="CreateDivDlg.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
   </ItemGroup>

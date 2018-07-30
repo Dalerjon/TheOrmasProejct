@@ -406,6 +406,72 @@ namespace BusinessLayer{
 	}
 
 	template<>
+	std::vector<DivisionAccountRelationView> OrmasBL::GetAllDataForClass<DivisionAccountRelationView>(std::string& errorMessage, std::string filter)
+	{
+		std::vector<DivisionAccountRelationView> vecForDivisionAccount;
+		std::vector<DataLayer::divisionAccountViewCollection> dataCollection;
+		if (filter.empty())
+		{
+			dataCollection = ormasDal.GetDivisionAccount(errorMessage);
+		}
+		else
+		{
+			dataCollection = ormasDal.GetDivisionAccount(errorMessage, filter);
+		}
+		if (!dataCollection.empty()){
+			for (auto data : dataCollection)
+			{
+				vecForDivisionAccount.push_back(DivisionAccountRelationView(data));
+			}
+		}
+		return vecForDivisionAccount;
+	}
+
+	template<>
+	std::vector<DivisionEmployeeRelation> OrmasBL::GetAllDataForClass<DivisionEmployeeRelation>(std::string& errorMessage, std::string filter)
+	{
+		std::vector<DivisionEmployeeRelation> vecForDivisionEmployee;
+		std::vector<DataLayer::divisionEmployeeCollection> dataCollection;
+		if (filter.empty())
+		{
+			dataCollection = ormasDal.GetDivisionEmployee(errorMessage);
+		}
+		else
+		{
+			dataCollection = ormasDal.GetDivisionEmployee(errorMessage, filter);
+		}
+		if (!dataCollection.empty()){
+			for (auto data : dataCollection)
+			{
+				vecForDivisionEmployee.push_back(DivisionEmployeeRelation(data));
+			}
+		}
+		return vecForDivisionEmployee;
+	}
+
+	template<>
+	std::vector<Division> OrmasBL::GetAllDataForClass<Division>(std::string& errorMessage, std::string filter)
+	{
+		std::vector<Division> vecForDivision;
+		std::vector<DataLayer::divisionsCollection> dataCollection;
+		if (filter.empty())
+		{
+			dataCollection = ormasDal.GetDivisions(errorMessage);
+		}
+		else
+		{
+			dataCollection = ormasDal.GetDivisions(errorMessage, filter);
+		}
+		if (!dataCollection.empty()){
+			for (auto data : dataCollection)
+			{
+				vecForDivision.push_back(Division(data));
+			}
+		}
+		return vecForDivision;
+	}
+
+	template<>
 	std::vector<EmployeeView> OrmasBL::GetAllDataForClass<EmployeeView>(std::string& errorMessage, std::string filter)
 	{
 		std::vector<EmployeeView> vecForEmployee;
@@ -2839,6 +2905,186 @@ namespace BusinessLayer{
 		}
 		return false;
 	}
+
+	bool OrmasBL::CreateDivisionAccountRelation(BusinessLayer::DivisionAccountRelation* divisionAccountReletion, std::string& errorMessage)
+	{
+		try
+		{
+			if (0 != divisionAccountReletion->GetDivisionID() && 0 != divisionAccountReletion->GetAccountID() && !divisionAccountReletion->GetCode().empty())
+			{
+				return divisionAccountReletion->CreateDivisionAccountRelation(ormasDal, errorMessage);
+			}
+			else
+			{
+				errorMessage = "Error! Division-Account relation division ID, account ID and code name must not be empty. Please fill up them!";
+			}
+		}
+		catch (...)
+		{
+			errorMessage = "Fatal error! Please contact with application provider.";
+		}
+		return false;
+	}
+
+	bool OrmasBL::UpdateDivisionAccountRelation(BusinessLayer::DivisionAccountRelation* divisionAccountReletion, std::string& errorMessage)
+	{
+		try
+		{
+			if (0 != divisionAccountReletion->GetDivisionID() && 0 != divisionAccountReletion->GetAccountID() && !divisionAccountReletion->GetCode().empty())
+			{
+				return divisionAccountReletion->UpdateDivisionAccountRelation(ormasDal, errorMessage);
+			}
+			else
+			{
+				errorMessage = "Error! Division-Account relation division ID, account ID and code name must not be empty. Please fill up them!";
+			}
+		}
+		catch (...)
+		{
+			errorMessage = "Fatal error! Please contact with application provider.";
+		}
+		return false;
+	}
+
+	bool OrmasBL::DeleteDivisionAccountRelation(BusinessLayer::DivisionAccountRelation* divisionAccountReletion, std::string& errorMessage)
+	{
+		try
+		{
+			if (0 != divisionAccountReletion->GetID())
+			{
+				return divisionAccountReletion->DeleteDivisionAccountRelation(ormasDal, errorMessage);
+			}
+			else
+			{
+				errorMessage = "Error! Division-Account relation ID is 0. Some thing goes wrong!";
+			}
+		}
+		catch (...)
+		{
+			errorMessage = "Fatal error! Please contact with application provider.";
+		}
+		return false;
+	}
+
+	bool OrmasBL::CreateDivisionEmployeeRelation(BusinessLayer::DivisionEmployeeRelation* divisionEmployeeRelation, std::string& errorMessage)
+	{
+		try
+		{
+			if (0 != divisionEmployeeRelation->GetDivisionID() && 0 != divisionEmployeeRelation->GetEmployeeID())
+			{
+				return divisionEmployeeRelation->CreateDivisionEmployeeRelation(ormasDal, errorMessage);
+			}
+			else
+			{
+				errorMessage = "Error! Division-Employee relation division ID, employee ID and code name must not be empty. Please fill up them!";
+			}
+		}
+		catch (...)
+		{
+			errorMessage = "Fatal error! Please contact with application provider.";
+		}
+		return false;
+	}
+
+	bool OrmasBL::UpdateDivisionEmployeeRelation(BusinessLayer::DivisionEmployeeRelation* divisionEmployeeRelation, std::string& errorMessage)
+	{
+		try
+		{
+			if (0 != divisionEmployeeRelation->GetDivisionID() && 0 != divisionEmployeeRelation->GetEmployeeID())
+			{
+				return divisionEmployeeRelation->UpdateDivisionEmployeeRelation(ormasDal, errorMessage);
+			}
+			else
+			{
+				errorMessage = "Error! Division-Account relation division ID, employee ID and code name must not be empty. Please fill up them!";
+			}
+		}
+		catch (...)
+		{
+			errorMessage = "Fatal error! Please contact with application provider.";
+		}
+		return false;
+	}
+
+	bool OrmasBL::DeleteDivisionEmployeeRelation(BusinessLayer::DivisionEmployeeRelation* divisionEmployeeReletion, std::string& errorMessage)
+	{
+		try
+		{
+			if (0 != divisionEmployeeReletion->GetID())
+			{
+				return divisionEmployeeReletion->DeleteDivisionEmployeeRelation(ormasDal, errorMessage);
+			}
+			else
+			{
+				errorMessage = "Error! Division-Account relation ID is 0. Some thing goes wrong!";
+			}
+		}
+		catch (...)
+		{
+			errorMessage = "Fatal error! Please contact with application provider.";
+		}
+		return false;
+	}
+
+	bool OrmasBL::CreateDivision(BusinessLayer::Division* division, std::string& errorMessage)
+	{
+		try
+		{
+			if (!division->GetCode().empty() && !division->GetName().empty())
+			{
+				return division->CreateDivision(ormasDal, errorMessage);
+			}
+			else
+			{
+				errorMessage = "Error! Division code and name must not be empty. Please fill up them!";
+			}
+		}
+		catch (...)
+		{
+			errorMessage = "Fatal error! Please contact with application provider.";
+		}
+		return false;
+	}
+
+	bool OrmasBL::UpdateDivision(BusinessLayer::Division* division, std::string& errorMessage)
+	{
+		try
+		{
+			if (!division->GetCode().empty() && !division->GetName().empty())
+			{
+				return division->UpdateDivision(ormasDal, errorMessage);
+			}
+			else
+			{
+				errorMessage = "Error! Division code and name must not be empty. Please fill up them!";
+			}
+		}
+		catch (...)
+		{
+			errorMessage = "Fatal error! Please contact with application provider.";
+		}
+		return false;
+	}
+
+	bool OrmasBL::DeleteDivision(BusinessLayer::Division* division, std::string& errorMessage)
+	{
+		try
+		{
+			if (0 != division->GetID())
+			{
+				return division->DeleteDivision(ormasDal, errorMessage);
+			}
+			else
+			{
+				errorMessage = "Error! Division ID is 0. Some thing goes wrong!";
+			}
+		}
+		catch (...)
+		{
+			errorMessage = "Fatal error! Please contact with application provider.";
+		}
+		return false;
+	}
     
 	bool OrmasBL::CreateEmployee(BusinessLayer::Employee* employee, std::string& errorMessage)
 	{
@@ -2970,7 +3216,7 @@ namespace BusinessLayer{
 	{
 		try
 		{
-			if (0 != entryRouting->GetCredit() && 0 != entryRouting->GetDebit() && !entryRouting->GetOperation().empty())
+			if (0 != entryRouting->GetCreditAccountID() && 0 != entryRouting->GetDebitAccountID() && !entryRouting->GetOperation().empty())
 			{
 				return entryRouting->CreateEntryRouting(ormasDal, errorMessage);
 			}
@@ -2990,7 +3236,7 @@ namespace BusinessLayer{
 	{
 		try
 		{
-			if (0 != entryRouting->GetCredit() && 0 != entryRouting->GetDebit() && !entryRouting->GetOperation().empty())
+			if (0 != entryRouting->GetCreditAccountID() && 0 != entryRouting->GetDebitAccountID() && !entryRouting->GetOperation().empty())
 			{
 				return entryRouting->UpdateEntryRouting(ormasDal, errorMessage);
 			}

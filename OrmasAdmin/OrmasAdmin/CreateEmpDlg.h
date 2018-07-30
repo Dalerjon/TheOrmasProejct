@@ -25,11 +25,15 @@ public:
 	void SetID(int ID, QString childName);
 private:
 	BusinessLayer::Employee *employee = new BusinessLayer::Employee();
+	BusinessLayer::DivisionEmployeeRelation *divisionEmployee = new BusinessLayer::DivisionEmployeeRelation();
 	void SetEmployeeParams(QString, QString, QString, QString, QString, int, QString, QString, int, QString, QString, int = 0);
+	void SetDivisionEmployeeParams(int, int, QString, int = 0);
 	void FillEditElements(QString, QString, QString, QString, QString, int, QString, QString, int, QString, QString);
+	void FillEditElements(int, QString);
 	QIntValidator *vInt = nullptr;
 	QWidget* parentForm;
 	MainForm* mainForm;
+	void InitComboBox();
 };
 
 #endif //CREATEEMPDLG_H

@@ -7,7 +7,8 @@
 #include "MainForm.h"
 #include "OrmasBL.h"
 #include "LoginForm.h"
-
+#include "ConfigParser.h"
+#include <QString>
 
 int main(int argc, char* argv[])
 {
@@ -17,7 +18,25 @@ int main(int argc, char* argv[])
 	app.installTranslator(&myTranslator);
 	QResource::registerResource("OrmasResource.rcc");
 	BusinessLayer::OrmasBL *oBL = new BusinessLayer::OrmasBL();
-	oBL->ConnectToDB("OrmasDB", "postgres", "postgres", "127.0.0.1", 5432);
+	ConfigParser conParser;
+	std::string executablePath = qApp->applicationDirPath().toStdString();
+	executablePath += "/";
+	executablePath += "appconfig.xml";
+	conParser.LoadConfig(executablePath.c_str());
+	if (conParser.IsEmpty())
+	{
+		QMessageBox::information(NULL, QString(QObject::tr("Error")),
+			QString(QObject::tr("DB credentiials are wrong!")),
+			QString(QObject::tr("Ok")));
+		return -1;
+	}
+	if (!oBL->ConnectToDB(conParser.dbName, conParser.dbUsername, conParser.dbPassword, conParser.dbIPAddress, conParser.port))
+	{
+		QMessageBox::information(NULL, QString(QObject::tr("Error")),
+			QString(QObject::tr("Cannot connect to DB!")),
+			QString(QObject::tr("Ok")));
+		return -1;
+	}
 	BusinessLayer::User *loggedUser = new BusinessLayer::User();
 	LoginForm logForm(oBL, loggedUser);
 	logForm.exec();

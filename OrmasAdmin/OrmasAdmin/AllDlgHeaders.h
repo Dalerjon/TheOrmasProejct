@@ -19,6 +19,7 @@
 #include "CreateConRListDlg.h"
 #include "CreateCurDlg.h"
 #include "CreateCOADlg.h"
+#include "CreateDivDlg.h"
 #include "CreateEmpDlg.h"
 #include "CreateEtrDlg.h"
 #include "CreateEtrRtDlg.h"

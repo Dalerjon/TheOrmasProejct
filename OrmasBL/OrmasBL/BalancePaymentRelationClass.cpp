@@ -5,15 +5,22 @@
 namespace BusinessLayer{
 	BalancePaymentRelation::BalancePaymentRelation(DataLayer::balancePaymentCollection bpCollection)
 	{
-		balanceID = std::get<0>(bpCollection);
-		paymentID = std::get<1>(bpCollection);
+		id = std::get<0>(bpCollection);
+		balanceID = std::get<1>(bpCollection);
+		paymentID = std::get<2>(bpCollection);
 	}
 	BalancePaymentRelation::BalancePaymentRelation()
 	{
+		id = 0;
 		balanceID = 0;
 		paymentID = 0;
 	}
 	
+	int BalancePaymentRelation::GetID()
+	{
+		return id;
+	}
+
 	int BalancePaymentRelation::GetBalanceID()
 	{
 		return balanceID;
@@ -24,6 +31,10 @@ namespace BusinessLayer{
 		return paymentID;
 	}
 
+	void BalancePaymentRelation::SetID(int bpID)
+	{
+		id = bpID;
+	}
 	void BalancePaymentRelation::SetBalanceID(int bID)
 	{
 		balanceID = bID;
@@ -37,10 +48,11 @@ namespace BusinessLayer{
 	{
 		if (IsDuplicate(ormasDal, bID, pID, errorMessage))
 			return false;
+		id = ormasDal.GenerateID();
 		balanceID = bID;
 		paymentID = pID;
 
-		if (ormasDal.CreateBalancePayment(balanceID, paymentID, errorMessage))
+		if (ormasDal.CreateBalancePayment(id, balanceID, paymentID, errorMessage))
 		{
 			return true;
 		}
@@ -54,7 +66,8 @@ namespace BusinessLayer{
 	{
 		if (IsDuplicate(ormasDal, errorMessage))
 			return false;
-		if (ormasDal.CreateBalancePayment(balanceID, paymentID, errorMessage))
+		id = ormasDal.GenerateID();
+		if (ormasDal.CreateBalancePayment(id, balanceID, paymentID, errorMessage))
 		{
 			return true;
 		}
@@ -82,9 +95,9 @@ namespace BusinessLayer{
 
 	std::string BalancePaymentRelation::GenerateFilter(DataLayer::OrmasDal& ormasDal)
 	{
-		if (0 != balanceID || 0 != paymentID)
+		if (0 != id || 0 != balanceID || 0 != paymentID)
 		{
-			return ormasDal.GetFilterForBalancePayment(balanceID, paymentID);
+			return ormasDal.GetFilterForBalancePayment(id, balanceID, paymentID);
 		}
 		return "";
 	}
@@ -128,13 +141,14 @@ namespace BusinessLayer{
 
 	bool BalancePaymentRelation::IsEmpty()
 	{
-		if (0 == balanceID && 0 == paymentID)
+		if (0 == id && 0 == balanceID && 0 == paymentID)
 			return true;
 		return false;
 	}
 
 	void BalancePaymentRelation::Clear()
 	{
+		id = 0;
 		balanceID = 0;
 		paymentID = 0;
 	}

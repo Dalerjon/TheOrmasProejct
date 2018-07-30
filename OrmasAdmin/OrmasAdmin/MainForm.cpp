@@ -190,6 +190,7 @@ void MainForm::SetAllMenuInvisible()
 	actionStatusRule->setVisible(false);
 	actionRelation->setVisible(false);
 	actionRelationType->setVisible(false);
+	actionDivision->setVisible(false);
 
 	//actions in menu about
 	actionAbout->setVisible(true);
@@ -305,6 +306,7 @@ void MainForm::SetAllMenuVisible()
 	actionStatusRule->setVisible(true);
 	actionRelation->setVisible(true);
 	actionRelationType->setVisible(true);
+	actionDivision->setVisible(true);
 
 	//actions in menu about
 	actionAbout->setVisible(true);
@@ -440,6 +442,7 @@ void MainForm::CreateConnections()
 	QObject::connect(actionStatusRule, &QAction::triggered, this, &MainForm::OpenStatusRuleForm);
 	QObject::connect(actionRelation, &QAction::triggered, this, &MainForm::OpenRelationForm);
 	QObject::connect(actionRelationType, &QAction::triggered, this, &MainForm::OpenRelationTypeForm);
+	QObject::connect(actionDivision, &QAction::triggered, this, &MainForm::OpenDivisionForm);
 
 	QObject::connect(actionAbout, &QAction::triggered, this, &MainForm::OpenAboutForm);
 }
@@ -3734,6 +3737,54 @@ void MainForm::OpenRelationTypeForm()
 		checkedWidget->topLevelWidget();
 		checkedWidget->activateWindow();
 		QString message = tr("All relation types are shown");
+		statusBar()->showMessage(message);
+	}
+}
+
+void MainForm::OpenDivisionForm()
+{
+	QString message = tr("Loading...");
+	statusBar()->showMessage(message);
+	QWidget* checkedWidget = IsWindowExist(mdiArea->subWindowList(), QString("divisionForm"));
+	if (checkedWidget == nullptr)
+	{
+		DataForm *dForm = new DataForm(oBL, this);
+		dForm->setWindowTitle(tr("Divisions"));
+		dForm->FillTable<BusinessLayer::Division>(errorMessage);
+		if (errorMessage.empty())
+		{
+			dForm->setObjectName("divisionForm");
+			dForm->QtConnect<BusinessLayer::Division>();
+			QMdiSubWindow *divisionWindow = new QMdiSubWindow;
+			divisionWindow->setWidget(dForm);
+			divisionWindow->setAttribute(Qt::WA_DeleteOnClose);
+			mdiArea->addSubWindow(divisionWindow);
+			divisionWindow->resize(dForm->size().width() + 18, dForm->size().height() + 30);
+			dForm->show();
+			dForm->topLevelWidget();
+			dForm->activateWindow();
+			dForm->raise();
+			dForm->setWindowFlags(dForm->windowFlags() | Qt::WindowStaysOnTopHint);
+			QString message = tr("All divisions are shown");
+			statusBar()->showMessage(message);
+		}
+		else
+		{
+			delete dForm;
+			QString message = tr("End with error!");
+			statusBar()->showMessage(message);
+			QMessageBox::information(NULL, QString(tr("Warning")),
+				QString(tr(errorMessage.c_str())),
+				QString(tr("Ok")));
+			QMessageBox msgBox;
+			errorMessage = "";
+		}
+	}
+	else
+	{
+		checkedWidget->topLevelWidget();
+		checkedWidget->activateWindow();
+		QString message = tr("All divisions are shown");
 		statusBar()->showMessage(message);
 	}
 }
