@@ -57,7 +57,7 @@ CreateTrsDlg::CreateTrsDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, QWi
 	QObject::connect(cancelBtn, &QPushButton::released, this, &CreateTrsDlg::Close);
 	QObject::connect(employeeBtn, &QPushButton::released, this, &CreateTrsDlg::OpenEmpDlg);
 	QObject::connect(statusBtn, &QPushButton::released, this, &CreateTrsDlg::OpenStsDlg);
-	QObject::connect(stockEmployeeBtn, &QPushButton::released, this, &CreateTrsDlg::OpenSkEmpDlg);
+	QObject::connect(stockEmployeeBtn, &QPushButton::released, this, &CreateTrsDlg::OpenUserDlg);
 	QObject::connect(addProdBtn, &QPushButton::released, this, &CreateTrsDlg::OpenTrsListDlg);
 	QObject::connect(statusEdit, &QLineEdit::textChanged, this, &CreateTrsDlg::StatusWasChenged);
 	QObject::connect(prodCountEdit, &QLineEdit::textChanged, this, &CreateTrsDlg::TextEditChanged);
@@ -74,13 +74,13 @@ CreateTrsDlg::~CreateTrsDlg()
 	dialogBL->CancelTransaction(errorMessage);
 }
 
-void CreateTrsDlg::SetTransportParams(int tEmployeeID, QString tDate, QString tExecDate, int tStockEmployeeID, double tCount,
+void CreateTrsDlg::SetTransportParams(int tUserID, QString tDate, QString tExecDate, int tEmployeeID, double tCount,
 	double tSum, int tStatusID, int tCurrencyID, int id)
 {
-	transport->SetEmployeeID(tEmployeeID);
+	transport->SetUserID(tUserID);
 	transport->SetDate(tDate.toUtf8().constData());
 	transport->SetExecutionDate(tExecDate.toUtf8().constData());
-	transport->SetStockEmployeeID(tStockEmployeeID);
+	transport->SetEmployeeID(tEmployeeID);
 	transport->SetCount(tCount);
 	transport->SetSum(tSum);
 	transport->SetStatusID(tStatusID);
@@ -88,29 +88,29 @@ void CreateTrsDlg::SetTransportParams(int tEmployeeID, QString tDate, QString tE
 	transport->SetID(id);
 }
 
-void CreateTrsDlg::FillEditElements(int tEmployeeID, QString tDate, QString tExecDate, int tStockEmployeeID, double tCount,
+void CreateTrsDlg::FillEditElements(int tUserID, QString tDate, QString tExecDate, int tEmployeeID, double tCount,
 	double tSum, int tStatusID, int tCurrencyID)
 {
-	employeeEdit->setText(QString::number(tEmployeeID));
+	employeeEdit->setText(QString::number(tUserID));
 	dateEdit->setDateTime(QDateTime::fromString(tDate, "dd.MM.yyyy hh:mm"));
 	if (!tExecDate.isEmpty())
 	{
 		execDateEdit->setDateTime(QDateTime::fromString(tExecDate, "dd.MM.yyyy hh:mm"));
 	}
-	stockEmployeeEdit->setText(QString::number(tStockEmployeeID));
+	stockEmployeeEdit->setText(QString::number(tEmployeeID));
 	prodCountEdit->setText(QString::number(tCount));
 	sumEdit->setText(QString::number(tSum));
 	statusEdit->setText(QString::number(tStatusID));
 	currencyCmb->setCurrentIndex(currencyCmb->findData(QVariant(tCurrencyID)));
 	BusinessLayer::User user1;
-	if (user1.GetUserByID(dialogBL->GetOrmasDal(), tEmployeeID, errorMessage))
+	if (user1.GetUserByID(dialogBL->GetOrmasDal(), tUserID, errorMessage))
 	{
 		empNamePh->setText(user1.GetName().c_str());
 		empSurnamePh->setText(user1.GetSurname().c_str());
 		empPhonePh->setText(user1.GetPhone().c_str());
 	}
 	BusinessLayer::User user2;
-	if (user2.GetUserByID(dialogBL->GetOrmasDal(), tStockEmployeeID, errorMessage))
+	if (user2.GetUserByID(dialogBL->GetOrmasDal(), tEmployeeID, errorMessage))
 	{
 		empStockNamePh->setText(user2.GetName().c_str());
 		empStockSurnamePh->setText(user2.GetSurname().c_str());
@@ -136,7 +136,7 @@ void CreateTrsDlg::SetID(int ID, QString childName)
 			this->activateWindow();
 			QApplication::setActiveWindow(this);
 
-			if (childName == QString("employeeForm"))
+			if (childName == QString("userForm"))
 			{
 				employeeEdit->setText(QString::number(ID));
 				BusinessLayer::User user;
@@ -156,7 +156,7 @@ void CreateTrsDlg::SetID(int ID, QString childName)
 					statusPh->setText(status.GetName().c_str());
 				}
 			}
-			if (childName == QString("stockEmployeeForm"))
+			if (childName == QString("employeeForm"))
 			{
 				stockEmployeeEdit->setText(QString::number(ID));
 				BusinessLayer::User user;
@@ -264,11 +264,11 @@ void CreateTrsDlg::CreateTransport()
 						<< new QStandardItem(status->GetCode().c_str())
 						<< new QStandardItem(status->GetName().c_str());
 
+					BusinessLayer::Employee *user = new BusinessLayer::Employee();
 					BusinessLayer::Employee *employee = new BusinessLayer::Employee();
-					BusinessLayer::Employee *stockEmployee = new BusinessLayer::Employee();
 					BusinessLayer::Currency *currency = new BusinessLayer::Currency;
 
-					if (!employee->GetEmployeeByID(dialogBL->GetOrmasDal(), transport->GetEmployeeID(), errorMessage)
+					if (!user->GetEmployeeByID(dialogBL->GetOrmasDal(), transport->GetEmployeeID(), errorMessage)
 						|| !currency->GetCurrencyByID(dialogBL->GetOrmasDal(), transport->GetCurrencyID(), errorMessage))
 					{
 						dialogBL->CancelTransaction(errorMessage);
@@ -282,24 +282,24 @@ void CreateTrsDlg::CreateTransport()
 						return;
 					}
 
-					if (transport->GetStockEmployeeID() > 0)
+					if (transport->GetEmployeeID() > 0)
 					{
-						if (!stockEmployee->GetEmployeeByID(dialogBL->GetOrmasDal(), transport->GetStockEmployeeID(), errorMessage))
+						if (!employee->GetEmployeeByID(dialogBL->GetOrmasDal(), transport->GetEmployeeID(), errorMessage))
 						{
 							dialogBL->CancelTransaction(errorMessage);
 							QMessageBox::information(NULL, QString(tr("Warning")),
 								QString(tr(errorMessage.c_str())),
 								QString(tr("Ok")));
 							errorMessage.clear();
-							delete stockEmployee;
+							delete employee;
 							return;
 						}
 					}
 
-					if (0 != transport->GetEmployeeID())
+					if (0 != transport->GetUserID())
 					{
 						BusinessLayer::Position *ePosition = new BusinessLayer::Position();
-						if (!employee->GetEmployeeByID(dialogBL->GetOrmasDal(), transport->GetEmployeeID(), errorMessage))
+						if (!user->GetEmployeeByID(dialogBL->GetOrmasDal(), transport->GetUserID(), errorMessage))
 						{
 							dialogBL->CancelTransaction(errorMessage);
 							QMessageBox::information(NULL, QString(tr("Warning")),
@@ -309,9 +309,9 @@ void CreateTrsDlg::CreateTransport()
 							delete ePosition;
 							return;
 						}
-						transportItem << new QStandardItem(employee->GetName().c_str())
-							<< new QStandardItem(employee->GetSurname().c_str())
-							<< new QStandardItem(employee->GetPhone().c_str())
+						transportItem << new QStandardItem(user->GetName().c_str())
+							<< new QStandardItem(user->GetSurname().c_str())
+							<< new QStandardItem(user->GetPhone().c_str())
 							<< new QStandardItem(ePosition->GetName().c_str());
 					}
 					else
@@ -321,10 +321,10 @@ void CreateTrsDlg::CreateTransport()
 							<< new QStandardItem("")
 							<< new QStandardItem("");
 					}
-					if (0 != transport->GetStockEmployeeID())
+					if (0 != transport->GetEmployeeID())
 					{
 						BusinessLayer::Position *sePosition = new BusinessLayer::Position();
-						if (!stockEmployee->GetEmployeeByID(dialogBL->GetOrmasDal(), transport->GetStockEmployeeID(), errorMessage))
+						if (!employee->GetEmployeeByID(dialogBL->GetOrmasDal(), transport->GetEmployeeID(), errorMessage))
 						{
 							dialogBL->CancelTransaction(errorMessage);
 							QMessageBox::information(NULL, QString(tr("Warning")),
@@ -334,9 +334,9 @@ void CreateTrsDlg::CreateTransport()
 							delete sePosition;
 							return;
 						}
-						transportItem << new QStandardItem(stockEmployee->GetName().c_str())
-							<< new QStandardItem(stockEmployee->GetSurname().c_str())
-							<< new QStandardItem(stockEmployee->GetPhone().c_str())
+						transportItem << new QStandardItem(employee->GetName().c_str())
+							<< new QStandardItem(employee->GetSurname().c_str())
+							<< new QStandardItem(employee->GetPhone().c_str())
 							<< new QStandardItem(sePosition->GetName().c_str());
 					}
 					else
@@ -349,15 +349,15 @@ void CreateTrsDlg::CreateTransport()
 					transportItem << new QStandardItem(QString::number(transport->GetCount()))
 						<< new QStandardItem(QString::number(transport->GetSum()))
 						<< new QStandardItem(currency->GetShortName().c_str())
-						<< new QStandardItem(QString::number(transport->GetStockEmployeeID()))
 						<< new QStandardItem(QString::number(transport->GetEmployeeID()))
+						<< new QStandardItem(QString::number(transport->GetUserID()))
 						<< new QStandardItem(QString::number(transport->GetStatusID()))
 						<< new QStandardItem(QString::number(transport->GetCurrencyID()));
 
 					QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
 					itemModel->appendRow(transportItem);
-					delete stockEmployee;
 					delete employee;
+					delete user;
 					delete currency;
 					delete status;
 				}
@@ -390,9 +390,9 @@ void CreateTrsDlg::EditTransport()
 		&& 0 != prodCountEdit->text().toDouble() && 0 != sumEdit->text().toDouble()
 		&& 0 != statusEdit->text().toInt() && 0 != currencyCmb->currentData().toInt())
 	{
-		if (transport->GetStockEmployeeID() != stockEmployeeEdit->text().toInt() || QString(transport->GetDate().c_str()) != dateEdit->text() ||
+		if (transport->GetEmployeeID() != stockEmployeeEdit->text().toInt() || QString(transport->GetDate().c_str()) != dateEdit->text() ||
 			QString(transport->GetExecutionDate().c_str()) != execDateEdit->text() ||
-			transport->GetEmployeeID() != employeeEdit->text().toInt() || transport->GetCount() != prodCountEdit->text().toDouble() ||
+			transport->GetUserID() != employeeEdit->text().toInt() || transport->GetCount() != prodCountEdit->text().toDouble() ||
 			transport->GetSum() != sumEdit->text().toDouble()
 			|| transport->GetCurrencyID() != currencyCmb->currentData().toInt())
 		{
@@ -421,12 +421,12 @@ void CreateTrsDlg::EditTransport()
 						itemModel->item(mIndex.row(), 2)->setText(transport->GetExecutionDate().c_str());
 
 
+						BusinessLayer::Employee *user = new BusinessLayer::Employee();
 						BusinessLayer::Employee *employee = new BusinessLayer::Employee();
-						BusinessLayer::Employee *stockEmployee = new BusinessLayer::Employee();
 						BusinessLayer::Currency *currency = new BusinessLayer::Currency();
 						BusinessLayer::Status *status = new BusinessLayer::Status;
 
-						if (!employee->GetEmployeeByID(dialogBL->GetOrmasDal(), transport->GetEmployeeID(), errorMessage)
+						if (!user->GetEmployeeByID(dialogBL->GetOrmasDal(), transport->GetUserID(), errorMessage)
 							|| !currency->GetCurrencyByID(dialogBL->GetOrmasDal(), transport->GetCurrencyID(), errorMessage)
 							|| !status->GetStatusByID(dialogBL->GetOrmasDal(), transport->GetStatusID(), errorMessage))
 						{
@@ -435,15 +435,15 @@ void CreateTrsDlg::EditTransport()
 								QString(tr(errorMessage.c_str())),
 								QString(tr("Ok")));
 							errorMessage.clear();
-							delete stockEmployee;
-							delete currency;
 							delete employee;
+							delete currency;
+							delete user;
 							delete status;
 							return;
 						}
-						if (transport->GetStockEmployeeID() > 0)
+						if (transport->GetEmployeeID() > 0)
 						{
-							if (!stockEmployee->GetEmployeeByID(dialogBL->GetOrmasDal(), transport->GetStockEmployeeID(), errorMessage))
+							if (!employee->GetEmployeeByID(dialogBL->GetOrmasDal(), transport->GetEmployeeID(), errorMessage))
 							{
 								dialogBL->CancelTransaction(errorMessage);
 								QMessageBox::information(NULL, QString(tr("Warning")),
@@ -456,10 +456,10 @@ void CreateTrsDlg::EditTransport()
 						}
 						itemModel->item(mIndex.row(), 3)->setText(status->GetCode().c_str());
 						itemModel->item(mIndex.row(), 4)->setText(status->GetName().c_str());
-						if (transport->GetEmployeeID() > 0)
+						if (transport->GetUserID() > 0)
 						{
 							BusinessLayer::Position *ePosition = new BusinessLayer::Position();
-							if (!employee->GetEmployeeByID(dialogBL->GetOrmasDal(), transport->GetEmployeeID(), errorMessage))
+							if (!user->GetEmployeeByID(dialogBL->GetOrmasDal(), transport->GetUserID(), errorMessage))
 							{
 								dialogBL->CancelTransaction(errorMessage);
 								QMessageBox::information(NULL, QString(tr("Warning")),
@@ -469,9 +469,9 @@ void CreateTrsDlg::EditTransport()
 								delete ePosition;
 								return;
 							}
-							itemModel->item(mIndex.row(), 5)->setText(employee->GetName().c_str());
-							itemModel->item(mIndex.row(), 6)->setText(employee->GetSurname().c_str());
-							itemModel->item(mIndex.row(), 7)->setText(employee->GetPhone().c_str());
+							itemModel->item(mIndex.row(), 5)->setText(user->GetName().c_str());
+							itemModel->item(mIndex.row(), 6)->setText(user->GetSurname().c_str());
+							itemModel->item(mIndex.row(), 7)->setText(user->GetPhone().c_str());
 							itemModel->item(mIndex.row(), 8)->setText(ePosition->GetName().c_str());
 						}
 						else
@@ -481,10 +481,10 @@ void CreateTrsDlg::EditTransport()
 							itemModel->item(mIndex.row(), 7)->setText("");
 							itemModel->item(mIndex.row(), 8)->setText("");
 						}
-						if (transport->GetStockEmployeeID() > 0)
+						if (transport->GetEmployeeID() > 0)
 						{
 							BusinessLayer::Position *sePosition = new BusinessLayer::Position();
-							if (!stockEmployee->GetEmployeeByID(dialogBL->GetOrmasDal(), transport->GetStockEmployeeID(), errorMessage))
+							if (!employee->GetEmployeeByID(dialogBL->GetOrmasDal(), transport->GetEmployeeID(), errorMessage))
 							{
 								dialogBL->CancelTransaction(errorMessage);
 								QMessageBox::information(NULL, QString(tr("Warning")),
@@ -494,9 +494,9 @@ void CreateTrsDlg::EditTransport()
 								delete sePosition;
 								return;
 							}
-							itemModel->item(mIndex.row(), 9)->setText(stockEmployee->GetName().c_str());
-							itemModel->item(mIndex.row(), 10)->setText(stockEmployee->GetSurname().c_str());
-							itemModel->item(mIndex.row(), 11)->setText(stockEmployee->GetPhone().c_str());
+							itemModel->item(mIndex.row(), 9)->setText(employee->GetName().c_str());
+							itemModel->item(mIndex.row(), 10)->setText(employee->GetSurname().c_str());
+							itemModel->item(mIndex.row(), 11)->setText(employee->GetPhone().c_str());
 							itemModel->item(mIndex.row(), 12)->setText(sePosition->GetName().c_str());
 						}
 						else
@@ -510,15 +510,15 @@ void CreateTrsDlg::EditTransport()
 						itemModel->item(mIndex.row(), 13)->setText(QString::number(transport->GetCount()));
 						itemModel->item(mIndex.row(), 14)->setText(QString::number(transport->GetSum()));
 						itemModel->item(mIndex.row(), 15)->setText(currency->GetShortName().c_str());
-						itemModel->item(mIndex.row(), 16)->setText(QString::number(transport->GetStockEmployeeID()));
-						itemModel->item(mIndex.row(), 17)->setText(QString::number(transport->GetEmployeeID()));
+						itemModel->item(mIndex.row(), 16)->setText(QString::number(transport->GetEmployeeID()));
+						itemModel->item(mIndex.row(), 17)->setText(QString::number(transport->GetUserID()));
 						itemModel->item(mIndex.row(), 18)->setText(QString::number(transport->GetStatusID()));
 						itemModel->item(mIndex.row(), 19)->setText(QString::number(transport->GetCurrencyID()));
 
 						emit itemModel->dataChanged(mIndex, mIndex);
 
+						delete user;
 						delete employee;
-						delete stockEmployee;
 						delete currency;
 						delete status;
 					}
@@ -633,7 +633,7 @@ void CreateTrsDlg::OpenEmpDlg()
 	}
 }
 
-void CreateTrsDlg::OpenSkEmpDlg()
+void CreateTrsDlg::OpenUserDlg()
 {
 	this->hide();
 	this->setModal(false);
@@ -682,7 +682,7 @@ void CreateTrsDlg::OpenSkEmpDlg()
 	if (errorMessage.empty())
 	{
 		dForm->parentDialog = this;
-		dForm->setObjectName("stockEmployeeForm");
+		dForm->setObjectName("userForm");
 		dForm->QtConnect<BusinessLayer::EmployeeView>();
 		QMdiSubWindow *stockEmployeeWindow = new QMdiSubWindow;
 		stockEmployeeWindow->setWidget(dForm);

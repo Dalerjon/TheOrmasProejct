@@ -331,9 +331,11 @@ namespace BusinessLayer{
 
 	bool Subaccount::IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string aNumber, std::string& errorMessage)
 	{
-		Subaccount Subaccount;
-		Subaccount.SetNumber(aNumber);
-		std::string filter = Subaccount.GenerateFilter(ormasDal);
+		Subaccount subaccount;
+		subaccount.Clear();
+		errorMessage.clear();
+		subaccount.SetNumber(aNumber);
+		std::string filter = subaccount.GenerateFilter(ormasDal);
 		std::vector<DataLayer::subaccountsViewCollection> subaccountVector = ormasDal.GetSubaccounts(errorMessage, filter);
 		if (!errorMessage.empty())
 			return true;
@@ -347,9 +349,11 @@ namespace BusinessLayer{
 
 	bool Subaccount::IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
-		Subaccount Subaccount;
-		Subaccount.SetNumber(number);
-		std::string filter = Subaccount.GenerateFilter(ormasDal);
+		Subaccount subaccount;
+		subaccount.Clear();
+		errorMessage.clear();
+		subaccount.SetNumber(number);
+		std::string filter = subaccount.GenerateFilter(ormasDal);
 		std::vector<DataLayer::subaccountsViewCollection> subaccountVector = ormasDal.GetSubaccounts(errorMessage, filter);
 		if (!errorMessage.empty())
 			return true;

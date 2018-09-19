@@ -227,6 +227,8 @@ namespace BusinessLayer{
 	bool Salary::IsDuplicate(DataLayer::OrmasDal& ormasDal, int uID, double sValue, int cID, std::string sDate, std::string& errorMessage)
 	{
 		Salary salary;
+		salary.Clear();
+		errorMessage.clear();
 		salary.SetEmployeeID(uID);
 		salary.SetValue(sValue);
 		salary.SetCurrencyID(cID);
@@ -246,6 +248,8 @@ namespace BusinessLayer{
 	bool Salary::IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
 		Salary salary;
+		salary.Clear();
+		errorMessage.clear();
 		salary.SetEmployeeID(employeeID);
 		salary.SetValue(value);
 		salary.SetCurrencyID(currencyID);

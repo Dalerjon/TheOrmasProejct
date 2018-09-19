@@ -20,12 +20,13 @@ public:
 	void TextEditChanged();
 	void Close();
 	void OpenUserDlg();
+	void OpenStatusDlg();
 	public slots:
 	void SetID(int ID, QString childName);
 private:
 	BusinessLayer::Payment *payment = new BusinessLayer::Payment();
-	void SetPaymentParams(QString, double, int, int, int = 0);
-	void FillEditElements(QString, double, int, int);
+	void SetPaymentParams(QString, double, int, int, int, int = 0);
+	void FillEditElements(QString, double, int, int, int);
 	QDoubleValidator *vDouble = nullptr;
 	QIntValidator *vInt = nullptr;
 	void InitComboBox();

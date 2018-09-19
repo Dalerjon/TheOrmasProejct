@@ -201,6 +201,8 @@ namespace BusinessLayer
 		int cID, std::string& errorMessage)
 	{
 		ConsumeProductList consumeProductList;
+		consumeProductList.Clear();
+		errorMessage.clear();
 		consumeProductList.SetConsumeProductID(cpID);
 		consumeProductList.SetProductID(pID);
 		consumeProductList.SetCount(cplCount);
@@ -221,6 +223,8 @@ namespace BusinessLayer
 	bool ConsumeProductList::IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
 		ConsumeProductList consumeProductList;
+		consumeProductList.Clear();
+		errorMessage.clear();
 		consumeProductList.SetConsumeProductID(consumeProductID);
 		consumeProductList.SetProductID(productID);
 		consumeProductList.SetCount(count);

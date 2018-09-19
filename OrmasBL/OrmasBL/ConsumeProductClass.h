@@ -71,6 +71,8 @@ namespace BusinessLayer
 		bool IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string& errorMessage);
 		bool ChangesAtStock(DataLayer::OrmasDal& ormasDal, int cpID, std::string& errorMessage);
 		bool ChangesAtStock(DataLayer::OrmasDal& ormasDal, int cpID, std::map<int, double> pProdCountMap, double pSum, std::string& errorMessage);
+		bool ChangesAtTransport(DataLayer::OrmasDal& ormasDal, int cpID, std::string& errorMessage);
+		bool ChangesAtTransport(DataLayer::OrmasDal& ormasDal, int cpID, std::map<int, double> pProdCountMap, double pSum, std::string& errorMessage);
 		double GetCurrentSum(DataLayer::OrmasDal& ormasDal, int cpID, std::string& errorMessage);
 		double GetCurrentCount(DataLayer::OrmasDal& ormasDal, int cpID, std::string& errorMessage);
 		int GetCurrentStatusID(DataLayer::OrmasDal& ormasDal, int oID, std::string& errorMessage);

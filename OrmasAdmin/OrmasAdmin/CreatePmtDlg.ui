@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>556</width>
-    <height>180</height>
+    <width>537</width>
+    <height>209</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -32,25 +32,20 @@
    <property name="bottomMargin">
     <number>11</number>
    </property>
-   <item row="5" column="3">
-    <widget class="QLabel" name="surnamePh">
-     <property name="minimumSize">
-      <size>
-       <width>100</width>
-       <height>0</height>
-      </size>
+   <item row="4" column="3">
+    <widget class="QLineEdit" name="userEdit">
+     <property name="toolTip">
+      <string>Must not be empty</string>
      </property>
-     <property name="font">
-      <font>
-       <family>Times New Roman</family>
-       <pointsize>12</pointsize>
-       <weight>75</weight>
-       <italic>true</italic>
-       <bold>true</bold>
-      </font>
+     <property name="readOnly">
+      <bool>true</bool>
      </property>
+    </widget>
+   </item>
+   <item row="5" column="4">
+    <widget class="QLabel" name="phoneLb">
      <property name="text">
-      <string/>
+      <string>Phone:</string>
      </property>
     </widget>
    </item>
@@ -73,10 +68,25 @@
      </property>
     </widget>
    </item>
-   <item row="5" column="4">
-    <widget class="QLabel" name="phoneLb">
+   <item row="5" column="3">
+    <widget class="QLabel" name="surnamePh">
+     <property name="minimumSize">
+      <size>
+       <width>100</width>
+       <height>0</height>
+      </size>
+     </property>
+     <property name="font">
+      <font>
+       <family>Times New Roman</family>
+       <pointsize>12</pointsize>
+       <weight>75</weight>
+       <italic>true</italic>
+       <bold>true</bold>
+      </font>
+     </property>
      <property name="text">
-      <string>Phone:</string>
+      <string/>
      </property>
     </widget>
    </item>
@@ -102,7 +112,7 @@
      </property>
     </widget>
    </item>
-   <item row="7" column="0" colspan="6">
+   <item row="8" column="0" colspan="6">
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
       <spacer name="horizontalSpacer">
@@ -211,16 +221,6 @@
    <item row="6" column="2" colspan="2">
     <widget class="QComboBox" name="currencyCmb"/>
    </item>
-   <item row="4" column="3">
-    <widget class="QLineEdit" name="userEdit">
-     <property name="toolTip">
-      <string>Must not be empty</string>
-     </property>
-     <property name="readOnly">
-      <bool>true</bool>
-     </property>
-    </widget>
-   </item>
    <item row="2" column="3">
     <widget class="QLineEdit" name="valueEdit">
      <property name="toolTip">
@@ -230,6 +230,82 @@
    </item>
    <item row="0" column="3">
     <widget class="QDateTimeEdit" name="dateEdit"/>
+   </item>
+   <item row="7" column="0" colspan="6">
+    <widget class="QWidget" name="statusWidget" native="true">
+     <layout class="QHBoxLayout" name="horizontalLayout_3">
+      <property name="spacing">
+       <number>9</number>
+      </property>
+      <property name="leftMargin">
+       <number>0</number>
+      </property>
+      <property name="topMargin">
+       <number>0</number>
+      </property>
+      <property name="rightMargin">
+       <number>0</number>
+      </property>
+      <property name="bottomMargin">
+       <number>0</number>
+      </property>
+      <item>
+       <widget class="QPushButton" name="statusBtn">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>197</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>Change status</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLineEdit" name="statusEdit">
+        <property name="readOnly">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="statusLb">
+        <property name="text">
+         <string>Status name:</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="statusPh">
+        <property name="minimumSize">
+         <size>
+          <width>120</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="font">
+         <font>
+          <family>Times New Roman</family>
+          <pointsize>12</pointsize>
+          <weight>75</weight>
+          <italic>true</italic>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
    </item>
   </layout>
  </widget>

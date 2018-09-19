@@ -233,6 +233,8 @@ namespace BusinessLayer{
 	bool AccessItem::IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string aNameEng, std::string aNameRu, std::string aDivision, std::string& errorMessage)
 	{
 		AccessItem accessItem;
+		accessItem.Clear();
+		errorMessage.clear();
 		accessItem.SetNameEng(aNameEng);
 		accessItem.SetDivision(aDivision);
 		std::string filter = accessItem.GenerateFilter(ormasDal);
@@ -260,6 +262,8 @@ namespace BusinessLayer{
 	bool AccessItem::IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
 		AccessItem accessItem;
+		accessItem.Clear();
+		errorMessage.clear();
 		accessItem.SetNameEng(nameEng);
 		accessItem.SetDivision(division);
 		std::string filter = accessItem.GenerateFilter(ormasDal);

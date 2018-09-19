@@ -176,6 +176,8 @@ namespace BusinessLayer{
 	bool Division::IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string cName, std::string cCode, std::string& errorMessage)
 	{
 		Division division;
+		division.Clear();
+		errorMessage.clear();
 		division.SetName(cName);
 		division.SetCode(cCode);
 		std::string filter = division.GenerateFilter(ormasDal);
@@ -193,6 +195,8 @@ namespace BusinessLayer{
 	bool Division::IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
 		Division division;
+		division.Clear();
+		errorMessage.clear();
 		division.SetName(name);
 		division.SetCode(code);
 		std::string filter = division.GenerateFilter(ormasDal);

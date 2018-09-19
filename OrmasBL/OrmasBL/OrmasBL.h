@@ -308,7 +308,7 @@ namespace BusinessLayer
 		bool RecalculateNetCost(std::string fromDate, std::string tillDate);
 		bool GenerateReports(std::string, std::string);
 		bool CorrectingEntries();
-		
+		std::string wstring_to_utf8(const std::wstring& str);
 	};
 }
 #endif

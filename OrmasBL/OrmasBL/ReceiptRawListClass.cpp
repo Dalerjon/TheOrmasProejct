@@ -202,6 +202,8 @@ namespace BusinessLayer
 		int cID, std::string& errorMessage)
 	{
 		ReceiptRawList receiptRawList;
+		receiptRawList.Clear();
+		errorMessage.clear();
 		receiptRawList.SetReceiptRawID(rID);
 		receiptRawList.SetProductID(pID);
 		receiptRawList.SetCount(rlCount);
@@ -222,6 +224,8 @@ namespace BusinessLayer
 	bool ReceiptRawList::IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
 		ReceiptRawList receiptRawList;
+		receiptRawList.Clear();
+		errorMessage.clear();
 		receiptRawList.SetReceiptRawID(receiptRawID);
 		receiptRawList.SetProductID(productID);
 		receiptRawList.SetCount(count);

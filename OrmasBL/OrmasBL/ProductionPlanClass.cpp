@@ -257,6 +257,8 @@ namespace BusinessLayer
 		int cID, std::string& errorMessage)
 	{
 		ProductionPlan productionPlan;
+		productionPlan.Clear();
+		errorMessage.clear();
 		productionPlan.SetDate(pDate);
 		productionPlan.SetCount(pCount);
 		productionPlan.SetSum(pSum);
@@ -276,6 +278,8 @@ namespace BusinessLayer
 	bool ProductionPlan::IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
 		ProductionPlan productionPlan;
+		productionPlan.Clear();
+		errorMessage.clear();
 		productionPlan.SetDate(date);
 		productionPlan.SetCount(count);
 		productionPlan.SetSum(sum);

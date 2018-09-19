@@ -187,6 +187,8 @@ namespace BusinessLayer{
 	bool Photo::IsDuplicate(DataLayer::OrmasDal& ormasDal, int uID, int pID, std::string pSource, std::string& errorMessage)
 	{
 		Photo photo;
+		photo.Clear();
+		errorMessage.clear();
 		photo.SetUserID(uID);
 		photo.SetSource(pSource);
 		std::string filter = photo.GenerateFilter(ormasDal);
@@ -215,6 +217,8 @@ namespace BusinessLayer{
 	bool Photo::IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
 		Photo photo;
+		photo.Clear();
+		errorMessage.clear();
 		photo.SetUserID(userID);
 		photo.SetSource(source);
 		std::string filter = photo.GenerateFilter(ormasDal);

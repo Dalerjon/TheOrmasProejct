@@ -28,12 +28,12 @@
 					<?php
 						if(!empty($_SESSION['name']) and !empty($_SESSION['surname']) and !empty($_SESSION['password']) and !empty($_SESSION['role_id']))
 						{	
-							echo("<a href='user.php'>".$_SESSION['name']." ".$_SESSION['surname']."</a>");
+							echo("<a href='exit.php'>".$_SESSION['name']." ".$_SESSION['surname']."</a>");
 						}
 						else
 						{
-							if($PageTitle != "Регистрация")
-								echo("<a href='registration.php'>Регистрация</a>");
+							//if($PageTitle != "Регистрация")
+								//echo("<a href='registration.php'>Регистрация</a>");
 						}
 					?>
 				</div>

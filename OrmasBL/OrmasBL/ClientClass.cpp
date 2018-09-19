@@ -320,6 +320,8 @@ namespace BusinessLayer{
 		int uRoleID, std::string cFirm, std::string& errorMessage)
 	{
 		Client client;
+		client.Clear();
+		errorMessage.clear();
 		client.SetName(uName);
 		client.SetSurname(uSurname);
 		client.SetPhone(uPhone);
@@ -340,6 +342,8 @@ namespace BusinessLayer{
 	bool Client::IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
 		Client client;
+		client.Clear();
+		errorMessage.clear();
 		client.SetName(name);
 		client.SetSurname(surname);
 		client.SetPhone(phone);

@@ -232,6 +232,8 @@ namespace BusinessLayer{
 	bool Tax::IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string tName, std::string tCode, std::string& errorMessage)
 	{
 		Tax tax;
+		tax.Clear();
+		errorMessage.clear();
 		tax.SetName(tName);
 		tax.SetCode(tCode);
 		std::string filter = tax.GenerateFilter(ormasDal);
@@ -249,6 +251,8 @@ namespace BusinessLayer{
 	bool Tax::IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
 		Tax tax;
+		tax.Clear();
+		errorMessage.clear();
 		tax.SetName(name);
 		tax.SetCode(code);
 		std::string filter = tax.GenerateFilter(ormasDal);

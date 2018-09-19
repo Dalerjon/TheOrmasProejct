@@ -234,6 +234,8 @@ namespace BusinessLayer{
 		std::string& errorMessage)
 	{
 		Price price;
+		price.Clear();
+		errorMessage.clear();
 		price.SetDate(pDate);
 		price.SetValue(pValue);
 		price.SetCurrencyID(cID);
@@ -253,6 +255,8 @@ namespace BusinessLayer{
 	bool Price::IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
 		Price price;
+		price.Clear();
+		errorMessage.clear();
 		price.SetDate(date);
 		price.SetValue(value);
 		price.SetCurrencyID(currencyID);

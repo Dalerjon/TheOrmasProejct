@@ -12,4 +12,5 @@ relation_type
 product_type
 user
 chart_of_accounts
-entry_routing
+entry_routing //not needed now
+division

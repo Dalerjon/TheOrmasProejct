@@ -11,6 +11,7 @@ namespace BusinessLayer{
 		creditingAccountNumber = std::get<4>(eCollection);
 		debitingAccountID = std::get<5>(eCollection);
 		creditingAccountID = std::get<6>(eCollection);
+		description = std::get<7>(eCollection);
 	}
 
 	std::string EntryView::GetDebitingAccountNumber()

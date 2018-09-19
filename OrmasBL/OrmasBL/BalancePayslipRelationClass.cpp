@@ -157,6 +157,8 @@ namespace BusinessLayer{
 	bool BalancePayslipRelation::IsDuplicate(DataLayer::OrmasDal& ormasDal, int bID, int pID, std::string& errorMessage)
 	{
 		BalancePayslipRelation bpRelation;
+		bpRelation.Clear();
+		errorMessage.clear();
 		bpRelation.SetBalanceID(bID);
 		bpRelation.SetPayslipID(pID);
 		std::string filter = bpRelation.GenerateFilter(ormasDal);
@@ -174,6 +176,8 @@ namespace BusinessLayer{
 	bool BalancePayslipRelation::IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
 		BalancePayslipRelation bpRelation;
+		bpRelation.Clear();
+		errorMessage.clear();
 		bpRelation.SetBalanceID(balanceID);
 		bpRelation.SetPayslipID(payslipID);
 		std::string filter = bpRelation.GenerateFilter(ormasDal);

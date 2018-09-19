@@ -19,7 +19,7 @@ body{
 	width:auto;
 	height:40px;
 	background-color: #106392;
-	/*background:url('../img/bground.png');*/
+	/*background:url('../images/bground.png');*/
 }
 
 #logo{
@@ -41,7 +41,7 @@ body{
 }
 
 #action-bar-wrap{
-	width:150px;
+	width:180px;
 	height:25px;
 	position:absolute;
 	right:0%;
@@ -68,7 +68,7 @@ body{
 	height:20px;
 	margin-right:10px;
 	margin-bottom:5px;
-	background: url('../img/user.png') no-repeat;
+	background: url('../images/user.png') no-repeat;
 	background-size: cover;
 	float:left;
 	margin-top:7px;
@@ -82,12 +82,12 @@ body{
 	height: -moz-calc(100vh - 80px);
 	display: flex;
 	justify-content: center;
-	background: url('../img/com_logo.png');
+	/*background: url('../images/com_logo.png');*/
 }
 
 #login{
 	align-self: center;
-	/*background:url('../img/bground.png');*/
+	/*background:url('../images/bground.png');*/
 	background-color: #106392;
 	width:380px;
 	height: 180px;
@@ -95,7 +95,7 @@ body{
 }
 
 #login-logo{
-	background: url('../img/lock.png') no-repeat;
+	background: url('../images/lock.png') no-repeat;
 	background-size: cover;
 	width:100px;
 	height:85px;

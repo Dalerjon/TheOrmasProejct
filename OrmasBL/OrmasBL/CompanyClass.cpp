@@ -227,6 +227,8 @@ namespace BusinessLayer{
 	bool Company::IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string cName, std::string cAddress, std::string cPhone, std::string& errorMessage)
 	{
 		Company company;
+		company.Clear();
+		errorMessage.clear();
 		company.SetName(cName);
 		company.SetAddress(cAddress);
 		company.SetPhone(cPhone);
@@ -245,6 +247,8 @@ namespace BusinessLayer{
 	bool Company::IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
 		Company company;
+		company.Clear();
+		errorMessage.clear();
 		company.SetName(name);
 		company.SetAddress(address);
 		company.SetPhone(phone);

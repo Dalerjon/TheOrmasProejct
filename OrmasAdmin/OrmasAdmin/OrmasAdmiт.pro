@@ -96,7 +96,15 @@ SOURCES += \
     CreateAccTpDlg.cpp \
     CreateAccDlg.cpp \
     CreateProdConRDlg.cpp \
-    CreateProdConRListDlg.cpp
+    CreateProdConRListDlg.cpp \
+    CloseOfMonthDlg.cpp \
+    CloseOfMonthInfoDlg.cpp \
+    ConfigParser.cpp \
+    CreateDivDlg.cpp \
+    DocForm.cpp \
+    GenerateCmpBlcDlg.cpp \
+    GenerateFinRepDlg.cpp \
+    ReworkRawDlg.cpp
 
 HEADERS  += AllDlgHeaders.h \
     ClcWagesDlg.h \
@@ -182,7 +190,15 @@ HEADERS  += AllDlgHeaders.h \
     CreateAccTpDlg.h \
     CreateAccDlg.h \
     CreateProdConRDlg.h \
-    CreateProdConRListDlg.h
+    CreateProdConRListDlg.h \
+    CloseOfMonthDlg.h \
+    CloseOfMonthInfoDlg.h \
+    ConfigParser.h \
+    CreateDivDlg.h \
+    DocForm.h \
+    GenerateCmpBlcDlg.h \
+    GenerateFinRepDlg.h \
+    ReworkRawDlg.h
 
 FORMS    += ClcWagesDlg.ui \
 	CreateAcсDlg.ui \
@@ -267,7 +283,14 @@ FORMS    += ClcWagesDlg.ui \
     CreatePrdnListDlg.ui \
     CreateAccDlg.ui \
     CreateProdConRDlg.ui \
-    CreateProdConRListDlg.ui
+    CreateProdConRListDlg.ui \
+    CloseOfMonthDlg.ui \
+    CloseOfMonthInfoDlg.ui \
+    CreateDivDlg.ui \
+    DocForm.ui \
+    GenerateCmpBlcDlg.ui \
+    GenerateFinRepDlg.ui \
+    ReworkRawDlg.ui
 
 DISTFILES += \
     ../../OrmasAdmin/OrmasAdmin/OrmasResource.rcc

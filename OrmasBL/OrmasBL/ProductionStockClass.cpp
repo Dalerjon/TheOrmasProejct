@@ -16,6 +16,7 @@
 #include "NetCostClass.h"
 #include "ProductionConsumeRawListClass.h"
 #include "ProductionConsumeRawListViewClass.h"
+#include <codecvt>
 
 namespace BusinessLayer
 {
@@ -224,9 +225,11 @@ namespace BusinessLayer
 
 	bool ProductionStock::IsDuplicate(DataLayer::OrmasDal& ormasDal, int pID, std::string& errorMessage)
 	{
-		ProductionStock ProductionStock;
-		ProductionStock.SetProductID(pID);
-		std::string filter = ProductionStock.GenerateFilter(ormasDal);
+		ProductionStock productionStock;
+		productionStock.Clear();
+		errorMessage.clear();
+		productionStock.SetProductID(pID);
+		std::string filter = productionStock.GenerateFilter(ormasDal);
 		std::vector<DataLayer::productionStockViewCollection> productionStockVector = ormasDal.GetProductionStock(errorMessage, filter);
 		if (!errorMessage.empty())
 			return true;
@@ -240,9 +243,11 @@ namespace BusinessLayer
 
 	bool ProductionStock::IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
-		ProductionStock ProductionStock;
-		ProductionStock.SetProductID(productID);
-		std::string filter = ProductionStock.GenerateFilter(ormasDal);
+		ProductionStock productionStock;
+		productionStock.Clear();
+		errorMessage.clear();
+		productionStock.SetProductID(productID);
+		std::string filter = productionStock.GenerateFilter(ormasDal);
 		std::vector<DataLayer::productionStockViewCollection> productionStockVector = ormasDal.GetProductionStock(errorMessage, filter);
 		if (!errorMessage.empty())
 			return true;
@@ -333,7 +338,6 @@ namespace BusinessLayer
 			ormasDal.CancelTransaction(errorMessage);
 			return false;
 		}
-		ormasDal.CommitTransaction(errorMessage);
 		return true;
 	}
 
@@ -416,7 +420,6 @@ namespace BusinessLayer
 			ormasDal.CancelTransaction(errorMessage);
 			return false;
 		}
-		ormasDal.CommitTransaction(errorMessage);
 		return true;
 	}
 
@@ -512,7 +515,7 @@ namespace BusinessLayer
 			return false;
 		}
 
-		ormasDal.CommitTransaction(errorMessage);
+		
 		return true;
 	}
 
@@ -608,7 +611,7 @@ namespace BusinessLayer
 			return false;
 		}
 
-		ormasDal.CommitTransaction(errorMessage);
+		
 		return true;
 	}
 
@@ -697,7 +700,7 @@ namespace BusinessLayer
 			ormasDal.CancelTransaction(errorMessage);
 			return false;
 		}
-		ormasDal.CommitTransaction(errorMessage);
+		
 		return true;
 	}
 
@@ -786,7 +789,7 @@ namespace BusinessLayer
 			ormasDal.CancelTransaction(errorMessage);
 			return false;
 		}
-		ormasDal.CommitTransaction(errorMessage);
+		
 		return true;
 	}
 
@@ -859,7 +862,7 @@ namespace BusinessLayer
 			ormasDal.CancelTransaction(errorMessage);
 			return false;
 		}
-		ormasDal.CommitTransaction(errorMessage);
+		
 		return true;
 	}
 
@@ -932,7 +935,7 @@ namespace BusinessLayer
 			ormasDal.CancelTransaction(errorMessage);
 			return false;
 		}
-		ormasDal.CommitTransaction(errorMessage);
+		
 		return true;
 	}
 
@@ -1023,6 +1026,7 @@ namespace BusinessLayer
 		entry.SetDebitingAccountID(debAccID);
 		entry.SetValue(currentSum);
 		entry.SetCreditingAccountID(credAccID);
+		entry.SetDescription(wstring_to_utf8(L"Складская операция"));
 		if (!entry.CreateEntry(ormasDal, errorMessage))
 		{
 			return false;
@@ -1036,6 +1040,7 @@ namespace BusinessLayer
 		entry.SetDebitingAccountID(credAccID);
 		entry.SetValue(previousSum);
 		entry.SetCreditingAccountID(debAccID);
+		entry.SetDescription(wstring_to_utf8(L"Складская операция"));
 		if (!entry.CreateEntry(ormasDal, errorMessage, true))
 		{
 			return false;
@@ -1044,10 +1049,17 @@ namespace BusinessLayer
 		entry.SetDebitingAccountID(debAccID);
 		entry.SetValue(currentSum);
 		entry.SetCreditingAccountID(credAccID);
+		entry.SetDescription(wstring_to_utf8(L"Складская операция"));
 		if (!entry.CreateEntry(ormasDal, errorMessage))
 		{
 			return false;
 		}
 		return true;
+	}
+
+	std::string ProductionStock::wstring_to_utf8(const std::wstring& str)
+	{
+		std::wstring_convert<std::codecvt_utf8<wchar_t>> myconv;
+		return myconv.to_bytes(str);
 	}
 }

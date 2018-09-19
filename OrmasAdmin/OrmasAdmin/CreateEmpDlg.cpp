@@ -135,7 +135,8 @@ void CreateEmpDlg::FillEditElements(QString eEmail, QString eName, QString eSurn
 
 void CreateEmpDlg::FillEditElements(int divisionID, QString eIsContract)
 {
-	divisionCmbBox->setCurrentIndex(divisionID);
+	int index = activatedCmbBox->findData(divisionID, Qt::UserRole);
+	divisionCmbBox->setCurrentIndex(index);
 	isContractChkBox->setChecked(eIsContract.compare("true") == 0 ? true : false);
 }
 
@@ -225,7 +226,7 @@ void CreateEmpDlg::CreateEmployee()
 		{
 			//division section
 			SetDivisionEmployeeParams(divisionCmbBox->currentData().toInt(), employee->GetID(), isContractChkBox->isChecked()? "true" : "false");
-			if (!dialogBL->CreateDivisionEmployeeRelation(divisionEmployee, errorMessage))
+			if (!employee->CreateDivisionEmployeeRelation(dialogBL->GetOrmasDal(), *divisionEmployee, errorMessage))
 			{
 				dialogBL->CancelTransaction(errorMessage);
 				if (errorMessage.empty())
@@ -323,8 +324,7 @@ void CreateEmpDlg::EditEmployee()
 			QString(employee->GetPhone().c_str()) != phoneEdit->text() || QString(employee->GetBirthDate().c_str()) != birthDateEdit->date().toString("dd.MM.yyyy") ||
 			QString(employee->GetHireDate().c_str()) != hireDateEdit->date().toString("dd.MM.yyyy") || employee->GetRoleID() != roleEdit->text().toInt() ||
 			employee->GetPositionID() != positionEdit->text().toInt() || QString(employee->GetPassword().c_str()) != passwordEdit->text() ||
-			QString(employee->GetActivated() ? "true" : "false") != activatedCmbBox->currentText()
-			|| divisionEmployee->GetDivisionID() != divisionCmbBox->currentData().toInt())
+			QString(employee->GetActivated() ? "true" : "false") != activatedCmbBox->currentText())
 		{
 			DataForm *parentDataForm = (DataForm*) parentForm;
 			
@@ -362,22 +362,26 @@ void CreateEmpDlg::EditEmployee()
 			if (dialogBL->UpdateEmployee(employee, errorMessage))
 			{
 				SetDivisionEmployeeParams(divisionCmbBox->currentData().toInt(), employee->GetID(), isContractChkBox->isChecked() ? "true" : "false", divisionEmployee->GetID());
-				if (!dialogBL->CreateDivisionEmployeeRelation(divisionEmployee, errorMessage))
+				if (divisionEmployee->GetDivisionID() != divisionCmbBox->currentData().toInt())
 				{
-					dialogBL->CancelTransaction(errorMessage);
-					if (errorMessage.empty())
+
+					if (!employee->UpdateDivisionEmployeeRelation(dialogBL->GetOrmasDal(), *divisionEmployee, errorMessage))
 					{
-						QMessageBox::information(NULL, QString(tr("Warning")),
-							QString(tr("Divsion is not correct!")),
-							QString(tr("Ok")));
+						dialogBL->CancelTransaction(errorMessage);
+						if (errorMessage.empty())
+						{
+							QMessageBox::information(NULL, QString(tr("Warning")),
+								QString(tr("Divsion is not correct!")),
+								QString(tr("Ok")));
+						}
+						else
+						{
+							QMessageBox::information(NULL, QString(tr("Warning")),
+								QString(tr(errorMessage.c_str())),
+								QString(tr("Ok")));
+						}
+						return;
 					}
-					else
-					{
-						QMessageBox::information(NULL, QString(tr("Warning")),
-							QString(tr(errorMessage.c_str())),
-							QString(tr("Ok")));
-					}
-					return;
 				}
 				if (parentDataForm != nullptr)
 				{

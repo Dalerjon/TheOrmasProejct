@@ -152,7 +152,7 @@ void CreateStockDlg::AddProduct()
 	{
 		DataForm *parentDataForm = (DataForm*) parentForm;
 		BusinessLayer::Status *status = new BusinessLayer::Status();
-		status->SetName("STOCKED");
+		status->SetName("IN STOCK");
 		std::string statusFilter = dialogBL->GenerateFilter<BusinessLayer::Status>(status);
 		std::vector<BusinessLayer::Status> statusVector = dialogBL->GetAllDataForClass<BusinessLayer::Status>(errorMessage, statusFilter);
 		delete status;

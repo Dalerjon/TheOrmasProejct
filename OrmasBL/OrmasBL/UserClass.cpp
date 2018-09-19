@@ -327,6 +327,8 @@ namespace BusinessLayer
 		std::string uAddress, int uRoleID, std::string& errorMessage)
 	{
 		User user;
+		user.Clear();
+		errorMessage.clear();
 		user.SetName(uName);
 		user.SetSurname(uSurname);
 		user.SetPhone(uPhone);
@@ -347,6 +349,8 @@ namespace BusinessLayer
 	bool User::IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
 		User user;
+		user.Clear();
+		errorMessage.clear();
 		user.SetName(name);
 		user.SetSurname(surname);
 		user.SetPhone(phone);

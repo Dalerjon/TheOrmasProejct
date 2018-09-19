@@ -346,6 +346,8 @@ namespace BusinessLayer{
 	bool Entry::IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string eDate, int daID, double eValue, int caID, std::string& errorMessage)
 	{
 		Entry entry;
+		entry.Clear();
+		errorMessage.clear();
 		entry.SetDate(eDate);
 		entry.SetDebitingAccountID(daID);
 		entry.SetValue(eValue);
@@ -363,6 +365,8 @@ namespace BusinessLayer{
 	bool Entry::IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
 		Entry entry;
+		entry.Clear();
+		errorMessage.clear();
 		entry.SetDate(date);
 		entry.SetDebitingAccountID(debitingAccountID);
 		entry.SetValue(value);

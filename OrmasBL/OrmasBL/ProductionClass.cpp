@@ -70,6 +70,7 @@ namespace BusinessLayer
 		expiryDate = pExpiryDate;
 		sessionStart = pSessionStart;
 		sessionEnd = pSessionEnd;
+		ormasDal.StartTransaction(errorMessage);
 		if (0 != id && ormasDal.CreateProduction(id, productionDate, expiryDate, sessionStart, sessionEnd, errorMessage))
 		{
 			if (ChangesAtStock(ormasDal, id, errorMessage))
@@ -94,6 +95,7 @@ namespace BusinessLayer
 	{
 		if (IsDuplicate(ormasDal, errorMessage))
 			return false;
+		ormasDal.StartTransaction(errorMessage);
 		if (0 != id &&ormasDal.CreateProduction(id, productionDate, expiryDate, sessionStart, sessionEnd, errorMessage))
 		{
 			if (ChangesAtStock(ormasDal, id, errorMessage))
@@ -118,6 +120,7 @@ namespace BusinessLayer
 	{
 		if (!ormasDal.StartTransaction(errorMessage))
 			return false;
+		ormasDal.StartTransaction(errorMessage);
 		if (ormasDal.DeleteProduction(id, errorMessage))
 		{
 			if (ormasDal.DeleteListByProductionID(id, errorMessage))
@@ -151,6 +154,7 @@ namespace BusinessLayer
 		expiryDate = pExpiryDate;
 		sessionStart = pSessionStart;
 		sessionEnd = pSessionEnd;
+		ormasDal.StartTransaction(errorMessage);
 		if (0 != id &&ormasDal.UpdateProduction(id, productionDate, expiryDate, sessionStart, sessionEnd, errorMessage))
 		{
 			if (ChangesAtStock(ormasDal, id, prodCountMap, errorMessage))
@@ -175,6 +179,7 @@ namespace BusinessLayer
 	{
 		if (0 == prodCountMap.size())
 			return false;
+		ormasDal.StartTransaction(errorMessage);
 		if (0 != id &&ormasDal.UpdateProduction(id, productionDate, expiryDate, sessionStart, sessionEnd, errorMessage))
 		{
 			if (ChangesAtStock(ormasDal, id, prodCountMap, errorMessage))
@@ -255,6 +260,8 @@ namespace BusinessLayer
 		std::string pSessionStart, std::string pSessionEnd, std::string& errorMessage)
 	{
 		Production production;
+		production.Clear();
+		errorMessage.clear();
 		production.SetProductionDate(pProductionDate);
 		production.SetExpiryDate(pExpiryDate);
 		production.SetSessionStart(pSessionStart);
@@ -274,6 +281,8 @@ namespace BusinessLayer
 	bool Production::IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
 		Production production;
+		production.Clear();
+		errorMessage.clear();
 		production.SetProductionDate(productionDate);
 		production.SetExpiryDate(expiryDate);
 		production.SetSessionStart(sessionStart);

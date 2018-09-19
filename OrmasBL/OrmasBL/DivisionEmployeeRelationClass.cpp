@@ -161,6 +161,27 @@ namespace BusinessLayer{
 		return false;
 	}
 
+	bool DivisionEmployeeRelation::GetDivisionEmployeeRelationByEmployeeID(DataLayer::OrmasDal& ormasDal, int eID, std::string& errorMessage)
+	{
+		employeeID = eID;
+		std::string filter = GenerateFilter(ormasDal);
+		std::vector<DataLayer::divisionEmployeeCollection> DivisionEmployeeRelationVector = ormasDal.GetDivisionEmployee(errorMessage, filter);
+		if (0 != DivisionEmployeeRelationVector.size())
+		{
+			id = std::get<0>(DivisionEmployeeRelationVector.at(0));
+			divisionID = std::get<1>(DivisionEmployeeRelationVector.at(0));
+			employeeID = std::get<2>(DivisionEmployeeRelationVector.at(0));
+			isContract = std::get<3>(DivisionEmployeeRelationVector.at(0));
+			return true;
+		}
+		else
+		{
+			errorMessage = "Cannot find division employee relation with this id";
+		}
+		return false;
+	}
+
+
 	bool DivisionEmployeeRelation::IsEmpty()
 	{
 		if (0 == id && 0 == divisionID && 0 == employeeID && isContract == false)
@@ -179,6 +200,8 @@ namespace BusinessLayer{
 	bool DivisionEmployeeRelation::IsDuplicate(DataLayer::OrmasDal& ormasDal, int dDivisionID, int dEmployeeID, std::string& errorMessage)
 	{
 		DivisionEmployeeRelation divisionEmployeeRelation;
+		divisionEmployeeRelation.Clear();
+		errorMessage.clear();
 		divisionEmployeeRelation.SetDivisionID(dDivisionID);
 		divisionEmployeeRelation.SetEmployeeID(dEmployeeID);
 		std::string filter = divisionEmployeeRelation.GenerateFilter(ormasDal);
@@ -196,6 +219,8 @@ namespace BusinessLayer{
 	bool DivisionEmployeeRelation::IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
 		DivisionEmployeeRelation divisionEmployeeRelation;
+		divisionEmployeeRelation.Clear();
+		errorMessage.clear();
 		divisionEmployeeRelation.SetDivisionID(divisionID);
 		divisionEmployeeRelation.SetEmployeeID(employeeID);
 		std::string filter = divisionEmployeeRelation.GenerateFilter(ormasDal);

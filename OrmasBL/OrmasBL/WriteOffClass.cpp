@@ -280,6 +280,8 @@ namespace BusinessLayer
 		int cID, std::string& errorMessage)
 	{
 		WriteOff writeOff;
+		writeOff.Clear();
+		errorMessage.clear();
 		writeOff.SetClientID(clID);
 		writeOff.SetDate(wDate);
 		writeOff.SetCount(wCount);
@@ -300,6 +302,8 @@ namespace BusinessLayer
 	bool WriteOff::IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
 		WriteOff writeOff;
+		writeOff.Clear();
+		errorMessage.clear();
 		writeOff.SetClientID(clientID);
 		writeOff.SetDate(date);
 		writeOff.SetCount(count);

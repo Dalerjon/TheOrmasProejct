@@ -14,13 +14,13 @@ namespace DataLayer{
 
 	typedef std::tuple<int, std::string, double, double> accountsCollection;
 	
-	typedef std::tuple<int, int> balancePaymentCollection;
+	typedef std::tuple<int, int, int> balancePaymentCollection;
 
-	typedef std::tuple<int, int> balancePayslipCollection;
+	typedef std::tuple<int, int, int> balancePayslipCollection;
 	
-	typedef std::tuple<int, int> balanceRefundCollection;
+	typedef std::tuple<int, int, int> balanceRefundCollection;
 	
-	typedef std::tuple<int, int> balanceWithdrawalCollection;
+	typedef std::tuple<int, int, int> balanceWithdrawalCollection;
 
 	typedef std::tuple<int, int, int> balancesCollection;
 
@@ -69,25 +69,27 @@ namespace DataLayer{
 
 	typedef std::tuple<int, int, int, std::string> divisionAccountCollection;
 
+	typedef std::tuple<int, std::string, std::string, std::string, std::string, int, int> divisionAccountViewCollection;
+
 	typedef std::tuple<int, int, int, bool> divisionEmployeeCollection;
 
-	typedef std::tuple<int, int, std::string> divisionsCollection;
+	typedef std::tuple<int, std::string, std::string> divisionsCollection;
 
 	typedef std::tuple<int, int, std::string, std::string> employeesCollection;
 
 	typedef std::tuple<int, std::string, std::string, std::string, std::string, std::string, std::string, std::string, 
-		std::string, std::string, std::string, bool, int, int> employeesViewCollection;
+		std::string, std::string, std::string, bool, int, int, int, int, bool> employeesViewCollection;
 
-	typedef std::tuple<int, std::string, int, double, int> entriesCollection;
+	typedef std::tuple<int, std::string, int, double, int, std::string> entriesCollection;
+
+	typedef std::tuple<int, std::string, std::string, double, std::string, int, int, std::string> entriesViewCollection;
 
 	typedef std::tuple<int, std::string, int, int> entryRoutingCollection;
 
-	typedef std::tuple<int, int> entrySubaccountCollection;
+	typedef std::tuple<int, int, int> entrySubaccountCollection;
 
 	typedef std::tuple<int, double, double, double, double, double, double, double, double, double, double, double, double, double, 
 		double,	double, std::string, std::string> financialReportCollection;
-
-	typedef std::tuple<int, std::string, std::string, double, std::string, int, int> entriesViewCollection;
 
 	typedef std::tuple<int, int, int, double, double, int, int> inventorizationListCollection;
 
@@ -120,8 +122,6 @@ namespace DataLayer{
 	typedef std::tuple<int, int, std::string, double, std::string, double, std::string, double, double, std::string,
 		std::string, int, int, int> orderListViewCollection;
 
-	typedef std::tuple<int, int> payslipOrderCollection;
-	
 	typedef std::tuple<int, int, std::string, std::string, int, double, double, int, int> ordersCollection;
 	
 	typedef std::tuple<int, std::string, std::string, std::string, std::string, std::string, std::string, std::string, std::string, std::string,
@@ -137,11 +137,15 @@ namespace DataLayer{
 	typedef std::tuple<int, std::string, std::string, std::string, std::string, std::string, std::string, std::string, std::string,
 		std::string, std::string, std::string, std::string, double, double, std::string, int, int, int, int> orderRawsViewCollection;
 
-	typedef std::tuple<int, std::string, double, int, int> paymentsCollection;
+	typedef std::tuple<int, std::string, double, int, int, int> paymentsCollection;
 
-	typedef std::tuple<int, std::string, double, std::string, int, int> paymentsViewCollection;
+	typedef std::tuple<int, std::string, std::string, std::string, std::string, double, std::string, std::string, int, int, int> paymentsViewCollection;
+
+	typedef std::tuple<int, int, int> paymentEmployeeCollection;
 
 	typedef std::tuple<int, std::string, double, int, int> payslipsCollection;
+
+	typedef std::tuple<int, int, int> payslipOrderCollection;
 
 	typedef std::tuple<int, std::string, double, std::string, int, int> payslipsViewCollection;
 

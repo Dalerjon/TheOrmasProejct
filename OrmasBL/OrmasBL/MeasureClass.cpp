@@ -183,6 +183,8 @@ namespace BusinessLayer{
 	bool Measure::IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string mName, std::string mShortName, std::string& errorMessage)
 	{
 		Measure measure;
+		measure.Clear();
+		errorMessage.clear();
 		measure.SetName(mName);
 		measure.SetShortName(mShortName);
 		std::string filter = measure.GenerateFilter(ormasDal);
@@ -200,6 +202,8 @@ namespace BusinessLayer{
 	bool Measure::IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
 		Measure measure;
+		measure.Clear();
+		errorMessage.clear();
 		measure.SetName(name);
 		measure.SetShortName(shortName);
 		std::string filter = measure.GenerateFilter(ormasDal);

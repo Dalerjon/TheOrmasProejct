@@ -296,6 +296,8 @@ namespace BusinessLayer
 		int cID, std::string& errorMessage)
 	{
 		WriteOffRaw writeOffRaw;
+		writeOffRaw.Clear();
+		errorMessage.clear();
 		writeOffRaw.SetEmployeeID(eID);
 		writeOffRaw.SetDate(wDate);
 		writeOffRaw.SetStockEmployeeID(seID);
@@ -317,6 +319,8 @@ namespace BusinessLayer
 	bool WriteOffRaw::IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
 		WriteOffRaw writeOffRaw;
+		writeOffRaw.Clear();
+		errorMessage.clear();
 		writeOffRaw.SetEmployeeID(employeeID);
 		writeOffRaw.SetDate(date);
 		writeOffRaw.SetStockEmployeeID(stockEmployeeID);

@@ -76,21 +76,15 @@
 <context>
     <name>ClcWagesDlg</name>
     <message>
-        <location filename="ClcWagesDlg.cpp" line="205"/>
         <source>Info</source>
-        <translation>Информация</translation>
+        <translation type="vanished">Информация</translation>
     </message>
     <message>
-        <location filename="ClcWagesDlg.cpp" line="207"/>
-        <location filename="ClcWagesDlg.cpp" line="230"/>
-        <location filename="ClcWagesDlg.cpp" line="290"/>
         <location filename="ClcWagesDlg.cpp" line="355"/>
         <source>Ok</source>
         <translation>Ок</translation>
     </message>
     <message>
-        <location filename="ClcWagesDlg.cpp" line="228"/>
-        <location filename="ClcWagesDlg.cpp" line="288"/>
         <location filename="ClcWagesDlg.cpp" line="353"/>
         <source>Warning</source>
         <translation>Ошибка</translation>
@@ -115,6 +109,92 @@
         <location filename="ClcWagesDlg.cpp" line="351"/>
         <source>End with error!</source>
         <translation>Завершено с ошибкой!</translation>
+    </message>
+</context>
+<context>
+    <name>CloseOfMonth</name>
+    <message>
+        <location filename="CloseOfMonthDlg.ui" line="14"/>
+        <source>Close of month</source>
+        <translation>Закрытие месяца</translation>
+    </message>
+    <message>
+        <location filename="CloseOfMonthDlg.ui" line="53"/>
+        <source>OK</source>
+        <translation>ОК</translation>
+    </message>
+    <message>
+        <location filename="CloseOfMonthDlg.ui" line="60"/>
+        <source>Cancel</source>
+        <translation>Отмена</translation>
+    </message>
+    <message>
+        <location filename="CloseOfMonthDlg.ui" line="72"/>
+        <source>Till date:</source>
+        <translation>До:</translation>
+    </message>
+    <message>
+        <location filename="CloseOfMonthDlg.ui" line="82"/>
+        <source>From date:</source>
+        <translation>От:</translation>
+    </message>
+    <message>
+        <location filename="CloseOfMonthDlg.ui" line="89"/>
+        <source>Claculate taxes?</source>
+        <translation>Рассчитать налоги?</translation>
+    </message>
+    <message>
+        <location filename="CloseOfMonthDlg.ui" line="96"/>
+        <source>Yes</source>
+        <translation>Да</translation>
+    </message>
+</context>
+<context>
+    <name>CloseOfMonthDlg</name>
+    <message>
+        <location filename="CloseOfMonthDlg.cpp" line="102"/>
+        <location filename="CloseOfMonthDlg.cpp" line="108"/>
+        <source>Info</source>
+        <translation>Информация</translation>
+    </message>
+    <message>
+        <location filename="CloseOfMonthDlg.cpp" line="103"/>
+        <source>Close of month is successfully ended!</source>
+        <translation>Закрытие месяца успешно завершено!</translation>
+    </message>
+    <message>
+        <location filename="CloseOfMonthDlg.cpp" line="104"/>
+        <location filename="CloseOfMonthDlg.cpp" line="110"/>
+        <source>Ok</source>
+        <translation>Ок</translation>
+    </message>
+    <message>
+        <location filename="CloseOfMonthDlg.cpp" line="109"/>
+        <source>Close of month is failed!</source>
+        <translation>Ошибка закрытие месяца!</translation>
+    </message>
+</context>
+<context>
+    <name>CloseOfMonthState</name>
+    <message>
+        <location filename="CloseOfMonthInfoDlg.ui" line="14"/>
+        <source>Close of month state info</source>
+        <translation>Информация о закрытие месяца</translation>
+    </message>
+    <message>
+        <location filename="CloseOfMonthInfoDlg.ui" line="60"/>
+        <source>OK</source>
+        <translation>ОК</translation>
+    </message>
+    <message>
+        <location filename="CloseOfMonthInfoDlg.ui" line="67"/>
+        <source>Cancel</source>
+        <translation>Отмена</translation>
+    </message>
+    <message>
+        <location filename="CloseOfMonthInfoDlg.ui" line="76"/>
+        <source>Close of Month state information:</source>
+        <translation>Информация о закрытие месяца:</translation>
     </message>
 </context>
 <context>
@@ -1522,63 +1602,63 @@
 <context>
     <name>CreateConRDlg</name>
     <message>
-        <location filename="CreateConRDlg.cpp" line="47"/>
-        <location filename="CreateConRDlg.cpp" line="200"/>
-        <location filename="CreateConRDlg.cpp" line="209"/>
-        <location filename="CreateConRDlg.cpp" line="253"/>
-        <location filename="CreateConRDlg.cpp" line="275"/>
-        <location filename="CreateConRDlg.cpp" line="290"/>
-        <location filename="CreateConRDlg.cpp" line="305"/>
-        <location filename="CreateConRDlg.cpp" line="330"/>
-        <location filename="CreateConRDlg.cpp" line="374"/>
-        <location filename="CreateConRDlg.cpp" line="381"/>
-        <location filename="CreateConRDlg.cpp" line="436"/>
-        <location filename="CreateConRDlg.cpp" line="451"/>
-        <location filename="CreateConRDlg.cpp" line="467"/>
-        <location filename="CreateConRDlg.cpp" line="492"/>
-        <location filename="CreateConRDlg.cpp" line="536"/>
-        <location filename="CreateConRDlg.cpp" line="548"/>
-        <location filename="CreateConRDlg.cpp" line="583"/>
-        <location filename="CreateConRDlg.cpp" line="599"/>
-        <location filename="CreateConRDlg.cpp" line="632"/>
-        <location filename="CreateConRDlg.cpp" line="661"/>
-        <location filename="CreateConRDlg.cpp" line="677"/>
-        <location filename="CreateConRDlg.cpp" line="710"/>
-        <location filename="CreateConRDlg.cpp" line="754"/>
-        <location filename="CreateConRDlg.cpp" line="802"/>
+        <location filename="CreateConRDlg.cpp" line="48"/>
+        <location filename="CreateConRDlg.cpp" line="201"/>
+        <location filename="CreateConRDlg.cpp" line="210"/>
+        <location filename="CreateConRDlg.cpp" line="254"/>
+        <location filename="CreateConRDlg.cpp" line="276"/>
+        <location filename="CreateConRDlg.cpp" line="291"/>
+        <location filename="CreateConRDlg.cpp" line="306"/>
+        <location filename="CreateConRDlg.cpp" line="331"/>
+        <location filename="CreateConRDlg.cpp" line="375"/>
+        <location filename="CreateConRDlg.cpp" line="382"/>
+        <location filename="CreateConRDlg.cpp" line="437"/>
+        <location filename="CreateConRDlg.cpp" line="452"/>
+        <location filename="CreateConRDlg.cpp" line="468"/>
+        <location filename="CreateConRDlg.cpp" line="493"/>
+        <location filename="CreateConRDlg.cpp" line="537"/>
+        <location filename="CreateConRDlg.cpp" line="549"/>
+        <location filename="CreateConRDlg.cpp" line="584"/>
+        <location filename="CreateConRDlg.cpp" line="600"/>
+        <location filename="CreateConRDlg.cpp" line="633"/>
+        <location filename="CreateConRDlg.cpp" line="662"/>
+        <location filename="CreateConRDlg.cpp" line="678"/>
+        <location filename="CreateConRDlg.cpp" line="711"/>
+        <location filename="CreateConRDlg.cpp" line="755"/>
+        <location filename="CreateConRDlg.cpp" line="803"/>
         <source>Warning</source>
         <translation>Ошибка</translation>
     </message>
     <message>
-        <location filename="CreateConRDlg.cpp" line="48"/>
+        <location filename="CreateConRDlg.cpp" line="49"/>
         <source>Status are empty please contact with Admin</source>
         <translation>Пожалуйста, свяжитесь с администратором системы, статус закаса не валиден</translation>
     </message>
     <message>
-        <location filename="CreateConRDlg.cpp" line="49"/>
-        <location filename="CreateConRDlg.cpp" line="202"/>
-        <location filename="CreateConRDlg.cpp" line="211"/>
-        <location filename="CreateConRDlg.cpp" line="255"/>
-        <location filename="CreateConRDlg.cpp" line="277"/>
-        <location filename="CreateConRDlg.cpp" line="292"/>
-        <location filename="CreateConRDlg.cpp" line="307"/>
-        <location filename="CreateConRDlg.cpp" line="332"/>
-        <location filename="CreateConRDlg.cpp" line="376"/>
-        <location filename="CreateConRDlg.cpp" line="383"/>
-        <location filename="CreateConRDlg.cpp" line="438"/>
-        <location filename="CreateConRDlg.cpp" line="453"/>
-        <location filename="CreateConRDlg.cpp" line="469"/>
-        <location filename="CreateConRDlg.cpp" line="494"/>
-        <location filename="CreateConRDlg.cpp" line="538"/>
-        <location filename="CreateConRDlg.cpp" line="550"/>
-        <location filename="CreateConRDlg.cpp" line="585"/>
-        <location filename="CreateConRDlg.cpp" line="601"/>
-        <location filename="CreateConRDlg.cpp" line="634"/>
-        <location filename="CreateConRDlg.cpp" line="663"/>
-        <location filename="CreateConRDlg.cpp" line="679"/>
-        <location filename="CreateConRDlg.cpp" line="712"/>
-        <location filename="CreateConRDlg.cpp" line="756"/>
-        <location filename="CreateConRDlg.cpp" line="804"/>
+        <location filename="CreateConRDlg.cpp" line="50"/>
+        <location filename="CreateConRDlg.cpp" line="203"/>
+        <location filename="CreateConRDlg.cpp" line="212"/>
+        <location filename="CreateConRDlg.cpp" line="256"/>
+        <location filename="CreateConRDlg.cpp" line="278"/>
+        <location filename="CreateConRDlg.cpp" line="293"/>
+        <location filename="CreateConRDlg.cpp" line="308"/>
+        <location filename="CreateConRDlg.cpp" line="333"/>
+        <location filename="CreateConRDlg.cpp" line="377"/>
+        <location filename="CreateConRDlg.cpp" line="384"/>
+        <location filename="CreateConRDlg.cpp" line="439"/>
+        <location filename="CreateConRDlg.cpp" line="454"/>
+        <location filename="CreateConRDlg.cpp" line="470"/>
+        <location filename="CreateConRDlg.cpp" line="495"/>
+        <location filename="CreateConRDlg.cpp" line="539"/>
+        <location filename="CreateConRDlg.cpp" line="551"/>
+        <location filename="CreateConRDlg.cpp" line="586"/>
+        <location filename="CreateConRDlg.cpp" line="602"/>
+        <location filename="CreateConRDlg.cpp" line="635"/>
+        <location filename="CreateConRDlg.cpp" line="664"/>
+        <location filename="CreateConRDlg.cpp" line="680"/>
+        <location filename="CreateConRDlg.cpp" line="713"/>
+        <location filename="CreateConRDlg.cpp" line="757"/>
+        <location filename="CreateConRDlg.cpp" line="805"/>
         <source>Ok</source>
         <translation>Ок</translation>
     </message>
@@ -1587,48 +1667,48 @@
         <translation type="vanished">Пожалуйста, свяжитесь с администратором системы, может быть ошибка связанна с БД!</translation>
     </message>
     <message>
-        <location filename="CreateConRDlg.cpp" line="210"/>
+        <location filename="CreateConRDlg.cpp" line="211"/>
         <source>This document have an &quot;EXECUTED&quot; status. The document with &quot;EXECUTED&quot; status cannot be changed!</source>
         <translation>Статус этого документа &quot;EXECUTED&quot;. Документы со статусом &quot;EXECUTED&quot; не могут быть изменены!</translation>
     </message>
     <message>
-        <location filename="CreateConRDlg.cpp" line="382"/>
+        <location filename="CreateConRDlg.cpp" line="383"/>
         <source>Please recheck all fields, especially product list!</source>
         <translation>Пожалуйста, проверьте все поля, они не должны быть пустыми, также не проверьте список продуктов!</translation>
     </message>
     <message>
-        <location filename="CreateConRDlg.cpp" line="549"/>
+        <location filename="CreateConRDlg.cpp" line="550"/>
         <source>Please recheck all fields, all of them must be filled!</source>
         <translation>Пожалуйста, проверьте все поля, они не должны быть пустыми!</translation>
     </message>
     <message>
-        <location filename="CreateConRDlg.cpp" line="566"/>
-        <location filename="CreateConRDlg.cpp" line="644"/>
-        <location filename="CreateConRDlg.cpp" line="722"/>
-        <location filename="CreateConRDlg.cpp" line="767"/>
+        <location filename="CreateConRDlg.cpp" line="567"/>
+        <location filename="CreateConRDlg.cpp" line="645"/>
+        <location filename="CreateConRDlg.cpp" line="723"/>
+        <location filename="CreateConRDlg.cpp" line="768"/>
         <source>Loading...</source>
         <translation>Загрузка...</translation>
     </message>
     <message>
-        <location filename="CreateConRDlg.cpp" line="569"/>
-        <location filename="CreateConRDlg.cpp" line="647"/>
+        <location filename="CreateConRDlg.cpp" line="570"/>
+        <location filename="CreateConRDlg.cpp" line="648"/>
         <source>Employees</source>
         <translation>Сотрудники</translation>
     </message>
     <message>
-        <location filename="CreateConRDlg.cpp" line="581"/>
-        <location filename="CreateConRDlg.cpp" line="659"/>
+        <location filename="CreateConRDlg.cpp" line="582"/>
+        <location filename="CreateConRDlg.cpp" line="660"/>
         <source>Sorry could not define the role for this employee!</source>
         <translation>Извините, однако роль сотрудника ошибочна, свяжитесь с поставщиком ПО!</translation>
     </message>
     <message>
-        <location filename="CreateConRDlg.cpp" line="597"/>
+        <location filename="CreateConRDlg.cpp" line="598"/>
         <source>Sorry could not find employee with &quot;PRODUCT MANAGER&quot; role!</source>
         <oldsource>Sorry could not find employee with &quot;expeditor&quot; role!</oldsource>
         <translation>Извините, не можем найти сотрудника (Началник производства)!</translation>
     </message>
     <message>
-        <location filename="CreateConRDlg.cpp" line="624"/>
+        <location filename="CreateConRDlg.cpp" line="625"/>
         <source>All employees are shown</source>
         <translation>Все сотрудники</translation>
     </message>
@@ -1637,40 +1717,40 @@
         <translation type="vanished">Все клиенты</translation>
     </message>
     <message>
-        <location filename="CreateConRDlg.cpp" line="630"/>
-        <location filename="CreateConRDlg.cpp" line="708"/>
-        <location filename="CreateConRDlg.cpp" line="752"/>
-        <location filename="CreateConRDlg.cpp" line="800"/>
+        <location filename="CreateConRDlg.cpp" line="631"/>
+        <location filename="CreateConRDlg.cpp" line="709"/>
+        <location filename="CreateConRDlg.cpp" line="753"/>
+        <location filename="CreateConRDlg.cpp" line="801"/>
         <source>End with error!</source>
         <translation>Завершено с ошибкой!</translation>
     </message>
     <message>
-        <location filename="CreateConRDlg.cpp" line="675"/>
+        <location filename="CreateConRDlg.cpp" line="676"/>
         <source>Sorry could not find employee with &quot;stock employee&quot; role!</source>
         <translation>Извините, не можем найти сотрудника (склада)!</translation>
     </message>
     <message>
-        <location filename="CreateConRDlg.cpp" line="702"/>
+        <location filename="CreateConRDlg.cpp" line="703"/>
         <source>All stock employees are shown</source>
         <translation>Все сотрудники склада</translation>
     </message>
     <message>
-        <location filename="CreateConRDlg.cpp" line="725"/>
+        <location filename="CreateConRDlg.cpp" line="726"/>
         <source>Status</source>
         <translation>Статус</translation>
     </message>
     <message>
-        <location filename="CreateConRDlg.cpp" line="746"/>
+        <location filename="CreateConRDlg.cpp" line="747"/>
         <source>All statuses are shown</source>
         <translation>Все статусы</translation>
     </message>
     <message>
-        <location filename="CreateConRDlg.cpp" line="770"/>
+        <location filename="CreateConRDlg.cpp" line="771"/>
         <source>Add product</source>
         <translation>Добавить продукты</translation>
     </message>
     <message>
-        <location filename="CreateConRDlg.cpp" line="794"/>
+        <location filename="CreateConRDlg.cpp" line="795"/>
         <source>All products are shown</source>
         <translation>Все продукты</translation>
     </message>
@@ -2144,74 +2224,151 @@
     </message>
 </context>
 <context>
-    <name>CreateEmpDlg</name>
+    <name>CreateDivDlg</name>
     <message>
-        <location filename="CreateEmpDlg.cpp" line="180"/>
-        <location filename="CreateEmpDlg.cpp" line="191"/>
-        <location filename="CreateEmpDlg.cpp" line="217"/>
-        <location filename="CreateEmpDlg.cpp" line="256"/>
-        <location filename="CreateEmpDlg.cpp" line="265"/>
-        <location filename="CreateEmpDlg.cpp" line="296"/>
-        <location filename="CreateEmpDlg.cpp" line="307"/>
-        <location filename="CreateEmpDlg.cpp" line="343"/>
-        <location filename="CreateEmpDlg.cpp" line="377"/>
-        <location filename="CreateEmpDlg.cpp" line="389"/>
-        <location filename="CreateEmpDlg.cpp" line="437"/>
-        <location filename="CreateEmpDlg.cpp" line="480"/>
+        <location filename="CreateDivDlg.cpp" line="87"/>
+        <location filename="CreateDivDlg.cpp" line="96"/>
+        <location filename="CreateDivDlg.cpp" line="133"/>
+        <location filename="CreateDivDlg.cpp" line="145"/>
         <source>Warning</source>
         <translation>Ошибка</translation>
     </message>
     <message>
-        <location filename="CreateEmpDlg.cpp" line="182"/>
-        <location filename="CreateEmpDlg.cpp" line="193"/>
-        <location filename="CreateEmpDlg.cpp" line="219"/>
-        <location filename="CreateEmpDlg.cpp" line="258"/>
-        <location filename="CreateEmpDlg.cpp" line="267"/>
-        <location filename="CreateEmpDlg.cpp" line="298"/>
-        <location filename="CreateEmpDlg.cpp" line="309"/>
-        <location filename="CreateEmpDlg.cpp" line="345"/>
-        <location filename="CreateEmpDlg.cpp" line="379"/>
-        <location filename="CreateEmpDlg.cpp" line="391"/>
-        <location filename="CreateEmpDlg.cpp" line="439"/>
-        <location filename="CreateEmpDlg.cpp" line="482"/>
+        <location filename="CreateDivDlg.cpp" line="89"/>
+        <location filename="CreateDivDlg.cpp" line="98"/>
+        <location filename="CreateDivDlg.cpp" line="135"/>
+        <location filename="CreateDivDlg.cpp" line="147"/>
         <source>Ok</source>
         <translation>Ок</translation>
     </message>
     <message>
-        <location filename="CreateEmpDlg.cpp" line="266"/>
-        <location filename="CreateEmpDlg.cpp" line="390"/>
+        <location filename="CreateDivDlg.cpp" line="97"/>
+        <location filename="CreateDivDlg.cpp" line="146"/>
+        <source>Please fill name and code!</source>
+        <translation>Пожалуйста, заполните поля: название и код!</translation>
+    </message>
+</context>
+<context>
+    <name>CreateDivision</name>
+    <message>
+        <location filename="CreateDivDlg.ui" line="20"/>
+        <source>Create/Update division</source>
+        <translation>Создать/Обновить подразделение</translation>
+    </message>
+    <message>
+        <location filename="CreateDivDlg.ui" line="59"/>
+        <source>OK</source>
+        <translation>ОК</translation>
+    </message>
+    <message>
+        <location filename="CreateDivDlg.ui" line="66"/>
+        <source>Cancel</source>
+        <translation>Отмена</translation>
+    </message>
+    <message>
+        <location filename="CreateDivDlg.ui" line="87"/>
+        <source>Name:</source>
+        <translation>Наименование:</translation>
+    </message>
+    <message>
+        <location filename="CreateDivDlg.ui" line="94"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;For example: &amp;quot;River Co.&amp;quot;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>Например: Производство</translation>
+    </message>
+    <message>
+        <location filename="CreateDivDlg.ui" line="101"/>
+        <source>Code:</source>
+        <translation>Код:</translation>
+    </message>
+    <message>
+        <location filename="CreateDivDlg.ui" line="108"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;For example: RELEASE&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>На пример: PRODUCTION</translation>
+    </message>
+</context>
+<context>
+    <name>CreateEmpDlg</name>
+    <message>
+        <location filename="CreateEmpDlg.cpp" line="202"/>
+        <location filename="CreateEmpDlg.cpp" line="213"/>
+        <location filename="CreateEmpDlg.cpp" line="234"/>
+        <location filename="CreateEmpDlg.cpp" line="240"/>
+        <location filename="CreateEmpDlg.cpp" line="257"/>
+        <location filename="CreateEmpDlg.cpp" line="299"/>
+        <location filename="CreateEmpDlg.cpp" line="308"/>
+        <location filename="CreateEmpDlg.cpp" line="339"/>
+        <location filename="CreateEmpDlg.cpp" line="350"/>
+        <location filename="CreateEmpDlg.cpp" line="373"/>
+        <location filename="CreateEmpDlg.cpp" line="379"/>
+        <location filename="CreateEmpDlg.cpp" line="408"/>
+        <location filename="CreateEmpDlg.cpp" line="444"/>
+        <location filename="CreateEmpDlg.cpp" line="456"/>
+        <location filename="CreateEmpDlg.cpp" line="516"/>
+        <location filename="CreateEmpDlg.cpp" line="559"/>
+        <source>Warning</source>
+        <translation>Ошибка</translation>
+    </message>
+    <message>
+        <location filename="CreateEmpDlg.cpp" line="204"/>
+        <location filename="CreateEmpDlg.cpp" line="215"/>
+        <location filename="CreateEmpDlg.cpp" line="236"/>
+        <location filename="CreateEmpDlg.cpp" line="242"/>
+        <location filename="CreateEmpDlg.cpp" line="259"/>
+        <location filename="CreateEmpDlg.cpp" line="301"/>
+        <location filename="CreateEmpDlg.cpp" line="310"/>
+        <location filename="CreateEmpDlg.cpp" line="341"/>
+        <location filename="CreateEmpDlg.cpp" line="352"/>
+        <location filename="CreateEmpDlg.cpp" line="375"/>
+        <location filename="CreateEmpDlg.cpp" line="381"/>
+        <location filename="CreateEmpDlg.cpp" line="410"/>
+        <location filename="CreateEmpDlg.cpp" line="446"/>
+        <location filename="CreateEmpDlg.cpp" line="458"/>
+        <location filename="CreateEmpDlg.cpp" line="518"/>
+        <location filename="CreateEmpDlg.cpp" line="561"/>
+        <source>Ok</source>
+        <translation>Ок</translation>
+    </message>
+    <message>
+        <location filename="CreateEmpDlg.cpp" line="235"/>
+        <location filename="CreateEmpDlg.cpp" line="374"/>
+        <source>Divsion is not correct!</source>
+        <translation>Подразделение некорректно!</translation>
+    </message>
+    <message>
+        <location filename="CreateEmpDlg.cpp" line="309"/>
+        <location filename="CreateEmpDlg.cpp" line="457"/>
         <source>Please recheck all fields, all of them must be filled!</source>
         <translation>Пожалуйста, проверьте все поля, они не должны быть пустыми!</translation>
     </message>
     <message>
-        <location filename="CreateEmpDlg.cpp" line="406"/>
-        <location filename="CreateEmpDlg.cpp" line="449"/>
+        <location filename="CreateEmpDlg.cpp" line="485"/>
+        <location filename="CreateEmpDlg.cpp" line="528"/>
         <source>Loading...</source>
         <translation>Загрузка...</translation>
     </message>
     <message>
-        <location filename="CreateEmpDlg.cpp" line="409"/>
+        <location filename="CreateEmpDlg.cpp" line="488"/>
         <source>Position</source>
         <translation>Должность</translation>
     </message>
     <message>
-        <location filename="CreateEmpDlg.cpp" line="429"/>
+        <location filename="CreateEmpDlg.cpp" line="508"/>
         <source>All positions are shown</source>
         <translation>Перечень должностей</translation>
     </message>
     <message>
-        <location filename="CreateEmpDlg.cpp" line="435"/>
-        <location filename="CreateEmpDlg.cpp" line="478"/>
+        <location filename="CreateEmpDlg.cpp" line="514"/>
+        <location filename="CreateEmpDlg.cpp" line="557"/>
         <source>End with error!</source>
         <translation>Завершено с ошибкой!</translation>
     </message>
     <message>
-        <location filename="CreateEmpDlg.cpp" line="452"/>
+        <location filename="CreateEmpDlg.cpp" line="531"/>
         <source>Roles</source>
         <translation>Роли</translation>
     </message>
     <message>
-        <location filename="CreateEmpDlg.cpp" line="472"/>
+        <location filename="CreateEmpDlg.cpp" line="551"/>
         <source>All roles are shown</source>
         <translation>Все роли</translation>
     </message>
@@ -2225,57 +2382,72 @@
         <translation>Создать/Обновить сотрудника</translation>
     </message>
     <message>
-        <location filename="CreateEmpDlg.ui" line="177"/>
+        <location filename="CreateEmpDlg.ui" line="152"/>
         <source>Role name:</source>
         <translation>Название роли:</translation>
     </message>
     <message>
-        <location filename="CreateEmpDlg.ui" line="200"/>
+        <location filename="CreateEmpDlg.ui" line="159"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Enter your birth date:&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>Введите дату рождения</translation>
     </message>
     <message>
-        <location filename="CreateEmpDlg.ui" line="245"/>
+        <location filename="CreateEmpDlg.ui" line="145"/>
         <source>Hire date:</source>
         <translation>Дата найма:</translation>
     </message>
     <message>
-        <location filename="CreateEmpDlg.ui" line="259"/>
+        <location filename="CreateEmpDlg.ui" line="84"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;For expamle: John&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>Например: Джон</translation>
     </message>
     <message>
-        <location filename="CreateEmpDlg.ui" line="266"/>
+        <location filename="CreateEmpDlg.ui" line="138"/>
         <source>Position name:</source>
         <translation>Должность:</translation>
     </message>
     <message>
-        <location filename="CreateEmpDlg.ui" line="238"/>
+        <location filename="CreateEmpDlg.ui" line="251"/>
         <source>Email:</source>
         <translation>Email:</translation>
     </message>
     <message>
-        <location filename="CreateEmpDlg.ui" line="224"/>
+        <location filename="CreateEmpDlg.ui" line="292"/>
+        <source>Division:</source>
+        <translation>Подразделение:</translation>
+    </message>
+    <message>
+        <location filename="CreateEmpDlg.ui" line="299"/>
+        <source>Is contract?</source>
+        <translation>Контрактник?</translation>
+    </message>
+    <message>
+        <location filename="CreateEmpDlg.ui" line="306"/>
+        <source>Yes</source>
+        <translation>Да</translation>
+    </message>
+    <message>
+        <location filename="CreateEmpDlg.ui" line="115"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;For example: Doe&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>Например: Дое</translation>
     </message>
     <message>
-        <location filename="CreateEmpDlg.ui" line="207"/>
+        <location filename="CreateEmpDlg.ui" line="234"/>
         <source>Surname:</source>
         <translation>Фамилия:</translation>
     </message>
     <message>
-        <location filename="CreateEmpDlg.ui" line="214"/>
+        <location filename="CreateEmpDlg.ui" line="241"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;For example: 929999999 (only digits)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>Например: 929999999 (только цифры)</translation>
     </message>
     <message>
-        <location filename="CreateEmpDlg.ui" line="231"/>
+        <location filename="CreateEmpDlg.ui" line="197"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;For example: John.Doe@gmail.com (not a mandatory field)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>Например: John.Doe@gmail.com (можно оставить пустым)</translation>
     </message>
     <message>
-        <location filename="CreateEmpDlg.ui" line="252"/>
+        <location filename="CreateEmpDlg.ui" line="108"/>
         <source>Password:</source>
         <translation>Пароль:</translation>
     </message>
@@ -2285,7 +2457,7 @@
         <translation>Имя:</translation>
     </message>
     <message>
-        <location filename="CreateEmpDlg.ui" line="108"/>
+        <location filename="CreateEmpDlg.ui" line="183"/>
         <source>Birth date:</source>
         <translation>Дата рождения:</translation>
     </message>
@@ -2295,17 +2467,17 @@
         <translation>Активирован:</translation>
     </message>
     <message>
-        <location filename="CreateEmpDlg.ui" line="44"/>
+        <location filename="CreateEmpDlg.ui" line="190"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Enter your hire date&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>Введите дату принятия на работу</translation>
     </message>
     <message>
-        <location filename="CreateEmpDlg.ui" line="154"/>
+        <location filename="CreateEmpDlg.ui" line="273"/>
         <source>OK</source>
         <translation>ОК</translation>
     </message>
     <message>
-        <location filename="CreateEmpDlg.ui" line="161"/>
+        <location filename="CreateEmpDlg.ui" line="280"/>
         <source>Cancel</source>
         <translation>Отмена</translation>
     </message>
@@ -2315,27 +2487,27 @@
         <translation>Минимум 6 символов</translation>
     </message>
     <message>
-        <location filename="CreateEmpDlg.ui" line="170"/>
+        <location filename="CreateEmpDlg.ui" line="220"/>
         <source>Phone:</source>
         <translation>Телефон:</translation>
     </message>
     <message>
-        <location filename="CreateEmpDlg.ui" line="67"/>
+        <location filename="CreateEmpDlg.ui" line="47"/>
         <source>Address:</source>
         <translation>Адрес:</translation>
     </message>
     <message>
-        <location filename="CreateEmpDlg.ui" line="84"/>
+        <location filename="CreateEmpDlg.ui" line="67"/>
         <source>Select position</source>
         <translation>Выберите должность</translation>
     </message>
     <message>
-        <location filename="CreateEmpDlg.ui" line="132"/>
+        <location filename="CreateEmpDlg.ui" line="227"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;For example: Downing St. 88&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>Например: ул. Мира 88</translation>
     </message>
     <message>
-        <location filename="CreateEmpDlg.ui" line="125"/>
+        <location filename="CreateEmpDlg.ui" line="166"/>
         <source>Select role</source>
         <translation>Выберите роль</translation>
     </message>
@@ -2348,68 +2520,82 @@
         <translation>Саздать проводку</translation>
     </message>
     <message>
-        <location filename="CreateEtrDlg.ui" line="166"/>
-        <location filename="CreateEtrDlg.ui" line="253"/>
+        <location filename="CreateEtrDlg.ui" line="67"/>
+        <location filename="CreateEtrDlg.ui" line="104"/>
         <source>OR</source>
         <translation>ИЛИ</translation>
     </message>
     <message>
-        <location filename="CreateEtrDlg.ui" line="280"/>
+        <location filename="CreateEtrDlg.ui" line="84"/>
+        <source>Description:</source>
+        <translation>Описание:</translation>
+    </message>
+    <message>
+        <location filename="CreateEtrDlg.ui" line="233"/>
         <source>Select crediting account</source>
         <translation>Выберите кредитуемый счет</translation>
     </message>
     <message>
-        <location filename="CreateEtrDlg.ui" line="76"/>
+        <location filename="CreateEtrDlg.ui" line="340"/>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="CreateEtrDlg.ui" line="149"/>
         <source>OK</source>
         <translation>ОК</translation>
     </message>
     <message>
-        <location filename="CreateEtrDlg.ui" line="83"/>
+        <location filename="CreateEtrDlg.ui" line="156"/>
         <source>Cancel</source>
         <translation>Отмена</translation>
     </message>
     <message>
-        <location filename="CreateEtrDlg.ui" line="273"/>
+        <location filename="CreateEtrDlg.ui" line="168"/>
         <source>Date:</source>
         <translation>Дата:</translation>
     </message>
     <message>
-        <location filename="CreateEtrDlg.ui" line="263"/>
+        <location filename="CreateEtrDlg.ui" line="114"/>
         <source>Enter crediting account number:</source>
         <translation>Введите нотер кредитуемого счета:</translation>
     </message>
     <message>
-        <location filename="CreateEtrDlg.ui" line="92"/>
+        <location filename="CreateEtrDlg.ui" line="273"/>
         <source>Crediting account name:</source>
         <translation>Наименование счета:</translation>
     </message>
     <message>
-        <location filename="CreateEtrDlg.ui" line="118"/>
+        <location filename="CreateEtrDlg.ui" line="299"/>
         <source>Enter debiting account number:</source>
         <translation>Введите нотер дебитуемого счета:</translation>
     </message>
     <message>
-        <location filename="CreateEtrDlg.ui" line="189"/>
+        <location filename="CreateEtrDlg.ui" line="127"/>
         <source>Value:</source>
         <translation>Значение:</translation>
     </message>
     <message>
-        <location filename="CreateEtrDlg.ui" line="313"/>
+        <location filename="CreateEtrDlg.ui" line="266"/>
         <source>Select debiting subaccount</source>
         <translation>Выберите дебетуемый субсчет</translation>
     </message>
     <message>
-        <location filename="CreateEtrDlg.ui" line="320"/>
+        <location filename="CreateEtrDlg.ui" line="226"/>
         <source>Select crediting subaccount</source>
         <translation>Выберите кредитуемый субсчет</translation>
     </message>
     <message>
-        <location filename="CreateEtrDlg.ui" line="176"/>
+        <location filename="CreateEtrDlg.ui" line="77"/>
         <source>Debiting account name:</source>
         <translation>Наименование счета:</translation>
     </message>
     <message>
-        <location filename="CreateEtrDlg.ui" line="44"/>
+        <location filename="CreateEtrDlg.ui" line="175"/>
         <source>Select debiting account</source>
         <translation>Выберите дебетуемый счет</translation>
     </message>
@@ -2450,98 +2636,110 @@
 <context>
     <name>CreateEtrDlg</name>
     <message>
-        <location filename="CreateEtrDlg.cpp" line="187"/>
-        <location filename="CreateEtrDlg.cpp" line="201"/>
-        <location filename="CreateEtrDlg.cpp" line="251"/>
-        <location filename="CreateEtrDlg.cpp" line="261"/>
-        <location filename="CreateEtrDlg.cpp" line="292"/>
-        <location filename="CreateEtrDlg.cpp" line="306"/>
-        <location filename="CreateEtrDlg.cpp" line="353"/>
-        <location filename="CreateEtrDlg.cpp" line="366"/>
-        <location filename="CreateEtrDlg.cpp" line="414"/>
-        <location filename="CreateEtrDlg.cpp" line="457"/>
-        <location filename="CreateEtrDlg.cpp" line="501"/>
-        <location filename="CreateEtrDlg.cpp" line="544"/>
+        <location filename="CreateEtrDlg.cpp" line="192"/>
+        <location filename="CreateEtrDlg.cpp" line="206"/>
+        <location filename="CreateEtrDlg.cpp" line="257"/>
+        <location filename="CreateEtrDlg.cpp" line="267"/>
+        <location filename="CreateEtrDlg.cpp" line="298"/>
+        <location filename="CreateEtrDlg.cpp" line="312"/>
+        <location filename="CreateEtrDlg.cpp" line="360"/>
+        <location filename="CreateEtrDlg.cpp" line="373"/>
+        <location filename="CreateEtrDlg.cpp" line="421"/>
+        <location filename="CreateEtrDlg.cpp" line="464"/>
+        <location filename="CreateEtrDlg.cpp" line="508"/>
+        <location filename="CreateEtrDlg.cpp" line="551"/>
+        <location filename="CreateEtrDlg.cpp" line="650"/>
         <source>Warning</source>
         <translation>Ошибка</translation>
     </message>
     <message>
-        <location filename="CreateEtrDlg.cpp" line="189"/>
-        <location filename="CreateEtrDlg.cpp" line="203"/>
-        <location filename="CreateEtrDlg.cpp" line="253"/>
-        <location filename="CreateEtrDlg.cpp" line="263"/>
-        <location filename="CreateEtrDlg.cpp" line="294"/>
-        <location filename="CreateEtrDlg.cpp" line="308"/>
-        <location filename="CreateEtrDlg.cpp" line="355"/>
-        <location filename="CreateEtrDlg.cpp" line="368"/>
-        <location filename="CreateEtrDlg.cpp" line="416"/>
-        <location filename="CreateEtrDlg.cpp" line="459"/>
-        <location filename="CreateEtrDlg.cpp" line="503"/>
-        <location filename="CreateEtrDlg.cpp" line="546"/>
+        <location filename="CreateEtrDlg.cpp" line="194"/>
+        <location filename="CreateEtrDlg.cpp" line="208"/>
+        <location filename="CreateEtrDlg.cpp" line="259"/>
+        <location filename="CreateEtrDlg.cpp" line="269"/>
+        <location filename="CreateEtrDlg.cpp" line="300"/>
+        <location filename="CreateEtrDlg.cpp" line="314"/>
+        <location filename="CreateEtrDlg.cpp" line="362"/>
+        <location filename="CreateEtrDlg.cpp" line="375"/>
+        <location filename="CreateEtrDlg.cpp" line="423"/>
+        <location filename="CreateEtrDlg.cpp" line="466"/>
+        <location filename="CreateEtrDlg.cpp" line="510"/>
+        <location filename="CreateEtrDlg.cpp" line="553"/>
+        <location filename="CreateEtrDlg.cpp" line="652"/>
         <source>Ok</source>
         <translation>Ок</translation>
     </message>
     <message>
-        <location filename="CreateEtrDlg.cpp" line="262"/>
+        <location filename="CreateEtrDlg.cpp" line="268"/>
         <source>Please fill user, value, date and currency!</source>
         <translation>Пожалуйста заполните поля: пользователь, значение, дата и валюта!</translation>
     </message>
     <message>
-        <location filename="CreateEtrDlg.cpp" line="367"/>
+        <location filename="CreateEtrDlg.cpp" line="374"/>
         <source>Please fill user, value and currency!</source>
         <translation>Пожалуйста заполните поля: пользователь, значение и валюта!</translation>
     </message>
     <message>
-        <location filename="CreateEtrDlg.cpp" line="383"/>
-        <location filename="CreateEtrDlg.cpp" line="426"/>
-        <location filename="CreateEtrDlg.cpp" line="470"/>
-        <location filename="CreateEtrDlg.cpp" line="513"/>
+        <location filename="CreateEtrDlg.cpp" line="390"/>
+        <location filename="CreateEtrDlg.cpp" line="433"/>
+        <location filename="CreateEtrDlg.cpp" line="477"/>
+        <location filename="CreateEtrDlg.cpp" line="520"/>
         <source>Loading...</source>
         <translation>Загрузка...</translation>
     </message>
     <message>
-        <location filename="CreateEtrDlg.cpp" line="386"/>
-        <location filename="CreateEtrDlg.cpp" line="429"/>
+        <location filename="CreateEtrDlg.cpp" line="393"/>
+        <location filename="CreateEtrDlg.cpp" line="436"/>
         <source>Accounts</source>
         <translation>Счета</translation>
     </message>
     <message>
-        <location filename="CreateEtrDlg.cpp" line="406"/>
-        <location filename="CreateEtrDlg.cpp" line="449"/>
+        <location filename="CreateEtrDlg.cpp" line="413"/>
+        <location filename="CreateEtrDlg.cpp" line="456"/>
         <source>All accounts are shown</source>
         <translation>Все счета</translation>
     </message>
     <message>
-        <location filename="CreateEtrDlg.cpp" line="412"/>
-        <location filename="CreateEtrDlg.cpp" line="455"/>
-        <location filename="CreateEtrDlg.cpp" line="499"/>
-        <location filename="CreateEtrDlg.cpp" line="542"/>
+        <location filename="CreateEtrDlg.cpp" line="419"/>
+        <location filename="CreateEtrDlg.cpp" line="462"/>
+        <location filename="CreateEtrDlg.cpp" line="506"/>
+        <location filename="CreateEtrDlg.cpp" line="549"/>
         <source>End with error!</source>
         <translation>Завершено с ошибкой!</translation>
     </message>
     <message>
-        <location filename="CreateEtrDlg.cpp" line="473"/>
+        <location filename="CreateEtrDlg.cpp" line="480"/>
         <source>Subccounts</source>
         <translation>Субсчета</translation>
     </message>
     <message>
-        <location filename="CreateEtrDlg.cpp" line="493"/>
-        <location filename="CreateEtrDlg.cpp" line="536"/>
+        <location filename="CreateEtrDlg.cpp" line="500"/>
+        <location filename="CreateEtrDlg.cpp" line="543"/>
         <source>All subaccounts are shown</source>
         <translation>Все субсчета</translation>
     </message>
     <message>
-        <location filename="CreateEtrDlg.cpp" line="516"/>
+        <location filename="CreateEtrDlg.cpp" line="523"/>
         <source>Subaccounts</source>
         <translation>Субсчета</translation>
     </message>
     <message>
-        <location filename="CreateEtrDlg.cpp" line="565"/>
-        <location filename="CreateEtrDlg.cpp" line="580"/>
-        <location filename="CreateEtrDlg.cpp" line="604"/>
-        <location filename="CreateEtrDlg.cpp" line="619"/>
+        <location filename="CreateEtrDlg.cpp" line="572"/>
+        <location filename="CreateEtrDlg.cpp" line="587"/>
+        <location filename="CreateEtrDlg.cpp" line="611"/>
+        <location filename="CreateEtrDlg.cpp" line="626"/>
         <source>Incorrect account number!</source>
         <translation>Неверный номер счета!</translation>
+    </message>
+    <message>
+        <location filename="CreateEtrDlg.cpp" line="651"/>
+        <source>Warning: no more then </source>
+        <translation>Предупреждение! Не более</translation>
+    </message>
+    <message>
+        <location filename="CreateEtrDlg.cpp" line="651"/>
+        <source> characters in this field</source>
+        <translation>символов в этом поле</translation>
     </message>
 </context>
 <context>
@@ -4829,27 +5027,37 @@
         <translation>Создать/Обновить отлату</translation>
     </message>
     <message>
-        <location filename="CreatePmtDlg.ui" line="72"/>
+        <location filename="CreatePmtDlg.ui" line="67"/>
         <source>Surname:</source>
         <translation>Фамилия:</translation>
     </message>
     <message>
-        <location filename="CreatePmtDlg.ui" line="79"/>
+        <location filename="CreatePmtDlg.ui" line="48"/>
         <source>Phone:</source>
         <translation>Телефон:</translation>
     </message>
     <message>
-        <location filename="CreatePmtDlg.ui" line="151"/>
+        <location filename="CreatePmtDlg.ui" line="161"/>
         <source>Name:</source>
         <translation>Имя:</translation>
     </message>
     <message>
-        <location filename="CreatePmtDlg.ui" line="194"/>
+        <location filename="CreatePmtDlg.ui" line="204"/>
         <source>Select currency:</source>
         <translation>Выберите валюту:</translation>
     </message>
     <message>
-        <location filename="CreatePmtDlg.ui" line="217"/>
+        <location filename="CreatePmtDlg.ui" line="267"/>
+        <source>Change status</source>
+        <translation>Изменить статус</translation>
+    </message>
+    <message>
+        <location filename="CreatePmtDlg.ui" line="281"/>
+        <source>Status name:</source>
+        <translation>Наименование статуса:</translation>
+    </message>
+    <message>
+        <location filename="CreatePmtDlg.ui" line="38"/>
         <source>Must not be empty</source>
         <translation>Не может быть пустым</translation>
     </message>
@@ -4859,17 +5067,17 @@
         <translation>Например: 300 (зависит от валюты)</translation>
     </message>
     <message>
-        <location filename="CreatePmtDlg.ui" line="123"/>
+        <location filename="CreatePmtDlg.ui" line="133"/>
         <source>OK</source>
         <translation>ОК</translation>
     </message>
     <message>
-        <location filename="CreatePmtDlg.ui" line="130"/>
+        <location filename="CreatePmtDlg.ui" line="140"/>
         <source>Cancel</source>
         <translation>Отмена</translation>
     </message>
     <message>
-        <location filename="CreatePmtDlg.ui" line="165"/>
+        <location filename="CreatePmtDlg.ui" line="175"/>
         <source>Sum:</source>
         <translation>Сумма:</translation>
     </message>
@@ -4878,12 +5086,12 @@
         <translation type="vanished">Выберите валюту</translation>
     </message>
     <message>
-        <location filename="CreatePmtDlg.ui" line="158"/>
+        <location filename="CreatePmtDlg.ui" line="168"/>
         <source>Date:</source>
         <translation>Дата оплаты:</translation>
     </message>
     <message>
-        <location filename="CreatePmtDlg.ui" line="207"/>
+        <location filename="CreatePmtDlg.ui" line="217"/>
         <source>Select user</source>
         <translation>Выберите пользователя</translation>
     </message>
@@ -5188,65 +5396,94 @@
 <context>
     <name>CreatePmtDlg</name>
     <message>
-        <location filename="CreatePmtDlg.cpp" line="132"/>
-        <location filename="CreatePmtDlg.cpp" line="158"/>
-        <location filename="CreatePmtDlg.cpp" line="168"/>
-        <location filename="CreatePmtDlg.cpp" line="197"/>
-        <location filename="CreatePmtDlg.cpp" line="222"/>
-        <location filename="CreatePmtDlg.cpp" line="235"/>
-        <location filename="CreatePmtDlg.cpp" line="268"/>
-        <location filename="CreatePmtDlg.cpp" line="283"/>
-        <location filename="CreatePmtDlg.cpp" line="316"/>
+        <location filename="CreatePmtDlg.cpp" line="35"/>
+        <location filename="CreatePmtDlg.cpp" line="146"/>
+        <location filename="CreatePmtDlg.cpp" line="155"/>
+        <location filename="CreatePmtDlg.cpp" line="193"/>
+        <location filename="CreatePmtDlg.cpp" line="228"/>
+        <location filename="CreatePmtDlg.cpp" line="238"/>
+        <location filename="CreatePmtDlg.cpp" line="272"/>
+        <location filename="CreatePmtDlg.cpp" line="306"/>
+        <location filename="CreatePmtDlg.cpp" line="319"/>
+        <location filename="CreatePmtDlg.cpp" line="352"/>
+        <location filename="CreatePmtDlg.cpp" line="367"/>
+        <location filename="CreatePmtDlg.cpp" line="400"/>
+        <location filename="CreatePmtDlg.cpp" line="444"/>
         <source>Warning</source>
         <translation>Ошибка</translation>
     </message>
     <message>
-        <location filename="CreatePmtDlg.cpp" line="134"/>
-        <location filename="CreatePmtDlg.cpp" line="160"/>
-        <location filename="CreatePmtDlg.cpp" line="170"/>
-        <location filename="CreatePmtDlg.cpp" line="199"/>
-        <location filename="CreatePmtDlg.cpp" line="224"/>
-        <location filename="CreatePmtDlg.cpp" line="237"/>
-        <location filename="CreatePmtDlg.cpp" line="270"/>
-        <location filename="CreatePmtDlg.cpp" line="285"/>
-        <location filename="CreatePmtDlg.cpp" line="318"/>
+        <location filename="CreatePmtDlg.cpp" line="36"/>
+        <source>Status are empty please contact with Admin</source>
+        <translation>Пожалуйста, свяжитесь с администратором системы, статус закаса не валиден</translation>
+    </message>
+    <message>
+        <location filename="CreatePmtDlg.cpp" line="37"/>
+        <location filename="CreatePmtDlg.cpp" line="148"/>
+        <location filename="CreatePmtDlg.cpp" line="157"/>
+        <location filename="CreatePmtDlg.cpp" line="195"/>
+        <location filename="CreatePmtDlg.cpp" line="230"/>
+        <location filename="CreatePmtDlg.cpp" line="240"/>
+        <location filename="CreatePmtDlg.cpp" line="274"/>
+        <location filename="CreatePmtDlg.cpp" line="308"/>
+        <location filename="CreatePmtDlg.cpp" line="321"/>
+        <location filename="CreatePmtDlg.cpp" line="354"/>
+        <location filename="CreatePmtDlg.cpp" line="369"/>
+        <location filename="CreatePmtDlg.cpp" line="402"/>
+        <location filename="CreatePmtDlg.cpp" line="446"/>
         <source>Ok</source>
         <translation>Ок</translation>
     </message>
     <message>
-        <location filename="CreatePmtDlg.cpp" line="169"/>
+        <location filename="CreatePmtDlg.cpp" line="156"/>
+        <source>This document have an &quot;EXECUTED&quot; status. The document with &quot;EXECUTED&quot; status cannot be changed!</source>
+        <translation>Статус этого документа &quot;EXECUTED&quot;. Документы со статусом &quot;EXECUTED&quot; не могут быть изменены!</translation>
+    </message>
+    <message>
+        <location filename="CreatePmtDlg.cpp" line="239"/>
         <source>Please fill user, value, date and currency!</source>
         <translation>Пожалуйста заполните поля: пользователь, значение, дата и валюта!</translation>
     </message>
     <message>
-        <location filename="CreatePmtDlg.cpp" line="236"/>
+        <location filename="CreatePmtDlg.cpp" line="320"/>
         <source>Please fill user, value and currency!</source>
         <translation>Пожалуйста заполните поля: пользователь, значение и валюта!</translation>
     </message>
     <message>
-        <location filename="CreatePmtDlg.cpp" line="252"/>
+        <location filename="CreatePmtDlg.cpp" line="336"/>
+        <location filename="CreatePmtDlg.cpp" line="412"/>
         <source>Loading...</source>
         <translation>Загрузка...</translation>
     </message>
     <message>
-        <location filename="CreatePmtDlg.cpp" line="255"/>
+        <location filename="CreatePmtDlg.cpp" line="339"/>
         <source>Clients</source>
         <translation>Клиенты</translation>
     </message>
     <message>
-        <location filename="CreatePmtDlg.cpp" line="266"/>
+        <location filename="CreatePmtDlg.cpp" line="350"/>
         <source>Sorry could not define the role for this client!</source>
         <translation>Извините, однако роль клиента ошибочна, свяжитесь с поставщиком ПО!</translation>
     </message>
     <message>
-        <location filename="CreatePmtDlg.cpp" line="281"/>
+        <location filename="CreatePmtDlg.cpp" line="365"/>
         <source>Sorry could not find client!</source>
         <translation>Извините, не можем найти такого клиента!</translation>
     </message>
     <message>
-        <location filename="CreatePmtDlg.cpp" line="308"/>
+        <location filename="CreatePmtDlg.cpp" line="392"/>
         <source>All clients are shown</source>
         <translation>Все клиенты</translation>
+    </message>
+    <message>
+        <location filename="CreatePmtDlg.cpp" line="415"/>
+        <source>Status</source>
+        <translation>Статус</translation>
+    </message>
+    <message>
+        <location filename="CreatePmtDlg.cpp" line="436"/>
+        <source>All statuses are shown</source>
+        <translation>Все статусы</translation>
     </message>
     <message>
         <source>Users</source>
@@ -5257,7 +5494,8 @@
         <translation type="vanished">Все пользователи</translation>
     </message>
     <message>
-        <location filename="CreatePmtDlg.cpp" line="314"/>
+        <location filename="CreatePmtDlg.cpp" line="398"/>
+        <location filename="CreatePmtDlg.cpp" line="442"/>
         <source>End with error!</source>
         <translation>Завершено с ошибкой!</translation>
     </message>
@@ -11960,55 +12198,60 @@
         <translation></translation>
     </message>
     <message>
-        <location filename="DataForm.ui" line="167"/>
+        <location filename="DataForm.ui" line="161"/>
+        <source>View</source>
+        <translation>Обзор</translation>
+    </message>
+    <message>
+        <location filename="DataForm.ui" line="174"/>
         <source>Create</source>
         <translation>Создать</translation>
     </message>
     <message>
-        <location filename="DataForm.ui" line="180"/>
+        <location filename="DataForm.ui" line="187"/>
         <source>Edit</source>
         <translation>Изменить</translation>
     </message>
     <message>
-        <location filename="DataForm.ui" line="193"/>
+        <location filename="DataForm.ui" line="200"/>
         <source>Delete</source>
         <translation>Удалить</translation>
     </message>
     <message>
-        <location filename="DataForm.ui" line="206"/>
+        <location filename="DataForm.ui" line="213"/>
         <source>Close</source>
         <translation>Закрыть</translation>
     </message>
     <message>
-        <location filename="DataForm.ui" line="249"/>
-        <location filename="DataForm.ui" line="343"/>
+        <location filename="DataForm.ui" line="256"/>
+        <location filename="DataForm.ui" line="350"/>
         <source>Filter</source>
         <translation>Фильтр</translation>
     </message>
     <message>
-        <location filename="DataForm.ui" line="276"/>
+        <location filename="DataForm.ui" line="283"/>
         <source>Value:</source>
         <translation>Значение:</translation>
     </message>
     <message>
-        <location filename="DataForm.ui" line="292"/>
-        <location filename="DataForm.ui" line="407"/>
+        <location filename="DataForm.ui" line="299"/>
+        <location filename="DataForm.ui" line="414"/>
         <source>Column:</source>
         <translation>Столбец:</translation>
     </message>
     <message>
-        <location filename="DataForm.ui" line="327"/>
+        <location filename="DataForm.ui" line="334"/>
         <source>Filter type:</source>
         <translation>Тип фильтра:</translation>
     </message>
     <message>
-        <location filename="DataForm.ui" line="351"/>
-        <location filename="DataForm.ui" line="423"/>
+        <location filename="DataForm.ui" line="358"/>
+        <location filename="DataForm.ui" line="430"/>
         <source>Search</source>
         <translation>Поиск</translation>
     </message>
     <message>
-        <location filename="DataForm.ui" line="391"/>
+        <location filename="DataForm.ui" line="398"/>
         <source>Vlaue:</source>
         <translation>Значение:</translation>
     </message>
@@ -12119,36 +12362,36 @@
         <location filename="DataForm.cpp" line="2180"/>
         <location filename="DataForm.cpp" line="2200"/>
         <location filename="DataForm.cpp" line="2207"/>
+        <location filename="DataForm.cpp" line="2239"/>
         <location filename="DataForm.cpp" line="2259"/>
         <location filename="DataForm.cpp" line="2266"/>
-        <location filename="DataForm.cpp" line="2302"/>
-        <location filename="DataForm.cpp" line="2322"/>
-        <location filename="DataForm.cpp" line="2329"/>
+        <location filename="DataForm.cpp" line="2318"/>
+        <location filename="DataForm.cpp" line="2325"/>
         <location filename="DataForm.cpp" line="2361"/>
         <location filename="DataForm.cpp" line="2381"/>
         <location filename="DataForm.cpp" line="2388"/>
-        <location filename="DataForm.cpp" line="2421"/>
-        <location filename="DataForm.cpp" line="2441"/>
-        <location filename="DataForm.cpp" line="2448"/>
-        <location filename="DataForm.cpp" line="2481"/>
-        <location filename="DataForm.cpp" line="2501"/>
-        <location filename="DataForm.cpp" line="2508"/>
-        <location filename="DataForm.cpp" line="2542"/>
-        <location filename="DataForm.cpp" line="2562"/>
-        <location filename="DataForm.cpp" line="2569"/>
+        <location filename="DataForm.cpp" line="2420"/>
+        <location filename="DataForm.cpp" line="2440"/>
+        <location filename="DataForm.cpp" line="2447"/>
+        <location filename="DataForm.cpp" line="2480"/>
+        <location filename="DataForm.cpp" line="2500"/>
+        <location filename="DataForm.cpp" line="2507"/>
+        <location filename="DataForm.cpp" line="2540"/>
+        <location filename="DataForm.cpp" line="2560"/>
+        <location filename="DataForm.cpp" line="2567"/>
         <location filename="DataForm.cpp" line="2601"/>
         <location filename="DataForm.cpp" line="2621"/>
         <location filename="DataForm.cpp" line="2628"/>
+        <location filename="DataForm.cpp" line="2660"/>
         <location filename="DataForm.cpp" line="2680"/>
         <location filename="DataForm.cpp" line="2687"/>
-        <location filename="DataForm.cpp" line="2723"/>
-        <location filename="DataForm.cpp" line="2743"/>
-        <location filename="DataForm.cpp" line="2750"/>
+        <location filename="DataForm.cpp" line="2739"/>
+        <location filename="DataForm.cpp" line="2746"/>
+        <location filename="DataForm.cpp" line="2782"/>
         <location filename="DataForm.cpp" line="2802"/>
         <location filename="DataForm.cpp" line="2809"/>
-        <location filename="DataForm.cpp" line="2845"/>
-        <location filename="DataForm.cpp" line="2865"/>
-        <location filename="DataForm.cpp" line="2872"/>
+        <location filename="DataForm.cpp" line="2861"/>
+        <location filename="DataForm.cpp" line="2868"/>
         <location filename="DataForm.cpp" line="2904"/>
         <location filename="DataForm.cpp" line="2924"/>
         <location filename="DataForm.cpp" line="2931"/>
@@ -12173,23 +12416,23 @@
         <location filename="DataForm.cpp" line="3317"/>
         <location filename="DataForm.cpp" line="3337"/>
         <location filename="DataForm.cpp" line="3344"/>
-        <location filename="DataForm.cpp" line="3377"/>
-        <location filename="DataForm.cpp" line="3397"/>
-        <location filename="DataForm.cpp" line="3404"/>
-        <location filename="DataForm.cpp" line="3440"/>
-        <location filename="DataForm.cpp" line="3460"/>
-        <location filename="DataForm.cpp" line="3467"/>
+        <location filename="DataForm.cpp" line="3376"/>
+        <location filename="DataForm.cpp" line="3396"/>
+        <location filename="DataForm.cpp" line="3403"/>
+        <location filename="DataForm.cpp" line="3436"/>
+        <location filename="DataForm.cpp" line="3456"/>
+        <location filename="DataForm.cpp" line="3463"/>
+        <location filename="DataForm.cpp" line="3499"/>
         <location filename="DataForm.cpp" line="3519"/>
         <location filename="DataForm.cpp" line="3526"/>
-        <location filename="DataForm.cpp" line="3562"/>
-        <location filename="DataForm.cpp" line="3582"/>
-        <location filename="DataForm.cpp" line="3589"/>
+        <location filename="DataForm.cpp" line="3578"/>
+        <location filename="DataForm.cpp" line="3585"/>
         <location filename="DataForm.cpp" line="3621"/>
         <location filename="DataForm.cpp" line="3641"/>
         <location filename="DataForm.cpp" line="3648"/>
-        <location filename="DataForm.cpp" line="3684"/>
-        <location filename="DataForm.cpp" line="3704"/>
-        <location filename="DataForm.cpp" line="3711"/>
+        <location filename="DataForm.cpp" line="3680"/>
+        <location filename="DataForm.cpp" line="3700"/>
+        <location filename="DataForm.cpp" line="3707"/>
         <location filename="DataForm.cpp" line="3743"/>
         <location filename="DataForm.cpp" line="3763"/>
         <location filename="DataForm.cpp" line="3770"/>
@@ -12202,27 +12445,27 @@
         <location filename="DataForm.cpp" line="3920"/>
         <location filename="DataForm.cpp" line="3940"/>
         <location filename="DataForm.cpp" line="3947"/>
+        <location filename="DataForm.cpp" line="3979"/>
         <location filename="DataForm.cpp" line="3999"/>
         <location filename="DataForm.cpp" line="4006"/>
-        <location filename="DataForm.cpp" line="4042"/>
-        <location filename="DataForm.cpp" line="4062"/>
-        <location filename="DataForm.cpp" line="4069"/>
+        <location filename="DataForm.cpp" line="4058"/>
+        <location filename="DataForm.cpp" line="4065"/>
+        <location filename="DataForm.cpp" line="4101"/>
         <location filename="DataForm.cpp" line="4121"/>
         <location filename="DataForm.cpp" line="4128"/>
-        <location filename="DataForm.cpp" line="4164"/>
-        <location filename="DataForm.cpp" line="4184"/>
-        <location filename="DataForm.cpp" line="4191"/>
+        <location filename="DataForm.cpp" line="4180"/>
+        <location filename="DataForm.cpp" line="4187"/>
         <location filename="DataForm.cpp" line="4223"/>
         <location filename="DataForm.cpp" line="4243"/>
         <location filename="DataForm.cpp" line="4250"/>
         <location filename="DataForm.cpp" line="4282"/>
         <location filename="DataForm.cpp" line="4302"/>
         <location filename="DataForm.cpp" line="4309"/>
+        <location filename="DataForm.cpp" line="4341"/>
         <location filename="DataForm.cpp" line="4361"/>
         <location filename="DataForm.cpp" line="4368"/>
-        <location filename="DataForm.cpp" line="4405"/>
-        <location filename="DataForm.cpp" line="4425"/>
-        <location filename="DataForm.cpp" line="4432"/>
+        <location filename="DataForm.cpp" line="4420"/>
+        <location filename="DataForm.cpp" line="4427"/>
         <location filename="DataForm.cpp" line="4464"/>
         <location filename="DataForm.cpp" line="4484"/>
         <location filename="DataForm.cpp" line="4491"/>
@@ -12232,21 +12475,21 @@
         <location filename="DataForm.cpp" line="4582"/>
         <location filename="DataForm.cpp" line="4602"/>
         <location filename="DataForm.cpp" line="4609"/>
-        <location filename="DataForm.cpp" line="4642"/>
-        <location filename="DataForm.cpp" line="4662"/>
-        <location filename="DataForm.cpp" line="4669"/>
+        <location filename="DataForm.cpp" line="4641"/>
+        <location filename="DataForm.cpp" line="4661"/>
+        <location filename="DataForm.cpp" line="4668"/>
         <location filename="DataForm.cpp" line="4701"/>
         <location filename="DataForm.cpp" line="4721"/>
         <location filename="DataForm.cpp" line="4728"/>
-        <location filename="DataForm.cpp" line="4764"/>
-        <location filename="DataForm.cpp" line="4784"/>
-        <location filename="DataForm.cpp" line="4791"/>
+        <location filename="DataForm.cpp" line="4760"/>
+        <location filename="DataForm.cpp" line="4780"/>
+        <location filename="DataForm.cpp" line="4787"/>
         <location filename="DataForm.cpp" line="4823"/>
         <location filename="DataForm.cpp" line="4843"/>
         <location filename="DataForm.cpp" line="4850"/>
-        <location filename="DataForm.cpp" line="4886"/>
-        <location filename="DataForm.cpp" line="4906"/>
-        <location filename="DataForm.cpp" line="4913"/>
+        <location filename="DataForm.cpp" line="4882"/>
+        <location filename="DataForm.cpp" line="4902"/>
+        <location filename="DataForm.cpp" line="4909"/>
         <location filename="DataForm.cpp" line="4945"/>
         <location filename="DataForm.cpp" line="4965"/>
         <location filename="DataForm.cpp" line="4972"/>
@@ -12256,29 +12499,32 @@
         <location filename="DataForm.cpp" line="5063"/>
         <location filename="DataForm.cpp" line="5083"/>
         <location filename="DataForm.cpp" line="5090"/>
+        <location filename="DataForm.cpp" line="5122"/>
         <location filename="DataForm.cpp" line="5142"/>
         <location filename="DataForm.cpp" line="5149"/>
-        <location filename="DataForm.cpp" line="5185"/>
-        <location filename="DataForm.cpp" line="5205"/>
-        <location filename="DataForm.cpp" line="5212"/>
+        <location filename="DataForm.cpp" line="5201"/>
+        <location filename="DataForm.cpp" line="5208"/>
         <location filename="DataForm.cpp" line="5244"/>
         <location filename="DataForm.cpp" line="5264"/>
         <location filename="DataForm.cpp" line="5271"/>
-        <location filename="DataForm.cpp" line="5304"/>
-        <location filename="DataForm.cpp" line="5324"/>
-        <location filename="DataForm.cpp" line="5331"/>
+        <location filename="DataForm.cpp" line="5303"/>
+        <location filename="DataForm.cpp" line="5323"/>
+        <location filename="DataForm.cpp" line="5330"/>
         <location filename="DataForm.cpp" line="5363"/>
         <location filename="DataForm.cpp" line="5383"/>
         <location filename="DataForm.cpp" line="5390"/>
-        <location filename="DataForm.cpp" line="5427"/>
-        <location filename="DataForm.cpp" line="5447"/>
-        <location filename="DataForm.cpp" line="5454"/>
+        <location filename="DataForm.cpp" line="5422"/>
+        <location filename="DataForm.cpp" line="5442"/>
+        <location filename="DataForm.cpp" line="5449"/>
         <location filename="DataForm.cpp" line="5486"/>
         <location filename="DataForm.cpp" line="5506"/>
         <location filename="DataForm.cpp" line="5513"/>
-        <location filename="DataForm.cpp" line="5550"/>
-        <location filename="DataForm.cpp" line="5570"/>
-        <location filename="DataForm.cpp" line="5577"/>
+        <location filename="DataForm.cpp" line="5545"/>
+        <location filename="DataForm.cpp" line="5565"/>
+        <location filename="DataForm.cpp" line="5572"/>
+        <location filename="DataForm.cpp" line="5609"/>
+        <location filename="DataForm.cpp" line="5629"/>
+        <location filename="DataForm.cpp" line="5636"/>
         <source>Warning</source>
         <translation>Ошибка</translation>
     </message>
@@ -12353,36 +12599,36 @@
         <location filename="DataForm.cpp" line="2182"/>
         <location filename="DataForm.cpp" line="2202"/>
         <location filename="DataForm.cpp" line="2209"/>
+        <location filename="DataForm.cpp" line="2241"/>
         <location filename="DataForm.cpp" line="2261"/>
         <location filename="DataForm.cpp" line="2268"/>
-        <location filename="DataForm.cpp" line="2304"/>
-        <location filename="DataForm.cpp" line="2324"/>
-        <location filename="DataForm.cpp" line="2331"/>
+        <location filename="DataForm.cpp" line="2320"/>
+        <location filename="DataForm.cpp" line="2327"/>
         <location filename="DataForm.cpp" line="2363"/>
         <location filename="DataForm.cpp" line="2383"/>
         <location filename="DataForm.cpp" line="2390"/>
-        <location filename="DataForm.cpp" line="2423"/>
-        <location filename="DataForm.cpp" line="2443"/>
-        <location filename="DataForm.cpp" line="2450"/>
-        <location filename="DataForm.cpp" line="2483"/>
-        <location filename="DataForm.cpp" line="2503"/>
-        <location filename="DataForm.cpp" line="2510"/>
-        <location filename="DataForm.cpp" line="2544"/>
-        <location filename="DataForm.cpp" line="2564"/>
-        <location filename="DataForm.cpp" line="2571"/>
+        <location filename="DataForm.cpp" line="2422"/>
+        <location filename="DataForm.cpp" line="2442"/>
+        <location filename="DataForm.cpp" line="2449"/>
+        <location filename="DataForm.cpp" line="2482"/>
+        <location filename="DataForm.cpp" line="2502"/>
+        <location filename="DataForm.cpp" line="2509"/>
+        <location filename="DataForm.cpp" line="2542"/>
+        <location filename="DataForm.cpp" line="2562"/>
+        <location filename="DataForm.cpp" line="2569"/>
         <location filename="DataForm.cpp" line="2603"/>
         <location filename="DataForm.cpp" line="2623"/>
         <location filename="DataForm.cpp" line="2630"/>
+        <location filename="DataForm.cpp" line="2662"/>
         <location filename="DataForm.cpp" line="2682"/>
         <location filename="DataForm.cpp" line="2689"/>
-        <location filename="DataForm.cpp" line="2725"/>
-        <location filename="DataForm.cpp" line="2745"/>
-        <location filename="DataForm.cpp" line="2752"/>
+        <location filename="DataForm.cpp" line="2741"/>
+        <location filename="DataForm.cpp" line="2748"/>
+        <location filename="DataForm.cpp" line="2784"/>
         <location filename="DataForm.cpp" line="2804"/>
         <location filename="DataForm.cpp" line="2811"/>
-        <location filename="DataForm.cpp" line="2847"/>
-        <location filename="DataForm.cpp" line="2867"/>
-        <location filename="DataForm.cpp" line="2874"/>
+        <location filename="DataForm.cpp" line="2863"/>
+        <location filename="DataForm.cpp" line="2870"/>
         <location filename="DataForm.cpp" line="2906"/>
         <location filename="DataForm.cpp" line="2926"/>
         <location filename="DataForm.cpp" line="2933"/>
@@ -12407,23 +12653,23 @@
         <location filename="DataForm.cpp" line="3319"/>
         <location filename="DataForm.cpp" line="3339"/>
         <location filename="DataForm.cpp" line="3346"/>
-        <location filename="DataForm.cpp" line="3379"/>
-        <location filename="DataForm.cpp" line="3399"/>
-        <location filename="DataForm.cpp" line="3406"/>
-        <location filename="DataForm.cpp" line="3442"/>
-        <location filename="DataForm.cpp" line="3462"/>
-        <location filename="DataForm.cpp" line="3469"/>
+        <location filename="DataForm.cpp" line="3378"/>
+        <location filename="DataForm.cpp" line="3398"/>
+        <location filename="DataForm.cpp" line="3405"/>
+        <location filename="DataForm.cpp" line="3438"/>
+        <location filename="DataForm.cpp" line="3458"/>
+        <location filename="DataForm.cpp" line="3465"/>
+        <location filename="DataForm.cpp" line="3501"/>
         <location filename="DataForm.cpp" line="3521"/>
         <location filename="DataForm.cpp" line="3528"/>
-        <location filename="DataForm.cpp" line="3564"/>
-        <location filename="DataForm.cpp" line="3584"/>
-        <location filename="DataForm.cpp" line="3591"/>
+        <location filename="DataForm.cpp" line="3580"/>
+        <location filename="DataForm.cpp" line="3587"/>
         <location filename="DataForm.cpp" line="3623"/>
         <location filename="DataForm.cpp" line="3643"/>
         <location filename="DataForm.cpp" line="3650"/>
-        <location filename="DataForm.cpp" line="3686"/>
-        <location filename="DataForm.cpp" line="3706"/>
-        <location filename="DataForm.cpp" line="3713"/>
+        <location filename="DataForm.cpp" line="3682"/>
+        <location filename="DataForm.cpp" line="3702"/>
+        <location filename="DataForm.cpp" line="3709"/>
         <location filename="DataForm.cpp" line="3745"/>
         <location filename="DataForm.cpp" line="3765"/>
         <location filename="DataForm.cpp" line="3772"/>
@@ -12436,27 +12682,27 @@
         <location filename="DataForm.cpp" line="3922"/>
         <location filename="DataForm.cpp" line="3942"/>
         <location filename="DataForm.cpp" line="3949"/>
+        <location filename="DataForm.cpp" line="3981"/>
         <location filename="DataForm.cpp" line="4001"/>
         <location filename="DataForm.cpp" line="4008"/>
-        <location filename="DataForm.cpp" line="4044"/>
-        <location filename="DataForm.cpp" line="4064"/>
-        <location filename="DataForm.cpp" line="4071"/>
+        <location filename="DataForm.cpp" line="4060"/>
+        <location filename="DataForm.cpp" line="4067"/>
+        <location filename="DataForm.cpp" line="4103"/>
         <location filename="DataForm.cpp" line="4123"/>
         <location filename="DataForm.cpp" line="4130"/>
-        <location filename="DataForm.cpp" line="4166"/>
-        <location filename="DataForm.cpp" line="4186"/>
-        <location filename="DataForm.cpp" line="4193"/>
+        <location filename="DataForm.cpp" line="4182"/>
+        <location filename="DataForm.cpp" line="4189"/>
         <location filename="DataForm.cpp" line="4225"/>
         <location filename="DataForm.cpp" line="4245"/>
         <location filename="DataForm.cpp" line="4252"/>
         <location filename="DataForm.cpp" line="4284"/>
         <location filename="DataForm.cpp" line="4304"/>
         <location filename="DataForm.cpp" line="4311"/>
+        <location filename="DataForm.cpp" line="4343"/>
         <location filename="DataForm.cpp" line="4363"/>
         <location filename="DataForm.cpp" line="4370"/>
-        <location filename="DataForm.cpp" line="4407"/>
-        <location filename="DataForm.cpp" line="4427"/>
-        <location filename="DataForm.cpp" line="4434"/>
+        <location filename="DataForm.cpp" line="4422"/>
+        <location filename="DataForm.cpp" line="4429"/>
         <location filename="DataForm.cpp" line="4466"/>
         <location filename="DataForm.cpp" line="4486"/>
         <location filename="DataForm.cpp" line="4493"/>
@@ -12466,21 +12712,21 @@
         <location filename="DataForm.cpp" line="4584"/>
         <location filename="DataForm.cpp" line="4604"/>
         <location filename="DataForm.cpp" line="4611"/>
-        <location filename="DataForm.cpp" line="4644"/>
-        <location filename="DataForm.cpp" line="4664"/>
-        <location filename="DataForm.cpp" line="4671"/>
+        <location filename="DataForm.cpp" line="4643"/>
+        <location filename="DataForm.cpp" line="4663"/>
+        <location filename="DataForm.cpp" line="4670"/>
         <location filename="DataForm.cpp" line="4703"/>
         <location filename="DataForm.cpp" line="4723"/>
         <location filename="DataForm.cpp" line="4730"/>
-        <location filename="DataForm.cpp" line="4766"/>
-        <location filename="DataForm.cpp" line="4786"/>
-        <location filename="DataForm.cpp" line="4793"/>
+        <location filename="DataForm.cpp" line="4762"/>
+        <location filename="DataForm.cpp" line="4782"/>
+        <location filename="DataForm.cpp" line="4789"/>
         <location filename="DataForm.cpp" line="4825"/>
         <location filename="DataForm.cpp" line="4845"/>
         <location filename="DataForm.cpp" line="4852"/>
-        <location filename="DataForm.cpp" line="4888"/>
-        <location filename="DataForm.cpp" line="4908"/>
-        <location filename="DataForm.cpp" line="4915"/>
+        <location filename="DataForm.cpp" line="4884"/>
+        <location filename="DataForm.cpp" line="4904"/>
+        <location filename="DataForm.cpp" line="4911"/>
         <location filename="DataForm.cpp" line="4947"/>
         <location filename="DataForm.cpp" line="4967"/>
         <location filename="DataForm.cpp" line="4974"/>
@@ -12490,29 +12736,32 @@
         <location filename="DataForm.cpp" line="5065"/>
         <location filename="DataForm.cpp" line="5085"/>
         <location filename="DataForm.cpp" line="5092"/>
+        <location filename="DataForm.cpp" line="5124"/>
         <location filename="DataForm.cpp" line="5144"/>
         <location filename="DataForm.cpp" line="5151"/>
-        <location filename="DataForm.cpp" line="5187"/>
-        <location filename="DataForm.cpp" line="5207"/>
-        <location filename="DataForm.cpp" line="5214"/>
+        <location filename="DataForm.cpp" line="5203"/>
+        <location filename="DataForm.cpp" line="5210"/>
         <location filename="DataForm.cpp" line="5246"/>
         <location filename="DataForm.cpp" line="5266"/>
         <location filename="DataForm.cpp" line="5273"/>
-        <location filename="DataForm.cpp" line="5306"/>
-        <location filename="DataForm.cpp" line="5326"/>
-        <location filename="DataForm.cpp" line="5333"/>
+        <location filename="DataForm.cpp" line="5305"/>
+        <location filename="DataForm.cpp" line="5325"/>
+        <location filename="DataForm.cpp" line="5332"/>
         <location filename="DataForm.cpp" line="5365"/>
         <location filename="DataForm.cpp" line="5385"/>
         <location filename="DataForm.cpp" line="5392"/>
-        <location filename="DataForm.cpp" line="5429"/>
-        <location filename="DataForm.cpp" line="5449"/>
-        <location filename="DataForm.cpp" line="5456"/>
+        <location filename="DataForm.cpp" line="5424"/>
+        <location filename="DataForm.cpp" line="5444"/>
+        <location filename="DataForm.cpp" line="5451"/>
         <location filename="DataForm.cpp" line="5488"/>
         <location filename="DataForm.cpp" line="5508"/>
         <location filename="DataForm.cpp" line="5515"/>
-        <location filename="DataForm.cpp" line="5552"/>
-        <location filename="DataForm.cpp" line="5572"/>
-        <location filename="DataForm.cpp" line="5579"/>
+        <location filename="DataForm.cpp" line="5547"/>
+        <location filename="DataForm.cpp" line="5567"/>
+        <location filename="DataForm.cpp" line="5574"/>
+        <location filename="DataForm.cpp" line="5611"/>
+        <location filename="DataForm.cpp" line="5631"/>
+        <location filename="DataForm.cpp" line="5638"/>
         <source>Ok</source>
         <translation>Ок</translation>
     </message>
@@ -12577,14 +12826,14 @@
         <location filename="DataForm.cpp" line="2063"/>
         <location filename="DataForm.cpp" line="2122"/>
         <location filename="DataForm.cpp" line="2181"/>
-        <location filename="DataForm.cpp" line="2303"/>
+        <location filename="DataForm.cpp" line="2240"/>
         <location filename="DataForm.cpp" line="2362"/>
-        <location filename="DataForm.cpp" line="2422"/>
-        <location filename="DataForm.cpp" line="2482"/>
-        <location filename="DataForm.cpp" line="2543"/>
+        <location filename="DataForm.cpp" line="2421"/>
+        <location filename="DataForm.cpp" line="2481"/>
+        <location filename="DataForm.cpp" line="2541"/>
         <location filename="DataForm.cpp" line="2602"/>
-        <location filename="DataForm.cpp" line="2724"/>
-        <location filename="DataForm.cpp" line="2846"/>
+        <location filename="DataForm.cpp" line="2661"/>
+        <location filename="DataForm.cpp" line="2783"/>
         <location filename="DataForm.cpp" line="2905"/>
         <location filename="DataForm.cpp" line="2964"/>
         <location filename="DataForm.cpp" line="3023"/>
@@ -12593,38 +12842,39 @@
         <location filename="DataForm.cpp" line="3200"/>
         <location filename="DataForm.cpp" line="3259"/>
         <location filename="DataForm.cpp" line="3318"/>
-        <location filename="DataForm.cpp" line="3378"/>
-        <location filename="DataForm.cpp" line="3441"/>
-        <location filename="DataForm.cpp" line="3563"/>
+        <location filename="DataForm.cpp" line="3377"/>
+        <location filename="DataForm.cpp" line="3437"/>
+        <location filename="DataForm.cpp" line="3500"/>
         <location filename="DataForm.cpp" line="3622"/>
-        <location filename="DataForm.cpp" line="3685"/>
+        <location filename="DataForm.cpp" line="3681"/>
         <location filename="DataForm.cpp" line="3744"/>
         <location filename="DataForm.cpp" line="3803"/>
         <location filename="DataForm.cpp" line="3862"/>
         <location filename="DataForm.cpp" line="3921"/>
-        <location filename="DataForm.cpp" line="4043"/>
-        <location filename="DataForm.cpp" line="4165"/>
+        <location filename="DataForm.cpp" line="3980"/>
+        <location filename="DataForm.cpp" line="4102"/>
         <location filename="DataForm.cpp" line="4224"/>
         <location filename="DataForm.cpp" line="4283"/>
-        <location filename="DataForm.cpp" line="4406"/>
+        <location filename="DataForm.cpp" line="4342"/>
         <location filename="DataForm.cpp" line="4465"/>
         <location filename="DataForm.cpp" line="4524"/>
         <location filename="DataForm.cpp" line="4583"/>
-        <location filename="DataForm.cpp" line="4643"/>
+        <location filename="DataForm.cpp" line="4642"/>
         <location filename="DataForm.cpp" line="4702"/>
-        <location filename="DataForm.cpp" line="4765"/>
+        <location filename="DataForm.cpp" line="4761"/>
         <location filename="DataForm.cpp" line="4824"/>
-        <location filename="DataForm.cpp" line="4887"/>
+        <location filename="DataForm.cpp" line="4883"/>
         <location filename="DataForm.cpp" line="4946"/>
         <location filename="DataForm.cpp" line="5005"/>
         <location filename="DataForm.cpp" line="5064"/>
-        <location filename="DataForm.cpp" line="5186"/>
+        <location filename="DataForm.cpp" line="5123"/>
         <location filename="DataForm.cpp" line="5245"/>
-        <location filename="DataForm.cpp" line="5305"/>
+        <location filename="DataForm.cpp" line="5304"/>
         <location filename="DataForm.cpp" line="5364"/>
-        <location filename="DataForm.cpp" line="5428"/>
+        <location filename="DataForm.cpp" line="5423"/>
         <location filename="DataForm.cpp" line="5487"/>
-        <location filename="DataForm.cpp" line="5551"/>
+        <location filename="DataForm.cpp" line="5546"/>
+        <location filename="DataForm.cpp" line="5610"/>
         <source>Please select one row at first!</source>
         <translation>Сперва выделите строку!</translation>
     </message>
@@ -12941,13 +13191,13 @@
     <message>
         <location filename="DataForm.cpp" line="1850"/>
         <location filename="DataForm.cpp" line="1972"/>
-        <location filename="DataForm.cpp" line="2330"/>
-        <location filename="DataForm.cpp" line="3590"/>
-        <location filename="DataForm.cpp" line="4070"/>
-        <location filename="DataForm.cpp" line="4192"/>
-        <location filename="DataForm.cpp" line="4792"/>
-        <location filename="DataForm.cpp" line="5213"/>
-        <location filename="DataForm.cpp" line="5578"/>
+        <location filename="DataForm.cpp" line="2389"/>
+        <location filename="DataForm.cpp" line="3649"/>
+        <location filename="DataForm.cpp" line="4129"/>
+        <location filename="DataForm.cpp" line="4251"/>
+        <location filename="DataForm.cpp" line="4851"/>
+        <location filename="DataForm.cpp" line="5272"/>
+        <location filename="DataForm.cpp" line="5637"/>
         <source>Wrong id, cannot delete data from this row!</source>
         <translation>Не верный ID, не удаление невозможно!</translation>
     </message>
@@ -12963,7 +13213,7 @@
     </message>
     <message>
         <location filename="DataForm.cpp" line="1909"/>
-        <location filename="DataForm.cpp" line="4129"/>
+        <location filename="DataForm.cpp" line="4188"/>
         <source>Consume raw with this id does not exist!</source>
         <translation>Расход сырья  с таким ID не существует!</translation>
     </message>
@@ -12984,7 +13234,7 @@
     </message>
     <message>
         <location filename="DataForm.cpp" line="1992"/>
-        <location filename="DataForm.cpp" line="2531"/>
+        <location filename="DataForm.cpp" line="2590"/>
         <source>Update currency</source>
         <translation>Обновить валюту</translation>
     </message>
@@ -12995,839 +13245,896 @@
     </message>
     <message>
         <location filename="DataForm.cpp" line="2040"/>
+        <source>Create division</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="DataForm.cpp" line="2051"/>
+        <source>Update division</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="DataForm.cpp" line="2090"/>
+        <source>Division with this id does not exist!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="DataForm.cpp" line="2099"/>
         <source>Create employee</source>
         <translation>Создать сотрудника</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="2051"/>
+        <location filename="DataForm.cpp" line="2110"/>
         <source>Update employee</source>
         <translation>Обновить сонрудника</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="2090"/>
+        <location filename="DataForm.cpp" line="2149"/>
         <source>Employee with this id does not exist!</source>
         <translation>Сотрудник с таким ID не существует!</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="2099"/>
+        <location filename="DataForm.cpp" line="2158"/>
         <source>Create entry</source>
         <translation>Создать проводку</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="2110"/>
+        <location filename="DataForm.cpp" line="2169"/>
         <source>Update entry</source>
         <translation>Обновить проводку</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="2149"/>
+        <location filename="DataForm.cpp" line="2208"/>
         <source>Entry with this id does not exist!</source>
         <translation>Проводки с таким ID не существует!</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="2158"/>
+        <location filename="DataForm.cpp" line="2217"/>
         <source>Create entry routing</source>
         <translation>Создать правило проводки</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="2169"/>
+        <location filename="DataForm.cpp" line="2228"/>
         <source>Update entry routing</source>
         <translation>Обновить правило проводки</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="2208"/>
+        <location filename="DataForm.cpp" line="2267"/>
         <source>Entry routing with this id does not exist!</source>
         <translation>Правило проводки с таким ID не существует!</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="2217"/>
+        <location filename="DataForm.cpp" line="2276"/>
         <source>Create inventorization</source>
         <translation>Создать инвентаризацию</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="2228"/>
+        <location filename="DataForm.cpp" line="2287"/>
         <source>Update inventorization</source>
         <translation>Обновить инвентаризацию</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="2267"/>
+        <location filename="DataForm.cpp" line="2326"/>
         <source>Inventorization with this id does not exist!</source>
         <translation>Инвентаризация  с таким ID не существует!</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="2280"/>
+        <location filename="DataForm.cpp" line="2339"/>
         <source>Add product to inventorization list</source>
         <translation>Добавить продукты в список инвентаризации</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="2291"/>
+        <location filename="DataForm.cpp" line="2350"/>
         <source>Update product in inventorization list</source>
         <translation>Обновить продукты в списке инвентаризации</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="2339"/>
+        <location filename="DataForm.cpp" line="2398"/>
         <source>Create jobprice</source>
         <translation>Создать ставку</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="2350"/>
+        <location filename="DataForm.cpp" line="2409"/>
         <source>Update jobprice</source>
         <translation>Обновить ставку</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="2389"/>
+        <location filename="DataForm.cpp" line="2448"/>
         <source>Jobprice with this id does not exist!</source>
         <translation>Ставка  с таким ID не существует!</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="2399"/>
+        <location filename="DataForm.cpp" line="2458"/>
         <source>Create jobsheet</source>
         <translation>Создать табель</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="2410"/>
+        <location filename="DataForm.cpp" line="2469"/>
         <source>Update jobsheet</source>
         <translation>Обновить табель</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="2449"/>
+        <location filename="DataForm.cpp" line="2508"/>
         <source>Jobsheet with this id does not exist!</source>
         <translation>Табель с таким ID не существует!</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="2459"/>
+        <location filename="DataForm.cpp" line="2518"/>
         <source>Create location</source>
         <translation>Создать локацию</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="2470"/>
+        <location filename="DataForm.cpp" line="2529"/>
         <source>Update location</source>
         <translation>Обновить локацию</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="2509"/>
+        <location filename="DataForm.cpp" line="2568"/>
         <source>Location with this id does not exist!</source>
         <translation>Локация  с таким ID не существует!</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="2520"/>
+        <location filename="DataForm.cpp" line="2579"/>
         <source>Create measure</source>
         <translation>Создать меру</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="2570"/>
+        <location filename="DataForm.cpp" line="2629"/>
         <source>Measure with this id does not exist!</source>
         <translation>Мера с таким ID не существует!</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="2579"/>
+        <location filename="DataForm.cpp" line="2638"/>
         <source>Create net cost</source>
         <translation>Создать себестоимость</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="2590"/>
+        <location filename="DataForm.cpp" line="2649"/>
         <source>Update net cost</source>
         <translation>Обновить себестоимость</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="2629"/>
+        <location filename="DataForm.cpp" line="2688"/>
         <source>Net cost with this id does not exist!</source>
         <translation>Себестоимость  с таким ID не существует!</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="2638"/>
+        <location filename="DataForm.cpp" line="2697"/>
         <source>Create order</source>
         <translation>Создать заказ</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="2649"/>
+        <location filename="DataForm.cpp" line="2708"/>
         <source>Update order</source>
         <translation>Обновит заказ</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="2688"/>
+        <location filename="DataForm.cpp" line="2747"/>
         <source>Order with this id does not exist!</source>
         <translation>Заказ  с таким ID не существует!</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="2701"/>
+        <location filename="DataForm.cpp" line="2760"/>
         <source>Add product to order list</source>
         <translation>Добавить продукты в список заказов</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="2712"/>
+        <location filename="DataForm.cpp" line="2771"/>
         <source>Update product in order list</source>
         <translation>Обновить продукт в списке заказов</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="2751"/>
+        <location filename="DataForm.cpp" line="2810"/>
         <source>Product with this id does not exist in order list!</source>
         <translation>Продукт с таким ID не существует в списке заказов!</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="2760"/>
+        <location filename="DataForm.cpp" line="2819"/>
         <source>Create order raw</source>
         <translation>Создать заказ на материалы/сырье</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="2771"/>
+        <location filename="DataForm.cpp" line="2830"/>
         <source>Update order raw</source>
         <translation>Обновить заказ на материалы/сырье</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="2810"/>
+        <location filename="DataForm.cpp" line="2869"/>
         <source>Order raw with this id does not exist!</source>
         <translation>Заказ на сырье с таким ID не существует!</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="2823"/>
+        <location filename="DataForm.cpp" line="2882"/>
         <source>Add raw to order list</source>
         <translation>Добавить продукты в список заказов на сырье</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="2834"/>
+        <location filename="DataForm.cpp" line="2893"/>
         <source>Update raw in order list</source>
         <translation>Создать/Обновить список материалов/сырья в списке заказа  материалов и сырья</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="2873"/>
+        <location filename="DataForm.cpp" line="2932"/>
         <source>Raw with this id does not exist in order list!</source>
         <translation>Сырья с таким ID не существует в списке заказов!</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="2882"/>
+        <location filename="DataForm.cpp" line="2941"/>
         <source>Create percent rate</source>
         <translation>Создать/Обновить процентную ставку</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="2893"/>
+        <location filename="DataForm.cpp" line="2952"/>
         <source>Update percent rate</source>
         <translation>Обновить процентную ставку</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="2932"/>
+        <location filename="DataForm.cpp" line="2991"/>
         <source>Percent rate with this id does not exist!</source>
         <translation>Процентная ставка с таким ID несуществует!</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="2941"/>
+        <location filename="DataForm.cpp" line="3000"/>
         <source>Create photo</source>
         <translation>Создать фото</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="2952"/>
+        <location filename="DataForm.cpp" line="3011"/>
         <source>Update photo</source>
         <translation>Обновить фото</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="2991"/>
+        <location filename="DataForm.cpp" line="3050"/>
         <source>Photo with this id does not exist!</source>
         <translation>Фото с таким ID не существует!</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="3000"/>
+        <location filename="DataForm.cpp" line="3059"/>
         <source>Create payment</source>
         <translation>Создать платеж</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="3011"/>
+        <location filename="DataForm.cpp" line="3070"/>
         <source>Update payment</source>
         <translation>Обновить платеж</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="3050"/>
+        <location filename="DataForm.cpp" line="3109"/>
         <source>Payment with this id does not exist!</source>
         <translation>Платеж с таким ID не существует!</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="3059"/>
+        <location filename="DataForm.cpp" line="3118"/>
         <source>Create position</source>
         <translation>Создать должность</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="3070"/>
+        <location filename="DataForm.cpp" line="3129"/>
         <source>Update position</source>
         <translation>Обновить должность</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="3109"/>
+        <location filename="DataForm.cpp" line="3168"/>
         <source>Position with this id does not exist!</source>
         <translation>Дольжность с таким ID не существует!</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="3118"/>
+        <location filename="DataForm.cpp" line="3177"/>
         <source>Create price</source>
         <translation>Создать цену</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="3129"/>
+        <location filename="DataForm.cpp" line="3188"/>
         <source>Update price</source>
         <translation>Обновить цену</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="3168"/>
+        <location filename="DataForm.cpp" line="3227"/>
         <source>Price with this id does not exist!</source>
         <translation>Цена  с таким ID не существует!</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="3177"/>
+        <location filename="DataForm.cpp" line="3236"/>
         <source>Create product type</source>
         <translation>Создать тип продуктов</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="3188"/>
+        <location filename="DataForm.cpp" line="3247"/>
         <source>Update product type</source>
         <translation>Обновить тип продуктов</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="3227"/>
+        <location filename="DataForm.cpp" line="3286"/>
         <source>Product type with this id does not exist!</source>
         <translation>Тип продукта  с таким ID не существует!</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="3236"/>
+        <location filename="DataForm.cpp" line="3295"/>
         <source>Create product</source>
         <translation>Создать продукт</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="3247"/>
+        <location filename="DataForm.cpp" line="3306"/>
         <source>Update product</source>
         <translation>Обновить продукт</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="3286"/>
+        <location filename="DataForm.cpp" line="3345"/>
         <source>Product with this id does not exist!</source>
         <translation>Продукт  с таким ID не существует!</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="3295"/>
+        <location filename="DataForm.cpp" line="3354"/>
         <source>Create production</source>
         <translation>Создать производственный цикл</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="3306"/>
+        <location filename="DataForm.cpp" line="3365"/>
         <source>Update production</source>
         <translation>Обновить производственный цикл</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="3345"/>
+        <location filename="DataForm.cpp" line="3404"/>
         <source>Production with this id does not exist!</source>
         <translation>Производственный цикл  с таким ID не существует!</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="3355"/>
+        <location filename="DataForm.cpp" line="3414"/>
         <source>Create production stock</source>
         <translation>Создать продукт в производственном складе</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="3366"/>
+        <location filename="DataForm.cpp" line="3425"/>
         <source>Update production stock</source>
         <translation>Создать/Обновить производственный склад</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="3405"/>
+        <location filename="DataForm.cpp" line="3464"/>
         <source>Production stock with this id does not exist!</source>
         <translation>Производвтвенный слад  с таким ID не существует!</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="3418"/>
+        <location filename="DataForm.cpp" line="3477"/>
         <source>Add product to production list</source>
         <translation>Добавить продукты в список произведенных</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="3429"/>
+        <location filename="DataForm.cpp" line="3488"/>
         <source>Update product in production list</source>
         <translation>Обновить продукты из список произведенных</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="3468"/>
+        <location filename="DataForm.cpp" line="3527"/>
         <source>Product with this id does not exist in production list!</source>
         <translation>Продукт с таким ID не существует в списке  произведенных!</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="3477"/>
+        <location filename="DataForm.cpp" line="3536"/>
         <source>Create production consume raw</source>
         <translation>Создать расход сырья</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="3488"/>
+        <location filename="DataForm.cpp" line="3547"/>
         <source>Update production consume raw</source>
         <translation>Обновить расход сырья</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="3527"/>
+        <location filename="DataForm.cpp" line="3586"/>
         <source>Prodcution consume raw with this id does not exist!</source>
         <translation>Расход сырья  с таким ID не существует!</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="3540"/>
+        <location filename="DataForm.cpp" line="3599"/>
         <source>Add raw to production consume raw list</source>
         <translation>Добавить продукты в список расходуемых</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="3551"/>
+        <location filename="DataForm.cpp" line="3610"/>
         <source>Update raw in production consume raw list</source>
         <translation>Обновить список продуктов в расходнике сырья</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="3599"/>
+        <location filename="DataForm.cpp" line="3658"/>
         <source>Create production plan</source>
         <translation>Создать производственный план</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="3610"/>
+        <location filename="DataForm.cpp" line="3669"/>
         <source>Update production plan</source>
         <translation>Обновить производственный план</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="3649"/>
+        <location filename="DataForm.cpp" line="3708"/>
         <source>Production plan with this id does not exist!</source>
         <translation>Производственный план  с таким ID не существует!</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="3662"/>
+        <location filename="DataForm.cpp" line="3721"/>
         <source>Add product to production plan list</source>
         <translation>Добавить продукты в список производственного плана</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="3673"/>
+        <location filename="DataForm.cpp" line="3732"/>
         <source>Update product in production plan list</source>
         <translation>Обновить список продуктов в производственном плане</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="3712"/>
+        <location filename="DataForm.cpp" line="3771"/>
         <source>Product with this id does not exist in production paln list!</source>
         <translation>Продукт с таким ID не существует в плане производства!</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="3721"/>
+        <location filename="DataForm.cpp" line="3780"/>
         <source>Create payslip</source>
         <translation>Создать расчетную ведомость</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="3732"/>
+        <location filename="DataForm.cpp" line="3791"/>
         <source>Update payslip</source>
         <translation>Обновить расчетную ведомость</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="3771"/>
+        <location filename="DataForm.cpp" line="3830"/>
         <source>Payslip with this id does not exist!</source>
         <translation>Расчетная ведомость с таким ID не существует!</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="3780"/>
+        <location filename="DataForm.cpp" line="3839"/>
         <source>Create purveyor</source>
         <translation>Создать поставщика</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="3791"/>
+        <location filename="DataForm.cpp" line="3850"/>
         <source>Update purveyor</source>
         <translation>Обновить поставщика</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="3830"/>
+        <location filename="DataForm.cpp" line="3889"/>
         <source>Purveyor with this id does not exist!</source>
         <translation>Поставщик  с таким ID не существует!</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="3839"/>
+        <location filename="DataForm.cpp" line="3898"/>
         <source>Create relation</source>
         <translation>Создать зависимость</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="3850"/>
+        <location filename="DataForm.cpp" line="3909"/>
         <source>Update relation</source>
         <translation>Обновить зависимость</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="3889"/>
+        <location filename="DataForm.cpp" line="3948"/>
         <source>Relation with this id does not exist!</source>
         <translation>Отношение  с таким ID не существует!</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="3898"/>
+        <location filename="DataForm.cpp" line="3957"/>
         <source>Create relation type</source>
         <translation>Создать тип зависимостей</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="3909"/>
+        <location filename="DataForm.cpp" line="3968"/>
         <source>Update relation type</source>
         <translation>Обновить тип зависимостей</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="3948"/>
+        <location filename="DataForm.cpp" line="4007"/>
         <source>Relation type with this id does not exist!</source>
         <translation>Тип зависимостей  с таким ID не существует!</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="3957"/>
+        <location filename="DataForm.cpp" line="4016"/>
         <source>Create receipt product</source>
         <translation>Создать оприходование продукта</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="3968"/>
+        <location filename="DataForm.cpp" line="4027"/>
         <source>Update receipt product</source>
         <translation>Обновить оприходование продукта</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="4007"/>
-        <location filename="DataForm.cpp" line="4973"/>
+        <location filename="DataForm.cpp" line="4066"/>
+        <location filename="DataForm.cpp" line="5032"/>
         <source>Receipt product with this id does not exist!</source>
         <translation>Документ оприходования продукта  с таким ID не существует!</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="4020"/>
+        <location filename="DataForm.cpp" line="4079"/>
         <source>Add product to receipt product list</source>
         <translation>Добавить продукты в список оприходования</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="4031"/>
+        <location filename="DataForm.cpp" line="4090"/>
         <source>Update product in receipt product list</source>
         <translation>Обновить список продуктов в документе оприходования продуктов</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="4079"/>
+        <location filename="DataForm.cpp" line="4138"/>
         <source>Receipt receipt raw</source>
         <translation>Создать оприходование материалов и сырья</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="4090"/>
+        <location filename="DataForm.cpp" line="4149"/>
         <source>Update receipt raw</source>
         <translation>Обновить оприходование материалов и сырья</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="4142"/>
+        <location filename="DataForm.cpp" line="4201"/>
         <source>Add raw to receipt raw list</source>
         <translation>Добавить сырье в список расходуемых</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="4153"/>
+        <location filename="DataForm.cpp" line="4212"/>
         <source>Update raw in receipt raw list</source>
         <translation>Обновить список материалов/сырья в списке оприходование  материалов и сырья</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="4201"/>
+        <location filename="DataForm.cpp" line="4260"/>
         <source>Create refund</source>
         <translation>Создать возват денег</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="4212"/>
+        <location filename="DataForm.cpp" line="4271"/>
         <source>Update refund</source>
         <translation>Обновить  возват денег</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="4251"/>
+        <location filename="DataForm.cpp" line="4310"/>
         <source>Refund with this id does not exist!</source>
         <translation>Возврат денег с таким ID не существует!</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="4260"/>
+        <location filename="DataForm.cpp" line="4319"/>
         <source>Create role</source>
         <translation>Создать роль</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="4271"/>
+        <location filename="DataForm.cpp" line="4330"/>
         <source>Update role</source>
         <translation>Обновить роль</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="4310"/>
+        <location filename="DataForm.cpp" line="4369"/>
         <source>Role with this id does not exist!</source>
         <translation>Роль  с таким ID не существует!</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="4319"/>
+        <location filename="DataForm.cpp" line="4378"/>
         <source>Create return</source>
         <translation>Создать возврат</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="4330"/>
+        <location filename="DataForm.cpp" line="4389"/>
         <source>Update return</source>
         <translation>Обновить возврат</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="4369"/>
+        <location filename="DataForm.cpp" line="4428"/>
         <source>Return with this id does not exist!</source>
         <translation>Возврат с таким ID не существует!</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="4383"/>
+        <location filename="DataForm.cpp" line="4442"/>
         <source>Add product to return list</source>
         <translation>Добавить продукты в список для возврата</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="4394"/>
+        <location filename="DataForm.cpp" line="4453"/>
         <source>Update product in return list</source>
         <translation>Обновить продукт в списке для возврата</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="4433"/>
+        <location filename="DataForm.cpp" line="4492"/>
         <source>Product with this id does not exist in return list!</source>
         <translation>Продукт с таким ID не существует в списке для возврата!</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="4442"/>
+        <location filename="DataForm.cpp" line="4501"/>
         <source>Create salary</source>
         <translation>Создать зарплату</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="4453"/>
+        <location filename="DataForm.cpp" line="4512"/>
         <source>Update salary</source>
         <translation>Обновить зарплату</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="4492"/>
+        <location filename="DataForm.cpp" line="4551"/>
         <source>Salary with this id does not exist!</source>
         <translation>Зарплата с таким ID не существует!</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="4501"/>
+        <location filename="DataForm.cpp" line="4560"/>
         <source>Create salary type</source>
         <translation>Создать тип зарплаты</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="4512"/>
+        <location filename="DataForm.cpp" line="4571"/>
         <source>Update salary type</source>
         <translation>Обновить тип зарплаты</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="4551"/>
+        <location filename="DataForm.cpp" line="4610"/>
         <source>Salary type with this id does not exist!</source>
         <translation>Тип зарплаты с таким ID не существует!</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="4560"/>
+        <location filename="DataForm.cpp" line="4619"/>
         <source>Create status</source>
         <translation>Создать статус</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="4571"/>
+        <location filename="DataForm.cpp" line="4630"/>
         <source>Update status</source>
         <translation>Обновить статус</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="4610"/>
+        <location filename="DataForm.cpp" line="4669"/>
         <source>Status with this id does not exist!</source>
         <translation>Статус с таким ID не существует!</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="4620"/>
+        <location filename="DataForm.cpp" line="4679"/>
         <source>Create status rule</source>
         <translation>Создать усдлвие для статуса</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="4631"/>
+        <location filename="DataForm.cpp" line="4690"/>
         <source>Update status rule</source>
         <translation>Обновить условие для статуса</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="4670"/>
+        <location filename="DataForm.cpp" line="4729"/>
         <source>Status rule with this id does not exist!</source>
         <translation>Условие для статуса с таким ID не существует!</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="4679"/>
+        <location filename="DataForm.cpp" line="4738"/>
         <source>Create specification</source>
         <translation>Создать спецификацию</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="4690"/>
+        <location filename="DataForm.cpp" line="4749"/>
         <source>Update specification</source>
         <translation>Обновить спецификацию</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="4729"/>
+        <location filename="DataForm.cpp" line="4788"/>
         <source>Specification with this id does not exist!</source>
         <translation>Спецификация с таким ID не существует!</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="4742"/>
+        <location filename="DataForm.cpp" line="4801"/>
         <source>Add product to specification list</source>
         <translation>Добавить продукты в список спецификации</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="4753"/>
+        <location filename="DataForm.cpp" line="4812"/>
         <source>Update product in specification list</source>
         <translation>Обновить список продуктов в спецификации</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="4801"/>
+        <location filename="DataForm.cpp" line="4860"/>
         <source>Create spoilage</source>
         <translation>Создать документ брака</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="4812"/>
+        <location filename="DataForm.cpp" line="4871"/>
         <source>Update spoilage</source>
         <translation>Обновить документ брака</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="4851"/>
+        <location filename="DataForm.cpp" line="4910"/>
         <source>Spoilage with this id does not exist!</source>
         <translation>Документ брака с таким ID не существует!</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="4864"/>
+        <location filename="DataForm.cpp" line="4923"/>
         <source>Add product to spoilage list</source>
         <translation>Добавить продукты в список бракованной продукции</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="4875"/>
+        <location filename="DataForm.cpp" line="4934"/>
         <source>Update product in spoilage list</source>
         <translation>Обновить продукты в списке бракованной продукции</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="4914"/>
+        <location filename="DataForm.cpp" line="4973"/>
         <source>Product with this id does not exist in spoilage list!</source>
         <translation>Продукт с таким ID не существует в списке брака!</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="4923"/>
+        <location filename="DataForm.cpp" line="4982"/>
         <source>Create stock</source>
         <translation>Создать склад</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="4934"/>
+        <location filename="DataForm.cpp" line="4993"/>
         <source>Update stock</source>
         <translation>Обновить склад</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="4982"/>
+        <location filename="DataForm.cpp" line="5041"/>
         <source>Create subaccount</source>
         <translation>Создать субсчет</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="4993"/>
+        <location filename="DataForm.cpp" line="5052"/>
         <source>Update subaccount</source>
         <translation>Обновить субсчет</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="5032"/>
+        <location filename="DataForm.cpp" line="5091"/>
         <source>Subaccount with this id does not exist!</source>
         <translation>Субсчет  с таким ID не существует!</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="5041"/>
+        <location filename="DataForm.cpp" line="5100"/>
         <source>Create timesheet</source>
         <translation>Создать табель</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="5052"/>
+        <location filename="DataForm.cpp" line="5111"/>
         <source>Update timesheet</source>
         <translation>Обновить табель</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="5091"/>
+        <location filename="DataForm.cpp" line="5150"/>
         <source>Timesheet with this id does not exist!</source>
         <translation>Табель с таким ID не существует!</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="5100"/>
+        <location filename="DataForm.cpp" line="5159"/>
         <source>Create transport</source>
         <translation>Создать транспортировку</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="5111"/>
+        <location filename="DataForm.cpp" line="5170"/>
         <source>Update transport</source>
         <translation>Обновить транспортировку</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="5150"/>
+        <location filename="DataForm.cpp" line="5209"/>
         <source>Transport with this id does not exist!</source>
         <translation>Транспорт с таким ID не существует!</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="5163"/>
+        <location filename="DataForm.cpp" line="5222"/>
         <source>Add product to transport list</source>
         <translation>Добавить продукты в список транспортируемых</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="5174"/>
+        <location filename="DataForm.cpp" line="5233"/>
         <source>Update product in transport list</source>
         <translation>Обновить продукты в списке транспортировки</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="5222"/>
+        <location filename="DataForm.cpp" line="5281"/>
         <source>Create user</source>
         <translation>Создать пользователя</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="5233"/>
+        <location filename="DataForm.cpp" line="5292"/>
         <source>Update user</source>
         <translation>Обновить пользователя</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="5272"/>
+        <location filename="DataForm.cpp" line="5331"/>
         <source>User with this id does not exist!</source>
         <translation>Пользователь  с таким ID не существует!</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="5282"/>
+        <location filename="DataForm.cpp" line="5341"/>
         <source>Create withdrawal</source>
         <translation>Создать вывод денег</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="5293"/>
+        <location filename="DataForm.cpp" line="5352"/>
         <source>Update withdrawal</source>
         <translation>Обновить вывод денег</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="5332"/>
+        <location filename="DataForm.cpp" line="5391"/>
         <source>Withdrawal with this id does not exist!</source>
         <translation> Вывод денег с таким ID не существует!</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="5341"/>
+        <location filename="DataForm.cpp" line="5400"/>
         <source>Create write-off</source>
         <translation>Создать списание</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="5352"/>
+        <location filename="DataForm.cpp" line="5411"/>
         <source>Update write-off</source>
         <translation>Обновить списание</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="5391"/>
+        <location filename="DataForm.cpp" line="5450"/>
         <source>Write-off with this id does not exist!</source>
         <translation>Списание с таким ID не существует!</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="5405"/>
+        <location filename="DataForm.cpp" line="5464"/>
         <source>Add product to write-off list</source>
         <translation>Добавить продукты в список для списания</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="5416"/>
+        <location filename="DataForm.cpp" line="5475"/>
         <source>Update product in write-off list</source>
         <translation>Обновить продукты из список для списания</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="5455"/>
+        <location filename="DataForm.cpp" line="5514"/>
         <source>Product with this id does not exist in write-off list!</source>
         <translation>Продукт с таким ID не существует в списке для списания!</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="5464"/>
+        <location filename="DataForm.cpp" line="5523"/>
         <source>Create write-off raw</source>
         <translation>Создать списание сырья</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="5475"/>
+        <location filename="DataForm.cpp" line="5534"/>
         <source>Update write-off raw</source>
         <translation>Обновить списание сырья</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="5514"/>
+        <location filename="DataForm.cpp" line="5573"/>
         <source>Write-off raw with this id does not exist!</source>
         <translation>Списание сырья с таким ID не существует!</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="5528"/>
+        <location filename="DataForm.cpp" line="5587"/>
         <source>Add raw to write-off list</source>
         <translation>Добавить продукты в список для списания сырья</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="5539"/>
+        <location filename="DataForm.cpp" line="5598"/>
         <source>Update raw in write-off list</source>
         <translation>Обновить продукты из список для списания сырья</translation>
+    </message>
+</context>
+<context>
+    <name>DocForm</name>
+    <message>
+        <location filename="DocForm.cpp" line="34"/>
+        <source>HTLM (*.html)</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="DocForm.cpp" line="38"/>
+        <source>Application</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="DocForm.cpp" line="39"/>
+        <source>Cannot write file %1:
+%2.</source>
+        <translation></translation>
+    </message>
+</context>
+<context>
+    <name>DocumentForm</name>
+    <message>
+        <location filename="DocForm.ui" line="20"/>
+        <source>Document</source>
+        <translation>Документ</translation>
+    </message>
+    <message>
+        <location filename="DocForm.ui" line="56"/>
+        <source>Save</source>
+        <translation>Сохранить</translation>
+    </message>
+    <message>
+        <location filename="DocForm.ui" line="69"/>
+        <source>Close</source>
+        <translation>Закрыть</translation>
+    </message>
+    <message>
+        <location filename="DocForm.ui" line="79"/>
+        <source>about:blank</source>
+        <translation></translation>
     </message>
 </context>
 <context>
@@ -13900,6 +14207,136 @@
         <location filename="GenerateAccDlg.ui" line="98"/>
         <source>Select currency:</source>
         <translation>Выберите валюту:</translation>
+    </message>
+</context>
+<context>
+    <name>GenerateCmpBlc</name>
+    <message>
+        <location filename="GenerateCmpBlcDlg.cpp" line="167"/>
+        <location filename="GenerateCmpBlcDlg.cpp" line="187"/>
+        <location filename="GenerateCmpBlcDlg.cpp" line="1276"/>
+        <source>Info</source>
+        <translation>Информация</translation>
+    </message>
+    <message>
+        <location filename="GenerateCmpBlcDlg.cpp" line="168"/>
+        <source>Cannot find report for this period!</source>
+        <translation>Невозможно найти отчет за этот период!</translation>
+    </message>
+    <message>
+        <location filename="GenerateCmpBlcDlg.cpp" line="169"/>
+        <location filename="GenerateCmpBlcDlg.cpp" line="189"/>
+        <location filename="GenerateCmpBlcDlg.cpp" line="1278"/>
+        <source>Ok</source>
+        <translation>Ок</translation>
+    </message>
+    <message>
+        <location filename="GenerateCmpBlcDlg.cpp" line="175"/>
+        <source>Print financial report</source>
+        <translation>Отчет о прибылях и убытках</translation>
+    </message>
+    <message>
+        <location filename="GenerateCmpBlcDlg.cpp" line="188"/>
+        <source>Cannot find report tamplate!</source>
+        <translation>Не возможно найти шаблон отчета!</translation>
+    </message>
+    <message>
+        <location filename="GenerateCmpBlcDlg.cpp" line="1277"/>
+        <source>Cannot generate report for this period!</source>
+        <translation>Невозможно найти отчет за этот период!</translation>
+    </message>
+</context>
+<context>
+    <name>GenerateCompanyBalance</name>
+    <message>
+        <location filename="GenerateCmpBlcDlg.ui" line="14"/>
+        <source>Generate company balance</source>
+        <translation>Отчет о прибылях и убытках</translation>
+    </message>
+    <message>
+        <location filename="GenerateCmpBlcDlg.ui" line="56"/>
+        <source>OK</source>
+        <translation>ОК</translation>
+    </message>
+    <message>
+        <location filename="GenerateCmpBlcDlg.ui" line="63"/>
+        <source>Cancel</source>
+        <translation>Отмена</translation>
+    </message>
+    <message>
+        <location filename="GenerateCmpBlcDlg.ui" line="72"/>
+        <source>Till date:</source>
+        <translation>До:</translation>
+    </message>
+    <message>
+        <location filename="GenerateCmpBlcDlg.ui" line="82"/>
+        <source>From date:</source>
+        <translation>От:</translation>
+    </message>
+</context>
+<context>
+    <name>GenerateFinRep</name>
+    <message>
+        <location filename="GenerateFinRepDlg.cpp" line="167"/>
+        <location filename="GenerateFinRepDlg.cpp" line="187"/>
+        <location filename="GenerateFinRepDlg.cpp" line="306"/>
+        <source>Info</source>
+        <translation>Информация</translation>
+    </message>
+    <message>
+        <location filename="GenerateFinRepDlg.cpp" line="168"/>
+        <source>Cannot find report for this period!</source>
+        <translation>Невозможно найти отчет за этот период!</translation>
+    </message>
+    <message>
+        <location filename="GenerateFinRepDlg.cpp" line="169"/>
+        <location filename="GenerateFinRepDlg.cpp" line="189"/>
+        <location filename="GenerateFinRepDlg.cpp" line="308"/>
+        <source>Ok</source>
+        <translation>Ок</translation>
+    </message>
+    <message>
+        <location filename="GenerateFinRepDlg.cpp" line="175"/>
+        <source>Print financial report</source>
+        <translation>Отчет о прибылях и убытках</translation>
+    </message>
+    <message>
+        <location filename="GenerateFinRepDlg.cpp" line="188"/>
+        <source>Cannot find report tamplate!</source>
+        <translation>Не возможно найти шаблон отчета!</translation>
+    </message>
+    <message>
+        <location filename="GenerateFinRepDlg.cpp" line="307"/>
+        <source>Cannot generate report for this period!</source>
+        <translation>Невозможно найти отчет за этот период!</translation>
+    </message>
+</context>
+<context>
+    <name>GenerateFinancialReport</name>
+    <message>
+        <location filename="GenerateFinRepDlg.ui" line="14"/>
+        <source>Generate financial report</source>
+        <translation>Отчет о прибылях и убытках</translation>
+    </message>
+    <message>
+        <location filename="GenerateFinRepDlg.ui" line="56"/>
+        <source>OK</source>
+        <translation>ОК</translation>
+    </message>
+    <message>
+        <location filename="GenerateFinRepDlg.ui" line="63"/>
+        <source>Cancel</source>
+        <translation>Отмена</translation>
+    </message>
+    <message>
+        <location filename="GenerateFinRepDlg.ui" line="72"/>
+        <source>Till date:</source>
+        <translation>До:</translation>
+    </message>
+    <message>
+        <location filename="GenerateFinRepDlg.ui" line="82"/>
+        <source>From date:</source>
+        <translation>От:</translation>
     </message>
 </context>
 <context>
@@ -14070,1041 +14507,1081 @@
 <context>
     <name>MainForm</name>
     <message>
-        <location filename="MainForm.cpp" line="14"/>
+        <location filename="MainForm.cpp" line="18"/>
         <source>Ready</source>
         <translation>Готово</translation>
     </message>
     <message>
-        <location filename="MainForm.cpp" line="430"/>
-        <location filename="MainForm.cpp" line="479"/>
-        <location filename="MainForm.cpp" line="527"/>
-        <location filename="MainForm.cpp" line="576"/>
-        <location filename="MainForm.cpp" line="625"/>
-        <location filename="MainForm.cpp" line="673"/>
-        <location filename="MainForm.cpp" line="721"/>
-        <location filename="MainForm.cpp" line="769"/>
-        <location filename="MainForm.cpp" line="817"/>
-        <location filename="MainForm.cpp" line="865"/>
-        <location filename="MainForm.cpp" line="913"/>
-        <location filename="MainForm.cpp" line="961"/>
-        <location filename="MainForm.cpp" line="1008"/>
-        <location filename="MainForm.cpp" line="1055"/>
-        <location filename="MainForm.cpp" line="1103"/>
-        <location filename="MainForm.cpp" line="1151"/>
-        <location filename="MainForm.cpp" line="1200"/>
-        <location filename="MainForm.cpp" line="1248"/>
-        <location filename="MainForm.cpp" line="1296"/>
-        <location filename="MainForm.cpp" line="1344"/>
-        <location filename="MainForm.cpp" line="1392"/>
-        <location filename="MainForm.cpp" line="1440"/>
-        <location filename="MainForm.cpp" line="1489"/>
-        <location filename="MainForm.cpp" line="1537"/>
-        <location filename="MainForm.cpp" line="1585"/>
-        <location filename="MainForm.cpp" line="1634"/>
-        <location filename="MainForm.cpp" line="1682"/>
-        <location filename="MainForm.cpp" line="1730"/>
-        <location filename="MainForm.cpp" line="1778"/>
-        <location filename="MainForm.cpp" line="1827"/>
-        <location filename="MainForm.cpp" line="1875"/>
-        <location filename="MainForm.cpp" line="1923"/>
-        <location filename="MainForm.cpp" line="1973"/>
-        <location filename="MainForm.cpp" line="2021"/>
-        <location filename="MainForm.cpp" line="2069"/>
-        <location filename="MainForm.cpp" line="2117"/>
-        <location filename="MainForm.cpp" line="2165"/>
-        <location filename="MainForm.cpp" line="2236"/>
-        <location filename="MainForm.cpp" line="2284"/>
-        <location filename="MainForm.cpp" line="2345"/>
-        <location filename="MainForm.cpp" line="2393"/>
-        <location filename="MainForm.cpp" line="2441"/>
-        <location filename="MainForm.cpp" line="2489"/>
-        <location filename="MainForm.cpp" line="2537"/>
-        <location filename="MainForm.cpp" line="2585"/>
-        <location filename="MainForm.cpp" line="2633"/>
-        <location filename="MainForm.cpp" line="2681"/>
-        <location filename="MainForm.cpp" line="2729"/>
-        <location filename="MainForm.cpp" line="2778"/>
-        <location filename="MainForm.cpp" line="2826"/>
-        <location filename="MainForm.cpp" line="2874"/>
-        <location filename="MainForm.cpp" line="2922"/>
-        <location filename="MainForm.cpp" line="2970"/>
-        <location filename="MainForm.cpp" line="3018"/>
-        <location filename="MainForm.cpp" line="3067"/>
-        <location filename="MainForm.cpp" line="3114"/>
-        <location filename="MainForm.cpp" line="3162"/>
-        <location filename="MainForm.cpp" line="3211"/>
-        <location filename="MainForm.cpp" line="3259"/>
-        <location filename="MainForm.cpp" line="3307"/>
-        <location filename="MainForm.cpp" line="3355"/>
-        <location filename="MainForm.cpp" line="3403"/>
-        <location filename="MainForm.cpp" line="3451"/>
-        <location filename="MainForm.cpp" line="3500"/>
-        <location filename="MainForm.cpp" line="3550"/>
-        <location filename="MainForm.cpp" line="3598"/>
+        <location filename="MainForm.cpp" line="457"/>
+        <location filename="MainForm.cpp" line="506"/>
+        <location filename="MainForm.cpp" line="554"/>
+        <location filename="MainForm.cpp" line="603"/>
+        <location filename="MainForm.cpp" line="652"/>
+        <location filename="MainForm.cpp" line="700"/>
+        <location filename="MainForm.cpp" line="748"/>
+        <location filename="MainForm.cpp" line="796"/>
+        <location filename="MainForm.cpp" line="844"/>
+        <location filename="MainForm.cpp" line="892"/>
+        <location filename="MainForm.cpp" line="940"/>
+        <location filename="MainForm.cpp" line="988"/>
+        <location filename="MainForm.cpp" line="1035"/>
+        <location filename="MainForm.cpp" line="1082"/>
+        <location filename="MainForm.cpp" line="1130"/>
+        <location filename="MainForm.cpp" line="1178"/>
+        <location filename="MainForm.cpp" line="1227"/>
+        <location filename="MainForm.cpp" line="1275"/>
+        <location filename="MainForm.cpp" line="1323"/>
+        <location filename="MainForm.cpp" line="1371"/>
+        <location filename="MainForm.cpp" line="1419"/>
+        <location filename="MainForm.cpp" line="1467"/>
+        <location filename="MainForm.cpp" line="1516"/>
+        <location filename="MainForm.cpp" line="1564"/>
+        <location filename="MainForm.cpp" line="1612"/>
+        <location filename="MainForm.cpp" line="1661"/>
+        <location filename="MainForm.cpp" line="1709"/>
+        <location filename="MainForm.cpp" line="1757"/>
+        <location filename="MainForm.cpp" line="1805"/>
+        <location filename="MainForm.cpp" line="1854"/>
+        <location filename="MainForm.cpp" line="1902"/>
+        <location filename="MainForm.cpp" line="1950"/>
+        <location filename="MainForm.cpp" line="2000"/>
+        <location filename="MainForm.cpp" line="2048"/>
+        <location filename="MainForm.cpp" line="2108"/>
+        <location filename="MainForm.cpp" line="2156"/>
+        <location filename="MainForm.cpp" line="2204"/>
+        <location filename="MainForm.cpp" line="2276"/>
+        <location filename="MainForm.cpp" line="2324"/>
+        <location filename="MainForm.cpp" line="2385"/>
+        <location filename="MainForm.cpp" line="2433"/>
+        <location filename="MainForm.cpp" line="2481"/>
+        <location filename="MainForm.cpp" line="2529"/>
+        <location filename="MainForm.cpp" line="2577"/>
+        <location filename="MainForm.cpp" line="2637"/>
+        <location filename="MainForm.cpp" line="2685"/>
+        <location filename="MainForm.cpp" line="2733"/>
+        <location filename="MainForm.cpp" line="2781"/>
+        <location filename="MainForm.cpp" line="2830"/>
+        <location filename="MainForm.cpp" line="2878"/>
+        <location filename="MainForm.cpp" line="2926"/>
+        <location filename="MainForm.cpp" line="2974"/>
+        <location filename="MainForm.cpp" line="3022"/>
+        <location filename="MainForm.cpp" line="3070"/>
+        <location filename="MainForm.cpp" line="3119"/>
+        <location filename="MainForm.cpp" line="3166"/>
+        <location filename="MainForm.cpp" line="3214"/>
+        <location filename="MainForm.cpp" line="3311"/>
+        <location filename="MainForm.cpp" line="3359"/>
+        <location filename="MainForm.cpp" line="3407"/>
+        <location filename="MainForm.cpp" line="3455"/>
+        <location filename="MainForm.cpp" line="3503"/>
+        <location filename="MainForm.cpp" line="3551"/>
+        <location filename="MainForm.cpp" line="3600"/>
+        <location filename="MainForm.cpp" line="3650"/>
+        <location filename="MainForm.cpp" line="3698"/>
+        <location filename="MainForm.cpp" line="3746"/>
         <source>Loading...</source>
         <translation>Загрузка...</translation>
     </message>
     <message>
-        <location filename="MainForm.cpp" line="437"/>
+        <location filename="MainForm.cpp" line="464"/>
         <source>Users</source>
         <translation>Пользователи</translation>
     </message>
     <message>
-        <location filename="MainForm.cpp" line="454"/>
-        <location filename="MainForm.cpp" line="472"/>
+        <location filename="MainForm.cpp" line="481"/>
+        <location filename="MainForm.cpp" line="499"/>
         <source>All users are shown</source>
         <translation>Все пользователи</translation>
     </message>
     <message>
-        <location filename="MainForm.cpp" line="460"/>
-        <location filename="MainForm.cpp" line="508"/>
-        <location filename="MainForm.cpp" line="557"/>
-        <location filename="MainForm.cpp" line="606"/>
-        <location filename="MainForm.cpp" line="654"/>
-        <location filename="MainForm.cpp" line="702"/>
-        <location filename="MainForm.cpp" line="750"/>
-        <location filename="MainForm.cpp" line="798"/>
-        <location filename="MainForm.cpp" line="846"/>
-        <location filename="MainForm.cpp" line="893"/>
-        <location filename="MainForm.cpp" line="941"/>
-        <location filename="MainForm.cpp" line="989"/>
-        <location filename="MainForm.cpp" line="1036"/>
-        <location filename="MainForm.cpp" line="1083"/>
-        <location filename="MainForm.cpp" line="1131"/>
-        <location filename="MainForm.cpp" line="1179"/>
-        <location filename="MainForm.cpp" line="1228"/>
-        <location filename="MainForm.cpp" line="1276"/>
-        <location filename="MainForm.cpp" line="1324"/>
-        <location filename="MainForm.cpp" line="1372"/>
-        <location filename="MainForm.cpp" line="1420"/>
-        <location filename="MainForm.cpp" line="1468"/>
-        <location filename="MainForm.cpp" line="1517"/>
-        <location filename="MainForm.cpp" line="1565"/>
-        <location filename="MainForm.cpp" line="1613"/>
-        <location filename="MainForm.cpp" line="1662"/>
-        <location filename="MainForm.cpp" line="1710"/>
-        <location filename="MainForm.cpp" line="1758"/>
-        <location filename="MainForm.cpp" line="1806"/>
-        <location filename="MainForm.cpp" line="1855"/>
-        <location filename="MainForm.cpp" line="1903"/>
-        <location filename="MainForm.cpp" line="1951"/>
-        <location filename="MainForm.cpp" line="2001"/>
-        <location filename="MainForm.cpp" line="2049"/>
-        <location filename="MainForm.cpp" line="2097"/>
-        <location filename="MainForm.cpp" line="2145"/>
-        <location filename="MainForm.cpp" line="2193"/>
-        <location filename="MainForm.cpp" line="2264"/>
-        <location filename="MainForm.cpp" line="2312"/>
-        <location filename="MainForm.cpp" line="2373"/>
-        <location filename="MainForm.cpp" line="2421"/>
-        <location filename="MainForm.cpp" line="2469"/>
-        <location filename="MainForm.cpp" line="2517"/>
-        <location filename="MainForm.cpp" line="2565"/>
-        <location filename="MainForm.cpp" line="2613"/>
-        <location filename="MainForm.cpp" line="2661"/>
-        <location filename="MainForm.cpp" line="2709"/>
-        <location filename="MainForm.cpp" line="2757"/>
-        <location filename="MainForm.cpp" line="2806"/>
-        <location filename="MainForm.cpp" line="2854"/>
-        <location filename="MainForm.cpp" line="2902"/>
-        <location filename="MainForm.cpp" line="2950"/>
-        <location filename="MainForm.cpp" line="2998"/>
-        <location filename="MainForm.cpp" line="3046"/>
-        <location filename="MainForm.cpp" line="3095"/>
-        <location filename="MainForm.cpp" line="3142"/>
-        <location filename="MainForm.cpp" line="3190"/>
-        <location filename="MainForm.cpp" line="3239"/>
-        <location filename="MainForm.cpp" line="3287"/>
-        <location filename="MainForm.cpp" line="3335"/>
-        <location filename="MainForm.cpp" line="3383"/>
-        <location filename="MainForm.cpp" line="3431"/>
-        <location filename="MainForm.cpp" line="3479"/>
-        <location filename="MainForm.cpp" line="3528"/>
-        <location filename="MainForm.cpp" line="3578"/>
-        <location filename="MainForm.cpp" line="3626"/>
-        <source>End with error!</source>
-        <translation>Завершено с ошибкой!</translation>
-    </message>
-    <message>
-        <location filename="MainForm.cpp" line="462"/>
-        <location filename="MainForm.cpp" line="510"/>
-        <location filename="MainForm.cpp" line="559"/>
-        <location filename="MainForm.cpp" line="608"/>
-        <location filename="MainForm.cpp" line="656"/>
-        <location filename="MainForm.cpp" line="704"/>
-        <location filename="MainForm.cpp" line="752"/>
-        <location filename="MainForm.cpp" line="800"/>
-        <location filename="MainForm.cpp" line="848"/>
-        <location filename="MainForm.cpp" line="895"/>
-        <location filename="MainForm.cpp" line="943"/>
-        <location filename="MainForm.cpp" line="991"/>
-        <location filename="MainForm.cpp" line="1038"/>
-        <location filename="MainForm.cpp" line="1085"/>
-        <location filename="MainForm.cpp" line="1133"/>
-        <location filename="MainForm.cpp" line="1181"/>
-        <location filename="MainForm.cpp" line="1230"/>
-        <location filename="MainForm.cpp" line="1278"/>
-        <location filename="MainForm.cpp" line="1326"/>
-        <location filename="MainForm.cpp" line="1374"/>
-        <location filename="MainForm.cpp" line="1422"/>
-        <location filename="MainForm.cpp" line="1470"/>
-        <location filename="MainForm.cpp" line="1519"/>
-        <location filename="MainForm.cpp" line="1567"/>
-        <location filename="MainForm.cpp" line="1615"/>
-        <location filename="MainForm.cpp" line="1664"/>
-        <location filename="MainForm.cpp" line="1712"/>
-        <location filename="MainForm.cpp" line="1760"/>
-        <location filename="MainForm.cpp" line="1808"/>
-        <location filename="MainForm.cpp" line="1857"/>
-        <location filename="MainForm.cpp" line="1905"/>
-        <location filename="MainForm.cpp" line="1953"/>
-        <location filename="MainForm.cpp" line="2003"/>
-        <location filename="MainForm.cpp" line="2051"/>
-        <location filename="MainForm.cpp" line="2099"/>
-        <location filename="MainForm.cpp" line="2147"/>
-        <location filename="MainForm.cpp" line="2195"/>
-        <location filename="MainForm.cpp" line="2266"/>
-        <location filename="MainForm.cpp" line="2314"/>
-        <location filename="MainForm.cpp" line="2375"/>
-        <location filename="MainForm.cpp" line="2423"/>
-        <location filename="MainForm.cpp" line="2471"/>
-        <location filename="MainForm.cpp" line="2519"/>
-        <location filename="MainForm.cpp" line="2567"/>
-        <location filename="MainForm.cpp" line="2615"/>
-        <location filename="MainForm.cpp" line="2663"/>
-        <location filename="MainForm.cpp" line="2711"/>
-        <location filename="MainForm.cpp" line="2759"/>
-        <location filename="MainForm.cpp" line="2808"/>
-        <location filename="MainForm.cpp" line="2856"/>
-        <location filename="MainForm.cpp" line="2904"/>
-        <location filename="MainForm.cpp" line="2952"/>
-        <location filename="MainForm.cpp" line="3000"/>
-        <location filename="MainForm.cpp" line="3048"/>
-        <location filename="MainForm.cpp" line="3097"/>
-        <location filename="MainForm.cpp" line="3144"/>
-        <location filename="MainForm.cpp" line="3192"/>
-        <location filename="MainForm.cpp" line="3241"/>
-        <location filename="MainForm.cpp" line="3289"/>
-        <location filename="MainForm.cpp" line="3337"/>
-        <location filename="MainForm.cpp" line="3385"/>
-        <location filename="MainForm.cpp" line="3433"/>
-        <location filename="MainForm.cpp" line="3481"/>
-        <location filename="MainForm.cpp" line="3530"/>
-        <location filename="MainForm.cpp" line="3580"/>
-        <location filename="MainForm.cpp" line="3628"/>
-        <source>Warning</source>
-        <translation>Ошибка</translation>
-    </message>
-    <message>
-        <location filename="MainForm.cpp" line="464"/>
-        <location filename="MainForm.cpp" line="512"/>
-        <location filename="MainForm.cpp" line="561"/>
-        <location filename="MainForm.cpp" line="610"/>
-        <location filename="MainForm.cpp" line="658"/>
-        <location filename="MainForm.cpp" line="706"/>
-        <location filename="MainForm.cpp" line="754"/>
-        <location filename="MainForm.cpp" line="802"/>
-        <location filename="MainForm.cpp" line="850"/>
-        <location filename="MainForm.cpp" line="897"/>
-        <location filename="MainForm.cpp" line="945"/>
-        <location filename="MainForm.cpp" line="993"/>
-        <location filename="MainForm.cpp" line="1040"/>
-        <location filename="MainForm.cpp" line="1087"/>
-        <location filename="MainForm.cpp" line="1135"/>
-        <location filename="MainForm.cpp" line="1183"/>
-        <location filename="MainForm.cpp" line="1232"/>
-        <location filename="MainForm.cpp" line="1280"/>
-        <location filename="MainForm.cpp" line="1328"/>
-        <location filename="MainForm.cpp" line="1376"/>
-        <location filename="MainForm.cpp" line="1424"/>
-        <location filename="MainForm.cpp" line="1472"/>
-        <location filename="MainForm.cpp" line="1521"/>
-        <location filename="MainForm.cpp" line="1569"/>
-        <location filename="MainForm.cpp" line="1617"/>
-        <location filename="MainForm.cpp" line="1666"/>
-        <location filename="MainForm.cpp" line="1714"/>
-        <location filename="MainForm.cpp" line="1762"/>
-        <location filename="MainForm.cpp" line="1810"/>
-        <location filename="MainForm.cpp" line="1859"/>
-        <location filename="MainForm.cpp" line="1907"/>
-        <location filename="MainForm.cpp" line="1955"/>
-        <location filename="MainForm.cpp" line="2005"/>
-        <location filename="MainForm.cpp" line="2053"/>
-        <location filename="MainForm.cpp" line="2101"/>
-        <location filename="MainForm.cpp" line="2149"/>
-        <location filename="MainForm.cpp" line="2197"/>
-        <location filename="MainForm.cpp" line="2268"/>
-        <location filename="MainForm.cpp" line="2316"/>
-        <location filename="MainForm.cpp" line="2377"/>
-        <location filename="MainForm.cpp" line="2425"/>
-        <location filename="MainForm.cpp" line="2473"/>
-        <location filename="MainForm.cpp" line="2521"/>
-        <location filename="MainForm.cpp" line="2569"/>
-        <location filename="MainForm.cpp" line="2617"/>
+        <location filename="MainForm.cpp" line="487"/>
+        <location filename="MainForm.cpp" line="535"/>
+        <location filename="MainForm.cpp" line="584"/>
+        <location filename="MainForm.cpp" line="633"/>
+        <location filename="MainForm.cpp" line="681"/>
+        <location filename="MainForm.cpp" line="729"/>
+        <location filename="MainForm.cpp" line="777"/>
+        <location filename="MainForm.cpp" line="825"/>
+        <location filename="MainForm.cpp" line="873"/>
+        <location filename="MainForm.cpp" line="920"/>
+        <location filename="MainForm.cpp" line="968"/>
+        <location filename="MainForm.cpp" line="1016"/>
+        <location filename="MainForm.cpp" line="1063"/>
+        <location filename="MainForm.cpp" line="1110"/>
+        <location filename="MainForm.cpp" line="1158"/>
+        <location filename="MainForm.cpp" line="1206"/>
+        <location filename="MainForm.cpp" line="1255"/>
+        <location filename="MainForm.cpp" line="1303"/>
+        <location filename="MainForm.cpp" line="1351"/>
+        <location filename="MainForm.cpp" line="1399"/>
+        <location filename="MainForm.cpp" line="1447"/>
+        <location filename="MainForm.cpp" line="1495"/>
+        <location filename="MainForm.cpp" line="1544"/>
+        <location filename="MainForm.cpp" line="1592"/>
+        <location filename="MainForm.cpp" line="1640"/>
+        <location filename="MainForm.cpp" line="1689"/>
+        <location filename="MainForm.cpp" line="1737"/>
+        <location filename="MainForm.cpp" line="1785"/>
+        <location filename="MainForm.cpp" line="1833"/>
+        <location filename="MainForm.cpp" line="1882"/>
+        <location filename="MainForm.cpp" line="1930"/>
+        <location filename="MainForm.cpp" line="1978"/>
+        <location filename="MainForm.cpp" line="2028"/>
+        <location filename="MainForm.cpp" line="2076"/>
+        <location filename="MainForm.cpp" line="2136"/>
+        <location filename="MainForm.cpp" line="2184"/>
+        <location filename="MainForm.cpp" line="2232"/>
+        <location filename="MainForm.cpp" line="2304"/>
+        <location filename="MainForm.cpp" line="2352"/>
+        <location filename="MainForm.cpp" line="2413"/>
+        <location filename="MainForm.cpp" line="2461"/>
+        <location filename="MainForm.cpp" line="2509"/>
+        <location filename="MainForm.cpp" line="2557"/>
+        <location filename="MainForm.cpp" line="2605"/>
         <location filename="MainForm.cpp" line="2665"/>
         <location filename="MainForm.cpp" line="2713"/>
         <location filename="MainForm.cpp" line="2761"/>
-        <location filename="MainForm.cpp" line="2810"/>
+        <location filename="MainForm.cpp" line="2809"/>
         <location filename="MainForm.cpp" line="2858"/>
         <location filename="MainForm.cpp" line="2906"/>
         <location filename="MainForm.cpp" line="2954"/>
         <location filename="MainForm.cpp" line="3002"/>
         <location filename="MainForm.cpp" line="3050"/>
-        <location filename="MainForm.cpp" line="3099"/>
-        <location filename="MainForm.cpp" line="3146"/>
+        <location filename="MainForm.cpp" line="3098"/>
+        <location filename="MainForm.cpp" line="3147"/>
         <location filename="MainForm.cpp" line="3194"/>
-        <location filename="MainForm.cpp" line="3243"/>
-        <location filename="MainForm.cpp" line="3291"/>
+        <location filename="MainForm.cpp" line="3242"/>
         <location filename="MainForm.cpp" line="3339"/>
         <location filename="MainForm.cpp" line="3387"/>
         <location filename="MainForm.cpp" line="3435"/>
         <location filename="MainForm.cpp" line="3483"/>
-        <location filename="MainForm.cpp" line="3532"/>
-        <location filename="MainForm.cpp" line="3582"/>
+        <location filename="MainForm.cpp" line="3531"/>
+        <location filename="MainForm.cpp" line="3579"/>
+        <location filename="MainForm.cpp" line="3628"/>
+        <location filename="MainForm.cpp" line="3678"/>
+        <location filename="MainForm.cpp" line="3726"/>
+        <location filename="MainForm.cpp" line="3774"/>
+        <source>End with error!</source>
+        <translation>Завершено с ошибкой!</translation>
+    </message>
+    <message>
+        <location filename="MainForm.cpp" line="489"/>
+        <location filename="MainForm.cpp" line="537"/>
+        <location filename="MainForm.cpp" line="586"/>
+        <location filename="MainForm.cpp" line="635"/>
+        <location filename="MainForm.cpp" line="683"/>
+        <location filename="MainForm.cpp" line="731"/>
+        <location filename="MainForm.cpp" line="779"/>
+        <location filename="MainForm.cpp" line="827"/>
+        <location filename="MainForm.cpp" line="875"/>
+        <location filename="MainForm.cpp" line="922"/>
+        <location filename="MainForm.cpp" line="970"/>
+        <location filename="MainForm.cpp" line="1018"/>
+        <location filename="MainForm.cpp" line="1065"/>
+        <location filename="MainForm.cpp" line="1112"/>
+        <location filename="MainForm.cpp" line="1160"/>
+        <location filename="MainForm.cpp" line="1208"/>
+        <location filename="MainForm.cpp" line="1257"/>
+        <location filename="MainForm.cpp" line="1305"/>
+        <location filename="MainForm.cpp" line="1353"/>
+        <location filename="MainForm.cpp" line="1401"/>
+        <location filename="MainForm.cpp" line="1449"/>
+        <location filename="MainForm.cpp" line="1497"/>
+        <location filename="MainForm.cpp" line="1546"/>
+        <location filename="MainForm.cpp" line="1594"/>
+        <location filename="MainForm.cpp" line="1642"/>
+        <location filename="MainForm.cpp" line="1691"/>
+        <location filename="MainForm.cpp" line="1739"/>
+        <location filename="MainForm.cpp" line="1787"/>
+        <location filename="MainForm.cpp" line="1835"/>
+        <location filename="MainForm.cpp" line="1884"/>
+        <location filename="MainForm.cpp" line="1932"/>
+        <location filename="MainForm.cpp" line="1980"/>
+        <location filename="MainForm.cpp" line="2030"/>
+        <location filename="MainForm.cpp" line="2078"/>
+        <location filename="MainForm.cpp" line="2138"/>
+        <location filename="MainForm.cpp" line="2186"/>
+        <location filename="MainForm.cpp" line="2234"/>
+        <location filename="MainForm.cpp" line="2306"/>
+        <location filename="MainForm.cpp" line="2354"/>
+        <location filename="MainForm.cpp" line="2415"/>
+        <location filename="MainForm.cpp" line="2463"/>
+        <location filename="MainForm.cpp" line="2511"/>
+        <location filename="MainForm.cpp" line="2559"/>
+        <location filename="MainForm.cpp" line="2607"/>
+        <location filename="MainForm.cpp" line="2667"/>
+        <location filename="MainForm.cpp" line="2715"/>
+        <location filename="MainForm.cpp" line="2763"/>
+        <location filename="MainForm.cpp" line="2811"/>
+        <location filename="MainForm.cpp" line="2860"/>
+        <location filename="MainForm.cpp" line="2908"/>
+        <location filename="MainForm.cpp" line="2956"/>
+        <location filename="MainForm.cpp" line="3004"/>
+        <location filename="MainForm.cpp" line="3052"/>
+        <location filename="MainForm.cpp" line="3100"/>
+        <location filename="MainForm.cpp" line="3149"/>
+        <location filename="MainForm.cpp" line="3196"/>
+        <location filename="MainForm.cpp" line="3244"/>
+        <location filename="MainForm.cpp" line="3271"/>
+        <location filename="MainForm.cpp" line="3277"/>
+        <location filename="MainForm.cpp" line="3341"/>
+        <location filename="MainForm.cpp" line="3389"/>
+        <location filename="MainForm.cpp" line="3437"/>
+        <location filename="MainForm.cpp" line="3485"/>
+        <location filename="MainForm.cpp" line="3533"/>
+        <location filename="MainForm.cpp" line="3581"/>
         <location filename="MainForm.cpp" line="3630"/>
+        <location filename="MainForm.cpp" line="3680"/>
+        <location filename="MainForm.cpp" line="3728"/>
+        <location filename="MainForm.cpp" line="3776"/>
+        <source>Warning</source>
+        <translation>Ошибка</translation>
+    </message>
+    <message>
+        <location filename="MainForm.cpp" line="491"/>
+        <location filename="MainForm.cpp" line="539"/>
+        <location filename="MainForm.cpp" line="588"/>
+        <location filename="MainForm.cpp" line="637"/>
+        <location filename="MainForm.cpp" line="685"/>
+        <location filename="MainForm.cpp" line="733"/>
+        <location filename="MainForm.cpp" line="781"/>
+        <location filename="MainForm.cpp" line="829"/>
+        <location filename="MainForm.cpp" line="877"/>
+        <location filename="MainForm.cpp" line="924"/>
+        <location filename="MainForm.cpp" line="972"/>
+        <location filename="MainForm.cpp" line="1020"/>
+        <location filename="MainForm.cpp" line="1067"/>
+        <location filename="MainForm.cpp" line="1114"/>
+        <location filename="MainForm.cpp" line="1162"/>
+        <location filename="MainForm.cpp" line="1210"/>
+        <location filename="MainForm.cpp" line="1259"/>
+        <location filename="MainForm.cpp" line="1307"/>
+        <location filename="MainForm.cpp" line="1355"/>
+        <location filename="MainForm.cpp" line="1403"/>
+        <location filename="MainForm.cpp" line="1451"/>
+        <location filename="MainForm.cpp" line="1499"/>
+        <location filename="MainForm.cpp" line="1548"/>
+        <location filename="MainForm.cpp" line="1596"/>
+        <location filename="MainForm.cpp" line="1644"/>
+        <location filename="MainForm.cpp" line="1693"/>
+        <location filename="MainForm.cpp" line="1741"/>
+        <location filename="MainForm.cpp" line="1789"/>
+        <location filename="MainForm.cpp" line="1837"/>
+        <location filename="MainForm.cpp" line="1886"/>
+        <location filename="MainForm.cpp" line="1934"/>
+        <location filename="MainForm.cpp" line="1982"/>
+        <location filename="MainForm.cpp" line="2032"/>
+        <location filename="MainForm.cpp" line="2080"/>
+        <location filename="MainForm.cpp" line="2140"/>
+        <location filename="MainForm.cpp" line="2188"/>
+        <location filename="MainForm.cpp" line="2236"/>
+        <location filename="MainForm.cpp" line="2308"/>
+        <location filename="MainForm.cpp" line="2356"/>
+        <location filename="MainForm.cpp" line="2417"/>
+        <location filename="MainForm.cpp" line="2465"/>
+        <location filename="MainForm.cpp" line="2513"/>
+        <location filename="MainForm.cpp" line="2561"/>
+        <location filename="MainForm.cpp" line="2609"/>
+        <location filename="MainForm.cpp" line="2669"/>
+        <location filename="MainForm.cpp" line="2717"/>
+        <location filename="MainForm.cpp" line="2765"/>
+        <location filename="MainForm.cpp" line="2813"/>
+        <location filename="MainForm.cpp" line="2862"/>
+        <location filename="MainForm.cpp" line="2910"/>
+        <location filename="MainForm.cpp" line="2958"/>
+        <location filename="MainForm.cpp" line="3006"/>
+        <location filename="MainForm.cpp" line="3054"/>
+        <location filename="MainForm.cpp" line="3102"/>
+        <location filename="MainForm.cpp" line="3151"/>
+        <location filename="MainForm.cpp" line="3198"/>
+        <location filename="MainForm.cpp" line="3246"/>
+        <location filename="MainForm.cpp" line="3273"/>
+        <location filename="MainForm.cpp" line="3279"/>
+        <location filename="MainForm.cpp" line="3343"/>
+        <location filename="MainForm.cpp" line="3391"/>
+        <location filename="MainForm.cpp" line="3439"/>
+        <location filename="MainForm.cpp" line="3487"/>
+        <location filename="MainForm.cpp" line="3535"/>
+        <location filename="MainForm.cpp" line="3583"/>
+        <location filename="MainForm.cpp" line="3632"/>
+        <location filename="MainForm.cpp" line="3682"/>
+        <location filename="MainForm.cpp" line="3730"/>
+        <location filename="MainForm.cpp" line="3778"/>
         <source>Ok</source>
         <translation>Ок</translation>
     </message>
     <message>
-        <location filename="MainForm.cpp" line="486"/>
+        <location filename="MainForm.cpp" line="513"/>
         <source>Clients</source>
         <translation>Клиенты</translation>
     </message>
     <message>
-        <location filename="MainForm.cpp" line="502"/>
-        <location filename="MainForm.cpp" line="520"/>
+        <location filename="MainForm.cpp" line="529"/>
+        <location filename="MainForm.cpp" line="547"/>
         <source>All clients are shown</source>
         <translation>Все клиенты</translation>
     </message>
     <message>
-        <location filename="MainForm.cpp" line="534"/>
+        <location filename="MainForm.cpp" line="561"/>
         <source>Employees</source>
         <translation>Сотрудники</translation>
     </message>
     <message>
-        <location filename="MainForm.cpp" line="551"/>
-        <location filename="MainForm.cpp" line="569"/>
+        <location filename="MainForm.cpp" line="578"/>
+        <location filename="MainForm.cpp" line="596"/>
         <source>All employees are shown</source>
         <translation>Все сотрудники</translation>
     </message>
     <message>
-        <location filename="MainForm.cpp" line="583"/>
+        <location filename="MainForm.cpp" line="610"/>
         <source>Purveyors</source>
         <translation>Поставщики</translation>
     </message>
     <message>
-        <location filename="MainForm.cpp" line="600"/>
-        <location filename="MainForm.cpp" line="618"/>
+        <location filename="MainForm.cpp" line="627"/>
+        <location filename="MainForm.cpp" line="645"/>
         <source>All purveyors are shown</source>
         <translation>Все поставщики</translation>
     </message>
     <message>
-        <location filename="MainForm.cpp" line="632"/>
+        <location filename="MainForm.cpp" line="659"/>
         <source>Company-employee relation</source>
         <translation>Зависимость компания-сотрудник</translation>
     </message>
     <message>
-        <location filename="MainForm.cpp" line="648"/>
-        <location filename="MainForm.cpp" line="666"/>
+        <location filename="MainForm.cpp" line="675"/>
+        <location filename="MainForm.cpp" line="693"/>
         <source>All company-employee relations are shown</source>
         <translation>Зависимость компания-сотрудники</translation>
     </message>
     <message>
-        <location filename="MainForm.cpp" line="680"/>
+        <location filename="MainForm.cpp" line="707"/>
         <source>Accesses</source>
         <translation>Доступ</translation>
     </message>
     <message>
-        <location filename="MainForm.cpp" line="696"/>
-        <location filename="MainForm.cpp" line="714"/>
+        <location filename="MainForm.cpp" line="723"/>
+        <location filename="MainForm.cpp" line="741"/>
         <source>All accesses are shown</source>
         <translation>Все права доступа</translation>
     </message>
     <message>
-        <location filename="MainForm.cpp" line="728"/>
+        <location filename="MainForm.cpp" line="755"/>
         <source>Access items</source>
         <translation>Пункты доступа</translation>
     </message>
     <message>
-        <location filename="MainForm.cpp" line="744"/>
-        <location filename="MainForm.cpp" line="762"/>
+        <location filename="MainForm.cpp" line="771"/>
+        <location filename="MainForm.cpp" line="789"/>
         <source>All access items are shown</source>
         <translation>Все пункты доступа</translation>
     </message>
     <message>
-        <location filename="MainForm.cpp" line="776"/>
+        <location filename="MainForm.cpp" line="803"/>
         <source>User photo</source>
         <translation>Фото пользователей</translation>
     </message>
     <message>
-        <location filename="MainForm.cpp" line="792"/>
-        <location filename="MainForm.cpp" line="810"/>
+        <location filename="MainForm.cpp" line="819"/>
+        <location filename="MainForm.cpp" line="837"/>
         <source>All user photos are shown</source>
         <translation>Все фото пользователей</translation>
     </message>
     <message>
-        <location filename="MainForm.cpp" line="824"/>
+        <location filename="MainForm.cpp" line="851"/>
         <source>Position</source>
         <translation>Должность</translation>
     </message>
     <message>
-        <location filename="MainForm.cpp" line="840"/>
-        <location filename="MainForm.cpp" line="858"/>
+        <location filename="MainForm.cpp" line="867"/>
+        <location filename="MainForm.cpp" line="885"/>
         <source>All position are shown</source>
         <translation>Перечень должностей</translation>
     </message>
     <message>
-        <location filename="MainForm.cpp" line="871"/>
+        <location filename="MainForm.cpp" line="898"/>
         <source>Products</source>
         <translation>Продукты</translation>
     </message>
     <message>
-        <location filename="MainForm.cpp" line="887"/>
-        <location filename="MainForm.cpp" line="905"/>
+        <location filename="MainForm.cpp" line="914"/>
+        <location filename="MainForm.cpp" line="932"/>
         <source>All products are shown</source>
         <translation>Все продукты</translation>
     </message>
     <message>
-        <location filename="MainForm.cpp" line="919"/>
+        <location filename="MainForm.cpp" line="946"/>
         <source>Product types</source>
         <translation>Тип продуктов</translation>
     </message>
     <message>
-        <location filename="MainForm.cpp" line="935"/>
-        <location filename="MainForm.cpp" line="953"/>
+        <location filename="MainForm.cpp" line="962"/>
+        <location filename="MainForm.cpp" line="980"/>
         <source>All product types are shown</source>
         <translation>Все типы продуктов</translation>
     </message>
     <message>
-        <location filename="MainForm.cpp" line="967"/>
+        <location filename="MainForm.cpp" line="994"/>
         <source>Product photo</source>
         <translation>Фото продуктов</translation>
     </message>
     <message>
-        <location filename="MainForm.cpp" line="983"/>
-        <location filename="MainForm.cpp" line="1001"/>
+        <location filename="MainForm.cpp" line="1010"/>
+        <location filename="MainForm.cpp" line="1028"/>
         <source>All product photos are shown</source>
         <translation>Все фото  продуктов</translation>
     </message>
     <message>
-        <location filename="MainForm.cpp" line="1014"/>
+        <location filename="MainForm.cpp" line="1041"/>
         <source>Specifications</source>
         <translation>Спецификация</translation>
     </message>
     <message>
-        <location filename="MainForm.cpp" line="1030"/>
-        <location filename="MainForm.cpp" line="1048"/>
+        <location filename="MainForm.cpp" line="1057"/>
+        <location filename="MainForm.cpp" line="1075"/>
         <source>All specifications are shown</source>
         <translation>Спецификации</translation>
     </message>
     <message>
-        <location filename="MainForm.cpp" line="1061"/>
+        <location filename="MainForm.cpp" line="1088"/>
         <source>Spesicfication list</source>
         <translation>Список продуктов в спецификации</translation>
     </message>
     <message>
-        <location filename="MainForm.cpp" line="1077"/>
-        <location filename="MainForm.cpp" line="1095"/>
+        <location filename="MainForm.cpp" line="1104"/>
+        <location filename="MainForm.cpp" line="1122"/>
         <source>All products in the specification list are shown</source>
         <translation>Все  продукты</translation>
     </message>
     <message>
-        <location filename="MainForm.cpp" line="1206"/>
+        <location filename="MainForm.cpp" line="1233"/>
         <source>Orders</source>
         <translation>Заказы</translation>
     </message>
     <message>
-        <location filename="MainForm.cpp" line="1222"/>
-        <location filename="MainForm.cpp" line="1240"/>
+        <location filename="MainForm.cpp" line="1249"/>
+        <location filename="MainForm.cpp" line="1267"/>
         <source>All orders are shown</source>
         <translation>Все заказы</translation>
     </message>
     <message>
-        <location filename="MainForm.cpp" line="1254"/>
+        <location filename="MainForm.cpp" line="1281"/>
         <source>Products in order list</source>
         <translation>Список заказаных продуктов </translation>
     </message>
     <message>
-        <location filename="MainForm.cpp" line="1270"/>
-        <location filename="MainForm.cpp" line="1288"/>
+        <location filename="MainForm.cpp" line="1297"/>
+        <location filename="MainForm.cpp" line="1315"/>
         <source>All products in order list are shown</source>
         <translation>Все заказаные продукты</translation>
     </message>
     <message>
-        <location filename="MainForm.cpp" line="1302"/>
+        <location filename="MainForm.cpp" line="1329"/>
         <source>Returns</source>
         <translation>Возврат</translation>
     </message>
     <message>
-        <location filename="MainForm.cpp" line="1318"/>
-        <location filename="MainForm.cpp" line="1336"/>
+        <location filename="MainForm.cpp" line="1345"/>
+        <location filename="MainForm.cpp" line="1363"/>
         <source>All returns are shown</source>
         <translation>Все документы на возврат</translation>
     </message>
     <message>
-        <location filename="MainForm.cpp" line="1350"/>
+        <location filename="MainForm.cpp" line="1377"/>
         <source>Products in return list</source>
         <translation>Список возвращенных продуктов </translation>
     </message>
     <message>
-        <location filename="MainForm.cpp" line="1366"/>
-        <location filename="MainForm.cpp" line="1384"/>
+        <location filename="MainForm.cpp" line="1393"/>
+        <location filename="MainForm.cpp" line="1411"/>
         <source>All products in return list are shown</source>
         <translation>Все возврвщенные продукты</translation>
     </message>
     <message>
-        <location filename="MainForm.cpp" line="1398"/>
+        <location filename="MainForm.cpp" line="1425"/>
         <source>Write-off</source>
         <translation>Списанные</translation>
     </message>
     <message>
-        <location filename="MainForm.cpp" line="1414"/>
-        <location filename="MainForm.cpp" line="1432"/>
+        <location filename="MainForm.cpp" line="1441"/>
+        <location filename="MainForm.cpp" line="1459"/>
         <source>All write-off are shown</source>
         <translation>Все документы списания</translation>
     </message>
     <message>
-        <location filename="MainForm.cpp" line="1446"/>
+        <location filename="MainForm.cpp" line="1473"/>
         <source>Products in write-off list</source>
         <translation>Список списанных продуктов </translation>
     </message>
     <message>
-        <location filename="MainForm.cpp" line="1462"/>
-        <location filename="MainForm.cpp" line="1480"/>
+        <location filename="MainForm.cpp" line="1489"/>
+        <location filename="MainForm.cpp" line="1507"/>
         <source>All products in write-off list are shown</source>
         <translation>Все списанные продукты</translation>
     </message>
     <message>
-        <location filename="MainForm.cpp" line="1495"/>
+        <location filename="MainForm.cpp" line="1522"/>
         <source>Production</source>
         <translation>Производство</translation>
     </message>
     <message>
-        <location filename="MainForm.cpp" line="1511"/>
-        <location filename="MainForm.cpp" line="1529"/>
+        <location filename="MainForm.cpp" line="1538"/>
+        <location filename="MainForm.cpp" line="1556"/>
         <source>All production are shown</source>
         <translation>Все производственные даты</translation>
     </message>
     <message>
-        <location filename="MainForm.cpp" line="1543"/>
+        <location filename="MainForm.cpp" line="1570"/>
         <source>Products in production list</source>
         <translation>Список произведенных продуктов </translation>
     </message>
     <message>
-        <location filename="MainForm.cpp" line="1559"/>
-        <location filename="MainForm.cpp" line="1577"/>
+        <location filename="MainForm.cpp" line="1586"/>
+        <location filename="MainForm.cpp" line="1604"/>
         <source>All products in production list are shown</source>
         <translation>Все произведенные продукты</translation>
     </message>
     <message>
-        <location filename="MainForm.cpp" line="1591"/>
+        <location filename="MainForm.cpp" line="1618"/>
         <source>Production consume raw</source>
         <translation>Расходуемое сырье</translation>
     </message>
     <message>
-        <location filename="MainForm.cpp" line="1640"/>
+        <location filename="MainForm.cpp" line="1667"/>
         <source>Production stock</source>
         <translation>Производственный склад</translation>
     </message>
     <message>
-        <location filename="MainForm.cpp" line="1656"/>
-        <location filename="MainForm.cpp" line="1674"/>
+        <location filename="MainForm.cpp" line="1683"/>
+        <location filename="MainForm.cpp" line="1701"/>
         <source>All products are shown in production stock</source>
         <translation>Все  продукты в производственном складе</translation>
     </message>
     <message>
-        <location filename="MainForm.cpp" line="1784"/>
+        <location filename="MainForm.cpp" line="1811"/>
         <source>Jobprice</source>
         <translation>Ставка</translation>
     </message>
     <message>
-        <location filename="MainForm.cpp" line="1800"/>
-        <location filename="MainForm.cpp" line="1819"/>
+        <location filename="MainForm.cpp" line="1827"/>
+        <location filename="MainForm.cpp" line="1846"/>
         <source>All jobprices are shown</source>
         <translation>Ставки</translation>
     </message>
     <message>
-        <location filename="MainForm.cpp" line="1833"/>
+        <location filename="MainForm.cpp" line="1860"/>
         <source>Jobsheet</source>
         <translation>Ценовой табель</translation>
     </message>
     <message>
-        <location filename="MainForm.cpp" line="1849"/>
-        <location filename="MainForm.cpp" line="1867"/>
+        <location filename="MainForm.cpp" line="1876"/>
+        <location filename="MainForm.cpp" line="1894"/>
         <source>All jobsheets are shown</source>
         <translation>Ставки</translation>
     </message>
     <message>
-        <location filename="MainForm.cpp" line="1881"/>
+        <location filename="MainForm.cpp" line="1908"/>
         <source>Percent rate</source>
         <translation>Процентная ставка</translation>
     </message>
     <message>
-        <location filename="MainForm.cpp" line="1897"/>
-        <location filename="MainForm.cpp" line="1915"/>
+        <location filename="MainForm.cpp" line="1924"/>
+        <location filename="MainForm.cpp" line="1942"/>
         <source>All percent rates are shown</source>
         <translation>Все процентые ставки</translation>
     </message>
     <message>
-        <location filename="MainForm.cpp" line="1929"/>
+        <location filename="MainForm.cpp" line="1956"/>
         <source>Timesheet</source>
         <translation>Временной табель</translation>
     </message>
     <message>
-        <location filename="MainForm.cpp" line="1945"/>
-        <location filename="MainForm.cpp" line="1963"/>
+        <location filename="MainForm.cpp" line="1972"/>
+        <location filename="MainForm.cpp" line="1990"/>
         <source>All timesheets are shown</source>
         <translation>Все табели</translation>
     </message>
     <message>
-        <location filename="MainForm.cpp" line="3648"/>
+        <location filename="MainForm.cpp" line="2098"/>
+        <source>Rework raws</source>
+        <translation>Переработка сырья</translation>
+    </message>
+    <message>
+        <location filename="MainForm.cpp" line="2627"/>
+        <source>Close of month</source>
+        <translation>Закрытие месяца</translation>
+    </message>
+    <message>
+        <location filename="MainForm.cpp" line="3266"/>
+        <source>Balance info!</source>
+        <translation>Информация о балансе!</translation>
+    </message>
+    <message>
+        <location filename="MainForm.cpp" line="3288"/>
+        <location filename="MainForm.cpp" line="3300"/>
+        <source>Generate financial report</source>
+        <translation>Сгенерировать отчет о прибылях и убытках</translation>
+    </message>
+    <message>
+        <location filename="MainForm.cpp" line="3752"/>
+        <source>Divisions</source>
+        <translation>Подразделение</translation>
+    </message>
+    <message>
+        <location filename="MainForm.cpp" line="3768"/>
+        <location filename="MainForm.cpp" line="3787"/>
+        <source>All divisions are shown</source>
+        <translation>Все подразделении</translation>
+    </message>
+    <message>
+        <location filename="MainForm.cpp" line="3796"/>
         <source>About</source>
         <translation>Справка</translation>
     </message>
     <message>
-        <location filename="MainForm.cpp" line="1688"/>
+        <location filename="MainForm.cpp" line="1715"/>
         <source>Production plan</source>
         <translation>Производственный план</translation>
     </message>
     <message>
-        <location filename="MainForm.cpp" line="1704"/>
+        <location filename="MainForm.cpp" line="1731"/>
         <source>All production plans are shown</source>
         <translation>Планы</translation>
     </message>
     <message>
-        <location filename="MainForm.cpp" line="1722"/>
+        <location filename="MainForm.cpp" line="1749"/>
         <source>All production plan are shown</source>
         <translation>Планы</translation>
     </message>
     <message>
-        <location filename="MainForm.cpp" line="1736"/>
+        <location filename="MainForm.cpp" line="1763"/>
         <source>Products in production plan list</source>
         <translation>Список продуктов в производственном плане</translation>
     </message>
     <message>
-        <location filename="MainForm.cpp" line="1752"/>
-        <location filename="MainForm.cpp" line="1770"/>
+        <location filename="MainForm.cpp" line="1779"/>
+        <location filename="MainForm.cpp" line="1797"/>
         <source>All products in production plan list are shown</source>
         <translation>Все произведенные продукты</translation>
     </message>
     <message>
-        <location filename="MainForm.cpp" line="1979"/>
+        <location filename="MainForm.cpp" line="2006"/>
         <source>Spoilage</source>
         <translation>Брак</translation>
     </message>
     <message>
-        <location filename="MainForm.cpp" line="1995"/>
-        <location filename="MainForm.cpp" line="2013"/>
+        <location filename="MainForm.cpp" line="2022"/>
+        <location filename="MainForm.cpp" line="2040"/>
         <source>All spoilage are shown</source>
         <translation>Все бракованные продукты</translation>
     </message>
     <message>
-        <location filename="MainForm.cpp" line="2027"/>
+        <location filename="MainForm.cpp" line="2054"/>
         <source>Products in spoilage list</source>
         <translation>Список бракованных продуктов </translation>
     </message>
     <message>
-        <location filename="MainForm.cpp" line="2043"/>
-        <location filename="MainForm.cpp" line="2061"/>
+        <location filename="MainForm.cpp" line="2070"/>
+        <location filename="MainForm.cpp" line="2088"/>
         <source>All products in spoilage list are shown</source>
         <translation>Все  продукты</translation>
     </message>
     <message>
-        <location filename="MainForm.cpp" line="2075"/>
+        <location filename="MainForm.cpp" line="2114"/>
         <source>Balances</source>
         <translation>Баланс</translation>
     </message>
     <message>
-        <location filename="MainForm.cpp" line="2091"/>
-        <location filename="MainForm.cpp" line="2109"/>
+        <location filename="MainForm.cpp" line="2130"/>
+        <location filename="MainForm.cpp" line="2148"/>
         <source>All balances are shown</source>
         <translation>Все балансы</translation>
     </message>
     <message>
-        <location filename="MainForm.cpp" line="2591"/>
+        <location filename="MainForm.cpp" line="2643"/>
         <source>Payments</source>
         <translation>Платежи</translation>
     </message>
     <message>
-        <location filename="MainForm.cpp" line="2607"/>
-        <location filename="MainForm.cpp" line="2625"/>
-        <location filename="MainForm.cpp" line="2673"/>
+        <location filename="MainForm.cpp" line="2659"/>
+        <location filename="MainForm.cpp" line="2677"/>
+        <location filename="MainForm.cpp" line="2725"/>
         <source>All payments are shown</source>
         <translation>Все платежы</translation>
     </message>
     <message>
-        <location filename="MainForm.cpp" line="2639"/>
+        <location filename="MainForm.cpp" line="2691"/>
         <source>Refunds</source>
         <translation>Возват денег</translation>
     </message>
     <message>
-        <location filename="MainForm.cpp" line="2655"/>
+        <location filename="MainForm.cpp" line="2707"/>
         <source>All refunds are shown</source>
         <translation>Все документы на возврат денег</translation>
     </message>
     <message>
-        <location filename="MainForm.cpp" line="1109"/>
+        <location filename="MainForm.cpp" line="1136"/>
         <source>Price</source>
         <translation>Цена</translation>
     </message>
     <message>
-        <location filename="MainForm.cpp" line="1125"/>
-        <location filename="MainForm.cpp" line="1143"/>
+        <location filename="MainForm.cpp" line="1152"/>
+        <location filename="MainForm.cpp" line="1170"/>
         <source>All prices are shown</source>
         <translation>Все цены</translation>
     </message>
     <message>
-        <location filename="MainForm.cpp" line="1157"/>
+        <location filename="MainForm.cpp" line="1184"/>
         <source>Net cost</source>
         <translation>Себестоимость</translation>
     </message>
     <message>
-        <location filename="MainForm.cpp" line="1173"/>
-        <location filename="MainForm.cpp" line="1191"/>
+        <location filename="MainForm.cpp" line="1200"/>
+        <location filename="MainForm.cpp" line="1218"/>
         <source>All net cost are shown</source>
         <translation>Себестоимости</translation>
     </message>
     <message>
-        <location filename="MainForm.cpp" line="2242"/>
+        <location filename="MainForm.cpp" line="2282"/>
         <source>Salary</source>
         <translation>Зарплата</translation>
     </message>
     <message>
-        <location filename="MainForm.cpp" line="2258"/>
-        <location filename="MainForm.cpp" line="2276"/>
+        <location filename="MainForm.cpp" line="2298"/>
+        <location filename="MainForm.cpp" line="2316"/>
         <source>All salary are shown</source>
         <translation>Все зарплаты</translation>
     </message>
     <message>
-        <location filename="MainForm.cpp" line="2290"/>
+        <location filename="MainForm.cpp" line="2330"/>
         <source>Salary types</source>
         <translation>Тип зарплат</translation>
     </message>
     <message>
-        <location filename="MainForm.cpp" line="2306"/>
-        <location filename="MainForm.cpp" line="2324"/>
+        <location filename="MainForm.cpp" line="2346"/>
+        <location filename="MainForm.cpp" line="2364"/>
         <source>All salary types are shown</source>
         <translation>Все типы зарплат</translation>
     </message>
     <message>
-        <location filename="MainForm.cpp" line="2335"/>
+        <location filename="MainForm.cpp" line="2375"/>
         <source>Calculate salary</source>
         <translation>Расчет заработной платы</translation>
     </message>
     <message>
-        <location filename="MainForm.cpp" line="2735"/>
+        <location filename="MainForm.cpp" line="2787"/>
         <source>Withdrawals</source>
         <translation>Вывод денег</translation>
     </message>
     <message>
-        <location filename="MainForm.cpp" line="2751"/>
+        <location filename="MainForm.cpp" line="2803"/>
         <source>All withdrawal are shown</source>
         <translation>Все документы вывода денег</translation>
     </message>
     <message>
-        <location filename="MainForm.cpp" line="2721"/>
-        <location filename="MainForm.cpp" line="2769"/>
+        <location filename="MainForm.cpp" line="2773"/>
+        <location filename="MainForm.cpp" line="2821"/>
         <source>All withdrawals are shown</source>
         <translation>Все документы вывода денег</translation>
     </message>
     <message>
-        <location filename="MainForm.cpp" line="2687"/>
+        <location filename="MainForm.cpp" line="2739"/>
         <source>Payslips</source>
         <translation>Расчетная ведомость</translation>
     </message>
     <message>
-        <location filename="MainForm.cpp" line="2703"/>
+        <location filename="MainForm.cpp" line="2755"/>
         <source>All payslips are shown</source>
         <translation>Все документы расчетной ведомости</translation>
     </message>
     <message>
-        <location filename="MainForm.cpp" line="2123"/>
+        <location filename="MainForm.cpp" line="2162"/>
         <source>Accounts</source>
         <translation>Счета</translation>
     </message>
     <message>
-        <location filename="MainForm.cpp" line="2139"/>
-        <location filename="MainForm.cpp" line="2157"/>
+        <location filename="MainForm.cpp" line="2178"/>
+        <location filename="MainForm.cpp" line="2196"/>
         <source>All accounts are shown</source>
         <translation>Все счета</translation>
     </message>
     <message>
-        <location filename="MainForm.cpp" line="2351"/>
+        <location filename="MainForm.cpp" line="2391"/>
         <source>Account type</source>
         <translation>Тип счетов</translation>
     </message>
     <message>
-        <location filename="MainForm.cpp" line="2367"/>
-        <location filename="MainForm.cpp" line="2385"/>
+        <location filename="MainForm.cpp" line="2407"/>
+        <location filename="MainForm.cpp" line="2425"/>
         <source>All account type are shown</source>
         <translation>Все типы счетов</translation>
     </message>
     <message>
-        <location filename="MainForm.cpp" line="2399"/>
+        <location filename="MainForm.cpp" line="2439"/>
         <source>Chart of account</source>
         <translation>План счетов</translation>
     </message>
     <message>
-        <location filename="MainForm.cpp" line="2415"/>
+        <location filename="MainForm.cpp" line="2455"/>
         <source>Chart of accounts are shown</source>
         <translation>План счетов</translation>
     </message>
     <message>
-        <location filename="MainForm.cpp" line="2433"/>
+        <location filename="MainForm.cpp" line="2473"/>
         <source>Chart of accounts are showns</source>
         <translation>План счетов</translation>
     </message>
     <message>
-        <location filename="MainForm.cpp" line="2447"/>
+        <location filename="MainForm.cpp" line="2487"/>
         <source>Company account relation</source>
         <translation>Зависимость компания-счет</translation>
     </message>
     <message>
-        <location filename="MainForm.cpp" line="2463"/>
-        <location filename="MainForm.cpp" line="2481"/>
+        <location filename="MainForm.cpp" line="2503"/>
+        <location filename="MainForm.cpp" line="2521"/>
         <source>Company-account relations are shown</source>
         <translation>Все зависимости компания-счет</translation>
     </message>
     <message>
-        <location filename="MainForm.cpp" line="2495"/>
+        <location filename="MainForm.cpp" line="2535"/>
         <source>Entries</source>
         <translation>Проводки</translation>
     </message>
     <message>
-        <location filename="MainForm.cpp" line="2511"/>
-        <location filename="MainForm.cpp" line="2529"/>
+        <location filename="MainForm.cpp" line="2551"/>
+        <location filename="MainForm.cpp" line="2569"/>
         <source>All entries are shown</source>
         <translation>Все проводки</translation>
     </message>
     <message>
-        <location filename="MainForm.cpp" line="2543"/>
+        <location filename="MainForm.cpp" line="2583"/>
         <source>Entry routing</source>
         <translation>Правило проводки</translation>
     </message>
     <message>
-        <location filename="MainForm.cpp" line="2559"/>
-        <location filename="MainForm.cpp" line="2577"/>
+        <location filename="MainForm.cpp" line="2599"/>
+        <location filename="MainForm.cpp" line="2617"/>
         <source>Entry routing are shown</source>
         <translation>Правило проводки</translation>
     </message>
     <message>
-        <location filename="MainForm.cpp" line="2214"/>
+        <location filename="MainForm.cpp" line="2254"/>
         <source>Generate accounts</source>
         <translation>Сгенерировать счета</translation>
     </message>
     <message>
-        <location filename="MainForm.cpp" line="2171"/>
+        <location filename="MainForm.cpp" line="2210"/>
         <source>Subaccounts</source>
         <translation>Субсчета</translation>
     </message>
     <message>
-        <location filename="MainForm.cpp" line="2187"/>
-        <location filename="MainForm.cpp" line="2205"/>
+        <location filename="MainForm.cpp" line="2226"/>
+        <location filename="MainForm.cpp" line="2244"/>
         <source>All subaccounts are shown</source>
         <translation>Все субсчета</translation>
     </message>
     <message>
-        <location filename="MainForm.cpp" line="2225"/>
+        <location filename="MainForm.cpp" line="2265"/>
         <source>Generate one account</source>
         <translation>Сгенерировать один счет</translation>
     </message>
     <message>
-        <location filename="MainForm.cpp" line="2784"/>
+        <location filename="MainForm.cpp" line="2836"/>
         <source>Stock</source>
         <translation>Склад</translation>
     </message>
     <message>
-        <location filename="MainForm.cpp" line="2800"/>
-        <location filename="MainForm.cpp" line="2818"/>
+        <location filename="MainForm.cpp" line="2852"/>
+        <location filename="MainForm.cpp" line="2870"/>
         <source>All products are shown in the stock</source>
         <translation>Все  продукты на складе</translation>
     </message>
     <message>
-        <location filename="MainForm.cpp" line="2832"/>
+        <location filename="MainForm.cpp" line="2884"/>
         <source>Order raw</source>
         <translation>Заказ материалов и сырья</translation>
     </message>
     <message>
-        <location filename="MainForm.cpp" line="2848"/>
-        <location filename="MainForm.cpp" line="2866"/>
+        <location filename="MainForm.cpp" line="2900"/>
+        <location filename="MainForm.cpp" line="2918"/>
         <source>All raws are shown in orders</source>
         <translation>Заказы сырья</translation>
     </message>
     <message>
-        <location filename="MainForm.cpp" line="2880"/>
+        <location filename="MainForm.cpp" line="2932"/>
         <source>Receipt raw</source>
         <translation>Оприходование материалов и сырья</translation>
     </message>
     <message>
-        <location filename="MainForm.cpp" line="2896"/>
-        <location filename="MainForm.cpp" line="2914"/>
+        <location filename="MainForm.cpp" line="2948"/>
+        <location filename="MainForm.cpp" line="2966"/>
         <source>All raws are shown in receipt</source>
         <translation>Все оприходованные материалы/сырье</translation>
     </message>
     <message>
-        <location filename="MainForm.cpp" line="2928"/>
+        <location filename="MainForm.cpp" line="2980"/>
         <source>Consume raw</source>
         <translation>Расход материалов/сырья</translation>
     </message>
     <message>
-        <location filename="MainForm.cpp" line="1607"/>
-        <location filename="MainForm.cpp" line="1625"/>
-        <location filename="MainForm.cpp" line="2944"/>
-        <location filename="MainForm.cpp" line="2962"/>
+        <location filename="MainForm.cpp" line="1634"/>
+        <location filename="MainForm.cpp" line="1652"/>
+        <location filename="MainForm.cpp" line="2996"/>
+        <location filename="MainForm.cpp" line="3014"/>
         <source>All raws are shown in consume</source>
         <translation>Все расходуемые материалы/сырье</translation>
     </message>
     <message>
-        <location filename="MainForm.cpp" line="2976"/>
+        <location filename="MainForm.cpp" line="3028"/>
         <source>Write-off raw</source>
         <translation>Списание сырья</translation>
     </message>
     <message>
-        <location filename="MainForm.cpp" line="2992"/>
-        <location filename="MainForm.cpp" line="3010"/>
+        <location filename="MainForm.cpp" line="3044"/>
+        <location filename="MainForm.cpp" line="3062"/>
         <source>All raw are shown in write-off</source>
         <translation>Все документы списания сырья</translation>
     </message>
     <message>
-        <location filename="MainForm.cpp" line="3024"/>
+        <location filename="MainForm.cpp" line="3076"/>
         <source>Transports</source>
         <translation>Транспорты</translation>
     </message>
     <message>
-        <location filename="MainForm.cpp" line="3040"/>
-        <location filename="MainForm.cpp" line="3058"/>
+        <location filename="MainForm.cpp" line="3092"/>
+        <location filename="MainForm.cpp" line="3110"/>
         <source>All transports are shown</source>
         <translation>Транспорты</translation>
     </message>
     <message>
-        <location filename="MainForm.cpp" line="3073"/>
+        <location filename="MainForm.cpp" line="3125"/>
         <source>Receipt product</source>
         <translation>Оприходование продуктов</translation>
     </message>
     <message>
-        <location filename="MainForm.cpp" line="3089"/>
-        <location filename="MainForm.cpp" line="3107"/>
+        <location filename="MainForm.cpp" line="3141"/>
+        <location filename="MainForm.cpp" line="3159"/>
         <source>All products are shown in receipt</source>
         <translation>Все опризодованные продукты</translation>
     </message>
     <message>
-        <location filename="MainForm.cpp" line="3120"/>
+        <location filename="MainForm.cpp" line="3172"/>
         <source>Consume product</source>
         <translation>Расходуемые продукты</translation>
     </message>
     <message>
-        <location filename="MainForm.cpp" line="3136"/>
-        <location filename="MainForm.cpp" line="3154"/>
+        <location filename="MainForm.cpp" line="3188"/>
+        <location filename="MainForm.cpp" line="3206"/>
         <source>All products are shown in consume</source>
         <translation>Все расходуемые продукты</translation>
     </message>
     <message>
-        <location filename="MainForm.cpp" line="3168"/>
+        <location filename="MainForm.cpp" line="3220"/>
         <source>Inventorization</source>
         <translation>Инвентаризация</translation>
     </message>
     <message>
-        <location filename="MainForm.cpp" line="3184"/>
-        <location filename="MainForm.cpp" line="3202"/>
+        <location filename="MainForm.cpp" line="3236"/>
+        <location filename="MainForm.cpp" line="3254"/>
         <source>All inventorizations are shown</source>
         <translation>Инвентаризация</translation>
     </message>
     <message>
-        <location filename="MainForm.cpp" line="3217"/>
+        <location filename="MainForm.cpp" line="3317"/>
         <source>Companies</source>
         <translation>Компании</translation>
     </message>
     <message>
-        <location filename="MainForm.cpp" line="3233"/>
-        <location filename="MainForm.cpp" line="3251"/>
+        <location filename="MainForm.cpp" line="3333"/>
+        <location filename="MainForm.cpp" line="3351"/>
         <source>All companies are shown</source>
         <translation>Все компании</translation>
     </message>
     <message>
-        <location filename="MainForm.cpp" line="3265"/>
+        <location filename="MainForm.cpp" line="3365"/>
         <source>Currencies</source>
         <translation>Валюты</translation>
     </message>
     <message>
-        <location filename="MainForm.cpp" line="3281"/>
-        <location filename="MainForm.cpp" line="3299"/>
+        <location filename="MainForm.cpp" line="3381"/>
+        <location filename="MainForm.cpp" line="3399"/>
         <source>All currencies are shown</source>
         <translation>Все валюты</translation>
     </message>
     <message>
-        <location filename="MainForm.cpp" line="3313"/>
+        <location filename="MainForm.cpp" line="3413"/>
         <source>Measures</source>
         <translation>Меры</translation>
     </message>
     <message>
-        <location filename="MainForm.cpp" line="3329"/>
-        <location filename="MainForm.cpp" line="3347"/>
+        <location filename="MainForm.cpp" line="3429"/>
+        <location filename="MainForm.cpp" line="3447"/>
         <source>All measures are shown</source>
         <translation>Все меры</translation>
     </message>
     <message>
-        <location filename="MainForm.cpp" line="3361"/>
+        <location filename="MainForm.cpp" line="3461"/>
         <source>Locations</source>
         <translation>Локации</translation>
     </message>
     <message>
-        <location filename="MainForm.cpp" line="3377"/>
-        <location filename="MainForm.cpp" line="3395"/>
+        <location filename="MainForm.cpp" line="3477"/>
+        <location filename="MainForm.cpp" line="3495"/>
         <source>All locations are shown</source>
         <translation>Все локации</translation>
     </message>
     <message>
-        <location filename="MainForm.cpp" line="3409"/>
+        <location filename="MainForm.cpp" line="3509"/>
         <source>Roles</source>
         <translation>Роли</translation>
     </message>
     <message>
-        <location filename="MainForm.cpp" line="3425"/>
-        <location filename="MainForm.cpp" line="3443"/>
+        <location filename="MainForm.cpp" line="3525"/>
+        <location filename="MainForm.cpp" line="3543"/>
         <source>All roles are shown</source>
         <translation>Все пользовательские роли</translation>
     </message>
     <message>
-        <location filename="MainForm.cpp" line="3457"/>
+        <location filename="MainForm.cpp" line="3557"/>
         <source>Statuses</source>
         <translation>Статус</translation>
     </message>
     <message>
-        <location filename="MainForm.cpp" line="3473"/>
-        <location filename="MainForm.cpp" line="3492"/>
+        <location filename="MainForm.cpp" line="3573"/>
+        <location filename="MainForm.cpp" line="3592"/>
         <source>All statuses are shown</source>
         <translation>Все статусы</translation>
     </message>
     <message>
-        <location filename="MainForm.cpp" line="3506"/>
+        <location filename="MainForm.cpp" line="3606"/>
         <source>Status rule</source>
         <translation>Условия для статуса</translation>
     </message>
     <message>
-        <location filename="MainForm.cpp" line="3522"/>
-        <location filename="MainForm.cpp" line="3541"/>
+        <location filename="MainForm.cpp" line="3622"/>
+        <location filename="MainForm.cpp" line="3641"/>
         <source>All status rules are shown</source>
         <translation>Все условия для статусов</translation>
     </message>
     <message>
-        <location filename="MainForm.cpp" line="3556"/>
+        <location filename="MainForm.cpp" line="3656"/>
         <source>Relations</source>
         <translation>Зависимости</translation>
     </message>
     <message>
-        <location filename="MainForm.cpp" line="3572"/>
-        <location filename="MainForm.cpp" line="3591"/>
+        <location filename="MainForm.cpp" line="3672"/>
+        <location filename="MainForm.cpp" line="3691"/>
         <source>All relations are shown</source>
         <translation>Все зависимостей</translation>
     </message>
     <message>
-        <location filename="MainForm.cpp" line="3604"/>
+        <location filename="MainForm.cpp" line="3704"/>
         <source>Relation types</source>
         <translation>Тип зависимостей</translation>
     </message>
     <message>
-        <location filename="MainForm.cpp" line="3620"/>
-        <location filename="MainForm.cpp" line="3639"/>
+        <location filename="MainForm.cpp" line="3720"/>
+        <location filename="MainForm.cpp" line="3739"/>
         <source>All relation types are shown</source>
         <translation>Все типы зависимостей</translation>
     </message>
@@ -15123,19 +15600,19 @@
     </message>
     <message>
         <location filename="MainForm.ui" line="76"/>
-        <location filename="MainForm.ui" line="227"/>
+        <location filename="MainForm.ui" line="239"/>
         <source>Products</source>
         <translation>Продукты</translation>
     </message>
     <message>
         <location filename="MainForm.ui" line="88"/>
-        <location filename="MainForm.ui" line="232"/>
+        <location filename="MainForm.ui" line="244"/>
         <source>Orders</source>
         <translation>Заказы</translation>
     </message>
     <message>
         <location filename="MainForm.ui" line="95"/>
-        <location filename="MainForm.ui" line="252"/>
+        <location filename="MainForm.ui" line="264"/>
         <source>Returns</source>
         <translation>Возврат</translation>
     </message>
@@ -15145,1760 +15622,1975 @@
         <translation>Справочники</translation>
     </message>
     <message>
-        <location filename="MainForm.ui" line="116"/>
+        <location filename="MainForm.ui" line="117"/>
         <source>Help</source>
         <translation>Помощь</translation>
     </message>
     <message>
-        <location filename="MainForm.ui" line="122"/>
-        <location filename="MainForm.ui" line="302"/>
+        <location filename="MainForm.ui" line="123"/>
+        <location filename="MainForm.ui" line="314"/>
         <source>Production</source>
         <translation>Производство</translation>
     </message>
     <message>
-        <location filename="MainForm.ui" line="139"/>
-        <location filename="MainForm.ui" line="322"/>
+        <location filename="MainForm.ui" line="141"/>
+        <location filename="MainForm.ui" line="334"/>
         <source>Write-offs</source>
         <translation>Списаные</translation>
     </message>
     <message>
-        <location filename="MainForm.ui" line="146"/>
+        <location filename="MainForm.ui" line="148"/>
         <source>Accounting</source>
         <translation>Учет</translation>
     </message>
     <message>
-        <location filename="MainForm.ui" line="166"/>
-        <location filename="MainForm.ui" line="432"/>
+        <location filename="MainForm.ui" line="169"/>
+        <location filename="MainForm.ui" line="444"/>
         <source>Stock</source>
         <translation>Склад</translation>
     </message>
     <message>
-        <location filename="MainForm.ui" line="180"/>
+        <location filename="MainForm.ui" line="183"/>
         <source>Cash</source>
         <translation>Касса</translation>
     </message>
     <message>
-        <location filename="MainForm.ui" line="202"/>
+        <location filename="MainForm.ui" line="192"/>
+        <source>Reports</source>
+        <translation>Отчеты</translation>
+    </message>
+    <message>
+        <location filename="MainForm.ui" line="214"/>
         <source>All users</source>
         <translation>Пользователи</translation>
     </message>
     <message>
-        <location filename="MainForm.ui" line="207"/>
+        <location filename="MainForm.ui" line="219"/>
         <source>Clients</source>
         <translation>Клиенты</translation>
     </message>
     <message>
-        <location filename="MainForm.ui" line="212"/>
+        <location filename="MainForm.ui" line="224"/>
         <source>Employees</source>
         <translation>Сотрудники</translation>
     </message>
     <message>
-        <location filename="MainForm.ui" line="217"/>
+        <location filename="MainForm.ui" line="229"/>
         <source>Access</source>
         <translation>Доступ</translation>
     </message>
     <message>
-        <location filename="MainForm.ui" line="222"/>
+        <location filename="MainForm.ui" line="234"/>
         <source>Products type</source>
         <translation>Тип продуктов</translation>
     </message>
     <message>
-        <location filename="MainForm.ui" line="237"/>
+        <location filename="MainForm.ui" line="249"/>
         <source>Products list</source>
         <translation>Список продуктов</translation>
     </message>
     <message>
-        <location filename="MainForm.ui" line="242"/>
+        <location filename="MainForm.ui" line="254"/>
         <source>Order details</source>
         <translation>Информация о заказах</translation>
     </message>
     <message>
-        <location filename="MainForm.ui" line="247"/>
+        <location filename="MainForm.ui" line="259"/>
         <source>Delete order</source>
         <translation>Удалить заказ</translation>
     </message>
     <message>
-        <location filename="MainForm.ui" line="257"/>
+        <location filename="MainForm.ui" line="269"/>
         <source>Retrun details</source>
         <translation>Информация о возвратах</translation>
     </message>
     <message>
-        <location filename="MainForm.ui" line="262"/>
+        <location filename="MainForm.ui" line="274"/>
         <source>Delete return</source>
         <translation>Удалить возврат</translation>
     </message>
     <message>
-        <location filename="MainForm.ui" line="267"/>
+        <location filename="MainForm.ui" line="279"/>
         <source>Company</source>
         <translation>Компании</translation>
     </message>
     <message>
-        <location filename="MainForm.ui" line="272"/>
+        <location filename="MainForm.ui" line="284"/>
         <source>Currency</source>
         <translation>Валюты</translation>
     </message>
     <message>
-        <location filename="MainForm.ui" line="277"/>
+        <location filename="MainForm.ui" line="289"/>
         <source>Measure</source>
         <translation>Меры</translation>
     </message>
     <message>
-        <location filename="MainForm.ui" line="282"/>
+        <location filename="MainForm.ui" line="294"/>
         <source>Location</source>
         <translation>Локации</translation>
     </message>
     <message>
-        <location filename="MainForm.ui" line="287"/>
+        <location filename="MainForm.ui" line="299"/>
         <source>Roles</source>
         <translation>Роли</translation>
     </message>
     <message>
-        <location filename="MainForm.ui" line="292"/>
+        <location filename="MainForm.ui" line="304"/>
         <source>Status</source>
         <translation>Статус</translation>
     </message>
     <message>
-        <location filename="MainForm.ui" line="297"/>
+        <location filename="MainForm.ui" line="309"/>
         <source>About</source>
         <translation>Справка</translation>
     </message>
     <message>
-        <location filename="MainForm.ui" line="307"/>
+        <location filename="MainForm.ui" line="319"/>
         <source>Access items</source>
         <translation>Пункты доступа</translation>
     </message>
     <message>
-        <location filename="MainForm.ui" line="312"/>
+        <location filename="MainForm.ui" line="324"/>
         <source>Prices</source>
         <translation>Цена</translation>
     </message>
     <message>
-        <location filename="MainForm.ui" line="317"/>
+        <location filename="MainForm.ui" line="329"/>
         <source>Production details</source>
         <translation>Информация о производстве</translation>
     </message>
     <message>
-        <location filename="MainForm.ui" line="327"/>
+        <location filename="MainForm.ui" line="339"/>
         <source>Write-off details</source>
         <translation>Информация о списании</translation>
     </message>
     <message>
-        <location filename="MainForm.ui" line="332"/>
+        <location filename="MainForm.ui" line="344"/>
         <source>User photo</source>
         <translation>Фото пользователей</translation>
     </message>
     <message>
-        <location filename="MainForm.ui" line="337"/>
+        <location filename="MainForm.ui" line="349"/>
         <source>Product photo</source>
         <translation>Фото продуктов</translation>
     </message>
     <message>
-        <location filename="MainForm.ui" line="342"/>
+        <location filename="MainForm.ui" line="354"/>
         <source>Position</source>
         <translation>Должность</translation>
     </message>
     <message>
-        <location filename="MainForm.ui" line="347"/>
+        <location filename="MainForm.ui" line="359"/>
         <source>Relation</source>
         <translation>Отношении</translation>
     </message>
     <message>
-        <location filename="MainForm.ui" line="352"/>
+        <location filename="MainForm.ui" line="364"/>
         <source>Relation types</source>
         <translation>Тип зависимостей</translation>
     </message>
     <message>
-        <location filename="MainForm.ui" line="357"/>
+        <location filename="MainForm.ui" line="369"/>
         <source>Balances</source>
         <translation>Баланс</translation>
     </message>
     <message>
-        <location filename="MainForm.ui" line="362"/>
+        <location filename="MainForm.ui" line="374"/>
         <source>Salary</source>
         <translation>Зарплата</translation>
     </message>
     <message>
-        <location filename="MainForm.ui" line="367"/>
+        <location filename="MainForm.ui" line="379"/>
         <source>Salary type</source>
         <translation>Тип зарплаты</translation>
     </message>
     <message>
-        <location filename="MainForm.ui" line="372"/>
+        <location filename="MainForm.ui" line="384"/>
         <source>Payments</source>
         <translation>Платежи</translation>
     </message>
     <message>
-        <location filename="MainForm.ui" line="377"/>
+        <location filename="MainForm.ui" line="389"/>
         <source>Payroll</source>
         <translation>Начисление зарплаты</translation>
     </message>
     <message>
-        <location filename="MainForm.ui" line="382"/>
+        <location filename="MainForm.ui" line="394"/>
         <source>Withdrawal</source>
         <translation>Вывод денег</translation>
     </message>
     <message>
-        <location filename="MainForm.ui" line="387"/>
+        <location filename="MainForm.ui" line="399"/>
         <source>Refund</source>
         <translation>Возват денег</translation>
     </message>
     <message>
-        <location filename="MainForm.ui" line="392"/>
+        <location filename="MainForm.ui" line="404"/>
         <source>Payslip</source>
         <translation>Расчетная ведомость</translation>
     </message>
     <message>
-        <location filename="MainForm.ui" line="397"/>
+        <location filename="MainForm.ui" line="409"/>
         <source>Order raw materials</source>
         <translation>Заказ материалов и сырья</translation>
     </message>
     <message>
-        <location filename="MainForm.ui" line="402"/>
+        <location filename="MainForm.ui" line="414"/>
         <source>Receipt raw materials</source>
         <translation>Оприходовать материалы/сырье</translation>
     </message>
     <message>
-        <location filename="MainForm.ui" line="407"/>
+        <location filename="MainForm.ui" line="419"/>
         <source>Transports</source>
         <translation>Транспорты</translation>
     </message>
     <message>
-        <location filename="MainForm.ui" line="412"/>
+        <location filename="MainForm.ui" line="424"/>
         <source>Receipt products</source>
         <translation>Оприходование продуктов</translation>
     </message>
     <message>
-        <location filename="MainForm.ui" line="417"/>
+        <location filename="MainForm.ui" line="429"/>
         <source>Consumption raw materials</source>
         <translation>Расход материалов и сырья</translation>
     </message>
     <message>
-        <location filename="MainForm.ui" line="422"/>
+        <location filename="MainForm.ui" line="434"/>
         <source>Write-off raw materials</source>
         <translation>Списания материалов и сырья</translation>
     </message>
     <message>
-        <location filename="MainForm.ui" line="427"/>
+        <location filename="MainForm.ui" line="439"/>
         <source>Consumption products</source>
         <translation>Расход продуктов</translation>
     </message>
     <message>
-        <location filename="MainForm.ui" line="437"/>
+        <location filename="MainForm.ui" line="449"/>
         <source>Inventorization</source>
         <translation>Инвентаризация</translation>
     </message>
     <message>
-        <location filename="MainForm.ui" line="442"/>
+        <location filename="MainForm.ui" line="454"/>
         <source>Specification</source>
         <translation>Спецификация</translation>
     </message>
     <message>
-        <location filename="MainForm.ui" line="447"/>
+        <location filename="MainForm.ui" line="459"/>
         <source>Specification details</source>
         <translation>Информация о спецификации</translation>
     </message>
     <message>
-        <location filename="MainForm.ui" line="452"/>
+        <location filename="MainForm.ui" line="464"/>
         <source>Jobprice</source>
         <translation>Ставка</translation>
     </message>
     <message>
-        <location filename="MainForm.ui" line="457"/>
+        <location filename="MainForm.ui" line="469"/>
         <source>Jobsheet</source>
         <translation>Ценовой табель</translation>
     </message>
     <message>
-        <location filename="MainForm.ui" line="462"/>
+        <location filename="MainForm.ui" line="474"/>
         <source>Percent rate</source>
         <translation>Процентная ставка</translation>
     </message>
     <message>
-        <location filename="MainForm.ui" line="467"/>
+        <location filename="MainForm.ui" line="479"/>
         <source>Timesheet</source>
         <translation>Временной табель</translation>
     </message>
     <message>
-        <location filename="MainForm.ui" line="472"/>
+        <location filename="MainForm.ui" line="484"/>
         <source>Accounts</source>
         <translation>Счета</translation>
     </message>
     <message>
-        <location filename="MainForm.ui" line="477"/>
+        <location filename="MainForm.ui" line="489"/>
         <source>Account type</source>
         <translation>Тип счетов</translation>
     </message>
     <message>
-        <location filename="MainForm.ui" line="482"/>
+        <location filename="MainForm.ui" line="494"/>
         <source>Chart of Accounts</source>
         <translation>План счетов</translation>
     </message>
     <message>
-        <location filename="MainForm.ui" line="487"/>
+        <location filename="MainForm.ui" line="499"/>
         <source>Company accounts</source>
         <translation>Зависимость компания-счет</translation>
     </message>
     <message>
-        <location filename="MainForm.ui" line="492"/>
+        <location filename="MainForm.ui" line="504"/>
         <source>Entry</source>
         <translation>Проводки</translation>
     </message>
     <message>
-        <location filename="MainForm.ui" line="497"/>
+        <location filename="MainForm.ui" line="509"/>
         <source>Net cost</source>
         <translation>Себестоимость</translation>
     </message>
     <message>
-        <location filename="MainForm.ui" line="502"/>
+        <location filename="MainForm.ui" line="514"/>
         <source>Production plan</source>
         <translation>Производственный план</translation>
     </message>
     <message>
-        <location filename="MainForm.ui" line="507"/>
+        <location filename="MainForm.ui" line="519"/>
         <source>Production plan details</source>
         <translation>Информация о производственном плане</translation>
     </message>
     <message>
-        <location filename="MainForm.ui" line="512"/>
+        <location filename="MainForm.ui" line="524"/>
         <source>Spoilage</source>
         <translation>Брак</translation>
     </message>
     <message>
-        <location filename="MainForm.ui" line="517"/>
+        <location filename="MainForm.ui" line="529"/>
         <source>Spoilage details</source>
         <translation>Информация о бракованных продуктах</translation>
     </message>
     <message>
-        <location filename="MainForm.ui" line="522"/>
+        <location filename="MainForm.ui" line="534"/>
         <source>Purveyors</source>
         <translation>Поставщики</translation>
     </message>
     <message>
-        <location filename="MainForm.ui" line="527"/>
+        <location filename="MainForm.ui" line="539"/>
         <source>Generate accounts</source>
         <translation>Сгенерировать счета</translation>
     </message>
     <message>
-        <location filename="MainForm.ui" line="532"/>
+        <location filename="MainForm.ui" line="544"/>
         <source>Generate one account</source>
         <translation>Сгенерировать один счет</translation>
     </message>
     <message>
-        <location filename="MainForm.ui" line="537"/>
+        <location filename="MainForm.ui" line="549"/>
         <source>Entry routing</source>
         <translation>Правило проводки</translation>
     </message>
     <message>
-        <location filename="MainForm.ui" line="542"/>
+        <location filename="MainForm.ui" line="554"/>
         <source>Company employees</source>
         <translation>Зависимость компания-сотрудник</translation>
     </message>
     <message>
-        <location filename="MainForm.ui" line="547"/>
+        <location filename="MainForm.ui" line="559"/>
         <source>Production stock</source>
         <translation>Производственный склад</translation>
     </message>
     <message>
-        <location filename="MainForm.ui" line="552"/>
+        <location filename="MainForm.ui" line="564"/>
         <source>Status rule</source>
         <translation>Условия для статуса</translation>
     </message>
     <message>
-        <location filename="MainForm.ui" line="557"/>
+        <location filename="MainForm.ui" line="569"/>
         <source>Subaccounts</source>
         <translation>Субсчета</translation>
     </message>
     <message>
-        <location filename="MainForm.ui" line="562"/>
+        <location filename="MainForm.ui" line="574"/>
         <source>Consume raws</source>
         <translation>Расходуемый материалы/сырье</translation>
+    </message>
+    <message>
+        <location filename="MainForm.ui" line="579"/>
+        <source>Company balance info</source>
+        <translation>Информация о балансе компании</translation>
+    </message>
+    <message>
+        <location filename="MainForm.ui" line="584"/>
+        <source>Rework raws</source>
+        <translation>Переработка сырья</translation>
+    </message>
+    <message>
+        <location filename="MainForm.ui" line="589"/>
+        <source>Close of month</source>
+        <translation>Закрытие месяца</translation>
+    </message>
+    <message>
+        <location filename="MainForm.ui" line="594"/>
+        <source>Financial report</source>
+        <translation>Отчет о прибылях и убытках</translation>
+    </message>
+    <message>
+        <location filename="MainForm.ui" line="599"/>
+        <source>Company balance</source>
+        <translation>Отчет о финансовом положении</translation>
+    </message>
+    <message>
+        <location filename="MainForm.ui" line="604"/>
+        <source>Division</source>
+        <translation>Подразделение</translation>
     </message>
 </context>
 <context>
     <name>QObject</name>
     <message>
-        <location filename="DataForm.cpp" line="5588"/>
-        <location filename="DataForm.cpp" line="5597"/>
-        <location filename="DataForm.cpp" line="5605"/>
-        <location filename="DataForm.cpp" line="5613"/>
-        <location filename="DataForm.cpp" line="5621"/>
-        <location filename="DataForm.cpp" line="5630"/>
-        <location filename="DataForm.cpp" line="5639"/>
-        <location filename="DataForm.cpp" line="5650"/>
-        <location filename="DataForm.cpp" line="5658"/>
-        <location filename="DataForm.cpp" line="5667"/>
-        <location filename="DataForm.cpp" line="5676"/>
+        <location filename="DataForm.cpp" line="5647"/>
+        <location filename="DataForm.cpp" line="5656"/>
+        <location filename="DataForm.cpp" line="5664"/>
+        <location filename="DataForm.cpp" line="5672"/>
+        <location filename="DataForm.cpp" line="5680"/>
         <location filename="DataForm.cpp" line="5689"/>
-        <location filename="DataForm.cpp" line="5700"/>
-        <location filename="DataForm.cpp" line="5713"/>
-        <location filename="DataForm.cpp" line="5724"/>
-        <location filename="DataForm.cpp" line="5733"/>
-        <location filename="DataForm.cpp" line="5744"/>
-        <location filename="DataForm.cpp" line="5753"/>
-        <location filename="DataForm.cpp" line="5762"/>
-        <location filename="DataForm.cpp" line="5775"/>
-        <location filename="DataForm.cpp" line="5786"/>
-        <location filename="DataForm.cpp" line="5797"/>
-        <location filename="DataForm.cpp" line="5807"/>
-        <location filename="DataForm.cpp" line="5817"/>
-        <location filename="DataForm.cpp" line="5825"/>
-        <location filename="DataForm.cpp" line="5834"/>
-        <location filename="DataForm.cpp" line="5847"/>
-        <location filename="DataForm.cpp" line="5858"/>
-        <location filename="DataForm.cpp" line="5871"/>
-        <location filename="DataForm.cpp" line="5882"/>
-        <location filename="DataForm.cpp" line="5890"/>
-        <location filename="DataForm.cpp" line="5898"/>
-        <location filename="DataForm.cpp" line="5907"/>
+        <location filename="DataForm.cpp" line="5698"/>
+        <location filename="DataForm.cpp" line="5709"/>
+        <location filename="DataForm.cpp" line="5717"/>
+        <location filename="DataForm.cpp" line="5726"/>
+        <location filename="DataForm.cpp" line="5735"/>
+        <location filename="DataForm.cpp" line="5748"/>
+        <location filename="DataForm.cpp" line="5759"/>
+        <location filename="DataForm.cpp" line="5772"/>
+        <location filename="DataForm.cpp" line="5783"/>
+        <location filename="DataForm.cpp" line="5792"/>
+        <location filename="DataForm.cpp" line="5800"/>
+        <location filename="DataForm.cpp" line="5812"/>
+        <location filename="DataForm.cpp" line="5822"/>
+        <location filename="DataForm.cpp" line="5831"/>
+        <location filename="DataForm.cpp" line="5844"/>
+        <location filename="DataForm.cpp" line="5855"/>
+        <location filename="DataForm.cpp" line="5866"/>
+        <location filename="DataForm.cpp" line="5876"/>
+        <location filename="DataForm.cpp" line="5886"/>
+        <location filename="DataForm.cpp" line="5894"/>
+        <location filename="DataForm.cpp" line="5903"/>
         <location filename="DataForm.cpp" line="5916"/>
-        <location filename="DataForm.cpp" line="5925"/>
-        <location filename="DataForm.cpp" line="5933"/>
-        <location filename="DataForm.cpp" line="5943"/>
-        <location filename="DataForm.cpp" line="5952"/>
-        <location filename="DataForm.cpp" line="5963"/>
-        <location filename="DataForm.cpp" line="5976"/>
-        <location filename="DataForm.cpp" line="5987"/>
-        <location filename="DataForm.cpp" line="5998"/>
-        <location filename="DataForm.cpp" line="6009"/>
-        <location filename="DataForm.cpp" line="6020"/>
-        <location filename="DataForm.cpp" line="6029"/>
-        <location filename="DataForm.cpp" line="6040"/>
-        <location filename="DataForm.cpp" line="6053"/>
-        <location filename="DataForm.cpp" line="6064"/>
-        <location filename="DataForm.cpp" line="6077"/>
-        <location filename="DataForm.cpp" line="6087"/>
-        <location filename="DataForm.cpp" line="6097"/>
-        <location filename="DataForm.cpp" line="6105"/>
-        <location filename="DataForm.cpp" line="6118"/>
-        <location filename="DataForm.cpp" line="6129"/>
-        <location filename="DataForm.cpp" line="6138"/>
-        <location filename="DataForm.cpp" line="6146"/>
-        <location filename="DataForm.cpp" line="6154"/>
-        <location filename="DataForm.cpp" line="6164"/>
-        <location filename="DataForm.cpp" line="6172"/>
-        <location filename="DataForm.cpp" line="6180"/>
-        <location filename="DataForm.cpp" line="6191"/>
-        <location filename="DataForm.cpp" line="6200"/>
-        <location filename="DataForm.cpp" line="6211"/>
-        <location filename="DataForm.cpp" line="6222"/>
-        <location filename="DataForm.cpp" line="6233"/>
-        <location filename="DataForm.cpp" line="6244"/>
-        <location filename="DataForm.cpp" line="6253"/>
-        <location filename="DataForm.cpp" line="6266"/>
-        <location filename="DataForm.cpp" line="6278"/>
-        <location filename="DataForm.cpp" line="6287"/>
-        <location filename="DataForm.cpp" line="6296"/>
-        <location filename="DataForm.cpp" line="6308"/>
-        <location filename="DataForm.cpp" line="6319"/>
-        <location filename="DataForm.cpp" line="6332"/>
+        <location filename="DataForm.cpp" line="5927"/>
+        <location filename="DataForm.cpp" line="5940"/>
+        <location filename="DataForm.cpp" line="5951"/>
+        <location filename="DataForm.cpp" line="5959"/>
+        <location filename="DataForm.cpp" line="5967"/>
+        <location filename="DataForm.cpp" line="5977"/>
+        <location filename="DataForm.cpp" line="5986"/>
+        <location filename="DataForm.cpp" line="5995"/>
+        <location filename="DataForm.cpp" line="6003"/>
+        <location filename="DataForm.cpp" line="6013"/>
+        <location filename="DataForm.cpp" line="6022"/>
+        <location filename="DataForm.cpp" line="6033"/>
+        <location filename="DataForm.cpp" line="6046"/>
+        <location filename="DataForm.cpp" line="6057"/>
+        <location filename="DataForm.cpp" line="6068"/>
+        <location filename="DataForm.cpp" line="6079"/>
+        <location filename="DataForm.cpp" line="6090"/>
+        <location filename="DataForm.cpp" line="6099"/>
+        <location filename="DataForm.cpp" line="6110"/>
+        <location filename="DataForm.cpp" line="6123"/>
+        <location filename="DataForm.cpp" line="6134"/>
+        <location filename="DataForm.cpp" line="6147"/>
+        <location filename="DataForm.cpp" line="6157"/>
+        <location filename="DataForm.cpp" line="6167"/>
+        <location filename="DataForm.cpp" line="6175"/>
+        <location filename="DataForm.cpp" line="6188"/>
+        <location filename="DataForm.cpp" line="6199"/>
+        <location filename="DataForm.cpp" line="6208"/>
+        <location filename="DataForm.cpp" line="6216"/>
+        <location filename="DataForm.cpp" line="6224"/>
+        <location filename="DataForm.cpp" line="6234"/>
+        <location filename="DataForm.cpp" line="6242"/>
+        <location filename="DataForm.cpp" line="6250"/>
+        <location filename="DataForm.cpp" line="6261"/>
+        <location filename="DataForm.cpp" line="6270"/>
+        <location filename="DataForm.cpp" line="6281"/>
+        <location filename="DataForm.cpp" line="6292"/>
+        <location filename="DataForm.cpp" line="6303"/>
+        <location filename="DataForm.cpp" line="6314"/>
+        <location filename="DataForm.cpp" line="6323"/>
+        <location filename="DataForm.cpp" line="6336"/>
+        <location filename="DataForm.cpp" line="6348"/>
+        <location filename="DataForm.cpp" line="6357"/>
+        <location filename="DataForm.cpp" line="6366"/>
+        <location filename="DataForm.cpp" line="6378"/>
+        <location filename="DataForm.cpp" line="6389"/>
+        <location filename="DataForm.cpp" line="6402"/>
         <source>ID</source>
         <translation>ID</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="5606"/>
-        <location filename="DataForm.cpp" line="5642"/>
-        <location filename="DataForm.cpp" line="5736"/>
-        <location filename="DataForm.cpp" line="6032"/>
-        <location filename="DataForm.cpp" line="6279"/>
+        <location filename="DataForm.cpp" line="5665"/>
+        <location filename="DataForm.cpp" line="5701"/>
+        <location filename="DataForm.cpp" line="5803"/>
+        <location filename="DataForm.cpp" line="6102"/>
+        <location filename="DataForm.cpp" line="6349"/>
         <source>Role ID</source>
         <translation>ID роли</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="5606"/>
+        <location filename="DataForm.cpp" line="5665"/>
         <source>Access item ID</source>
         <translation>ID путкта доступа</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="5605"/>
-        <location filename="DataForm.cpp" line="5613"/>
+        <location filename="DataForm.cpp" line="5664"/>
+        <location filename="DataForm.cpp" line="5672"/>
         <source>Item english name</source>
         <translation>Имя на английском</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="5605"/>
-        <location filename="DataForm.cpp" line="5613"/>
+        <location filename="DataForm.cpp" line="5664"/>
+        <location filename="DataForm.cpp" line="5672"/>
         <source>Item russian name</source>
         <translation>Имя на русском</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="5606"/>
-        <location filename="DataForm.cpp" line="5613"/>
+        <location filename="DataForm.cpp" line="5665"/>
+        <location filename="DataForm.cpp" line="5672"/>
         <source>Division</source>
         <translation>Классификация</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="5621"/>
-        <location filename="DataForm.cpp" line="5797"/>
+        <location filename="DataForm.cpp" line="5680"/>
+        <location filename="DataForm.cpp" line="5866"/>
+        <location filename="DataForm.cpp" line="6324"/>
         <source>User name</source>
         <translation>Имя</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="5621"/>
-        <location filename="DataForm.cpp" line="5798"/>
+        <location filename="DataForm.cpp" line="5680"/>
+        <location filename="DataForm.cpp" line="5867"/>
+        <location filename="DataForm.cpp" line="6324"/>
         <source>User surname</source>
         <translation>Фамилия</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="5744"/>
-        <location filename="DataForm.cpp" line="5786"/>
-        <location filename="DataForm.cpp" line="5826"/>
-        <location filename="DataForm.cpp" line="5882"/>
-        <location filename="DataForm.cpp" line="5898"/>
-        <location filename="DataForm.cpp" line="5917"/>
-        <location filename="DataForm.cpp" line="6020"/>
-        <location filename="DataForm.cpp" line="6129"/>
-        <location filename="DataForm.cpp" line="6155"/>
-        <location filename="DataForm.cpp" line="6287"/>
+        <location filename="DataForm.cpp" line="5812"/>
+        <location filename="DataForm.cpp" line="5855"/>
+        <location filename="DataForm.cpp" line="5895"/>
+        <location filename="DataForm.cpp" line="5951"/>
+        <location filename="DataForm.cpp" line="5968"/>
+        <location filename="DataForm.cpp" line="5987"/>
+        <location filename="DataForm.cpp" line="6090"/>
+        <location filename="DataForm.cpp" line="6199"/>
+        <location filename="DataForm.cpp" line="6225"/>
+        <location filename="DataForm.cpp" line="6357"/>
         <source>Value</source>
         <translation>Значение</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="5622"/>
-        <location filename="DataForm.cpp" line="5679"/>
-        <location filename="DataForm.cpp" line="5690"/>
-        <location filename="DataForm.cpp" line="5703"/>
-        <location filename="DataForm.cpp" line="5714"/>
-        <location filename="DataForm.cpp" line="5765"/>
-        <location filename="DataForm.cpp" line="5776"/>
-        <location filename="DataForm.cpp" line="5826"/>
-        <location filename="DataForm.cpp" line="5837"/>
-        <location filename="DataForm.cpp" line="5848"/>
-        <location filename="DataForm.cpp" line="5861"/>
-        <location filename="DataForm.cpp" line="5872"/>
-        <location filename="DataForm.cpp" line="5898"/>
+        <location filename="DataForm.cpp" line="5681"/>
+        <location filename="DataForm.cpp" line="5738"/>
+        <location filename="DataForm.cpp" line="5749"/>
+        <location filename="DataForm.cpp" line="5762"/>
+        <location filename="DataForm.cpp" line="5773"/>
+        <location filename="DataForm.cpp" line="5834"/>
+        <location filename="DataForm.cpp" line="5845"/>
+        <location filename="DataForm.cpp" line="5895"/>
+        <location filename="DataForm.cpp" line="5906"/>
         <location filename="DataForm.cpp" line="5917"/>
-        <location filename="DataForm.cpp" line="5933"/>
-        <location filename="DataForm.cpp" line="5953"/>
-        <location filename="DataForm.cpp" line="5966"/>
-        <location filename="DataForm.cpp" line="5977"/>
+        <location filename="DataForm.cpp" line="5930"/>
+        <location filename="DataForm.cpp" line="5941"/>
+        <location filename="DataForm.cpp" line="5968"/>
         <location filename="DataForm.cpp" line="5987"/>
-        <location filename="DataForm.cpp" line="5999"/>
-        <location filename="DataForm.cpp" line="6010"/>
-        <location filename="DataForm.cpp" line="6020"/>
-        <location filename="DataForm.cpp" line="6043"/>
-        <location filename="DataForm.cpp" line="6054"/>
-        <location filename="DataForm.cpp" line="6067"/>
-        <location filename="DataForm.cpp" line="6078"/>
-        <location filename="DataForm.cpp" line="6109"/>
-        <location filename="DataForm.cpp" line="6119"/>
-        <location filename="DataForm.cpp" line="6129"/>
-        <location filename="DataForm.cpp" line="6155"/>
-        <location filename="DataForm.cpp" line="6200"/>
-        <location filename="DataForm.cpp" line="6212"/>
-        <location filename="DataForm.cpp" line="6223"/>
-        <location filename="DataForm.cpp" line="6235"/>
-        <location filename="DataForm.cpp" line="6256"/>
-        <location filename="DataForm.cpp" line="6267"/>
-        <location filename="DataForm.cpp" line="6287"/>
-        <location filename="DataForm.cpp" line="6299"/>
-        <location filename="DataForm.cpp" line="6309"/>
-        <location filename="DataForm.cpp" line="6322"/>
-        <location filename="DataForm.cpp" line="6333"/>
+        <location filename="DataForm.cpp" line="6003"/>
+        <location filename="DataForm.cpp" line="6023"/>
+        <location filename="DataForm.cpp" line="6036"/>
+        <location filename="DataForm.cpp" line="6047"/>
+        <location filename="DataForm.cpp" line="6057"/>
+        <location filename="DataForm.cpp" line="6069"/>
+        <location filename="DataForm.cpp" line="6080"/>
+        <location filename="DataForm.cpp" line="6090"/>
+        <location filename="DataForm.cpp" line="6113"/>
+        <location filename="DataForm.cpp" line="6124"/>
+        <location filename="DataForm.cpp" line="6137"/>
+        <location filename="DataForm.cpp" line="6148"/>
+        <location filename="DataForm.cpp" line="6179"/>
+        <location filename="DataForm.cpp" line="6189"/>
+        <location filename="DataForm.cpp" line="6199"/>
+        <location filename="DataForm.cpp" line="6225"/>
+        <location filename="DataForm.cpp" line="6270"/>
+        <location filename="DataForm.cpp" line="6282"/>
+        <location filename="DataForm.cpp" line="6293"/>
+        <location filename="DataForm.cpp" line="6305"/>
+        <location filename="DataForm.cpp" line="6326"/>
+        <location filename="DataForm.cpp" line="6337"/>
+        <location filename="DataForm.cpp" line="6357"/>
+        <location filename="DataForm.cpp" line="6369"/>
+        <location filename="DataForm.cpp" line="6379"/>
+        <location filename="DataForm.cpp" line="6392"/>
+        <location filename="DataForm.cpp" line="6403"/>
         <source>Currency name</source>
         <translation>Валюта</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="5622"/>
-        <location filename="DataForm.cpp" line="5890"/>
-        <location filename="DataForm.cpp" line="5898"/>
-        <location filename="DataForm.cpp" line="6129"/>
-        <location filename="DataForm.cpp" line="6154"/>
-        <location filename="DataForm.cpp" line="6288"/>
+        <location filename="DataForm.cpp" line="5681"/>
+        <location filename="DataForm.cpp" line="5959"/>
+        <location filename="DataForm.cpp" line="5968"/>
+        <location filename="DataForm.cpp" line="6199"/>
+        <location filename="DataForm.cpp" line="6224"/>
+        <location filename="DataForm.cpp" line="6358"/>
         <source>User ID</source>
         <translation>ID пользователя</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="5680"/>
-        <location filename="DataForm.cpp" line="5692"/>
-        <location filename="DataForm.cpp" line="5704"/>
-        <location filename="DataForm.cpp" line="5716"/>
-        <location filename="DataForm.cpp" line="5766"/>
-        <location filename="DataForm.cpp" line="5778"/>
-        <location filename="DataForm.cpp" line="5788"/>
-        <location filename="DataForm.cpp" line="5826"/>
-        <location filename="DataForm.cpp" line="5838"/>
-        <location filename="DataForm.cpp" line="5850"/>
-        <location filename="DataForm.cpp" line="5862"/>
-        <location filename="DataForm.cpp" line="5874"/>
-        <location filename="DataForm.cpp" line="5899"/>
-        <location filename="DataForm.cpp" line="5917"/>
-        <location filename="DataForm.cpp" line="5935"/>
-        <location filename="DataForm.cpp" line="5955"/>
-        <location filename="DataForm.cpp" line="5967"/>
-        <location filename="DataForm.cpp" line="5979"/>
-        <location filename="DataForm.cpp" line="5990"/>
-        <location filename="DataForm.cpp" line="6001"/>
-        <location filename="DataForm.cpp" line="6012"/>
-        <location filename="DataForm.cpp" line="6021"/>
-        <location filename="DataForm.cpp" line="6044"/>
-        <location filename="DataForm.cpp" line="6056"/>
-        <location filename="DataForm.cpp" line="6068"/>
-        <location filename="DataForm.cpp" line="6080"/>
-        <location filename="DataForm.cpp" line="6110"/>
-        <location filename="DataForm.cpp" line="6121"/>
-        <location filename="DataForm.cpp" line="6130"/>
-        <location filename="DataForm.cpp" line="6156"/>
-        <location filename="DataForm.cpp" line="6183"/>
-        <location filename="DataForm.cpp" line="6203"/>
-        <location filename="DataForm.cpp" line="6214"/>
-        <location filename="DataForm.cpp" line="6225"/>
-        <location filename="DataForm.cpp" line="6235"/>
-        <location filename="DataForm.cpp" line="6257"/>
-        <location filename="DataForm.cpp" line="6269"/>
-        <location filename="DataForm.cpp" line="6288"/>
-        <location filename="DataForm.cpp" line="6300"/>
-        <location filename="DataForm.cpp" line="6311"/>
-        <location filename="DataForm.cpp" line="6323"/>
-        <location filename="DataForm.cpp" line="6335"/>
+        <location filename="DataForm.cpp" line="5739"/>
+        <location filename="DataForm.cpp" line="5751"/>
+        <location filename="DataForm.cpp" line="5763"/>
+        <location filename="DataForm.cpp" line="5775"/>
+        <location filename="DataForm.cpp" line="5835"/>
+        <location filename="DataForm.cpp" line="5847"/>
+        <location filename="DataForm.cpp" line="5857"/>
+        <location filename="DataForm.cpp" line="5895"/>
+        <location filename="DataForm.cpp" line="5907"/>
+        <location filename="DataForm.cpp" line="5919"/>
+        <location filename="DataForm.cpp" line="5931"/>
+        <location filename="DataForm.cpp" line="5943"/>
+        <location filename="DataForm.cpp" line="5969"/>
+        <location filename="DataForm.cpp" line="5987"/>
+        <location filename="DataForm.cpp" line="6005"/>
+        <location filename="DataForm.cpp" line="6025"/>
+        <location filename="DataForm.cpp" line="6037"/>
+        <location filename="DataForm.cpp" line="6049"/>
+        <location filename="DataForm.cpp" line="6060"/>
+        <location filename="DataForm.cpp" line="6071"/>
+        <location filename="DataForm.cpp" line="6082"/>
+        <location filename="DataForm.cpp" line="6091"/>
+        <location filename="DataForm.cpp" line="6114"/>
+        <location filename="DataForm.cpp" line="6126"/>
+        <location filename="DataForm.cpp" line="6138"/>
+        <location filename="DataForm.cpp" line="6150"/>
+        <location filename="DataForm.cpp" line="6180"/>
+        <location filename="DataForm.cpp" line="6191"/>
+        <location filename="DataForm.cpp" line="6200"/>
+        <location filename="DataForm.cpp" line="6226"/>
+        <location filename="DataForm.cpp" line="6253"/>
+        <location filename="DataForm.cpp" line="6273"/>
+        <location filename="DataForm.cpp" line="6284"/>
+        <location filename="DataForm.cpp" line="6295"/>
+        <location filename="DataForm.cpp" line="6305"/>
+        <location filename="DataForm.cpp" line="6327"/>
+        <location filename="DataForm.cpp" line="6339"/>
+        <location filename="DataForm.cpp" line="6358"/>
+        <location filename="DataForm.cpp" line="6370"/>
+        <location filename="DataForm.cpp" line="6381"/>
+        <location filename="DataForm.cpp" line="6393"/>
+        <location filename="DataForm.cpp" line="6405"/>
         <source>Currency ID</source>
         <translation>ID валюты</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="5630"/>
-        <location filename="DataForm.cpp" line="5639"/>
-        <location filename="DataForm.cpp" line="5650"/>
-        <location filename="DataForm.cpp" line="5724"/>
-        <location filename="DataForm.cpp" line="5733"/>
-        <location filename="DataForm.cpp" line="5817"/>
-        <location filename="DataForm.cpp" line="5907"/>
-        <location filename="DataForm.cpp" line="5925"/>
-        <location filename="DataForm.cpp" line="5933"/>
-        <location filename="DataForm.cpp" line="6029"/>
-        <location filename="DataForm.cpp" line="6097"/>
-        <location filename="DataForm.cpp" line="6138"/>
-        <location filename="DataForm.cpp" line="6146"/>
-        <location filename="DataForm.cpp" line="6164"/>
-        <location filename="DataForm.cpp" line="6278"/>
+        <location filename="DataForm.cpp" line="5689"/>
+        <location filename="DataForm.cpp" line="5698"/>
+        <location filename="DataForm.cpp" line="5709"/>
+        <location filename="DataForm.cpp" line="5783"/>
+        <location filename="DataForm.cpp" line="5792"/>
+        <location filename="DataForm.cpp" line="5800"/>
+        <location filename="DataForm.cpp" line="5886"/>
+        <location filename="DataForm.cpp" line="5977"/>
+        <location filename="DataForm.cpp" line="5995"/>
+        <location filename="DataForm.cpp" line="6003"/>
+        <location filename="DataForm.cpp" line="6099"/>
+        <location filename="DataForm.cpp" line="6167"/>
+        <location filename="DataForm.cpp" line="6208"/>
+        <location filename="DataForm.cpp" line="6216"/>
+        <location filename="DataForm.cpp" line="6234"/>
+        <location filename="DataForm.cpp" line="6348"/>
         <source>Name</source>
         <translation>Название</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="5639"/>
-        <location filename="DataForm.cpp" line="5733"/>
-        <location filename="DataForm.cpp" line="6029"/>
-        <location filename="DataForm.cpp" line="6278"/>
+        <location filename="DataForm.cpp" line="5698"/>
+        <location filename="DataForm.cpp" line="5800"/>
+        <location filename="DataForm.cpp" line="6099"/>
+        <location filename="DataForm.cpp" line="6348"/>
         <source>Surname</source>
         <translation>Фамилия</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="5639"/>
-        <location filename="DataForm.cpp" line="5650"/>
-        <location filename="DataForm.cpp" line="5734"/>
-        <location filename="DataForm.cpp" line="6029"/>
-        <location filename="DataForm.cpp" line="6278"/>
+        <location filename="DataForm.cpp" line="5698"/>
+        <location filename="DataForm.cpp" line="5709"/>
+        <location filename="DataForm.cpp" line="5801"/>
+        <location filename="DataForm.cpp" line="6099"/>
+        <location filename="DataForm.cpp" line="6348"/>
         <source>Phone</source>
         <translation>Телефон</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="5639"/>
-        <location filename="DataForm.cpp" line="5807"/>
-        <location filename="DataForm.cpp" line="6029"/>
+        <location filename="DataForm.cpp" line="5698"/>
+        <location filename="DataForm.cpp" line="5876"/>
+        <location filename="DataForm.cpp" line="6099"/>
         <source>Country name</source>
         <translation>Страна</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="5640"/>
-        <location filename="DataForm.cpp" line="5808"/>
-        <location filename="DataForm.cpp" line="6030"/>
+        <location filename="DataForm.cpp" line="5699"/>
+        <location filename="DataForm.cpp" line="5877"/>
+        <location filename="DataForm.cpp" line="6100"/>
         <source>Region name</source>
         <translation>Регион</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="5640"/>
-        <location filename="DataForm.cpp" line="5808"/>
-        <location filename="DataForm.cpp" line="6030"/>
+        <location filename="DataForm.cpp" line="5699"/>
+        <location filename="DataForm.cpp" line="5877"/>
+        <location filename="DataForm.cpp" line="6100"/>
         <source>City name</source>
         <translation>Город</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="5640"/>
-        <location filename="DataForm.cpp" line="5650"/>
-        <location filename="DataForm.cpp" line="5734"/>
-        <location filename="DataForm.cpp" line="6030"/>
-        <location filename="DataForm.cpp" line="6279"/>
+        <location filename="DataForm.cpp" line="5699"/>
+        <location filename="DataForm.cpp" line="5709"/>
+        <location filename="DataForm.cpp" line="5801"/>
+        <location filename="DataForm.cpp" line="6100"/>
+        <location filename="DataForm.cpp" line="6349"/>
         <source>Address</source>
         <translation>Адрес</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="5640"/>
+        <location filename="DataForm.cpp" line="5699"/>
         <source>Firm</source>
         <translation>Название фирмы</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="5641"/>
+        <location filename="DataForm.cpp" line="5700"/>
         <source>Firm number</source>
         <translation>Номер фирмы</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="5605"/>
-        <location filename="DataForm.cpp" line="5641"/>
-        <location filename="DataForm.cpp" line="5734"/>
-        <location filename="DataForm.cpp" line="6031"/>
-        <location filename="DataForm.cpp" line="6279"/>
+        <location filename="DataForm.cpp" line="5664"/>
+        <location filename="DataForm.cpp" line="5700"/>
+        <location filename="DataForm.cpp" line="5801"/>
+        <location filename="DataForm.cpp" line="6101"/>
+        <location filename="DataForm.cpp" line="6349"/>
         <source>Role name</source>
         <translation>Роль</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="5641"/>
-        <location filename="DataForm.cpp" line="5735"/>
-        <location filename="DataForm.cpp" line="6031"/>
-        <location filename="DataForm.cpp" line="6279"/>
+        <location filename="DataForm.cpp" line="5700"/>
+        <location filename="DataForm.cpp" line="5802"/>
+        <location filename="DataForm.cpp" line="6101"/>
+        <location filename="DataForm.cpp" line="6349"/>
         <source>Password</source>
         <translation>Пароль</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="5641"/>
-        <location filename="DataForm.cpp" line="5735"/>
-        <location filename="DataForm.cpp" line="6031"/>
-        <location filename="DataForm.cpp" line="6278"/>
+        <location filename="DataForm.cpp" line="5700"/>
+        <location filename="DataForm.cpp" line="5802"/>
+        <location filename="DataForm.cpp" line="6101"/>
+        <location filename="DataForm.cpp" line="6348"/>
         <source>Email</source>
         <translation>Email</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="5642"/>
-        <location filename="DataForm.cpp" line="5736"/>
-        <location filename="DataForm.cpp" line="6032"/>
-        <location filename="DataForm.cpp" line="6279"/>
+        <location filename="DataForm.cpp" line="5701"/>
+        <location filename="DataForm.cpp" line="5803"/>
+        <location filename="DataForm.cpp" line="6102"/>
+        <location filename="DataForm.cpp" line="6349"/>
         <source>Avtivated</source>
         <translation>Активирован</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="5642"/>
-        <location filename="DataForm.cpp" line="6032"/>
+        <location filename="DataForm.cpp" line="5701"/>
+        <location filename="DataForm.cpp" line="6102"/>
         <source>Location ID</source>
         <translation>ID локации</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="5597"/>
-        <location filename="DataForm.cpp" line="5650"/>
-        <location filename="DataForm.cpp" line="6097"/>
-        <location filename="DataForm.cpp" line="6138"/>
-        <location filename="DataForm.cpp" line="6164"/>
+        <location filename="DataForm.cpp" line="5656"/>
+        <location filename="DataForm.cpp" line="5709"/>
+        <location filename="DataForm.cpp" line="6167"/>
+        <location filename="DataForm.cpp" line="6208"/>
+        <location filename="DataForm.cpp" line="6234"/>
         <source>Comment</source>
         <translation>Коментарий</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="5724"/>
-        <location filename="DataForm.cpp" line="5925"/>
-        <location filename="DataForm.cpp" line="6138"/>
-        <location filename="DataForm.cpp" line="6146"/>
-        <location filename="DataForm.cpp" line="6164"/>
+        <location filename="DataForm.cpp" line="5783"/>
+        <location filename="DataForm.cpp" line="5792"/>
+        <location filename="DataForm.cpp" line="5995"/>
+        <location filename="DataForm.cpp" line="6208"/>
+        <location filename="DataForm.cpp" line="6216"/>
+        <location filename="DataForm.cpp" line="6234"/>
         <source>Code</source>
         <translation>Код</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="5724"/>
-        <location filename="DataForm.cpp" line="5817"/>
-        <location filename="DataForm.cpp" line="5925"/>
+        <location filename="DataForm.cpp" line="5783"/>
+        <location filename="DataForm.cpp" line="5886"/>
+        <location filename="DataForm.cpp" line="5995"/>
         <source>Short name</source>
         <translation>Короткое название</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="5725"/>
-        <location filename="DataForm.cpp" line="5817"/>
+        <location filename="DataForm.cpp" line="5784"/>
+        <location filename="DataForm.cpp" line="5886"/>
         <source>Change unit</source>
         <translation>Обменная единица</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="5725"/>
+        <location filename="DataForm.cpp" line="5784"/>
         <source>Main trade currency</source>
         <translation>Оснавная валюта</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="5733"/>
-        <location filename="DataForm.cpp" line="5787"/>
+        <location filename="DataForm.cpp" line="5800"/>
+        <location filename="DataForm.cpp" line="5856"/>
         <source>Position name</source>
         <translation>Должность</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="5734"/>
+        <location filename="DataForm.cpp" line="5801"/>
         <source>Birth date</source>
         <translation>Дата рождения</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="5735"/>
+        <location filename="DataForm.cpp" line="5802"/>
         <source>Hire date</source>
         <translation>Дата найма</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="5736"/>
-        <location filename="DataForm.cpp" line="5789"/>
-        <location filename="DataForm.cpp" line="5882"/>
+        <location filename="DataForm.cpp" line="5803"/>
+        <location filename="DataForm.cpp" line="5858"/>
+        <location filename="DataForm.cpp" line="5951"/>
         <source>Position ID</source>
         <translation>ID должности</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="5807"/>
+        <location filename="DataForm.cpp" line="5876"/>
         <source>Country code</source>
         <translation>Код страны</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="5834"/>
+        <location filename="DataForm.cpp" line="5903"/>
         <source>Order date</source>
         <translation>Дата заказа</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="5676"/>
-        <location filename="DataForm.cpp" line="5700"/>
-        <location filename="DataForm.cpp" line="5762"/>
-        <location filename="DataForm.cpp" line="5834"/>
-        <location filename="DataForm.cpp" line="5858"/>
-        <location filename="DataForm.cpp" line="5963"/>
-        <location filename="DataForm.cpp" line="6040"/>
-        <location filename="DataForm.cpp" line="6064"/>
-        <location filename="DataForm.cpp" line="6105"/>
-        <location filename="DataForm.cpp" line="6253"/>
+        <location filename="DataForm.cpp" line="5735"/>
+        <location filename="DataForm.cpp" line="5759"/>
+        <location filename="DataForm.cpp" line="5831"/>
+        <location filename="DataForm.cpp" line="5903"/>
+        <location filename="DataForm.cpp" line="5927"/>
+        <location filename="DataForm.cpp" line="6033"/>
+        <location filename="DataForm.cpp" line="6110"/>
+        <location filename="DataForm.cpp" line="6134"/>
+        <location filename="DataForm.cpp" line="6175"/>
+        <location filename="DataForm.cpp" line="6323"/>
         <source>Execution date</source>
         <translation>Дата исполнения</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="5676"/>
-        <location filename="DataForm.cpp" line="5700"/>
-        <location filename="DataForm.cpp" line="5762"/>
-        <location filename="DataForm.cpp" line="5834"/>
-        <location filename="DataForm.cpp" line="5858"/>
-        <location filename="DataForm.cpp" line="5963"/>
-        <location filename="DataForm.cpp" line="6040"/>
-        <location filename="DataForm.cpp" line="6064"/>
-        <location filename="DataForm.cpp" line="6105"/>
-        <location filename="DataForm.cpp" line="6253"/>
-        <location filename="DataForm.cpp" line="6296"/>
-        <location filename="DataForm.cpp" line="6319"/>
+        <location filename="DataForm.cpp" line="5735"/>
+        <location filename="DataForm.cpp" line="5759"/>
+        <location filename="DataForm.cpp" line="5831"/>
+        <location filename="DataForm.cpp" line="5903"/>
+        <location filename="DataForm.cpp" line="5927"/>
+        <location filename="DataForm.cpp" line="6033"/>
+        <location filename="DataForm.cpp" line="6110"/>
+        <location filename="DataForm.cpp" line="6134"/>
+        <location filename="DataForm.cpp" line="6175"/>
+        <location filename="DataForm.cpp" line="6323"/>
+        <location filename="DataForm.cpp" line="6366"/>
+        <location filename="DataForm.cpp" line="6389"/>
         <source>Status code</source>
         <translation>Код статуса</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="5677"/>
-        <location filename="DataForm.cpp" line="5691"/>
-        <location filename="DataForm.cpp" line="5701"/>
-        <location filename="DataForm.cpp" line="5715"/>
-        <location filename="DataForm.cpp" line="5763"/>
-        <location filename="DataForm.cpp" line="5777"/>
-        <location filename="DataForm.cpp" line="5835"/>
-        <location filename="DataForm.cpp" line="5849"/>
-        <location filename="DataForm.cpp" line="5859"/>
-        <location filename="DataForm.cpp" line="5873"/>
-        <location filename="DataForm.cpp" line="5954"/>
-        <location filename="DataForm.cpp" line="5964"/>
-        <location filename="DataForm.cpp" line="5978"/>
-        <location filename="DataForm.cpp" line="5988"/>
-        <location filename="DataForm.cpp" line="6000"/>
-        <location filename="DataForm.cpp" line="6011"/>
-        <location filename="DataForm.cpp" line="6041"/>
-        <location filename="DataForm.cpp" line="6055"/>
-        <location filename="DataForm.cpp" line="6065"/>
-        <location filename="DataForm.cpp" line="6079"/>
-        <location filename="DataForm.cpp" line="6106"/>
-        <location filename="DataForm.cpp" line="6120"/>
-        <location filename="DataForm.cpp" line="6172"/>
-        <location filename="DataForm.cpp" line="6201"/>
-        <location filename="DataForm.cpp" line="6213"/>
-        <location filename="DataForm.cpp" line="6224"/>
-        <location filename="DataForm.cpp" line="6235"/>
-        <location filename="DataForm.cpp" line="6254"/>
-        <location filename="DataForm.cpp" line="6268"/>
-        <location filename="DataForm.cpp" line="6296"/>
-        <location filename="DataForm.cpp" line="6310"/>
-        <location filename="DataForm.cpp" line="6320"/>
-        <location filename="DataForm.cpp" line="6334"/>
+        <location filename="DataForm.cpp" line="5736"/>
+        <location filename="DataForm.cpp" line="5750"/>
+        <location filename="DataForm.cpp" line="5760"/>
+        <location filename="DataForm.cpp" line="5774"/>
+        <location filename="DataForm.cpp" line="5832"/>
+        <location filename="DataForm.cpp" line="5846"/>
+        <location filename="DataForm.cpp" line="5904"/>
+        <location filename="DataForm.cpp" line="5918"/>
+        <location filename="DataForm.cpp" line="5928"/>
+        <location filename="DataForm.cpp" line="5942"/>
+        <location filename="DataForm.cpp" line="5968"/>
+        <location filename="DataForm.cpp" line="6024"/>
+        <location filename="DataForm.cpp" line="6034"/>
+        <location filename="DataForm.cpp" line="6048"/>
+        <location filename="DataForm.cpp" line="6058"/>
+        <location filename="DataForm.cpp" line="6070"/>
+        <location filename="DataForm.cpp" line="6081"/>
+        <location filename="DataForm.cpp" line="6111"/>
+        <location filename="DataForm.cpp" line="6125"/>
+        <location filename="DataForm.cpp" line="6135"/>
+        <location filename="DataForm.cpp" line="6149"/>
+        <location filename="DataForm.cpp" line="6176"/>
+        <location filename="DataForm.cpp" line="6190"/>
+        <location filename="DataForm.cpp" line="6242"/>
+        <location filename="DataForm.cpp" line="6271"/>
+        <location filename="DataForm.cpp" line="6283"/>
+        <location filename="DataForm.cpp" line="6294"/>
+        <location filename="DataForm.cpp" line="6305"/>
+        <location filename="DataForm.cpp" line="6324"/>
+        <location filename="DataForm.cpp" line="6338"/>
+        <location filename="DataForm.cpp" line="6366"/>
+        <location filename="DataForm.cpp" line="6380"/>
+        <location filename="DataForm.cpp" line="6390"/>
+        <location filename="DataForm.cpp" line="6404"/>
         <source>Status name</source>
         <translation>Статус</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="5835"/>
-        <location filename="DataForm.cpp" line="6106"/>
-        <location filename="DataForm.cpp" line="6297"/>
+        <location filename="DataForm.cpp" line="5904"/>
+        <location filename="DataForm.cpp" line="5967"/>
+        <location filename="DataForm.cpp" line="6176"/>
+        <location filename="DataForm.cpp" line="6367"/>
         <source>Client name</source>
         <translation>Имя клиента</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="5835"/>
-        <location filename="DataForm.cpp" line="6106"/>
-        <location filename="DataForm.cpp" line="6297"/>
+        <location filename="DataForm.cpp" line="5904"/>
+        <location filename="DataForm.cpp" line="5967"/>
+        <location filename="DataForm.cpp" line="6176"/>
+        <location filename="DataForm.cpp" line="6367"/>
         <source>Client surname</source>
         <translation>Фамилия клиента</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="5835"/>
-        <location filename="DataForm.cpp" line="6107"/>
-        <location filename="DataForm.cpp" line="6297"/>
+        <location filename="DataForm.cpp" line="5904"/>
+        <location filename="DataForm.cpp" line="6177"/>
+        <location filename="DataForm.cpp" line="6367"/>
         <source>Client phone</source>
         <translation>Номер клиента</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="5836"/>
-        <location filename="DataForm.cpp" line="6107"/>
-        <location filename="DataForm.cpp" line="6297"/>
+        <location filename="DataForm.cpp" line="5905"/>
+        <location filename="DataForm.cpp" line="6177"/>
+        <location filename="DataForm.cpp" line="6367"/>
         <source>Client address</source>
         <translation>Адрес клиета</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="5836"/>
-        <location filename="DataForm.cpp" line="6107"/>
-        <location filename="DataForm.cpp" line="6298"/>
+        <location filename="DataForm.cpp" line="5905"/>
+        <location filename="DataForm.cpp" line="6177"/>
+        <location filename="DataForm.cpp" line="6368"/>
         <source>Client firm</source>
         <translation>Фирма клиента</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="5667"/>
-        <location filename="DataForm.cpp" line="5677"/>
-        <location filename="DataForm.cpp" line="5678"/>
-        <location filename="DataForm.cpp" line="5701"/>
-        <location filename="DataForm.cpp" line="5702"/>
-        <location filename="DataForm.cpp" line="5763"/>
-        <location filename="DataForm.cpp" line="5764"/>
-        <location filename="DataForm.cpp" line="5836"/>
-        <location filename="DataForm.cpp" line="5860"/>
-        <location filename="DataForm.cpp" line="5964"/>
-        <location filename="DataForm.cpp" line="5965"/>
-        <location filename="DataForm.cpp" line="5988"/>
-        <location filename="DataForm.cpp" line="6041"/>
-        <location filename="DataForm.cpp" line="6042"/>
-        <location filename="DataForm.cpp" line="6065"/>
-        <location filename="DataForm.cpp" line="6066"/>
-        <location filename="DataForm.cpp" line="6107"/>
-        <location filename="DataForm.cpp" line="6154"/>
-        <location filename="DataForm.cpp" line="6181"/>
-        <location filename="DataForm.cpp" line="6201"/>
-        <location filename="DataForm.cpp" line="6244"/>
-        <location filename="DataForm.cpp" line="6254"/>
-        <location filename="DataForm.cpp" line="6255"/>
-        <location filename="DataForm.cpp" line="6298"/>
-        <location filename="DataForm.cpp" line="6320"/>
-        <location filename="DataForm.cpp" line="6321"/>
+        <location filename="DataForm.cpp" line="5726"/>
+        <location filename="DataForm.cpp" line="5736"/>
+        <location filename="DataForm.cpp" line="5737"/>
+        <location filename="DataForm.cpp" line="5760"/>
+        <location filename="DataForm.cpp" line="5761"/>
+        <location filename="DataForm.cpp" line="5832"/>
+        <location filename="DataForm.cpp" line="5833"/>
+        <location filename="DataForm.cpp" line="5905"/>
+        <location filename="DataForm.cpp" line="5929"/>
+        <location filename="DataForm.cpp" line="6034"/>
+        <location filename="DataForm.cpp" line="6035"/>
+        <location filename="DataForm.cpp" line="6058"/>
+        <location filename="DataForm.cpp" line="6111"/>
+        <location filename="DataForm.cpp" line="6112"/>
+        <location filename="DataForm.cpp" line="6135"/>
+        <location filename="DataForm.cpp" line="6136"/>
+        <location filename="DataForm.cpp" line="6177"/>
+        <location filename="DataForm.cpp" line="6224"/>
+        <location filename="DataForm.cpp" line="6251"/>
+        <location filename="DataForm.cpp" line="6271"/>
+        <location filename="DataForm.cpp" line="6314"/>
+        <location filename="DataForm.cpp" line="6325"/>
+        <location filename="DataForm.cpp" line="6368"/>
+        <location filename="DataForm.cpp" line="6390"/>
+        <location filename="DataForm.cpp" line="6391"/>
         <source>Employee name</source>
         <translation>Имя сотрудника</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="5667"/>
-        <location filename="DataForm.cpp" line="5677"/>
-        <location filename="DataForm.cpp" line="5678"/>
-        <location filename="DataForm.cpp" line="5701"/>
-        <location filename="DataForm.cpp" line="5702"/>
-        <location filename="DataForm.cpp" line="5763"/>
-        <location filename="DataForm.cpp" line="5764"/>
-        <location filename="DataForm.cpp" line="5836"/>
-        <location filename="DataForm.cpp" line="5860"/>
-        <location filename="DataForm.cpp" line="5964"/>
-        <location filename="DataForm.cpp" line="5965"/>
-        <location filename="DataForm.cpp" line="5988"/>
-        <location filename="DataForm.cpp" line="6041"/>
-        <location filename="DataForm.cpp" line="6042"/>
-        <location filename="DataForm.cpp" line="6065"/>
-        <location filename="DataForm.cpp" line="6066"/>
-        <location filename="DataForm.cpp" line="6108"/>
-        <location filename="DataForm.cpp" line="6154"/>
-        <location filename="DataForm.cpp" line="6181"/>
-        <location filename="DataForm.cpp" line="6201"/>
-        <location filename="DataForm.cpp" line="6244"/>
-        <location filename="DataForm.cpp" line="6254"/>
-        <location filename="DataForm.cpp" line="6255"/>
-        <location filename="DataForm.cpp" line="6298"/>
-        <location filename="DataForm.cpp" line="6320"/>
-        <location filename="DataForm.cpp" line="6321"/>
+        <location filename="DataForm.cpp" line="5726"/>
+        <location filename="DataForm.cpp" line="5736"/>
+        <location filename="DataForm.cpp" line="5737"/>
+        <location filename="DataForm.cpp" line="5760"/>
+        <location filename="DataForm.cpp" line="5761"/>
+        <location filename="DataForm.cpp" line="5832"/>
+        <location filename="DataForm.cpp" line="5833"/>
+        <location filename="DataForm.cpp" line="5905"/>
+        <location filename="DataForm.cpp" line="5929"/>
+        <location filename="DataForm.cpp" line="6034"/>
+        <location filename="DataForm.cpp" line="6035"/>
+        <location filename="DataForm.cpp" line="6058"/>
+        <location filename="DataForm.cpp" line="6111"/>
+        <location filename="DataForm.cpp" line="6112"/>
+        <location filename="DataForm.cpp" line="6135"/>
+        <location filename="DataForm.cpp" line="6136"/>
+        <location filename="DataForm.cpp" line="6178"/>
+        <location filename="DataForm.cpp" line="6224"/>
+        <location filename="DataForm.cpp" line="6251"/>
+        <location filename="DataForm.cpp" line="6271"/>
+        <location filename="DataForm.cpp" line="6314"/>
+        <location filename="DataForm.cpp" line="6325"/>
+        <location filename="DataForm.cpp" line="6368"/>
+        <location filename="DataForm.cpp" line="6390"/>
+        <location filename="DataForm.cpp" line="6391"/>
         <source>Employee surname</source>
         <translation>Фамилия сотрудника</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="5677"/>
-        <location filename="DataForm.cpp" line="5678"/>
-        <location filename="DataForm.cpp" line="5701"/>
-        <location filename="DataForm.cpp" line="5702"/>
-        <location filename="DataForm.cpp" line="5763"/>
-        <location filename="DataForm.cpp" line="5764"/>
-        <location filename="DataForm.cpp" line="5837"/>
-        <location filename="DataForm.cpp" line="5860"/>
-        <location filename="DataForm.cpp" line="5964"/>
-        <location filename="DataForm.cpp" line="5965"/>
-        <location filename="DataForm.cpp" line="5989"/>
-        <location filename="DataForm.cpp" line="6041"/>
-        <location filename="DataForm.cpp" line="6042"/>
-        <location filename="DataForm.cpp" line="6065"/>
-        <location filename="DataForm.cpp" line="6066"/>
-        <location filename="DataForm.cpp" line="6108"/>
-        <location filename="DataForm.cpp" line="6155"/>
-        <location filename="DataForm.cpp" line="6182"/>
-        <location filename="DataForm.cpp" line="6202"/>
-        <location filename="DataForm.cpp" line="6244"/>
-        <location filename="DataForm.cpp" line="6254"/>
-        <location filename="DataForm.cpp" line="6255"/>
-        <location filename="DataForm.cpp" line="6298"/>
-        <location filename="DataForm.cpp" line="6320"/>
-        <location filename="DataForm.cpp" line="6321"/>
+        <location filename="DataForm.cpp" line="5736"/>
+        <location filename="DataForm.cpp" line="5737"/>
+        <location filename="DataForm.cpp" line="5760"/>
+        <location filename="DataForm.cpp" line="5761"/>
+        <location filename="DataForm.cpp" line="5832"/>
+        <location filename="DataForm.cpp" line="5833"/>
+        <location filename="DataForm.cpp" line="5906"/>
+        <location filename="DataForm.cpp" line="5929"/>
+        <location filename="DataForm.cpp" line="6034"/>
+        <location filename="DataForm.cpp" line="6035"/>
+        <location filename="DataForm.cpp" line="6059"/>
+        <location filename="DataForm.cpp" line="6111"/>
+        <location filename="DataForm.cpp" line="6112"/>
+        <location filename="DataForm.cpp" line="6135"/>
+        <location filename="DataForm.cpp" line="6136"/>
+        <location filename="DataForm.cpp" line="6178"/>
+        <location filename="DataForm.cpp" line="6225"/>
+        <location filename="DataForm.cpp" line="6252"/>
+        <location filename="DataForm.cpp" line="6272"/>
+        <location filename="DataForm.cpp" line="6314"/>
+        <location filename="DataForm.cpp" line="6325"/>
+        <location filename="DataForm.cpp" line="6368"/>
+        <location filename="DataForm.cpp" line="6390"/>
+        <location filename="DataForm.cpp" line="6391"/>
         <source>Employee phone</source>
         <translation>Телефон сотрудника</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="5679"/>
-        <location filename="DataForm.cpp" line="5703"/>
-        <location filename="DataForm.cpp" line="5765"/>
-        <location filename="DataForm.cpp" line="5837"/>
-        <location filename="DataForm.cpp" line="5861"/>
-        <location filename="DataForm.cpp" line="5966"/>
-        <location filename="DataForm.cpp" line="6043"/>
-        <location filename="DataForm.cpp" line="6067"/>
-        <location filename="DataForm.cpp" line="6108"/>
-        <location filename="DataForm.cpp" line="6256"/>
-        <location filename="DataForm.cpp" line="6299"/>
-        <location filename="DataForm.cpp" line="6322"/>
+        <location filename="DataForm.cpp" line="5738"/>
+        <location filename="DataForm.cpp" line="5762"/>
+        <location filename="DataForm.cpp" line="5834"/>
+        <location filename="DataForm.cpp" line="5906"/>
+        <location filename="DataForm.cpp" line="5930"/>
+        <location filename="DataForm.cpp" line="6036"/>
+        <location filename="DataForm.cpp" line="6113"/>
+        <location filename="DataForm.cpp" line="6137"/>
+        <location filename="DataForm.cpp" line="6178"/>
+        <location filename="DataForm.cpp" line="6326"/>
+        <location filename="DataForm.cpp" line="6369"/>
+        <location filename="DataForm.cpp" line="6392"/>
         <source>Product count</source>
         <translation>Количесто продуктов</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="5679"/>
-        <location filename="DataForm.cpp" line="5691"/>
-        <location filename="DataForm.cpp" line="5703"/>
-        <location filename="DataForm.cpp" line="5715"/>
-        <location filename="DataForm.cpp" line="5765"/>
-        <location filename="DataForm.cpp" line="5777"/>
-        <location filename="DataForm.cpp" line="5837"/>
-        <location filename="DataForm.cpp" line="5849"/>
-        <location filename="DataForm.cpp" line="5861"/>
-        <location filename="DataForm.cpp" line="5873"/>
-        <location filename="DataForm.cpp" line="5954"/>
-        <location filename="DataForm.cpp" line="5966"/>
-        <location filename="DataForm.cpp" line="5978"/>
-        <location filename="DataForm.cpp" line="5987"/>
-        <location filename="DataForm.cpp" line="6000"/>
-        <location filename="DataForm.cpp" line="6011"/>
-        <location filename="DataForm.cpp" line="6043"/>
-        <location filename="DataForm.cpp" line="6055"/>
-        <location filename="DataForm.cpp" line="6067"/>
-        <location filename="DataForm.cpp" line="6079"/>
-        <location filename="DataForm.cpp" line="6108"/>
-        <location filename="DataForm.cpp" line="6120"/>
-        <location filename="DataForm.cpp" line="6181"/>
-        <location filename="DataForm.cpp" line="6200"/>
-        <location filename="DataForm.cpp" line="6213"/>
-        <location filename="DataForm.cpp" line="6224"/>
-        <location filename="DataForm.cpp" line="6256"/>
-        <location filename="DataForm.cpp" line="6268"/>
-        <location filename="DataForm.cpp" line="6299"/>
-        <location filename="DataForm.cpp" line="6309"/>
-        <location filename="DataForm.cpp" line="6322"/>
-        <location filename="DataForm.cpp" line="6334"/>
+        <location filename="DataForm.cpp" line="5738"/>
+        <location filename="DataForm.cpp" line="5750"/>
+        <location filename="DataForm.cpp" line="5762"/>
+        <location filename="DataForm.cpp" line="5774"/>
+        <location filename="DataForm.cpp" line="5834"/>
+        <location filename="DataForm.cpp" line="5846"/>
+        <location filename="DataForm.cpp" line="5906"/>
+        <location filename="DataForm.cpp" line="5918"/>
+        <location filename="DataForm.cpp" line="5930"/>
+        <location filename="DataForm.cpp" line="5942"/>
+        <location filename="DataForm.cpp" line="6024"/>
+        <location filename="DataForm.cpp" line="6036"/>
+        <location filename="DataForm.cpp" line="6048"/>
+        <location filename="DataForm.cpp" line="6057"/>
+        <location filename="DataForm.cpp" line="6070"/>
+        <location filename="DataForm.cpp" line="6081"/>
+        <location filename="DataForm.cpp" line="6113"/>
+        <location filename="DataForm.cpp" line="6125"/>
+        <location filename="DataForm.cpp" line="6137"/>
+        <location filename="DataForm.cpp" line="6149"/>
+        <location filename="DataForm.cpp" line="6178"/>
+        <location filename="DataForm.cpp" line="6190"/>
+        <location filename="DataForm.cpp" line="6251"/>
+        <location filename="DataForm.cpp" line="6270"/>
+        <location filename="DataForm.cpp" line="6283"/>
+        <location filename="DataForm.cpp" line="6294"/>
+        <location filename="DataForm.cpp" line="6326"/>
+        <location filename="DataForm.cpp" line="6338"/>
+        <location filename="DataForm.cpp" line="6369"/>
+        <location filename="DataForm.cpp" line="6379"/>
+        <location filename="DataForm.cpp" line="6392"/>
+        <location filename="DataForm.cpp" line="6404"/>
         <source>Sum</source>
         <translation>Сумма</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="5680"/>
-        <location filename="DataForm.cpp" line="5704"/>
-        <location filename="DataForm.cpp" line="5766"/>
-        <location filename="DataForm.cpp" line="5838"/>
-        <location filename="DataForm.cpp" line="5862"/>
-        <location filename="DataForm.cpp" line="5967"/>
-        <location filename="DataForm.cpp" line="5989"/>
-        <location filename="DataForm.cpp" line="6044"/>
-        <location filename="DataForm.cpp" line="6068"/>
-        <location filename="DataForm.cpp" line="6109"/>
-        <location filename="DataForm.cpp" line="6183"/>
-        <location filename="DataForm.cpp" line="6202"/>
-        <location filename="DataForm.cpp" line="6257"/>
-        <location filename="DataForm.cpp" line="6299"/>
-        <location filename="DataForm.cpp" line="6323"/>
+        <location filename="DataForm.cpp" line="5739"/>
+        <location filename="DataForm.cpp" line="5763"/>
+        <location filename="DataForm.cpp" line="5835"/>
+        <location filename="DataForm.cpp" line="5907"/>
+        <location filename="DataForm.cpp" line="5931"/>
+        <location filename="DataForm.cpp" line="6037"/>
+        <location filename="DataForm.cpp" line="6059"/>
+        <location filename="DataForm.cpp" line="6114"/>
+        <location filename="DataForm.cpp" line="6138"/>
+        <location filename="DataForm.cpp" line="6179"/>
+        <location filename="DataForm.cpp" line="6253"/>
+        <location filename="DataForm.cpp" line="6272"/>
+        <location filename="DataForm.cpp" line="6327"/>
+        <location filename="DataForm.cpp" line="6369"/>
+        <location filename="DataForm.cpp" line="6393"/>
         <source>Employee ID</source>
         <translation>ID сотрудника</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="5680"/>
-        <location filename="DataForm.cpp" line="5704"/>
-        <location filename="DataForm.cpp" line="5766"/>
-        <location filename="DataForm.cpp" line="5838"/>
-        <location filename="DataForm.cpp" line="5862"/>
-        <location filename="DataForm.cpp" line="5967"/>
-        <location filename="DataForm.cpp" line="6044"/>
-        <location filename="DataForm.cpp" line="6068"/>
-        <location filename="DataForm.cpp" line="6109"/>
-        <location filename="DataForm.cpp" line="6257"/>
-        <location filename="DataForm.cpp" line="6300"/>
-        <location filename="DataForm.cpp" line="6323"/>
+        <location filename="DataForm.cpp" line="5739"/>
+        <location filename="DataForm.cpp" line="5763"/>
+        <location filename="DataForm.cpp" line="5835"/>
+        <location filename="DataForm.cpp" line="5907"/>
+        <location filename="DataForm.cpp" line="5931"/>
+        <location filename="DataForm.cpp" line="6037"/>
+        <location filename="DataForm.cpp" line="6114"/>
+        <location filename="DataForm.cpp" line="6138"/>
+        <location filename="DataForm.cpp" line="6179"/>
+        <location filename="DataForm.cpp" line="6327"/>
+        <location filename="DataForm.cpp" line="6370"/>
+        <location filename="DataForm.cpp" line="6393"/>
         <source>Client ID</source>
         <translation>ID клиента</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="5680"/>
-        <location filename="DataForm.cpp" line="5692"/>
-        <location filename="DataForm.cpp" line="5704"/>
-        <location filename="DataForm.cpp" line="5716"/>
-        <location filename="DataForm.cpp" line="5766"/>
-        <location filename="DataForm.cpp" line="5778"/>
-        <location filename="DataForm.cpp" line="5838"/>
-        <location filename="DataForm.cpp" line="5850"/>
-        <location filename="DataForm.cpp" line="5862"/>
-        <location filename="DataForm.cpp" line="5874"/>
-        <location filename="DataForm.cpp" line="5955"/>
-        <location filename="DataForm.cpp" line="5967"/>
-        <location filename="DataForm.cpp" line="5979"/>
-        <location filename="DataForm.cpp" line="5989"/>
-        <location filename="DataForm.cpp" line="6001"/>
-        <location filename="DataForm.cpp" line="6012"/>
-        <location filename="DataForm.cpp" line="6044"/>
-        <location filename="DataForm.cpp" line="6056"/>
-        <location filename="DataForm.cpp" line="6068"/>
-        <location filename="DataForm.cpp" line="6080"/>
-        <location filename="DataForm.cpp" line="6110"/>
-        <location filename="DataForm.cpp" line="6121"/>
-        <location filename="DataForm.cpp" line="6172"/>
-        <location filename="DataForm.cpp" line="6202"/>
-        <location filename="DataForm.cpp" line="6214"/>
-        <location filename="DataForm.cpp" line="6225"/>
-        <location filename="DataForm.cpp" line="6235"/>
-        <location filename="DataForm.cpp" line="6257"/>
-        <location filename="DataForm.cpp" line="6269"/>
-        <location filename="DataForm.cpp" line="6300"/>
-        <location filename="DataForm.cpp" line="6310"/>
-        <location filename="DataForm.cpp" line="6323"/>
-        <location filename="DataForm.cpp" line="6335"/>
+        <location filename="DataForm.cpp" line="5739"/>
+        <location filename="DataForm.cpp" line="5751"/>
+        <location filename="DataForm.cpp" line="5763"/>
+        <location filename="DataForm.cpp" line="5775"/>
+        <location filename="DataForm.cpp" line="5835"/>
+        <location filename="DataForm.cpp" line="5847"/>
+        <location filename="DataForm.cpp" line="5907"/>
+        <location filename="DataForm.cpp" line="5919"/>
+        <location filename="DataForm.cpp" line="5931"/>
+        <location filename="DataForm.cpp" line="5943"/>
+        <location filename="DataForm.cpp" line="5969"/>
+        <location filename="DataForm.cpp" line="6025"/>
+        <location filename="DataForm.cpp" line="6037"/>
+        <location filename="DataForm.cpp" line="6049"/>
+        <location filename="DataForm.cpp" line="6059"/>
+        <location filename="DataForm.cpp" line="6071"/>
+        <location filename="DataForm.cpp" line="6082"/>
+        <location filename="DataForm.cpp" line="6114"/>
+        <location filename="DataForm.cpp" line="6126"/>
+        <location filename="DataForm.cpp" line="6138"/>
+        <location filename="DataForm.cpp" line="6150"/>
+        <location filename="DataForm.cpp" line="6180"/>
+        <location filename="DataForm.cpp" line="6191"/>
+        <location filename="DataForm.cpp" line="6242"/>
+        <location filename="DataForm.cpp" line="6272"/>
+        <location filename="DataForm.cpp" line="6284"/>
+        <location filename="DataForm.cpp" line="6295"/>
+        <location filename="DataForm.cpp" line="6305"/>
+        <location filename="DataForm.cpp" line="6327"/>
+        <location filename="DataForm.cpp" line="6339"/>
+        <location filename="DataForm.cpp" line="6370"/>
+        <location filename="DataForm.cpp" line="6380"/>
+        <location filename="DataForm.cpp" line="6393"/>
+        <location filename="DataForm.cpp" line="6405"/>
         <source>Status ID</source>
         <translation>ID статуса</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="5681"/>
-        <location filename="DataForm.cpp" line="5705"/>
-        <location filename="DataForm.cpp" line="5767"/>
-        <location filename="DataForm.cpp" line="5839"/>
-        <location filename="DataForm.cpp" line="5863"/>
-        <location filename="DataForm.cpp" line="5944"/>
-        <location filename="DataForm.cpp" line="5968"/>
-        <location filename="DataForm.cpp" line="5990"/>
-        <location filename="DataForm.cpp" line="6045"/>
-        <location filename="DataForm.cpp" line="6069"/>
-        <location filename="DataForm.cpp" line="6110"/>
-        <location filename="DataForm.cpp" line="6203"/>
-        <location filename="DataForm.cpp" line="6258"/>
-        <location filename="DataForm.cpp" line="6300"/>
-        <location filename="DataForm.cpp" line="6324"/>
+        <location filename="DataForm.cpp" line="5740"/>
+        <location filename="DataForm.cpp" line="5764"/>
+        <location filename="DataForm.cpp" line="5836"/>
+        <location filename="DataForm.cpp" line="5908"/>
+        <location filename="DataForm.cpp" line="5932"/>
+        <location filename="DataForm.cpp" line="6014"/>
+        <location filename="DataForm.cpp" line="6038"/>
+        <location filename="DataForm.cpp" line="6060"/>
+        <location filename="DataForm.cpp" line="6115"/>
+        <location filename="DataForm.cpp" line="6139"/>
+        <location filename="DataForm.cpp" line="6180"/>
+        <location filename="DataForm.cpp" line="6273"/>
+        <location filename="DataForm.cpp" line="6328"/>
+        <location filename="DataForm.cpp" line="6370"/>
+        <location filename="DataForm.cpp" line="6394"/>
         <source>Product list</source>
         <translation>Список продуктов</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="5847"/>
+        <location filename="DataForm.cpp" line="5916"/>
         <source>Order ID</source>
         <translation>ID заказа</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="5689"/>
-        <location filename="DataForm.cpp" line="5713"/>
-        <location filename="DataForm.cpp" line="5775"/>
-        <location filename="DataForm.cpp" line="5786"/>
-        <location filename="DataForm.cpp" line="5798"/>
-        <location filename="DataForm.cpp" line="5825"/>
-        <location filename="DataForm.cpp" line="5847"/>
-        <location filename="DataForm.cpp" line="5871"/>
+        <location filename="DataForm.cpp" line="5748"/>
+        <location filename="DataForm.cpp" line="5772"/>
+        <location filename="DataForm.cpp" line="5844"/>
+        <location filename="DataForm.cpp" line="5855"/>
+        <location filename="DataForm.cpp" line="5867"/>
+        <location filename="DataForm.cpp" line="5894"/>
         <location filename="DataForm.cpp" line="5916"/>
-        <location filename="DataForm.cpp" line="5952"/>
-        <location filename="DataForm.cpp" line="5976"/>
-        <location filename="DataForm.cpp" line="5998"/>
-        <location filename="DataForm.cpp" line="6009"/>
-        <location filename="DataForm.cpp" line="6053"/>
-        <location filename="DataForm.cpp" line="6077"/>
-        <location filename="DataForm.cpp" line="6118"/>
-        <location filename="DataForm.cpp" line="6180"/>
-        <location filename="DataForm.cpp" line="6191"/>
-        <location filename="DataForm.cpp" line="6211"/>
-        <location filename="DataForm.cpp" line="6222"/>
-        <location filename="DataForm.cpp" line="6266"/>
-        <location filename="DataForm.cpp" line="6308"/>
-        <location filename="DataForm.cpp" line="6332"/>
+        <location filename="DataForm.cpp" line="5940"/>
+        <location filename="DataForm.cpp" line="5986"/>
+        <location filename="DataForm.cpp" line="6022"/>
+        <location filename="DataForm.cpp" line="6046"/>
+        <location filename="DataForm.cpp" line="6068"/>
+        <location filename="DataForm.cpp" line="6079"/>
+        <location filename="DataForm.cpp" line="6123"/>
+        <location filename="DataForm.cpp" line="6147"/>
+        <location filename="DataForm.cpp" line="6188"/>
+        <location filename="DataForm.cpp" line="6250"/>
+        <location filename="DataForm.cpp" line="6261"/>
+        <location filename="DataForm.cpp" line="6281"/>
+        <location filename="DataForm.cpp" line="6292"/>
+        <location filename="DataForm.cpp" line="6336"/>
+        <location filename="DataForm.cpp" line="6378"/>
+        <location filename="DataForm.cpp" line="6402"/>
         <source>Product name</source>
         <translation>Название продукта</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="5689"/>
-        <location filename="DataForm.cpp" line="5713"/>
-        <location filename="DataForm.cpp" line="5775"/>
-        <location filename="DataForm.cpp" line="5847"/>
-        <location filename="DataForm.cpp" line="5871"/>
-        <location filename="DataForm.cpp" line="5933"/>
-        <location filename="DataForm.cpp" line="5952"/>
-        <location filename="DataForm.cpp" line="5976"/>
-        <location filename="DataForm.cpp" line="5998"/>
-        <location filename="DataForm.cpp" line="6009"/>
-        <location filename="DataForm.cpp" line="6053"/>
-        <location filename="DataForm.cpp" line="6077"/>
-        <location filename="DataForm.cpp" line="6118"/>
-        <location filename="DataForm.cpp" line="6211"/>
-        <location filename="DataForm.cpp" line="6222"/>
-        <location filename="DataForm.cpp" line="6266"/>
-        <location filename="DataForm.cpp" line="6308"/>
-        <location filename="DataForm.cpp" line="6332"/>
+        <location filename="DataForm.cpp" line="5748"/>
+        <location filename="DataForm.cpp" line="5772"/>
+        <location filename="DataForm.cpp" line="5844"/>
+        <location filename="DataForm.cpp" line="5916"/>
+        <location filename="DataForm.cpp" line="5940"/>
+        <location filename="DataForm.cpp" line="6003"/>
+        <location filename="DataForm.cpp" line="6022"/>
+        <location filename="DataForm.cpp" line="6046"/>
+        <location filename="DataForm.cpp" line="6068"/>
+        <location filename="DataForm.cpp" line="6079"/>
+        <location filename="DataForm.cpp" line="6123"/>
+        <location filename="DataForm.cpp" line="6147"/>
+        <location filename="DataForm.cpp" line="6188"/>
+        <location filename="DataForm.cpp" line="6281"/>
+        <location filename="DataForm.cpp" line="6292"/>
+        <location filename="DataForm.cpp" line="6336"/>
+        <location filename="DataForm.cpp" line="6378"/>
+        <location filename="DataForm.cpp" line="6402"/>
         <source>Price</source>
         <translation>Цена</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="5690"/>
-        <location filename="DataForm.cpp" line="5714"/>
-        <location filename="DataForm.cpp" line="5776"/>
-        <location filename="DataForm.cpp" line="5787"/>
-        <location filename="DataForm.cpp" line="5825"/>
-        <location filename="DataForm.cpp" line="5848"/>
-        <location filename="DataForm.cpp" line="5872"/>
-        <location filename="DataForm.cpp" line="5916"/>
-        <location filename="DataForm.cpp" line="5933"/>
-        <location filename="DataForm.cpp" line="5953"/>
-        <location filename="DataForm.cpp" line="5977"/>
-        <location filename="DataForm.cpp" line="5999"/>
-        <location filename="DataForm.cpp" line="6010"/>
-        <location filename="DataForm.cpp" line="6054"/>
-        <location filename="DataForm.cpp" line="6078"/>
-        <location filename="DataForm.cpp" line="6119"/>
-        <location filename="DataForm.cpp" line="6212"/>
-        <location filename="DataForm.cpp" line="6223"/>
-        <location filename="DataForm.cpp" line="6267"/>
-        <location filename="DataForm.cpp" line="6309"/>
-        <location filename="DataForm.cpp" line="6333"/>
+        <location filename="DataForm.cpp" line="5749"/>
+        <location filename="DataForm.cpp" line="5773"/>
+        <location filename="DataForm.cpp" line="5845"/>
+        <location filename="DataForm.cpp" line="5856"/>
+        <location filename="DataForm.cpp" line="5894"/>
+        <location filename="DataForm.cpp" line="5917"/>
+        <location filename="DataForm.cpp" line="5941"/>
+        <location filename="DataForm.cpp" line="5986"/>
+        <location filename="DataForm.cpp" line="6003"/>
+        <location filename="DataForm.cpp" line="6023"/>
+        <location filename="DataForm.cpp" line="6047"/>
+        <location filename="DataForm.cpp" line="6069"/>
+        <location filename="DataForm.cpp" line="6080"/>
+        <location filename="DataForm.cpp" line="6124"/>
+        <location filename="DataForm.cpp" line="6148"/>
+        <location filename="DataForm.cpp" line="6189"/>
+        <location filename="DataForm.cpp" line="6282"/>
+        <location filename="DataForm.cpp" line="6293"/>
+        <location filename="DataForm.cpp" line="6337"/>
+        <location filename="DataForm.cpp" line="6379"/>
+        <location filename="DataForm.cpp" line="6403"/>
         <source>Volume</source>
         <translation>Объем/Количество</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="5690"/>
-        <location filename="DataForm.cpp" line="5714"/>
-        <location filename="DataForm.cpp" line="5776"/>
-        <location filename="DataForm.cpp" line="5787"/>
-        <location filename="DataForm.cpp" line="5799"/>
-        <location filename="DataForm.cpp" line="5825"/>
-        <location filename="DataForm.cpp" line="5848"/>
-        <location filename="DataForm.cpp" line="5872"/>
-        <location filename="DataForm.cpp" line="5916"/>
-        <location filename="DataForm.cpp" line="5934"/>
-        <location filename="DataForm.cpp" line="5953"/>
-        <location filename="DataForm.cpp" line="5977"/>
-        <location filename="DataForm.cpp" line="5999"/>
-        <location filename="DataForm.cpp" line="6010"/>
-        <location filename="DataForm.cpp" line="6054"/>
-        <location filename="DataForm.cpp" line="6078"/>
-        <location filename="DataForm.cpp" line="6119"/>
-        <location filename="DataForm.cpp" line="6192"/>
-        <location filename="DataForm.cpp" line="6212"/>
-        <location filename="DataForm.cpp" line="6223"/>
-        <location filename="DataForm.cpp" line="6267"/>
-        <location filename="DataForm.cpp" line="6309"/>
-        <location filename="DataForm.cpp" line="6333"/>
+        <location filename="DataForm.cpp" line="5749"/>
+        <location filename="DataForm.cpp" line="5773"/>
+        <location filename="DataForm.cpp" line="5845"/>
+        <location filename="DataForm.cpp" line="5856"/>
+        <location filename="DataForm.cpp" line="5868"/>
+        <location filename="DataForm.cpp" line="5894"/>
+        <location filename="DataForm.cpp" line="5917"/>
+        <location filename="DataForm.cpp" line="5941"/>
+        <location filename="DataForm.cpp" line="5986"/>
+        <location filename="DataForm.cpp" line="6004"/>
+        <location filename="DataForm.cpp" line="6023"/>
+        <location filename="DataForm.cpp" line="6047"/>
+        <location filename="DataForm.cpp" line="6069"/>
+        <location filename="DataForm.cpp" line="6080"/>
+        <location filename="DataForm.cpp" line="6124"/>
+        <location filename="DataForm.cpp" line="6148"/>
+        <location filename="DataForm.cpp" line="6189"/>
+        <location filename="DataForm.cpp" line="6262"/>
+        <location filename="DataForm.cpp" line="6282"/>
+        <location filename="DataForm.cpp" line="6293"/>
+        <location filename="DataForm.cpp" line="6337"/>
+        <location filename="DataForm.cpp" line="6379"/>
+        <location filename="DataForm.cpp" line="6403"/>
         <source>Measure name</source>
         <translation>Название меры</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="5690"/>
-        <location filename="DataForm.cpp" line="5714"/>
-        <location filename="DataForm.cpp" line="5776"/>
-        <location filename="DataForm.cpp" line="5798"/>
-        <location filename="DataForm.cpp" line="5848"/>
-        <location filename="DataForm.cpp" line="5872"/>
-        <location filename="DataForm.cpp" line="5953"/>
-        <location filename="DataForm.cpp" line="5977"/>
-        <location filename="DataForm.cpp" line="5987"/>
-        <location filename="DataForm.cpp" line="5999"/>
-        <location filename="DataForm.cpp" line="6010"/>
-        <location filename="DataForm.cpp" line="6054"/>
-        <location filename="DataForm.cpp" line="6078"/>
-        <location filename="DataForm.cpp" line="6119"/>
-        <location filename="DataForm.cpp" line="6192"/>
-        <location filename="DataForm.cpp" line="6200"/>
-        <location filename="DataForm.cpp" line="6212"/>
-        <location filename="DataForm.cpp" line="6223"/>
-        <location filename="DataForm.cpp" line="6267"/>
-        <location filename="DataForm.cpp" line="6309"/>
-        <location filename="DataForm.cpp" line="6333"/>
+        <location filename="DataForm.cpp" line="5749"/>
+        <location filename="DataForm.cpp" line="5773"/>
+        <location filename="DataForm.cpp" line="5845"/>
+        <location filename="DataForm.cpp" line="5867"/>
+        <location filename="DataForm.cpp" line="5917"/>
+        <location filename="DataForm.cpp" line="5941"/>
+        <location filename="DataForm.cpp" line="6023"/>
+        <location filename="DataForm.cpp" line="6047"/>
+        <location filename="DataForm.cpp" line="6057"/>
+        <location filename="DataForm.cpp" line="6069"/>
+        <location filename="DataForm.cpp" line="6080"/>
+        <location filename="DataForm.cpp" line="6124"/>
+        <location filename="DataForm.cpp" line="6148"/>
+        <location filename="DataForm.cpp" line="6189"/>
+        <location filename="DataForm.cpp" line="6262"/>
+        <location filename="DataForm.cpp" line="6270"/>
+        <location filename="DataForm.cpp" line="6282"/>
+        <location filename="DataForm.cpp" line="6293"/>
+        <location filename="DataForm.cpp" line="6337"/>
+        <location filename="DataForm.cpp" line="6379"/>
+        <location filename="DataForm.cpp" line="6403"/>
         <source>Count</source>
         <translation>Количество</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="5691"/>
-        <location filename="DataForm.cpp" line="5715"/>
-        <location filename="DataForm.cpp" line="5777"/>
-        <location filename="DataForm.cpp" line="5849"/>
-        <location filename="DataForm.cpp" line="5873"/>
-        <location filename="DataForm.cpp" line="5954"/>
-        <location filename="DataForm.cpp" line="5978"/>
-        <location filename="DataForm.cpp" line="6000"/>
-        <location filename="DataForm.cpp" line="6011"/>
-        <location filename="DataForm.cpp" line="6055"/>
-        <location filename="DataForm.cpp" line="6079"/>
-        <location filename="DataForm.cpp" line="6120"/>
-        <location filename="DataForm.cpp" line="6213"/>
-        <location filename="DataForm.cpp" line="6224"/>
-        <location filename="DataForm.cpp" line="6268"/>
-        <location filename="DataForm.cpp" line="6310"/>
-        <location filename="DataForm.cpp" line="6334"/>
+        <location filename="DataForm.cpp" line="5750"/>
+        <location filename="DataForm.cpp" line="5774"/>
+        <location filename="DataForm.cpp" line="5846"/>
+        <location filename="DataForm.cpp" line="5918"/>
+        <location filename="DataForm.cpp" line="5942"/>
+        <location filename="DataForm.cpp" line="6024"/>
+        <location filename="DataForm.cpp" line="6048"/>
+        <location filename="DataForm.cpp" line="6070"/>
+        <location filename="DataForm.cpp" line="6081"/>
+        <location filename="DataForm.cpp" line="6125"/>
+        <location filename="DataForm.cpp" line="6149"/>
+        <location filename="DataForm.cpp" line="6190"/>
+        <location filename="DataForm.cpp" line="6283"/>
+        <location filename="DataForm.cpp" line="6294"/>
+        <location filename="DataForm.cpp" line="6338"/>
+        <location filename="DataForm.cpp" line="6380"/>
+        <location filename="DataForm.cpp" line="6404"/>
         <source>Sum currency name</source>
         <translation>Валюта суммы</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="5692"/>
-        <location filename="DataForm.cpp" line="5716"/>
-        <location filename="DataForm.cpp" line="5778"/>
-        <location filename="DataForm.cpp" line="5788"/>
-        <location filename="DataForm.cpp" line="5799"/>
-        <location filename="DataForm.cpp" line="5826"/>
-        <location filename="DataForm.cpp" line="5850"/>
-        <location filename="DataForm.cpp" line="5874"/>
-        <location filename="DataForm.cpp" line="5890"/>
-        <location filename="DataForm.cpp" line="5917"/>
-        <location filename="DataForm.cpp" line="5955"/>
-        <location filename="DataForm.cpp" line="5979"/>
-        <location filename="DataForm.cpp" line="6001"/>
-        <location filename="DataForm.cpp" line="6012"/>
-        <location filename="DataForm.cpp" line="6056"/>
-        <location filename="DataForm.cpp" line="6080"/>
-        <location filename="DataForm.cpp" line="6121"/>
-        <location filename="DataForm.cpp" line="6182"/>
-        <location filename="DataForm.cpp" line="6192"/>
-        <location filename="DataForm.cpp" line="6214"/>
-        <location filename="DataForm.cpp" line="6225"/>
-        <location filename="DataForm.cpp" line="6269"/>
-        <location filename="DataForm.cpp" line="6310"/>
-        <location filename="DataForm.cpp" line="6335"/>
+        <location filename="DataForm.cpp" line="5751"/>
+        <location filename="DataForm.cpp" line="5775"/>
+        <location filename="DataForm.cpp" line="5847"/>
+        <location filename="DataForm.cpp" line="5857"/>
+        <location filename="DataForm.cpp" line="5868"/>
+        <location filename="DataForm.cpp" line="5895"/>
+        <location filename="DataForm.cpp" line="5919"/>
+        <location filename="DataForm.cpp" line="5943"/>
+        <location filename="DataForm.cpp" line="5959"/>
+        <location filename="DataForm.cpp" line="5987"/>
+        <location filename="DataForm.cpp" line="6025"/>
+        <location filename="DataForm.cpp" line="6049"/>
+        <location filename="DataForm.cpp" line="6071"/>
+        <location filename="DataForm.cpp" line="6082"/>
+        <location filename="DataForm.cpp" line="6126"/>
+        <location filename="DataForm.cpp" line="6150"/>
+        <location filename="DataForm.cpp" line="6191"/>
+        <location filename="DataForm.cpp" line="6252"/>
+        <location filename="DataForm.cpp" line="6262"/>
+        <location filename="DataForm.cpp" line="6284"/>
+        <location filename="DataForm.cpp" line="6295"/>
+        <location filename="DataForm.cpp" line="6339"/>
+        <location filename="DataForm.cpp" line="6380"/>
+        <location filename="DataForm.cpp" line="6405"/>
         <source>Product ID</source>
         <translation>ID продукта</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="5890"/>
+        <location filename="DataForm.cpp" line="5959"/>
         <source>Source</source>
         <translation>Источник</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="5744"/>
-        <location filename="DataForm.cpp" line="5797"/>
-        <location filename="DataForm.cpp" line="5825"/>
-        <location filename="DataForm.cpp" line="5898"/>
-        <location filename="DataForm.cpp" line="5916"/>
-        <location filename="DataForm.cpp" line="5987"/>
-        <location filename="DataForm.cpp" line="6020"/>
-        <location filename="DataForm.cpp" line="6129"/>
-        <location filename="DataForm.cpp" line="6155"/>
-        <location filename="DataForm.cpp" line="6180"/>
-        <location filename="DataForm.cpp" line="6200"/>
-        <location filename="DataForm.cpp" line="6245"/>
-        <location filename="DataForm.cpp" line="6287"/>
+        <location filename="DataForm.cpp" line="5812"/>
+        <location filename="DataForm.cpp" line="5866"/>
+        <location filename="DataForm.cpp" line="5894"/>
+        <location filename="DataForm.cpp" line="5967"/>
+        <location filename="DataForm.cpp" line="5986"/>
+        <location filename="DataForm.cpp" line="6057"/>
+        <location filename="DataForm.cpp" line="6090"/>
+        <location filename="DataForm.cpp" line="6199"/>
+        <location filename="DataForm.cpp" line="6225"/>
+        <location filename="DataForm.cpp" line="6250"/>
+        <location filename="DataForm.cpp" line="6270"/>
+        <location filename="DataForm.cpp" line="6315"/>
+        <location filename="DataForm.cpp" line="6357"/>
         <source>Date</source>
         <translation>Дата</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="5934"/>
+        <location filename="DataForm.cpp" line="6004"/>
         <source>Product type name</source>
         <translation>Наименование типа продуктов</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="5934"/>
+        <location filename="DataForm.cpp" line="6004"/>
         <source>Shelf life</source>
         <translation>Срок годности(в днях)</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="5658"/>
-        <location filename="DataForm.cpp" line="5667"/>
-        <location filename="DataForm.cpp" line="5934"/>
-        <location filename="DataForm.cpp" line="6030"/>
+        <location filename="DataForm.cpp" line="5717"/>
+        <location filename="DataForm.cpp" line="5726"/>
+        <location filename="DataForm.cpp" line="6004"/>
+        <location filename="DataForm.cpp" line="6100"/>
         <source>Company name</source>
         <translation>Наименование компании</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="5588"/>
-        <location filename="DataForm.cpp" line="5630"/>
-        <location filename="DataForm.cpp" line="6233"/>
+        <location filename="DataForm.cpp" line="5647"/>
+        <location filename="DataForm.cpp" line="5689"/>
+        <location filename="DataForm.cpp" line="6303"/>
         <source>Number</source>
         <translation>Номер</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="5588"/>
-        <location filename="DataForm.cpp" line="6234"/>
+        <location filename="DataForm.cpp" line="5647"/>
+        <location filename="DataForm.cpp" line="6304"/>
         <source>Start balance</source>
         <translation>Начальный баланс</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="5588"/>
-        <location filename="DataForm.cpp" line="5621"/>
-        <location filename="DataForm.cpp" line="6234"/>
+        <location filename="DataForm.cpp" line="5647"/>
+        <location filename="DataForm.cpp" line="5680"/>
+        <location filename="DataForm.cpp" line="6304"/>
         <source>Current balance</source>
         <translation>Текущий баланс</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="6236"/>
+        <location filename="DataForm.cpp" line="6306"/>
         <source>Opened date</source>
         <translation>Дата открытия</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="6236"/>
+        <location filename="DataForm.cpp" line="6306"/>
         <source>Closed date</source>
         <translation>Дата закрытия</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="5589"/>
-        <location filename="DataForm.cpp" line="6236"/>
+        <location filename="DataForm.cpp" line="5648"/>
+        <location filename="DataForm.cpp" line="6306"/>
         <source>Details</source>
         <translation>Подробно</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="5597"/>
-        <location filename="DataForm.cpp" line="5630"/>
+        <location filename="DataForm.cpp" line="5656"/>
+        <location filename="DataForm.cpp" line="5689"/>
         <source>Type name</source>
         <translation>Название типа</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="5597"/>
+        <location filename="DataForm.cpp" line="5656"/>
         <source>Type number</source>
         <translation>Номер типа</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="5622"/>
-        <location filename="DataForm.cpp" line="5659"/>
-        <location filename="DataForm.cpp" line="5668"/>
+        <location filename="DataForm.cpp" line="5681"/>
+        <location filename="DataForm.cpp" line="5718"/>
+        <location filename="DataForm.cpp" line="5727"/>
         <source>Account ID</source>
         <translation>ID счета</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="5631"/>
+        <location filename="DataForm.cpp" line="5690"/>
         <source>Account type ID</source>
         <translation>ID типа счета</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="5658"/>
+        <location filename="DataForm.cpp" line="5717"/>
         <source>Account number</source>
         <translation>Номер счета</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="5659"/>
-        <location filename="DataForm.cpp" line="5668"/>
-        <location filename="DataForm.cpp" line="5935"/>
+        <location filename="DataForm.cpp" line="5718"/>
+        <location filename="DataForm.cpp" line="5727"/>
+        <location filename="DataForm.cpp" line="6005"/>
         <source>Company ID</source>
         <translation>ID компании</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="5668"/>
+        <location filename="DataForm.cpp" line="5727"/>
         <source>Employee Phone</source>
         <translation>Телефон сотрудника</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="5676"/>
+        <location filename="DataForm.cpp" line="5735"/>
         <source>Consume date</source>
         <translation>Дата расхода продуктов</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="5678"/>
-        <location filename="DataForm.cpp" line="5679"/>
-        <location filename="DataForm.cpp" line="5702"/>
-        <location filename="DataForm.cpp" line="5703"/>
-        <location filename="DataForm.cpp" line="5764"/>
-        <location filename="DataForm.cpp" line="5765"/>
-        <location filename="DataForm.cpp" line="5861"/>
-        <location filename="DataForm.cpp" line="5965"/>
-        <location filename="DataForm.cpp" line="5966"/>
-        <location filename="DataForm.cpp" line="5989"/>
-        <location filename="DataForm.cpp" line="6042"/>
-        <location filename="DataForm.cpp" line="6043"/>
-        <location filename="DataForm.cpp" line="6066"/>
-        <location filename="DataForm.cpp" line="6067"/>
-        <location filename="DataForm.cpp" line="6182"/>
-        <location filename="DataForm.cpp" line="6202"/>
-        <location filename="DataForm.cpp" line="6255"/>
-        <location filename="DataForm.cpp" line="6256"/>
-        <location filename="DataForm.cpp" line="6321"/>
-        <location filename="DataForm.cpp" line="6322"/>
+        <location filename="DataForm.cpp" line="5737"/>
+        <location filename="DataForm.cpp" line="5738"/>
+        <location filename="DataForm.cpp" line="5761"/>
+        <location filename="DataForm.cpp" line="5762"/>
+        <location filename="DataForm.cpp" line="5833"/>
+        <location filename="DataForm.cpp" line="5834"/>
+        <location filename="DataForm.cpp" line="5930"/>
+        <location filename="DataForm.cpp" line="6035"/>
+        <location filename="DataForm.cpp" line="6036"/>
+        <location filename="DataForm.cpp" line="6059"/>
+        <location filename="DataForm.cpp" line="6112"/>
+        <location filename="DataForm.cpp" line="6113"/>
+        <location filename="DataForm.cpp" line="6136"/>
+        <location filename="DataForm.cpp" line="6137"/>
+        <location filename="DataForm.cpp" line="6252"/>
+        <location filename="DataForm.cpp" line="6272"/>
+        <location filename="DataForm.cpp" line="6326"/>
+        <location filename="DataForm.cpp" line="6391"/>
+        <location filename="DataForm.cpp" line="6392"/>
         <source>Employee position</source>
         <translation>Должность</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="5689"/>
+        <location filename="DataForm.cpp" line="5748"/>
         <source>Consume ID</source>
         <translation>ID расхода продуктов</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="5700"/>
-        <location filename="DataForm.cpp" line="5963"/>
+        <location filename="DataForm.cpp" line="5759"/>
+        <location filename="DataForm.cpp" line="6033"/>
         <source>Consume raw date</source>
         <translation>Дата расхода материалов/сырья</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="5713"/>
-        <location filename="DataForm.cpp" line="5976"/>
+        <location filename="DataForm.cpp" line="5772"/>
+        <location filename="DataForm.cpp" line="6046"/>
         <source>Consume raw ID</source>
         <translation>ID расхода материалов и сырья</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="5744"/>
+        <location filename="DataForm.cpp" line="5804"/>
+        <source>Division-Employee-ID</source>
+        <translation>Подразделение-Сотрудник</translation>
+    </message>
+    <message>
+        <location filename="DataForm.cpp" line="5804"/>
+        <source>Division ID</source>
+        <translation>ID подразделения</translation>
+    </message>
+    <message>
+        <location filename="DataForm.cpp" line="5804"/>
+        <source>Is contract?</source>
+        <translation>Контрактник?</translation>
+    </message>
+    <message>
+        <location filename="DataForm.cpp" line="5812"/>
         <source>Debiting account number</source>
         <translation>Дебитовый счет</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="5745"/>
+        <location filename="DataForm.cpp" line="5813"/>
         <source>Crediting account number</source>
         <translation>Кредитовый счет</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="5745"/>
+        <location filename="DataForm.cpp" line="5813"/>
         <source>Debiting account ID</source>
         <translation>ID дебитового счета</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="5745"/>
+        <location filename="DataForm.cpp" line="5813"/>
         <source>Crediting account ID</source>
         <translation>ID кредитового счета</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="5753"/>
-        <location filename="DataForm.cpp" line="6172"/>
+        <location filename="DataForm.cpp" line="5814"/>
+        <source>Description</source>
+        <translation>Описание</translation>
+    </message>
+    <message>
+        <location filename="DataForm.cpp" line="5822"/>
+        <location filename="DataForm.cpp" line="6242"/>
         <source>Operation</source>
         <translation>Операция</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="5753"/>
+        <location filename="DataForm.cpp" line="5822"/>
         <source>Debit</source>
         <translation>Дебит</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="5754"/>
+        <location filename="DataForm.cpp" line="5823"/>
         <source>Credit</source>
         <translation>Кредит</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="5762"/>
+        <location filename="DataForm.cpp" line="5831"/>
         <source>Inventorization date</source>
         <translation>Дата инвентаризации</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="5775"/>
+        <location filename="DataForm.cpp" line="5844"/>
         <source>Inventorization ID</source>
         <translation>ID инвентаризации</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="5787"/>
-        <location filename="DataForm.cpp" line="6181"/>
+        <location filename="DataForm.cpp" line="5856"/>
+        <location filename="DataForm.cpp" line="6251"/>
         <source>Currnecy name</source>
         <translation>Название валюты</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="5788"/>
-        <location filename="DataForm.cpp" line="5799"/>
-        <location filename="DataForm.cpp" line="5935"/>
+        <location filename="DataForm.cpp" line="5857"/>
+        <location filename="DataForm.cpp" line="5868"/>
+        <location filename="DataForm.cpp" line="6005"/>
         <source>Measure ID</source>
         <translation>ID меры</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="5798"/>
+        <location filename="DataForm.cpp" line="5867"/>
+        <location filename="DataForm.cpp" line="6324"/>
         <source>User phone</source>
         <translation>Телефон</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="5826"/>
-        <location filename="DataForm.cpp" line="5917"/>
+        <location filename="DataForm.cpp" line="5895"/>
+        <location filename="DataForm.cpp" line="5987"/>
         <source>Is outdated?</source>
         <translation>Устарело?</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="5858"/>
+        <location filename="DataForm.cpp" line="5927"/>
         <source>Order raw date</source>
         <translation>Дата заказа материалов и сырья</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="5859"/>
+        <location filename="DataForm.cpp" line="5928"/>
         <source>Purveyor name</source>
         <translation>Имя поставщика</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="5859"/>
+        <location filename="DataForm.cpp" line="5928"/>
         <source>Purveyor surname</source>
         <translation>Фамилия поставщика</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="5859"/>
+        <location filename="DataForm.cpp" line="5928"/>
         <source>Purveyor phone</source>
         <translation>Телефон поставщика</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="5860"/>
+        <location filename="DataForm.cpp" line="5929"/>
         <source>Purveyor company name</source>
         <translation>Компания поставщика</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="5871"/>
+        <location filename="DataForm.cpp" line="5940"/>
         <source>Order raw ID</source>
         <translation>ID заказа материалов и сырья</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="5882"/>
+        <location filename="DataForm.cpp" line="5951"/>
         <source>Condition</source>
         <translation>Условие</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="5935"/>
+        <location filename="DataForm.cpp" line="5967"/>
+        <source>Client Phone</source>
+        <translation>Номер клиента</translation>
+    </message>
+    <message>
+        <location filename="DataForm.cpp" line="6005"/>
         <source>Product type ID</source>
         <translation>ID типа продуктов</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="5943"/>
+        <location filename="DataForm.cpp" line="6013"/>
         <source>Production Date</source>
         <translation>Дата начала</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="5943"/>
+        <location filename="DataForm.cpp" line="6013"/>
         <source>Expiry Date</source>
         <translation>Дата окончания</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="5943"/>
+        <location filename="DataForm.cpp" line="6013"/>
         <source>Session start</source>
         <translation>Старт сессии</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="5944"/>
+        <location filename="DataForm.cpp" line="6014"/>
         <source>Session end</source>
         <translation>Конец сессии</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="5952"/>
+        <location filename="DataForm.cpp" line="6022"/>
         <source>Production ID</source>
         <translation>ID производства</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="5998"/>
+        <location filename="DataForm.cpp" line="6068"/>
         <source>Production plan ID</source>
         <translation>ID производственного плана</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="6021"/>
-        <location filename="DataForm.cpp" line="6245"/>
+        <location filename="DataForm.cpp" line="6091"/>
+        <location filename="DataForm.cpp" line="6315"/>
         <source>Salary ID</source>
         <translation>ID зарплаты</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="6040"/>
-        <location filename="DataForm.cpp" line="6064"/>
+        <location filename="DataForm.cpp" line="6110"/>
+        <location filename="DataForm.cpp" line="6134"/>
         <source>Receipt date</source>
         <translation>Дата оприходования продуктов</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="6053"/>
+        <location filename="DataForm.cpp" line="6123"/>
         <source>Receipt ID</source>
         <translation>ID оприходования продуктов</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="6077"/>
+        <location filename="DataForm.cpp" line="6147"/>
         <source>Receipt raw ID</source>
         <translation>Оприходование сырья</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="6087"/>
+        <location filename="DataForm.cpp" line="6157"/>
         <source>User 1 name</source>
         <translation>Имя пользователя 1</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="6087"/>
+        <location filename="DataForm.cpp" line="6157"/>
         <source>User 1 surname</source>
         <translation>Фамилия пользователя 1</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="6087"/>
+        <location filename="DataForm.cpp" line="6157"/>
         <source>User 1 Phone</source>
         <translation>Телефон пользователя 1</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="6088"/>
+        <location filename="DataForm.cpp" line="6158"/>
         <source>Relation type name</source>
         <translation>Название зависимости</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="6088"/>
+        <location filename="DataForm.cpp" line="6158"/>
         <source>User 2 name</source>
         <translation>Имя пользователя 2</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="6088"/>
+        <location filename="DataForm.cpp" line="6158"/>
         <source>User 2 surname</source>
         <translation>Фамилия пользователя 2</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="6089"/>
+        <location filename="DataForm.cpp" line="6159"/>
         <source>User 1</source>
         <translation>Пользователь 1</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="6089"/>
+        <location filename="DataForm.cpp" line="6159"/>
         <source>User 2</source>
         <translation>Пользователь 2</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="6089"/>
+        <location filename="DataForm.cpp" line="6159"/>
         <source>Relation type</source>
         <translation>Тип зависимостей</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="6089"/>
+        <location filename="DataForm.cpp" line="6159"/>
         <source>User 2 Phone</source>
         <translation>Телефон пользователя 2</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="6105"/>
+        <location filename="DataForm.cpp" line="6175"/>
         <source>Return date</source>
         <translation>Дата возврата</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="6118"/>
+        <location filename="DataForm.cpp" line="6188"/>
         <source>Return ID</source>
         <translation>ID возврата</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="6156"/>
+        <location filename="DataForm.cpp" line="6226"/>
         <source>Salary type name</source>
         <translation>Название типа зарплаты</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="6156"/>
+        <location filename="DataForm.cpp" line="6226"/>
         <source>Salary type ID</source>
         <translation>ID типа зарплаты</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="6156"/>
+        <location filename="DataForm.cpp" line="6226"/>
         <source>Is bonus?</source>
         <translation>Бонус?</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="6191"/>
+        <location filename="DataForm.cpp" line="6261"/>
         <source>Specification ID</source>
         <translation>ID спецификация</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="6211"/>
+        <location filename="DataForm.cpp" line="6281"/>
         <source>Spoilage ID</source>
         <translation>ID брака</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="6233"/>
+        <location filename="DataForm.cpp" line="6303"/>
         <source>Parent account ID</source>
         <translation>ID счета</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="6233"/>
+        <location filename="DataForm.cpp" line="6303"/>
         <source>Parent account Number</source>
         <translation>Номер счета</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="6245"/>
+        <location filename="DataForm.cpp" line="6315"/>
         <source>Worked time</source>
         <translation>Количество вып. работы</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="6253"/>
+        <location filename="DataForm.cpp" line="6323"/>
         <source>Transportation date</source>
         <translation>Дата транспортировки</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="6266"/>
+        <location filename="DataForm.cpp" line="6325"/>
+        <source>Userposition</source>
+        <translation>Должность</translation>
+    </message>
+    <message>
+        <location filename="DataForm.cpp" line="6336"/>
         <source>Transport ID</source>
         <translation>ID транспорта</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="6296"/>
-        <location filename="DataForm.cpp" line="6319"/>
+        <location filename="DataForm.cpp" line="6366"/>
+        <location filename="DataForm.cpp" line="6389"/>
         <source>Write-off date</source>
         <translation>Дата списания</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="6308"/>
+        <location filename="DataForm.cpp" line="6378"/>
         <source>Write-off ID</source>
         <translation>ID списания</translation>
     </message>
     <message>
-        <location filename="DataForm.cpp" line="6332"/>
+        <location filename="DataForm.cpp" line="6402"/>
         <source>Write-off raw ID</source>
         <translation>ID списание сырья</translation>
+    </message>
+    <message>
+        <location filename="OrmasAdmin.cpp" line="28"/>
+        <location filename="OrmasAdmin.cpp" line="35"/>
+        <source>Error</source>
+        <translation>Ошибка</translation>
+    </message>
+    <message>
+        <location filename="OrmasAdmin.cpp" line="29"/>
+        <source>DB credentiials are wrong!</source>
+        <translation>Невозможно подключится к БД!</translation>
+    </message>
+    <message>
+        <location filename="OrmasAdmin.cpp" line="30"/>
+        <location filename="OrmasAdmin.cpp" line="37"/>
+        <source>Ok</source>
+        <translation>Ок</translation>
+    </message>
+    <message>
+        <location filename="OrmasAdmin.cpp" line="36"/>
+        <source>Cannot connect to DB!</source>
+        <translation>Невозможно подключится к БД!</translation>
+    </message>
+</context>
+<context>
+    <name>ReworkRaw</name>
+    <message>
+        <location filename="ReworkRawDlg.ui" line="14"/>
+        <source>Rework raw</source>
+        <translation>Переработка сырья</translation>
+    </message>
+    <message>
+        <location filename="ReworkRawDlg.ui" line="53"/>
+        <source>Create</source>
+        <translation>Создать</translation>
+    </message>
+    <message>
+        <location filename="ReworkRawDlg.ui" line="60"/>
+        <source>Cancel</source>
+        <translation>Отмена</translation>
+    </message>
+    <message>
+        <location filename="ReworkRawDlg.ui" line="69"/>
+        <source>Select product</source>
+        <translation>Выберите продукт</translation>
+    </message>
+    <message>
+        <location filename="ReworkRawDlg.ui" line="132"/>
+        <source>Product name:</source>
+        <translation>Название продукта:</translation>
+    </message>
+    <message>
+        <location filename="ReworkRawDlg.ui" line="161"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;For example: 100&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>Например: 100</translation>
+    </message>
+    <message>
+        <location filename="ReworkRawDlg.ui" line="174"/>
+        <source>Count:</source>
+        <translation>Количество:</translation>
+    </message>
+    <message>
+        <location filename="ReworkRawDlg.ui" line="181"/>
+        <source>Measure:</source>
+        <translation>Меры:</translation>
+    </message>
+    <message>
+        <location filename="ReworkRawDlg.ui" line="207"/>
+        <source>Volume:</source>
+        <translation>Объем/Количество:</translation>
+    </message>
+</context>
+<context>
+    <name>ReworkRawDlg</name>
+    <message>
+        <location filename="ReworkRawDlg.cpp" line="60"/>
+        <location filename="ReworkRawDlg.cpp" line="103"/>
+        <location filename="ReworkRawDlg.cpp" line="114"/>
+        <location filename="ReworkRawDlg.cpp" line="124"/>
+        <location filename="ReworkRawDlg.cpp" line="136"/>
+        <location filename="ReworkRawDlg.cpp" line="145"/>
+        <location filename="ReworkRawDlg.cpp" line="186"/>
+        <location filename="ReworkRawDlg.cpp" line="202"/>
+        <location filename="ReworkRawDlg.cpp" line="234"/>
+        <source>Warning</source>
+        <translation>Ошибка</translation>
+    </message>
+    <message>
+        <location filename="ReworkRawDlg.cpp" line="61"/>
+        <source>Cannot rework this raw, because cannot find it in specification</source>
+        <translation>Невозможно обработать это сыре, так как отсутствует спецификация</translation>
+    </message>
+    <message>
+        <location filename="ReworkRawDlg.cpp" line="62"/>
+        <location filename="ReworkRawDlg.cpp" line="105"/>
+        <location filename="ReworkRawDlg.cpp" line="116"/>
+        <location filename="ReworkRawDlg.cpp" line="126"/>
+        <location filename="ReworkRawDlg.cpp" line="138"/>
+        <location filename="ReworkRawDlg.cpp" line="147"/>
+        <location filename="ReworkRawDlg.cpp" line="188"/>
+        <location filename="ReworkRawDlg.cpp" line="204"/>
+        <location filename="ReworkRawDlg.cpp" line="236"/>
+        <source>Ok</source>
+        <translation>Ок</translation>
+    </message>
+    <message>
+        <location filename="ReworkRawDlg.cpp" line="115"/>
+        <source>Cannot rework this raw, because specification is wrong!</source>
+        <translation>Невозможно обработать это сыре, так как  спецификация не действительна!</translation>
+    </message>
+    <message>
+        <location filename="ReworkRawDlg.cpp" line="146"/>
+        <source>Reworking the raw is successfully ended!</source>
+        <translation>Переработка сырья успешно завершено!</translation>
+    </message>
+    <message>
+        <location filename="ReworkRawDlg.cpp" line="170"/>
+        <source>Loading...</source>
+        <translation>Загрузка...</translation>
+    </message>
+    <message>
+        <location filename="ReworkRawDlg.cpp" line="173"/>
+        <source>Products</source>
+        <translation>Продукты</translation>
+    </message>
+    <message>
+        <location filename="ReworkRawDlg.cpp" line="184"/>
+        <source>Sorry could not find product type with &quot;Raw&quot; code!</source>
+        <translation>Извините, не можем найти продукт с кодом &quot;Raw&quot;!</translation>
+    </message>
+    <message>
+        <location filename="ReworkRawDlg.cpp" line="200"/>
+        <source>Sorry could not find product with &quot;Raw&quot; code!</source>
+        <translation>Извините, не можем найти продукт с кодом &quot;Raw&quot;!</translation>
+    </message>
+    <message>
+        <location filename="ReworkRawDlg.cpp" line="226"/>
+        <source>All products are shown</source>
+        <translation>Все продукты</translation>
+    </message>
+    <message>
+        <location filename="ReworkRawDlg.cpp" line="232"/>
+        <source>End with error!</source>
+        <translation>Завершено с ошибкой!</translation>
     </message>
 </context>
 </TS>

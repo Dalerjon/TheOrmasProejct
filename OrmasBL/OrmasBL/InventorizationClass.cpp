@@ -274,6 +274,8 @@ namespace BusinessLayer
 		int cID, std::string& errorMessage)
 	{
 		Inventorization inventorization;
+		inventorization.Clear();
+		errorMessage.clear();
 		inventorization.SetEmployeeID(eID);
 		inventorization.SetDate(iDate);
 		inventorization.SetStockEmployeeID(seID);
@@ -295,6 +297,8 @@ namespace BusinessLayer
 	bool Inventorization::IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
 		Inventorization inventorization;
+		inventorization.Clear();
+		errorMessage.clear();
 		inventorization.SetEmployeeID(employeeID);
 		inventorization.SetDate(date);
 		inventorization.SetStockEmployeeID(stockEmployeeID);

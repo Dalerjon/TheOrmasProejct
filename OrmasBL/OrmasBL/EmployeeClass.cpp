@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "EmployeeClass.h"
 #include <boost/algorithm/string.hpp>
+#include "CompanyEmployeeRelationClass.h"
+#include "CompanyClass.h"
 
 namespace BusinessLayer{
 	Employee::Employee(DataLayer::employeesCollection cCollection)
@@ -78,7 +80,7 @@ namespace BusinessLayer{
 		hireDate = eHireDate;
 		if (0 != id && ormasDal.CreateUser(id, email, name, surname, phone, address, roleID, password, activated, errorMessage))
 		{
-			if (ormasDal.CreateEmployee(userID, positionID, birthDate, hireDate, errorMessage))
+			if (ormasDal.CreateEmployee(userID, positionID, birthDate, hireDate, errorMessage) && this->CreateCompanyEmployeeRelation(ormasDal, errorMessage))
 			{
 				if (CreateBalance(ormasDal, errorMessage))
 					return true;
@@ -100,7 +102,7 @@ namespace BusinessLayer{
 		userID = id;
 		if (0 != id && ormasDal.CreateUser(id, email, name, surname, phone, address, roleID, password, activated, errorMessage))
 		{
-			if (ormasDal.CreateEmployee(userID, positionID, birthDate, hireDate, errorMessage))
+			if (ormasDal.CreateEmployee(userID, positionID, birthDate, hireDate, errorMessage) && this->CreateCompanyEmployeeRelation(ormasDal, errorMessage))
 			{
 				if (CreateBalance(ormasDal, errorMessage))
 					return true;
@@ -322,6 +324,8 @@ namespace BusinessLayer{
 		int uRoleID, std::string eBirthDate, std::string& errorMessage)
 	{
 		Employee employee;
+		employee.Clear();
+		errorMessage.clear();
 		employee.SetName(uName);
 		employee.SetSurname(uSurname);
 		employee.SetPhone(uPhone);
@@ -342,6 +346,8 @@ namespace BusinessLayer{
 	bool Employee::IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
 		Employee employee;
+		employee.Clear();
+		errorMessage.clear();
 		employee.SetName(name);
 		employee.SetSurname(surname);
 		employee.SetPhone(phone);
@@ -366,4 +372,28 @@ namespace BusinessLayer{
 			return user.GetPhone();
 		return 0;
 	}
+
+	bool Employee::CreateDivisionEmployeeRelation(DataLayer::OrmasDal& ormasDal, DivisionEmployeeRelation deRelation, std::string& errorMessage)
+	{
+		return deRelation.CreateDivisionEmployeeRelation(ormasDal, errorMessage);
+	}
+
+	bool Employee::UpdateDivisionEmployeeRelation(DataLayer::OrmasDal& ormasDal, DivisionEmployeeRelation deRelation, std::string& errorMessage)
+	{
+		return deRelation.UpdateDivisionEmployeeRelation(ormasDal, errorMessage);
+	}
+
+	bool Employee::CreateCompanyEmployeeRelation(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
+	{
+		Company company;
+		int companyID = company.GetCompanyID(ormasDal, errorMessage);
+		if (0 == companyID)
+			return false;
+		CompanyEmployeeRelation ceRelation;
+		ceRelation.SetEmployeeID(id);
+		ceRelation.SetCompanyID(companyID);
+		return ceRelation.CreateCompanyEmployeeRelation(ormasDal, errorMessage);
+	}
+
+
 }

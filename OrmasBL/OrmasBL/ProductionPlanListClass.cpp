@@ -201,6 +201,8 @@ namespace BusinessLayer
 		int cID, std::string& errorMessage)
 	{
 		ProductionPlanList productionPlanList;
+		productionPlanList.Clear();
+		errorMessage.clear();
 		productionPlanList.SetProductionPlanID(ppID);
 		productionPlanList.SetProductID(pID);
 		productionPlanList.SetCount(pplCount);
@@ -221,6 +223,8 @@ namespace BusinessLayer
 	bool ProductionPlanList::IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
 		ProductionPlanList productionPlanList;
+		productionPlanList.Clear();
+		errorMessage.clear();
 		productionPlanList.SetProductionPlanID(productionPlanID);
 		productionPlanList.SetProductID(productID);
 		productionPlanList.SetCount(count);

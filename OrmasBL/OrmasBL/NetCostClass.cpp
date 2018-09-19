@@ -234,6 +234,8 @@ namespace BusinessLayer{
 		std::string& errorMessage)
 	{
 		NetCost netCost;
+		netCost.Clear();
+		errorMessage.clear();
 		netCost.SetDate(nDate);
 		netCost.SetValue(nValue);
 		netCost.SetCurrencyID(cID);
@@ -253,6 +255,8 @@ namespace BusinessLayer{
 	bool NetCost::IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
 		NetCost netCost;
+		netCost.Clear();
+		errorMessage.clear();
 		netCost.SetDate(date);
 		netCost.SetValue(value);
 		netCost.SetCurrencyID(currencyID);

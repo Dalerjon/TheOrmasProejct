@@ -190,6 +190,8 @@ namespace BusinessLayer
 	bool ProductType::IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string pTypeName, std::string pTypeShortName, std::string pTypeCode, std::string& errorMessage)
 	{
 		ProductType productType;
+		productType.Clear();
+		errorMessage.clear();
 		productType.SetName(pTypeName);
 		productType.SetShortName(pTypeShortName);
 		productType.SetCode(pTypeCode);
@@ -208,6 +210,8 @@ namespace BusinessLayer
 	bool ProductType::IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
 		ProductType productType;
+		productType.Clear();
+		errorMessage.clear();
 		productType.SetName(name);
 		productType.SetShortName(shortName);
 		productType.SetCode(code);

@@ -201,6 +201,8 @@ namespace BusinessLayer
 		int cID, std::string& errorMessage)
 	{
 		WriteOffRawList writeOffRawList;
+		writeOffRawList.Clear();
+		errorMessage.clear();
 		writeOffRawList.SetWriteOffRawID(wID);
 		writeOffRawList.SetProductID(pID);
 		writeOffRawList.SetCount(wlCount);
@@ -221,6 +223,8 @@ namespace BusinessLayer
 	bool WriteOffRawList::IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
 		WriteOffRawList writeOffRawList;
+		writeOffRawList.Clear();
+		errorMessage.clear();
 		writeOffRawList.SetWriteOffRawID(writeOffRawID);
 		writeOffRawList.SetProductID(productID);
 		writeOffRawList.SetCount(count);

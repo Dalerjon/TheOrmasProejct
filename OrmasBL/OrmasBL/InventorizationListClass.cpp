@@ -201,6 +201,8 @@ namespace BusinessLayer
 		int cID, std::string& errorMessage)
 	{
 		InventorizationList inventorizationList;
+		inventorizationList.Clear();
+		errorMessage.clear();
 		inventorizationList.SetInventorizationID(iID);
 		inventorizationList.SetProductID(pID);
 		inventorizationList.SetCount(ilCount);
@@ -221,6 +223,8 @@ namespace BusinessLayer
 	bool InventorizationList::IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
 		InventorizationList inventorizationList;
+		inventorizationList.Clear();
+		errorMessage.clear();
 		inventorizationList.SetInventorizationID(inventorizationID);
 		inventorizationList.SetProductID(productID);
 		inventorizationList.SetCount(count);

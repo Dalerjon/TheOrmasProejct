@@ -6,6 +6,7 @@
 #include <typeinfo>
 #include <math.h>
 #include <algorithm>
+#include <codecvt>
 namespace BusinessLayer{
 	
 	OrmasBL::OrmasBL()
@@ -4097,7 +4098,8 @@ namespace BusinessLayer{
 	{
 		try
 		{
-			if (0 != payment->GetUserID() && 0.0 != payment->GetValue() && 0 != payment->GetCurrencyID() && !payment->GetDate().empty())
+			if (0 != payment->GetUserID() && 0.0 != payment->GetValue() && 0 != payment->GetCurrencyID() && !payment->GetDate().empty()
+				&& 0 != payment->GetStatusID())
 			{
 				return payment->CreatePayment(ormasDal, errorMessage);
 			}
@@ -4117,7 +4119,8 @@ namespace BusinessLayer{
 	{
 		try
 		{
-			if (0 != payment->GetUserID() && 0.0 != payment->GetValue() && 0 != payment->GetCurrencyID() && !payment->GetDate().empty())
+			if (0 != payment->GetUserID() && 0.0 != payment->GetValue() && 0 != payment->GetCurrencyID() && !payment->GetDate().empty()
+				&& 0 != payment->GetStatusID())
 			{
 				return payment->UpdatePayment(ormasDal, errorMessage);
 			}
@@ -6710,9 +6713,9 @@ namespace BusinessLayer{
 	{
 		try
 		{
-			if (!transport->GetDate().empty() && 0 != transport->GetEmployeeID() && 0 != transport->GetCount()
+			if (!transport->GetDate().empty() && 0 != transport->GetUserID() && 0 != transport->GetCount()
 				&& 0 != transport->GetSum() && 0 != transport->GetStatusID() && 0 != transport->GetCurrencyID()
-				&& 0 != transport->GetStockEmployeeID())
+				&& 0 != transport->GetEmployeeID())
 			{
 				double roundSum = 0;
 				Currency *cur = new Currency();
@@ -6744,9 +6747,9 @@ namespace BusinessLayer{
 	{
 		try
 		{
-			if (!transport->GetDate().empty() && 0 != transport->GetEmployeeID() && 0 != transport->GetCount()
+			if (!transport->GetDate().empty() && 0 != transport->GetUserID() && 0 != transport->GetCount()
 				&& 0 != transport->GetSum() && 0 != transport->GetStatusID() && 0 != transport->GetCurrencyID()
-				&& 0 != transport->GetStockEmployeeID())
+				&& 0 != transport->GetEmployeeID())
 			{
 				double roundSum = 0;
 				Currency *cur = new Currency();
@@ -7288,8 +7291,6 @@ namespace BusinessLayer{
 	bool OrmasBL::CloseOfMonth(std::string fromDate, std::string tillDate)
 	{
 		std::string errorMessage = "";
-		//if (!NormalizationOfAccounts())
-		//	return false;
 		ormasDal.StartTransaction(errorMessage);
 		if (CalculateEmployeeSalary(fromDate, tillDate))
 		{
@@ -7677,6 +7678,7 @@ namespace BusinessLayer{
 			entry.SetValue(correctingValue);
 			entry.SetCreditingAccountID(account10730.GetID());
 			entry.SetDate(ormasDal.GetSystemDateTime());
+			entry.SetDescription(wstring_to_utf8(L"Коррекция счета 55010 при закрытии месяца"));
 			if (!entry.CreateEntry(ormasDal, errorMessage))
 				return false;
 		}
@@ -7688,6 +7690,7 @@ namespace BusinessLayer{
 			entry.SetValue(correctingValue * (-1));
 			entry.SetCreditingAccountID(acc55010);
 			entry.SetDate(ormasDal.GetSystemDateTime());
+			entry.SetDescription(wstring_to_utf8(L"Коррекция счета 55010 при закрытии месяца"));
 			if (!entry.CreateEntry(ormasDal, errorMessage))
 				return false;
 		}
@@ -7699,6 +7702,7 @@ namespace BusinessLayer{
 			entry.SetValue(correctingStockValue);
 			entry.SetCreditingAccountID(account55020.GetID());
 			entry.SetDate(ormasDal.GetSystemDateTime());
+			entry.SetDescription(wstring_to_utf8(L"Коррекция счета 55010 при закрытии месяца"));
 			if (!entry.CreateEntry(ormasDal, errorMessage))
 				return false;
 		}
@@ -7710,6 +7714,7 @@ namespace BusinessLayer{
 			entry.SetValue(correctingStockValue * (-1));
 			entry.SetCreditingAccountID(acc55010);
 			entry.SetDate(ormasDal.GetSystemDateTime());
+			entry.SetDescription(wstring_to_utf8(L"Коррекция счета 55010 при закрытии месяца"));
 			if (!entry.CreateEntry(ormasDal, errorMessage))
 				return false;
 		}
@@ -7993,6 +7998,7 @@ namespace BusinessLayer{
 						entry.SetValue(item.GetCurrentBalance());
 						entry.SetCreditingAccountID(item.GetID());
 						entry.SetDate(ormasDal.GetSystemDateTime());
+						entry.SetDescription(wstring_to_utf8(L"Закрытие счетов на конец месяца"));
 						if (!entry.CreateEntry(ormasDal, errorMessage))
 							return false;
 					}
@@ -8004,6 +8010,7 @@ namespace BusinessLayer{
 						entry.SetValue(item.GetCurrentBalance() * (-1));
 						entry.SetCreditingAccountID(acc70000);
 						entry.SetDate(ormasDal.GetSystemDateTime());
+						entry.SetDescription(wstring_to_utf8(L"Закрытие счетов на конец месяца"));
 						if (!entry.CreateEntry(ormasDal, errorMessage))
 							return false;
 					}
@@ -8066,6 +8073,7 @@ namespace BusinessLayer{
 			entry.SetValue(correctingValue);
 			entry.SetCreditingAccountID(account33210.GetID());
 			entry.SetDate(ormasDal.GetSystemDateTime());
+			entry.SetDescription(wstring_to_utf8(L"Операция закрытие счета 70000"));
 			if (!entry.CreateEntry(ormasDal, errorMessage))
 				return false;
 		}
@@ -8077,6 +8085,7 @@ namespace BusinessLayer{
 			entry.SetValue(correctingValue * (-1));
 			entry.SetCreditingAccountID(account70000.GetID());
 			entry.SetDate(ormasDal.GetSystemDateTime());
+			entry.SetDescription(wstring_to_utf8(L"Операция закрытие счета 70000"));
 			if (!entry.CreateEntry(ormasDal, errorMessage))
 				return false;
 		}
@@ -8087,39 +8096,9 @@ namespace BusinessLayer{
 		return true;
 	}
 
-	/*bool OrmasBL::NormalizationOfAccounts()
+	std::string OrmasBL::wstring_to_utf8(const std::wstring& str)
 	{
-		std::string errorMessage ="";
-		std::vector<Account> vecForAccount;
-		std::vector<DataLayer::accountsCollection> accCollection;
-		accCollection = ormasDal.GetAccounts(errorMessage);
-		if (!accCollection.empty()){
-			for (auto data : accCollection)
-			{
-				vecForAccount.push_back(Account(data));
-			}
-		}
-		std::string parentNumber = "";
-		Account acc;
-		for each (auto item in vecForAccount)
-		{
-			if (0 == item.GetNumber().substr(3, 2).compare("00"))
-			{
-				parentNumber = item.GetNumber();
-			}
-			else
-			{
-				if (0 == item.GetNumber().substr(0, 3).compare(parentNumber.substr(0, 3)))
-				{
-					acc.Clear();
-					if (!acc.GetAccountByNumber(ormasDal, parentNumber, errorMessage))
-						return false;
-					acc.SetCurrentBalance(acc.GetCurrentBalance() + item.GetCurrentBalance());
-					if (!acc.UpdateAccount(ormasDal, errorMessage))
-						return false;
-				}
-			}
-		}
-		return true;
-	}*/
+		std::wstring_convert<std::codecvt_utf8<wchar_t>> myconv;
+		return myconv.to_bytes(str);
+	}
 }

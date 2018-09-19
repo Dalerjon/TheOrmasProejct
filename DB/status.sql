@@ -48,7 +48,7 @@ INSERT INTO "OrmasSchema".status(
     VALUES ((SELECT nextval('"OrmasSchema".id_seq')), '0016', 'INVENTORIZED', 'Inventorization of stock');
 INSERT INTO "OrmasSchema".status(
             status_id, status_code, status_name, comment)
-    VALUES ((SELECT nextval('"OrmasSchema".id_seq')), '0017', 'STOKEED', 'Products are stoked');
+    VALUES ((SELECT nextval('"OrmasSchema".id_seq')), '0017', 'STOKED', 'Products are stoked');
 INSERT INTO "OrmasSchema".status(
             status_id, status_code, status_name, comment)
     VALUES ((SELECT nextval('"OrmasSchema".id_seq')), '0018', 'OPEN', 'Account status is opened');
@@ -61,3 +61,6 @@ INSERT INTO "OrmasSchema".status(
 INSERT INTO "OrmasSchema".status(
             status_id, status_code, status_name, comment)
     VALUES ((SELECT nextval('"OrmasSchema".id_seq')), '0021', 'SPOILAGE', 'Product is spoilage');
+INSERT INTO "OrmasSchema".status(
+            status_id, status_code, status_name, comment)
+    VALUES ((SELECT nextval('"OrmasSchema".id_seq')), '0021', 'TO PAY', 'To pay');

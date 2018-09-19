@@ -25,6 +25,7 @@
 #include "SubaccountClass.h"
 #include "CompanyAccountRelationClass.h"
 #include "NetCostClass.h"
+#include <codecvt>
 
 namespace BusinessLayer
 {
@@ -234,6 +235,8 @@ namespace BusinessLayer
 	bool Stock::IsDuplicate(DataLayer::OrmasDal& ormasDal, int pID, std::string& errorMessage)
 	{
 		Stock stock;
+		stock.Clear();
+		errorMessage.clear();
 		stock.SetProductID(pID);
 		std::string filter = stock.GenerateFilter(ormasDal);
 		std::vector<DataLayer::stockViewCollection> stockVector = ormasDal.GetStock(errorMessage, filter);
@@ -250,6 +253,8 @@ namespace BusinessLayer
 	bool Stock::IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
 		Stock stock;
+		stock.Clear();
+		errorMessage.clear();
 		stock.SetProductID(productID);
 		std::string filter = stock.GenerateFilter(ormasDal);
 		std::vector<DataLayer::stockViewCollection> stockVector = ormasDal.GetStock(errorMessage, filter);
@@ -355,7 +360,8 @@ namespace BusinessLayer
 		}
 
 		CompanyAccountRelation caRel;
-		int debAccID = caRel.GetAccountIDByCompanyID(ormasDal, companyID, "55010", errorMessage);
+		//int debAccID = caRel.GetAccountIDByCompanyID(ormasDal, companyID, "55010", errorMessage);
+		int debAccID = caRel.GetAccountIDByCompanyID(ormasDal, companyID, "10742", errorMessage);
 		int credAccID = caRel.GetAccountIDByCompanyID(ormasDal, companyID, "10740", errorMessage);
 		if (0 == debAccID || 0 == credAccID)
 		{
@@ -368,7 +374,6 @@ namespace BusinessLayer
 			ormasDal.CancelTransaction(errorMessage);
 			return false;
 		}
-		ormasDal.CommitTransaction(errorMessage);
 		return true;
 	}
 
@@ -464,7 +469,7 @@ namespace BusinessLayer
 		}
 
 		CompanyAccountRelation caRel;
-		int debAccID = caRel.GetAccountIDByCompanyID(ormasDal, companyID, "55010", errorMessage);
+		int debAccID = caRel.GetAccountIDByCompanyID(ormasDal, companyID, "10742", errorMessage);
 		int credAccID = caRel.GetAccountIDByCompanyID(ormasDal, companyID, "10740", errorMessage);
 		if (0 == debAccID || 0 == credAccID)
 		{
@@ -477,7 +482,7 @@ namespace BusinessLayer
 			ormasDal.CancelTransaction(errorMessage);
 			return false;
 		}
-		ormasDal.CommitTransaction(errorMessage);
+		
 		return true;
 	}
 
@@ -579,7 +584,6 @@ namespace BusinessLayer
 			ormasDal.CancelTransaction(errorMessage);
 			return false;
 		}
-		ormasDal.CommitTransaction(errorMessage);
 		return true;
 	}
 
@@ -680,7 +684,6 @@ namespace BusinessLayer
 			ormasDal.CancelTransaction(errorMessage);
 			return false;
 		}
-		ormasDal.CommitTransaction(errorMessage);
 		return true;
 	}
 
@@ -783,7 +786,6 @@ namespace BusinessLayer
 			ormasDal.CancelTransaction(errorMessage);
 			return false;
 		}
-		ormasDal.CommitTransaction(errorMessage);
 		return true;
 	}
 
@@ -886,7 +888,6 @@ namespace BusinessLayer
 			ormasDal.CancelTransaction(errorMessage);
 			return false;
 		}
-		ormasDal.CommitTransaction(errorMessage);
 		return true;
 	}
 
@@ -989,7 +990,6 @@ namespace BusinessLayer
 			ormasDal.CancelTransaction(errorMessage);
 			return false;
 		}
-		ormasDal.CommitTransaction(errorMessage);
 		return true;
 	}
 
@@ -1092,7 +1092,6 @@ namespace BusinessLayer
 			ormasDal.CancelTransaction(errorMessage);
 			return false;
 		}
-		ormasDal.CommitTransaction(errorMessage);
 		return true;
 	}
 
@@ -1189,7 +1188,6 @@ namespace BusinessLayer
 			ormasDal.CancelTransaction(errorMessage);
 			return false;
 		}
-		ormasDal.CommitTransaction(errorMessage);
 		return true;
 	}
 
@@ -1286,7 +1284,6 @@ namespace BusinessLayer
 			ormasDal.CancelTransaction(errorMessage);
 			return false;
 		}
-		ormasDal.CommitTransaction(errorMessage);
 		return true;
 	}
 
@@ -1389,7 +1386,6 @@ namespace BusinessLayer
 			ormasDal.CancelTransaction(errorMessage);
 			return false;
 		}
-		ormasDal.CommitTransaction(errorMessage);
 		return true;
 	}
 
@@ -1492,7 +1488,6 @@ namespace BusinessLayer
 			ormasDal.CancelTransaction(errorMessage);
 			return false;
 		}
-		ormasDal.CommitTransaction(errorMessage);
 		return true;
 	}
 
@@ -1595,7 +1590,6 @@ namespace BusinessLayer
 			ormasDal.CancelTransaction(errorMessage);
 			return false;
 		}
-		ormasDal.CommitTransaction(errorMessage);
 		return true;
 	}
 
@@ -1697,7 +1691,6 @@ namespace BusinessLayer
 			ormasDal.CancelTransaction(errorMessage);
 			return false;
 		}
-		ormasDal.CommitTransaction(errorMessage);
 		return true;
 	}
 
@@ -1799,7 +1792,6 @@ namespace BusinessLayer
 			ormasDal.CancelTransaction(errorMessage);
 			return false;
 		}
-		ormasDal.CommitTransaction(errorMessage);
 		return true;
 	}
 
@@ -1901,7 +1893,6 @@ namespace BusinessLayer
 			ormasDal.CancelTransaction(errorMessage);
 			return false;
 		}
-		ormasDal.CommitTransaction(errorMessage);
 		return true;
 	}
 
@@ -1956,6 +1947,7 @@ namespace BusinessLayer
 		entry.SetDebitingAccountID(debAccID);
 		entry.SetValue(currentSum);
 		entry.SetCreditingAccountID(credAccID);
+		entry.SetDescription(wstring_to_utf8(L"Складская операция"));
 		if (!entry.CreateEntry(ormasDal, errorMessage))
 		{
 			return false;
@@ -1969,6 +1961,7 @@ namespace BusinessLayer
 		entry.SetDebitingAccountID(credAccID);
 		entry.SetValue(previousSum);
 		entry.SetCreditingAccountID(debAccID);
+		entry.SetDescription(wstring_to_utf8(L"Складская операция"));
 		if (!entry.CreateEntry(ormasDal, errorMessage, true))
 		{
 			return false;
@@ -1977,10 +1970,17 @@ namespace BusinessLayer
 		entry.SetDebitingAccountID(debAccID);
 		entry.SetValue(currentSum);
 		entry.SetCreditingAccountID(credAccID);
+		entry.SetDescription(wstring_to_utf8(L"Складская операция"));
 		if (!entry.CreateEntry(ormasDal, errorMessage))
 		{
 			return false;
 		}
 		return true;
+	}
+
+	std::string Stock::wstring_to_utf8(const std::wstring& str)
+	{
+		std::wstring_convert<std::codecvt_utf8<wchar_t>> myconv;
+		return myconv.to_bytes(str);
 	}
 }

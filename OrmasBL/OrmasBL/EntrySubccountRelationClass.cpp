@@ -156,6 +156,8 @@ namespace BusinessLayer{
 	bool EntrySubaccountRelation::IsDuplicate(DataLayer::OrmasDal& ormasDal, int eID, int sID, std::string& errorMessage)
 	{
 		EntrySubaccountRelation aeRelation;
+		aeRelation.Clear();
+		errorMessage.clear();
 		aeRelation.SetSubaccountID(sID);
 		aeRelation.SetEntryID(eID);
 		std::string filter = aeRelation.GenerateFilter(ormasDal);
@@ -173,6 +175,8 @@ namespace BusinessLayer{
 	bool EntrySubaccountRelation::IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
 		EntrySubaccountRelation aeRelation;
+		aeRelation.Clear();
+		errorMessage.clear();
 		aeRelation.SetSubaccountID(subaccountID);
 		aeRelation.SetEntryID(entryID);
 		std::string filter = aeRelation.GenerateFilter(ormasDal);

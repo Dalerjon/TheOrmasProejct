@@ -204,6 +204,8 @@ namespace BusinessLayer{
 	bool AccountType::IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string aName, int aNumber, std::string& errorMessage)
 	{
 		AccountType accountType;
+		accountType.Clear();
+		errorMessage.clear();
 		accountType.SetName(aName);
 		accountType.SetNumber(aNumber);
 		std::string filter = accountType.GenerateFilter(ormasDal);
@@ -221,6 +223,8 @@ namespace BusinessLayer{
 	bool AccountType::IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
 		AccountType accountType;
+		accountType.Clear();
+		errorMessage.clear();
 		accountType.SetName(name);
 		accountType.SetNumber(number);
 		std::string filter = accountType.GenerateFilter(ormasDal);

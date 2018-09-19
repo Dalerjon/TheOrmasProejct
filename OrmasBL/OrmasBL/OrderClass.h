@@ -77,6 +77,9 @@ namespace BusinessLayer
 		double GetCurrentCount(DataLayer::OrmasDal& ormasDal, int oID, std::string& errorMessage);
 		bool CreateEntry(DataLayer::OrmasDal& ormasDal, int debAccID, double currentSum, int credAccID, std::string oExecDate, std::string& errorMessage);
 		bool CreateEntry(DataLayer::OrmasDal& ormasDal, int debAccID, double currentSum, int credAccID, double previousSum, std::string oExecDate, std::string& errorMessage);
+		bool ChangesAtTransport(DataLayer::OrmasDal& ormasDal, int oID, std::string& errorMessage);
+		bool ChangesAtTransport(DataLayer::OrmasDal& ormasDal, int oID, std::map<int, double> pProdCountMap, double pSum, std::string& errorMessage);
+		std::string wstring_to_utf8(const std::wstring& str);
 	};
 }
 #endif //ORDERCLASS_H

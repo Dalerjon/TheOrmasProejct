@@ -203,6 +203,8 @@ namespace BusinessLayer{
 	bool Jobsheet::IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string jDate, double jCount, int pID, int eID, std::string& errorMessage)
 	{
 		Jobsheet jobsheet;
+		jobsheet.Clear();
+		errorMessage.clear();
 		jobsheet.SetDate(jDate);
 		jobsheet.SetCount(jCount);
 		jobsheet.SetProductID(pID);
@@ -222,6 +224,8 @@ namespace BusinessLayer{
 	bool Jobsheet::IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
 		Jobsheet jobsheet;
+		jobsheet.Clear();
+		errorMessage.clear();
 		jobsheet.SetDate(date);
 		jobsheet.SetCount(count);
 		jobsheet.SetProductID(productID);

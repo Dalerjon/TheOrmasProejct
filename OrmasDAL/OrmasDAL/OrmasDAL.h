@@ -52,7 +52,7 @@ namespace DataLayer{
 		std::vector<consumeRawListViewCollection> GetConsumeRawList(std::string& errorMessage, std::string filter = std::string());
 		std::vector<consumeRawsViewCollection> GetConsumeRaws(std::string& errorMessage, std::string filter = std::string());
 		std::vector<currenciesCollection> GetCurrencies(std::string& errorMessage, std::string filter = std::string());
-		std::vector<divisionAccountCollection> GetDivisionAccount(std::string& errorMessage, std::string filter = std::string());
+		std::vector<divisionAccountViewCollection> GetDivisionAccount(std::string& errorMessage, std::string filter = std::string());
 		std::vector<divisionEmployeeCollection> GetDivisionEmployee(std::string& errorMessage, std::string filter = std::string());
 		std::vector<divisionsCollection> GetDivisions(std::string& errorMessage, std::string filter = std::string());
 		std::vector<employeesViewCollection> GetEmployees(std::string& errorMessage, std::string filter = std::string());
@@ -72,6 +72,7 @@ namespace DataLayer{
 		std::vector<orderRawListViewCollection> GetOrderRawList(std::string& errorMessage, std::string filter = std::string());
 		std::vector<orderRawsViewCollection> GetOrderRaws(std::string& errorMessage, std::string filter = std::string());
 		std::vector<paymentsViewCollection> GetPayments(std::string& errorMessage, std::string filter = std::string());
+		std::vector<paymentEmployeeCollection> GetPaymentEmployee(std::string& errorMessage, std::string filter = std::string());
 		std::vector<payslipsViewCollection> GetPayslips(std::string& errorMessage, std::string filter = std::string());
 		std::vector<payslipOrderCollection> GetPayslipOrder(std::string& errorMessage, std::string filter = std::string());
 		std::vector<percentRateCollection> GetPercentRate(std::string& errorMessage, std::string filter = std::string());
@@ -121,103 +122,213 @@ namespace DataLayer{
 		std::vector<writeOffRawsViewCollection> GetWriteOffRaws(std::string& errorMessage, std::string filter = std::string());
 		std::vector<writeOffRawListViewCollection> GetWriteOffRawList(std::string& errorMessage, std::string filter = std::string());
 
+		//overload view methods
+		std::vector<accessItemsCollection> GetAccessItems(int offset, std::string& errorMessage, std::string filter = std::string());
+		std::vector<accessesViewCollection> GetAccesses(int offset, std::string& errorMessage, std::string filter = std::string());
+		std::vector<accountTypeCollection> GetAccountType(int offset, std::string& errorMessage, std::string filter = std::string());
+		std::vector<accountHistoryCollection> GetAccountHistory(int offset, std::string& errorMessage, std::string filter = std::string());
+		std::vector<accountsCollection> GetAccounts(int offset, std::string& errorMessage, std::string filter = std::string());
+		std::vector<balancePaymentCollection> GetBalancePayment(int offset, std::string& errorMessage, std::string filter = std::string());
+		std::vector<balancePayslipCollection> GetBalancePayslip(int offset, std::string& errorMessage, std::string filter = std::string());
+		std::vector<balanceRefundCollection> GetBalanceRefund(int offset, std::string& errorMessage, std::string filter = std::string());
+		std::vector<balanceWithdrawalCollection> GetBalanceWithdrawal(int offset, std::string& errorMessage, std::string filter = std::string());
+		std::vector<balancesViewCollection> GetBalances(int offset, std::string& errorMessage, std::string filter = std::string());
+		std::vector<chartOfAccountsViewCollection> GetChartOfAccounts(int offset, std::string& errorMessage, std::string filter = std::string());
+		std::vector<clientsViewCollection> GetClients(int offset, std::string& errorMessage, std::string filter = std::string());
+		std::vector<companiesCollection> GetCompanies(int offset, std::string& errorMessage, std::string filter = std::string());
+		std::vector<companyEmployeeViewCollection> GetCompanyEmployee(int offset, std::string& errorMessage, std::string filter = std::string());
+		std::vector<companyAccountViewCollection> GetCompanyAccount(int offset, std::string& errorMessage, std::string filter = std::string());
+		std::vector<consumeProductListViewCollection> GetConsumeProductList(int offset, std::string& errorMessage, std::string filter = std::string());
+		std::vector<consumeProductsViewCollection> GetConsumeProducts(int offset, std::string& errorMessage, std::string filter = std::string());
+		std::vector<consumeRawListViewCollection> GetConsumeRawList(int offset, std::string& errorMessage, std::string filter = std::string());
+		std::vector<consumeRawsViewCollection> GetConsumeRaws(int offset, std::string& errorMessage, std::string filter = std::string());
+		std::vector<currenciesCollection> GetCurrencies(int offset, std::string& errorMessage, std::string filter = std::string());
+		std::vector<divisionAccountViewCollection> GetDivisionAccount(int offset, std::string& errorMessage, std::string filter = std::string());
+		std::vector<divisionEmployeeCollection> GetDivisionEmployee(int offset, std::string& errorMessage, std::string filter = std::string());
+		std::vector<divisionsCollection> GetDivisions(int offset, std::string& errorMessage, std::string filter = std::string());
+		std::vector<employeesViewCollection> GetEmployees(int offset, std::string& errorMessage, std::string filter = std::string());
+		std::vector<entriesViewCollection> GetEntries(int offset, std::string& errorMessage, std::string filter = std::string());
+		std::vector<entrySubaccountCollection> GetEntrySubaccount(int offset, std::string& errorMessage, std::string filter = std::string());
+		std::vector<financialReportCollection> GetFinancialReport(int offset, std::string& errorMessage, std::string filter = std::string());
+		std::vector<entryRoutingCollection> GetEntryRouting(int offset, std::string& errorMessage, std::string filter = std::string());
+		std::vector<inventorizationListViewCollection> GetInventorizationList(int offset, std::string& errorMessage, std::string filter = std::string());
+		std::vector<inventorizationsViewCollection> GetInventorizations(int offset, std::string& errorMessage, std::string filter = std::string());
+		std::vector<jobpriceViewCollection> GetJobprice(int offset, std::string& errorMessage, std::string filter = std::string());
+		std::vector<jobsheetViewCollection> GetJobsheet(int offset, std::string& errorMessage, std::string filter = std::string());
+		std::vector<locationsCollection> GetLocations(int offset, std::string& errorMessage, std::string filter = std::string());
+		std::vector<measuresCollection> GetMeasures(int offset, std::string& errorMessage, std::string filter = std::string());
+		std::vector<netCostViewCollection> GetNetCost(int offset, std::string& errorMessage, std::string filter = std::string());
+		std::vector<orderListViewCollection> GetOrderList(int offset, std::string& errorMessage, std::string filter = std::string());
+		std::vector<ordersViewCollection> GetOrders(int offset, std::string& errorMessage, std::string filter = std::string());
+		std::vector<orderRawListViewCollection> GetOrderRawList(int offset, std::string& errorMessage, std::string filter = std::string());
+		std::vector<orderRawsViewCollection> GetOrderRaws(int offset, std::string& errorMessage, std::string filter = std::string());
+		std::vector<paymentsViewCollection> GetPayments(int offset, std::string& errorMessage, std::string filter = std::string());
+		std::vector<paymentEmployeeCollection> GetPaymentEmployee(int offset, std::string& errorMessage, std::string filter = std::string());
+		std::vector<payslipsViewCollection> GetPayslips(int offset, std::string& errorMessage, std::string filter = std::string());
+		std::vector<payslipOrderCollection> GetPayslipOrder(int offset, std::string& errorMessage, std::string filter = std::string());
+		std::vector<percentRateCollection> GetPercentRate(int offset, std::string& errorMessage, std::string filter = std::string());
+		std::vector<photosCollection> GetPhotos(int offset, std::string& errorMessage, std::string filter = std::string());
+		std::vector<positionsCollection> GetPositions(int offset, std::string& errorMessage, std::string filter = std::string());
+		std::vector<pricesViewCollection> GetPrices(int offset, std::string& errorMessage, std::string filter = std::string());
+		std::vector<productTypeCollection> GetProductTypes(int offset, std::string& errorMessage, std::string filter = std::string());
+		std::vector<productionCollection> GetProduction(int offset, std::string& errorMessage, std::string filter = std::string());
+		std::vector<productionListViewCollection> GetProductionList(int offset, std::string& errorMessage, std::string filter = std::string());
+		std::vector<productionConsumeRawListViewCollection> GetProductionConsumeRawList(int offset, std::string& errorMessage, std::string filter = std::string());
+		std::vector<productionConsumeRawsViewCollection> GetProductionConsumeRaws(int offset, std::string& errorMessage, std::string filter = std::string());
+		std::vector<productionPlanViewCollection> GetProductionPlan(int offset, std::string& errorMessage, std::string filter = std::string());
+		std::vector<productionPlanListViewCollection> GetProductionPlanList(int offset, std::string& errorMessage, std::string filter = std::string());
+		std::vector<productionStockViewCollection> GetProductionStock(int offset, std::string& errorMessage, std::string filter = std::string());
+		std::vector<productsViewCollection> GetProducts(int offset, std::string& errorMessage, std::string filter = std::string());
+		std::vector<purveyorsViewCollection> GetPurveyors(int offset, std::string& errorMessage, std::string filter = std::string());
+		std::vector<receiptProductListViewCollection> GetReceiptProductList(int offset, std::string& errorMessage, std::string filter = std::string());
+		std::vector<receiptProductsViewCollection> GetReceiptProducts(int offset, std::string& errorMessage, std::string filter = std::string());
+		std::vector<receiptRawListViewCollection> GetReceiptRawList(int offset, std::string& errorMessage, std::string filter = std::string());
+		std::vector<receiptRawsViewCollection> GetReceiptRaws(int offset, std::string& errorMessage, std::string filter = std::string());
+		std::vector<refundsViewCollection> GetRefunds(int offset, std::string& errorMessage, std::string filter = std::string());
+		std::vector<relationTypeCollection> GetRelationType(int offset, std::string& errorMessage, std::string filter = std::string());
+		std::vector<relationsViewCollection> GetRelations(int offset, std::string& errorMessage, std::string filter = std::string());
+		std::vector<returnListViewCollection> GetReturnList(int offset, std::string& errorMessage, std::string filter = std::string());
+		std::vector<returnsViewCollection> GetReturns(int offset, std::string& errorMessage, std::string filter = std::string());
+		std::vector<rolesCollection> GetRoles(int offset, std::string& errorMessage, std::string filter = std::string());
+		std::vector<salariesViewCollection> GetSalaries(int offset, std::string& errorMessage, std::string filter = std::string());
+		std::vector<salaryTypeCollection> GetSalaryType(int offset, std::string& errorMessage, std::string filter = std::string());
+		std::vector<specificationListViewCollection> GetSpecificationList(int offset, std::string& errorMessage, std::string filter = std::string());
+		std::vector<specificationsViewCollection> GetSpecifications(int offset, std::string& errorMessage, std::string filter = std::string());
+		std::vector<spoilageListViewCollection> GetSpoilageList(int offset, std::string& errorMessage, std::string filter = std::string());
+		std::vector<spoilageViewCollection> GetSpoilage(int offset, std::string& errorMessage, std::string filter = std::string());
+		std::vector<stateCollection> GetState(int offset, std::string& errorMessage, std::string filter = std::string());
+		std::vector<statusCollection> GetStatus(int offset, std::string& errorMessage, std::string filter = std::string());
+		std::vector<statusRuleViewCollection> GetStatusRule(int offset, std::string& errorMessage, std::string filter = std::string());
+		std::vector<stockViewCollection> GetStock(int offset, std::string& errorMessage, std::string filter = std::string());
+		std::vector<subaccountsViewCollection> GetSubaccounts(int offset, std::string& errorMessage, std::string filter = std::string());
+		std::vector<subaccountHistoryCollection> GetSubaccountHistory(int offset, std::string& errorMessage, std::string filter = std::string());
+		std::vector<taxesCollection> GetTaxes(int offset, std::string& errorMessage, std::string filter = std::string());
+		std::vector<timesheetViewCollection> GetTimesheet(int offset, std::string& errorMessage, std::string filter = std::string());
+		std::vector<transportListViewCollection> GetTransportList(int offset, std::string& errorMessage, std::string filter = std::string());
+		std::vector<transportsViewCollection> GetTransports(int offset, std::string& errorMessage, std::string filter = std::string());
+		std::vector<usersViewCollection> GetUsers(int offset, std::string& errorMessage, std::string filter = std::string());
+		std::vector<withdrawalsViewCollection> GetWithdrawals(int offset, std::string& errorMessage, std::string filter = std::string());
+		std::vector<writeOffsViewCollection> GetWriteOffs(int offset, std::string& errorMessage, std::string filter = std::string());
+		std::vector<writeOffListViewCollection> GetWriteOffList(int offset, std::string& errorMessage, std::string filter = std::string());
+		std::vector<writeOffRawsViewCollection> GetWriteOffRaws(int offset, std::string& errorMessage, std::string filter = std::string());
+		std::vector<writeOffRawListViewCollection> GetWriteOffRawList(int offset, std::string& errorMessage, std::string filter = std::string());
+
 		//create methods
-		bool CreateAccessItem(int aID, std::string aItenEng, std::string aItemRu,std::string aDivision, std::string& errorMessage);
-		bool CreateAccess(int aID, int rID, int aiID, std::string& errorMessage);
-		bool CreateAccountType(int atID, std::string atName, int atNumber, std::string atComment, std::string& errorMessage);
-		bool CreateAccount(int aID, std::string aNumber, double aStartBalance, double aCurrentBalance, std::string& errorMessage);
-		bool CreateAccountHistory(int ahID, int aID, std::string aNumber, double aStartBalance, double aCurrentBalance, std::string ahFrom, std::string ahTill, std::string& errorMessage);
-		bool CreateBalancePayment(int bID, int pID, std::string& errorMessage);
-		bool CreateBalancePayslip(int bID, int pID, std::string& errorMessage);
-		bool CreateBalanceRefund(int bID, int rID, std::string& errorMessage);
-		bool CreateBalanceWithdrawal(int bID, int wID, std::string& errorMessage);
-		bool CreateBalance(int bID, int uID, int aID, std::string& errorMessage);
-		bool CreateChartOfAccount(int coaID, std::string caoNumber, std::string caoNameOfAccount, int atID, std::string& errorMessage);
-		bool CreateClient(int uID, std::string cFirm, std::string cFirmNumber, int lID, std::string& errorMessage);
-		bool CreateCompany(int cID, std::string cName, std::string cAddress, std::string cPhone, std::string cComment,
+		bool CreateAccessItem(int accessItemID, std::string accessItemEng, std::string accessItemRu,std::string accessItemDivision, std::string& errorMessage);
+		bool CreateAccess(int accessID, int roleID, int accessItemID, std::string& errorMessage);
+		bool CreateAccountType(int accountTypeID, std::string accountTypeName, int accountTypeNumber, std::string accountTypeComment, std::string& errorMessage);
+		bool CreateAccount(int accountID, std::string accountNumber, double accountStartBalance, double accountCurrentBalance, std::string& errorMessage);
+		bool CreateAccountHistory(int accountHistoryID, int accountID, std::string accountNumber, double accountStartBalance, 
+			double aCurrentBalance, std::string fromDate, std::string tillDate, std::string& errorMessage);
+		bool CreateBalancePayment(int balancePaymentID, int balanceID, int paymentID, std::string& errorMessage);
+		bool CreateBalancePayslip(int balancePayslipID, int bananceID, int payslipID, std::string& errorMessage);
+		bool CreateBalanceRefund(int balanceRefundID, int balanceID, int refundID, std::string& errorMessage);
+		bool CreateBalanceWithdrawal(int balanceWithdrawalID, int balanceID, int withdrawalID, std::string& errorMessage);
+		bool CreateBalance(int balanceID, int userID, int subaccountID, std::string& errorMessage);
+		bool CreateChartOfAccount(int chartOfAccountID, std::string chartOfAccountNumber, std::string chartOfAccountName, int accountTypeID, std::string& errorMessage);
+		bool CreateClient(int userID, std::string firm, std::string firmNumber, int locationID, std::string& errorMessage);
+		bool CreateCompany(int companyID, std::string companyName, std::string companyAddress, std::string companyPhone, std::string comment,
 			std::string& errorMessage);
-		bool CreateCompanyAccount(int caID, int cID, int aID, std::string& errorMessage);
-		bool CreateCompanyEmployee(int ceID, int cID, int eID, std::string& errorMessage);
-		bool CreateConsumeProductList(int clID, int cpID, int pID, double clCount, double clSum, int sID, int cID, std::string& errorMessage);
-		bool CreateConsumeProduct(int cID, int eID, std::string cDate, std::string cExecDate, int seID, double cCount, double cSum, int sID, int curID, std::string& errorMessage);
-		bool CreateConsumeRawList(int clID, int cpID, int pID, double clCount, double clSum, int sID, int cID, std::string& errorMessage);
-		bool CreateConsumeRaw(int cID, int uID, std::string cDate, std::string cExecDate, int seID, double cCount, double cSum, int sID, int curID, std::string& errorMessage);
-		bool CreateCurrency(int cID, int cCode, std::string cShortName, std::string cName, int cUnit, bool cMainTrade, std::string& errorMessage);
-		bool CreateDivisionAccount(int daID, int dID, int aID,  std::string cShortName, std::string cName, int cUnit, bool cMainTrade, std::string& errorMessage);
-		bool CreateEmployee(int uID, int pID, std::string eBirthDate, std::string eHireDate, std::string& errorMessage);
-		bool CreateEntry(int eID, std::string eDate, int daID, double eValue, int caID, std::string& errorMessage);
-		bool CreateEntryRouting(int erID, std::string eOperation, int daNumber, int caNumber, std::string& errorMessage);
-		bool CreateEntrySubaccount(int eID, int sID, std::string& errorMessage);
-		bool CreateFinancialReport(int fID, double acc_44010, double acc_55010, double acc_552, double acc_55270, double acc_553,
-			double acc_55321, double acc_44020_90, double acc_66010_66110, double acc_66020_66120, double acc_66040_66140,
-			double acc_66050_66150, double acc_66060_66160, double acc_66130, double acc_66070_66170, double tax, std::string ahFrom, std::string ahTill, std::string& errorMessage);
-		bool CreateInventorizationList(int ilID, int iID, int pID, double ilCount, double ilSum, int sID, int cID, std::string& errorMessage);
-		bool CreateInventorization(int iID, int uID, std::string iDate, std::string iExecDate, int seID, double iCount, double iSum, int sID, int cID, std::string& errorMessage);
-		bool CreateJobprice(int jID, int pID, double jValue, int cID, double jVolume, int mID, int psID, std::string& errorMessage);
-		bool CreateJobsheet(int jID, std::string jDate, double jCount, int pID, int eID, std::string& errorMessage);
-		bool CreateLocation(int lID, std::string lCountryName, std::string lCountryCode, std::string lRegionName
-			, std::string lCityName, std::string& errorMessage);
-		bool CreateMeasure(int mID, std::string mName, std::string mShortName, int mUnit, std::string& errorMessage);
-		bool CreateNetCost(int ncID, std::string ncDate, double ncValue, int cID, int pID, bool ncIsOutdated, std::string& errorMessage);
-		bool CreateOrderList(int olID, int oID, int pID, double olCount, double olSum, int sID, int cID, std::string& errorMessage);
-		bool CreateOrder(int oID, int uID, std::string oDate, std::string oExecDate, int eID, double oCount, double oSum, int sID, int cID, std::string& errorMessage);
-		bool CreateOrderRawList(int olID, int oID, int pID, double olCount, double olSum, int sID, int cID, std::string& errorMessage);
-		bool CreateOrderRaw(int oID, int pID, std::string oDate, std::string oExecDate, int eID, double oCount, double oSum, int sID, int cID, std::string& errorMessage);
-		bool CreatePayment(int pID, std::string pDate, double pValue, int uID, int cID, std::string& errorMessage);
-		bool CreatePayslip(int pID, std::string pDate, double pValue, int sID, int cID, std::string& errorMessage);
-		bool CreatePayslipOrder(int pID, int oID, std::string& errorMessage);
-		bool CreatePercentRate(int prID, double prValue, std::string prCondition, int psID, std::string& errorMessage);
-		bool CreatePhoto(int pID, int uID, int prodId, std::string pSource, std::string& errorMessage);
-		bool CreatePosition(int pID, std::string pName, std::string& errorMessage);
-		bool CreatePrice(int pID, std::string pDate, double pValue, int cID, int prodID, bool pIsOutdated, std::string& errorMessage);
-		bool CreateProductType(int pTypeID, std::string pTypeName, std::string pTypeShortName, std::string pTypeCode, std::string& errorMessage);
-		bool CreateProduction(int pID, std::string pProductionDate, std::string pExpiryDate, std::string pSessionStart, 
-			std::string pSessionEnd, std::string& errorMessage);
-		bool CreateProductionList(int plID, int pID, int prodID, double plCount, double plSum, int sID, int cID, std::string& errorMessage);
-		bool CreateProductionConsumeRawList(int clID, int cpID, int pID, double clCount, double clSum, int sID, int cID, std::string& errorMessage);
-		bool CreateProductionConsumeRaw(int cID, int uID, std::string cDate, std::string cExecDate, int seID, double cCount, double cSum, int sID, int curID, std::string& errorMessage);
-		bool CreateProductionPlanList(int pplID, int ppID, int pID, double pplCount, double pplSum, int sID, int cID, std::string& errorMessage);
-		bool CreateProductionPlan(int pID, std::string pDate, int eID, double pCount, double pSum, int sID, int cID, std::string& errorMessage);
-		bool CreateProductionStock(int psID, int pID, double psCount, double psSum, int stsID, int cID, std::string& errorMessage);
-		bool CreateProduct(int pID, int cID, std::string pName, double vol, int mID, double price, int pTypeID, int pShelfLife, 
-			int pCur, std::string& errorMessage);
-		bool CreatePurveyor(int uID, std::string pCompanyName, int lID, std::string& errorMessage);
-		bool CreateReceiptProductList(int rlID, int rpID, int pID, double rlCount, double rlSum, int sID, int cID, std::string& errorMessage);
-		bool CreateReceiptProduct(int rID, int eID, std::string rDate, std::string rExecDate, int seID, double rCount, double rSum, int sID, int cID, std::string& errorMessage);
-		bool CreateReceiptRawList(int rlID, int rpID, int pID, double rlCount, double rlSum, int sID, int cID, std::string& errorMessage);
-		bool CreateReceiptRaw(int rID, int uID, std::string rDate, std::string rExecDate, int seID, double rCount, double rSum, int sID, int cID, std::string& errorMessage);
-		bool CreateRefund(int rID, std::string rDate, double rValue, int uID, int cID, std::string& errorMessage);
-		bool CreateRelationType(int rID, std::string rName, std::string rComment, std::string& errorMessage);
-		bool CreateRelation(int rID, int uID1, int uID2, int rtID, std::string& errorMessage);
-		bool CreateReturnList(int rlID, int rID, int pID, double rlCount, double rlSum, int sID, int cID, std::string& errorMessage);
-		bool CreateReturn(int rID, int uID, std::string rDate, std::string rExecDate, int eID, double rCount, double rSum, int sID, int cID, std::string& errorMessage);
-		bool CreateSalary(int sID, int uID, double sValue, int cID, int stID, std::string sDate, bool sBonus, std::string& errorMessage);
-		bool CreateSalaryType(int sID, std::string sCode, std::string sName, std::string& errorMessage);
-		bool CreateRole(int rID,std::string rCode, std::string rName, std::string rComment, std::string& errorMessage);
-		bool CreateSpecificationList(int slID, int sID, int pID, double tlCount, std::string& errorMessage);
-		bool CreateSpecification(int sID, int pID, double sSum, int cID, int eID, std::string sDate, std::string& errorMessage);
-		bool CreateSpoilageList(int slID, int sID, int pID, double slCount, double slSum, int stsID, int cID, std::string& errorMessage);
-		bool CreateSpoilage(int sID, std::string sDate, int eID, double sCount, double sSum, int stsID, int cID, std::string& errorMessage);
-		bool CreateState(int sID, int unID, int stsID, std::string sLastChange, std::string& errorMessage);
-		bool CreateStatus(int sID, std::string sCode, std::string sName, std::string sComment, std::string& errorMessage);
-		bool CreateStatusRule(int srID, std::string srOperation, int sID, std::string& errorMessage);
-		bool CreateStock(int sID, int pID, double sCount, double sSum, int stsID, int cID, std::string& errorMessage);
-		bool CreateSubaccount(int saID, int aID, std::string saNumber, double saStartBalance, double saCurrentBalance, int cID, int sID,
-			std::string saOpenDate, std::string saCloseDate, std::string saDetails, std::string& errorMessage);
-		bool CreateSubaccountHistory(int shID, int saID, double saStartBalance, double saCurrentBalance, 
-			std::string ahFrom, std::string ahTill, std::string& errorMessage);
-		bool CreateTax(int tID, std::string taxName, std::string taxCode, double fixedValue, int percentValue,
+		bool CreateCompanyAccount(int companyAccountID, int companyID, int accountID, std::string& errorMessage);
+		bool CreateCompanyEmployee(int companyEmployeeID, int companyID, int employeeID, std::string& errorMessage);
+		bool CreateConsumeProductList(int consumeProductListID, int consumeProductID, int productID, double consumeListCount,
+			double consumeListSum, int statusID, int currencyID, std::string& errorMessage);
+		bool CreateConsumeProduct(int consumeProductID, int employeeID, std::string consumeProductDate, std::string consumeProductExecutionDate, 
+			int stockEmployeeID, double consumeProductCount, double consumeProductSum, int statusID, int currencyID, std::string& errorMessage);
+		bool CreateConsumeRawList(int consuleRawListID, int consumeRawID, int productID, double consumeRawListCount, double consumeRawListSum, 
+			int statusID, int currencyID, std::string& errorMessage);
+		bool CreateConsumeRaw(int consumeRawID, int userID, std::string consumeRawDate, std::string consumeRawExecutionDate, 
+			int stockEmployeeID, double consumeRawaCount, double conusmeRawSum, int statusID, int currencyID, std::string& errorMessage);
+		bool CreateCurrency(int currenycID, int currencyCode, std::string currencyShortName, std::string currencyName, int currencyUnit, bool cMainTrade, std::string& errorMessage);
+		bool CreateDivisionAccount(int divisionAccountID, int disvisionID, int accountID, std::string accountCode, std::string& errorMessage);
+		bool CreateDivisionEmployee(int divisionEmployeeID, int disvisionID, int employeeID, bool isContract, std::string& errorMessage);
+		bool CreateDivision(int divisionID, std::string divisionName, std::string divisionCode, std::string& errorMessage);
+		bool CreateEmployee(int userID, int positionID, std::string birthDate, std::string hireDate, std::string& errorMessage);
+		bool CreateEntry(int entryID, std::string entryDate, int debbitingAccountID, double entryValue, int creditingAccountID, std::string description,  std::string& errorMessage);
+		bool CreateEntryRouting(int entryRoutingID, std::string entryRoutingOperation, int debbitingAccountID, int creditingAccountID, std::string& errorMessage);
+		bool CreateEntrySubaccount(int entrySubaccountID, int entryID, int subaccountID, std::string& errorMessage);
+		bool CreateFinancialReport(int financialReportID, double account_44010, double account_55010, double account_552, 
+			double account_55270, double account_553, double account_55321, double account_44020_90, double account_66010_66110, 
+			double account_66020_66120, double account_66040_66140, double account_66050_66150, double account_66060_66160, 
+			double account_66130, double account_66070_66170, double tax, std::string fromDate, std::string tillDate, std::string& errorMessage);
+		bool CreateInventorizationList(int inventorizationListID, int inventorizationID, int productID, double inventorizationListCount, 
+			double inventorizationListSum, int statusID, int currencyID, std::string& errorMessage);
+		bool CreateInventorization(int inventorizationID, int userID, std::string inventorizationDate, std::string inventorizationExecutionDate, 
+			int stockEmployeeID, double inventorizationCount, double inventorizationSum, int statusID, int currencyID, std::string& errorMessage);
+		bool CreateJobprice(int jobpriceID, int producrtID, double jobpriceValue, int currencyID, double jobpriceVolume, int measureID, int positionID, std::string& errorMessage);
+		bool CreateJobsheet(int jobsheetID, std::string jobsheetDate, double jobsheetCount, int productID, int employeeID, std::string& errorMessage);
+		bool CreateLocation(int locationID, std::string countryName, std::string countryCode, std::string regionName
+			, std::string cityName, std::string& errorMessage);
+		bool CreateMeasure(int measureID, std::string measureName, std::string measureShortName, int measureUnit, std::string& errorMessage);
+		bool CreateNetCost(int netCostID, std::string netCostDate, double netCostValue, int currencyID, int productID, bool netCostIsOutdated, std::string& errorMessage);
+		bool CreateOrderList(int orderListID, int orderID, int productID, double orderListCount, double orderListSum, int statusID, int currencyID, std::string& errorMessage);
+		bool CreateOrder(int orderID, int clientID, std::string orderDate, std::string orderExecutionDate, int employeeID,
+			double orderCount, double orderSum, int statusID, int currencyID, std::string& errorMessage);
+		bool CreateOrderRawList(int orderRawListID, int orderRawID, int productID, double orderRawListCount, double orderRawSum, int statusID, int currencyID, std::string& errorMessage);
+		bool CreateOrderRaw(int orderRawID, int productID, std::string orderRawDate, std::string orderRawExecutionDate, 
+			int employeeID, double orderRawCount, double orderRawSum, int statusID, int currencyID, std::string& errorMessage);
+		bool CreatePayment(int paymentID, std::string paymatDate, double paymentValue, int userID, int currencyID, int statusID, std::string& errorMessage);
+		bool CreatePaymentEmployee(int paymentEmployeeID, int paymentID, int employeeID, std::string& errorMessage);
+		bool CreatePayslip(int payslipID, std::string payslipDate, double payslipValue, int statusID, int currencyID, std::string& errorMessage);
+		bool CreatePayslipOrder(int payslipOrderID, int payslipID, int orderID, std::string& errorMessage);
+		bool CreatePercentRate(int percentRateID, double percentRateValue, std::string percentRateCondition, int positionID, std::string& errorMessage);
+		bool CreatePhoto(int photoID, int userID, int productionID, std::string photoSource, std::string& errorMessage);
+		bool CreatePosition(int positionID, std::string positionName, std::string& errorMessage);
+		bool CreatePrice(int priceID, std::string priceDate, double priceValue, int currencyID, int productID, bool priceIsOutdated, std::string& errorMessage);
+		bool CreateProductType(int productTypeID, std::string productTypeName, std::string productTypeShortName, std::string productTypeCode, std::string& errorMessage);
+		bool CreateProduction(int productionID, std::string productionDate, std::string productionExpiryDate, std::string productionSessionStart, 
+			std::string productionSessionEnd, std::string& errorMessage);
+		bool CreateProductionList(int productionListID, int productionID, int productID, double productionListCount, double productionListSum, int statusID, int currencyID, std::string& errorMessage);
+		bool CreateProductionConsumeRawList(int productionConsRawListID, int productionConsumeRawID, int productID, double productionConsRawListCount, double productionConsRawListSum, int statusID, int currencyID, std::string& errorMessage);
+		bool CreateProductionConsumeRaw(int productionConsumeRawID, int userID, std::string productionConsumeRawDate, 
+			std::string productionConsumeRawExecutionDate, int stockEmployeeID, double productionConsumeRawCount,
+			double productionConsumeRawSum, int statusID, int currencyID, std::string& errorMessage);
+		bool CreateProductionPlanList(int productionPlanListID, int productionPlanID, int productID, double productionPlanListCount, double productionPlanListSum, int statusID, int currencyID, std::string& errorMessage);
+		bool CreateProductionPlan(int productionPlanID, std::string productionPlanDate, int employeeID, double productionPlanListCount, double productionPlanListSum, int statusID, int currencyID, std::string& errorMessage);
+		bool CreateProductionStock(int productionStockID, int productID, double productionStockCount, double productionStockSum, int statusID, int currencyID, std::string& errorMessage);
+		bool CreateProduct(int productID, int companyID, std::string productName, double productVolume, int measureID, double productPrice, int productTypeID, int productShelfLife, 
+			int currencyID, std::string& errorMessage);
+		bool CreatePurveyor(int userID, std::string purveyorCompanyName, int locationID, std::string& errorMessage);
+		bool CreateReceiptProductList(int receiptProductListID, int receiptProductID, int productID, double receiptProductCount,
+			double receiptProductSum, int statusID, int currencyID, std::string& errorMessage);
+		bool CreateReceiptProduct(int receiptProductID, int employeeID, std::string receiptProductDate, 
+			std::string receiptProductExecutionDate, int stockEmployeeID, double receiptProductCount, double receiptProductSum, 
+			int statusID, int currencyID, std::string& errorMessage);
+		bool CreateReceiptRawList(int receiptRawListID, int receiptRawID, int productID, double receiptRawListCount, double receiptRawListSum, int statusID, int currencyID, std::string& errorMessage);
+		bool CreateReceiptRaw(int receiptRawID, int employeeID, std::string receiptRawDate, std::string receiptRawExecutionDate, int stockEmployeeID, double receiptRawCount, double receiptRawSum, int statusID, int currencyID, std::string& errorMessage);
+		bool CreateRefund(int refundID, std::string refuntDate, double refundValue, int userID, int currencyID, std::string& errorMessage);
+		bool CreateRelationType(int relationTypeID, std::string relationTypeName, std::string comment, std::string& errorMessage);
+		bool CreateRelation(int relationID, int user1ID, int user2ID, int relationTypeID, std::string& errorMessage);
+		bool CreateReturnList(int returnListID, int returnID, int productID, double returnListCount, double returnListSum, int statusID, int currencyID, std::string& errorMessage);
+		bool CreateReturn(int returnID, int clientID, std::string returnDate, std::string returnExecutionDate, int employeeID, double returnCount, double returnSum, int statusID, int currencyID, std::string& errorMessage);
+		bool CreateRole(int roleID, std::string roleCode, std::string roleName, std::string comment, std::string& errorMessage);
+		bool CreateSalary(int salaryID, int userID, double salaryValue, int currencyID, int salaryTypeID, std::string salaryDate, bool salaryBonus, std::string& errorMessage);
+		bool CreateSalaryType(int salaryTypeID, std::string salaryTypeCode, std::string salaryTypeName, std::string& errorMessage);
+		bool CreateSpecificationList(int specificationListID, int specificationID, int productID, double specificationListCount, std::string& errorMessage);
+		bool CreateSpecification(int specificationID, int productID, double specificationSum, int currencyID, int employeeID, std::string sDate, std::string& errorMessage);
+		bool CreateSpoilageList(int spoilageListID, int spoilageID, int productID, double spoilageListCount, double spoilageListSum, int statusID, int currencyID, std::string& errorMessage);
+		bool CreateSpoilage(int spoilageID, std::string spoilageDate, int employeeID, double spoilageCount, double spoilageSum, int statusID, int currencyID, std::string& errorMessage);
+		bool CreateState(int stateID, int universalID, int statusID, std::string statusLastChange, std::string& errorMessage);
+		bool CreateStatus(int statusID, std::string statusCode, std::string statusName, std::string comment, std::string& errorMessage);
+		bool CreateStatusRule(int statusRuleID, std::string statusRuleOperation, int statusID, std::string& errorMessage);
+		bool CreateStock(int stockID, int productID, double stockCount, double stockSum, int statusID, int currencyID, std::string& errorMessage);
+		bool CreateSubaccount(int subaccountID, int accountID, std::string subaccountNumber, double subaccountStartBalance, double subaccountCurrentBalance, int currencyID, int statusID,
+			std::string subaccountOpenDate, std::string subaccountCloseDate, std::string subaccountDetails, std::string& errorMessage);
+		bool CreateSubaccountHistory(int subaccountHistoryID, int subaccountID, double subaccountStartBalance, double subaccountCurrentBalance,
+			std::string fromDate, std::string tillDate, std::string& errorMessage);
+		bool CreateTax(int taxID, std::string taxName, std::string taxCode, double fixedValue, int percentValue,
 			std::string formulaValue, std::string& errorMessage);
-		bool CreateTimesheet(int tID, int sID, double tWorkedTime, std::string tDate, std::string& errorMessage);
-		bool CreateTransportList(int tlID, int tID, int pID, double tlCount, double tlSum, int sID, int cID, std::string& errorMessage);
-		bool CreateTransport(int tID, int uID, std::string tDate, std::string tExecDate, int seID, double tCount, double tSum, int sID, int cID, std::string& errorMessage);
-		bool CreateUser(int uID, std::string uEmail, std::string uName, std::string uSurname, std::string uPhone, std::string uAddress,
-			int uRoleID, std::string uPassword, bool uActivated, std::string& errorMessage);
-		bool CreateWithdrawal(int wID, std::string wDate, double wValue, int uID, int cID, std::string& errorMessage);
-		bool CreateWriteOffList(int wlID, int wID, int pID, double wlCount, double wlSum, int sID, int cID, std::string& errorMessage);
-		bool CreateWriteOff(int wID, int uID, std::string wDate, int eID, double wCount, double wSum, int sID, int cID, std::string& errorMessage);
-		bool CreateWriteOffRawList(int rlID, int rID, int pID, double rlCount, double rlSum, int sID, int cID, std::string& errorMessage);
-		bool CreateWriteOffRaw(int tID, int uID, std::string rDate, int seID, double rCount, double rSum, int sID, int cID, std::string& errorMessage);
+		bool CreateTimesheet(int timesheetID, int salaryID, double workedTime, std::string timesheetDate, std::string& errorMessage);
+		bool CreateTransportList(int transportListID, int transportID, int productID, double transportListCount, double transportListSum, int statusID, int currencyID, std::string& errorMessage);
+		bool CreateTransport(int transportID, int employeeID, std::string transportDate, std::string transportExecutionDate, 
+			int stockEmployeeID, double transportCount, double transportSum, int statusID, int currencyID, std::string& errorMessage);
+		bool CreateUser(int userID, std::string userEmail, std::string userName, std::string userSurname, std::string userPhone, std::string userAddress,
+			int roleID, std::string userPassword, bool userActivated, std::string& errorMessage);
+		bool CreateWithdrawal(int withdrawalID, std::string withdrawalDate, double withdrawalValue, int userID, int currencyID, std::string& errorMessage);
+		bool CreateWriteOffList(int writeOffListID, int writeOffID, int productID, double writeOffListCount, double writeOffListSum, int statusID, int currencyID, std::string& errorMessage);
+		bool CreateWriteOff(int writeOffID, int userID, std::string writeOffDate, int employeeID, double writeOffCount, double writeOffSum, int statusID, int currencyID, std::string& errorMessage);
+		bool CreateWriteOffRawList(int writeOffRawListID, int writeOffRawID, int productID, double writeOffRawListCount, double writeOffRawListSum, int statusID, int currencyID, std::string& errorMessage);
+		bool CreateWriteOffRaw(int writeOffRawID, int employeeID, std::string writeOffRawListDate, int stockEmployeeID, double writeOffRawListCount, double writeOffRawListSum, int statusID, int currencyID, std::string& errorMessage);
 
 		//delete methods
 		bool DeleteAccessItem(int id, std::string& errorMessage);
@@ -242,6 +353,9 @@ namespace DataLayer{
 		bool DeleteConsumeRaw(int id, std::string& errorMessage);
 		bool DeleteItemInConsumeRawList(int id, std::string& errorMessage);
 		bool DeleteListByConsumeRawID(int id, std::string& errorMessage);
+		bool DeleteDivisionAccount(int divisionID, int accountID, std::string& errorMessage);
+		bool DeleteDivisionEmployee(int divisionID, int employeeID, std::string& errorMessage);
+		bool DeleteDivision(int id, std::string& errorMessage);
 		bool DeleteEmployee(int id, std::string& errorMessage);
 		bool DeleteEntry(int id, std::string& errorMessage); 
 		bool DeleteEntrySubaccount(int eID, int sID, std::string& errorMessage);
@@ -262,6 +376,7 @@ namespace DataLayer{
 		bool DeleteListByOrderRawID(int id, std::string& errorMessage);
 		bool DeleteOrderRaw(int id, std::string& errorMessage);
 		bool DeletePayment(int id, std::string& errorMessage);
+		bool DeletePaymentEmployee(int pID, int eID, std::string& errorMessage);
 		bool DeletePayslip(int id, std::string& errorMessage);
 		bool DeletePayslipOrder(int pID, int oID, std::string& errorMessage);
 		bool DeletePercentRate(int id, std::string& errorMessage);
@@ -323,203 +438,247 @@ namespace DataLayer{
 		bool DeleteItemInWriteOffRawList(int id, std::string& errorMessage);
 
 		//update methods
-		bool UpdateAccessItem(int aID, std::string aItemEng, std::string aItemRu, std::string aDivision, std::string& errorMessage);
-		bool UpdateAccess(int aID, int rID, int aiID, std::string& errorMessage);
-		bool UpdateAccountType(int atID, std::string atName, int atNumber, std::string atComment, std::string& errorMessage);
-		bool UpdateAccount(int aID, std::string aNumber, double aStartBalance, double aCurrentBalance, std::string& errorMessage);
-		bool UpdateAccountHistory(int ahID, int aID, std::string aNumber, double aStartBalance, double aCurrentBalance, std::string ahFrom, std::string ahTill, std::string& errorMessage);
-		bool UpdateBalance(int bID, int uID, int aID, std::string& errorMessage);
-		bool UpdateChartOfAccount(int coaID, std::string caoNumber, std::string caoNameOfAccount, int atID, std::string& errorMessage);
-		bool UpdateClient(int uID, std::string cFirm, std::string cFirmNumber, int lID, std::string& errorMessage);
-		bool UpdateCompany(int cID, std::string cName, std::string cAddress, std::string cPhone, std::string cComment,
+		bool UpdateAccessItem(int accessItemID, std::string accessItemEng, std::string accessItemRu, std::string accessItemDivision, std::string& errorMessage);
+		bool UpdateAccess(int accessID, int roleID, int accessItemID, std::string& errorMessage);
+		bool UpdateAccountType(int accountTypeID, std::string accountTypeName, int accountTypeNumber, std::string accountTypeComment, std::string& errorMessage);
+		bool UpdateAccount(int accountID, std::string accountNumber, double accountStartBalance, double accountCurrentBalance, std::string& errorMessage);
+		bool UpdateAccountHistory(int accountHistoryID, int accountID, std::string accountNumber, double accountStartBalance,
+			double accountCurrentBalance, std::string fromDate, std::string tillDate, std::string& errorMessage);
+		bool UpdateBalancePayment(int balancePaymentID, int balanceID, int paymentID, std::string& errorMessage);
+		bool UpdateBalancePayslip(int balancePayslipID, int bananceID, int payslipID, std::string& errorMessage);
+		bool UpdateBalanceRefund(int balanceRefundID, int balanceID, int refundID, std::string& errorMessage);
+		bool UpdateBalanceWithdrawal(int balanceWithdrawalID, int balanceID, int withdrawalID, std::string& errorMessage);
+		bool UpdateBalance(int balanceID, int userID, int subaccountID, std::string& errorMessage);
+		bool UpdateChartOfAccount(int chartOfAccountID, std::string chartOfAccountNumber, std::string chartOfAccountName, int accountTypeID, std::string& errorMessage);
+		bool UpdateClient(int userID, std::string firm, std::string firmNumber, int locationID, std::string& errorMessage);
+		bool UpdateCompany(int companyID, std::string companyName, std::string companyAddress, std::string companyPhone, std::string comment,
 			std::string& errorMessage);
-		bool UpdateCompanyAccount(int caID, int cID, int eID, std::string& errorMessage);
-		bool UpdateCompanyEmployee(int ceID, int cID, int eID, std::string& errorMessage);
-		bool UpdateConsumeProductList(int clID, int cpID, int pID, double clCount, double clSum, int sID, int cID, std::string& errorMessage);
-		bool UpdateConsumeProduct(int cID, int eID, std::string cDate, std::string cExecDate, int seID, double cCount, double cSum, int sID, int curID, std::string& errorMessage);
-		bool UpdateConsumeRawList(int clID, int cpID, int pID, double clCount, double clSum, int sID, int cID, std::string& errorMessage);
-		bool UpdateConsumeRaw(int cID, int uID, std::string cDate, std::string cExecDate, int seID, double cCount, double cSum, int sID, int curID, std::string& errorMessage);
-		bool UpdateCurrency(int cID, int cCode, std::string cShortName, std::string cName, int cUnit, bool cMainTrade, std::string& errorMessage);
-		bool UpdateEmployee(int uID, int pID, std::string eBirthDate, std::string eHireDate, std::string& errorMessage);
-		bool UpdateEntry(int eID, std::string eDate, int daID, double eValue, int caID, std::string& errorMessage);
-		bool UpdateEntryRouting(int erID, std::string eOperation, int daNumber, int caNumber, std::string& errorMessage);
-		bool UpdateFinancialReport(int fID, double acc_44010, double acc_55010, double acc_552, double acc_55270, double acc_553,
-			double acc_55321, double acc_44020_90, double acc_66010_66110, double acc_66020_66120, double acc_66040_66140,
-			double acc_66050_66150, double acc_66060_66160, double acc_66130, double acc_66070_66170, double tax, std::string ahFrom, std::string ahTill, std::string& errorMessage);
-		bool UpdateInventorizationList(int ilID, int iID, int pID, double ilCount, double ilSum, int sID, int cID, std::string& errorMessage);
-		bool UpdateInventorization(int iID, int uID, std::string iDate, std::string iExecDate, int seID, double iCount, double iSum, int sID, int cID, std::string& errorMessage);
-		bool UpdateJobprice(int jID, int pID, double jValue, int cID, double jVolume, int mID, int psID, std::string& errorMessage);
-		bool UpdateJobsheet(int jID, std::string jDate, double jCount, int pID, int eID, std::string& errorMessage);
-		bool UpdateLocation(int lID, std::string lCountryName, std::string lCountryCode, std::string lRegionName
-			, std::string lCityName, std::string& errorMessage);
-		bool UpdateMeasure(int mID, std::string mName, std::string mShortName, int mUnit, std::string& errorMessage);
-		bool UpdateNetCost(int ncID, std::string ncDate, double ncValue, int cID, int pID, bool ncIsOutdated, std::string& errorMessage);
-		bool UpdateOrderList(int olID, int oID, int pID, double olCount, double olSum, int sID, int cID, std::string& errorMessage);
-		bool UpdateOrder(int oID, int uID, std::string oDate, std::string oExecDate, int eID, double oCount, double oSum, int sID, int cID, std::string& errorMessage);
-		bool UpdateOrderRawList(int olID, int oID, int pID, double olCount, double olSum, int sID, int cID, std::string& errorMessage);
-		bool UpdateOrderRaw(int oID, int pID, std::string oDate, std::string oExecDate, int eID, double oCount, double oSum, int sID, int cID, std::string& errorMessage);
-		bool UpdatePayment(int pID, std::string pDate, double pValue, int uID, int cID, std::string& errorMessage);
-		bool UpdatePayslip(int pID, std::string pDate, double pValue, int sID, int cID, std::string& errorMessage);
-		bool UpdatePercentRate(int prID, double prValue, std::string prCondition, int psID, std::string& errorMessage);
-		bool UpdatePhoto(int pID, int uID, int prodId, std::string pSource, std::string& errorMessage);
-		bool UpdatePosition(int pID, std::string pName, std::string& errorMessage);
-		bool UpdatePrice(int pID, std::string pDate, double pValue, int cID, int prodID, bool aIsOutdated, std::string& errorMessage);
-		bool UpdateProductType(int pTypeID, std::string pTypeName, std::string pTypeShortName, std::string pTypeCode, std::string& errorMessage);
-		bool UpdateProduction(int pID, std::string pProductionDate, std::string pExpiryDate, std::string pSessionStart,
-			std::string pSessionEnd, std::string& errorMessage);
-		bool UpdateProductionList(int plID, int pID, int prodID, double plCount, double plSum, int sID, int cID, std::string& errorMessage);
-		bool UpdateProductionConsumeRawList(int clID, int cpID, int pID, double clCount, double clSum, int sID, int cID, std::string& errorMessage);
-		bool UpdateProductionConsumeRaw(int cID, int uID, std::string cDate, std::string cExecDate, int seID, double cCount, double cSum, int sID, int curID, std::string& errorMessage);
-		bool UpdateProductionPlanList(int pplID, int ppID, int pID, double pplCount, double pplSum, int sID, int cID, std::string& errorMessage);
-		bool UpdateProductionPlan(int pID, std::string pDate, int eID, double pCount, double pSum, int sID, int cID, std::string& errorMessage);
-		bool UpdateProductionStock(int psID, int pID, double psCount, double psSum, int stsID, int cID, std::string& errorMessage);
-		bool UpdateProduct(int pID, int cID, std::string pName, double vol, int mID, double price, int pTypeID, int pShelfLife,
-			int pCur, std::string& errorMessage);
-		bool UpdatePurveyor(int uID, std::string pCompanyName, int lID, std::string& errorMessage);
-		bool UpdateReceiptProductList(int rlID, int rpID, int pID, double rlCount, double rlSum, int sID, int cID, std::string& errorMessage);
-		bool UpdateReceiptProduct(int rID, int eID, std::string rDate, std::string rExecDate, int seID, double rCount, double rSum, int sID, int cID, std::string& errorMessage);
-		bool UpdateReceiptRawList(int rlID, int rpID, int pID, double rlCount, double rlSum, int sID, int cID, std::string& errorMessage);
-		bool UpdateReceiptRaw(int rID, int uID, std::string rDate, std::string rExecDate, int seID, double rCount, double rSum, int sID, int cID, std::string& errorMessage);
-		bool UpdateRefund(int rID, std::string rDate, double rValue, int uID, int cID, std::string& errorMessage);
-		bool UpdateRelationType(int rID, std::string rName, std::string rComment, std::string& errorMessage);
-		bool UpdateRelation(int rID, int uID1, int uID2, int rtID, std::string& errorMessage);
-		bool UpdateReturnList(int rlID, int rID, int pID, double rlCount, double rlSum, int sID, int cID, std::string& errorMessage);
-		bool UpdateReturn(int rID, int uID, std::string rDate, std::string oExecDate, int eID, double rCount, double rSum, int sID, int cID, std::string& errorMessage);
-		bool UpdateRole(int rID, std::string rCode, std::string rName, std::string rComment, std::string& errorMessage);
-		bool UpdateSalary(int sID, int uID, double sValue, int cID, int stID, std::string sDate, bool sBonus, std::string& errorMessage);
-		bool UpdateSalaryType(int sID, std::string sCode, std::string sName, std::string& errorMessage);
-		bool UpdateSpecificationList(int slID, int sID, int pID, double tlCount, std::string& errorMessage);
-		bool UpdateSpecification(int sID, int pID, double sSum, int cID, int eID, std::string sDate, std::string& errorMessage);
-		bool UpdateSpoilageList(int slID, int sID, int pID, double slCount, double slSum, int stsID, int cID, std::string& errorMessage);
-		bool UpdateSpoilage(int sID, std::string sDate, int eID, double sCount, double sSum, int stsID, int cID, std::string& errorMessage);
-		bool UpdateState(int sID, int unID, int stsID, std::string sLastChange, std::string& errorMessage);
-		bool UpdateStatus(int sID, std::string sCode, std::string sName, std::string sComment, std::string& errorMessage);
-		bool UpdateStatusRule(int srID, std::string srOperation, int sID, std::string& errorMessage);
-		bool UpdateStock(int sID, int pID, double sCount, double sSum, int stsID, int cID, std::string& errorMessage);
-		bool UpdateSubaccount(int saID, int aID, std::string saNumber, double saStartBalance, double saCurrentBalance, int cID, int sID,
-			std::string saOpenDate, std::string saCloseDate, std::string saDetails, std::string& errorMessage);
-		bool UpdateSubaccountHistory(int shID, int saID, double saStartBalance, double saCurrentBalance,
-			std::string ahFrom, std::string ahTill, std::string& errorMessage);
-		bool UpdateTax(int tID, std::string taxName, std::string taxCode, double fixedValue, int percentValue,
+		bool UpdateCompanyAccount(int companyAccountID, int companyID, int accountID, std::string& errorMessage);
+		bool UpdateCompanyEmployee(int companyEmployeeID, int companyID, int employeeID, std::string& errorMessage);
+		bool UpdateConsumeProductList(int consumeProductListID, int consumeProductID, int productID, double consumeListCount,
+			double consumeListSum, int statusID, int currencyID, std::string& errorMessage);
+		bool UpdateConsumeProduct(int consumeProductID, int employeeID, std::string consumeProductDate, std::string consumeProductExecutionDate,
+			int stockEmployeeID, double consumeProductCount, double consumeProductSum, int statusID, int currencyID, std::string& errorMessage);
+		bool UpdateConsumeRawList(int consuleRawListID, int consumeRawID, int productID, double consumeRawListCount, double consumeRawListSum,
+			int statusID, int currencyID, std::string& errorMessage);
+		bool UpdateConsumeRaw(int consumeRawID, int userID, std::string consumeRawDate, std::string consumeRawExecutionDate,
+			int stockEmployeeID, double consumeRawaCount, double conusmeRawSum, int statusID, int currencyID, std::string& errorMessage);
+		bool UpdateCurrency(int currenycID, int currencyCode, std::string currencyShortName, std::string currencyName, int currencyUnit, bool cMainTrade, std::string& errorMessage);
+		bool UpdateDivisionAccount(int divisionAccountID, int divisionID, int accountID, std::string accountCode, std::string& errorMessage);
+		bool UpdateDivisionEmployee(int divisionEmployeeID, int divisionID, int employeeID, bool isContract, std::string& errorMessage);
+		bool UpdateDivision(int divisionID, std::string divisionName, std::string divisionCode, std::string& errorMessage);
+		bool UpdateEmployee(int userID, int positionID, std::string birthDate, std::string hireDate, std::string& errorMessage);
+		bool UpdateEntry(int entryID, std::string entryDate, int debbitingAccountID, double entryValue, int creditingAccountID, std::string description, std::string& errorMessage);
+		bool UpdateEntryRouting(int entryRoutingID, std::string entryRoutingOperation, int debbitingAccountID, int creditingAccountID, std::string& errorMessage);
+		bool UpdateEntrySubaccount(int entrySubaccountID, int entryID, int subaccountID, std::string& errorMessage);
+		bool UpdateFinancialReport(int financialReportID, double account_44010, double account_55010, double account_552,
+			double account_55270, double account_553, double account_55321, double account_44020_90, double account_66010_66110,
+			double account_66020_66120, double account_66040_66140, double account_66050_66150, double account_66060_66160,
+			double account_66130, double account_66070_66170, double tax, std::string fromDate, std::string tillDate, std::string& errorMessage);
+		bool UpdateInventorizationList(int inventorizationListID, int inventorizationID, int productID, double inventorizationListCount,
+			double inventorizationListSum, int statusID, int currencyID, std::string& errorMessage);
+		bool UpdateInventorization(int inventorizationID, int userID, std::string inventorizationDate, std::string inventorizationExecutionDate,
+			int stockEmployeeID, double inventorizationCount, double inventorizationSum, int statusID, int currencyID, std::string& errorMessage);
+		bool UpdateJobprice(int jobpriceID, int producrtID, double jobpriceValue, int currencyID, double jobpriceVolume, int measureID, int positionID, std::string& errorMessage);
+		bool UpdateJobsheet(int jobsheetID, std::string jobsheetDate, double jobsheetCount, int productID, int employeeID, std::string& errorMessage);
+		bool UpdateLocation(int locationID, std::string countryName, std::string countryCode, std::string regionName
+			, std::string cityName, std::string& errorMessage);
+		bool UpdateMeasure(int measureID, std::string measureName, std::string measureShortName, int measureUnit, std::string& errorMessage);
+		bool UpdateNetCost(int netCostID, std::string netCostDate, double netCostValue, int currencyID, int productID, bool netCostIsOutdated, std::string& errorMessage);
+		bool UpdateOrderList(int orderListID, int orderID, int productID, double orderListCount, double orderListSum, int statusID, int currencyID, std::string& errorMessage);
+		bool UpdateOrder(int orderID, int clientID, std::string orderDate, std::string orderExecutionDate, int employeeID,
+			double orderCount, double orderSum, int statusID, int currencyID, std::string& errorMessage);
+		bool UpdateOrderRawList(int orderRawListID, int orderRawID, int productID, double orderRawListCount, double orderRawSum, int statusID, int currencyID, std::string& errorMessage);
+		bool UpdateOrderRaw(int orderRawID, int productID, std::string orderRawDate, std::string orderRawExecutionDate,
+			int employeeID, double orderRawCount, double orderRawSum, int statusID, int currencyID, std::string& errorMessage);
+		bool UpdatePayment(int paymentID, std::string paymatDate, double paymentValue, int userID, int currencyID, int statusID, std::string& errorMessage);
+		bool UpdatePaymentEmployee(int paymentEmployeeID, int paymentID, int employeeID, std::string& errorMessage);
+		bool UpdatePayslip(int payslipID, std::string payslipDate, double payslipValue, int statusID, int currencyID, std::string& errorMessage);
+		bool UpdatePercentRate(int percentRateID, double percentRateValue, std::string percentRateCondition, int positionID, std::string& errorMessage);
+		bool UpdatePhoto(int photoID, int userID, int productionID, std::string photoSource, std::string& errorMessage);
+		bool UpdatePosition(int positionID, std::string positionName, std::string& errorMessage);
+		bool UpdatePrice(int priceID, std::string priceDate, double priceValue, int currencyID, int productID, bool priceIsOutdated, std::string& errorMessage);
+		bool UpdateProductType(int productTypeID, std::string productTypeName, std::string productTypeShortName, std::string productTypeCode, std::string& errorMessage);
+		bool UpdateProduction(int productionID, std::string productionDate, std::string productionExpiryDate, std::string productionSessionStart,
+			std::string productionSessionEnd, std::string& errorMessage);
+		bool UpdateProductionList(int productionListID, int productionID, int productID, double productionListCount, double productionListSum, int statusID, int currencyID, std::string& errorMessage);
+		bool UpdateProductionConsumeRawList(int productionConsRawListID, int productionConsumeRawID, int productID, double productionConsRawListCount, double productionConsRawListSum, int statusID, int currencyID, std::string& errorMessage);
+		bool UpdateProductionConsumeRaw(int productionConsumeRawID, int userID, std::string productionConsumeRawDate,
+			std::string productionConsumeRawExecutionDate, int stockEmployeeID, double productionConsumeRawCount,
+			double productionConsumeRawSum, int statusID, int currencyID, std::string& errorMessage);
+		bool UpdateProductionPlanList(int productionPlanListID, int productionPlanID, int productID, double productionPlanListCount, double productionPlanListSum, int statusID, int currencyID, std::string& errorMessage);
+		bool UpdateProductionPlan(int productionPlanID, std::string productionPlanDate, int employeeID, double productionPlanListCount, double productionPlanListSum, int statusID, int currencyID, std::string& errorMessage);
+		bool UpdateProductionStock(int productionStockID, int productID, double productionStockCount, double productionStockSum, int statusID, int currencyID, std::string& errorMessage);
+		bool UpdateProduct(int productID, int companyID, std::string productName, double productVolume, int measureID, double productPrice, int productTypeID, int productShelfLife,
+			int currencyID, std::string& errorMessage);
+		bool UpdatePurveyor(int userID, std::string purveyorCompanyName, int locationID, std::string& errorMessage);
+		bool UpdateReceiptProductList(int receiptProductListID, int receiptProductID, int productID, double receiptProductCount, double receiptProductSum, int statusID, int currencyID, std::string& errorMessage);
+		bool UpdateReceiptProduct(int receiptProductID, int employeeID, std::string receiptProductDate,
+			std::string receiptProductExecutionDate, int stockEmployeeID, double receiptProductCount, double receiptProductSum,
+			int statusID, int currencyID, std::string& errorMessage);
+		bool UpdateReceiptRawList(int receiptRawListID, int receiptRawID, int productID, double receiptRawListCount, double receiptRawListSum, int statusID, int currencyID, std::string& errorMessage);
+		bool UpdateReceiptRaw(int receiptRawID, int employeeID, std::string receiptRawDate, std::string receiptRawExecutionDate, int stockEmployeeID, double receiptRawCount, double receiptRawSum, int statusID, int currencyID, std::string& errorMessage);
+		bool UpdateRefund(int refundID, std::string refuntDate, double refundValue, int userID, int currencyID, std::string& errorMessage);
+		bool UpdateRelationType(int relationTypeID, std::string relationTypeName, std::string comment, std::string& errorMessage);
+		bool UpdateRelation(int relationID, int user1ID, int user2ID, int relationTypeID, std::string& errorMessage);
+		bool UpdateReturnList(int returnListID, int returnID, int productID, double returnListCount, double returnListSum, int statusID, int currencyID, std::string& errorMessage);
+		bool UpdateReturn(int returnID, int clientID, std::string returnDate, std::string returnExecutionDate, int employeeID, double returnCount, double returnSum, int statusID, int currencyID, std::string& errorMessage);
+		bool UpdateRole(int roleID, std::string roleCode, std::string roleName, std::string comment, std::string& errorMessage);
+		bool UpdateSalary(int salaryID, int userID, double salaryValue, int currencyID, int salaryTypeID, std::string salaryDate, bool salaryBonus, std::string& errorMessage);
+		bool UpdateSalaryType(int salaryTypeID, std::string salaryTypeCode, std::string salaryTypeName, std::string& errorMessage);
+		bool UpdateSpecificationList(int specificationListID, int specificationID, int productID, double specificationListCount, std::string& errorMessage);
+		bool UpdateSpecification(int specificationID, int productID, double specificationSum, int currencyID, int employeeID, std::string sDate, std::string& errorMessage);
+		bool UpdateSpoilageList(int spoilageListID, int spoilageID, int productID, double spoilageListCount, double spoilageListSum, int statusID, int currencyID, std::string& errorMessage);
+		bool UpdateSpoilage(int spoilageID, std::string spoilageDate, int employeeID, double spoilageCount, double spoilageSum, int statusID, int currencyID, std::string& errorMessage);
+		bool UpdateState(int stateID, int universalID, int statusID, std::string statusLastChange, std::string& errorMessage);
+		bool UpdateStatus(int statusID, std::string statusCode, std::string statusName, std::string comment, std::string& errorMessage);
+		bool UpdateStatusRule(int statusRuleID, std::string statusRuleOperation, int statusID, std::string& errorMessage);
+		bool UpdateStock(int stockID, int productID, double stockCount, double stockSum, int statusID, int currencyID, std::string& errorMessage);
+		bool UpdateSubaccount(int subaccountID, int accountID, std::string subaccountNumber, double subaccountStartBalance, double subaccountCurrentBalance, int currencyID, int statusID,
+			std::string subaccountOpenDate, std::string subaccountCloseDate, std::string subaccountDetails, std::string& errorMessage);
+		bool UpdateSubaccountHistory(int subaccountHistoryID, int subaccountID, double subaccountStartBalance, double subaccountCurrentBalance,
+			std::string fromDate, std::string tillDate, std::string& errorMessage);
+		bool UpdateTax(int taxID, std::string taxName, std::string taxCode, double fixedValue, int percentValue,
 			std::string formulaValue, std::string& errorMessage);
-		bool UpdateTimesheet(int tID, int sID, double tWorkedTime, std::string tDate, std::string& errorMessage);
-		bool UpdateTransportList(int tlID, int tID, int pID, double tlCount, double tlSum, int sID, int cID, std::string& errorMessage);
-		bool UpdateTransport(int tID, int uID, std::string tDate, std::string tExecDate, int seID, double tCount, double tSum, int sID, int cID, std::string& errorMessage);
-		bool UpdateUser(int uID, std::string uEmail, std::string uName, std::string uSurname, std::string uPhone, std::string uAddress,
-			int uRoleID, std::string uPassword, bool uActivated, std::string& errorMessage);
-		bool UpdateWithdrawal(int wID, std::string wDate, double wValue, int uID, int cID, std::string& errorMessage);
-		bool UpdateWriteOffList(int wlID, int wID, int pID, double wlCount, double wlSum, int sID, int cID, std::string& errorMessage);
-		bool UpdateWriteOff(int wID, int uID, std::string wDate, int eID, double wCount, double wSum, int sID, int cID, std::string& errorMessage);
-		bool UpdateWriteOffRawList(int rlID, int rID, int pID, double rlCount, double rlSum, int sID, int cID, std::string& errorMessage);
-		bool UpdateWriteOffRaw(int tID, int uID, std::string rDate, int seID, double rCount, double rSum, int sID, int cID, std::string& errorMessage);
+		bool UpdateTimesheet(int timesheetID, int salaryID, double workedTime, std::string timesheetDate, std::string& errorMessage);
+		bool UpdateTransportList(int transportListID, int transportID, int productID, double transportListCount, double transportListSum, int statusID, int currencyID, std::string& errorMessage);
+		bool UpdateTransport(int transportID, int employeeID, std::string transportDate, std::string transportExecutionDate,
+			int stockEmployeeID, double transportCount, double transportSum, int statusID, int currencyID, std::string& errorMessage);
+		bool UpdateUser(int userID, std::string userEmail, std::string userName, std::string userSurname, std::string userPhone, std::string userAddress,
+			int roleID, std::string userPassword, bool userActivated, std::string& errorMessage);
+		bool UpdateWithdrawal(int withdrawalID, std::string withdrawalDate, double withdrawalValue, int userID, int currencyID, std::string& errorMessage);
+		bool UpdateWriteOffList(int writeOffListID, int writeOffID, int productID, double writeOffListCount, double writeOffListSum, int statusID, int currencyID, std::string& errorMessage);
+		bool UpdateWriteOff(int writeOffID, int userID, std::string writeOffDate, int employeeID, double writeOffCount, double writeOffSum, int statusID, int currencyID, std::string& errorMessage);
+		bool UpdateWriteOffRawList(int writeOffRawListID, int writeOffRawID, int productID, double writeOffRawListCount, double writeOffRawListSum, int statusID, int currencyID, std::string& errorMessage);
+		bool UpdateWriteOffRaw(int writeOffRawID, int employeeID, std::string writeOffRawListDate, int stockEmployeeID, double writeOffRawListCount, double writeOffRawListSum, int statusID, int currencyID, std::string& errorMessage);
 
 		//Filter factory
-		std::string GetFilterForAccessItem(int aID, std::string aItemEng, std::string aItemRu, std::string aDivision);
-		std::string GetFilterForAccess(int aID, int rID, int aiID);
-		std::string GetFilterForAccountType(int atID, std::string atName, int atNumber, std::string atComment);
-		std::string GetFilterForAccount(int aID, std::string aNumber, double aStartBalance, double aCurrentBalance);
-		std::string GetFilterForAccountHistory(int ahID, int aID, std::string aNumber, double aStartBalance, double aCurrentBalance, std::string ahFrom, std::string ahTill);
-		std::string GetFilterForBalancePayment(int bID, int pID);
-		std::string GetFilterForBalancePayslip(int bID, int pID);
-		std::string GetFilterForBalanceRefund(int bID, int rID);
-		std::string GetFilterForBalanceWithdrawal(int bID, int wID);
-		std::string GetFilterForBalance(int bID, int uID, int aID);
-		std::string GetFilterForClient(int cID, std::string uName, std::string uSurname, std::string uPhone,
-			std::string uAddress, std::string cFirm, std::string cFirmNumber, std::string uPassword, std::string uEmail, 
-			bool uActivated, int rID, int lID);
-		std::string GetFilterForChartOfAccount(int coaID, std::string caoNumber, std::string caoNameOfAccount, int atID);
-		std::string GetFilterForCompany(int cID, std::string cName, std::string cAddress, std::string cPhone, std::string cComment);
-		std::string GetFilterForCompanyAccount(int caID, int cID, int aID);
-		std::string GetFilterForCompanyEmployee(int ceID, int cID, int eID);
-		std::string GetFilterForConsumeProductList(int clID, int cpID, int pID, double clCount, double clSum, int sID, int cID);
-		std::string GetFilterForConsumeProduct(int cID, int eID, std::string cDate, std::string cExecDate, int seID, double cCount, double cSum, int sID, int curID);
-		std::string GetFilterForConsumeRawList(int clID, int cpID, int pID, double clCount, double clSum, int sID, int cID);
-		std::string GetFilterForConsumeRaw(int cID, int uID, std::string cDate, std::string cExecDate, int seID, double cCount, double cSum, int sID, int curID);
-		std::string GetFilterForCurrency(int cID, int cCode, std::string cShortName, std::string cName, int cUnit);
-		std::string GetFilterForEmployee(int eID, std::string uName, std::string uSurname, std::string uPhone, 
-			std::string uAddress, std::string eBirthDate, std::string eHireDate, std::string uPassword, 
-			std::string uEmail, bool uActivated, int rID, int pID);
-		std::string GetFilterForEntry(int eID, std::string eDate, int daID, double eValue, int caID);
-		std::string GetFilterForEntryRouting(int erID, std::string eOperation, int daNumber, int caNumber);
-		std::string GetFilterForEntrySubaccount(int eID, int saID);
-		std::string GetFilterForFinancialReport(int fID, double acc_44010, double acc_55010, double acc_552, double acc_55270, double acc_553,
-			double acc_55321, double acc_44020_90, double acc_66010_66110, double acc_66020_66120, double acc_66040_66140,
-			double acc_66050_66150, double acc_66060_66160, double acc_66130, double acc_66070_66170, double tax, std::string ahFrom, std::string ahTill);
-		std::string GetFilterForInventorizationList(int ilID, int iID, int pID, double ilCount, double ilSum, int sID, int cID);
-		std::string GetFilterForInventorization(int iID, int uID, std::string iDate, std::string iExecDate, int seID, double iCount, double iSum, int sID, int cID);
-		std::string GetFilterForJobprice(int jID, int pID, double jValue, int cID, double jVolume, int mID, int psID);
-		std::string GetFilterForJobsheet(int jID, std::string jDate, double jCount, int pID, int eID);
-		std::string GetFilterForJobsheetForPeriod(int jID, std::string jDate, double jCount, int pID, int eID, std::string fromDate, std::string toDate);
-		std::string GetFilterForLocation(int lID, std::string lCountryName, std::string lCountryCode, std::string lRegionName
-			, std::string lCityName);
-		std::string GetFilterForMeasure(int mID, std::string mName, std::string mShortName, int mUnit);
-		std::string GetFilterForNetCost(int ncID, std::string ncDate, double ncValue, int cID, int pID, bool ncIsOutdated);
-		std::string GetFilterForOrderList(int olID, int oID, int pID, double olCount, double olSum, int sID, int cID);
-		std::string GetFilterForOrder(int oID, int uID, std::string oDate, std::string oExecDate, int eID, double oCount, double oSum, int sID, int cID);
-		std::string GetFilterForOrderForPeriod(int oID, int uID, std::string oDate, std::string oExecDate, int eID, double oCount, double oSum, int sID, int cID, std::string fromDate, std::string toDate);
-		std::string GetFilterForOrderRawList(int olID, int oID, int pID, double olCount, double olSum, int sID, int cID);
-		std::string GetFilterForOrderRaw(int oID, int pID, std::string oDate, std::string oExecDate, int eID, double oCount, double oSum, int sID, int cID);
-		std::string GetFilterForPayment(int pID, std::string pDate, double pValue, int uID, int cID);
-		std::string GetFilterForPayslip(int pID, std::string pDate, double pValue, int sID, int cID);
-		std::string GetFilterForPayslipOrder(int pID, int oID);
-		std::string GetFilterForPercentRate(int prID, double prValue, std::string prCondition, int psID);
-		std::string GetFilterForPhoto(int pID, int uID, int prodId, std::string pSource);
-		std::string GetFilterForPosition(int pID, std::string pName);
-		std::string GetFilterForPrice(int pID, std::string pDate, double pValue, int cID, int prodID, bool ncIsOutdated);
-		std::string GetFilterForProductType(int pTypeID, std::string pTypeName, std::string pTypeShortName, std::string pTypeCode);
-		std::string GetFilterForProduction(int pID, std::string pProductionDate, std::string pExpiryDate, std::string pSessionStart,
-			std::string pSessionEnd);
-		std::string GetFilterForProductionForPeriod(int pID, std::string pProductionDate, std::string pExpiryDate, std::string pSessionStart,
-			std::string pSessionEnd, std::string fromDate, std::string toDate);
-		std::string GetFilterForProductionList(int plID, int pID, int prodID, double plCount, double plSum, int sID, int cID);
-		std::string GetFilterForProductionListInEnum(int plID, int pID, int prodID, double plCount, double plSum, int sID, int cID, std::vector<int> vecProdID);
-		std::string GetFilterForProductionConsumeRawList(int clID, int cpID, int pID, double clCount, double clSum, int sID, int cID);
-		std::string GetFilterForProductionConsumeRaw(int cID, int uID, std::string cDate, std::string cExecDate, int seID, double cCount, double cSum, int sID, int curID);
-		std::string GetFilterForProductionPlanList(int pplID, int ppID, int pID, double pplCount, double pplSum, int sID, int cID);
-		std::string GetFilterForProductionPlan(int pID, std::string pDate, int eID, double pCount, double pSum, int sID, int cID);
-		std::string GetFilterForProductionStock(int psID, int pID, double psCount, double psSum, int stsID, int cID);
-		std::string GetFilterForProduct(int pID, int cID, std::string pName, double vol, int mID, double price, int pTypeID, int pShelfLife,
-			int pCur);
-		std::string GetFilterForPurveyor(int pID, std::string uName, std::string uSurname, std::string uPhone,
-			std::string uAddress, std::string pCompanyName, std::string uPassword, std::string uEmail,
-			bool uActivated, int rID, int lID);
-		std::string GetFilterForReceiptProductList(int rlID, int rpID, int pID, double rlCount, double rlSum, int sID, int cID);
-		std::string GetFilterForReceiptProduct(int rID, int eID, std::string rDate, std::string rExecDate, int seID, double rCount, double rSum, int sID, int cID);
-		std::string GetFilterForReceiptRawList(int rlID, int rpID, int pID, double rlCount, double rlSum, int sID, int cID);
-		std::string GetFilterForReceiptRaw(int rID, int uID, std::string rDate, std::string rExecDate, int seID, double rCount, double rSum, int sID, int cID);
-		std::string GetFilterForRefund(int rID, std::string rDate, double rValue, int uID, int cID);
-		std::string GetFilterForRelationType(int rID, std::string rName, std::string rComment);
-		std::string GetFilterForRelation(int rID, int uID1, int uID2, int rtID);
-		std::string GetFilterForReturnList(int rlID, int rID, int pID, double rlCount, double rlSum, int sID, int cID);
-		std::string GetFilterForReturn(int rID, int uID, std::string rDate, std::string rExecDate, int eID, double rCount, double rSum, int sID, int cID);
-		std::string GetFilterForRole(int rID, std::string rCode, std::string rName, std::string rComment);
-		std::string GetFilterForSalary(int sID, int uID, double sValue, int cID, int stID, std::string sDate, bool sBonus);
-		std::string GetFilterForSalaryType(int sID, std::string sCode, std::string sName);
-		std::string GetFilterForSpecificationList(int slID, int sID, int pID, double tlCount);
-		std::string GetFilterForSpecification(int sID, int pID, double sSum, int cID, int eID, std::string sDate);
-		std::string GetFilterForSpoilageList(int slID, int sID, int pID, double slCount, double slSum, int stsID, int cID);
-		std::string GetFilterForSpoilage(int sID, std::string sDate, int eID, double sCount, double sSum, int stsID, int cID);
-		std::string GetFilterForState(int sID, int unID, int stsID, std::string sLastChange);
-		std::string GetFilterForStatus(int sID, std::string sCode, std::string sName, std::string sComment);
-		std::string GetFilterForStatusRule(int srID, std::string srOperation, int sID);
-		std::string GetFilterForStock(int sID, int pID, double sCount, double sSum, int stsID, int cID);
-		std::string GetFilterForSubaccount(int saID, int aID, std::string saNumber, double saStartBalance, double saCurrentBalance, int cID, int sID,
-			std::string saOpenDate, std::string saCloseDate, std::string saDetails);
-		std::string GetFilterForSubaccountHistory(int shID, int saID, double saStartBalance, double saCurrentBalance,
-			std::string ahFrom, std::string ahTill);
-		std::string GetFilterForTax(int tID, std::string taxName, std::string taxCode, double fixedValue, int percentValue,
+		std::string GetFilterForAccessItem(int accessItemID, std::string accessItemEng, std::string accessItemRu, std::string accessItemDivision);
+		std::string GetFilterForAccess(int accessID, int roleID, int accessItemID);
+		std::string GetFilterForAccountType(int accountTypeID, std::string accountTypeName, int accountTypeNumber, std::string accountTypeComment);
+		std::string GetFilterForAccount(int accountID, std::string accountNumber, double accountStartBalance, double accountCurrentBalance);
+		std::string GetFilterForAccountHistory(int accountHistoryID, int accountID, std::string accountNumber, double accountStartBalance,
+			double aCurrentBalance, std::string fromDate, std::string tillDate);
+		std::string GetFilterForBalancePayment(int balancePaymentID, int balanceID, int paymentID);
+		std::string GetFilterForBalancePayslip(int balancePayslipID, int bananceID, int payslipID);
+		std::string GetFilterForBalanceRefund(int balanceRefundID, int balanceID, int refundID);
+		std::string GetFilterForBalanceWithdrawal(int balanceWithdrawalID, int balanceID, int withdrawalID);
+		std::string GetFilterForBalance(int balanceID, int userID, int subaccountID);
+		std::string GetFilterForChartOfAccount(int chartOfAccountID, std::string chartOfAccountNumber, std::string chartOfAccountName, int accountTypeID);
+		std::string GetFilterForClient(int clientID, std::string name, std::string surname, std::string phone,
+			std::string address, std::string firm, std::string firmNumber, std::string password, std::string email, 
+			bool activated, int roleID, int locationID);
+		std::string GetFilterForCompany(int companyID, std::string companyName, std::string companyAddress, std::string companyPhone, std::string comment);
+		std::string GetFilterForCompanyAccount(int companyAccountID, int companyID, int accountID);
+		std::string GetFilterForCompanyEmployee(int companyEmployeeID, int companyID, int employeeID);
+		std::string GetFilterForConsumeProductList(int consumeProductListID, int consumeProductID, int productID, double consumeListCount,
+			double consumeListSum, int statusID, int currencyID);
+		std::string GetFilterForConsumeProduct(int consumeProductID, int employeeID, std::string consumeProductDate, std::string consumeProductExecutionDate,
+			int stockEmployeeID, double consumeProductCount, double consumeProductSum, int statusID, int currencyID);
+		std::string GetFilterForConsumeRawList(int consuleRawListID, int consumeRawID, int productID, double consumeRawListCount, double consumeRawListSum,
+			int statusID, int currencyID);
+		std::string GetFilterForConsumeRaw(int consumeRawID, int userID, std::string consumeRawDate, std::string consumeRawExecutionDate,
+			int stockEmployeeID, double consumeRawaCount, double conusmeRawSum, int statusID, int currencyID);
+		std::string GetFilterForCurrency(int currenycID, int currencyCode, std::string currencyShortName, std::string currencyName, int currencyUnit, bool cMainTrade);
+		std::string GetFilterForDivisionAccount(int divisionAccountID, int disvisionID, int accountID, std::string accountCode);
+		std::string GetFilterForDivisionEmployee(int divisionEmployeeID, int disvisionID, int employeeID, bool isContract);
+		std::string GetFilterForDivision(int divisionID, std::string divisionName, std::string divisionCode);
+		std::string GetFilterForEmployee(int employeeID, std::string name, std::string surname, std::string phone, 
+			std::string address, std::string birthDate, std::string hireDate, std::string password, 
+			std::string email, bool activated, int roleID, int positionID);
+		std::string GetFilterForEntry(int entryID, std::string entryDate, int debbitingAccountID, double entryValue, int creditingAccountID, std::string description);
+		std::string GetFilterForEntryRouting(int entryRoutingID, std::string entryRoutingOperation, int debbitingAccountID, int creditingAccountID);
+		std::string GetFilterForEntrySubaccount(int entrySubaccountID, int entryID, int subaccountID);
+		std::string GetFilterForFinancialReport(int financialReportID, double account_44010, double account_55010, double account_552,
+			double account_55270, double account_553, double account_55321, double account_44020_90, double account_66010_66110,
+			double account_66020_66120, double account_66040_66140, double account_66050_66150, double account_66060_66160,
+			double account_66130, double account_66070_66170, double tax, std::string fromDate, std::string tillDate);
+		std::string GetFilterForInventorizationList(int inventorizationListID, int inventorizationID, int productID, double inventorizationListCount,
+			double inventorizationListSum, int statusID, int currencyID);
+		std::string GetFilterForInventorization(int inventorizationID, int userID, std::string inventorizationDate, std::string inventorizationExecutionDate,
+			int stockEmployeeID, double inventorizationCount, double inventorizationSum, int statusID, int currencyID);
+		std::string GetFilterForJobprice(int jobpriceID, int producrtID, double jobpriceValue, int currencyID, double jobpriceVolume, int measureID, int positionID);
+		std::string GetFilterForJobsheet(int jobsheetID, std::string jobsheetDate, double jobsheetCount, int productID, int employeeID);
+		std::string GetFilterForJobsheetForPeriod(int jobsheetID, std::string jobsheetDate, double jobsheetCount, int productID, int employeeID, std::string fromDate, std::string toDate);
+		std::string GetFilterForLocation(int locationID, std::string countryName, std::string countryCode, std::string regionName
+			, std::string cityName);
+		std::string GetFilterForMeasure(int measureID, std::string measureName, std::string measureShortName, int measureUnit);
+		std::string GetFilterForNetCost(int netCostID, std::string netCostDate, double netCostValue, int currencyID, int productID, bool netCostIsOutdated);
+		std::string GetFilterForOrderList(int orderListID, int orderID, int productID, double orderListCount, double orderListSum, int statusID, int currencyID);
+		std::string GetFilterForOrder(int orderID, int clientID, std::string orderDate, std::string orderExecutionDate, int employeeID,
+			double orderCount, double orderSum, int statusID, int currencyID);
+		std::string GetFilterForOrderForPeriod(int orderID, int clientID, std::string orderDate, std::string orderExecutionDate, int employeeID,
+			double orderCount, double orderSum, int statusID, int currencyID, std::string fromDate, std::string toDate);
+		std::string GetFilterForOrderRawList(int orderRawListID, int orderRawID, int productID, double orderRawListCount, double orderRawSum, int statusID, int currencyID);
+		std::string GetFilterForOrderRaw(int orderRawID, int productID, std::string orderRawDate, std::string orderRawExecutionDate,
+			int employeeID, double orderRawCount, double orderRawSum, int statusID, int currencyID);
+		std::string GetFilterForPayment(int paymentID, std::string paymatDate, double paymentValue, int userID, int currencyID, int statusID);
+		std::string GetFilterForPaymentEmployee(int paymentEmployeeID, int paymentID, int employeeID);
+		std::string GetFilterForPayslip(int payslipID, std::string payslipDate, double payslipValue, int statusID, int currencyID);
+		std::string GetFilterForPayslipOrder(int payslipOrderID, int payslipID, int orderID);
+		std::string GetFilterForPercentRate(int percentRateID, double percentRateValue, std::string percentRateCondition, int positionID);
+		std::string GetFilterForPhoto(int photoID, int userID, int productionID, std::string photoSource);
+		std::string GetFilterForPosition(int positionID, std::string positionName);
+		std::string GetFilterForPrice(int priceID, std::string priceDate, double priceValue, int currencyID, int productID, bool priceIsOutdated);
+		std::string GetFilterForProductType(int productTypeID, std::string productTypeName, std::string productTypeShortName, std::string productTypeCode);
+		std::string GetFilterForProduction(int productionID, std::string productionDate, std::string productionExpiryDate, std::string productionSessionStart,
+			std::string productionSessionEnd);
+		std::string GetFilterForProductionForPeriod(int productionID, std::string productionDate, std::string productionExpiryDate, std::string productionSessionStart,
+			std::string productionSessionEnd, std::string fromDate, std::string toDate);
+		std::string GetFilterForProductionList(int productionListID, int productionID, int productID, double productionListCount, double productionListSum, int statusID, int currencyID);
+		std::string GetFilterForProductionListInEnum(int productionListID, int productionID, int productID, double productionListCount, double productionListSum, int statusID, int currencyID, std::vector<int> vecProdID);
+		std::string GetFilterForProductionConsumeRawList(int productionConsRawListID, int productionConsumeRawID, int productID, double productionConsRawListCount, double productionConsRawListSum, int statusID, int currencyID);
+		std::string GetFilterForProductionConsumeRaw(int productionConsumeRawID, int userID, std::string productionConsumeRawDate,
+			std::string productionConsumeRawExecutionDate, int stockEmployeeID, double productionConsumeRawCount,
+			double productionConsumeRawSum, int statusID, int currencyID);
+		std::string GetFilterForProductionPlanList(int productionPlanListID, int productionPlanID, int productID, double productionPlanListCount, double productionPlanListSum, int statusID, int currencyID);
+		std::string GetFilterForProductionPlan(int productionPlanID, std::string productionPlanDate, int employeeID, double productionPlanListCount, double productionPlanListSum, int statusID, int currencyID);
+		std::string GetFilterForProductionStock(int productionStockID, int productID, double productionStockCount, double productionStockSum, int statusID, int currencyID);
+		std::string GetFilterForProduct(int productID, int companyID, std::string productName, double productVolume, int measureID, double productPrice, int productTypeID, int productShelfLife,
+			int currencyID);
+		std::string GetFilterForPurveyor(int purveyorID, std::string name, std::string surname, std::string phone,
+			std::string address, std::string purveyorCompanyName, std::string password, std::string email,
+			bool activated, int roleID, int locationID);
+		std::string GetFilterForReceiptProductList(int receiptProductListID, int receiptProductID, int productID, double receiptProductCount, double receiptProductSum, int statusID, int currencyID);
+		std::string GetFilterForReceiptProduct(int receiptProductID, int employeeID, std::string receiptProductDate,
+			std::string receiptProductExecutionDate, int stockEmployeeID, double receiptProductCount, double receiptProductSum,
+			int statusID, int currencyID);
+		std::string GetFilterForReceiptRawList(int receiptRawListID, int receiptRawID, int productID, double receiptRawListCount, double receiptRawListSum, int statusID, int currencyID);
+		std::string GetFilterForReceiptRaw(int receiptRawID, int employeeID, std::string receiptRawDate, std::string receiptRawExecutionDate, int stockEmployeeID, double receiptRawCount, double receiptRawSum, int statusID, int currencyID);
+		std::string GetFilterForRefund(int refundID, std::string refuntDate, double refundValue, int userID, int currencyID);
+		std::string GetFilterForRelationType(int relationTypeID, std::string relationTypeName, std::string comment);
+		std::string GetFilterForRelation(int relationID, int user1ID, int user2ID, int relationTypeID);
+		std::string GetFilterForReturnList(int returnListID, int returnID, int productID, double returnListCount, double returnListSum, int statusID, int currencyID);
+		std::string GetFilterForReturn(int returnID, int clientID, std::string returnDate, std::string returnExecutionDate, int employeeID, double returnCount, double returnSum, int statusID, int currencyID);
+		std::string GetFilterForRole(int roleID, std::string roleCode, std::string roleName, std::string comment);
+		std::string GetFilterForSalary(int salaryID, int userID, double salaryValue, int currencyID, int salaryTypeID, std::string salaryDate, bool salaryBonus);
+		std::string GetFilterForSalaryType(int salaryTypeID, std::string salaryTypeCode, std::string salaryTypeName);
+		std::string GetFilterForSpecificationList(int specificationListID, int specificationID, int productID, double specificationListCount);
+		std::string GetFilterForSpecification(int specificationID, int productID, double specificationSum, int currencyID, int employeeID, std::string sDate);
+		std::string GetFilterForSpoilageList(int spoilageListID, int spoilageID, int productID, double spoilageListCount, double spoilageListSum, int statusID, int currencyID);
+		std::string GetFilterForSpoilage(int spoilageID, std::string spoilageDate, int employeeID, double spoilageCount, double spoilageSum, int statusID, int currencyID);
+		std::string GetFilterForState(int stateID, int universalID, int statusID, std::string statusLastChange);
+		std::string GetFilterForStatus(int statusID, std::string statusCode, std::string statusName, std::string comment);
+		std::string GetFilterForStatusRule(int statusRuleID, std::string statusRuleOperation, int statusID);
+		std::string GetFilterForStock(int stockID, int productID, double stockCount, double stockSum, int statusID, int currencyID);
+		std::string GetFilterForSubaccount(int subaccountID, int accountID, std::string subaccountNumber, double subaccountStartBalance, double subaccountCurrentBalance, int currencyID, int statusID,
+			std::string subaccountOpenDate, std::string subaccountCloseDate, std::string subaccountDetails);
+		std::string GetFilterForSubaccountHistory(int subaccountHistoryID, int subaccountID, double subaccountStartBalance, double subaccountCurrentBalance,
+			std::string fromDate, std::string tillDate);
+		std::string GetFilterForTax(int taxID, std::string taxName, std::string taxCode, double fixedValue, int percentValue,
 			std::string formulaValue);
-		std::string GetFilterForTimesheet(int tID, int sID, double tWorkedTime, std::string tDate);
-		std::string GetFilterForTimesheetForPeriod(int tID, int sID, double tWorkedTime, std::string tDate, std::string fromDate, std::string toDate);
-		std::string GetFilterForTransportList(int tlID, int tID, int pID, double tlCount, double tlSum, int sID, int cID);
-		std::string GetFilterForTransport(int tID, int uID, std::string tDate, std::string tExecDate, int seID, double tCount, double tSum, int sID, int cID);
-		std::string GetFilterForUser(int uID, std::string uEmail, std::string uName, std::string uSurname, std::string uPhone, std::string uAddress,
-			int uRoleID, std::string uPassword, bool uActivated);
-		std::string GetFilterForWithdrawal(int wID, std::string wDate, double wValue, int uID, int cID);
-		std::string GetFilterForWriteOffList(int wlID, int wID, int pID, double wlCount, double wlSum, int sID, int cID);
-		std::string GetFilterForWriteOff(int wID, int uID, std::string wDate, int eID, double wCount, double wSum, int sID, int cID);
-		std::string GetFilterForWriteOffRawList(int rlID, int rID, int pID, double rlCount, double rlSum, int sID, int cID);
-		std::string GetFilterForWriteOffRaw(int tID, int uID, std::string rDate, int seID, double rCount, double rSum, int sID, int cID);
+		std::string GetFilterForTimesheet(int timesheetID, int salaryID, double workedTime, std::string timesheetDate);
+		std::string GetFilterForTimesheetForPeriod(int timesheetID, int salaryID, double workedTime, std::string timesheetDate, std::string fromDate, std::string toDate);
+		std::string GetFilterForTransportList(int transportListID, int transportID, int productID, double transportListCount, double transportListSum, int statusID, int currencyID);
+		std::string GetFilterForTransport(int transportID, int employeeID, std::string transportDate, std::string transportExecutionDate,
+			int stockEmployeeID, double transportCount, double transportSum, int statusID, int currencyID);
+		std::string GetFilterForUser(int userID, std::string userEmail, std::string userName, std::string userSurname, std::string userPhone, std::string userAddress,
+			int roleID, std::string userPassword, bool userActivated);
+		std::string GetFilterForWithdrawal(int withdrawalID, std::string withdrawalDate, double withdrawalValue, int userID, int currencyID);
+		std::string GetFilterForWriteOffList(int writeOffListID, int writeOffID, int productID, double writeOffListCount, double writeOffListSum, int statusID, int currencyID);
+		std::string GetFilterForWriteOff(int writeOffID, int userID, std::string writeOffDate, int employeeID, double writeOffCount, double writeOffSum, int statusID, int currencyID);
+		std::string GetFilterForWriteOffRawList(int writeOffRawListID, int writeOffRawID, int productID, double writeOffRawListCount, double writeOffRawListSum, int statusID, int currencyID);
+		std::string GetFilterForWriteOffRaw(int writeOffRawID, int employeeID, std::string writeOffRawListDate, int stockEmployeeID, double writeOffRawListCount, double writeOffRawListSum, int statusID, int currencyID);
 
 		//overloaded  operators
 		OrmasDal& operator=(const OrmasDal& ormasDal)
@@ -530,13 +689,13 @@ namespace DataLayer{
 			}
 			else
 			{
-				dbConection = ormasDal.dbConection;
+				dbConnection = ormasDal.dbConnection;
 				connectionString = ormasDal.connectionString;
 			}
 			return *this;
 		}
 	private:
-		PGconn *dbConection;
+		PGconn *dbConnection;
 		ConnectionString connectionString;
 	};
 }

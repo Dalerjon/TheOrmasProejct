@@ -471,6 +471,9 @@
     <ClInclude Include="DivisionAccountRelationViewClass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="PaymentEmployeeRelationClass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -918,6 +921,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="DivisionAccountRelationViewClass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PaymentEmployeeRelationClass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

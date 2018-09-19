@@ -9,6 +9,7 @@
 #include "CompanyAccountRelationClass.h"
 #include "CompanyEmployeeRelationClass.h"
 #include "CompanyClass.h"
+#include <codecvt>
 
 namespace BusinessLayer{
 	Payslip::Payslip(DataLayer::payslipsCollection pCollection)
@@ -237,6 +238,8 @@ namespace BusinessLayer{
 		std::string& errorMessage)
 	{
 		Payslip payslip;
+		payslip.Clear();
+		errorMessage.clear();
 		payslip.SetDate(pDate);
 		payslip.SetValue(pValue);
 		payslip.SetSalaryID(uID);
@@ -256,6 +259,8 @@ namespace BusinessLayer{
 	bool Payslip::IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
 		Payslip payslip;
+		payslip.Clear();
+		errorMessage.clear();
 		payslip.SetDate(date);
 		payslip.SetValue(value);
 		payslip.SetSalaryID(salaryID);
@@ -424,6 +429,7 @@ namespace BusinessLayer{
 		entry.SetDebitingAccountID(debAccID);
 		entry.SetValue(currentSum);
 		entry.SetCreditingAccountID(credAccID);
+		entry.SetDescription(wstring_to_utf8(L"Операция выдачи денег"));
 		if (!entry.CreateEntry(ormasDal, errorMessage))
 		{
 			return false;
@@ -437,6 +443,7 @@ namespace BusinessLayer{
 		entry.SetDebitingAccountID(credAccID);
 		entry.SetValue(previousSum);
 		entry.SetCreditingAccountID(debAccID);
+		entry.SetDescription(wstring_to_utf8(L"Операция выдачи денег"));
 		if (!entry.CreateEntry(ormasDal, errorMessage))
 		{
 			return false;
@@ -446,6 +453,7 @@ namespace BusinessLayer{
 		entry.SetDebitingAccountID(debAccID);
 		entry.SetValue(currentSum);
 		entry.SetCreditingAccountID(credAccID);
+		entry.SetDescription(wstring_to_utf8(L"Операция выдачи денег"));
 		if (!entry.CreateEntry(ormasDal, errorMessage))
 		{
 			return false;
@@ -459,10 +467,17 @@ namespace BusinessLayer{
 		entry.SetDebitingAccountID(credAccID);
 		entry.SetValue(currentSum);
 		entry.SetCreditingAccountID(debAccID);
+		entry.SetDescription(wstring_to_utf8(L"Операция выдачи денег"));
 		if (!entry.CreateEntry(ormasDal, errorMessage))
 		{
 			return false;
 		}
 		return true;
+	}
+
+	std::string Payslip::wstring_to_utf8(const std::wstring& str)
+	{
+		std::wstring_convert<std::codecvt_utf8<wchar_t>> myconv;
+		return myconv.to_bytes(str);
 	}
 }

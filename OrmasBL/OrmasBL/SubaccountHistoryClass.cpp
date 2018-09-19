@@ -237,6 +237,8 @@ namespace BusinessLayer{
 	bool SubaccountHistory::IsDuplicate(DataLayer::OrmasDal& ormasDal, int aID, std::string aFromDate, std::string aTillDate, std::string& errorMessage)
 	{
 		SubaccountHistory subaccountHistory;
+		subaccountHistory.Clear();
+		errorMessage.clear();
 		subaccountHistory.SetSubaccountID(aID);
 		subaccountHistory.SetFromDate(aFromDate);
 		subaccountHistory.SetTillDate(aTillDate);
@@ -255,6 +257,8 @@ namespace BusinessLayer{
 	bool SubaccountHistory::IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
 		SubaccountHistory subaccountHistory;
+		subaccountHistory.Clear();
+		errorMessage.clear();
 		subaccountHistory.SetSubaccountID(id);
 		subaccountHistory.SetFromDate(fromDate);
 		subaccountHistory.SetTillDate(tillDate);

@@ -200,13 +200,15 @@ namespace BusinessLayer
 	bool ProductionConsumeRawList::IsDuplicate(DataLayer::OrmasDal& ormasDal, int crID, int pID, double crlCount, double crlSum,
 		int cID, std::string& errorMessage)
 	{
-		ProductionConsumeRawList ProductionConsumeRawList;
-		ProductionConsumeRawList.SetProductionConsumeRawID(crID);
-		ProductionConsumeRawList.SetProductID(pID);
-		ProductionConsumeRawList.SetCount(crlCount);
-		ProductionConsumeRawList.SetSum(crlSum);
-		ProductionConsumeRawList.SetCurrencyID(cID);
-		std::string filter = ProductionConsumeRawList.GenerateFilter(ormasDal);
+		ProductionConsumeRawList productionConsumeRawList;
+		productionConsumeRawList.Clear();
+		errorMessage.clear();
+		productionConsumeRawList.SetProductionConsumeRawID(crID);
+		productionConsumeRawList.SetProductID(pID);
+		productionConsumeRawList.SetCount(crlCount);
+		productionConsumeRawList.SetSum(crlSum);
+		productionConsumeRawList.SetCurrencyID(cID);
+		std::string filter = productionConsumeRawList.GenerateFilter(ormasDal);
 		std::vector<DataLayer::productionConsumeRawListViewCollection> productionConsumeRawListVector = ormasDal.GetProductionConsumeRawList(errorMessage, filter);
 		if (!errorMessage.empty())
 			return true;
@@ -220,13 +222,15 @@ namespace BusinessLayer
 
 	bool ProductionConsumeRawList::IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
-		ProductionConsumeRawList ProductionConsumeRawList;
-		ProductionConsumeRawList.SetProductionConsumeRawID(ProductionConsumeRawID);
-		ProductionConsumeRawList.SetProductID(productID);
-		ProductionConsumeRawList.SetCount(count);
-		ProductionConsumeRawList.SetSum(sum);
-		ProductionConsumeRawList.SetCurrencyID(currencyID);
-		std::string filter = ProductionConsumeRawList.GenerateFilter(ormasDal);
+		ProductionConsumeRawList productionConsumeRawList;
+		productionConsumeRawList.Clear();
+		errorMessage.clear();
+		productionConsumeRawList.SetProductionConsumeRawID(ProductionConsumeRawID);
+		productionConsumeRawList.SetProductID(productID);
+		productionConsumeRawList.SetCount(count);
+		productionConsumeRawList.SetSum(sum);
+		productionConsumeRawList.SetCurrencyID(currencyID);
+		std::string filter = productionConsumeRawList.GenerateFilter(ormasDal);
 		std::vector<DataLayer::productionConsumeRawListViewCollection> productionConsumeRawListVector = ormasDal.GetProductionConsumeRawList(errorMessage, filter);
 		if (!errorMessage.empty())
 			return true;

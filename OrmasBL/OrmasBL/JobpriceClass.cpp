@@ -228,6 +228,8 @@ namespace BusinessLayer{
 		int posID, std::string& errorMessage)
 	{
 		Jobprice jobprice;
+		jobprice.Clear();
+		errorMessage.clear();
 		jobprice.SetProductID(pID);
 		jobprice.SetValue(jValue);
 		jobprice.SetCurrencyID(cID);
@@ -249,6 +251,8 @@ namespace BusinessLayer{
 	bool Jobprice::IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
 		Jobprice jobprice;
+		jobprice.Clear();
+		errorMessage.clear();
 		jobprice.SetProductID(productID);
 		jobprice.SetValue(value);
 		jobprice.SetCurrencyID(currencyID);

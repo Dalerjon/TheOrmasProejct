@@ -93,7 +93,7 @@ GenerateFinRep::GenerateFinRep(BusinessLayer::OrmasBL *ormasBL, QWidget *parent)
 		prevFromMonth += std::to_string(month-1);
 		prevFromMonth += ".";
 		prevFromMonth += std::to_string(year);
-		pastMonthDate = (QDate::fromString(startDate.c_str(), "dd.MM.yyyy"));
+		pastMonthDate = (QDate::fromString(prevFromMonth.c_str(), "dd.MM.yyyy"));
 		coundOfDays = pastMonthDate.daysInMonth();
 		prevTillMonth = std::to_string(coundOfDays);
 		prevTillMonth += ".";
@@ -121,7 +121,7 @@ GenerateFinRep::GenerateFinRep(BusinessLayer::OrmasBL *ormasBL, QWidget *parent)
 			prevFromMonth += std::to_string(12);
 			prevFromMonth += ".";
 			prevFromMonth += std::to_string(year-1);
-			pastMonthDate = (QDate::fromString(startDate.c_str(), "dd.MM.yyyy"));
+			pastMonthDate = (QDate::fromString(prevFromMonth.c_str(), "dd.MM.yyyy"));
 			coundOfDays = pastMonthDate.daysInMonth();
 			prevTillMonth = std::to_string(coundOfDays);
 			prevTillMonth += ".";
@@ -135,7 +135,7 @@ GenerateFinRep::GenerateFinRep(BusinessLayer::OrmasBL *ormasBL, QWidget *parent)
 			prevFromMonth += std::to_string(month-2);
 			prevFromMonth += ".";
 			prevFromMonth += std::to_string(year);
-			pastMonthDate = (QDate::fromString(startDate.c_str(), "dd.MM.yyyy"));
+			pastMonthDate = (QDate::fromString(prevFromMonth.c_str(), "dd.MM.yyyy"));
 			coundOfDays = pastMonthDate.daysInMonth();
 			prevTillMonth = std::to_string(coundOfDays);
 			prevTillMonth += ".";

@@ -200,6 +200,8 @@ namespace BusinessLayer
 	bool Role::IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string rCode, std::string rName, std::string& errorMessage)
 	{
 		Role role;
+		role.Clear();
+		errorMessage.clear();
 		role.SetCode(rCode);
 		role.SetName(rName);
 		std::string filter = role.GenerateFilter(ormasDal);
@@ -217,6 +219,8 @@ namespace BusinessLayer
 	bool Role::IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
 		Role role;
+		role.Clear();
+		errorMessage.clear();
 		role.SetCode(code);
 		role.SetName(name);
 		std::string filter = role.GenerateFilter(ormasDal);

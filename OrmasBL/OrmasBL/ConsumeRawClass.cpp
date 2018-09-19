@@ -454,6 +454,8 @@ namespace BusinessLayer
 		int cID, std::string& errorMessage)
 	{
 		ConsumeRaw consumeRaw;
+		consumeRaw.Clear();
+		errorMessage.clear();
 		consumeRaw.SetEmployeeID(eID);
 		consumeRaw.SetDate(cDate);
 		consumeRaw.SetStockEmployeeID(seID);
@@ -475,6 +477,8 @@ namespace BusinessLayer
 	bool ConsumeRaw::IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
 		ConsumeRaw consumeRaw;
+		consumeRaw.Clear();
+		errorMessage.clear();
 		consumeRaw.SetEmployeeID(employeeID);
 		consumeRaw.SetDate(date);
 		consumeRaw.SetStockEmployeeID(stockEmployeeID);

@@ -302,6 +302,8 @@ namespace BusinessLayer{
 		int uRoleID, std::string pCompanyName, std::string& errorMessage)
 	{
 		Purveyor purveyor;
+		purveyor.Clear();
+		errorMessage.clear();
 		purveyor.SetName(uName);
 		purveyor.SetSurname(uSurname);
 		purveyor.SetPhone(uPhone);
@@ -322,6 +324,8 @@ namespace BusinessLayer{
 	bool Purveyor::IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
 		Purveyor purveyor;
+		purveyor.Clear();
+		errorMessage.clear();
 		purveyor.SetName(name);
 		purveyor.SetSurname(surname);
 		purveyor.SetPhone(phone);

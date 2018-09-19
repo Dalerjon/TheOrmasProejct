@@ -143,6 +143,7 @@
     <ClInclude Include="OrderRawListClass.h" />
     <ClInclude Include="OrderRawListViewClass.h" />
     <ClInclude Include="OrderRawViewClass.h" />
+    <ClInclude Include="PaymentEmployeeRelationClass.h" />
     <ClInclude Include="PayslipOrderRelationClass.h" />
     <ClInclude Include="OrderViewClass.h" />
     <ClInclude Include="OrmasBL.h" />
@@ -294,6 +295,7 @@
     <ClCompile Include="OrderRawListClass.cpp" />
     <ClCompile Include="OrderRawListViewClass.cpp" />
     <ClCompile Include="OrderRawViewClass.cpp" />
+    <ClCompile Include="PaymentEmployeeRelationClass.cpp" />
     <ClCompile Include="PayslipOrderRelationClass.cpp" />
     <ClCompile Include="OrderViewClass.cpp" />
     <ClCompile Include="OrmasBL.cpp" />

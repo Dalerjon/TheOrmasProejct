@@ -4,6 +4,7 @@
 #include "UserClass.h"
 #include "StatusClass.h"
 #include "StockClass.h"
+#include "TransportClass.h"
 
 namespace BusinessLayer
 {
@@ -129,8 +130,16 @@ namespace BusinessLayer
 			{
 				if (ChangesAtStock(ormasDal, id, errorMessage))
 				{
-					ormasDal.CommitTransaction(errorMessage);
-					return true;
+					if (ChangesAtTransport(ormasDal, id, errorMessage))
+					{
+						ormasDal.CommitTransaction(errorMessage);
+						return true;
+					}
+					else
+					{
+						ormasDal.CancelTransaction(errorMessage);
+						return true;
+					}
 				}
 				else
 				{
@@ -163,15 +172,23 @@ namespace BusinessLayer
 			{
 				if (ChangesAtStock(ormasDal, id, errorMessage))
 				{
-					ormasDal.CommitTransaction(errorMessage);
-					return true;
+					if (ChangesAtTransport(ormasDal, id, errorMessage))
+					{
+						ormasDal.CommitTransaction(errorMessage);
+						return true;
+					}
+					else
+					{
+						ormasDal.CancelTransaction(errorMessage);
+						return true;
+					}
 				}
 				else
 				{
 					ormasDal.CancelTransaction(errorMessage);
 					return false;
 				}
-			}
+			}			
 			ormasDal.CommitTransaction(errorMessage);
 			return true;
 		}
@@ -250,8 +267,16 @@ namespace BusinessLayer
 			{
 				if (ChangesAtStock(ormasDal, id,  errorMessage))
 				{
-					ormasDal.CommitTransaction(errorMessage);
-					return true;
+					if (ChangesAtTransport(ormasDal, id, errorMessage))
+					{
+						ormasDal.CommitTransaction(errorMessage);
+						return true;
+					}
+					else
+					{
+						ormasDal.CancelTransaction(errorMessage);
+						return true;
+					}
 				}
 				else
 				{
@@ -265,8 +290,16 @@ namespace BusinessLayer
 				{
 					if (ChangesAtStock(ormasDal, id, prodCountMap, prevSum, errorMessage))
 					{
-						ormasDal.CommitTransaction(errorMessage);
-						return true;
+						if (ChangesAtTransport(ormasDal, id, prodCountMap, prevSum, errorMessage))
+						{
+							ormasDal.CommitTransaction(errorMessage);
+							return true;
+						}
+						else
+						{
+							ormasDal.CancelTransaction(errorMessage);
+							return true;
+						}
 					}
 					else
 					{
@@ -307,8 +340,16 @@ namespace BusinessLayer
 			{
 				if (ChangesAtStock(ormasDal, id, errorMessage))
 				{
-					ormasDal.CommitTransaction(errorMessage);
-					return true;
+					if (ChangesAtTransport(ormasDal, id, errorMessage))
+					{
+						ormasDal.CommitTransaction(errorMessage);
+						return true;
+					}
+					else
+					{
+						ormasDal.CancelTransaction(errorMessage);
+						return true;
+					}
 				}
 				else
 				{
@@ -322,8 +363,16 @@ namespace BusinessLayer
 				{
 					if (ChangesAtStock(ormasDal, id, prodCountMap, prevSum, errorMessage))
 					{
-						ormasDal.CommitTransaction(errorMessage);
-						return true;
+						if (ChangesAtTransport(ormasDal, id, prodCountMap, prevSum, errorMessage))
+						{
+							ormasDal.CommitTransaction(errorMessage);
+							return true;
+						}
+						else
+						{
+							ormasDal.CancelTransaction(errorMessage);
+							return true;
+						}
 					}
 					else
 					{
@@ -407,6 +456,8 @@ namespace BusinessLayer
 		int cID, std::string& errorMessage)
 	{
 		ConsumeProduct consumeProduct;
+		consumeProduct.Clear();
+		errorMessage.clear();
 		consumeProduct.SetEmployeeID(eID);
 		consumeProduct.SetDate(oDate);
 		consumeProduct.SetStockEmployeeID(seID);
@@ -428,6 +479,8 @@ namespace BusinessLayer
 	bool ConsumeProduct::IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
 		ConsumeProduct consumeProduct;
+		consumeProduct.Clear();
+		errorMessage.clear();
 		consumeProduct.SetEmployeeID(employeeID);
 		consumeProduct.SetDate(date);
 		consumeProduct.SetStockEmployeeID(stockEmployeeID);
@@ -456,6 +509,18 @@ namespace BusinessLayer
 	{
 		Stock stock;
 		return stock.ChangingByConsumeProduct(ormasDal, cpID, pProdCountMap, previousSum, errorMessage);
+	}
+
+	bool ConsumeProduct::ChangesAtTransport(DataLayer::OrmasDal& ormasDal, int cpID, std::string& errorMessage)
+	{
+		Transport transport;
+		return transport.ChangingByReceiptProduct(ormasDal, cpID, errorMessage);
+	}
+
+	bool ConsumeProduct::ChangesAtTransport(DataLayer::OrmasDal& ormasDal, int cpID, std::map<int, double> pProdCountMap, double previousSum, std::string& errorMessage)
+	{
+		Transport transport;
+		return transport.ChangingByReceiptProduct(ormasDal, cpID, pProdCountMap, previousSum, errorMessage);
 	}
 
 	double ConsumeProduct::GetCurrentSum(DataLayer::OrmasDal& ormasDal, int cpID, std::string& errorMessage)

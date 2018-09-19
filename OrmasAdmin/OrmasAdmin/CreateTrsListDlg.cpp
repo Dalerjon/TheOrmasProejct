@@ -334,8 +334,8 @@ void CreateTrsListDlg::EditProductInList()
 						itemModel->item(mIndex.row(), 8)->setText(QString::number(transportList->GetSum()));
 						itemModel->item(mIndex.row(), 9)->setText(sumCurrency->GetShortName().c_str());
 						itemModel->item(mIndex.row(), 10)->setText(status->GetName().c_str());
-						itemModel->item(mIndex.row(), 11)->setText(QString::number(transportList->GetStatusID()));
-						itemModel->item(mIndex.row(), 12)->setText(QString::number(product->GetMeasureID()));
+						itemModel->item(mIndex.row(), 11)->setText(QString::number(transportList->GetProductID()));
+						itemModel->item(mIndex.row(), 12)->setText(QString::number(transportList->GetStatusID()));
 						itemModel->item(mIndex.row(), 13)->setText(QString::number(transportList->GetCurrencyID()));
 
 						emit itemModel->dataChanged(mIndex, mIndex);

@@ -72,7 +72,7 @@ void CreateCmpDlg::CreateCompany()
 	if (!(nameEdit->text().isEmpty() || phoneEdit->text().isEmpty() || addressEdit->text().isEmpty()))
 	{
 		DataForm *parentDataForm = (DataForm*) parentForm;
-		SetCompanyParams(nameEdit->text(), phoneEdit->text(), addressEdit->text(), commentTextEdit->toPlainText());
+		SetCompanyParams(nameEdit->text(), addressEdit->text(), phoneEdit->text(), commentTextEdit->toPlainText());
 		dialogBL->StartTransaction(errorMessage);
 		if (dialogBL->CreateCompany(company,errorMessage))
 		{
@@ -121,7 +121,7 @@ void CreateCmpDlg::EditCompany()
 			|| QString(company->GetComment().c_str()) != commentTextEdit->toPlainText())
 		{
 			DataForm *parentDataForm = (DataForm*) parentForm;
-			SetCompanyParams(nameEdit->text(), phoneEdit->text(), addressEdit->text(), commentTextEdit->toPlainText(), company->GetID());
+			SetCompanyParams(nameEdit->text(), addressEdit->text(), phoneEdit->text(), commentTextEdit->toPlainText(), company->GetID());
 			dialogBL->StartTransaction(errorMessage);
 			if (dialogBL->UpdateCompany(company, errorMessage))
 			{

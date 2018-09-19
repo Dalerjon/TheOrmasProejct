@@ -246,6 +246,8 @@ namespace BusinessLayer{
 	bool Access::IsDuplicate(DataLayer::OrmasDal& ormasDal, int rID, int aiID, std::string& errorMessage)
 	{
 		Access access;
+		access.Clear();
+		errorMessage.clear();
 		access.SetRoleID(rID);
 		access.SetAccessItemID(aiID);
 		std::string filter = access.GenerateFilter(ormasDal);
@@ -263,6 +265,8 @@ namespace BusinessLayer{
 	bool Access::IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
 		Access access;
+		access.Clear();
+		errorMessage.clear();
 		access.SetRoleID(roleID);
 		access.SetAccessItemID(accessItemID);
 		std::string filter = access.GenerateFilter(ormasDal);

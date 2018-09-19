@@ -400,6 +400,8 @@ namespace BusinessLayer
 		int cID, std::string& errorMessage)
 	{
 		OrderRaw orderRaw;
+		orderRaw.Clear();
+		errorMessage.clear();
 		orderRaw.SetPurveyorID(pID);
 		orderRaw.SetDate(oDate);
 		orderRaw.SetEmployeeID(eID);
@@ -421,6 +423,8 @@ namespace BusinessLayer
 	bool OrderRaw::IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
 		OrderRaw orderRaw;
+		orderRaw.Clear();
+		errorMessage.clear();
 		orderRaw.SetPurveyorID(purveyorID);
 		orderRaw.SetDate(date);
 		orderRaw.SetEmployeeID(employeeID);

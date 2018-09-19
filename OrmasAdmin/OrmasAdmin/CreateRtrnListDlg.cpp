@@ -331,8 +331,8 @@ void CreateRtrnListDlg::EditProductInList()
 						itemModel->item(mIndex.row(), 8)->setText(QString::number(returnList->GetSum()));
 						itemModel->item(mIndex.row(), 9)->setText(sumCurrency->GetShortName().c_str());
 						itemModel->item(mIndex.row(), 10)->setText(status->GetName().c_str());
-						itemModel->item(mIndex.row(), 11)->setText(QString::number(returnList->GetStatusID()));
-						itemModel->item(mIndex.row(), 12)->setText(QString::number(product->GetMeasureID()));
+						itemModel->item(mIndex.row(), 11)->setText(QString::number(returnList->GetProductID()));
+						itemModel->item(mIndex.row(), 12)->setText(QString::number(returnList->GetStatusID()));
 						itemModel->item(mIndex.row(), 13)->setText(QString::number(returnList->GetCurrencyID()));
 
 						emit itemModel->dataChanged(mIndex, mIndex);

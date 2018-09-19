@@ -1,13 +1,13 @@
 <div id="footter">
 			<div id = "company">
 			<span>
-				Имя компании. Все права зашешены.<br/>
-				Контактный номер: +992 92 777 77 77
+				ООО "Фархунда". Все права зашешены.<br/>
+				Контактный номер: +992 92 933 00 33
 			</span>
 		</div>
 		<div id = "designer">
 			<span>
-				Designer by: <br/>
+				Designed by: <br/>
 				MainTech Solutions.
 			</span>
 		<div>

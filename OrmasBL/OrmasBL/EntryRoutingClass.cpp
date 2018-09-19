@@ -178,6 +178,8 @@ namespace BusinessLayer{
 	bool EntryRouting::IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string eOperation, int eDebitAccountID, int eCreditAccountID, std::string& errorMessage)
 	{
 		EntryRouting entryRouting;
+		entryRouting.Clear();
+		errorMessage.clear();
 		entryRouting.SetOperation(eOperation);
 		entryRouting.SetDebitAccountID(eDebitAccountID);
 		entryRouting.SetCreditAccountID(eCreditAccountID);
@@ -196,11 +198,13 @@ namespace BusinessLayer{
 
 	bool EntryRouting::IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
-		EntryRouting EntryRouting;
-		EntryRouting.SetOperation(operation);
-		EntryRouting.SetDebitAccountID(debitAccountID);
-		EntryRouting.SetCreditAccountID(creditAccountID);
-		std::string filter = EntryRouting.GenerateFilter(ormasDal);
+		EntryRouting entryRouting;
+		entryRouting.Clear();
+		errorMessage.clear();
+		entryRouting.SetOperation(operation);
+		entryRouting.SetDebitAccountID(debitAccountID);
+		entryRouting.SetCreditAccountID(creditAccountID);
+		std::string filter = entryRouting.GenerateFilter(ormasDal);
 		errorMessage.clear();
 		std::vector<DataLayer::entryRoutingCollection> entryRoutingVector = ormasDal.GetEntryRouting(errorMessage, filter);
 		if (!errorMessage.empty())

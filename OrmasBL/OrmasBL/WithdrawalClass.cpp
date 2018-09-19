@@ -7,6 +7,7 @@
 #include "CompanyAccountRelationClass.h"
 #include "CompanyEmployeeRelationClass.h"
 #include "CompanyClass.h"
+#include <codecvt>
 
 namespace BusinessLayer{
 	Withdrawal::Withdrawal(DataLayer::withdrawalsCollection wCollection)
@@ -235,6 +236,8 @@ namespace BusinessLayer{
 		std::string& errorMessage)
 	{
 		Withdrawal withdrawal;
+		withdrawal.Clear();
+		errorMessage.clear();
 		withdrawal.SetDate(pDate);
 		withdrawal.SetValue(pValue);
 		withdrawal.SetUserID(uID);
@@ -254,6 +257,8 @@ namespace BusinessLayer{
 	bool Withdrawal::IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
 		Withdrawal withdrawal;
+		withdrawal.Clear();
+		errorMessage.clear();
 		withdrawal.SetDate(date);
 		withdrawal.SetValue(value);
 		withdrawal.SetUserID(userID);
@@ -362,6 +367,7 @@ namespace BusinessLayer{
 		entry.SetDebitingAccountID(debAccID);
 		entry.SetValue(currentSum);
 		entry.SetCreditingAccountID(credAccID);
+		entry.SetDescription(wstring_to_utf8(L"Операция снятие суммы со счета"));
 		if (!entry.CreateEntry(ormasDal, errorMessage))
 		{
 			return false;
@@ -375,6 +381,7 @@ namespace BusinessLayer{
 		entry.SetDebitingAccountID(credAccID);
 		entry.SetValue(previousSum);
 		entry.SetCreditingAccountID(debAccID);
+		entry.SetDescription(wstring_to_utf8(L"Операция снятие суммы со счета"));
 		if (!entry.CreateEntry(ormasDal, errorMessage))
 		{
 			return false;
@@ -384,6 +391,7 @@ namespace BusinessLayer{
 		entry.SetDebitingAccountID(debAccID);
 		entry.SetValue(currentSum);
 		entry.SetCreditingAccountID(credAccID);
+		entry.SetDescription(wstring_to_utf8(L"Операция снятие суммы со счета"));
 		if (!entry.CreateEntry(ormasDal, errorMessage))
 		{
 			return false;
@@ -397,10 +405,17 @@ namespace BusinessLayer{
 		entry.SetDebitingAccountID(credAccID);
 		entry.SetValue(currentSum);
 		entry.SetCreditingAccountID(debAccID);
+		entry.SetDescription(wstring_to_utf8(L"Отмена снятие суммы со счета"));
 		if (!entry.CreateEntry(ormasDal, errorMessage))
 		{
 			return false;
 		}
 		return true;
+	}
+	
+	std::string Withdrawal::wstring_to_utf8(const std::wstring& str)
+	{
+		std::wstring_convert<std::codecvt_utf8<wchar_t>> myconv;
+		return myconv.to_bytes(str);
 	}
 }

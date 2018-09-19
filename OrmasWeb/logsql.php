@@ -1,6 +1,6 @@
 <?php
 	$db_hostname= 'localhost';
-	$db_database = 'OrmasDB';
+	$db_database = 'FarhundaDB2';
 	$db_username = 'postgres';
 	$db_password = 'postgres';
 	$db_port = '5432';

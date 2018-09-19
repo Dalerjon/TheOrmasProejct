@@ -20,7 +20,7 @@ public:
 	void DeleteTransport(){};
 	void Close();
 	void OpenEmpDlg();
-	void OpenSkEmpDlg();
+	void OpenUserDlg();
 	void OpenStsDlg();
 	void OpenTrsListDlg();
 	void StatusWasChenged();

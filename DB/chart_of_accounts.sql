@@ -158,6 +158,10 @@ INSERT INTO "OrmasSchema".chart_of_accounts(
 																				WHERE account_type_name = 'ACTIVE') );
 INSERT INTO "OrmasSchema".chart_of_accounts(
             chart_of_account_id, number_of_account, name_of_account, account_type_id)
+    VALUES ((SELECT nextval('"OrmasSchema".id_seq')), '10742', 'Готовая продукция в пути', (SELECT account_type_id from "OrmasSchema".account_type 
+																				WHERE account_type_name = 'ACTIVE') );
+INSERT INTO "OrmasSchema".chart_of_accounts(
+            chart_of_account_id, number_of_account, name_of_account, account_type_id)
     VALUES ((SELECT nextval('"OrmasSchema".id_seq')), '10750', 'Сельхозпродукция с биологических активов', (SELECT account_type_id from "OrmasSchema".account_type 
 																				WHERE account_type_name = 'ACTIVE') );
 INSERT INTO "OrmasSchema".chart_of_accounts(

@@ -3,6 +3,8 @@
 
 #include "OrmasDAL.h"
 #include "UserClass.h"
+#include "DivisionEmployeeRelationClass.h"
+
 
 namespace BusinessLayer{
 	class Employee : public User
@@ -53,6 +55,9 @@ namespace BusinessLayer{
 		bool GetEmployeeByCredentials(DataLayer::OrmasDal& ormasDal, std::string uPhone, std::string uEmail, std::string uPassword);
 		bool IsEmpty();
 		void Clear();
+		bool CreateDivisionEmployeeRelation(DataLayer::OrmasDal& ormasDal, DivisionEmployeeRelation deRelation, std::string& errorMessage);
+		bool UpdateDivisionEmployeeRelation(DataLayer::OrmasDal& ormasDal, DivisionEmployeeRelation deRelation, std::string& errorMessage);
+		bool CreateCompanyEmployeeRelation(DataLayer::OrmasDal& ormasDal, std::string& errorMessage);
 	private:
 		void TrimStrings(std::string&, std::string&, std::string&, std::string&, std::string&, std::string&, std::string&, std::string&);
 		bool IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string uName, std::string uSurname, std::string uPhone,

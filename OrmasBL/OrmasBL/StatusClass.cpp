@@ -209,6 +209,8 @@ namespace BusinessLayer
 	bool Status::IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string sCode, std::string sName, std::string& errorMessage)
 	{
 		Status status;
+		status.Clear();
+		errorMessage.clear();
 		status.SetCode(sCode);
 		status.SetName(sName);
 		std::string filter = status.GenerateFilter(ormasDal);
@@ -226,6 +228,8 @@ namespace BusinessLayer
 	bool Status::IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
 		Status status;
+		status.Clear();
+		errorMessage.clear();
 		status.SetCode(code);
 		status.SetName(name);
 		std::string filter = status.GenerateFilter(ormasDal);

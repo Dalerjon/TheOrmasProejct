@@ -40,6 +40,7 @@ namespace BusinessLayer{
 		//Generate filter string for class
 		std::string GenerateFilter(DataLayer::OrmasDal& ormasDal);
 		bool GetDivisionEmployeeRelationByID(DataLayer::OrmasDal& ormasDal, int deID, std::string& errorMessage);
+		bool GetDivisionEmployeeRelationByEmployeeID(DataLayer::OrmasDal& ormasDal, int eID, std::string& errorMessage);
 		bool IsEmpty();
 		void Clear();
 	private:

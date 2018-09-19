@@ -171,6 +171,8 @@ namespace BusinessLayer
 	bool SalaryType::IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string stCode, std::string stName, std::string& errorMessage)
 	{
 		SalaryType salaryType;
+		salaryType.Clear();
+		errorMessage.clear();
 		salaryType.SetCode(stCode);
 		salaryType.SetName(stName);
 		std::string filter = salaryType.GenerateFilter(ormasDal);
@@ -188,6 +190,8 @@ namespace BusinessLayer
 	bool SalaryType::IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
 		SalaryType salaryType;
+		salaryType.Clear();
+		errorMessage.clear();
 		salaryType.SetCode(code);
 		salaryType.SetName(name);
 		std::string filter = salaryType.GenerateFilter(ormasDal);

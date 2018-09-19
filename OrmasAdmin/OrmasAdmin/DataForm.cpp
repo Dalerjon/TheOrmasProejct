@@ -5964,8 +5964,9 @@ template<>
 QStringList DataForm::GetTableHeader<BusinessLayer::PaymentView>()
 {
 	QStringList header;
-	header << QObject::tr("ID") << QObject::tr("Date") << QObject::tr("Value") << QObject::tr("Currency name") << QObject::tr("User ID")
-		<< QObject::tr("Currency ID");
+	header << QObject::tr("ID") << QObject::tr("Date") << QObject::tr("Client name") << QObject::tr("Client surname") << QObject::tr("Client Phone") 
+		<< QObject::tr("Value") << QObject::tr("Currency name") << QObject::tr("Status name") << QObject::tr("User ID")
+		<< QObject::tr("Currency ID") << QObject::tr("Status ID");
 	return header;
 }
 
@@ -6320,8 +6321,8 @@ QStringList DataForm::GetTableHeader<BusinessLayer::TransportView>()
 {
 	QStringList header;
 	header << QObject::tr("ID") << QObject::tr("Transportation date") << QObject::tr("Execution date") << QObject::tr("Status code")
-		<< QObject::tr("Status name") << QObject::tr("Employee name") << QObject::tr("Employee surname") << QObject::tr("Employee phone")
-		<< QObject::tr("Employee position") << QObject::tr("Employee name") << QObject::tr("Employee surname") << QObject::tr("Employee phone")
+		<< QObject::tr("Status name") << QObject::tr("User name") << QObject::tr("User surname") << QObject::tr("User phone")
+		<< QObject::tr("Userposition") << QObject::tr("Employee name") << QObject::tr("Employee surname") << QObject::tr("Employee phone")
 		<< QObject::tr("Employee position") << QObject::tr("Product count") << QObject::tr("Sum") << QObject::tr("Currency name")
 		<< QObject::tr("Employee ID") << QObject::tr("Client ID") << QObject::tr("Status ID") << QObject::tr("Currency ID")
 		<< QObject::tr("Product list");
@@ -6953,10 +6954,15 @@ QList<QStandardItem*> DataForm::GetDataFromClass<BusinessLayer::PaymentView>(Bus
 	QList<QStandardItem*> items;
 	items << new QStandardItem(QString::number(data.GetID()))
 		<< new QStandardItem(data.GetDate().c_str())
+		<< new QStandardItem(data.GetUsername().c_str())
+		<< new QStandardItem(data.GetUserSurname().c_str())
+		<< new QStandardItem(data.GetUserPhone().c_str())
 		<< new QStandardItem(QString::number(data.GetValue()))
 		<< new QStandardItem(data.GetCurrencyName().c_str())
+		<< new QStandardItem(data.GetStatusName().c_str())
 		<< new QStandardItem(QString::number(data.GetUserID()))
-		<< new QStandardItem(QString::number(data.GetCurrencyID()));
+		<< new QStandardItem(QString::number(data.GetCurrencyID()))
+		<< new QStandardItem(QString::number(data.GetStatusID()));
 	return items;
 }
 
@@ -7585,19 +7591,19 @@ QList<QStandardItem*> DataForm::GetDataFromClass<BusinessLayer::TransportView>(B
 		<< new QStandardItem(data.GetExecutionDate().c_str())
 		<< new QStandardItem(data.GetStatusCode().c_str())
 		<< new QStandardItem(data.GetStatusName().c_str())
+		<< new QStandardItem(data.GetUsername().c_str())
+		<< new QStandardItem(data.GetUserSurname().c_str())
+		<< new QStandardItem(data.GetUserPhone().c_str())
+		<< new QStandardItem(data.GetUserPosition().c_str())
 		<< new QStandardItem(data.GetEmployeeName().c_str())
 		<< new QStandardItem(data.GetEmployeeSurname().c_str())
 		<< new QStandardItem(data.GetEmployeePhone().c_str())
 		<< new QStandardItem(data.GetEmployeePosition().c_str())
-		<< new QStandardItem(data.GetStockEmployeeName().c_str())
-		<< new QStandardItem(data.GetStockEmployeeSurname().c_str())
-		<< new QStandardItem(data.GetStockEmployeePhone().c_str())
-		<< new QStandardItem(data.GetStockEmployeePosition().c_str())
 		<< new QStandardItem(QString::number(data.GetCount()))
 		<< new QStandardItem(QString::number(data.GetSum(), 'f', 3))
 		<< new QStandardItem(data.GetCurrencyName().c_str())
-		<< new QStandardItem(QString::number(data.GetStockEmployeeID()))
 		<< new QStandardItem(QString::number(data.GetEmployeeID()))
+		<< new QStandardItem(QString::number(data.GetUserID()))
 		<< new QStandardItem(QString::number(data.GetStatusID()))
 		<< new QStandardItem(QString::number(data.GetCurrencyID()))
 		<< new QStandardItem(icon, "Detail");
@@ -9433,6 +9439,16 @@ void DataForm::QtConnect<BusinessLayer::ProductView>()
 		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
 		connect(this, SIGNAL(SendID(int, QString)), ((CreateSpecListDlg*)parentDialog), SLOT(SetID(int, QString)));
 	}
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreateStock")
+	{
+		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreateStockDlg*)parentDialog), SLOT(SetID(int, QString)));
+	}
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreateSpecList")
+	{
+		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreateSpecListDlg*)parentDialog), SLOT(SetID(int, QString)));
+	}
 	if (parentDialog != nullptr && parentDialog->objectName() == "CreateSplList")
 	{
 		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
@@ -10442,6 +10458,11 @@ void DataForm::QtConnect<BusinessLayer::Status>()
 	{
 		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
 		connect(this, SIGNAL(SendID(int, QString)), ((CreateOrdRDlg*)parentDialog), SLOT(SetID(int, QString)));
+	}
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreatePayment")
+	{
+		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreatePmtDlg*)parentDialog), SLOT(SetID(int, QString)));
 	}
 	if (parentDialog != nullptr && parentDialog->objectName() == "CreateProduction")
 	{

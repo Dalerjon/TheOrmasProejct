@@ -156,6 +156,8 @@ namespace BusinessLayer
 	bool SpecificationList::IsDuplicate(DataLayer::OrmasDal& ormasDal, int sID, int pID, double slCount, std::string& errorMessage)
 	{
 		SpecificationList specificationList;
+		specificationList.Clear();
+		errorMessage.clear();
 		specificationList.SetSpecificationID(sID);
 		specificationList.SetProductID(pID);
 		specificationList.SetCount(slCount);
@@ -174,6 +176,8 @@ namespace BusinessLayer
 	bool SpecificationList::IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
 		SpecificationList specificationList;
+		specificationList.Clear();
+		errorMessage.clear();
 		specificationList.SetSpecificationID(specificationID);
 		specificationList.SetProductID(productID);
 		specificationList.SetCount(count);

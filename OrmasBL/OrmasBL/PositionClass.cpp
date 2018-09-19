@@ -155,6 +155,8 @@ namespace BusinessLayer{
 	bool Position::IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string pName, std::string& errorMessage)
 	{
 		Position position;
+		position.Clear();
+		errorMessage.clear();
 		position.SetName(pName);
 		std::string filter = position.GenerateFilter(ormasDal);
 		std::vector<DataLayer::positionsCollection> positionVector = ormasDal.GetPositions(errorMessage, filter);
@@ -171,6 +173,8 @@ namespace BusinessLayer{
 	bool Position::IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
 		Position position;
+		position.Clear();
+		errorMessage.clear();
 		position.SetName(name);
 		std::string filter = position.GenerateFilter(ormasDal);
 		std::vector<DataLayer::positionsCollection> positionVector = ormasDal.GetPositions(errorMessage, filter);

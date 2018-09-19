@@ -303,6 +303,8 @@ namespace BusinessLayer
 		int curID, std::string& errorMessage)
 	{
 		Product product;
+		product.Clear();
+		errorMessage.clear();
 		product.SetCompanyID(cID);
 		product.SetName(pName);
 		product.SetVolume(vol);
@@ -324,6 +326,8 @@ namespace BusinessLayer
 	bool Product::IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
 		Product product;
+		product.Clear();
+		errorMessage.clear();
 		product.SetCompanyID(companyID);
 		product.SetName(name);
 		product.SetVolume(volume);

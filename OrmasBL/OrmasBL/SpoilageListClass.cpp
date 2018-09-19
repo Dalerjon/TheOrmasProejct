@@ -201,6 +201,8 @@ namespace BusinessLayer
 		int cID, std::string& errorMessage)
 	{
 		SpoilageList spoilageList;
+		spoilageList.Clear();
+		errorMessage.clear();
 		spoilageList.SetSpoilageID(sID);
 		spoilageList.SetProductID(pID);
 		spoilageList.SetCount(slCount);
@@ -221,6 +223,8 @@ namespace BusinessLayer
 	bool SpoilageList::IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
 		SpoilageList spoilageList;
+		spoilageList.Clear();
+		errorMessage.clear();
 		spoilageList.SetSpoilageID(spoilageID);
 		spoilageList.SetProductID(productID);
 		spoilageList.SetCount(count);

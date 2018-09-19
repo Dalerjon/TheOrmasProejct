@@ -117,7 +117,7 @@ if (isset($_POST['phone']) && isset($_POST['password']))
 			<form action="index.php" method="post">
 				<p>
 					<label>Номер телефона:<br></label>
-					<input name="phone" type="text" placeholder="Например: 927771122"> 
+					<input name="phone" type="text" placeholder="Например: 991010022"> 
 				</p>
 				<p>
 					<label>Пароль:<br></label>

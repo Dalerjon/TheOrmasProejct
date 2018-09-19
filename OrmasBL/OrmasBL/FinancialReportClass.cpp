@@ -423,6 +423,8 @@ namespace BusinessLayer{
 	bool FinancialReport::IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string aFromDate, std::string aTillDate, std::string& errorMessage)
 	{
 		FinancialReport financialReport;
+		financialReport.Clear();
+		errorMessage.clear();
 		financialReport.SetFromDate(aFromDate);
 		financialReport.SetTillDate(aTillDate);
 		std::string filter = financialReport.GenerateFilter(ormasDal);
@@ -440,6 +442,8 @@ namespace BusinessLayer{
 	bool FinancialReport::IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
 		FinancialReport financialReport;
+		financialReport.Clear();
+		errorMessage.clear();
 		financialReport.SetFromDate(fromDate);
 		financialReport.SetTillDate(tillDate);
 		std::string filter = financialReport.GenerateFilter(ormasDal);

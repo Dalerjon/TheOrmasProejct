@@ -192,6 +192,8 @@ namespace BusinessLayer
 	bool State::IsDuplicate(DataLayer::OrmasDal& ormasDal, int uID, int stsID, std::string sLastChange, std::string& errorMessage)
 	{
 		State state;
+		state.Clear();
+		errorMessage.clear();
 		state.SetUniversalID(uID);
 		state.SetStatusID(stsID);
 		state.SetLastChange(sLastChange);
@@ -210,6 +212,8 @@ namespace BusinessLayer
 	bool State::IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
 		State state;
+		state.Clear();
+		errorMessage.clear();
 		state.SetUniversalID(universalID);
 		state.SetStatusID(statusID);
 		state.SetLastChange(lastChange);

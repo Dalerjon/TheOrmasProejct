@@ -190,6 +190,8 @@ namespace BusinessLayer{
 	bool PercentRate::IsDuplicate(DataLayer::OrmasDal& ormasDal, double pValue, std::string pCondition, int pID, std::string& errorMessage)
 	{
 		PercentRate percentRate;
+		percentRate.Clear();
+		errorMessage.clear();
 		percentRate.SetValue(pValue);
 		percentRate.SetCondition(pCondition);
 		percentRate.SetPositionID(pID);
@@ -208,6 +210,8 @@ namespace BusinessLayer{
 	bool PercentRate::IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
 		PercentRate percentRate;
+		percentRate.Clear();
+		errorMessage.clear();
 		percentRate.SetValue(value);
 		percentRate.SetCondition(condition);
 		percentRate.SetPositionID(positionID);

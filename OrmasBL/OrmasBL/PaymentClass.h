@@ -11,10 +11,11 @@ namespace BusinessLayer{
 		double value = 0.0;
 		int userID = 0;
 		int currencyID = 0;
+		int statusID = 0;
 	public:
 		Payment();
-		Payment(int pID, std::string pDate, double pValue, int uID, int cID) :id(pID), date(pDate), value(pValue), userID(uID),
-			currencyID(cID){};
+		Payment(int pID, std::string pDate, double pValue, int uID, int cID, int sID) :id(pID), date(pDate), value(pValue), userID(uID),
+			currencyID(cID), statusID(sID){};
 		Payment(DataLayer::paymentsCollection);
 		~Payment(){};
 
@@ -25,6 +26,7 @@ namespace BusinessLayer{
 		double GetValue();
 		int GetUserID();
 		int GetCurrencyID();
+		int GetStatusID();
 
 		//Payment class Mutators
 		void SetID(int);
@@ -32,14 +34,15 @@ namespace BusinessLayer{
 		void SetDate(std::string);
 		void SetValue(double);
 		void SetCurrencyID(int);
+		void SetStatusID(int);
 
 		// Create, delete and update Payment
 		bool CreatePayment(DataLayer::OrmasDal &ormasDal, std::string& errorMessage);
 		bool UpdatePayment(DataLayer::OrmasDal &ormasDal, std::string& errorMessage);
 		bool DeletePayment(DataLayer::OrmasDal &ormasDal, std::string& errorMessage);
-		bool CreatePayment(DataLayer::OrmasDal &ormasDal, std::string pDate, double pValue, int uID, int cID,
+		bool CreatePayment(DataLayer::OrmasDal &ormasDal, std::string pDate, double pValue, int uID, int cID, int sID,
 			std::string& errorMessage);
-		bool UpdatePayment(DataLayer::OrmasDal &ormasDal, std::string pDate, double pValue, int uID, int cID,
+		bool UpdatePayment(DataLayer::OrmasDal &ormasDal, std::string pDate, double pValue, int uID, int cID, int sID,
 			std::string& errorMessage);
 
 		//Generate filter string for class
@@ -49,6 +52,7 @@ namespace BusinessLayer{
 		void Clear();
 	private:
 		double currentValue = 0.0;
+		int previousStatusID = 0;
 		bool IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string pDate, double pValue, int uID, int cID,
 			std::string& errorMessage);
 		bool IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string& errorMessage);
@@ -59,7 +63,8 @@ namespace BusinessLayer{
 		bool CreateEntry(DataLayer::OrmasDal& ormasDal, int debAccID, double currentSum, int credAccID, std::string oExecDate, std::string& errorMessage);
 		bool CreateEntry(DataLayer::OrmasDal& ormasDal, int debAccID, double currentSum, int credAccID, double previousSum, std::string oExecDate, std::string& errorMessage);
 		bool CorrectingEntry(DataLayer::OrmasDal& ormasDal, int debAccID, double currentSum, int credAccID, std::string oExecDate, std::string& errorMessage);
+		int GetCurrentStatusID(DataLayer::OrmasDal& ormasDal, int pID, std::string& errorMessage);
+		std::string wstring_to_utf8(const std::wstring& str);
 	};
 }
-
 #endif

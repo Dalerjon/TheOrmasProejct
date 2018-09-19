@@ -189,6 +189,8 @@ namespace BusinessLayer{
 	bool Timesheet::IsDuplicate(DataLayer::OrmasDal& ormasDal, int sID, double tWorkedTime, std::string tDate, std::string& errorMessage)
 	{
 		Timesheet timesheet;
+		timesheet.Clear();
+		errorMessage.clear();
 		timesheet.SetSalaryID(sID);
 		timesheet.SetWorkedTime(tWorkedTime);
 		timesheet.SetDate(tDate);
@@ -207,6 +209,8 @@ namespace BusinessLayer{
 	bool Timesheet::IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
 		Timesheet timesheet;
+		timesheet.Clear();
+		errorMessage.clear();
 		timesheet.SetSalaryID(salaryID);
 		timesheet.SetWorkedTime(workedTime);
 		timesheet.SetDate(date);

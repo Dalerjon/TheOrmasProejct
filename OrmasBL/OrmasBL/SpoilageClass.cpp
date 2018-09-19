@@ -6,6 +6,7 @@
 #include "StatusClass.h"
 #include "CompanyAccountRelationClass.h"
 #include "CompanyEmployeeRelationClass.h"
+#include <codecvt>
 
 namespace BusinessLayer
 {
@@ -374,6 +375,8 @@ namespace BusinessLayer
 		int cID, std::string& errorMessage)
 	{
 		Spoilage spoilage;
+		spoilage.Clear();
+		errorMessage.clear();
 		spoilage.SetDate(sDate);
 		spoilage.SetCount(sCount);
 		spoilage.SetSum(sSum);
@@ -393,6 +396,8 @@ namespace BusinessLayer
 	bool Spoilage::IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
 		Spoilage spoilage;
+		spoilage.Clear();
+		errorMessage.clear();
 		spoilage.SetDate(date);
 		spoilage.SetCount(count);
 		spoilage.SetSum(sum);
@@ -478,6 +483,7 @@ namespace BusinessLayer
 		entry.SetDebitingAccountID(debAccID);
 		entry.SetValue(currentSum);
 		entry.SetCreditingAccountID(credAccID);
+		entry.SetDescription(wstring_to_utf8(L"Операция списания"));
 		if (!entry.CreateEntry(ormasDal, errorMessage))
 		{
 			return false;
@@ -491,6 +497,7 @@ namespace BusinessLayer
 		entry.SetDebitingAccountID(credAccID);
 		entry.SetValue(previousSum);
 		entry.SetCreditingAccountID(debAccID);
+		entry.SetDescription(wstring_to_utf8(L"Операция списания"));
 		if (!entry.CreateEntry(ormasDal, errorMessage))
 		{
 			return false;
@@ -500,10 +507,17 @@ namespace BusinessLayer
 		entry.SetDebitingAccountID(debAccID);
 		entry.SetValue(currentSum);
 		entry.SetCreditingAccountID(credAccID);
+		entry.SetDescription(wstring_to_utf8(L"Операция списания"));
 		if (!entry.CreateEntry(ormasDal, errorMessage))
 		{
 			return false;
 		}
 		return true;
+	}
+
+	std::string Spoilage::wstring_to_utf8(const std::wstring& str)
+	{
+		std::wstring_convert<std::codecvt_utf8<wchar_t>> myconv;
+		return myconv.to_bytes(str);
 	}
 }

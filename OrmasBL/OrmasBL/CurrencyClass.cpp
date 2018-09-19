@@ -248,6 +248,8 @@ namespace BusinessLayer
 	bool Currency::IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string cShortName, std::string cName, std::string& errorMessage)
 	{
 		Currency currency;
+		currency.Clear();
+		errorMessage.clear();
 		currency.SetShortName(cShortName);
 		currency.SetName(cName);
 		std::string filter = currency.GenerateFilter(ormasDal);
@@ -265,6 +267,8 @@ namespace BusinessLayer
 	bool Currency::IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
 		Currency currency;
+		currency.Clear();
+		errorMessage.clear();
 		currency.SetShortName(shortName);
 		currency.SetName(name);
 		std::string filter = currency.GenerateFilter(ormasDal);

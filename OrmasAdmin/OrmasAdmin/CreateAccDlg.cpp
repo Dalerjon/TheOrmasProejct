@@ -76,8 +76,8 @@ void CreateAccDlg::SetAccountParams(QString aNumber, double aStartBalance, doubl
 void CreateAccDlg::FillEditElements(QString aNumber, double aStartBalance, double aCurrentBalance)
 {
 	numberEdit->setText(aNumber);
-	startBalanceEdit->setText(QString::number(aStartBalance));
-	currentBalanceEdit->setText(QString::number(aCurrentBalance));
+	startBalanceEdit->setText(QString::number(aStartBalance, 'f', 3));
+	currentBalanceEdit->setText(QString::number(aCurrentBalance, 'f', 3));
 	BusinessLayer::ChartOfAccounts aoAcc;
 	if (aoAcc.GetChartOfAccountsByNumber(dialogBL->GetOrmasDal(), aNumber.toUtf8().constData(), errorMessage))
 	{
@@ -125,8 +125,8 @@ void CreateAccDlg::CreateAccount()
 					QList<QStandardItem*> accountItem;
 					accountItem << new QStandardItem(QString::number(account->GetID()))
 						<< new QStandardItem(account->GetNumber().c_str())
-						<< new QStandardItem(QString::number(account->GetStartBalance()))
-						<< new QStandardItem(QString::number(account->GetCurrentBalance()));
+						<< new QStandardItem(QString::number(account->GetStartBalance(), 'f', 3))
+						<< new QStandardItem(QString::number(account->GetCurrentBalance(), 'f', 3));
 					QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
 					itemModel->appendRow(accountItem);
 				}
@@ -175,8 +175,8 @@ void CreateAccDlg::EditAccount()
 						QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
 						QModelIndex mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
 						itemModel->item(mIndex.row(), 1)->setText(account->GetNumber().c_str());
-						itemModel->item(mIndex.row(), 2)->setText(QString::number(account->GetStartBalance()));
-						itemModel->item(mIndex.row(), 3)->setText(QString::number(account->GetCurrentBalance()));
+						itemModel->item(mIndex.row(), 2)->setText(QString::number(account->GetStartBalance(), 'f', 3));
+						itemModel->item(mIndex.row(), 3)->setText(QString::number(account->GetCurrentBalance(), 'f', 3));
 						emit itemModel->dataChanged(mIndex, mIndex);
 					}
 				}

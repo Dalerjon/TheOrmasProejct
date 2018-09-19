@@ -190,6 +190,8 @@ namespace BusinessLayer{
 	bool CompanyEmployeeRelation::IsDuplicate(DataLayer::OrmasDal& ormasDal, int cID, int eID, std::string& errorMessage)
 	{
 		CompanyEmployeeRelation ceRelation;
+		ceRelation.Clear();
+		errorMessage.clear();
 		ceRelation.SetCompanyID(cID);
 		ceRelation.SetEmployeeID(eID);
 		std::string filter = ceRelation.GenerateFilter(ormasDal);
@@ -207,6 +209,8 @@ namespace BusinessLayer{
 	bool CompanyEmployeeRelation::IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
 		CompanyEmployeeRelation ceRelation;
+		ceRelation.Clear();
+		errorMessage.clear();
 		ceRelation.SetCompanyID(companyID);
 		ceRelation.SetEmployeeID(employeeID);
 		std::string filter = ceRelation.GenerateFilter(ormasDal);

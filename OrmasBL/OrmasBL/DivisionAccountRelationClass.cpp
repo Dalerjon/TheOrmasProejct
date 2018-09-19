@@ -190,6 +190,8 @@ namespace BusinessLayer{
 	bool DivisionAccountRelation::IsDuplicate(DataLayer::OrmasDal& ormasDal, int dDivisionID, int dAccountID, std::string cCode, std::string& errorMessage)
 	{
 		DivisionAccountRelation divisionAccountRelation;
+		divisionAccountRelation.Clear();
+		errorMessage.clear();
 		divisionAccountRelation.SetDivisionID(dDivisionID);
 		divisionAccountRelation.SetAccountID(dAccountID);
 		divisionAccountRelation.SetCode(cCode);
@@ -208,6 +210,8 @@ namespace BusinessLayer{
 	bool DivisionAccountRelation::IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
 		DivisionAccountRelation divisionAccountRelation;
+		divisionAccountRelation.Clear();
+		errorMessage.clear();
 		divisionAccountRelation.SetDivisionID(divisionID);
 		divisionAccountRelation.SetAccountID(accountID);
 		divisionAccountRelation.SetCode(code);

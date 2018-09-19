@@ -237,6 +237,8 @@ namespace BusinessLayer
 	bool Specification::IsDuplicate(DataLayer::OrmasDal& ormasDal, int pID, double sSum, int cID, std::string& errorMessage)
 	{
 		Specification specification;
+		specification.Clear();
+		errorMessage.clear();
 		specification.SetProductID(pID);
 		specification.SetSum(sSum);
 		specification.SetCurrencyID(cID);
@@ -255,6 +257,8 @@ namespace BusinessLayer
 	bool Specification::IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
 		Specification specification;
+		specification.Clear();
+		errorMessage.clear();
 		specification.SetProductID(productID);
 		specification.SetSum(sum);
 		specification.SetCurrencyID(currencyID);

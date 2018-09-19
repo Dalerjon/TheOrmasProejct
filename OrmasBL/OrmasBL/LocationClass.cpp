@@ -208,6 +208,8 @@ namespace BusinessLayer
 		std::string lRegionName, std::string lCityName, std::string& errorMessage)
 	{
 		Location location;
+		location.Clear();
+		errorMessage.clear();
 		location.SetCountryName(lCountryName);
 		location.SetRegionName(lRegionName);
 		location.SetCityName(lCityName);
@@ -226,6 +228,8 @@ namespace BusinessLayer
 	bool Location::IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
 		Location location;
+		location.Clear();
+		errorMessage.clear();
 		location.SetCountryName(countryName);
 		location.SetRegionName(regionName);
 		location.SetCityName(cityName);

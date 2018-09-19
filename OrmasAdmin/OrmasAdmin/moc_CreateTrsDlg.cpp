@@ -20,7 +20,7 @@
 QT_BEGIN_MOC_NAMESPACE
 struct qt_meta_stringdata_CreateTrsDlg_t {
     QByteArrayData data[16];
-    char stringdata0[186];
+    char stringdata0[185];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
@@ -37,20 +37,20 @@ QT_MOC_LITERAL(4, 48, 13), // "EditTransport"
 QT_MOC_LITERAL(5, 62, 15), // "DeleteTransport"
 QT_MOC_LITERAL(6, 78, 5), // "Close"
 QT_MOC_LITERAL(7, 84, 10), // "OpenEmpDlg"
-QT_MOC_LITERAL(8, 95, 12), // "OpenSkEmpDlg"
-QT_MOC_LITERAL(9, 108, 10), // "OpenStsDlg"
-QT_MOC_LITERAL(10, 119, 14), // "OpenTrsListDlg"
-QT_MOC_LITERAL(11, 134, 16), // "StatusWasChenged"
-QT_MOC_LITERAL(12, 151, 15), // "TextEditChanged"
-QT_MOC_LITERAL(13, 167, 5), // "SetID"
-QT_MOC_LITERAL(14, 173, 2), // "ID"
-QT_MOC_LITERAL(15, 176, 9) // "childName"
+QT_MOC_LITERAL(8, 95, 11), // "OpenUserDlg"
+QT_MOC_LITERAL(9, 107, 10), // "OpenStsDlg"
+QT_MOC_LITERAL(10, 118, 14), // "OpenTrsListDlg"
+QT_MOC_LITERAL(11, 133, 16), // "StatusWasChenged"
+QT_MOC_LITERAL(12, 150, 15), // "TextEditChanged"
+QT_MOC_LITERAL(13, 166, 5), // "SetID"
+QT_MOC_LITERAL(14, 172, 2), // "ID"
+QT_MOC_LITERAL(15, 175, 9) // "childName"
 
     },
     "CreateTrsDlg\0CloseCreatedForms\0\0"
     "CreateTransport\0EditTransport\0"
     "DeleteTransport\0Close\0OpenEmpDlg\0"
-    "OpenSkEmpDlg\0OpenStsDlg\0OpenTrsListDlg\0"
+    "OpenUserDlg\0OpenStsDlg\0OpenTrsListDlg\0"
     "StatusWasChenged\0TextEditChanged\0SetID\0"
     "ID\0childName"
 };
@@ -116,7 +116,7 @@ void CreateTrsDlg::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id
         case 3: _t->DeleteTransport(); break;
         case 4: _t->Close(); break;
         case 5: _t->OpenEmpDlg(); break;
-        case 6: _t->OpenSkEmpDlg(); break;
+        case 6: _t->OpenUserDlg(); break;
         case 7: _t->OpenStsDlg(); break;
         case 8: _t->OpenTrsListDlg(); break;
         case 9: _t->StatusWasChenged(); break;

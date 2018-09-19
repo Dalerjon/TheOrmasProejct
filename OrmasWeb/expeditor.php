@@ -15,28 +15,32 @@
 						<div id="list-img"></div>
 						<label class= "for-pannel">Список</label>
 					</div>
-					<div class="pannel" id="search-element">
+					<!--<div class="pannel" id="search-element">
 						<div id="find-img"></div>
 						<label class= "for-pannel">Поиск по ID</label>
 					
+					</div>-->
+					<div class="pannel" id="transport">
+						<div id="transport-img"></div>
+						<label class= "for-pannel">Транспорт</label>
 					</div>
 				</div>
 				<div class = "pannel-block">
-					<div class="pannel" id="balance">
+					<div class="pannel" id="clients-balance">
 						<div id="balance-img"></div>
-						<label class= "for-pannel">Мой баланс</label>
+						<label class= "for-pannel">Баланс</label>
 					
 					</div>
-					<div class="pannel" id="expeditor">
-						<div id="expeditor-img"></div>
-						<label class= "for-pannel">Экспедитор</label>
+					<div class="pannel" id="clients">
+						<div id="clients-img"></div>
+						<label class= "for-pannel">Клиенты</label>
 					
 					</div>
 				</div>
 				<div class = "pannel-block">
-					<div class="pannel" id="price">
+					<div class="pannel" id="payment">
 						<div id="price-img"></div>
-						<label class= "for-pannel">Цены</label>
+						<label class= "for-pannel">Оплата</label>
 					
 					</div>
 				</div>

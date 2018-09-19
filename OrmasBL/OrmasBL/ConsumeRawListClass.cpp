@@ -200,13 +200,15 @@ namespace BusinessLayer
 	bool ConsumeRawList::IsDuplicate(DataLayer::OrmasDal& ormasDal, int crID, int pID, double crlCount, double crlSum,
 		int cID, std::string& errorMessage)
 	{
-		ConsumeRawList ConsumeRawList;
-		ConsumeRawList.SetConsumeRawID(crID);
-		ConsumeRawList.SetProductID(pID);
-		ConsumeRawList.SetCount(crlCount);
-		ConsumeRawList.SetSum(crlSum);
-		ConsumeRawList.SetCurrencyID(cID);
-		std::string filter = ConsumeRawList.GenerateFilter(ormasDal);
+		ConsumeRawList consumeRawList;
+		consumeRawList.Clear();
+		errorMessage.clear();
+		consumeRawList.SetConsumeRawID(crID);
+		consumeRawList.SetProductID(pID);
+		consumeRawList.SetCount(crlCount);
+		consumeRawList.SetSum(crlSum);
+		consumeRawList.SetCurrencyID(cID);
+		std::string filter = consumeRawList.GenerateFilter(ormasDal);
 		std::vector<DataLayer::consumeRawListViewCollection> consumeRawListVector = ormasDal.GetConsumeRawList(errorMessage, filter);
 		if (!errorMessage.empty())
 			return true;
@@ -221,6 +223,8 @@ namespace BusinessLayer
 	bool ConsumeRawList::IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
 		ConsumeRawList consumeRawList;
+		consumeRawList.Clear();
+		errorMessage.clear();
 		consumeRawList.SetConsumeRawID(consumeRawID);
 		consumeRawList.SetProductID(productID);
 		consumeRawList.SetCount(count);

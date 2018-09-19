@@ -6,6 +6,8 @@
 #include "StatusClass.h"
 #include "CompanyAccountRelationClass.h"
 #include "CompanyEmployeeRelationClass.h"
+#include "TransportClass.h"
+#include <codecvt>
 
 namespace BusinessLayer
 {
@@ -131,8 +133,16 @@ namespace BusinessLayer
 			{
 				if (CreateOrderEntry(ormasDal, clientID, employeeID, sum, currencyID, executionDate, errorMessage))
 				{
-					ormasDal.CommitTransaction(errorMessage);
-					return false;
+					if (ChangesAtTransport(ormasDal, id, errorMessage))
+					{
+						ormasDal.CommitTransaction(errorMessage);
+						return false;
+					}
+					else
+					{
+						ormasDal.CancelTransaction(errorMessage);
+						return false;
+					}
 				}
 				else
 				{
@@ -165,8 +175,16 @@ namespace BusinessLayer
 			{
 				if (CreateOrderEntry(ormasDal, clientID, employeeID, sum, currencyID, executionDate, errorMessage))
 				{
-					ormasDal.CommitTransaction(errorMessage);
-					return false;
+					if (ChangesAtTransport(ormasDal, id, errorMessage))
+					{
+						ormasDal.CommitTransaction(errorMessage);
+						return false;
+					}
+					else
+					{
+						ormasDal.CancelTransaction(errorMessage);
+						return false;
+					}
 				}
 				else
 				{
@@ -248,8 +266,16 @@ namespace BusinessLayer
 			{
 				if (CreateOrderEntry(ormasDal, clientID, employeeID, sum, currencyID, executionDate, errorMessage))
 				{
-					ormasDal.CommitTransaction(errorMessage);
-					return true;
+					if (ChangesAtTransport(ormasDal, id, errorMessage))
+					{
+						ormasDal.CommitTransaction(errorMessage);
+						return false;
+					}
+					else
+					{
+						ormasDal.CancelTransaction(errorMessage);
+						return false;
+					}
 				}
 				else
 				{
@@ -301,8 +327,16 @@ namespace BusinessLayer
 			{
 				if (CreateOrderEntry(ormasDal, clientID, employeeID, sum, currencyID, executionDate, errorMessage))
 				{
-					ormasDal.CommitTransaction(errorMessage);
-					return true;
+					if (ChangesAtTransport(ormasDal, id, errorMessage))
+					{
+						ormasDal.CommitTransaction(errorMessage);
+						return false;
+					}
+					else
+					{
+						ormasDal.CancelTransaction(errorMessage);
+						return false;
+					}
 				}
 				else
 				{
@@ -405,6 +439,8 @@ namespace BusinessLayer
 		int cID, std::string& errorMessage)
 	{
 		Order order;
+		order.Clear();
+		errorMessage.clear();
 		order.SetClientID(clID);
 		order.SetDate(oDate);
 		order.SetCount(oCount);
@@ -425,6 +461,8 @@ namespace BusinessLayer
 	bool Order::IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
 		Order order;
+		order.Clear();
+		errorMessage.clear();
 		order.SetClientID(clientID);
 		order.SetDate(date);
 		order.SetCount(count);
@@ -515,6 +553,7 @@ namespace BusinessLayer
 		entry.SetDebitingAccountID(debAccID);
 		entry.SetValue(currentSum);
 		entry.SetCreditingAccountID(credAccID);
+		entry.SetDescription(wstring_to_utf8(L"Товар продан и отгружен клиенту с ID =") + std::to_string(clientID));
 		if (!entry.CreateEntry(ormasDal, errorMessage))
 		{
 			return false;
@@ -528,6 +567,7 @@ namespace BusinessLayer
 		entry.SetDebitingAccountID(credAccID);
 		entry.SetValue(previousSum);
 		entry.SetCreditingAccountID(debAccID);
+		entry.SetDescription(wstring_to_utf8(L"Товар продан и отгружен клиенту с ID =") + std::to_string(clientID));
 		if (!entry.CreateEntry(ormasDal, errorMessage, true))
 		{
 			return false;
@@ -537,10 +577,29 @@ namespace BusinessLayer
 		entry.SetDebitingAccountID(debAccID);
 		entry.SetValue(currentSum);
 		entry.SetCreditingAccountID(credAccID);
+		entry.SetDescription(wstring_to_utf8(L"Товар продан и отгружен клиенту с ID =") + std::to_string(clientID));
 		if (!entry.CreateEntry(ormasDal, errorMessage))
 		{
 			return false;
 		}
 		return true;
+	}
+
+	bool Order::ChangesAtTransport(DataLayer::OrmasDal& ormasDal, int oID, std::string& errorMessage)
+	{
+		Transport transport;
+		return transport.ChangingByConsumeProduct(ormasDal, oID, errorMessage);
+	}
+
+	bool Order::ChangesAtTransport(DataLayer::OrmasDal& ormasDal, int oID, std::map<int, double> pProdCountMap, double previousSum, std::string& errorMessage)
+	{
+		Transport transport;
+		return transport.ChangingByConsumeProduct(ormasDal, oID, pProdCountMap, previousSum, errorMessage);
+	}
+
+	std::string Order::wstring_to_utf8(const std::wstring& str)
+	{
+		std::wstring_convert<std::codecvt_utf8<wchar_t>> myconv;
+		return myconv.to_bytes(str);
 	}
 }

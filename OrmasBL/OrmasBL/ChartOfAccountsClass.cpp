@@ -206,6 +206,8 @@ namespace BusinessLayer{
 	bool ChartOfAccounts::IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string cNumber, std::string cName, int cAccountTypeID, std::string& errorMessage)
 	{
 		ChartOfAccounts chartOfAccounts;
+		chartOfAccounts.Clear();
+		errorMessage.clear();
 		chartOfAccounts.SetNumber(cNumber);
 		chartOfAccounts.SetName(cName);
 		chartOfAccounts.SetAccountTypeID(cAccountTypeID);
@@ -224,6 +226,8 @@ namespace BusinessLayer{
 	bool ChartOfAccounts::IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
 		ChartOfAccounts chartOfAccounts;
+		chartOfAccounts.Clear();
+		errorMessage.clear();
 		chartOfAccounts.SetNumber(number);
 		chartOfAccounts.SetName(name);
 		chartOfAccounts.SetAccountTypeID(accountTypeID);

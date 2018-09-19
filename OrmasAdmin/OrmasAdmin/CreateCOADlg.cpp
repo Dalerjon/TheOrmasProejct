@@ -126,8 +126,8 @@ void CreateCOADlg::CreateChartOfAccounts()
 
 					QList<QStandardItem*> chartOfAccountsItem;
 					chartOfAccountsItem << new QStandardItem(QString::number(chartOfAccounts->GetID()))
-						<< new QStandardItem(chartOfAccounts->GetName().c_str())
 						<< new QStandardItem(chartOfAccounts->GetNumber().c_str())
+						<< new QStandardItem(chartOfAccounts->GetName().c_str())
 						<< new QStandardItem(QString::number(chartOfAccounts->GetAccountTypeID()));
 					QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
 					itemModel->appendRow(chartOfAccountsItem);
@@ -190,8 +190,8 @@ void CreateCOADlg::EditChartOfAccounts()
 
 						QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
 						QModelIndex mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
-						itemModel->item(mIndex.row(), 1)->setText(chartOfAccounts->GetName().c_str());
-						itemModel->item(mIndex.row(), 2)->setText(chartOfAccounts->GetNumber().c_str());
+						itemModel->item(mIndex.row(), 1)->setText(chartOfAccounts->GetNumber().c_str());
+						itemModel->item(mIndex.row(), 2)->setText(chartOfAccounts->GetName().c_str());
 						itemModel->item(mIndex.row(), 3)->setText(accType->GetName().c_str());
 						itemModel->item(mIndex.row(), 4)->setText(QString::number(chartOfAccounts->GetAccountTypeID()));
 						emit itemModel->dataChanged(mIndex, mIndex);

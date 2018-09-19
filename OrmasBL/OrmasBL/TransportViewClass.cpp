@@ -10,19 +10,19 @@ namespace BusinessLayer
 		executionDate = std::get<2>(tCollection);
 		statusCode = std::get<3>(tCollection);
 		statusName = std::get<4>(tCollection);
-		employeeName = std::get<5>(tCollection);
-		employeeSurname = std::get<6>(tCollection);
-		employeePhone = std::get<7>(tCollection);
-		employeePosition = std::get<8>(tCollection);
-		stockEmployeeName = std::get<9>(tCollection);
-		stockEmployeeSurname = std::get<10>(tCollection);
-		stockEmployeePhone = std::get<11>(tCollection);
-		stockEmployeePosition = std::get<12>(tCollection);
+		userName = std::get<5>(tCollection);
+		userSurname = std::get<6>(tCollection);
+		userPhone = std::get<7>(tCollection);
+		userPosition = std::get<8>(tCollection);
+		employeeName = std::get<9>(tCollection);
+		employeeSurname = std::get<10>(tCollection);
+		employeePhone = std::get<11>(tCollection);
+		employeePosition = std::get<12>(tCollection);
 		count = std::get<13>(tCollection);
 		sum = std::get<14>(tCollection);
 		currencyName = std::get<15>(tCollection);
-		stockEmployeeID = std::get<16>(tCollection);
-		employeeID = std::get<17>(tCollection);
+		employeeID = std::get<16>(tCollection);
+		userID = std::get<17>(tCollection);
 		statusID = std::get<18>(tCollection);
 		currencyID = std::get<19>(tCollection);
 	}
@@ -34,6 +34,22 @@ namespace BusinessLayer
 	std::string TransportView::GetStatusName()
 	{
 		return statusName;
+	}
+	std::string TransportView::GetUsername()
+	{
+		return userName;
+	}
+	std::string TransportView::GetUserSurname()
+	{
+		return userSurname;
+	}
+	std::string TransportView::GetUserPhone()
+	{
+		return userPhone;
+	}
+	std::string TransportView::GetUserPosition()
+	{
+		return userPosition;
 	}
 	std::string TransportView::GetEmployeeName()
 	{
@@ -50,22 +66,6 @@ namespace BusinessLayer
 	std::string TransportView::GetEmployeePosition()
 	{
 		return employeePosition;
-	}
-	std::string TransportView::GetStockEmployeeName()
-	{
-		return stockEmployeeName;
-	}
-	std::string TransportView::GetStockEmployeeSurname()
-	{
-		return stockEmployeeSurname;
-	}
-	std::string TransportView::GetStockEmployeePhone()
-	{
-		return stockEmployeePhone;
-	}
-	std::string TransportView::GetStockEmployeePosition()
-	{
-		return stockEmployeePosition;
 	}
 	std::string TransportView::GetCurrencyName()
 	{

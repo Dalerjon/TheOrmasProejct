@@ -406,6 +406,8 @@ namespace BusinessLayer
 		int cID, std::string& errorMessage)
 	{
 		Return ret;
+		ret.Clear();
+		errorMessage.clear();
 		ret.SetClientID(clID);
 		ret.SetDate(rDate);
 		ret.SetCount(rCount);
@@ -426,6 +428,8 @@ namespace BusinessLayer
 	bool Return::IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
 		Return ret;
+		ret.Clear();
+		errorMessage.clear();
 		ret.SetClientID(clientID);
 		ret.SetDate(date);
 		ret.SetCount(count);

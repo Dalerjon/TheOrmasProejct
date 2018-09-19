@@ -180,6 +180,30 @@ namespace BusinessLayer
 		return false;
 	}
 
+	bool TransportList::GetTransportListByTransportAndProductID(DataLayer::OrmasDal& ormasDal, int tID, int pID, std::string& errorMessage)
+	{
+		id = tID;
+		productID = pID;
+		std::string filter = GenerateFilter(ormasDal);
+		std::vector<DataLayer::transportListViewCollection> transportListVector = ormasDal.GetTransportList(errorMessage, filter);
+		if (0 != transportListVector.size())
+		{
+			id = std::get<0>(transportListVector.at(0));
+			transportID = std::get<1>(transportListVector.at(0));
+			count = std::get<7>(transportListVector.at(0));
+			sum = std::get<8>(transportListVector.at(0));
+			productID = std::get<11>(transportListVector.at(0));
+			statusID = std::get<12>(transportListVector.at(0));
+			currencyID = std::get<13>(transportListVector.at(0));
+			return true;
+		}
+		else
+		{
+			errorMessage = "Cannot find ttansport list with this id";
+		}
+		return false;
+	}
+
 	bool TransportList::IsEmpty()
 	{
 		if (0 == id && 0 == transportID && 0 == count && 0 == sum && 0 == productID && 0 == statusID && 0 == currencyID)
@@ -202,6 +226,8 @@ namespace BusinessLayer
 		int cID, std::string& errorMessage)
 	{
 		TransportList transportList;
+		transportList.Clear();
+		errorMessage.clear();
 		transportList.SetTransportID(tID);
 		transportList.SetProductID(pID);
 		transportList.SetCount(tlCount);
@@ -222,6 +248,8 @@ namespace BusinessLayer
 	bool TransportList::IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
 		TransportList transportList;
+		transportList.Clear();
+		errorMessage.clear();
 		transportList.SetTransportID(transportID);
 		transportList.SetProductID(productID);
 		transportList.SetCount(count);
