@@ -1,2 +1,2 @@
-# TheOrmasProejct
-Order Management Solution
+# Just A project
+
