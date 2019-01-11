@@ -14,9 +14,10 @@ namespace BusinessLayer
 		double sum = 0;
 		int statusID = 0;
 		int currencyID = 0;
+		int warehouseID = 0;
 	public:
-		ProductionStock(int psID, int pID, double psCount, double psSum, int stsID, int cID) :id(psID),
-			productID(pID), count(psCount), sum(psSum), statusID(stsID), currencyID(cID){};
+		ProductionStock(int psID, int pID, double psCount, double psSum, int stsID, int cID, int wID) :id(psID),
+			productID(pID), count(psCount), sum(psSum), statusID(stsID), currencyID(cID), warehouseID(wID){};
 		ProductionStock(DataLayer::productionStockCollection);
 		ProductionStock(){};
 		~ProductionStock(){};
@@ -28,6 +29,7 @@ namespace BusinessLayer
 		double GetSum();
 		int GetStatusID();
 		int GetCurrencyID();
+		int GetWarehouseID();
 
 		//ProductionStock class Mutators
 		void SetID(int);
@@ -36,15 +38,16 @@ namespace BusinessLayer
 		void SetSum(double);
 		void SetStatusID(int);
 		void SetCurrencyID(int);
+		void SetWarehouseID(int);
 
 		//Create, delete, update methods
 		bool CreateProductionStock(DataLayer::OrmasDal& ormasDal, std::string& errorMessage);
 		bool UpdateProductionStock(DataLayer::OrmasDal& ormasDal, std::string& errorMessage);
 		bool DeleteProductionStock(DataLayer::OrmasDal& ormasDal, std::string& errorMessage);
 		bool CreateProductionStock(DataLayer::OrmasDal& ormasDal, int pID, double sCount, double sSum,
-			int sID, int cID, std::string& errorMessage);
+			int sID, int cID, int wID, std::string& errorMessage);
 		bool UpdateProductionStock(DataLayer::OrmasDal& ormasDal, int pID, double sCount, double sSum,
-			int sID, int cID, std::string& errorMessage);
+			int sID, int cID, int wID, std::string& errorMessage);
 
 		//Generate filter string for class
 		std::string GenerateFilter(DataLayer::OrmasDal& ormasDal);

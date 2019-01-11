@@ -58,6 +58,7 @@ CreateWOffRDlg::CreateWOffRDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag,
 	QObject::connect(addProdBtn, &QPushButton::released, this, &CreateWOffRDlg::OpenWOffRListDlg);
 	QObject::connect(prodCountEdit, &QLineEdit::textChanged, this, &CreateWOffRDlg::TextEditChanged);
 	QObject::connect(sumEdit, &QLineEdit::textChanged, this, &CreateWOffRDlg::TextEditChanged);
+
 	QObject::connect(this, SIGNAL(CloseCreatedForms()), ((MainForm*)((DataForm*)parent)->GetParent()), SLOT(CloseChildsByName()));
 	InitComboBox();
 }
@@ -149,6 +150,41 @@ void CreateWOffRDlg::SetID(int ID, QString childName)
 			}
 			if (childName == QString("stockEmployeeForm"))
 			{
+				BusinessLayer::WarehouseEmployeeRelation weRel;
+				if (!weRel.GetWarehouseEmployeeByEmployeeID(dialogBL->GetOrmasDal(), ID, errorMessage))
+				{
+					QMessageBox::information(NULL, QString(tr("Warning")),
+						QString(tr("This user isn't warehouse employee!")),
+						QString(tr("Ok")));
+					errorMessage.clear();
+					return;
+				}
+				BusinessLayer::Warehouse warehouse;
+				if (!warehouse.GetWarehouseByID(dialogBL->GetOrmasDal(), weRel.GetWarehouseID(), errorMessage))
+				{
+					QMessageBox::information(NULL, QString(tr("Warning")),
+						QString(tr("Cannot find warehouse!")),
+						QString(tr("Ok")));
+					errorMessage.clear();
+					return;
+				}
+				BusinessLayer::WarehouseType warehouseType;
+				if (!warehouseType.GetWarehouseTypeByCode(dialogBL->GetOrmasDal(), "RAW", errorMessage))
+				{
+					QMessageBox::information(NULL, QString(tr("Warning")),
+						QString(tr("Cannot find warehouse type!")),
+						QString(tr("Ok")));
+					errorMessage.clear();
+					return;
+				}
+				if (warehouseType.GetID() != warehouse.GetWarehouseTypeID())
+				{
+					QMessageBox::information(NULL, QString(tr("Warning")),
+						QString(tr("This user isn't raw warehouse employee!")),
+						QString(tr("Ok")));
+					errorMessage.clear();
+					return;
+				}
 				stockEmployeeEdit->setText(QString::number(ID));
 				BusinessLayer::User user;
 				if (user.GetUserByID(dialogBL->GetOrmasDal(), ID, errorMessage))
@@ -585,6 +621,15 @@ void CreateWOffRDlg::OpenEmpDlg()
 
 void CreateWOffRDlg::OpenSkEmpDlg()
 {
+	if (prodCountEdit->text().toInt() > 0)
+	{
+		QString message = tr("Cannot change employee!");
+		mainForm->statusBar()->showMessage(message);
+		QMessageBox::information(NULL, QString(tr("Warning")),
+			QString(tr("Cannot change stock employee after adding product!")),
+			QString(tr("Ok")));
+		return;
+	}
 	this->hide();
 	this->setModal(false);
 	this->show();
@@ -619,7 +664,7 @@ void CreateWOffRDlg::OpenSkEmpDlg()
 	if (employeeVector.size() == 0)
 	{
 		delete role;
-		QString message = tr("Sorry could not find employee with \"expeditor\" role!");
+		QString message = tr("Sorry could not find employee with \"stock employee\" role!");
 		mainForm->statusBar()->showMessage(message);
 		QMessageBox::information(NULL, QString(tr("Warning")),
 			QString(message),
@@ -707,6 +752,15 @@ void CreateWOffRDlg::OpenStsDlg()
 
 void CreateWOffRDlg::OpenWOffRListDlg()
 {
+	if (stockEmployeeEdit->text().toInt() == 0 || stockEmployeeEdit->text().toInt() < 0)
+	{
+		QString message = tr("Enter stock employee before!");
+		mainForm->statusBar()->showMessage(message);
+		QMessageBox::information(NULL, QString(tr("Warning")),
+			QString(tr("Enter stock employee before!")),
+			QString(tr("Ok")));
+		return;
+	}
 	this->hide();
 	this->setModal(false);
 	this->show();

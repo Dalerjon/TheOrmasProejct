@@ -54,7 +54,7 @@ private slots:
 	void CrtAccDlg();
 	void UdpAccDlg();
 	void DelAccDlg();
-
+	
 	void CrtAccTpDlg();
 	void UdpAccTpDlg();
 	void DelAccTpDlg();
@@ -70,6 +70,18 @@ private slots:
 	void CrtBlcDlg();
 	void UdpBlcDlg();
 	void DelBlcDlg();
+
+	void CrtBrhDlg();
+	void UdpBrhDlg();
+	void DelBrhDlg();
+	
+	void CrtCbxDlg();
+	void UdpCbxDlg();
+	void DelCbxDlg();
+
+	void CrtCASHERDlg();
+	void UdpCASHERDlg();
+	void DelCASHERDlg();
 
 	void CrtCltDlg();
 	void UdpCltDlg();
@@ -94,6 +106,7 @@ private slots:
 	void CrtConPDlg();
 	void UdpConPDlg();
 	void DelConPDlg();
+	void ViewConPDlg();
 
 	void CrtConPListDlg();
 	void UdpConPListDlg();
@@ -102,6 +115,7 @@ private slots:
 	void CrtConRDlg();
 	void UdpConRDlg();
 	void DelConRDlg();
+	void ViewConRDlg();
 
 	void CrtConRListDlg();
 	void UdpConRListDlg();
@@ -130,6 +144,7 @@ private slots:
 	void CrtInvDlg();
 	void UdpInvDlg();
 	void DelInvDlg();
+	void ViewInvDlg();
 
 	void CrtInvListDlg();
 	void UdpInvListDlg();
@@ -158,6 +173,7 @@ private slots:
 	void CrtOrdDlg();
 	void UdpOrdDlg();
 	void DelOrdDlg();
+	void ViewOrdDlg();
 
 	void CrtOrdListDlg();
 	void UdpOrdListDlg();
@@ -166,6 +182,7 @@ private slots:
 	void CrtOrdRDlg();
 	void UdpOrdRDlg();
 	void DelOrdRDlg();
+	void ViewOrdRDlg();
 
 	void CrtOrdRListDlg();
 	void UdpOrdRListDlg();
@@ -182,6 +199,7 @@ private slots:
 	void CrtPmtDlg();
 	void UdpPmtDlg();
 	void DelPmtDlg();
+	void ViewPmtDlg();
 
 	void CrtPosDlg();
 	void UdpPosDlg();
@@ -202,10 +220,12 @@ private slots:
 	void CrtProdnDlg();
 	void UdpProdnDlg();
 	void DelProdnDlg();
+	void ViewProdnDlg(){};
 
 	void CrtProdConRDlg();
 	void UdpProdConRDlg();
 	void DelProdConRDlg();
+	void ViewProdConRDlg();
 
 	void CrtProdConRListDlg();
 	void UdpProdConRListDlg();
@@ -222,6 +242,7 @@ private slots:
 	void CrtPPlanDlg();
 	void UdpPPlanDlg();
 	void DelPPlanDlg();
+	void ViewPPlanDlg(){};
 
 	void CrtPPlanListDlg();
 	void UdpPPlanListDlg();
@@ -250,6 +271,7 @@ private slots:
 	void CrtRcpPDlg();
 	void UdpRcpPDlg();
 	void DelRcpPDlg();
+	void ViewRcpPDlg();
 
 	void CrtRcpPListDlg();
 	void UdpRcpPListDlg();
@@ -258,6 +280,7 @@ private slots:
 	void CrtRcpRDlg();
 	void UdpRcpRDlg();
 	void DelRcpRDlg();
+	void ViewRcpRDlg();
 
 	void CrtRcpRListDlg();
 	void UdpRcpRListDlg();
@@ -270,6 +293,7 @@ private slots:
 	void CrtRtrnDlg();
 	void UdpRtrnDlg();
 	void DelRtrnDlg();
+	void ViewRtrnDlg();
 
 	void CrtRtrnListDlg();
 	void UdpRtrnListDlg();
@@ -294,6 +318,7 @@ private slots:
 	void CrtSpecDlg();
 	void UdpSpecDlg();
 	void DelSpecDlg();
+	void ViewSpecDlg();
 	
 	void CrtSpecListDlg();
 	void UdpSpecListDlg();
@@ -302,6 +327,7 @@ private slots:
 	void CrtSplDlg();
 	void UdpSplDlg();
 	void DelSplDlg();
+	void ViewSplDlg();
 
 	void CrtSplListDlg();
 	void UdpSplListDlg();
@@ -322,6 +348,7 @@ private slots:
 	void CrtTrsDlg();
 	void UdpTrsDlg();
 	void DelTrsDlg();
+	void ViewTrsDlg();
 
 	void CrtTrsListDlg();
 	void UdpTrsListDlg();
@@ -331,13 +358,27 @@ private slots:
 	void UdpUserDlg();
 	void DelUserDlg();
 
+	void CrtWrhDlg();
+	void UdpWrhDlg();
+	void DelWrhDlg();
+
+	void CrtWrhTpDlg();
+	void UdpWrhTpDlg();
+	void DelWrhTpDlg();
+
+	void CrtWERDlg();
+	void UdpWERDlg();
+	void DelWERDlg();
+
 	void CrtWdwDlg();
 	void UdpWdwDlg();
 	void DelWdwDlg();
+	void ViewWdwDlg();
 
 	void CrtWOffDlg();
 	void UdpWOffDlg();
 	void DelWOffDlg();
+	void ViewWOffDlg();
 
 	void CrtWOffListDlg();
 	void UdpWOffListDlg();
@@ -346,6 +387,7 @@ private slots:
 	void CrtWOffRDlg();
 	void UdpWOffRDlg();
 	void DelWOffRDlg();
+	void ViewWOffRDlg();
 
 	void CrtWOffRListDlg();
 	void UdpWOffRListDlg();
@@ -386,5 +428,7 @@ public:
 	unsigned int spoilageID = 0;
 	unsigned int transportID = 0;
 	unsigned int writeOffRawID = 0;
+	unsigned int employeeID = 0;
+	unsigned int stockEmployeeID = 0;
 };
 #endif //DATAFORM_H

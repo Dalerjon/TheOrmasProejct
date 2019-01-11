@@ -13,6 +13,7 @@ CreateProdConRListDlg::CreateProdConRListDlg(BusinessLayer::OrmasBL *ormasBL, bo
 	DataForm *dataFormParent = (DataForm *)this->parentForm;
 	mainForm = (MainForm *)dataFormParent->GetParent();
 	pConsumeRawID = ((DataForm*)parent)->consumeRawID;
+	stockEmployeeID = ((DataForm*)parent)->stockEmployeeID;
 	vDouble = new QDoubleValidator(0.00, 1000000000.00, 3, this);
 	vInt = new QIntValidator(0, 1000000000, this);
 	productEdit->setValidator(vInt);
@@ -220,7 +221,7 @@ void CreateProdConRListDlg::AddProductToList()
 		SetConRListParams(pConsumeRawID, productEdit->text().toInt(),
 			countEdit->text().toDouble(), (countEdit->text().toDouble() * product->GetPrice()),
 			statusVector.at(0).GetID(), product->GetCurrencyID());
-
+		pConsumeRawList->stockEmployeeID = stockEmployeeID;
 		if (dialogBL->CreateProductionConsumeRawList(pConsumeRawList, errorMessage))
 		{
 			if (parentDataForm != nullptr)
@@ -238,7 +239,7 @@ void CreateProdConRListDlg::AddProductToList()
 						productListItem << new QStandardItem(QString::number(0));
 					}
 					productListItem << new QStandardItem(product->GetName().c_str())
-						<< new QStandardItem(QString::number(product->GetPrice()))
+						<< new QStandardItem(QString::number(pConsumeRawList->GetSum() / pConsumeRawList->GetCount()))
 						<< new QStandardItem(currency->GetShortName().c_str())
 						<< new QStandardItem(QString::number(product->GetVolume()))
 						<< new QStandardItem(measure->GetName().c_str())
@@ -294,7 +295,8 @@ void CreateProdConRListDlg::EditProductInList()
 				delete product;
 				return;
 			}
-			if (countEdit->text().toDouble() != pConsumeRawList->GetCount())
+			if (countEdit->text().toDouble() != pConsumeRawList->GetCount() ||
+				productEdit->text().toInt() != pConsumeRawList->GetProductID())
 			{
 				sumEdit->setText(QString::number(countEdit->text().toDouble() * product->GetPrice()));
 			}
@@ -302,6 +304,7 @@ void CreateProdConRListDlg::EditProductInList()
 			SetConRListParams(consumeRawEdit->text().toInt(),
 				productEdit->text().toInt(), countEdit->text().toDouble(), sumEdit->text().toDouble(), statusEdit->text().toInt(),
 				pConsumeRawList->GetCurrencyID(), pConsumeRawList->GetID());
+			pConsumeRawList->stockEmployeeID = stockEmployeeID;
 			if (dialogBL->UpdateProductionConsumeRawList(pConsumeRawList, errorMessage))
 			{
 				if (parentDataForm != nullptr)
@@ -332,7 +335,7 @@ void CreateProdConRListDlg::EditProductInList()
 						QModelIndex mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
 						itemModel->item(mIndex.row(), 1)->setText(QString::number(pConsumeRawList->GetProductionConsumeRawID()));
 						itemModel->item(mIndex.row(), 2)->setText(product->GetName().c_str());
-						itemModel->item(mIndex.row(), 3)->setText(QString::number(product->GetPrice()));
+						itemModel->item(mIndex.row(), 3)->setText(QString::number(pConsumeRawList->GetSum() / pConsumeRawList->GetCount()));
 						itemModel->item(mIndex.row(), 4)->setText(currency->GetShortName().c_str());
 						itemModel->item(mIndex.row(), 5)->setText(QString::number(product->GetVolume()));
 						itemModel->item(mIndex.row(), 6)->setText(measure->GetName().c_str());

@@ -14,6 +14,7 @@ public:
 	bool FillDlgElements(QTableView*);
 	std::string errorMessage;
 	int pConsumeRawID = 0;
+	int stockEmployeeID = 0;
 	private slots:
 	void AddProductToList();
 	void EditProductInList();

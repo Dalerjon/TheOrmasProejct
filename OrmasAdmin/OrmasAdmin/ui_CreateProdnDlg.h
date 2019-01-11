@@ -14,6 +14,7 @@
 #include <QtWidgets/QAction>
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QButtonGroup>
+#include <QtWidgets/QComboBox>
 #include <QtWidgets/QDateEdit>
 #include <QtWidgets/QDialog>
 #include <QtWidgets/QGridLayout>
@@ -31,6 +32,9 @@ class Ui_CreateProduction
 {
 public:
     QGridLayout *gridLayout;
+    QTimeEdit *sesStartTimeEdit;
+    QDateEdit *expiryDateEdit;
+    QDateEdit *prdDateEdit;
     QLineEdit *prodCountEdit;
     QLabel *expiryDateLb;
     QHBoxLayout *horizontalLayout;
@@ -43,25 +47,39 @@ public:
     QLabel *productionDateLb;
     QLabel *prodCountLb;
     QTimeEdit *sesEndTimeEdit;
-    QTimeEdit *sesStartTimeEdit;
-    QDateEdit *prdDateEdit;
-    QDateEdit *expiryDateEdit;
+    QLabel *warehouseLb;
+    QComboBox *warehouseCmb;
 
     void setupUi(QDialog *CreateProduction)
     {
         if (CreateProduction->objectName().isEmpty())
             CreateProduction->setObjectName(QStringLiteral("CreateProduction"));
-        CreateProduction->resize(396, 176);
+        CreateProduction->resize(396, 202);
         CreateProduction->setLocale(QLocale(QLocale::English, QLocale::UnitedStates));
         CreateProduction->setModal(false);
         gridLayout = new QGridLayout(CreateProduction);
         gridLayout->setObjectName(QStringLiteral("gridLayout"));
         gridLayout->setContentsMargins(9, 9, 9, 9);
+        sesStartTimeEdit = new QTimeEdit(CreateProduction);
+        sesStartTimeEdit->setObjectName(QStringLiteral("sesStartTimeEdit"));
+
+        gridLayout->addWidget(sesStartTimeEdit, 2, 1, 1, 2);
+
+        expiryDateEdit = new QDateEdit(CreateProduction);
+        expiryDateEdit->setObjectName(QStringLiteral("expiryDateEdit"));
+
+        gridLayout->addWidget(expiryDateEdit, 1, 1, 1, 2);
+
+        prdDateEdit = new QDateEdit(CreateProduction);
+        prdDateEdit->setObjectName(QStringLiteral("prdDateEdit"));
+
+        gridLayout->addWidget(prdDateEdit, 0, 1, 1, 2);
+
         prodCountEdit = new QLineEdit(CreateProduction);
         prodCountEdit->setObjectName(QStringLiteral("prodCountEdit"));
         prodCountEdit->setReadOnly(true);
 
-        gridLayout->addWidget(prodCountEdit, 4, 2, 1, 1);
+        gridLayout->addWidget(prodCountEdit, 6, 2, 1, 1);
 
         expiryDateLb = new QLabel(CreateProduction);
         expiryDateLb->setObjectName(QStringLiteral("expiryDateLb"));
@@ -86,7 +104,7 @@ public:
         horizontalLayout->addWidget(cancelBtn);
 
 
-        gridLayout->addLayout(horizontalLayout, 5, 0, 1, 3);
+        gridLayout->addLayout(horizontalLayout, 7, 0, 1, 3);
 
         sessionStartLb = new QLabel(CreateProduction);
         sessionStartLb->setObjectName(QStringLiteral("sessionStartLb"));
@@ -101,7 +119,7 @@ public:
         addProdBtn = new QPushButton(CreateProduction);
         addProdBtn->setObjectName(QStringLiteral("addProdBtn"));
 
-        gridLayout->addWidget(addProdBtn, 4, 0, 1, 1);
+        gridLayout->addWidget(addProdBtn, 6, 0, 1, 1);
 
         productionDateLb = new QLabel(CreateProduction);
         productionDateLb->setObjectName(QStringLiteral("productionDateLb"));
@@ -112,27 +130,22 @@ public:
         prodCountLb->setObjectName(QStringLiteral("prodCountLb"));
         prodCountLb->setMinimumSize(QSize(80, 0));
 
-        gridLayout->addWidget(prodCountLb, 4, 1, 1, 1);
+        gridLayout->addWidget(prodCountLb, 6, 1, 1, 1);
 
         sesEndTimeEdit = new QTimeEdit(CreateProduction);
         sesEndTimeEdit->setObjectName(QStringLiteral("sesEndTimeEdit"));
 
         gridLayout->addWidget(sesEndTimeEdit, 3, 1, 1, 2);
 
-        sesStartTimeEdit = new QTimeEdit(CreateProduction);
-        sesStartTimeEdit->setObjectName(QStringLiteral("sesStartTimeEdit"));
+        warehouseLb = new QLabel(CreateProduction);
+        warehouseLb->setObjectName(QStringLiteral("warehouseLb"));
 
-        gridLayout->addWidget(sesStartTimeEdit, 2, 1, 1, 2);
+        gridLayout->addWidget(warehouseLb, 5, 0, 1, 1);
 
-        prdDateEdit = new QDateEdit(CreateProduction);
-        prdDateEdit->setObjectName(QStringLiteral("prdDateEdit"));
+        warehouseCmb = new QComboBox(CreateProduction);
+        warehouseCmb->setObjectName(QStringLiteral("warehouseCmb"));
 
-        gridLayout->addWidget(prdDateEdit, 0, 1, 1, 2);
-
-        expiryDateEdit = new QDateEdit(CreateProduction);
-        expiryDateEdit->setObjectName(QStringLiteral("expiryDateEdit"));
-
-        gridLayout->addWidget(expiryDateEdit, 1, 1, 1, 2);
+        gridLayout->addWidget(warehouseCmb, 5, 1, 1, 2);
 
         QWidget::setTabOrder(sesStartTimeEdit, sesEndTimeEdit);
         QWidget::setTabOrder(sesEndTimeEdit, addProdBtn);
@@ -156,6 +169,7 @@ public:
         addProdBtn->setText(QApplication::translate("CreateProduction", "Add products", 0));
         productionDateLb->setText(QApplication::translate("CreateProduction", "Production date:", 0));
         prodCountLb->setText(QApplication::translate("CreateProduction", "Product count:", 0));
+        warehouseLb->setText(QApplication::translate("CreateProduction", "Select warehouse:", 0));
     } // retranslateUi
 
 };

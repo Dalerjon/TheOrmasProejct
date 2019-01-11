@@ -290,7 +290,8 @@ void CreateSplListDlg::EditProductInList()
 				delete product;
 				return;
 			}
-			if (countEdit->text().toDouble() != spoilageList->GetCount())
+			if (countEdit->text().toDouble() != spoilageList->GetCount() ||
+				productEdit->text().toInt() != spoilageList->GetProductID())
 			{
 				sumEdit->setText(QString::number(countEdit->text().toDouble() * product->GetPrice()));
 			}

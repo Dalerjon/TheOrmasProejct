@@ -158,6 +158,7 @@ GenerateFinRep::~GenerateFinRep()
 
 void GenerateFinRep::Generate()
 {
+	CalculatePrevMonth(fromDateEdit->text().toUtf8().constData(), tillDateEdit->text().toUtf8().constData(), prevFromMonth, prevTillMonth);
 	fReport->SetFromDate(fromDateEdit->text().toUtf8().constData());
 	fReport->SetTillDate(tillDateEdit->text().toUtf8().constData());
 	std::string filter = fReport->GenerateFilter(dialogBL->GetOrmasDal());
@@ -173,11 +174,11 @@ void GenerateFinRep::Generate()
 		DocForm *docForm = new DocForm(dialogBL, this);
 		docForm->setAttribute(Qt::WA_DeleteOnClose);
 		docForm->setWindowTitle(tr("Print financial report"));
-		QMdiSubWindow *generateOneAccWindow = new QMdiSubWindow;
-		generateOneAccWindow->setWidget(docForm);
-		generateOneAccWindow->setAttribute(Qt::WA_DeleteOnClose);
-		generateOneAccWindow->resize(docForm->size().width() + 18, docForm->size().height() + 30);
-		mainForm->mdiArea->addSubWindow(generateOneAccWindow);
+		QMdiSubWindow *generateFinRepWindow = new QMdiSubWindow;
+		generateFinRepWindow->setWidget(docForm);
+		generateFinRepWindow->setAttribute(Qt::WA_DeleteOnClose);
+		generateFinRepWindow->resize(docForm->size().width() + 18, docForm->size().height() + 30);
+		mainForm->mdiArea->addSubWindow(generateFinRepWindow);
 		
 		//read template
 		QFile file;
@@ -201,34 +202,34 @@ void GenerateFinRep::Generate()
 			{
 				reportText.replace(QString("fromDatePh"), fromDateEdit->text(), Qt::CaseInsensitive);
 				reportText.replace(QString("tillDatePh"), tillDateEdit->text(), Qt::CaseInsensitive);
-				reportText.replace(QString("chepter10Ph"), QString::number(item.GetAccount44010()*(-1)), Qt::CaseInsensitive);
-				reportText.replace(QString("chepter20Ph"), QString::number(item.GetAccount55010()), Qt::CaseInsensitive);
+				reportText.replace(QString("chepter10Ph"), QString::number(item.GetAccount44010()*(-1), 'f', 3), Qt::CaseInsensitive);
+				reportText.replace(QString("chepter20Ph"), QString::number(item.GetAccount55010(), 'f', 3), Qt::CaseInsensitive);
 				allIncome = item.GetAccount44010()*(-1) - item.GetAccount55010();
-				reportText.replace(QString("chepter30Ph"), QString::number(allIncome), Qt::CaseInsensitive);
-				reportText.replace(QString("chepter40Ph"), QString::number(item.GetAccount552()), Qt::CaseInsensitive);
-				reportText.replace(QString("chepter41Ph"), QString::number(item.GetAccount55270()), Qt::CaseInsensitive);
-				reportText.replace(QString("chepter50Ph"), QString::number(item.GetAccount553()), Qt::CaseInsensitive);
-				reportText.replace(QString("chepter51Ph"), QString::number(item.GetAccount55321()), Qt::CaseInsensitive);
+				reportText.replace(QString("chepter30Ph"), QString::number(allIncome ,'f', 3), Qt::CaseInsensitive);
+				reportText.replace(QString("chepter40Ph"), QString::number(item.GetAccount552() ,'f', 3), Qt::CaseInsensitive);
+				reportText.replace(QString("chepter41Ph"), QString::number(item.GetAccount55270() ,'f', 3), Qt::CaseInsensitive);
+				reportText.replace(QString("chepter50Ph"), QString::number(item.GetAccount553() ,'f', 3), Qt::CaseInsensitive);
+				reportText.replace(QString("chepter51Ph"), QString::number(item.GetAccount55321() ,'f', 3), Qt::CaseInsensitive);
 				allOperOut = item.GetAccount552() + item.GetAccount553();
-				reportText.replace(QString("chepter60Ph"), QString::number(allOperOut), Qt::CaseInsensitive);
-				reportText.replace(QString("chepter70Ph"), QString::number(item.GetAccount44020_90()), Qt::CaseInsensitive);
-				operIncome = allIncome - allOperOut + item.GetAccount44020_90();
-				reportText.replace(QString("chepter80Ph"), QString::number(operIncome), Qt::CaseInsensitive);
+				reportText.replace(QString("chepter60Ph"), QString::number(allOperOut, 'f', 3), Qt::CaseInsensitive);
+				reportText.replace(QString("chepter70Ph"), QString::number(item.GetAccount44020_90() * (-1),'f', 3), Qt::CaseInsensitive);
+				operIncome = allIncome - allOperOut - item.GetAccount44020_90();
+				reportText.replace(QString("chepter80Ph"), QString::number(operIncome, 'f', 3), Qt::CaseInsensitive);
 				operOutIn = item.GetAccount66010_66110() + item.GetAccount66020_66120() + item.GetAccount66040_66140() +
 					item.GetAccount66050_66150() + item.GetAccount66060_66160() + item.GetAccount66070_66170();
 				reportText.replace(QString("chepter90Ph"), "", Qt::CaseInsensitive);
-				reportText.replace(QString("chepter100Ph"), QString::number(item.GetAccount66010_66110()*(-1)), Qt::CaseInsensitive);
-				reportText.replace(QString("chepter110Ph"), QString::number(item.GetAccount66020_66120()*(-1)), Qt::CaseInsensitive);
-				reportText.replace(QString("chepter120Ph"), QString::number(item.GetAccount66040_66140()*(-1)), Qt::CaseInsensitive);
-				reportText.replace(QString("chepter130Ph"), QString::number(item.GetAccount66050_66150()*(-1)), Qt::CaseInsensitive);
-				reportText.replace(QString("chepter140Ph"), QString::number(item.GetAccount66060_66160()*(-1)), Qt::CaseInsensitive);
-				reportText.replace(QString("chepter150Ph"), QString::number(item.GetAccount66130()), Qt::CaseInsensitive);
-				reportText.replace(QString("chepter160Ph"), QString::number(item.GetAccount66070_66170()*(-1)), Qt::CaseInsensitive);
-				reportText.replace(QString("chepter170Ph"), QString::number(operOutIn*(-1)), Qt::CaseInsensitive);
+				reportText.replace(QString("chepter100Ph"), QString::number(item.GetAccount66010_66110()*(-1) ,'f', 3), Qt::CaseInsensitive);
+				reportText.replace(QString("chepter110Ph"), QString::number(item.GetAccount66020_66120()*(-1), 'f', 3), Qt::CaseInsensitive);
+				reportText.replace(QString("chepter120Ph"), QString::number(item.GetAccount66040_66140()*(-1), 'f', 3), Qt::CaseInsensitive);
+				reportText.replace(QString("chepter130Ph"), QString::number(item.GetAccount66050_66150()*(-1), 'f', 3), Qt::CaseInsensitive);
+				reportText.replace(QString("chepter140Ph"), QString::number(item.GetAccount66060_66160()*(-1), 'f', 3), Qt::CaseInsensitive);
+				reportText.replace(QString("chepter150Ph"), QString::number(item.GetAccount66130(), 'f', 3), Qt::CaseInsensitive);
+				reportText.replace(QString("chepter160Ph"), QString::number(item.GetAccount66070_66170()*(-1), 'f', 3), Qt::CaseInsensitive);
+				reportText.replace(QString("chepter170Ph"), QString::number(operOutIn*(-1), 'f', 3), Qt::CaseInsensitive);
 				reportText.replace(QString("chepter180Ph"), "", Qt::CaseInsensitive);
-				reportText.replace(QString("chepter190Ph"), QString::number(operIncome + operOutIn*(-1)), Qt::CaseInsensitive);
+				reportText.replace(QString("chepter190Ph"), QString::number(operIncome + operOutIn*(-1), 'f', 3), Qt::CaseInsensitive);
 				reportText.replace(QString("chepter200Ph"), "", Qt::CaseInsensitive);
-				reportText.replace(QString("chepter210Ph"), QString::number(operIncome + operOutIn*(-1)), Qt::CaseInsensitive);
+				reportText.replace(QString("chepter210Ph"), QString::number(operIncome + operOutIn*(-1), 'f', 3), Qt::CaseInsensitive);
 			}
 
 			BusinessLayer::FinancialReport prevFinRep;
@@ -266,34 +267,34 @@ void GenerateFinRep::Generate()
 			{
 				for each (auto item in vecPrevFinRep)
 				{
-					reportText.replace(QString("chepterprev10Ph"), QString::number(item.GetAccount44010()*(-1)), Qt::CaseInsensitive);
-					reportText.replace(QString("chepterprev20Ph"), QString::number(item.GetAccount55010()), Qt::CaseInsensitive);
+					reportText.replace(QString("chepterprev10Ph"), QString::number(item.GetAccount44010()*(-1), 'f', 3), Qt::CaseInsensitive);
+					reportText.replace(QString("chepterprev20Ph"), QString::number(item.GetAccount55010(), 'f', 3), Qt::CaseInsensitive);
 					allIncome = item.GetAccount44010()*(-1) - item.GetAccount55010();
-					reportText.replace(QString("chepterprev30Ph"), QString::number(allIncome), Qt::CaseInsensitive);
-					reportText.replace(QString("chepterprev40Ph"), QString::number(item.GetAccount552()), Qt::CaseInsensitive);
-					reportText.replace(QString("chepterprev41Ph"), QString::number(item.GetAccount55270()), Qt::CaseInsensitive);
-					reportText.replace(QString("chepterprev50Ph"), QString::number(item.GetAccount553()), Qt::CaseInsensitive);
-					reportText.replace(QString("chepterprev51Ph"), QString::number(item.GetAccount55321()), Qt::CaseInsensitive);
+					reportText.replace(QString("chepterprev30Ph"), QString::number(allIncome, 'f', 3), Qt::CaseInsensitive);
+					reportText.replace(QString("chepterprev40Ph"), QString::number(item.GetAccount552(), 'f', 3), Qt::CaseInsensitive);
+					reportText.replace(QString("chepterprev41Ph"), QString::number(item.GetAccount55270(), 'f', 3), Qt::CaseInsensitive);
+					reportText.replace(QString("chepterprev50Ph"), QString::number(item.GetAccount553(), 'f', 3), Qt::CaseInsensitive);
+					reportText.replace(QString("chepterprev51Ph"), QString::number(item.GetAccount55321(), 'f', 3), Qt::CaseInsensitive);
 					allOperOut = item.GetAccount552() + item.GetAccount553();
-					reportText.replace(QString("chepterprev60Ph"), QString::number(allOperOut), Qt::CaseInsensitive);
-					reportText.replace(QString("chepterprev70Ph"), QString::number(item.GetAccount44020_90()), Qt::CaseInsensitive);
-					operIncome = allIncome - allOperOut + item.GetAccount44020_90();
-					reportText.replace(QString("chepterprev80Ph"), QString::number(operIncome), Qt::CaseInsensitive);
+					reportText.replace(QString("chepterprev60Ph"), QString::number(allOperOut, 'f', 3), Qt::CaseInsensitive);
+					reportText.replace(QString("chepterprev70Ph"), QString::number(item.GetAccount44020_90() * (-1), 'f', 3), Qt::CaseInsensitive);
+					operIncome = allIncome - allOperOut - item.GetAccount44020_90();
+					reportText.replace(QString("chepterprev80Ph"), QString::number(operIncome, 'f', 3), Qt::CaseInsensitive);
 					operOutIn = item.GetAccount66010_66110() + item.GetAccount66020_66120() + item.GetAccount66040_66140() +
 						item.GetAccount66050_66150() + item.GetAccount66060_66160() + item.GetAccount66070_66170();
 					reportText.replace(QString("chepterprev90Ph"), "", Qt::CaseInsensitive);
-					reportText.replace(QString("chepterprev100Ph"), QString::number(item.GetAccount66010_66110()*(-1)), Qt::CaseInsensitive);
-					reportText.replace(QString("chepterprev110Ph"), QString::number(item.GetAccount66020_66120()*(-1)), Qt::CaseInsensitive);
-					reportText.replace(QString("chepterprev120Ph"), QString::number(item.GetAccount66040_66140()*(-1)), Qt::CaseInsensitive);
-					reportText.replace(QString("chepterprev130Ph"), QString::number(item.GetAccount66050_66150()*(-1)), Qt::CaseInsensitive);
-					reportText.replace(QString("chepterprev140Ph"), QString::number(item.GetAccount66060_66160()*(-1)), Qt::CaseInsensitive);
-					reportText.replace(QString("chepterprev150Ph"), QString::number(item.GetAccount66130()), Qt::CaseInsensitive);
-					reportText.replace(QString("chepterprev160Ph"), QString::number(item.GetAccount66070_66170()*(-1)), Qt::CaseInsensitive);
-					reportText.replace(QString("chepterprev170Ph"), QString::number(operOutIn*(-1)), Qt::CaseInsensitive);
+					reportText.replace(QString("chepterprev100Ph"), QString::number(item.GetAccount66010_66110()*(-1), 'f', 3), Qt::CaseInsensitive);
+					reportText.replace(QString("chepterprev110Ph"), QString::number(item.GetAccount66020_66120()*(-1), 'f', 3), Qt::CaseInsensitive);
+					reportText.replace(QString("chepterprev120Ph"), QString::number(item.GetAccount66040_66140()*(-1), 'f', 3), Qt::CaseInsensitive);
+					reportText.replace(QString("chepterprev130Ph"), QString::number(item.GetAccount66050_66150()*(-1), 'f', 3), Qt::CaseInsensitive);
+					reportText.replace(QString("chepterprev140Ph"), QString::number(item.GetAccount66060_66160()*(-1), 'f', 3), Qt::CaseInsensitive);
+					reportText.replace(QString("chepterprev150Ph"), QString::number(item.GetAccount66130(), 'f', 3), Qt::CaseInsensitive);
+					reportText.replace(QString("chepterprev160Ph"), QString::number(item.GetAccount66070_66170()*(-1), 'f', 3), Qt::CaseInsensitive);
+					reportText.replace(QString("chepterprev170Ph"), QString::number(operOutIn*(-1), 'f', 3), Qt::CaseInsensitive);
 					reportText.replace(QString("chepterprev180Ph"), "", Qt::CaseInsensitive);
-					reportText.replace(QString("chepterprev190Ph"), QString::number(operIncome + operOutIn*(-1)), Qt::CaseInsensitive);
+					reportText.replace(QString("chepterprev190Ph"), QString::number(operIncome + operOutIn*(-1), 'f', 3), Qt::CaseInsensitive);
 					reportText.replace(QString("chepterprev200Ph"), "", Qt::CaseInsensitive);
-					reportText.replace(QString("chepterprev210Ph"), QString::number(operIncome + operOutIn*(-1)), Qt::CaseInsensitive);
+					reportText.replace(QString("chepterprev210Ph"), QString::number(operIncome + operOutIn*(-1), 'f', 3), Qt::CaseInsensitive);
 				}
 			}
 			docForm->webEngineView->setHtml(reportText);
@@ -314,4 +315,38 @@ void GenerateFinRep::Generate()
 void GenerateFinRep::Close()
 {
 	this->parentWidget()->close();
+}
+
+void GenerateFinRep::CalculatePrevMonth(std::string fromMonth, std::string tilMonth, std::string& prevFromMonth, std::string& tillFromMonth)
+{
+	QDate startDate = QDate::fromString(fromMonth.c_str(), "dd.MM.yyyy");
+	int day = startDate.day();
+	int month = startDate.month();
+	int year = startDate.year();
+
+	if (month == 1)
+	{
+		prevFromMonth = "01.";
+		prevFromMonth += std::to_string(12);
+		prevFromMonth += ".";
+		prevFromMonth += std::to_string(year - 1);
+	}
+	else
+	{
+		prevFromMonth = "01.";
+		prevFromMonth += std::to_string(month-1);
+		prevFromMonth += ".";
+		prevFromMonth += std::to_string(year);
+	}
+	QDate pastMonthDate = (QDate::fromString(prevFromMonth.c_str(), "dd.MM.yyyy"));
+	int coundOfDays = pastMonthDate.daysInMonth();
+	day = pastMonthDate.day();
+	month = pastMonthDate.month();
+	year = pastMonthDate.year();
+	tillFromMonth = std::to_string(coundOfDays);
+	tillFromMonth += ".";
+	tillFromMonth += std::to_string(month);
+	tillFromMonth += ".";
+	tillFromMonth += std::to_string(year);
+
 }

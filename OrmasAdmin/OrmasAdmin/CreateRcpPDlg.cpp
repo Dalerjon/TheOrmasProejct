@@ -140,6 +140,41 @@ void CreateRcpPDlg::SetID(int ID, QString childName)
 
 			if (childName == QString("employeeForm"))
 			{
+				BusinessLayer::WarehouseEmployeeRelation weRel;
+				if (!weRel.GetWarehouseEmployeeByEmployeeID(dialogBL->GetOrmasDal(), ID, errorMessage))
+				{
+					QMessageBox::information(NULL, QString(tr("Warning")),
+						QString(tr("This user isn't warehouse employee!")),
+						QString(tr("Ok")));
+					errorMessage.clear();
+					return;
+				}
+				BusinessLayer::Warehouse warehouse;
+				if (!warehouse.GetWarehouseByID(dialogBL->GetOrmasDal(), weRel.GetWarehouseID(), errorMessage))
+				{
+					QMessageBox::information(NULL, QString(tr("Warning")),
+						QString(tr("Cannot find warehouse!")),
+						QString(tr("Ok")));
+					errorMessage.clear();
+					return;
+				}
+				BusinessLayer::WarehouseType warehouseType;
+				if (!warehouseType.GetWarehouseTypeByCode(dialogBL->GetOrmasDal(), "PRODUCTION", errorMessage))
+				{
+					QMessageBox::information(NULL, QString(tr("Warning")),
+						QString(tr("Cannot find warehouse type!")),
+						QString(tr("Ok")));
+					errorMessage.clear();
+					return;
+				}
+				if (warehouseType.GetID() != warehouse.GetWarehouseTypeID())
+				{
+					QMessageBox::information(NULL, QString(tr("Warning")),
+						QString(tr("This user isn't production warehouse employee!")),
+						QString(tr("Ok")));
+					errorMessage.clear();
+					return;
+				}
 				employeeEdit->setText(QString::number(ID));
 				BusinessLayer::User user;
 				if (user.GetUserByID(dialogBL->GetOrmasDal(), ID, errorMessage))
@@ -160,6 +195,41 @@ void CreateRcpPDlg::SetID(int ID, QString childName)
 			}
 			if (childName == QString("stockEmployeeForm"))
 			{
+				BusinessLayer::WarehouseEmployeeRelation weRel;
+				if (!weRel.GetWarehouseEmployeeByEmployeeID(dialogBL->GetOrmasDal(), ID, errorMessage))
+				{
+					QMessageBox::information(NULL, QString(tr("Warning")),
+						QString(tr("This user isn't warehouse employee!")),
+						QString(tr("Ok")));
+					errorMessage.clear();
+					return;
+				}
+				BusinessLayer::Warehouse warehouse;
+				if (!warehouse.GetWarehouseByID(dialogBL->GetOrmasDal(), weRel.GetWarehouseID(), errorMessage))
+				{
+					QMessageBox::information(NULL, QString(tr("Warning")),
+						QString(tr("Cannot find warehouse!")),
+						QString(tr("Ok")));
+					errorMessage.clear();
+					return;
+				}
+				BusinessLayer::WarehouseType warehouseType;
+				if (!warehouseType.GetWarehouseTypeByCode(dialogBL->GetOrmasDal(), "PRODUCT", errorMessage))
+				{
+					QMessageBox::information(NULL, QString(tr("Warning")),
+						QString(tr("Cannot find warehouse type!")),
+						QString(tr("Ok")));
+					errorMessage.clear();
+					return;
+				}
+				if (warehouseType.GetID() != warehouse.GetWarehouseTypeID())
+				{
+					QMessageBox::information(NULL, QString(tr("Warning")),
+						QString(tr("This user isn't product warehouse employee!")),
+						QString(tr("Ok")));
+					errorMessage.clear();
+					return;
+				}
 				stockEmployeeEdit->setText(QString::number(ID));
 				BusinessLayer::User user;
 				if (user.GetUserByID(dialogBL->GetOrmasDal(), ID, errorMessage))
@@ -639,6 +709,15 @@ void CreateRcpPDlg::OpenEmpDlg()
 
 void CreateRcpPDlg::OpenSkEmpDlg()
 {
+	if (prodCountEdit->text().toInt() > 0)
+	{
+		QString message = tr("Cannot change employee!");
+		mainForm->statusBar()->showMessage(message);
+		QMessageBox::information(NULL, QString(tr("Warning")),
+			QString(tr("Cannot change stock employee after adding product!")),
+			QString(tr("Ok")));
+		return;
+	}
 	this->hide();
 	this->setModal(false);
 	this->show();
@@ -762,6 +841,15 @@ void CreateRcpPDlg::OpenStsDlg()
 
 void CreateRcpPDlg::OpenRcpPListDlg()
 {
+	if (stockEmployeeEdit->text().toInt() == 0 || stockEmployeeEdit->text().toInt() < 0)
+	{
+		QString message = tr("Enter stock employee before!");
+		mainForm->statusBar()->showMessage(message);
+		QMessageBox::information(NULL, QString(tr("Warning")),
+			QString(tr("Enter stock employee before!")),
+			QString(tr("Ok")));
+		return;
+	}
 	this->hide();
 	this->setModal(false);
 	this->show();

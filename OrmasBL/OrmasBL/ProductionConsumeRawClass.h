@@ -59,6 +59,7 @@ namespace BusinessLayer
 
 		//Generate filter string for class
 		std::string GenerateFilter(DataLayer::OrmasDal& ormasDal);
+		std::string GenerateFilterForPeriod(DataLayer::OrmasDal& ormasDal, std::string fromDate, std::string toDate);
 		bool GetProductionConsumeRawByID(DataLayer::OrmasDal& ormasDal, int crID, std::string& errorMessage);
 		bool IsEmpty();
 		void Clear();
@@ -69,8 +70,8 @@ namespace BusinessLayer
 		bool IsDuplicate(DataLayer::OrmasDal& ormasDal, int eID, std::string crDate, int seID, double crCount, double crSum,
 			int cID, std::string& errorMessage);
 		bool IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string& errorMessage);
-		bool ChangesAtProdStock(DataLayer::OrmasDal& ormasDal, int crID, std::string& errorMessage);
-		bool ChangesAtProdStock(DataLayer::OrmasDal& ormasDal, int cpID, std::map<int, double> pProdCountMap, double pSum, std::string& errorMessage);
+		bool ChangesAtStock(DataLayer::OrmasDal& ormasDal, int crID, int stockEmpID, std::string& errorMessage);
+		bool ChangesAtStock(DataLayer::OrmasDal& ormasDal, int cpID, int stockEmpID, std::map<int, double> pProdCountMap, double pSum, std::string& errorMessage);
 		double GetCurrentSum(DataLayer::OrmasDal& ormasDal, int crID, std::string& errorMessage);
 		double GetCurrentCount(DataLayer::OrmasDal& ormasDal, int crID, std::string& errorMessage);
 		int GetCurrentStatusID(DataLayer::OrmasDal& ormasDal, int oID, std::string& errorMessage);

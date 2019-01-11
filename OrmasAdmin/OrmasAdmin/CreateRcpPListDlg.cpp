@@ -12,7 +12,7 @@ CreateRcpPListDlg::CreateRcpPListDlg(BusinessLayer::OrmasBL *ormasBL, bool updat
 	parentForm = parent;
 	DataForm *dataFormParent = (DataForm *)this->parentForm;
 	mainForm = (MainForm *)dataFormParent->GetParent();
-	receiptProductID = ((DataForm*)parent)->receiptProductID;
+	receiptProductID = ((DataForm*)parent)->receiptProductID; 
 	vDouble = new QDoubleValidator(0.00, 1000000000.00, 3, this);
 	vInt = new QIntValidator(0, 1000000000, this);
 	productEdit->setValidator(vInt);
@@ -219,7 +219,6 @@ void CreateRcpPListDlg::AddProductToList()
 		SetRcpPListParams(receiptProductID, productEdit->text().toInt(),
 			countEdit->text().toDouble(), (countEdit->text().toDouble() * nCost->GetValue()),
 			statusVector.at(0).GetID(), product->GetCurrencyID());
-
 		if (dialogBL->CreateReceiptProductList(receiptProductList, errorMessage))
 		{
 			if (parentDataForm != nullptr)
@@ -304,7 +303,8 @@ void CreateRcpPListDlg::EditProductInList()
 				delete nCost;
 				return;
 			}
-			if (countEdit->text().toDouble() != receiptProductList->GetCount())
+			if (countEdit->text().toDouble() != receiptProductList->GetCount() ||
+				productEdit->text().toInt() != receiptProductList->GetProductID())
 			{
 				sumEdit->setText(QString::number(countEdit->text().toDouble() * nCost->GetValue()));
 			}

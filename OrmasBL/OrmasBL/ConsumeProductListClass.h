@@ -21,6 +21,7 @@ namespace BusinessLayer
 		ConsumeProductList(){};
 		~ConsumeProductList(){};
 
+		int stockEmployeeID = 0;
 		//ConsumeProductList class Accessors
 		int GetID();
 		int GetConsumeProductID();

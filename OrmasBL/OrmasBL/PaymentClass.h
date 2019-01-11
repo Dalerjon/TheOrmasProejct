@@ -20,6 +20,7 @@ namespace BusinessLayer{
 		~Payment(){};
 
 		std::string errorMessage = "";
+		int loggedUserID = 0;
 		//Payment class Paymentors
 		int GetID();
 		std::string GetDate();

@@ -13,6 +13,7 @@ CreateRcpRListDlg::CreateRcpRListDlg(BusinessLayer::OrmasBL *ormasBL, bool updat
 	DataForm *dataFormParent = (DataForm *)this->parentForm;
 	mainForm = (MainForm *)dataFormParent->GetParent();
 	receiptRawID = ((DataForm*)parent)->receiptRawID;
+	stockEmployeeID = ((DataForm*)parent)->stockEmployeeID;
 	vDouble = new QDoubleValidator(0.00, 1000000000.00, 3, this);
 	vInt = new QIntValidator(0, 1000000000, this);
 	productEdit->setValidator(vInt);
@@ -20,8 +21,6 @@ CreateRcpRListDlg::CreateRcpRListDlg(BusinessLayer::OrmasBL *ormasBL, bool updat
 	countEdit->setMaxLength(20);
 	receiptRawEdit->setValidator(vInt);
 	statusEdit->setValidator(vInt);
-	sumEdit->setValidator(vDouble);
-	sumEdit->setMaxLength(17);
 	if (true == updateFlag)
 	{
 		QObject::connect(addBtn, &QPushButton::released, this, &CreateRcpRListDlg::EditProductInList);
@@ -32,7 +31,6 @@ CreateRcpRListDlg::CreateRcpRListDlg(BusinessLayer::OrmasBL *ormasBL, bool updat
 		receiptRawEdit->setText("0");
 		countEdit->setText("0");
 		productEdit->setText("0");
-		sumEdit->setText("0");
 		editSectionWgt->hide();
 		QObject::connect(addBtn, &QPushButton::released, this, &CreateRcpRListDlg::AddProductToList);
 	}
@@ -41,7 +39,6 @@ CreateRcpRListDlg::CreateRcpRListDlg(BusinessLayer::OrmasBL *ormasBL, bool updat
 	QObject::connect(productBtn, &QPushButton::released, this, &CreateRcpRListDlg::OpenProdDlg);
 	QObject::connect(statusBtn, &QPushButton::released, this, &CreateRcpRListDlg::OpenStsDlg);
 	QObject::connect(countEdit, &QLineEdit::textChanged, this, &CreateRcpRListDlg::TextEditChanged);
-	QObject::connect(sumEdit, &QLineEdit::textChanged, this, &CreateRcpRListDlg::TextEditChanged);
 	QObject::connect(this, SIGNAL(DataIsChanged()), ((DataForm*)parent), SLOT(OnRowsNumberChanged()));
 	InitComboBox();
 }
@@ -113,8 +110,8 @@ void CreateRcpRListDlg::FillEditElements(int rReceiptRawID, int rProductID, doub
 	receiptRawEdit->setText(QString::number(rReceiptRawID));
 	productEdit->setText(QString::number(rProductID));
 	countEdit->setText(QString::number(rCount));
-	sumEdit->setText(QString::number(rSum));
 	statusEdit->setText(QString::number(rStatusID));
+	sumEdit->setText(QString::number(rSum));
 	currencyCmb->setCurrentIndex(currencyCmb->findData(QVariant(rCurrencyID)));
 	BusinessLayer::Product product;
 	if (product.GetProductByID(dialogBL->GetOrmasDal(), rProductID, errorMessage))
@@ -165,7 +162,7 @@ void CreateRcpRListDlg::AddProductToList()
 	errorMessage.clear();
 	if (0 != productEdit->text().toInt() || 0 != countEdit->text().toDouble())
 	{
-		DataForm *parentDataForm = (DataForm*) parentForm;
+		DataForm *parentDataForm = (DataForm*)parentForm;
 		BusinessLayer::Status *status = new BusinessLayer::Status();
 		status->SetName("RECEIPTED");
 		std::string statusFilter = dialogBL->GenerateFilter<BusinessLayer::Status>(status);
@@ -183,6 +180,7 @@ void CreateRcpRListDlg::AddProductToList()
 		BusinessLayer::Measure *measure = new BusinessLayer::Measure();
 		BusinessLayer::Currency *currency = new BusinessLayer::Currency();
 		BusinessLayer::Currency *sumCurrency = new BusinessLayer::Currency();
+		BusinessLayer::NetCost *nCost = new BusinessLayer::NetCost();
 
 		if (!product->GetProductByID(dialogBL->GetOrmasDal(), productEdit->text().toInt(), errorMessage))
 		{
@@ -193,13 +191,15 @@ void CreateRcpRListDlg::AddProductToList()
 			delete product;
 			delete measure;
 			delete currency;
+			delete nCost;
 			return;
 		}
 		else
 		{
 			if (!measure->GetMeasureByID(dialogBL->GetOrmasDal(), product->GetMeasureID(), errorMessage)
 				|| !currency->GetCurrencyByID(dialogBL->GetOrmasDal(), product->GetCurrencyID(), errorMessage)
-				|| !sumCurrency->GetCurrencyByID(dialogBL->GetOrmasDal(), receiptRawList->GetCurrencyID(), errorMessage))
+				|| !sumCurrency->GetCurrencyByID(dialogBL->GetOrmasDal(), receiptRawList->GetCurrencyID(), errorMessage)
+				|| !nCost->GetNetCostByProductID(dialogBL->GetOrmasDal(), product->GetID(), errorMessage))
 			{
 				QMessageBox::information(NULL, QString(tr("Warning")),
 					QString(tr(errorMessage.c_str())),
@@ -208,14 +208,14 @@ void CreateRcpRListDlg::AddProductToList()
 				delete product;
 				delete measure;
 				delete currency;
+				delete nCost;
 				return;
 			}
 		}
 
 		SetRcpRListParams(receiptRawID, productEdit->text().toInt(),
-			countEdit->text().toDouble(), (countEdit->text().toDouble() * product->GetPrice()),
+			countEdit->text().toDouble(), (countEdit->text().toDouble() * nCost->GetValue()),
 			statusVector.at(0).GetID(), product->GetCurrencyID());
-
 		if (dialogBL->CreateReceiptRawList(receiptRawList, errorMessage))
 		{
 			if (parentDataForm != nullptr)
@@ -251,6 +251,7 @@ void CreateRcpRListDlg::AddProductToList()
 			delete measure;
 			delete product;
 			delete currency;
+			delete nCost;
 			Close();
 		}
 		else
@@ -288,11 +289,23 @@ void CreateRcpRListDlg::EditProductInList()
 				delete product;
 				return;
 			}
-			if (countEdit->text().toDouble() != receiptRawList->GetCount())
+			BusinessLayer::NetCost *nCost = new BusinessLayer::NetCost();
+			if (!nCost->GetNetCostByProductID(dialogBL->GetOrmasDal(), product->GetID(), errorMessage))
 			{
-				sumEdit->setText(QString::number(countEdit->text().toDouble() * product->GetPrice()));
+				QMessageBox::information(NULL, QString(tr("Warning")),
+					QString(tr(errorMessage.c_str())),
+					QString(tr("Ok")));
+				errorMessage.clear();
+				delete product;
+				delete nCost;
+				return;
 			}
-			DataForm *parentDataForm = (DataForm*) parentForm;
+			if (countEdit->text().toDouble() != receiptRawList->GetCount() ||
+				productEdit->text().toInt() != receiptRawList->GetProductID())
+			{
+				sumEdit->setText(QString::number(countEdit->text().toDouble() * nCost->GetValue()));
+			}
+			DataForm *parentDataForm = (DataForm*)parentForm;
 			SetRcpRListParams(receiptRawEdit->text().toInt(),
 				productEdit->text().toInt(), countEdit->text().toDouble(), sumEdit->text().toDouble(), statusEdit->text().toInt(),
 				receiptRawList->GetCurrencyID(), receiptRawList->GetID());
@@ -319,6 +332,7 @@ void CreateRcpRListDlg::EditProductInList()
 							delete measure;
 							delete status;
 							delete currency;
+							delete nCost;
 							return;
 						}
 
@@ -346,7 +360,8 @@ void CreateRcpRListDlg::EditProductInList()
 					}
 				}
 				delete product;
-				
+
+				delete nCost;
 				Close();
 			}
 			else
@@ -432,13 +447,13 @@ void CreateRcpRListDlg::OpenProdDlg()
 	dForm->setWindowModality(Qt::WindowModal);
 
 	BusinessLayer::ProductType *pType = new BusinessLayer::ProductType();
-	pType->SetCode("RAW");
+	pType->SetCode("PRODUCT");
 	std::string pTypeFilter = dialogBL->GenerateFilter<BusinessLayer::ProductType>(pType);
 	std::vector<BusinessLayer::ProductType> pTypeVector = dialogBL->GetAllDataForClass<BusinessLayer::ProductType>(errorMessage, pTypeFilter);
 	if (pTypeVector.size() == 0)
 	{
 		delete pType;
-		QString message = tr("Sorry could not find product type with \"Raw\" code!");
+		QString message = tr("Sorry could not find product type with \"PRODUCT\" code!");
 		mainForm->statusBar()->showMessage(message);
 		QMessageBox::information(NULL, QString(tr("Warning")),
 			QString(message),
@@ -454,7 +469,7 @@ void CreateRcpRListDlg::OpenProdDlg()
 	if (productVector.size() == 0)
 	{
 		delete product;
-		QString message = tr("Sorry could not find product with \"Raw\" code!");
+		QString message = tr("Sorry could not find product with \"product\" code!");
 		mainForm->statusBar()->showMessage(message);
 		QMessageBox::information(NULL, QString(tr("Warning")),
 			QString(message),

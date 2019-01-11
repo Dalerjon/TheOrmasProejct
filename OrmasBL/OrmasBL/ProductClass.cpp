@@ -119,16 +119,16 @@ namespace BusinessLayer
 		productTypeID = pTypeID;
 		shelfLife = pShelfLife;
 		currencyID = currID;
-		ormasDal.StartTransaction(errorMessage);
+		//ormasDal.StartTransaction(errorMessage);
 		if (0 != id && ormasDal.CreateProduct(id, companyID, name, volume, measureID, price, productTypeID, shelfLife, currencyID, errorMessage))
 		{
 			if (AddPriceData(ormasDal, id, price, currencyID, errorMessage))
 			{
-				ormasDal.CommitTransaction(errorMessage);
+				//ormasDal.CommitTransaction(errorMessage);
 				return true;
 			}
 		}
-		ormasDal.CancelTransaction(errorMessage);
+		//ormasDal.CancelTransaction(errorMessage);
 		return false;
 	}
 	bool Product::CreateProduct(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
@@ -136,16 +136,16 @@ namespace BusinessLayer
 		if (IsDuplicate(ormasDal, errorMessage))
 			return false;
 		id = ormasDal.GenerateID();
-		ormasDal.StartTransaction(errorMessage);
+		//ormasDal.StartTransaction(errorMessage);
 		if (0 != id && ormasDal.CreateProduct(id, companyID, name, volume, measureID, price, productTypeID, shelfLife, currencyID, errorMessage))
 		{
 			if (AddPriceData(ormasDal, id, price, currencyID, errorMessage))
 			{
-				ormasDal.CommitTransaction(errorMessage);
+				//ormasDal.CommitTransaction(errorMessage);
 				return true;
 			}
 		}
-		ormasDal.CancelTransaction(errorMessage);
+		//ormasDal.CancelTransaction(errorMessage);
 		return false;
 	}
 	bool Product::DeleteProduct(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
@@ -170,70 +170,70 @@ namespace BusinessLayer
 		shelfLife = pShelfLife;
 		currencyID = pCurrencyID;
 		oldPrice = GetCurrentPrice(ormasDal, id, errorMessage);
-		ormasDal.StartTransaction(errorMessage);
+		//ormasDal.StartTransaction(errorMessage);
 		if (0 != id && ormasDal.UpdateProduct(id, companyID, name, volume, measureID, price, productTypeID, shelfLife, currencyID, errorMessage))
 		{
 			if (!AddPriceData(ormasDal, id, price, currencyID, errorMessage))
 			{
-				ormasDal.CancelTransaction(errorMessage);
+				//ormasDal.CancelTransaction(errorMessage);
 				return false;
 			}
 			if (oldPrice != price)
 			{
 				if (!RecalculateStock(ormasDal, id, oldPrice, price, errorMessage))
 				{
-					ormasDal.CancelTransaction(errorMessage);
+					//ormasDal.CancelTransaction(errorMessage);
 					return false;
 				}
 				if (!UpdateSpecifications(ormasDal, id, oldPrice, price, errorMessage))
 				{
-					ormasDal.CancelTransaction(errorMessage);
+					//ormasDal.CancelTransaction(errorMessage);
 					return false;
 				}
 
 			}
-			ormasDal.CommitTransaction(errorMessage);
+			//ormasDal.CommitTransaction(errorMessage);
 			return true;
 		}
 		if (errorMessage.empty())
 		{
 			errorMessage = "Warning! ID is 0, or some unexpected error. Please contact with provider.";
 		}
-		ormasDal.CancelTransaction(errorMessage);
+		//ormasDal.CancelTransaction(errorMessage);
 		return false;
 	}
 	bool Product::UpdateProduct(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
 		oldPrice = GetCurrentPrice(ormasDal, id, errorMessage);
-		ormasDal.StartTransaction(errorMessage);
+		//ormasDal.StartTransaction(errorMessage);
 		if (0 != id && ormasDal.UpdateProduct(id, companyID, name, volume, measureID, price, productTypeID, shelfLife, currencyID, errorMessage))
 		{
 			if (!AddPriceData(ormasDal, id, price, currencyID, errorMessage))
 			{
-				ormasDal.CancelTransaction(errorMessage);
+				//ormasDal.CancelTransaction(errorMessage);
 				return false;
 			}				
 			if (oldPrice != price)
 			{
 				if (!RecalculateStock(ormasDal, id, oldPrice, price, errorMessage))
 				{
-					ormasDal.CancelTransaction(errorMessage);
+					//ormasDal.CancelTransaction(errorMessage);
 					return false;
 				}
 				if (!UpdateSpecifications(ormasDal, id, oldPrice, price, errorMessage))
 				{
-					ormasDal.CancelTransaction(errorMessage);
+					//ormasDal.CancelTransaction(errorMessage);
 					return false;
 				}
 			}
-			ormasDal.CommitTransaction(errorMessage);
+			//ormasDal.CommitTransaction(errorMessage);
 			return true;
 		}
 		if (errorMessage.empty())
 		{
 			errorMessage = "Warning! ID is 0, or some unexpected error. Please contact with provider.";
 		}
-		ormasDal.CancelTransaction(errorMessage);
+		//ormasDal.CancelTransaction(errorMessage);
 		return false;
 	}
 

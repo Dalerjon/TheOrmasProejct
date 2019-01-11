@@ -294,7 +294,8 @@ void CreateInvListDlg::EditProductInList()
 				delete product;
 				return;
 			}
-			if (countEdit->text().toDouble() != inventorizationList->GetCount())
+			if (countEdit->text().toDouble() != inventorizationList->GetCount() ||
+				productEdit->text().toInt() != inventorizationList->GetProductID())
 			{
 				sumEdit->setText(QString::number(countEdit->text().toDouble() * product->GetPrice()));
 			}

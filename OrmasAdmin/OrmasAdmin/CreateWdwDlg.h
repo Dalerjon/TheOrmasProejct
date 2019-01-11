@@ -19,13 +19,16 @@ public:
 	void DeleteWithdrawal(){};
 	void Close();
 	void TextEditChanged();
+	void SATextChanged();
+	void UserIsChanged();
+	void OpenSAccDlg();
 	void OpenUserDlg();
 	public slots:
 	void SetID(int ID, QString childName);
 private:
 	BusinessLayer::Withdrawal *withdrawal = new BusinessLayer::Withdrawal();
-	void SetWithdrawalParams(QString, double, int, int, int = 0);
-	void FillEditElements(QString, double, int, int);
+	void SetWithdrawalParams(QString, double, int, int, QString, int, int = 0);
+	void FillEditElements(QString, double, int, int, QString, int);
 	QDoubleValidator *vDouble = nullptr;
 	QIntValidator *vInt = nullptr;
 	void InitComboBox();

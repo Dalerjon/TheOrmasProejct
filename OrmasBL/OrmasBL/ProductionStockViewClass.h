@@ -13,6 +13,8 @@ namespace BusinessLayer
 		double volume = 0;
 		std::string measureName = "";
 		std::string sumCurrencyName = "";
+		std::string warehouseName = "";
+		std::string subaccountNumber = "";
 		std::string statusName = "";
 	public:
 		ProductionStockView(DataLayer::productionStockViewCollection);
@@ -26,6 +28,8 @@ namespace BusinessLayer
 		double GetVolume();
 		std::string GetMeasureName();
 		std::string GetSumCurrencyName();
+		std::string GetWarehouseName();
+		std::string GetSubaccountNumber();
 		std::string GetStatusName();
 	};
 }

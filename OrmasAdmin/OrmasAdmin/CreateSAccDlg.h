@@ -20,6 +20,7 @@ public:
 	void Close();
 	void OpenStsDlg();
 	void TextEditChanged();
+	void GenerateNumber();
 	void OpenCOADlg();
 	public slots:
 	void SetID(int ID, QString childName);
@@ -27,11 +28,13 @@ private:
 	BusinessLayer::Subaccount *subaccount = new BusinessLayer::Subaccount();
 	void SetSubaccountParams(QString, double, double, int, int, QString, QString, QString, int = 0);
 	void FillEditElements(QString, double, double, int, int, QString, QString, QString);
+	int GetParentAccNumber(std::string subNumber);
 	QDoubleValidator *vDouble = nullptr;
 	QIntValidator *vInt = nullptr;
 	void InitComboBox();
 	QWidget* parentForm;
 	MainForm* mainForm;
+	int parentAccID = 0;
 };
 
 #endif //CREATESACCDLG_H

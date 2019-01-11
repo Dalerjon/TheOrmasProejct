@@ -106,12 +106,12 @@ namespace BusinessLayer
 		sum = wSum;
 		statusID = sID;
 		currencyID = cID;
-		ormasDal.StartTransaction(errorMessage);
+		//ormasDal.StartTransaction(errorMessage);
 		if (0 != id && ormasDal.CreateWriteOff(id, clientID, date, employeeID, count, sum, statusID, currencyID, errorMessage))
 		{
-			if (ChangesAtStock(ormasDal, id, errorMessage))
+			if (ChangesAtStock(ormasDal, id, employeeID, errorMessage))
 			{
-				ormasDal.CommitTransaction(errorMessage);
+				//ormasDal.CommitTransaction(errorMessage);
 				return true;
 			}
 		}
@@ -119,7 +119,7 @@ namespace BusinessLayer
 		{
 			errorMessage = "Warning! ID is 0, or some unexpected error. Please contact with provider.";
 		}
-		ormasDal.CancelTransaction(errorMessage);
+		//ormasDal.CancelTransaction(errorMessage);
 		return false;
 	}
 
@@ -127,12 +127,12 @@ namespace BusinessLayer
 	{
 		if (IsDuplicate(ormasDal, errorMessage))
 			return false;
-		ormasDal.StartTransaction(errorMessage);
+		//ormasDal.StartTransaction(errorMessage);
 		if (0 != id && ormasDal.CreateWriteOff(id, clientID, date, employeeID, count, sum, statusID, currencyID, errorMessage))
 		{
-			if (ChangesAtStock(ormasDal, id, errorMessage))
+			if (ChangesAtStock(ormasDal, id, employeeID, errorMessage))
 			{
-				ormasDal.CommitTransaction(errorMessage);
+				//ormasDal.CommitTransaction(errorMessage);
 				return true;
 			}
 		}
@@ -140,7 +140,7 @@ namespace BusinessLayer
 		{
 			errorMessage = "Warning! ID is 0, or some unexpected error. Please contact with provider.";
 		}
-		ormasDal.CancelTransaction(errorMessage);
+		//ormasDal.CancelTransaction(errorMessage);
 		return false;
 	}
 	bool WriteOff::DeleteWriteOff(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
@@ -152,17 +152,17 @@ namespace BusinessLayer
 			if (ormasDal.DeleteListByWriteOffID(id, errorMessage))
 			{
 				Clear();
-				ormasDal.CommitTransaction(errorMessage);
+				//ormasDal.CommitTransaction(errorMessage);
 				return true;
 			}
 			else
 			{
-				ormasDal.CancelTransaction(errorMessage);
+				//ormasDal.CancelTransaction(errorMessage);
 			}
 		}
 		else
 		{
-			ormasDal.CancelTransaction(errorMessage);
+			//ormasDal.CancelTransaction(errorMessage);
 		}
 		if (errorMessage.empty())
 		{
@@ -185,12 +185,12 @@ namespace BusinessLayer
 		currencyID = cID;
 		prevSum = GetCurrentSum(ormasDal, id, errorMessage);
 		prevCount = GetCurrentCount(ormasDal, id, errorMessage);
-		ormasDal.StartTransaction(errorMessage);
+		//ormasDal.StartTransaction(errorMessage);
 		if (0 != id && ormasDal.UpdateWriteOff(id, clientID, date, employeeID, count, sum, statusID, currencyID, errorMessage))
 		{
-			if (ChangesAtStock(ormasDal, id, prodCountMap, prevSum, errorMessage))
+			if (ChangesAtStock(ormasDal, id, employeeID, prodCountMap, prevSum, errorMessage))
 			{
-				ormasDal.CommitTransaction(errorMessage);
+				//ormasDal.CommitTransaction(errorMessage);
 				return true;
 			}
 		}
@@ -198,7 +198,7 @@ namespace BusinessLayer
 		{
 			errorMessage = "Warning! ID is 0, or some unexpected error. Please contact with provider.";
 		}
-		ormasDal.CancelTransaction(errorMessage);
+		//ormasDal.CancelTransaction(errorMessage);
 		return false;
 	}
 	bool WriteOff::UpdateWriteOff(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
@@ -208,12 +208,12 @@ namespace BusinessLayer
 			return false;
 		prevSum = GetCurrentSum(ormasDal, id, errorMessage);
 		prevCount = GetCurrentCount(ormasDal, id, errorMessage);
-		ormasDal.StartTransaction(errorMessage);
+		//ormasDal.StartTransaction(errorMessage);
 		if (0 != id && ormasDal.UpdateWriteOff(id, clientID, date, employeeID, count, sum, statusID, currencyID, errorMessage))
 		{
-			if (ChangesAtStock(ormasDal, id, prodCountMap, prevSum, errorMessage))
+			if (ChangesAtStock(ormasDal, id, employeeID, prodCountMap, prevSum, errorMessage))
 			{
-				ormasDal.CommitTransaction(errorMessage);
+				//ormasDal.CommitTransaction(errorMessage);
 				return true;
 			}
 		}
@@ -221,7 +221,7 @@ namespace BusinessLayer
 		{
 			errorMessage = "Warning! ID is 0, or some unexpected error. Please contact with provider.";
 		}
-		ormasDal.CancelTransaction(errorMessage);
+		//ormasDal.CancelTransaction(errorMessage);
 		return false;
 	}
 
@@ -321,16 +321,16 @@ namespace BusinessLayer
 		return true;
 	}
 
-	bool WriteOff::ChangesAtStock(DataLayer::OrmasDal& ormasDal, int wID, std::string& errorMessage)
+	bool WriteOff::ChangesAtStock(DataLayer::OrmasDal& ormasDal, int wID, int empID, std::string& errorMessage)
 	{
 		Stock stock;
-		return stock.ChangingByWriteOff(ormasDal, wID, errorMessage);
+		return stock.ChangingByWriteOff(ormasDal, wID, empID, errorMessage);
 	}
 
-	bool WriteOff::ChangesAtStock(DataLayer::OrmasDal& ormasDal, int wID, std::map<int, double> pProdCountMap, double pSum, std::string& errorMessage)
+	bool WriteOff::ChangesAtStock(DataLayer::OrmasDal& ormasDal, int wID, int empID, std::map<int, double> pProdCountMap, double pSum, std::string& errorMessage)
 	{
 		Stock stock;
-		return stock.ChangingByWriteOff(ormasDal, wID, pProdCountMap, pSum, errorMessage);
+		return stock.ChangingByWriteOff(ormasDal, wID, empID, pProdCountMap, pSum, errorMessage);
 	}
 
 	double WriteOff::GetCurrentSum(DataLayer::OrmasDal& ormasDal, int wID, std::string& errorMessage)

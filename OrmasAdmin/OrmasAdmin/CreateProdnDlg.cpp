@@ -40,6 +40,7 @@ CreateProdnDlg::CreateProdnDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag,
 	QObject::connect(cancelBtn, &QPushButton::released, this, &CreateProdnDlg::Close);
 	QObject::connect(addProdBtn, &QPushButton::released, this, &CreateProdnDlg::OpenProdnListDlg);
 	QObject::connect(this, SIGNAL(CloseCreatedForms()), ((MainForm*)((DataForm*)parent)->GetParent()), SLOT(CloseChildsByName()));
+	InitComboBox();
 }
 
 CreateProdnDlg::~CreateProdnDlg()
@@ -97,7 +98,7 @@ void CreateProdnDlg::CreateProduction()
 	{
 		DataForm *parentDataForm = (DataForm*) parentForm;
 		SetProductionParams(prdDateEdit->text(), expiryDateEdit->text(), sesStartTimeEdit->text(), sesEndTimeEdit->text(), production->GetID());
-		
+		production->warehouseID = warehouseCmb->currentData().toInt();
 		if (dialogBL->CreateProduction(production, errorMessage))
 		{
 			if (parentDataForm != nullptr)
@@ -147,6 +148,7 @@ void CreateProdnDlg::EditProduction()
 		{
 			DataForm *parentDataForm = (DataForm*) parentForm;
 			SetProductionParams(prdDateEdit->text(), expiryDateEdit->text(), sesStartTimeEdit->text(), sesEndTimeEdit->text(), production->GetID());
+			production->warehouseID = warehouseCmb->currentData().toInt();
 			if (dialogBL->UpdateProduction(production, errorMessage))
 			{
 				if (parentDataForm != nullptr)
@@ -244,3 +246,20 @@ void CreateProdnDlg::OpenProdnListDlg()
 
 }
 
+void CreateProdnDlg::InitComboBox()
+{
+	BusinessLayer::Warehouse warehouse;
+	BusinessLayer::WarehouseType warehouseType;
+	if (!warehouseType.GetWarehouseTypeByCode(dialogBL->GetOrmasDal(), "PRODUCTION", errorMessage))
+		return;
+	warehouse.SetWarehouseTypeID(warehouseType.GetID());
+	std::string filter = warehouse.GenerateFilter(dialogBL->GetOrmasDal());
+	std::vector<BusinessLayer::WarehouseView> werVector = dialogBL->GetAllDataForClass<BusinessLayer::WarehouseView>(errorMessage, filter);
+	if (!werVector.empty())
+	{
+		for (unsigned int i = 0; i < werVector.size(); i++)
+		{
+			warehouseCmb->addItem(werVector[i].GetName().c_str(), QVariant(werVector[i].GetID()));
+		}
+	}
+}

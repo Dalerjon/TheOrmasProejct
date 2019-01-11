@@ -214,7 +214,6 @@ void CreateWOffRListDlg::AddProductToList()
 		SetWOffRListParams(writeOffRawID, productEdit->text().toInt(),
 			countEdit->text().toDouble(), (countEdit->text().toDouble() * product->GetPrice()),
 			statusVector.at(0).GetID(), product->GetCurrencyID());
-
 		if (dialogBL->CreateWriteOffRawList(writeOffRawList, errorMessage))
 		{
 			if (parentDataForm != nullptr)
@@ -287,7 +286,8 @@ void CreateWOffRListDlg::EditProductInList()
 				delete product;
 				return;
 			}
-			if (countEdit->text().toDouble() != writeOffRawList->GetCount())
+			if (countEdit->text().toDouble() != writeOffRawList->GetCount() ||
+				productEdit->text().toInt() != writeOffRawList->GetProductID())
 			{
 				sumEdit->setText(QString::number(countEdit->text().toDouble() * product->GetPrice()));
 			}

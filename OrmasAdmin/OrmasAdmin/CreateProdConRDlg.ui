@@ -381,7 +381,7 @@
    <item row="4" column="0" colspan="2">
     <widget class="QPushButton" name="stockEmployeeBtn">
      <property name="text">
-      <string>Select stock employee</string>
+      <string>Select production stock employee</string>
      </property>
     </widget>
    </item>

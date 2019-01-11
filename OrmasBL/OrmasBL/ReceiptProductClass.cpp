@@ -123,38 +123,30 @@ namespace BusinessLayer
 		sum = rpSum;
 		statusID = sID;
 		currencyID = cID;
-		ormasDal.StartTransaction(errorMessage);
+		//ormasDal.StartTransaction(errorMessage);
 		if (0 != id && ormasDal.CreateReceiptProduct(id, employeeID, date, executionDate, stockEmployeeID, count, sum, statusID, currencyID, errorMessage))
 		{
 			if (statusID == statusMap.find("EXECUTED")->second)
 			{
-				if (ChangesAtProdStock(ormasDal, id, errorMessage))
+				if (ChangesAtStock(ormasDal, id, employeeID, stockEmployeeID, errorMessage))
 				{
-					if (ChangesAtStock(ormasDal, id, errorMessage))
-					{
-						ormasDal.CommitTransaction(errorMessage);
-						return true;
-					}
-					else
-					{
-						ormasDal.CancelTransaction(errorMessage);
-						return false;
-					}
+					//ormasDal.CommitTransaction(errorMessage);
+					return true;
 				}
 				else
 				{
-					ormasDal.CancelTransaction(errorMessage);
+					//ormasDal.CancelTransaction(errorMessage);
 					return false;
 				}
 			}
-			ormasDal.CommitTransaction(errorMessage);
+			//ormasDal.CommitTransaction(errorMessage);
 			return true;
 		}
 		if (errorMessage.empty())
 		{
 			errorMessage = "Warning! ID is 0, or some unexpected error. Please contact with provider.";
 		}
-		ormasDal.CancelTransaction(errorMessage);
+		//ormasDal.CancelTransaction(errorMessage);
 		return false;
 	}
 
@@ -165,38 +157,31 @@ namespace BusinessLayer
 		std::map<std::string, int> statusMap = BusinessLayer::Status::GetStatusesAsMap(ormasDal, errorMessage);
 		if (0 == statusMap.size())
 			return false;
-		ormasDal.StartTransaction(errorMessage);
+		//ormasDal.StartTransaction(errorMessage);
 		if (0 != id && ormasDal.CreateReceiptProduct(id, employeeID, date, executionDate, stockEmployeeID, count, sum, statusID, currencyID, errorMessage))
 		{
 			if (statusID == statusMap.find("EXECUTED")->second)
 			{
-				if (ChangesAtProdStock(ormasDal, id, errorMessage))
+				if (ChangesAtStock(ormasDal, id, employeeID, stockEmployeeID, errorMessage))
 				{
-					if (ChangesAtStock(ormasDal, id, errorMessage))
-					{
-						ormasDal.CommitTransaction(errorMessage);
-						return true;
-					}
-					else
-					{
-						ormasDal.CancelTransaction(errorMessage);
-						return false;
-					}
+					//ormasDal.CommitTransaction(errorMessage);
+					return true;
 				}
 				else
 				{
-					ormasDal.CancelTransaction(errorMessage);
+					//ormasDal.CancelTransaction(errorMessage);
 					return false;
 				}
+				
 			}
-			ormasDal.CommitTransaction(errorMessage);
+			//ormasDal.CommitTransaction(errorMessage);
 			return true;
 		}
 		if (errorMessage.empty())
 		{
 			errorMessage = "Warning! ID is 0, or some unexpected error. Please contact with provider.";
 		}
-		ormasDal.CancelTransaction(errorMessage);
+		//ormasDal.CancelTransaction(errorMessage);
 		return false;
 	}
 	bool ReceiptProduct::DeleteReceiptProduct(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
@@ -221,17 +206,17 @@ namespace BusinessLayer
 			if (ormasDal.DeleteListByReceiptProductID(id, errorMessage))
 			{
 				Clear();
-				ormasDal.CommitTransaction(errorMessage);
+				//ormasDal.CommitTransaction(errorMessage);
 				return true;
 			}
 			else
 			{
-				ormasDal.CancelTransaction(errorMessage);
+				//ormasDal.CancelTransaction(errorMessage);
 			}
 		}
 		else
 		{
-			ormasDal.CancelTransaction(errorMessage);
+			//ormasDal.CancelTransaction(errorMessage);
 		}
 		if (errorMessage.empty())
 		{
@@ -259,27 +244,19 @@ namespace BusinessLayer
 		prevSum = GetCurrentSum(ormasDal, id, errorMessage);
 		prevCount = GetCurrentCount(ormasDal, id, errorMessage);
 		previousStatusID = GetCurrentStatusID(ormasDal, id, errorMessage);
-		ormasDal.StartTransaction(errorMessage);
+		//ormasDal.StartTransaction(errorMessage);
 		if (0 != id && ormasDal.UpdateReceiptProduct(id, employeeID, date, executionDate, stockEmployeeID, count, sum, statusID, currencyID, errorMessage))
 		{
 			if (statusID == statusMap.find("EXECUTED")->second && previousStatusID != statusMap.find("EXECUTED")->second)
 			{
-				if (ChangesAtProdStock(ormasDal, id, errorMessage))
+				if (ChangesAtStock(ormasDal, id, employeeID, stockEmployeeID, errorMessage))
 				{
-					if (ChangesAtStock(ormasDal, id, errorMessage))
-					{
-						ormasDal.CommitTransaction(errorMessage);
-						return true;
-					}
-					else
-					{
-						ormasDal.CancelTransaction(errorMessage);
-						return false;
-					}
+					//ormasDal.CommitTransaction(errorMessage);
+					return true;
 				}
 				else
 				{
-					ormasDal.CancelTransaction(errorMessage);
+					//ormasDal.CancelTransaction(errorMessage);
 					return false;
 				}
 			}
@@ -287,39 +264,31 @@ namespace BusinessLayer
 			{
 				if (count != prevCount || sum != prevSum)
 				{
-					if (ChangesAtProdStock(ormasDal, id, prodCountMap, prevSum, errorMessage))
+					if (ChangesAtStock(ormasDal, id, employeeID, stockEmployeeID, prodCountMap, prevSum, errorMessage))
 					{
-						if (ChangesAtStock(ormasDal, id, prodCountMap, prevSum,  errorMessage))
-						{
-							ormasDal.CommitTransaction(errorMessage);
-							return true;
-						}
-						else
-						{
-							ormasDal.CancelTransaction(errorMessage);
-							return false;
-						}
+						//ormasDal.CommitTransaction(errorMessage);
+						return true;
 					}
 					else
 					{
-						ormasDal.CancelTransaction(errorMessage);
+						//ormasDal.CancelTransaction(errorMessage);
 						return false;
-					}
+					}					
 				}
 				else
 				{
-					ormasDal.CommitTransaction(errorMessage);
+					//ormasDal.CommitTransaction(errorMessage);
 					return true;
 				}
 			}
-			ormasDal.CommitTransaction(errorMessage);
+			//ormasDal.CommitTransaction(errorMessage);
 			return true;
 		}
 		if (errorMessage.empty())
 		{
 			errorMessage = "Warning! ID is 0, or some unexpected error. Please contact with provider.";
 		}
-		ormasDal.CancelTransaction(errorMessage);
+		//ormasDal.CancelTransaction(errorMessage);
 		return false;
 	}
 	bool ReceiptProduct::UpdateReceiptProduct(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
@@ -333,27 +302,19 @@ namespace BusinessLayer
 		prevSum = GetCurrentSum(ormasDal, id, errorMessage);
 		prevCount = GetCurrentCount(ormasDal, id, errorMessage);
 		previousStatusID = GetCurrentStatusID(ormasDal, id, errorMessage);
-		ormasDal.StartTransaction(errorMessage);
+		//ormasDal.StartTransaction(errorMessage);
 		if (0 != id && ormasDal.UpdateReceiptProduct(id, employeeID, date, executionDate, stockEmployeeID, count, sum, statusID, currencyID, errorMessage))
 		{
 			if (statusID == statusMap.find("EXECUTED")->second && previousStatusID != statusMap.find("EXECUTED")->second)
 			{
-				if (ChangesAtProdStock(ormasDal, id, errorMessage))
+				if (ChangesAtStock(ormasDal, id, employeeID, stockEmployeeID, errorMessage))
 				{
-					if (ChangesAtStock(ormasDal, id, errorMessage))
-					{
-						ormasDal.CommitTransaction(errorMessage);
-						return true;
-					}
-					else
-					{
-						ormasDal.CancelTransaction(errorMessage);
-						return false;
-					}
+					//ormasDal.CommitTransaction(errorMessage);
+					return true;
 				}
 				else
 				{
-					ormasDal.CancelTransaction(errorMessage);
+					//ormasDal.CancelTransaction(errorMessage);
 					return false;
 				}
 			}
@@ -361,39 +322,31 @@ namespace BusinessLayer
 			{
 				if (count != prevCount || sum != prevSum)
 				{
-					if (ChangesAtProdStock(ormasDal, id, prodCountMap, prevSum, errorMessage))
+					if (ChangesAtStock(ormasDal, id, employeeID, stockEmployeeID, prodCountMap, prevSum, errorMessage))
 					{
-						if (ChangesAtStock(ormasDal, id, prodCountMap, prevSum, errorMessage))
-						{
-							ormasDal.CommitTransaction(errorMessage);
-							return true;
-						}
-						else
-						{
-							ormasDal.CancelTransaction(errorMessage);
-							return false;
-						}
+						//ormasDal.CommitTransaction(errorMessage);
+						return true;
 					}
 					else
 					{
-						ormasDal.CancelTransaction(errorMessage);
+						//ormasDal.CancelTransaction(errorMessage);
 						return false;
 					}
 				}
 				else
 				{
-					ormasDal.CommitTransaction(errorMessage);
+					//ormasDal.CommitTransaction(errorMessage);
 					return true;
 				}
 			}
-			ormasDal.CommitTransaction(errorMessage);
+			//ormasDal.CommitTransaction(errorMessage);
 			return true;
 		}
 		if (errorMessage.empty())
 		{
 			errorMessage = "Warning! ID is 0, or some unexpected error. Please contact with provider.";
 		}
-		ormasDal.CancelTransaction(errorMessage);
+		//ormasDal.CancelTransaction(errorMessage);
 		return false;
 	}
 
@@ -499,28 +452,28 @@ namespace BusinessLayer
 		return true;
 	}
 
-	bool ReceiptProduct::ChangesAtProdStock(DataLayer::OrmasDal& ormasDal, int crID, std::string& errorMessage)
+	/*bool ReceiptProduct::ChangesAtProdStock(DataLayer::OrmasDal& ormasDal, int crID, std::string& errorMessage)
 	{
-		ProductionStock pStock;
+		Stock pStock;
 		return pStock.ChangingByConsumeProduct(ormasDal, crID, errorMessage);
 	}
 
 	bool ReceiptProduct::ChangesAtProdStock(DataLayer::OrmasDal& ormasDal, int crID, std::map<int, double> pProdCountMap, double pSum, std::string& errorMessage)
 	{
-		ProductionStock pStock;
-		return pStock.ChangingByConsumeProduct(ormasDal, crID, pProdCountMap, pSum, errorMessage);
-	}
+		Stock pStock;
+		return pStock.ChangingByReceiptProductA(ormasDal, crID, pProdCountMap, pSum, errorMessage);
+	}*/
 
-	bool ReceiptProduct::ChangesAtStock(DataLayer::OrmasDal& ormasDal, int rpID, std::string& errorMessage)
+	bool ReceiptProduct::ChangesAtStock(DataLayer::OrmasDal& ormasDal, int rpID, int empID, int stockEmpID, std::string& errorMessage)
 	{
 		Stock stock;
-		return stock.ChangingByReceiptProduct(ormasDal, rpID, errorMessage);
+		return stock.ChangingByReceiptProduct(ormasDal, rpID, empID, stockEmpID, errorMessage);
 	}
 
-	bool ReceiptProduct::ChangesAtStock(DataLayer::OrmasDal& ormasDal, int rpID, std::map<int, double> pProdCountMap, double pSum, std::string& errorMessage)
+	bool ReceiptProduct::ChangesAtStock(DataLayer::OrmasDal& ormasDal, int rpID, int empID, int stockEmpID, std::map<int, double> pProdCountMap, double pSum, std::string& errorMessage)
 	{
 		Stock stock;
-		return stock.ChangingByReceiptProduct(ormasDal, rpID, pProdCountMap, pSum, errorMessage);
+		return stock.ChangingByReceiptProduct(ormasDal, rpID, empID, stockEmpID, pProdCountMap, pSum, errorMessage);
 	}
 
 	double ReceiptProduct::GetCurrentSum(DataLayer::OrmasDal& ormasDal, int rpID, std::string& errorMessage)

@@ -21,6 +21,7 @@ namespace BusinessLayer
 		~Production(){};
 		std::map<int, double> prodCountMap;
 
+		int warehouseID = 0;
 		//ProductType class Accessors
 		int GetID();
 		std::string GetProductionDate();
@@ -54,8 +55,8 @@ namespace BusinessLayer
 		bool IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string pProductionDate, std::string pExpiryDate,
 			std::string pSessionStart, std::string pSessionEnd, std::string& errorMessage);
 		bool IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string& errorMessage);
-		bool ChangesAtStock(DataLayer::OrmasDal& ormasDal, int pID, std::string& errorMessage);
-		bool ChangesAtStock(DataLayer::OrmasDal& ormasDal, int pID, std::map<int, double> pProdCountMap, std::string& errorMessage);
+		bool ChangesAtStock(DataLayer::OrmasDal& ormasDal, int pID, int warID, std::string& errorMessage);
+		bool ChangesAtStock(DataLayer::OrmasDal& ormasDal, int pID, int warID, std::map<int, double> pProdCountMap, std::string& errorMessage);
 	};
 }
 #endif //PRODYUCTIONCLASS_H

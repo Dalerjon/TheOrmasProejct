@@ -4,7 +4,6 @@
 #include "UserClass.h"
 #include "StatusClass.h"
 #include "StockClass.h"
-#include "ProductionStockClass.h"
 
 namespace BusinessLayer
 {
@@ -123,31 +122,31 @@ namespace BusinessLayer
 		sum = cpSum;
 		statusID = sID;
 		currencyID = cID;
-		ormasDal.StartTransaction(errorMessage);
+		//ormasDal.StartTransaction(errorMessage);
 		if (0 != id && ormasDal.CreateProductionConsumeRaw(id, employeeID, date, executionDate, stockEmployeeID, count, sum, statusID, currencyID, errorMessage))
 		{
 			if (statusID == statusMap.find("EXECUTED")->second)
 			{
-				if (ChangesAtProdStock(ormasDal, id, errorMessage))
+				if (ChangesAtStock(ormasDal, id, stockEmployeeID, errorMessage))
 				{
-					ormasDal.CommitTransaction(errorMessage);
+					//ormasDal.CommitTransaction(errorMessage);
 					return true;
 				}
 				else
 				{
-					ormasDal.CancelTransaction(errorMessage);
+					//ormasDal.CancelTransaction(errorMessage);
 					return false;
 				}
 
 			}
-			ormasDal.CommitTransaction(errorMessage);
+			//ormasDal.CommitTransaction(errorMessage);
 			return true;
 		}
 		if (errorMessage.empty())
 		{
 			errorMessage = "Warning! ID is 0, or some unexpected error. Please contact with provider.";
 		}
-		ormasDal.CancelTransaction(errorMessage);
+		//ormasDal.CancelTransaction(errorMessage);
 		return false;
 	}
 
@@ -158,30 +157,30 @@ namespace BusinessLayer
 		std::map<std::string, int> statusMap = BusinessLayer::Status::GetStatusesAsMap(ormasDal, errorMessage);
 		if (0 == statusMap.size())
 			return false;
-		ormasDal.StartTransaction(errorMessage);
+		//ormasDal.StartTransaction(errorMessage);
 		if (0 != id && ormasDal.CreateProductionConsumeRaw(id, employeeID, date, executionDate, stockEmployeeID, count, sum, statusID, currencyID, errorMessage))
 		{
 			if (statusID == statusMap.find("EXECUTED")->second)
 			{
-				if (ChangesAtProdStock(ormasDal, id, errorMessage))
+				if (ChangesAtStock(ormasDal, id, stockEmployeeID, errorMessage))
 				{
-					ormasDal.CommitTransaction(errorMessage);
+					//ormasDal.CommitTransaction(errorMessage);
 					return true;
 				}
 				else
 				{
-					ormasDal.CancelTransaction(errorMessage);
+					//ormasDal.CancelTransaction(errorMessage);
 					return false;
 				}
 			}
-			ormasDal.CommitTransaction(errorMessage);
+			//ormasDal.CommitTransaction(errorMessage);
 			return true;
 		}
 		if (errorMessage.empty())
 		{
 			errorMessage = "Warning! ID is 0, or some unexpected error. Please contact with provider.";
 		}
-		ormasDal.CancelTransaction(errorMessage);
+		//ormasDal.CancelTransaction(errorMessage);
 		return false;
 	}
 	bool ProductionConsumeRaw::DeleteProductionConsumeRaw(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
@@ -206,17 +205,17 @@ namespace BusinessLayer
 			if (ormasDal.DeleteListByProductionConsumeRawID(id, errorMessage))
 			{
 				Clear();
-				ormasDal.CommitTransaction(errorMessage);
+				//ormasDal.CommitTransaction(errorMessage);
 				return true;
 			}
 			else
 			{
-				ormasDal.CancelTransaction(errorMessage);
+				//ormasDal.CancelTransaction(errorMessage);
 			}
 		}
 		else
 		{
-			ormasDal.CancelTransaction(errorMessage);
+			//ormasDal.CancelTransaction(errorMessage);
 		}
 		if (errorMessage.empty())
 		{
@@ -243,19 +242,19 @@ namespace BusinessLayer
 		currencyID = cID;
 		prevSum = GetCurrentSum(ormasDal, id, errorMessage);
 		prevCount = GetCurrentCount(ormasDal, id, errorMessage);
-		ormasDal.StartTransaction(errorMessage);
+		//ormasDal.StartTransaction(errorMessage);
 		if (0 != id && ormasDal.UpdateProductionConsumeRaw(id, employeeID, date, executionDate, stockEmployeeID, count, sum, statusID, currencyID, errorMessage))
 		{
 			if (statusID == statusMap.find("EXECUTED")->second && previousStatusID != statusMap.find("EXECUTED")->second)
 			{
-				if (ChangesAtProdStock(ormasDal, id, errorMessage))
+				if (ChangesAtStock(ormasDal, id, stockEmployeeID, errorMessage))
 				{
-					ormasDal.CommitTransaction(errorMessage);
+					//ormasDal.CommitTransaction(errorMessage);
 					return true;
 				}
 				else
 				{
-					ormasDal.CancelTransaction(errorMessage);
+					//ormasDal.CancelTransaction(errorMessage);
 					return false;
 				}
 			}
@@ -263,32 +262,32 @@ namespace BusinessLayer
 			{
 				if (count != prevCount || sum != prevSum)
 				{
-					if (ChangesAtProdStock(ormasDal, id, prodCountMap, prevSum, errorMessage))
+					if (ChangesAtStock(ormasDal, id, stockEmployeeID, prodCountMap, prevSum, errorMessage))
 					{
-						ormasDal.CommitTransaction(errorMessage);
+						//ormasDal.CommitTransaction(errorMessage);
 						return true;
 					}
 					else
 					{
-						ormasDal.CancelTransaction(errorMessage);
+						//ormasDal.CancelTransaction(errorMessage);
 						return false;
 					}
 
 				}
 				else
 				{
-					ormasDal.CommitTransaction(errorMessage);
+					//ormasDal.CommitTransaction(errorMessage);
 					return true;
 				}
 			}
-			ormasDal.CommitTransaction(errorMessage);
+			//ormasDal.CommitTransaction(errorMessage);
 			return true;
 		}
 		if (errorMessage.empty())
 		{
 			errorMessage = "Warning! ID is 0, or some unexpected error. Please contact with provider.";
 		}
-		ormasDal.CancelTransaction(errorMessage);
+		//ormasDal.CancelTransaction(errorMessage);
 		return false;
 	}
 	bool ProductionConsumeRaw::UpdateProductionConsumeRaw(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
@@ -301,19 +300,19 @@ namespace BusinessLayer
 			return false;
 		prevSum = GetCurrentSum(ormasDal, id, errorMessage);
 		prevCount = GetCurrentCount(ormasDal, id, errorMessage);
-		ormasDal.StartTransaction(errorMessage);
+		//ormasDal.StartTransaction(errorMessage);
 		if (0 != id && ormasDal.UpdateProductionConsumeRaw(id, employeeID, date, executionDate, stockEmployeeID, count, sum, statusID, currencyID, errorMessage))
 		{
 			if (statusID == statusMap.find("EXECUTED")->second && previousStatusID != statusMap.find("EXECUTED")->second)
 			{
-				if (ChangesAtProdStock(ormasDal, id, errorMessage))
+				if (ChangesAtStock(ormasDal, id, stockEmployeeID, errorMessage))
 				{
-					ormasDal.CommitTransaction(errorMessage);
+					//ormasDal.CommitTransaction(errorMessage);
 					return true;
 				}
 				else
 				{
-					ormasDal.CancelTransaction(errorMessage);
+					//ormasDal.CancelTransaction(errorMessage);
 					return false;
 				}
 			}
@@ -321,31 +320,31 @@ namespace BusinessLayer
 			{
 				if (count != prevCount || sum != prevSum)
 				{
-					if (ChangesAtProdStock(ormasDal, id, prodCountMap, prevSum, errorMessage))
+					if (ChangesAtStock(ormasDal, id, stockEmployeeID, prodCountMap, prevSum, errorMessage))
 					{
-						ormasDal.CommitTransaction(errorMessage);
+						//ormasDal.CommitTransaction(errorMessage);
 						return true;
 					}
 					else
 					{
-						ormasDal.CancelTransaction(errorMessage);
+						//ormasDal.CancelTransaction(errorMessage);
 						return false;
 					}
 				}
 				else
 				{
-					ormasDal.CommitTransaction(errorMessage);
+					//ormasDal.CommitTransaction(errorMessage);
 					return true;
 				}
 			}
-			ormasDal.CommitTransaction(errorMessage);
+			//ormasDal.CommitTransaction(errorMessage);
 			return true;
 		}
 		if (errorMessage.empty())
 		{
 			errorMessage = "Warning! ID is 0, or some unexpected error. Please contact with provider.";
 		}
-		ormasDal.CancelTransaction(errorMessage);
+		//ormasDal.CancelTransaction(errorMessage);
 		return false;
 	}
 
@@ -354,6 +353,15 @@ namespace BusinessLayer
 		if (0 != id || 0 != employeeID || !date.empty() || !executionDate.empty() || 0 != stockEmployeeID || 0 != count || 0 != sum || 0 != statusID)
 		{
 			return ormasDal.GetFilterForProductionConsumeRaw(id, employeeID, date, executionDate, stockEmployeeID, count, sum, statusID, currencyID);
+		}
+		return "";
+	}
+
+	std::string ProductionConsumeRaw::GenerateFilterForPeriod(DataLayer::OrmasDal& ormasDal, std::string fromDate, std::string toDate)
+	{
+		if (0 != id || 0 != employeeID || !date.empty() || !executionDate.empty() || 0 != stockEmployeeID || 0 != count || 0 != sum || 0 != statusID)
+		{
+			return ormasDal.GetFilterForProductionConsumeRawForPeriod(id, employeeID, date, executionDate, stockEmployeeID, count, sum, statusID, currencyID, fromDate, toDate);
 		}
 		return "";
 	}
@@ -451,16 +459,16 @@ namespace BusinessLayer
 		return true;
 	}
 
-	bool ProductionConsumeRaw::ChangesAtProdStock(DataLayer::OrmasDal& ormasDal, int crID, std::string& errorMessage)
+	bool ProductionConsumeRaw::ChangesAtStock(DataLayer::OrmasDal& ormasDal, int crID, int stockEmpID, std::string& errorMessage)
 	{
-		ProductionStock pStock;
-		return pStock.ChangingByConsumeRaw(ormasDal, crID, errorMessage);
+		Stock stock;
+		return stock.ChangingByProdConsumeRaw(ormasDal, crID, stockEmpID, errorMessage);
 	}
 
-	bool ProductionConsumeRaw::ChangesAtProdStock(DataLayer::OrmasDal& ormasDal, int crID, std::map<int, double> pProdCountMap, double pSum, std::string& errorMessage)
+	bool ProductionConsumeRaw::ChangesAtStock(DataLayer::OrmasDal& ormasDal, int crID, int stockEmpID, std::map<int, double> pProdCountMap, double pSum, std::string& errorMessage)
 	{
-		ProductionStock pStock;
-		return pStock.ChangingByConsumeRaw(ormasDal, crID, pProdCountMap, pSum, errorMessage);
+		Stock stock;
+		return stock.ChangingByProdConsumeRaw(ormasDal, crID, stockEmpID, pProdCountMap, pSum, errorMessage);
 	}
 
 	double ProductionConsumeRaw::GetCurrentSum(DataLayer::OrmasDal& ormasDal, int crID, std::string& errorMessage)

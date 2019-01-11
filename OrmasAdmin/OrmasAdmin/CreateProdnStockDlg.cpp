@@ -86,23 +86,26 @@ void CreateProdnStockDlg::SetID(int ID, QString childName)
 	}
 }
 
-void CreateProdnStockDlg::SetProdnStockParams(int sProductID, double sCount, double sSum, int sStatusID, int sCurrencyID, int id)
+void CreateProdnStockDlg::SetProdnStockParams(int sProductID, double sCount, double sSum, int sStatusID, int sCurrencyID, 
+						int sWarehouseID, int id)
 {
 	prodnStock->SetProductID(sProductID);
 	prodnStock->SetCount(sCount);
 	prodnStock->SetSum(sSum);
 	prodnStock->SetStatusID(sStatusID);
 	prodnStock->SetCurrencyID(sCurrencyID);
+	prodnStock->SetWarehouseID(sWarehouseID);
 	prodnStock->SetID(id);
 }
 
-void CreateProdnStockDlg::FillEditElements(int sProductID, double sCount, double sSum, int sStatusID, int sCurrencyID)
+void CreateProdnStockDlg::FillEditElements(int sProductID, double sCount, double sSum, int sStatusID, int sCurrencyID, int sWarehouseID)
 {
 	productEdit->setText(QString::number(sProductID));
 	countEdit->setText(QString::number(sCount));
 	sumEdit->setText(QString::number(sSum));
 	statusEdit->setText(QString::number(sStatusID));
 	currencyCmb->setCurrentIndex(currencyCmb->findData(QVariant(sCurrencyID)));
+	warehouseCmb->setCurrentIndex(warehouseCmb->findData(QVariant(sWarehouseID)));
 	BusinessLayer::Product product;
 	if (product.GetProductByID(dialogBL->GetOrmasDal(), sProductID, errorMessage))
 	{
@@ -126,17 +129,19 @@ bool CreateProdnStockDlg::FillDlgElements(QTableView* oTable)
 	QModelIndex mIndex = oTable->selectionModel()->currentIndex();
 	if (mIndex.row() >= 0)
 	{
-		SetProdnStockParams(oTable->model()->data(oTable->model()->index(mIndex.row(), 10)).toInt(),
+		SetProdnStockParams(oTable->model()->data(oTable->model()->index(mIndex.row(), 12)).toInt(),
 			oTable->model()->data(oTable->model()->index(mIndex.row(), 6)).toDouble(),
 			oTable->model()->data(oTable->model()->index(mIndex.row(), 7)).toDouble(),
-			oTable->model()->data(oTable->model()->index(mIndex.row(), 11)).toInt(),
-			oTable->model()->data(oTable->model()->index(mIndex.row(), 12)).toInt(),
+			oTable->model()->data(oTable->model()->index(mIndex.row(), 13)).toInt(),
+			oTable->model()->data(oTable->model()->index(mIndex.row(), 14)).toInt(),
+			oTable->model()->data(oTable->model()->index(mIndex.row(), 15)).toInt(),
 			oTable->model()->data(oTable->model()->index(mIndex.row(), 0)).toInt());
-		FillEditElements(oTable->model()->data(oTable->model()->index(mIndex.row(), 10)).toInt(),
+		FillEditElements(oTable->model()->data(oTable->model()->index(mIndex.row(), 12)).toInt(),
 			oTable->model()->data(oTable->model()->index(mIndex.row(), 6)).toDouble(),
 			oTable->model()->data(oTable->model()->index(mIndex.row(), 7)).toDouble(),
-			oTable->model()->data(oTable->model()->index(mIndex.row(), 11)).toInt(),
-			oTable->model()->data(oTable->model()->index(mIndex.row(), 12)).toInt());
+			oTable->model()->data(oTable->model()->index(mIndex.row(), 13)).toInt(),
+			oTable->model()->data(oTable->model()->index(mIndex.row(), 14)).toInt(),
+			oTable->model()->data(oTable->model()->index(mIndex.row(), 15)).toInt());
 		return true;
 	}
 	else
@@ -152,7 +157,7 @@ void CreateProdnStockDlg::AddProduct()
 	{
 		DataForm *parentDataForm = (DataForm*) parentForm;
 		BusinessLayer::Status *status = new BusinessLayer::Status();
-		status->SetName("ProdnStockED");
+		status->SetName("IN STOCK");
 		std::string statusFilter = dialogBL->GenerateFilter<BusinessLayer::Status>(status);
 		std::vector<BusinessLayer::Status> statusVector = dialogBL->GetAllDataForClass<BusinessLayer::Status>(errorMessage, statusFilter);
 		delete status;
@@ -196,10 +201,40 @@ void CreateProdnStockDlg::AddProduct()
 				return;
 			}
 		}
+		BusinessLayer::Subaccount subacc;
+		BusinessLayer::Warehouse warehouse;
+		if (warehouseCmb->currentData().toInt() != 0)
+		{
+			if (warehouse.GetWarehouseByID(dialogBL->GetOrmasDal(), warehouseCmb->currentData().toInt(), errorMessage))
+			{
+				if (!subacc.GetSubaccountByID(dialogBL->GetOrmasDal(), warehouse.GetSubaccountID(), errorMessage))
+				{
+					QMessageBox::information(NULL, QString(tr("Warning")),
+						QString(tr(errorMessage.c_str())),
+						QString(tr("Ok")));
+					errorMessage.clear();
+					delete product;
+					delete measure;
+					delete currency;
+					return;
+				}
+			}
+			else
+			{
+				QMessageBox::information(NULL, QString(tr("Warning")),
+					QString(tr(errorMessage.c_str())),
+					QString(tr("Ok")));
+				errorMessage.clear();
+				delete product;
+				delete measure;
+				delete currency;
+				return;
+			}
+		}
 
 		SetProdnStockParams(productEdit->text().toInt(),
 			countEdit->text().toDouble(), (countEdit->text().toDouble() * product->GetPrice()),
-			statusVector.at(0).GetID(), product->GetCurrencyID());
+			statusVector.at(0).GetID(), product->GetCurrencyID(), warehouseCmb->currentData().toInt());
 
 		if (dialogBL->CreateProductionStock(prodnStock, errorMessage))
 		{
@@ -217,10 +252,13 @@ void CreateProdnStockDlg::AddProduct()
 						<< new QStandardItem(QString::number(prodnStock->GetCount()))
 						<< new QStandardItem(QString::number(prodnStock->GetSum()))
 						<< new QStandardItem(sumCurrency->GetShortName().c_str())
+						<< new QStandardItem(warehouseCmb->currentText())
+						<< new QStandardItem(subacc.GetNumber().c_str())
 						<< new QStandardItem(statusVector.at(0).GetName().c_str())
 						<< new QStandardItem(QString::number(prodnStock->GetProductID()))
 						<< new QStandardItem(QString::number(prodnStock->GetStatusID()))
-						<< new QStandardItem(QString::number(prodnStock->GetCurrencyID()));
+						<< new QStandardItem(QString::number(prodnStock->GetCurrencyID()))
+						<< new QStandardItem(QString::number(warehouseCmb->currentData().toInt()));
 					QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
 					itemModel->appendRow(productListItem);
 				}
@@ -265,13 +303,14 @@ void CreateProdnStockDlg::EditProduct()
 				delete product;
 				return;
 			}
-			if (countEdit->text().toDouble() != prodnStock->GetCount())
+			if (countEdit->text().toDouble() != prodnStock->GetCount() ||
+				productEdit->text().toInt() != prodnStock->GetProductID())
 			{
 				sumEdit->setText(QString::number(countEdit->text().toDouble() * product->GetPrice()));
 			}
 			DataForm *parentDataForm = (DataForm*) parentForm;
 			SetProdnStockParams(productEdit->text().toInt(), countEdit->text().toDouble(), sumEdit->text().toDouble(), statusEdit->text().toInt(),
-				prodnStock->GetCurrencyID(), prodnStock->GetID());
+				prodnStock->GetCurrencyID(), warehouseCmb->currentData().toInt(), prodnStock->GetID());
 			if (dialogBL->UpdateProductionStock(prodnStock, errorMessage))
 			{
 				if (parentDataForm != nullptr)
@@ -297,6 +336,37 @@ void CreateProdnStockDlg::EditProduct()
 							delete currency;
 							return;
 						}
+						
+						BusinessLayer::Subaccount subacc;
+						BusinessLayer::Warehouse warehouse;
+						if (warehouseCmb->currentData().toInt() != 0)
+						{
+							if (warehouse.GetWarehouseByID(dialogBL->GetOrmasDal(), warehouseCmb->currentData().toInt(), errorMessage))
+							{
+								if (!subacc.GetSubaccountByID(dialogBL->GetOrmasDal(), warehouse.GetSubaccountID(), errorMessage))
+								{
+									QMessageBox::information(NULL, QString(tr("Warning")),
+										QString(tr(errorMessage.c_str())),
+										QString(tr("Ok")));
+									errorMessage.clear();
+									delete product;
+									delete measure;
+									delete currency;
+									return;
+								}
+							}
+							else
+							{
+								QMessageBox::information(NULL, QString(tr("Warning")),
+									QString(tr(errorMessage.c_str())),
+									QString(tr("Ok")));
+								errorMessage.clear();
+								delete product;
+								delete measure;
+								delete currency;
+								return;
+							}
+						}
 
 						QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
 						QModelIndex mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
@@ -308,10 +378,13 @@ void CreateProdnStockDlg::EditProduct()
 						itemModel->item(mIndex.row(), 6)->setText(QString::number(prodnStock->GetCount()));
 						itemModel->item(mIndex.row(), 7)->setText(QString::number(prodnStock->GetSum()));
 						itemModel->item(mIndex.row(), 8)->setText(sumCurrency->GetShortName().c_str());
-						itemModel->item(mIndex.row(), 9)->setText(status->GetName().c_str());
-						itemModel->item(mIndex.row(), 10)->setText(QString::number(prodnStock->GetStatusID()));
-						itemModel->item(mIndex.row(), 11)->setText(QString::number(product->GetMeasureID()));
-						itemModel->item(mIndex.row(), 12)->setText(QString::number(prodnStock->GetCurrencyID()));
+						itemModel->item(mIndex.row(), 9)->setText(warehouseCmb->currentText());
+						itemModel->item(mIndex.row(), 10)->setText(subacc.GetNumber().c_str());
+						itemModel->item(mIndex.row(), 11)->setText(status->GetName().c_str());
+						itemModel->item(mIndex.row(), 12)->setText(QString::number(product->GetID()));
+						itemModel->item(mIndex.row(), 13)->setText(QString::number(prodnStock->GetStatusID()));
+						itemModel->item(mIndex.row(), 14)->setText(QString::number(prodnStock->GetCurrencyID()));
+						itemModel->item(mIndex.row(), 15)->setText(QString::number(warehouseCmb->currentData().toInt()));
 
 						emit itemModel->dataChanged(mIndex, mIndex);
 						delete measure;
@@ -445,6 +518,15 @@ void CreateProdnStockDlg::InitComboBox()
 		for (unsigned int i = 0; i < curVector.size(); i++)
 		{
 			currencyCmb->addItem(curVector[i].GetShortName().c_str(), QVariant(curVector[i].GetID()));
+		}
+	}
+
+	std::vector<BusinessLayer::WarehouseView> werVector = dialogBL->GetAllDataForClass<BusinessLayer::WarehouseView>(errorMessage);
+	if (!werVector.empty())
+	{
+		for (unsigned int i = 0; i < werVector.size(); i++)
+		{
+			warehouseCmb->addItem(werVector[i].GetName().c_str(), QVariant(werVector[i].GetID()));
 		}
 	}
 }

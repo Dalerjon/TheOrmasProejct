@@ -64,7 +64,10 @@
     <addaction name="actionClients"/>
     <addaction name="actionEmployees"/>
     <addaction name="actionPurveyors"/>
+    <addaction name="separator"/>
     <addaction name="actionCompanyEmployees"/>
+    <addaction name="actionCashboxEmployees"/>
+    <addaction name="actionWarehouseEmployees"/>
     <addaction name="separator"/>
     <addaction name="actionAccess"/>
     <addaction name="actionAccessItems"/>
@@ -111,6 +114,8 @@
     <addaction name="actionRelation"/>
     <addaction name="actionRelationType"/>
     <addaction name="actionDivision"/>
+    <addaction name="actionBranch"/>
+    <addaction name="actionWarehouseType"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
@@ -163,12 +168,17 @@
     <addaction name="actionEntry"/>
     <addaction name="actionEntryRouting"/>
     <addaction name="actionCloseOfMonth"/>
+    <addaction name="separator"/>
+    <addaction name="actionWarehouse"/>
+    <addaction name="actionCashbox"/>
    </widget>
    <widget class="QMenu" name="menuStock">
     <property name="title">
      <string>Stock</string>
     </property>
     <addaction name="actionStock"/>
+    <addaction name="actionRawStock"/>
+    <addaction name="actionProductStock"/>
     <addaction name="actionOrderRaws"/>
     <addaction name="actionReceiptRaws"/>
     <addaction name="actionConsumptionRaws"/>
@@ -182,10 +192,12 @@
     <property name="title">
      <string>Cash</string>
     </property>
+    <addaction name="actionCash"/>
     <addaction name="actionPayments"/>
     <addaction name="actionPayslip"/>
     <addaction name="actionRefund"/>
     <addaction name="actionWithdrawal"/>
+    <addaction name="actionCashBookList"/>
    </widget>
    <widget class="QMenu" name="menuReports">
     <property name="title">
@@ -194,6 +206,10 @@
     <addaction name="actionCompanyBalanceInfo"/>
     <addaction name="actionFinancialReport"/>
     <addaction name="actionCompanyBalance"/>
+    <addaction name="actionSpecificationReport"/>
+    <addaction name="actionProfitability"/>
+    <addaction name="actionSalesReport"/>
+    <addaction name="actionAccountCard"/>
    </widget>
    <addaction name="menuUsers"/>
    <addaction name="menuProducts"/>
@@ -602,6 +618,76 @@
   <action name="actionDivision">
    <property name="text">
     <string>Division</string>
+   </property>
+  </action>
+  <action name="actionCash">
+   <property name="text">
+    <string>Cash</string>
+   </property>
+  </action>
+  <action name="actionCashBookList">
+   <property name="text">
+    <string>Cash book list</string>
+   </property>
+  </action>
+  <action name="actionSpecificationReport">
+   <property name="text">
+    <string>Specification report</string>
+   </property>
+  </action>
+  <action name="actionProfitability">
+   <property name="text">
+    <string>Profitability</string>
+   </property>
+  </action>
+  <action name="actionSalesReport">
+   <property name="text">
+    <string>Sales report</string>
+   </property>
+  </action>
+  <action name="actionAccountCard">
+   <property name="text">
+    <string>Account card</string>
+   </property>
+  </action>
+  <action name="actionCashboxEmployees">
+   <property name="text">
+    <string>Cashbox employees</string>
+   </property>
+  </action>
+  <action name="actionWarehouseEmployees">
+   <property name="text">
+    <string>Warehouse employees</string>
+   </property>
+  </action>
+  <action name="actionBranch">
+   <property name="text">
+    <string>Branch</string>
+   </property>
+  </action>
+  <action name="actionWarehouseType">
+   <property name="text">
+    <string>Warehouse types</string>
+   </property>
+  </action>
+  <action name="actionWarehouse">
+   <property name="text">
+    <string>Warehouse</string>
+   </property>
+  </action>
+  <action name="actionCashbox">
+   <property name="text">
+    <string>Cashbox</string>
+   </property>
+  </action>
+  <action name="actionRawStock">
+   <property name="text">
+    <string>Raw stock</string>
+   </property>
+  </action>
+  <action name="actionProductStock">
+   <property name="text">
+    <string>Product stock</string>
    </property>
   </action>
  </widget>

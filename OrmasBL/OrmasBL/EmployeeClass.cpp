@@ -3,6 +3,8 @@
 #include <boost/algorithm/string.hpp>
 #include "CompanyEmployeeRelationClass.h"
 #include "CompanyClass.h"
+#include "BranchClass.h"
+
 
 namespace BusinessLayer{
 	Employee::Employee(DataLayer::employeesCollection cCollection)
@@ -86,10 +88,10 @@ namespace BusinessLayer{
 					return true;
 				return false;
 			}
-			ormasDal.CancelTransaction(errorMessage);
+			//ormasDal.CancelTransaction(errorMessage);
 			return false;
 		}
-		ormasDal.CancelTransaction(errorMessage);
+		//ormasDal.CancelTransaction(errorMessage);
 		return false;
 	}
 	bool Employee::CreateEmployee(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
@@ -108,15 +110,15 @@ namespace BusinessLayer{
 					return true;
 				return false;
 			}
-			ormasDal.CancelTransaction(errorMessage);
+			//ormasDal.CancelTransaction(errorMessage);
 			return false;
 		}
-		ormasDal.CancelTransaction(errorMessage);
+		//ormasDal.CancelTransaction(errorMessage);
 		return false;
 	}
 	bool Employee::DeleteEmployee(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
-		ormasDal.StartTransaction(errorMessage);
+		//ormasDal.StartTransaction(errorMessage);
 		if (!errorMessage.empty())
 			return false;
 		if (ormasDal.DeleteEmployee(id, errorMessage))
@@ -128,7 +130,7 @@ namespace BusinessLayer{
 					return true;
 			}
 		}
-		ormasDal.CancelTransaction(errorMessage);
+		//ormasDal.CancelTransaction(errorMessage);
 		return false;
 	}
 	bool Employee::UpdateEmployee(DataLayer::OrmasDal& ormasDal, std::string uEmail, std::string uName, std::string uSurname, std::string uPhone,
@@ -155,24 +157,24 @@ namespace BusinessLayer{
 		birthDate = eBirthDate;
 		hireDate = eHireDate;
 		userID = id;
-		ormasDal.StartTransaction(errorMessage);
+		//ormasDal.StartTransaction(errorMessage);
 		if (!errorMessage.empty())
 			return false;
 		if (0 != id && ormasDal.UpdateUser(id, email, name, surname, phone, address, roleID, password, activated, errorMessage))
 		{
 			if (ormasDal.UpdateEmployee(userID, positionID, birthDate, hireDate, errorMessage))
 			{
-				ormasDal.CommitTransaction(errorMessage);
+				//ormasDal.CommitTransaction(errorMessage);
 				if (!errorMessage.empty())
 				{
 					return false;
 				}
 				return true;
 			}
-			ormasDal.CancelTransaction(errorMessage);
+			//ormasDal.CancelTransaction(errorMessage);
 			return false;
 		}
-		ormasDal.CancelTransaction(errorMessage);
+		//ormasDal.CancelTransaction(errorMessage);
 		return false;
 	}
 	bool Employee::UpdateEmployee(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
@@ -183,7 +185,7 @@ namespace BusinessLayer{
 			if (!IsUnique(ormasDal, phone, errorMessage))
 				return false;
 		}
-		ormasDal.StartTransaction(errorMessage);
+		//ormasDal.StartTransaction(errorMessage);
 		userID = id;
 		if (!errorMessage.empty())
 			return false;
@@ -191,17 +193,17 @@ namespace BusinessLayer{
 		{
 			if (ormasDal.UpdateEmployee(userID, positionID, birthDate, hireDate, errorMessage))
 			{
-				ormasDal.CommitTransaction(errorMessage);
+				//ormasDal.CommitTransaction(errorMessage);
 				if (!errorMessage.empty())
 				{
 					return false;
 				}
 				return true;
 			}
-			ormasDal.CancelTransaction(errorMessage);
+			//ormasDal.CancelTransaction(errorMessage);
 			return false;
 		}
-		ormasDal.CancelTransaction(errorMessage);
+		//ormasDal.CancelTransaction(errorMessage);
 		return false;
 	}
 	
@@ -386,12 +388,24 @@ namespace BusinessLayer{
 	bool Employee::CreateCompanyEmployeeRelation(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
 		Company company;
+		Branch branch;
+		int branchID = 0;
+		std::vector<DataLayer::branchesCollection> vecBranch = ormasDal.GetBranches(errorMessage);
+		if (0 == vecBranch.size())
+		{
+			return false;
+		}
+		else
+		{
+			branchID = std::get<0>(vecBranch.at(0));
+		}
 		int companyID = company.GetCompanyID(ormasDal, errorMessage);
 		if (0 == companyID)
 			return false;
 		CompanyEmployeeRelation ceRelation;
 		ceRelation.SetEmployeeID(id);
 		ceRelation.SetCompanyID(companyID);
+		ceRelation.SetBranchID(branchID);
 		return ceRelation.CreateCompanyEmployeeRelation(ormasDal, errorMessage);
 	}
 

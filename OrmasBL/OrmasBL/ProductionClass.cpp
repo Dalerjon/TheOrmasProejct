@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "ProductionClass.h"
 #include "ProductionListClass.h"
-#include "ProductionStockClass.h"
+#include "StockClass.h"
 #include <map>
 
 namespace BusinessLayer
@@ -70,17 +70,17 @@ namespace BusinessLayer
 		expiryDate = pExpiryDate;
 		sessionStart = pSessionStart;
 		sessionEnd = pSessionEnd;
-		ormasDal.StartTransaction(errorMessage);
+		//ormasDal.StartTransaction(errorMessage);
 		if (0 != id && ormasDal.CreateProduction(id, productionDate, expiryDate, sessionStart, sessionEnd, errorMessage))
 		{
-			if (ChangesAtStock(ormasDal, id, errorMessage))
+			if (ChangesAtStock(ormasDal, id, warehouseID, errorMessage))
 			{
-				ormasDal.CommitTransaction(errorMessage);
+				//ormasDal.CommitTransaction(errorMessage);
 				return true;
 			}
 			else
 			{
-				ormasDal.CancelTransaction(errorMessage);
+				//ormasDal.CancelTransaction(errorMessage);
 				return false;
 			}
 		}
@@ -88,24 +88,24 @@ namespace BusinessLayer
 		{
 			errorMessage = "Warning! ID is 0, or some unexpected error. Please contact with provider.";
 		}
-		ormasDal.CancelTransaction(errorMessage);
+		//ormasDal.CancelTransaction(errorMessage);
 		return false;
 	}
 	bool Production::CreateProduction(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
 		if (IsDuplicate(ormasDal, errorMessage))
 			return false;
-		ormasDal.StartTransaction(errorMessage);
+		//ormasDal.StartTransaction(errorMessage);
 		if (0 != id &&ormasDal.CreateProduction(id, productionDate, expiryDate, sessionStart, sessionEnd, errorMessage))
 		{
-			if (ChangesAtStock(ormasDal, id, errorMessage))
+			if (ChangesAtStock(ormasDal, id, warehouseID, errorMessage))
 			{
-				ormasDal.CommitTransaction(errorMessage);
+				//ormasDal.CommitTransaction(errorMessage);
 				return true;
 			}
 			else
 			{
-				ormasDal.CancelTransaction(errorMessage);
+				//ormasDal.CancelTransaction(errorMessage);
 				return false;
 			}
 		}
@@ -113,36 +113,36 @@ namespace BusinessLayer
 		{
 			errorMessage = "Warning! ID is 0, or some unexpected error. Please contact with provider.";
 		}
-		ormasDal.CancelTransaction(errorMessage);
+		//ormasDal.CancelTransaction(errorMessage);
 		return false;
 	}
 	bool Production::DeleteProduction(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
 		if (!ormasDal.StartTransaction(errorMessage))
 			return false;
-		ormasDal.StartTransaction(errorMessage);
+		//ormasDal.StartTransaction(errorMessage);
 		if (ormasDal.DeleteProduction(id, errorMessage))
 		{
 			if (ormasDal.DeleteListByProductionID(id, errorMessage))
 			{
 				Clear();
-				ormasDal.CommitTransaction(errorMessage);
+				//ormasDal.CommitTransaction(errorMessage);
 				return true;
 			}
 			else
 			{
-				ormasDal.CancelTransaction(errorMessage);
+				//ormasDal.CancelTransaction(errorMessage);
 			}
 		}
 		else
 		{
-			ormasDal.CancelTransaction(errorMessage);
+			//ormasDal.CancelTransaction(errorMessage);
 		}
 		if (errorMessage.empty())
 		{
 			errorMessage = "Unexpected error. Please contact with application provider.";
 		}
-		ormasDal.CancelTransaction(errorMessage);
+		//ormasDal.CancelTransaction(errorMessage);
 		return false;
 	}
 	bool Production::UpdateProduction(DataLayer::OrmasDal& ormasDal, std::string pProductionDate, std::string pExpiryDate,
@@ -154,17 +154,17 @@ namespace BusinessLayer
 		expiryDate = pExpiryDate;
 		sessionStart = pSessionStart;
 		sessionEnd = pSessionEnd;
-		ormasDal.StartTransaction(errorMessage);
+		//ormasDal.StartTransaction(errorMessage);
 		if (0 != id &&ormasDal.UpdateProduction(id, productionDate, expiryDate, sessionStart, sessionEnd, errorMessage))
 		{
-			if (ChangesAtStock(ormasDal, id, prodCountMap, errorMessage))
+			if (ChangesAtStock(ormasDal, id, warehouseID, prodCountMap, errorMessage))
 			{
-				ormasDal.CommitTransaction(errorMessage);
+				//ormasDal.CommitTransaction(errorMessage);
 				return true;
 			}
 			else
 			{
-				ormasDal.CancelTransaction(errorMessage);
+				//ormasDal.CancelTransaction(errorMessage);
 				return false;
 			}
 		}
@@ -172,24 +172,24 @@ namespace BusinessLayer
 		{
 			errorMessage = "Warning! ID is 0, or some unexpected error. Please contact with provider.";
 		}
-		ormasDal.CancelTransaction(errorMessage);
+		//ormasDal.CancelTransaction(errorMessage);
 		return false;
 	}
 	bool Production::UpdateProduction(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
 		if (0 == prodCountMap.size())
 			return false;
-		ormasDal.StartTransaction(errorMessage);
+		//ormasDal.StartTransaction(errorMessage);
 		if (0 != id &&ormasDal.UpdateProduction(id, productionDate, expiryDate, sessionStart, sessionEnd, errorMessage))
 		{
-			if (ChangesAtStock(ormasDal, id, prodCountMap, errorMessage))
+			if (ChangesAtStock(ormasDal, id, warehouseID, prodCountMap, errorMessage))
 			{
-				ormasDal.CommitTransaction(errorMessage);
+				//ormasDal.CommitTransaction(errorMessage);
 				return true;
 			}
 			else
 			{
-				ormasDal.CancelTransaction(errorMessage);
+				//ormasDal.CancelTransaction(errorMessage);
 				return false;
 			}
 		}
@@ -197,7 +197,7 @@ namespace BusinessLayer
 		{
 			errorMessage = "Warning! ID is 0, or some unexpected error. Please contact with provider.";
 		}
-		ormasDal.CancelTransaction(errorMessage);
+		//ormasDal.CancelTransaction(errorMessage);
 		return false;
 	}
 
@@ -300,16 +300,16 @@ namespace BusinessLayer
 	}
 
 
-	bool Production::ChangesAtStock(DataLayer::OrmasDal& ormasDal, int rpID, std::string& errorMessage)
+	bool Production::ChangesAtStock(DataLayer::OrmasDal& ormasDal, int rpID, int warID, std::string& errorMessage)
 	{
-		ProductionStock pStock;
-		return pStock.ChangingByProduction(ormasDal, rpID, errorMessage);
+		Stock pStock;
+		return pStock.ChangingByProduction(ormasDal, rpID, warID, errorMessage);
 	}
 
-	bool Production::ChangesAtStock(DataLayer::OrmasDal& ormasDal, int rpID, std::map<int, double> pProdCountMap, std::string& errorMessage)
+	bool Production::ChangesAtStock(DataLayer::OrmasDal& ormasDal, int rpID, int warID, std::map<int, double> pProdCountMap, std::string& errorMessage)
 	{
-		ProductionStock pStock;
-		return pStock.ChangingByProduction(ormasDal, rpID, pProdCountMap, errorMessage);
+		Stock pStock;
+		return pStock.ChangingByProduction(ormasDal, rpID, warID, pProdCountMap, errorMessage);
 	}
 }
 

@@ -161,6 +161,26 @@ namespace BusinessLayer
 		}
 		return false;
 	}
+
+	bool ProductType::GetProductTypeByCode(DataLayer::OrmasDal& ormasDal, std::string pCode, std::string& errorMessage)
+	{
+		code = pCode;
+		std::string filter = GenerateFilter(ormasDal);
+		std::vector<DataLayer::productTypeCollection> productTypeVector = ormasDal.GetProductTypes(errorMessage, filter);
+		if (0 != productTypeVector.size())
+		{
+			id = std::get<0>(productTypeVector.at(0));
+			name = std::get<1>(productTypeVector.at(0));
+			shortName = std::get<2>(productTypeVector.at(0));
+			code = std::get<3>(productTypeVector.at(0));
+			return true;
+		}
+		else
+		{
+			errorMessage = "Cannot find product type with this id";
+		}
+		return false;
+	}
 	
 	bool ProductType::IsEmpty()
 	{

@@ -170,17 +170,17 @@ namespace BusinessLayer
 			if (ormasDal.DeleteListByTransportID(id, errorMessage))
 			{
 				Clear();
-				ormasDal.CommitTransaction(errorMessage);
+				//ormasDal.CommitTransaction(errorMessage);
 				return true;
 			}
 			else
 			{
-				ormasDal.CancelTransaction(errorMessage);
+				//ormasDal.CancelTransaction(errorMessage);
 			}
 		}
 		else
 		{
-			ormasDal.CancelTransaction(errorMessage);
+			//ormasDal.CancelTransaction(errorMessage);
 		}
 		if (errorMessage.empty())
 		{
@@ -350,7 +350,7 @@ namespace BusinessLayer
 			TransportList tList;
 			Status status;
 			NetCost nCost;
-			ormasDal.StartTransaction(errorMessage);
+			//ormasDal.StartTransaction(errorMessage);
 			for each (auto item in cPListVec)
 			{
 				tList.Clear();
@@ -363,7 +363,7 @@ namespace BusinessLayer
 					if (!status.GetStatusByName(ormasDal, "TRANSPORTING", errorMessage))
 					{
 						errorMessage = "ERROR! Cannot transport this product, status is not valied!";
-						ormasDal.CancelTransaction(errorMessage);
+						//ormasDal.CancelTransaction(errorMessage);
 						return false;
 					}
 					if (!product.GetProductByID(ormasDal, item.GetProductID(), errorMessage))
@@ -380,7 +380,7 @@ namespace BusinessLayer
 					tList.SetStatusID(status.GetID());
 					if (!tList.CreateTransportList(ormasDal, errorMessage))
 					{
-						ormasDal.CancelTransaction(errorMessage);
+						//ormasDal.CancelTransaction(errorMessage);
 						return false;
 					}
 				}
@@ -396,7 +396,7 @@ namespace BusinessLayer
 					tList.SetSum(tList.GetSum() + (item.GetCount()*nCost.GetValue()));
 					if (!tList.UpdateTransportList(ormasDal, errorMessage))
 					{
-						ormasDal.CancelTransaction(errorMessage);
+						//ormasDal.CancelTransaction(errorMessage);
 						return false;
 					}
 				}
@@ -405,7 +405,7 @@ namespace BusinessLayer
 		else
 		{
 			errorMessage = "ERROR! Transport list is empty!";
-			ormasDal.CancelTransaction(errorMessage);
+			//ormasDal.CancelTransaction(errorMessage);
 			return false;
 		}
 		return true;
@@ -453,7 +453,7 @@ namespace BusinessLayer
 			TransportList tList;
 			Status status;
 			NetCost nCost;
-			ormasDal.StartTransaction(errorMessage);
+			//ormasDal.StartTransaction(errorMessage);
 			for each (auto item in cPListVec)
 			{
 				tList.Clear();
@@ -466,7 +466,7 @@ namespace BusinessLayer
 					if (!status.GetStatusByName(ormasDal, "IN STOCK", errorMessage))
 					{
 						errorMessage = "ERROR! Cannot transport this product, status is not valied!";
-						ormasDal.CancelTransaction(errorMessage);
+						//ormasDal.CancelTransaction(errorMessage);
 						return false;
 					}
 					if (!product.GetProductByID(ormasDal, item.GetProductID(), errorMessage))
@@ -483,7 +483,7 @@ namespace BusinessLayer
 					tList.SetStatusID(status.GetID());
 					if (!tList.CreateTransportList(ormasDal, errorMessage))
 					{
-						ormasDal.CancelTransaction(errorMessage);
+						//ormasDal.CancelTransaction(errorMessage);
 						return false;
 					}
 				}
@@ -499,7 +499,7 @@ namespace BusinessLayer
 					tList.SetSum(tList.GetSum() + ((item.GetCount()*nCost.GetValue()) - (pProdCountMap.find(product.GetID())->second * nCost.GetValue())));
 					if (!tList.UpdateTransportList(ormasDal, errorMessage))
 					{
-						ormasDal.CancelTransaction(errorMessage);
+						//ormasDal.CancelTransaction(errorMessage);
 						return false;
 					}
 				}
@@ -508,7 +508,7 @@ namespace BusinessLayer
 		else
 		{
 			errorMessage = "ERROR! Transport list is empty!";
-			ormasDal.CancelTransaction(errorMessage);
+			//ormasDal.CancelTransaction(errorMessage);
 			return false;
 		}
 		return true;
@@ -552,7 +552,7 @@ namespace BusinessLayer
 			TransportList tList;
 			Status status;
 			NetCost nCost;
-			ormasDal.StartTransaction(errorMessage);
+			//ormasDal.StartTransaction(errorMessage);
 			for each (auto item in oListVec)
 			{
 				tList.Clear();
@@ -565,7 +565,7 @@ namespace BusinessLayer
 						return false;
 					errorMessage = "ERROR! This product is out of transport:";
 					errorMessage += product.GetName();
-					ormasDal.CancelTransaction(errorMessage);
+					//ormasDal.CancelTransaction(errorMessage);
 					return false;
 				}
 				else
@@ -581,7 +581,7 @@ namespace BusinessLayer
 							errorMessage += std::to_string(transport.GetCount());
 
 						}
-						ormasDal.CancelTransaction(errorMessage);
+						//ormasDal.CancelTransaction(errorMessage);
 						return false;
 					}
 					else
@@ -603,7 +603,7 @@ namespace BusinessLayer
 						}
 						if (!tList.UpdateTransportList(ormasDal, errorMessage))
 						{
-							ormasDal.CancelTransaction(errorMessage);
+							//ormasDal.CancelTransaction(errorMessage);
 							return false;
 						}
 					}
@@ -613,7 +613,7 @@ namespace BusinessLayer
 		else
 		{
 			errorMessage = "ERROR! Transport list is empty!";
-			ormasDal.CancelTransaction(errorMessage);
+			//ormasDal.CancelTransaction(errorMessage);
 			return false;
 		}
 		CompanyAccountRelation caRel;
@@ -621,13 +621,13 @@ namespace BusinessLayer
 		int credAccID = caRel.GetAccountIDByCompanyID(ormasDal, companyID, "10742", errorMessage);
 		if (0 == debAccID || 0 == credAccID)
 		{
-			ormasDal.CancelTransaction(errorMessage);
+			//ormasDal.CancelTransaction(errorMessage);
 			return false;
 		}
 
 		if (!this->CreateEntry(ormasDal, debAccID, totalSum, credAccID, errorMessage))
 		{
-			ormasDal.CancelTransaction(errorMessage);
+			//ormasDal.CancelTransaction(errorMessage);
 			return false;
 		}
 		return true;
@@ -671,7 +671,7 @@ namespace BusinessLayer
 			TransportList tList;
 			Status status;
 			NetCost nCost;
-			ormasDal.StartTransaction(errorMessage);
+			//ormasDal.StartTransaction(errorMessage);
 			for each (auto item in oListVec)
 			{
 				tList.Clear();
@@ -684,7 +684,7 @@ namespace BusinessLayer
 						return false;
 					errorMessage = "ERROR! This product is out of transport:";
 					errorMessage += product.GetName();
-					ormasDal.CancelTransaction(errorMessage);
+					//ormasDal.CancelTransaction(errorMessage);
 					return false;
 				}
 				else
@@ -700,7 +700,7 @@ namespace BusinessLayer
 							errorMessage += std::to_string(transport.GetCount());
 
 						}
-						ormasDal.CancelTransaction(errorMessage);
+						//ormasDal.CancelTransaction(errorMessage);
 						return false;
 					}
 					else
@@ -722,7 +722,7 @@ namespace BusinessLayer
 						}
 						if (!tList.UpdateTransportList(ormasDal, errorMessage))
 						{
-							ormasDal.CancelTransaction(errorMessage);
+							//ormasDal.CancelTransaction(errorMessage);
 							return false;
 						}
 					}
@@ -732,7 +732,7 @@ namespace BusinessLayer
 		else
 		{
 			errorMessage = "ERROR! Transport list is empty!";
-			ormasDal.CancelTransaction(errorMessage);
+			//ormasDal.CancelTransaction(errorMessage);
 			return false;
 		}
 		CompanyAccountRelation caRel;
@@ -740,13 +740,13 @@ namespace BusinessLayer
 		int credAccID = caRel.GetAccountIDByCompanyID(ormasDal, companyID, "10742", errorMessage);
 		if (0 == debAccID || 0 == credAccID)
 		{
-			ormasDal.CancelTransaction(errorMessage);
+			//ormasDal.CancelTransaction(errorMessage);
 			return false;
 		}
 
 		if (!this->CreateEntry(ormasDal, debAccID, totalSum, credAccID, errorMessage))
 		{
-			ormasDal.CancelTransaction(errorMessage);
+			//ormasDal.CancelTransaction(errorMessage);
 			return false;
 		}
 		return true;

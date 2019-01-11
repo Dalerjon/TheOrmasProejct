@@ -220,7 +220,6 @@ void CreateConRListDlg::AddProductToList()
 		SetConRListParams(consumeRawID, productEdit->text().toInt(),
 			countEdit->text().toDouble(), (countEdit->text().toDouble() * product->GetPrice()),
 			statusVector.at(0).GetID(), product->GetCurrencyID());
-
 		if (dialogBL->CreateConsumeRawList(consumeRawList, errorMessage))
 		{
 			if (parentDataForm != nullptr)
@@ -294,7 +293,8 @@ void CreateConRListDlg::EditProductInList()
 				delete product;
 				return;
 			}
-			if (countEdit->text().toDouble() != consumeRawList->GetCount())
+			if (countEdit->text().toDouble() != consumeRawList->GetCount() ||
+				productEdit->text().toInt() != consumeRawList->GetProductID())
 			{
 				sumEdit->setText(QString::number(countEdit->text().toDouble() * product->GetPrice()));
 			}

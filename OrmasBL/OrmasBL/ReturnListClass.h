@@ -22,6 +22,7 @@ namespace BusinessLayer
 		ReturnList(){};
 		~ReturnList(){};
 
+		int employeeID = 0;
 		//ReturnList class Accessors
 		int GetID();
 		int GetReturnID();

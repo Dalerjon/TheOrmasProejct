@@ -6,7 +6,7 @@ namespace BusinessLayer
 	ProductionConsumeRawListView::ProductionConsumeRawListView(DataLayer::productionConsumeRawListViewCollection cCollection)
 	{
 		id = std::get<0>(cCollection);
-		ProductionConsumeRawID = std::get<1>(cCollection);
+		productionConsumeRawID = std::get<1>(cCollection);
 		productName = std::get<2>(cCollection);
 		price = std::get<3>(cCollection);
 		currencyName = std::get<4>(cCollection);

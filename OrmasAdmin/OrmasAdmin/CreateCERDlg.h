@@ -23,8 +23,8 @@ public:
 	void SetID(int ID, QString childName);
 private:
 	BusinessLayer::CompanyEmployeeRelation *companyEmployee = new BusinessLayer::CompanyEmployeeRelation();
-	void SetCompanyEmployeeParams(int, int, int = 0);
-	void FillEditElements(int, int);
+	void SetCompanyEmployeeParams(int, int, int, int = 0);
+	void FillEditElements(int, int, int);
 	QIntValidator *vInt = nullptr;
 	void InitComboBox();
 	QWidget* parentForm;

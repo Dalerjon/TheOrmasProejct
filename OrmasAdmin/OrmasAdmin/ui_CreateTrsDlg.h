@@ -361,7 +361,7 @@ public:
         prodCountLb->setText(QApplication::translate("CreateTransport", "Count of products:", 0));
         employeeBtn->setText(QApplication::translate("CreateTransport", "Select employee", 0));
         dateLb->setText(QApplication::translate("CreateTransport", "Transportation date:", 0));
-        stockEmployeeBtn->setText(QApplication::translate("CreateTransport", "Select stock employee", 0));
+        stockEmployeeBtn->setText(QApplication::translate("CreateTransport", "Select employee", 0));
         execDateLb->setText(QApplication::translate("CreateTransport", "Execution date:", 0));
 #ifndef QT_NO_TOOLTIP
         employeeEdit->setToolTip(QApplication::translate("CreateTransport", "<html><head/><body><p>Enter client ID</p></body></html>", 0));

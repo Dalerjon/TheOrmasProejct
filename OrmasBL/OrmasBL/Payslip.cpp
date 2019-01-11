@@ -9,6 +9,8 @@
 #include "CompanyAccountRelationClass.h"
 #include "CompanyEmployeeRelationClass.h"
 #include "CompanyClass.h"
+#include "DivisionEmployeeRelationClass.h"
+#include "DivisionClass.h"
 #include <codecvt>
 
 namespace BusinessLayer{
@@ -86,12 +88,12 @@ namespace BusinessLayer{
 		value = pValue;
 		salaryID = sID;
 		currencyID = cID;
-		ormasDal.StartTransaction(errorMessage);
+		//ormasDal.StartTransaction(errorMessage);
 		if (0 != id && ormasDal.CreatePayslip(id, date, value, salaryID, currencyID, errorMessage))
 		{
 			if (Payout(ormasDal, salaryID, currencyID, errorMessage))
 			{
-				ormasDal.CommitTransaction(errorMessage);
+				//ormasDal.CommitTransaction(errorMessage);
 				return true;
 			}
 		}
@@ -99,7 +101,7 @@ namespace BusinessLayer{
 		{
 			errorMessage = "Warning! ID is 0, or some unexpected error. Please contact with provider.";
 		}
-		ormasDal.CancelTransaction(errorMessage);
+		//ormasDal.CancelTransaction(errorMessage);
 		return false;
 	}
 	bool Payslip::CreatePayslip(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
@@ -107,12 +109,12 @@ namespace BusinessLayer{
 		if (IsDuplicate(ormasDal, errorMessage))
 			return false;
 		id = ormasDal.GenerateID();
-		ormasDal.StartTransaction(errorMessage);
+		//ormasDal.StartTransaction(errorMessage);
 		if (0 != id && ormasDal.CreatePayslip(id, date, value, salaryID, currencyID, errorMessage))
 		{
 			if (Payout(ormasDal, salaryID, currencyID, errorMessage))
 			{
-				ormasDal.CommitTransaction(errorMessage);
+				//ormasDal.CommitTransaction(errorMessage);
 				return true;
 			}
 		}
@@ -120,7 +122,7 @@ namespace BusinessLayer{
 		{
 			errorMessage = "Warning! ID is 0, or some unexpected error. Please contact with provider.";
 		}
-		ormasDal.CancelTransaction(errorMessage);
+		//ormasDal.CancelTransaction(errorMessage);
 		return false;
 	}
 	bool Payslip::DeletePayslip(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
@@ -150,12 +152,12 @@ namespace BusinessLayer{
 		salaryID = sID;
 		currencyID = cID;
 		currentValue = GetCurrentValue(ormasDal, id, errorMessage);
-		ormasDal.StartTransaction(errorMessage);
+		//ormasDal.StartTransaction(errorMessage);
 		if (0 != id && ormasDal.UpdatePayslip(id, date, value, salaryID, currencyID, errorMessage))
 		{
 			if (Payout(ormasDal, salaryID, currencyID, currentValue, errorMessage))
 			{
-				ormasDal.CommitTransaction(errorMessage);
+				//ormasDal.CommitTransaction(errorMessage);
 				currentValue = 0.0;
 				return true;
 			}
@@ -164,18 +166,18 @@ namespace BusinessLayer{
 		{
 			errorMessage = "Warning! ID is 0, or some unexpected error. Please contact with provider.";
 		}
-		ormasDal.CancelTransaction(errorMessage);
+		//ormasDal.CancelTransaction(errorMessage);
 		return false;
 	}
 	bool Payslip::UpdatePayslip(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
 		currentValue = GetCurrentValue(ormasDal, id, errorMessage);
-		ormasDal.StartTransaction(errorMessage);
+		//ormasDal.StartTransaction(errorMessage);
 		if (0 != id && ormasDal.UpdatePayslip(id, date, value, salaryID, currencyID, errorMessage))
 		{
 			if (Payout(ormasDal, salaryID, currencyID, currentValue, errorMessage))
 			{
-				ormasDal.CommitTransaction(errorMessage);
+				//ormasDal.CommitTransaction(errorMessage);
 				currentValue = 0.0;
 				return true;
 			}
@@ -184,7 +186,7 @@ namespace BusinessLayer{
 		{
 			errorMessage = "Warning! ID is 0, or some unexpected error. Please contact with provider.";
 		}
-		ormasDal.CancelTransaction(errorMessage);
+		//ormasDal.CancelTransaction(errorMessage);
 		return false;
 	}
 
@@ -282,6 +284,8 @@ namespace BusinessLayer{
 	{
 		CompanyAccountRelation cAccRel;
 		CompanyEmployeeRelation cEmpRel;
+		DivisionEmployeeRelation deRel;
+		Division division;
 		Balance balance;
 		Company company;
 		Salary salary;
@@ -300,17 +304,20 @@ namespace BusinessLayer{
 				return false;
 			if (!role.GetRoleByID(ormasDal, user.GetRoleID(), errorMessage))
 				return false;
+			if (!deRel.GetDivisionEmployeeRelationByEmployeeID(ormasDal, user.GetID(), errorMessage))
+				return false;
+			if (!division.GetDivisionByID(ormasDal, deRel.GetDivisionID(), errorMessage))
+				return false;
 			int debAccID = 0;
-			if (0 == role.GetName().compare("EXPEDITOR") || 0 == role.GetName().compare("DRIVER"))
+			if (0 == division.GetCode().compare("RELEASE"))
 			{
 				debAccID = cAccRel.GetAccountIDByCompanyID(ormasDal, companyID, "55220", errorMessage);
 			}
-			else if (0 == role.GetName().compare("PRODUCT MANAGER") || 0 == role.GetName().compare("CHIEF ACCOUNTANT") ||
-				0 == role.GetName().compare("ACCOUNTANT"))
+			else if (0 == division.GetCode().compare("ADMINISTRATION"))
 			{
 				debAccID = cAccRel.GetAccountIDByCompanyID(ormasDal, companyID, "55310", errorMessage);
 			}
-			else
+			else if (0 == division.GetCode().compare("PRODUCTION"))
 			{
 				debAccID = cAccRel.GetAccountIDByCompanyID(ormasDal, companyID, "10730", errorMessage);
 			}
@@ -335,6 +342,8 @@ namespace BusinessLayer{
 	{
 		CompanyAccountRelation cAccRel;
 		CompanyEmployeeRelation cEmpRel;
+		DivisionEmployeeRelation deRel;
+		Division division;
 		Balance balance;
 		Company company;
 		Salary salary;
@@ -353,17 +362,20 @@ namespace BusinessLayer{
 				return false;
 			if (!role.GetRoleByID(ormasDal, user.GetRoleID(), errorMessage))
 				return false;
+			if (!deRel.GetDivisionEmployeeRelationByEmployeeID(ormasDal, user.GetID(), errorMessage))
+				return false;
+			if (!division.GetDivisionByID(ormasDal, deRel.GetDivisionID(), errorMessage))
+				return false;
 			int debAccID = 0;
-			if (0 == role.GetName().compare("EXPEDITOR") || 0 == role.GetName().compare("DRIVER"))
+			if (0 == division.GetCode().compare("RELEASE"))
 			{
 				debAccID = cAccRel.GetAccountIDByCompanyID(ormasDal, companyID, "55220", errorMessage);
 			}
-			else if (0 == role.GetName().compare("PRODUCT MANAGER") || 0 == role.GetName().compare("CHIEF ACCOUNTANT") ||
-				0 == role.GetName().compare("ACCOUNTANT"))
+			else if (0 == division.GetCode().compare("ADMINISTRATION"))
 			{
 				debAccID = cAccRel.GetAccountIDByCompanyID(ormasDal, companyID, "55310", errorMessage);
 			}
-			else
+			else if (0 == division.GetCode().compare("PRODUCTION"))
 			{
 				debAccID = cAccRel.GetAccountIDByCompanyID(ormasDal, companyID, "10730", errorMessage);
 			}

@@ -21,6 +21,7 @@ namespace BusinessLayer
 		WriteOffList(){};
 		~WriteOffList(){};
 
+		int employeeID = 0;
 		//WriteOffList class Accessors
 		int GetID();
 		int GetWriteOffID();

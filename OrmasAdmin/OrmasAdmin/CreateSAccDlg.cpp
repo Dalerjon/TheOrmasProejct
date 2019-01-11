@@ -11,7 +11,7 @@ CreateSAccDlg::CreateSAccDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, Q
 	parentForm = parent;
 	DataForm *dataFormParent = (DataForm *)this->parentForm;
 	mainForm = (MainForm *)dataFormParent->GetParent();
-	vDouble = new QDoubleValidator(0.00, 1000000000.00, 3, this);
+	vDouble = new QDoubleValidator(-1000000000.00, 1000000000.00, 3, this);
 	vInt = new QIntValidator(0, 1000000000, this);
 	numberEdit->setMaxLength(20);
 	statusEdit->setValidator(vInt);
@@ -19,6 +19,7 @@ CreateSAccDlg::CreateSAccDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, Q
 	currentBalanceEdit->setValidator(vDouble);
 	startBalanceEdit->setMaxLength(17);
 	currentBalanceEdit->setMaxLength(17);
+	openedDateEdit->setDate(QDate::currentDate());
 	if (true == updateFlag)
 	{
 		QObject::connect(okBtn, &QPushButton::released, this, &CreateSAccDlg::EditSubaccount);
@@ -32,6 +33,8 @@ CreateSAccDlg::CreateSAccDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, Q
 	QObject::connect(statusBtn, &QPushButton::released, this, &CreateSAccDlg::OpenStsDlg);
 	QObject::connect(startBalanceEdit, &QLineEdit::textChanged, this, &CreateSAccDlg::TextEditChanged);
 	QObject::connect(currentBalanceEdit, &QLineEdit::textChanged, this, &CreateSAccDlg::TextEditChanged);
+	QObject::connect(chartOfAccEdit, &QLineEdit::textChanged, this, &CreateSAccDlg::GenerateNumber);
+	QObject::connect(currencyCmb, &QComboBox::currentTextChanged, this, &CreateSAccDlg::GenerateNumber);
 	InitComboBox();
 }
 
@@ -54,7 +57,7 @@ void CreateSAccDlg::SetID(int ID, QString childName)
 			this->activateWindow();
 			QApplication::setActiveWindow(this);
 
-			if (childName == QString("chartOfSAccountForm"))
+			if (childName == QString("chartOfAccountForm"))
 			{
 				chartOfAccEdit->setText(QString::number(ID));
 				BusinessLayer::ChartOfAccounts coSAcc;
@@ -101,12 +104,15 @@ void CreateSAccDlg::FillEditElements(QString aNumber, double aStartBalance, doub
 	openedDateEdit->setDate(QDate::fromString(aOpenedDate, "dd.MM.yyyy"));
 	detailsEdit->setText(aDetails);
 	BusinessLayer::ChartOfAccounts aoSAcc;
+	BusinessLayer::Status status;
 	if (aoSAcc.GetChartOfAccountsByNumber(dialogBL->GetOrmasDal(), aNumber.left(5).toUtf8().constData(), errorMessage))
 	{
-		
 		chartOfAccEdit->setText(QString::number(aoSAcc.GetID()));
 		accNamePh->setText(aoSAcc.GetName().c_str());
-		
+	}
+	if (status.GetStatusByID(dialogBL->GetOrmasDal(), sID, errorMessage))
+	{
+		statusPh->setText(status.GetName().c_str());
 	}
 }
 
@@ -147,9 +153,11 @@ void CreateSAccDlg::CreateSubaccount()
 		!openedDateEdit->text().isEmpty() && 0 != statusEdit->text().toInt())
 	{
 		DataForm *parentDataForm = (DataForm*) parentForm;
+
 		SetSubaccountParams(numberEdit->text(), startBalanceEdit->text().toDouble(), currentBalanceEdit->text().toDouble(), 
 			currencyCmb->currentData().toInt(), statusEdit->text().toInt(), 
 			openedDateEdit->text(), "", detailsEdit->text());
+		subaccount->SetParentAccountID(parentAccID);
 		dialogBL->StartTransaction(errorMessage);
 		if (dialogBL->CreateSubaccount(subaccount, errorMessage))
 		{
@@ -248,6 +256,10 @@ void CreateSAccDlg::EditSubaccount()
 			SetSubaccountParams(numberEdit->text(), startBalanceEdit->text().toDouble(), currentBalanceEdit->text().toDouble(),
 				currencyCmb->currentData().toInt(), statusEdit->text().toInt(),
 				openedDateEdit->text(), "", detailsEdit->text(), subaccount->GetID());
+			int parAccID = GetParentAccNumber(numberEdit->text().toStdString());
+			if (0 == parAccID)
+				return;
+			subaccount->SetParentAccountID(parAccID);
 			dialogBL->StartTransaction(errorMessage);
 			if (dialogBL->UpdateSubaccount(subaccount, errorMessage))
 			{
@@ -455,3 +467,61 @@ void CreateSAccDlg::TextEditChanged()
 		currentBalanceEdit->setText(currentBalanceEdit->text().replace("..", "."));
 	}
 }
+
+void CreateSAccDlg::GenerateNumber()
+{
+	BusinessLayer::ChartOfAccounts coAcc;
+	BusinessLayer::Account account;
+	BusinessLayer::Currency currency;
+	if (chartOfAccEdit->text().toInt() == 0 || chartOfAccEdit->text().isEmpty())
+		return;
+	if (!coAcc.GetChartOfAccountsByID(dialogBL->GetOrmasDal(), chartOfAccEdit->text().toInt(), errorMessage))
+		return;
+	std::string number = coAcc.GetNumber();
+
+	if (!account.GetAccountByNumber(dialogBL->GetOrmasDal(), coAcc.GetNumber(), errorMessage))
+	{
+		QMessageBox::information(NULL, QString(tr("Warning")),
+			QString(tr(errorMessage.c_str())),
+			QString(tr("Ok")));
+		errorMessage.clear();
+		return;
+	}
+	if (!currency.GetCurrencyByID(dialogBL->GetOrmasDal(), currencyCmb->currentData().toInt(), errorMessage))
+	{
+		QMessageBox::information(NULL, QString(tr("Warning")),
+			QString(tr(errorMessage.c_str())),
+			QString(tr("Ok")));
+		errorMessage.clear();
+		return;
+	}
+	number.append(std::to_string(currency.GetCode()));
+	std::string genAccRawNumber = subaccount->GenerateRawNumber(dialogBL->GetOrmasDal(), errorMessage);
+	if (genAccRawNumber.empty())
+	{
+		QMessageBox::information(NULL, QString(tr("Info")),
+			QString(tr("Cannot generate account number! Please contact with Administrator!")),
+			QString(tr("Ok")));
+		Close();
+	}
+	number.append(genAccRawNumber);
+	parentAccID = account.GetID();
+	numberEdit->setText(number.c_str());
+}
+
+int CreateSAccDlg::GetParentAccNumber(std::string subNumber)
+{
+	std::string parentNumber = subNumber.substr(0, 5);
+	BusinessLayer::Account account;
+	if (!account.GetAccountByNumber(dialogBL->GetOrmasDal(), parentNumber, errorMessage))
+	{
+		QMessageBox::information(NULL, QString(tr("Warning")),
+			QString(tr(errorMessage.c_str())),
+			QString(tr("Ok")));
+		errorMessage.clear();
+		return 0;
+	}
+	return account.GetID();
+}
+
+

@@ -11,7 +11,7 @@ CreateAccDlg::CreateAccDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, QWi
 	parentForm = parent;
 	DataForm *dataFormParent = (DataForm *)this->parentForm;
 	mainForm = (MainForm *)dataFormParent->GetParent();
-	vDouble = new QDoubleValidator(0.00, 1000000000.00, 3, this);
+	vDouble = new QDoubleValidator(-1000000000.00, 1000000000.00, 3, this);
 	vInt = new QIntValidator(0, 1000000000, this);
 	numberEdit->setMaxLength(20);
 	startBalanceEdit->setValidator(vDouble);

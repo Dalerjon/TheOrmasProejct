@@ -25,8 +25,8 @@ public:
 	void SetID(int ID, QString childName);
 private:
 	BusinessLayer::Stock *stock = new BusinessLayer::Stock();
-	void SetStockParams(int, double, double, int, int, int = 0);
-	void FillEditElements(int, double, double, int, int);
+	void SetStockParams(int, double, double, int, int, int, int = 0);
+	void FillEditElements(int, double, double, int, int, int);
 	QDoubleValidator *vDouble = nullptr;
 	QIntValidator *vInt = nullptr;
 	void InitComboBox();

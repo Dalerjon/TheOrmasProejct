@@ -101,7 +101,7 @@ namespace BusinessLayer{
 		value = eValue;
 		creditingAccountID = caID;
 		description = eDescription;
-		ormasDal.StartTransaction(errorMessage);
+		//ormasDal.StartTransaction(errorMessage);
 		Subaccount dSAcc;
 		Subaccount cSAcc;
 		int dSAccParentID = 0;
@@ -154,7 +154,7 @@ namespace BusinessLayer{
 						return false;
 					}
 				}
-				ormasDal.CommitTransaction(errorMessage);
+				//ormasDal.CommitTransaction(errorMessage);
 				return true;
 			}
 		}
@@ -162,7 +162,7 @@ namespace BusinessLayer{
 		{
 			errorMessage = "Warning! ID is 0, or some unexpected error. Please contact with provider.";
 		}
-		ormasDal.StartTransaction(errorMessage);
+		//ormasDal.StartTransaction(errorMessage);
 		return false;
 	}
 	bool Entry::CreateEntry(DataLayer::OrmasDal& ormasDal, std::string& errorMessage, bool corrEntry)
@@ -174,9 +174,10 @@ namespace BusinessLayer{
 			if (!EntryRoutingValidation(ormasDal, debitingAccountID, creditingAccountID, errorMessage))
 				return false;
 		}
-		
+		if (value < 0)
+			return false;
 		id = ormasDal.GenerateID();
-		ormasDal.StartTransaction(errorMessage);
+		//ormasDal.StartTransaction(errorMessage);
 		Subaccount dSAcc;
 		Subaccount cSAcc;
 		int dSAccParentID = 0;
@@ -233,7 +234,7 @@ namespace BusinessLayer{
 						return false;
 					}
 				}
-				ormasDal.CommitTransaction(errorMessage);
+				//ormasDal.CommitTransaction(errorMessage);
 				return true;
 			}
 		}
@@ -241,7 +242,7 @@ namespace BusinessLayer{
 		{
 			errorMessage = "Warning! ID is 0, or some unexpected error. Please contact with provider.";
 		}
-		ormasDal.StartTransaction(errorMessage);
+		//ormasDal.StartTransaction(errorMessage);
 		return false;
 	}
 	bool Entry::DeleteEntry(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
@@ -266,32 +267,32 @@ namespace BusinessLayer{
 		value = eValue;
 		creditingAccountID = caID;
 		description = eDescription;
-		ormasDal.StartTransaction(errorMessage);
+		//ormasDal.StartTransaction(errorMessage);
 		if (0 != id && ormasDal.UpdateEntry(id, date, debitingAccountID, value, creditingAccountID, description, errorMessage))
 		{
-			ormasDal.CommitTransaction(errorMessage);
+			//ormasDal.CommitTransaction(errorMessage);
 			return true;
 		}
 		if (errorMessage.empty())
 		{
 			errorMessage = "Warning! ID is 0, or some unexpected error. Please contact with provider.";
 		}
-		ormasDal.StartTransaction(errorMessage);
+		//ormasDal.StartTransaction(errorMessage);
 		return false;
 	}
 	bool Entry::UpdateEntry(DataLayer::OrmasDal& ormasDal, std::string& errorMessage, bool corrEntry)
 	{
-		ormasDal.StartTransaction(errorMessage);
+		//ormasDal.StartTransaction(errorMessage);
 		if (0 != id && ormasDal.UpdateEntry(id, date, debitingAccountID, value, creditingAccountID, description, errorMessage))
 		{
-			ormasDal.CommitTransaction(errorMessage);
+			//ormasDal.CommitTransaction(errorMessage);
 			return true;
 		}
 		if (errorMessage.empty())
 		{
 			errorMessage = "Warning! ID is 0, or some unexpected error. Please contact with provider.";
 		}
-		ormasDal.StartTransaction(errorMessage);
+		//ormasDal.StartTransaction(errorMessage);
 		return false;
 	}
 
@@ -300,6 +301,15 @@ namespace BusinessLayer{
 		if (0 != id || !date.empty() || 0.0 != value || 0 != debitingAccountID || 0 != creditingAccountID || !description.empty())
 		{
 			return ormasDal.GetFilterForEntry(id, date, debitingAccountID, value, creditingAccountID, description);
+		}
+		return "";
+	}
+
+	std::string Entry::GenerateFilterForPeriod(DataLayer::OrmasDal& ormasDal, std::string fromDate, std::string toDate)
+	{
+		if (0 != id || !date.empty() || 0.0 != value || 0 != debitingAccountID || 0 != creditingAccountID || !description.empty())
+		{
+			return ormasDal.GetFilterForEntryForPeriod(id, date, debitingAccountID, value, creditingAccountID, description, fromDate, toDate);
 		}
 		return "";
 	}

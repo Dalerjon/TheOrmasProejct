@@ -8,19 +8,20 @@ namespace BusinessLayer
 	{
 	protected:
 		int id = 0;
-		int ProductionConsumeRawID = 0;
+		int productionConsumeRawID = 0;
 		int productID = 0;
 		double count = 0;
 		double sum = 0;
 		int statusID = 0;
 		int currencyID = 0;
 	public:
-		ProductionConsumeRawList(int clID, int crID, int pID, double clCount, double clSum, int sID, int cID) :id(clID), ProductionConsumeRawID(crID),
+		ProductionConsumeRawList(int clID, int crID, int pID, double clCount, double clSum, int sID, int cID) :id(clID), productionConsumeRawID(crID),
 			productID(pID),	count(clCount), sum(clSum), statusID(sID), currencyID(cID){};
 		ProductionConsumeRawList(DataLayer::productionConsumeRawListCollection);
 		ProductionConsumeRawList(){};
 		~ProductionConsumeRawList(){};
 
+		int stockEmployeeID = 0;
 		//ProductionConsumeRawList class Accessors
 		int GetID();
 		int GetProductionConsumeRawID();
@@ -58,6 +59,7 @@ namespace BusinessLayer
 		bool IsDuplicate(DataLayer::OrmasDal& ormasDal, int crID, int pID, double clCount, double clSum,
 			int cID, std::string& errorMessage);
 		bool IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string& errorMessage);
+		double CalculateMiddleSum(DataLayer::OrmasDal& ormasDal, int pcrID, int pID, std::string& errorMessage);
 	};
 }
 #endif

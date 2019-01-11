@@ -21,6 +21,7 @@ namespace BusinessLayer
 		ReceiptRawList(){};
 		~ReceiptRawList(){};
 
+		int stockEmployeeID = 0 ;
 		//ReceiptRawList class Accessors
 		int GetID();
 		int GetReceiptRawID();

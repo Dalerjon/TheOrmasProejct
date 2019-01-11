@@ -537,6 +537,15 @@ void CreateWOffDlg::OpenCltDlg()
 
 void CreateWOffDlg::OpenEmpDlg()
 {
+	if (prodCountEdit->text().toInt() > 0)
+	{
+		QString message = tr("Cannot change employee!");
+		mainForm->statusBar()->showMessage(message);
+		QMessageBox::information(NULL, QString(tr("Warning")),
+			QString(tr("Cannot change production employee after adding product!")),
+			QString(tr("Ok")));
+		return;
+	}
 	this->hide();
 	this->setModal(false);
 	this->show();
@@ -659,6 +668,15 @@ void CreateWOffDlg::OpenStsDlg()
 
 void CreateWOffDlg::OpenWOffListDlg()
 {
+	if (employeeEdit->text().toInt() == 0 || employeeEdit->text().toInt() < 0)
+	{
+		QString message = tr("Enter stock employee before!");
+		mainForm->statusBar()->showMessage(message);
+		QMessageBox::information(NULL, QString(tr("Warning")),
+			QString(tr("Enter stock employee before!")),
+			QString(tr("Ok")));
+		return;
+	}
 	this->hide();
 	this->setModal(false);
 	this->show();
@@ -736,4 +754,5 @@ void CreateWOffDlg::TextEditChanged()
 	{
 		sumEdit->setText(sumEdit->text().replace("..", "."));
 	}
+	
 }

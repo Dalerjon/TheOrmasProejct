@@ -20,6 +20,8 @@ void LoginForm::CreateConnections()
 
 void LoginForm::CheckCredentials()
 {
+	if (!oBL->IsConnected())
+		Close();
 	std::string errorMessage = "";
 	if (userEdit->text().isEmpty() && passwordEdit->text().isEmpty())
 	{

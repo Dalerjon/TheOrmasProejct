@@ -11,6 +11,7 @@ CreateRtrnListDlg::CreateRtrnListDlg(BusinessLayer::OrmasBL *ormasBL, bool updat
 	parentForm = parent;
 	DataForm *dataFormParent = (DataForm *)this->parentForm;
 	mainForm = (MainForm *)dataFormParent->GetParent();
+	returnID = ((DataForm*)parent)->returnID;
 	vDouble = new QDoubleValidator(0.00, 1000000000.00, 3, this);
 	vInt = new QIntValidator(0, 1000000000, this);
 	productEdit->setValidator(vInt);
@@ -212,7 +213,6 @@ void CreateRtrnListDlg::AddProductToList()
 		SetReturnListParams(returnID, productEdit->text().toInt(),
 			countEdit->text().toDouble(), (countEdit->text().toDouble() * product->GetPrice()),
 			statusVector.at(0).GetID(), product->GetCurrencyID());
-
 		if (dialogBL->CreateReturnList(returnList, errorMessage))
 		{
 			if (parentDataForm != nullptr)
@@ -285,7 +285,8 @@ void CreateRtrnListDlg::EditProductInList()
 				delete product;
 				return;
 			}
-			if (countEdit->text().toDouble() != returnList->GetCount())
+			if (countEdit->text().toDouble() != returnList->GetCount() ||
+				productEdit->text().toInt() != returnList->GetProductID())
 			{
 				sumEdit->setText(QString::number(countEdit->text().toDouble() * product->GetPrice()));
 			}

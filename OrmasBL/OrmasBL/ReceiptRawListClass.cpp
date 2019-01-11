@@ -1,5 +1,10 @@
 #include "stdafx.h"
 #include "ReceiptRawListClass.h"
+#include "ProductClass.h"
+#include "EntryClass.h"
+#include "CompanyAccountRelationClass.h"
+#include "CompanyClass.h"
+
 
 namespace BusinessLayer
 {

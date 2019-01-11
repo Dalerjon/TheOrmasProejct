@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "ConsumeProductListClass.h"
 
+
 namespace BusinessLayer
 {
 	ConsumeProductList::ConsumeProductList(DataLayer::consumeProductListCollection cListCollection)

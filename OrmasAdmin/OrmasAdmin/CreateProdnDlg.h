@@ -25,6 +25,7 @@ private:
 	BusinessLayer::Production *production = new BusinessLayer::Production();
 	void SetProductionParams(QString, QString, QString, QString, int=0);
 	void FillEditElements(QString, QString, QString, QString);
+	void InitComboBox();
 	QWidget* parentForm;
 	MainForm* mainForm;
 };

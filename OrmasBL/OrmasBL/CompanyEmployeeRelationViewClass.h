@@ -7,6 +7,7 @@ namespace BusinessLayer{
 	class CompanyEmployeeRelationView : public CompanyEmployeeRelation
 	{
 		std::string companyName = "";
+		std::string branchName = "";
 		std::string userName = "";
 		std::string userSurname = "";
 		std::string userPhone = "";
@@ -17,6 +18,7 @@ namespace BusinessLayer{
 
 		// CompanyEmployeeRelationView class CompanyEmployeeRelationors
 		std::string GetCompanyName();
+		std::string GetBranchName();
 		std::string GetUsername();
 		std::string GetUserSurname();
 		std::string GetUserPhone();

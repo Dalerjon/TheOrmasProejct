@@ -4,9 +4,8 @@
 #include "BalanceClass.h"
 #include "BalancePaymentRelationClass.h"
 #include "EntryClass.h"
-#include "CompanyAccountRelationClass.h"
-#include "CompanyEmployeeRelationClass.h"
-#include "CompanyClass.h"
+#include "CashboxEmployeeRelationClass.h"
+#include "CashboxClass.h"
 #include "StatusClass.h"
 #include <codecvt>
 
@@ -101,7 +100,7 @@ namespace BusinessLayer{
 		userID = uID;
 		currencyID = cID;
 		statusID = sID;
-		ormasDal.StartTransaction(errorMessage);
+		//ormasDal.StartTransaction(errorMessage);
 		if (0 != id && ormasDal.CreatePayment(id, date, value, userID, currencyID, statusID, errorMessage))
 		{
 			if (statusID == statusMap.find("EXECUTED")->second)
@@ -109,23 +108,23 @@ namespace BusinessLayer{
 
 				if (Replenishment(ormasDal, userID, currencyID, errorMessage))
 				{
-					ormasDal.CommitTransaction(errorMessage);
+					//ormasDal.CommitTransaction(errorMessage);
 					return true;
 				}
 				else
 				{
-					ormasDal.CancelTransaction(errorMessage);
+					//ormasDal.CancelTransaction(errorMessage);
 					return false;
 				}
 			}
-			ormasDal.CommitTransaction(errorMessage);
+			//ormasDal.CommitTransaction(errorMessage);
 			return true;
 		}
 		if (errorMessage.empty())
 		{
 			errorMessage = "Warning! ID is 0, or some unexpected error. Please contact with provider.";
 		}
-		ormasDal.CancelTransaction(errorMessage);
+		//ormasDal.CancelTransaction(errorMessage);
 		return false;
 	}
 	bool Payment::CreatePayment(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
@@ -136,7 +135,7 @@ namespace BusinessLayer{
 		if (0 == statusMap.size())
 			return false;
 		id = ormasDal.GenerateID();
-		ormasDal.StartTransaction(errorMessage);
+		//ormasDal.StartTransaction(errorMessage);
 		if (0 != id && ormasDal.CreatePayment(id, date, value, userID, currencyID, statusID, errorMessage))
 		{
 			if (statusID == statusMap.find("EXECUTED")->second)
@@ -144,23 +143,23 @@ namespace BusinessLayer{
 
 				if (Replenishment(ormasDal, userID, currencyID, errorMessage))
 				{
-					ormasDal.CommitTransaction(errorMessage);
+					//ormasDal.CommitTransaction(errorMessage);
 					return true;
 				}
 				else
 				{
-					ormasDal.CancelTransaction(errorMessage);
+					//ormasDal.CancelTransaction(errorMessage);
 					return false;
 				}
 			}
-			ormasDal.CommitTransaction(errorMessage);
+			//ormasDal.CommitTransaction(errorMessage);
 			return true;
 		}
 		if (errorMessage.empty())
 		{
 			errorMessage = "Warning! ID is 0, or some unexpected error. Please contact with provider.";
 		}
-		ormasDal.CancelTransaction(errorMessage);
+		//ormasDal.CancelTransaction(errorMessage);
 		return false;
 	}
 	bool Payment::DeletePayment(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
@@ -194,7 +193,7 @@ namespace BusinessLayer{
 		currencyID = cID;
 		statusID = sID;
 		currentValue = GetCurrentValue(ormasDal, id, errorMessage);
-		ormasDal.StartTransaction(errorMessage);
+		//ormasDal.StartTransaction(errorMessage);
 		if (0 != id && ormasDal.UpdatePayment(id, date, value, userID, currencyID, statusID, errorMessage))
 		{
 			if (statusID == statusMap.find("EXECUTED")->second)
@@ -202,23 +201,23 @@ namespace BusinessLayer{
 				if (Replenishment(ormasDal, userID, currencyID, currentValue, errorMessage))
 				{
 					currentValue = 0.0;
-					ormasDal.CommitTransaction(errorMessage);
+					//ormasDal.CommitTransaction(errorMessage);
 					return true;
 				}
 				else
 				{
-					ormasDal.CancelTransaction(errorMessage);
+					//ormasDal.CancelTransaction(errorMessage);
 					return false;
 				}
 			}
-			ormasDal.CommitTransaction(errorMessage);
+			//ormasDal.CommitTransaction(errorMessage);
 			return true;
 		}
 		if (errorMessage.empty())
 		{
 			errorMessage = "Warning! ID is 0, or some unexpected error. Please contact with provider.";
 		}
-		ormasDal.CancelTransaction(errorMessage);
+		//ormasDal.CancelTransaction(errorMessage);
 		return false;
 	}
 	bool Payment::UpdatePayment(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
@@ -227,30 +226,30 @@ namespace BusinessLayer{
 		if (0 == statusMap.size())
 			return false;
 		currentValue = GetCurrentValue(ormasDal, id, errorMessage);
-		ormasDal.StartTransaction(errorMessage);
+		//ormasDal.StartTransaction(errorMessage);
 		if (0 != id && ormasDal.UpdatePayment(id, date, value, userID, currencyID, statusID, errorMessage))
 		{
 			if (statusID == statusMap.find("EXECUTED")->second)
 			{
 				if (Replenishment(ormasDal, userID, currencyID, errorMessage))
 				{
-					ormasDal.CommitTransaction(errorMessage);
+					//ormasDal.CommitTransaction(errorMessage);
 					return true;
 				}
 				else
 				{
-					ormasDal.CancelTransaction(errorMessage);
+					//ormasDal.CancelTransaction(errorMessage);
 					return false;
 				}
 			}
-			ormasDal.CommitTransaction(errorMessage);
+			//ormasDal.CommitTransaction(errorMessage);
 			return true;
 		}
 		if (errorMessage.empty())
 		{
 			errorMessage = "Warning! ID is 0, or some unexpected error. Please contact with provider.";
 		}
-		ormasDal.CancelTransaction(errorMessage);
+		//ormasDal.CancelTransaction(errorMessage);
 		return false;
 	}
 
@@ -347,16 +346,25 @@ namespace BusinessLayer{
 
 	bool Payment::Replenishment(DataLayer::OrmasDal& ormasDal, int uID, int cID, std::string& errorMessage)
 	{
-		CompanyAccountRelation cAccRel;
-		CompanyEmployeeRelation cEmpRel;
+		CashboxEmployeeRelation cashEmpRel;
+		if (!cashEmpRel.GetCashboxByEmployeeID(ormasDal, loggedUserID, errorMessage))
+		{
+			errorMessage = "Access denied! You haven't rights for doing operations with cashbox!";
+			return false;
+		}
+
 		Balance balance;
-		Company company;
+		Cashbox cashbox;
+		if (!cashbox.GetCashboxByID(ormasDal, cashEmpRel.GetCashboxID(), errorMessage))
+		{
+			errorMessage = "Access denied! You haven't rights for doing operations with cashbox!";
+			return false;
+		}
 		if (balance.GetBalanceByUserID(ormasDal, uID, errorMessage))
 		{
 			int credAccID = balance.GetSubaccountID();
-			int companyID = company.GetCompanyID(ormasDal, errorMessage);
-			int debAccID = cAccRel.GetAccountIDByCompanyID(ormasDal, companyID, "10110", errorMessage);
-			if (0 == debAccID || 0 == credAccID || 0 == companyID)
+			int debAccID = cashbox.GetSubaccountID();
+			if (0 == debAccID || 0 == credAccID)
 			{
 				return false;
 			}
@@ -374,16 +382,25 @@ namespace BusinessLayer{
 
 	bool Payment::Replenishment(DataLayer::OrmasDal& ormasDal, int uID, int cID, double previousValue, std::string& errorMessage)
 	{
-		CompanyAccountRelation cAccRel;
-		CompanyEmployeeRelation cEmpRel;
+		CashboxEmployeeRelation cashEmpRel;
+		if (!cashEmpRel.GetCashboxByEmployeeID(ormasDal, loggedUserID, errorMessage))
+		{
+			errorMessage = "Access denied! You haven't rights for doing operations with cashbox!";
+			return false;
+		}
+
 		Balance balance;
-		Company company;
+		Cashbox cashbox;
+		if (!cashbox.GetCashboxByID(ormasDal, cashEmpRel.GetCashboxID(), errorMessage))
+		{
+			errorMessage = "Access denied! You haven't rights for doing operations with cashbox!";
+			return false;
+		}
 		if (balance.GetBalanceByUserID(ormasDal, uID, errorMessage))
 		{
 			int credAccID = balance.GetSubaccountID();
-			int companyID = company.GetCompanyID(ormasDal, errorMessage);
-			int debAccID = cAccRel.GetAccountIDByCompanyID(ormasDal, companyID, "10110", errorMessage);
-			if (0 == debAccID || 0 == credAccID || 0 == companyID)
+			int debAccID = cashbox.GetSubaccountID();
+			if (0 == debAccID || 0 == credAccID)
 			{
 				return false;
 			}
@@ -405,16 +422,25 @@ namespace BusinessLayer{
 
 	bool Payment::CancelPayment(DataLayer::OrmasDal& ormasDal, int uID, int cID, std::string& errorMessage)
 	{
-		CompanyAccountRelation cAccRel;
-		CompanyEmployeeRelation cEmpRel;
+		CashboxEmployeeRelation cashEmpRel;
+		if (!cashEmpRel.GetCashboxByEmployeeID(ormasDal, loggedUserID, errorMessage))
+		{
+			errorMessage = "Access denied! You haven't rights for doing operations with cashbox!";
+			return false;
+		}
+		
 		Balance balance;
-		Company company;
+		Cashbox cashbox;
+		if (!cashbox.GetCashboxByID(ormasDal, cashEmpRel.GetCashboxID(), errorMessage))
+		{
+			errorMessage = "Access denied! You haven't rights for doing operations with cashbox!";
+			return false;
+		}
 		if (balance.GetBalanceByUserID(ormasDal, uID, errorMessage))
 		{
-			int credAccID = balance.GetSubaccountID();
-			int companyID = company.GetCompanyID(ormasDal, errorMessage);
-			int debAccID = cAccRel.GetAccountIDByCompanyID(ormasDal, companyID, "10110", errorMessage);
-			if (0 == debAccID || 0 == credAccID || 0 == companyID)
+			int debAccID = balance.GetSubaccountID();
+			int credAccID = cashbox.GetSubaccountID();
+			if (0 == debAccID || 0 == credAccID)
 			{
 				return false;
 			}

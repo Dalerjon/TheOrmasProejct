@@ -62,17 +62,19 @@ void CreateCERDlg::SetID(int ID, QString childName)
 }
 
 
-void CreateCERDlg::SetCompanyEmployeeParams(int ceCompenyID, int ceEmployeeID, int id)
+void CreateCERDlg::SetCompanyEmployeeParams(int ceCompenyID, int ceEmployeeID, int ceBranchID, int id)
 {
 	companyEmployee->SetCompanyID(ceCompenyID);
 	companyEmployee->SetEmployeeID(ceEmployeeID);
+	companyEmployee->SetBranchID(ceBranchID);
 	companyEmployee->SetID(id);
 }
 
-void CreateCERDlg::FillEditElements(int ceCompenyID, int ceEmployeeID)
+void CreateCERDlg::FillEditElements(int ceCompenyID, int ceEmployeeID, int ceBranchID)
 {
 	employeeEdit->setText(QString::number(ceEmployeeID));
 	companyCmb->setCurrentIndex(companyCmb->findData(QVariant(ceCompenyID)));
+	branchCmb->setCurrentIndex(branchCmb->findData(QVariant(ceBranchID)));
 	BusinessLayer::User user;
 	if (user.GetUserByID(dialogBL->GetOrmasDal(), ceEmployeeID, errorMessage))
 	{
@@ -87,11 +89,13 @@ bool CreateCERDlg::FillDlgElements(QTableView* aTable)
 	QModelIndex mIndex = aTable->selectionModel()->currentIndex();
 	if (mIndex.row() >= 0)
 	{
-		SetCompanyEmployeeParams(aTable->model()->data(aTable->model()->index(mIndex.row(), 5)).toInt(),
-			aTable->model()->data(aTable->model()->index(mIndex.row(), 6)).toInt(),
+		SetCompanyEmployeeParams(aTable->model()->data(aTable->model()->index(mIndex.row(), 6)).toInt(),
+			aTable->model()->data(aTable->model()->index(mIndex.row(), 7)).toInt(),
+			aTable->model()->data(aTable->model()->index(mIndex.row(), 8)).toInt(),
 			aTable->model()->data(aTable->model()->index(mIndex.row(), 0)).toInt());
-		FillEditElements(aTable->model()->data(aTable->model()->index(mIndex.row(), 5)).toInt(),
-			aTable->model()->data(aTable->model()->index(mIndex.row(), 6)).toInt());
+		FillEditElements(aTable->model()->data(aTable->model()->index(mIndex.row(), 6)).toInt(),
+			aTable->model()->data(aTable->model()->index(mIndex.row(), 7)).toInt(),
+			aTable->model()->data(aTable->model()->index(mIndex.row(), 8)).toInt());
 		return true;
 	}
 	else
@@ -106,7 +110,7 @@ void CreateCERDlg::CreateCompanyEmployee()
 	if (!companyCmb->currentText().isEmpty() && 0 != employeeEdit->text().toInt())
 	{
 		DataForm *parentDataForm = (DataForm*) parentForm;
-		SetCompanyEmployeeParams(companyCmb->currentData().toInt(), employeeEdit->text().toInt());
+		SetCompanyEmployeeParams(companyCmb->currentData().toInt(), employeeEdit->text().toInt(), branchCmb->currentData().toInt());
 		dialogBL->StartTransaction(errorMessage);
 		if (dialogBL->CreateCompanyEmployeeRelation(companyEmployee, errorMessage))
 		{
@@ -116,10 +120,11 @@ void CreateCERDlg::CreateCompanyEmployee()
 				{
 					BusinessLayer::Company *company = new BusinessLayer::Company();
 					BusinessLayer::Employee *employee = new BusinessLayer::Employee();
+					BusinessLayer::Branch *branch = new BusinessLayer::Branch();
 					if (!company->GetCompanyByID(dialogBL->GetOrmasDal(), companyEmployee->GetCompanyID(), errorMessage)
-						|| !employee->GetEmployeeByID(dialogBL->GetOrmasDal(), companyEmployee->GetEmployeeID(), errorMessage))
+						|| !employee->GetEmployeeByID(dialogBL->GetOrmasDal(), companyEmployee->GetEmployeeID(), errorMessage)
+						|| !branch->GetBranchByID(dialogBL->GetOrmasDal(), companyEmployee->GetBranchID(), errorMessage))
 					{
-						dialogBL->CancelTransaction(errorMessage);
 						dialogBL->CancelTransaction(errorMessage);
 						QMessageBox::information(NULL, QString(tr("Warning")),
 							QString(tr(errorMessage.c_str())),
@@ -128,21 +133,25 @@ void CreateCERDlg::CreateCompanyEmployee()
 						errorMessage.clear();
 						delete company;
 						delete employee;
+						delete branch;
 						return;
 					}
 					QList<QStandardItem*> companyEmployeeItem;
 					companyEmployeeItem << new QStandardItem(QString::number(companyEmployee->GetID()))
 						<< new QStandardItem(company->GetName().c_str())
+						<< new QStandardItem(branch->GetName().c_str())
 						<< new QStandardItem(employee->GetName().c_str())
 						<< new QStandardItem(employee->GetSurname().c_str())
 						<< new QStandardItem(employee->GetPhone().c_str())
 						<< new QStandardItem(QString::number(companyEmployee->GetCompanyID()))
-						<< new QStandardItem(QString::number(companyEmployee->GetEmployeeID()));
+						<< new QStandardItem(QString::number(companyEmployee->GetEmployeeID()))
+						<< new QStandardItem(QString::number(companyEmployee->GetBranchID()));
 					QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
 					itemModel->appendRow(companyEmployeeItem);
 					
 					delete company;
 					delete employee;
+					delete branch;
 				}
 			}
 			dialogBL->CommitTransaction(errorMessage);
@@ -187,10 +196,11 @@ void CreateCERDlg::EditCompanyEmployee()
 					{
 						BusinessLayer::Company *company = new BusinessLayer::Company();
 						BusinessLayer::Employee *employee = new BusinessLayer::Employee();
+						BusinessLayer::Branch *branch = new BusinessLayer::Branch();
 						if (!company->GetCompanyByID(dialogBL->GetOrmasDal(), companyEmployee->GetCompanyID(), errorMessage)
-							|| !employee->GetEmployeeByID(dialogBL->GetOrmasDal(), companyEmployee->GetEmployeeID(), errorMessage))
+							|| !employee->GetEmployeeByID(dialogBL->GetOrmasDal(), companyEmployee->GetEmployeeID(), errorMessage)
+							|| !branch->GetBranchByID(dialogBL->GetOrmasDal(), companyEmployee->GetBranchID(), errorMessage))
 						{
-							dialogBL->CancelTransaction(errorMessage);
 							dialogBL->CancelTransaction(errorMessage);
 							QMessageBox::information(NULL, QString(tr("Warning")),
 								QString(tr(errorMessage.c_str())),
@@ -199,20 +209,24 @@ void CreateCERDlg::EditCompanyEmployee()
 							errorMessage.clear();
 							delete company;
 							delete employee;
+							delete branch;
 							return;
 						}
 
 						QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
 						QModelIndex mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
 						itemModel->item(mIndex.row(), 1)->setText(company->GetName().c_str());
-						itemModel->item(mIndex.row(), 2)->setText(employee->GetName().c_str());
-						itemModel->item(mIndex.row(), 3)->setText(employee->GetSurname().c_str());
-						itemModel->item(mIndex.row(), 4)->setText(employee->GetPhone().c_str());
-						itemModel->item(mIndex.row(), 5)->setText(QString::number(companyEmployee->GetCompanyID()));
-						itemModel->item(mIndex.row(), 6)->setText(QString::number(companyEmployee->GetEmployeeID()));
+						itemModel->item(mIndex.row(), 2)->setText(branch->GetName().c_str());
+						itemModel->item(mIndex.row(), 3)->setText(employee->GetName().c_str());
+						itemModel->item(mIndex.row(), 4)->setText(employee->GetSurname().c_str());
+						itemModel->item(mIndex.row(), 5)->setText(employee->GetPhone().c_str());
+						itemModel->item(mIndex.row(), 6)->setText(QString::number(companyEmployee->GetCompanyID()));
+						itemModel->item(mIndex.row(), 7)->setText(QString::number(companyEmployee->GetEmployeeID()));
+						itemModel->item(mIndex.row(), 7)->setText(QString::number(companyEmployee->GetBranchID()));
 						emit itemModel->dataChanged(mIndex, mIndex);
 						delete company;
 						delete employee;
+						delete branch;
 					}
 				}
 				dialogBL->CommitTransaction(errorMessage);
@@ -235,7 +249,7 @@ void CreateCERDlg::EditCompanyEmployee()
 	else
 	{
 		QMessageBox::information(NULL, QString(tr("Warning")),
-			QString(tr("Please enter role and CompanyEmployee item!")),
+			QString(tr("Please enter employee and company item!")),
 			QString(tr("Ok")));
 	}
 	errorMessage.clear();
@@ -300,6 +314,14 @@ void CreateCERDlg::InitComboBox()
 		for (unsigned int i = 0; i < comVector.size(); i++)
 		{
 			companyCmb->addItem(comVector[i].GetName().c_str(), QVariant(comVector[i].GetID()));
+		}
+	}
+	std::vector<BusinessLayer::Branch> brVector = dialogBL->GetAllDataForClass<BusinessLayer::Branch>(errorMessage);
+	if (!brVector.empty())
+	{
+		for (unsigned int i = 0; i < brVector.size(); i++)
+		{
+			branchCmb->addItem(brVector[i].GetName().c_str(), QVariant(brVector[i].GetID()));
 		}
 	}
 }

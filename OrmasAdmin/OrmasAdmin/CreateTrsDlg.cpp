@@ -21,6 +21,18 @@ CreateTrsDlg::CreateTrsDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, QWi
 	sumEdit->setValidator(vDouble);
 	sumEdit->setMaxLength(17);
 	dialogBL->StartTransaction(errorMessage);
+
+	//hide employee, because it's not needed
+	empNamePh->setVisible(false);
+	empSurnamePh->setVisible(false);
+	empPhonePh->setVisible(false);
+	empNameLb->setVisible(false);
+	empSurnameLb->setVisible(false);
+	empPhoneLb->setVisible(false);
+	employeeBtn->setVisible(false);
+	employeeEdit->setVisible(false);
+	//
+	 
 	if (true == updateFlag)
 	{
 		QObject::connect(okBtn, &QPushButton::released, this, &CreateTrsDlg::EditTransport);

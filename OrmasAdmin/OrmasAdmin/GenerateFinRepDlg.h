@@ -22,5 +22,7 @@ private:
 	MainForm* mainForm;
 	std::string prevFromMonth;
 	std::string prevTillMonth;
+	void CalculatePrevMonth(std::string, std::string, std::string&, std::string&);
+
 };
 #endif

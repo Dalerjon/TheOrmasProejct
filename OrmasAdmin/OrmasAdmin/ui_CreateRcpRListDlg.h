@@ -31,54 +31,82 @@ class Ui_CreateRcpRList
 {
 public:
     QGridLayout *gridLayout;
-    QLabel *prodNameLb;
-    QLabel *volumeLb;
-    QLabel *measureLb;
-    QLabel *volumePh;
-    QLabel *prodNamePh;
-    QLabel *measurePh;
-    QWidget *editSectionWgt;
-    QGridLayout *gridLayout_3;
-    QComboBox *currencyCmb;
-    QLineEdit *receiptRawEdit;
-    QPushButton *receiptRawBtn;
-    QLabel *sumLb;
-    QLineEdit *sumEdit;
-    QLabel *currencyLb;
-    QSpacerItem *horizontalSpacer_2;
-    QSpacerItem *horizontalSpacer_3;
-    QSpacerItem *horizontalSpacer_4;
-    QWidget *statusWidget;
-    QHBoxLayout *horizontalLayout_3;
-    QPushButton *statusBtn;
-    QLineEdit *statusEdit;
-    QLabel *statusLb;
-    QLabel *statusPh;
     QHBoxLayout *horizontalLayout;
     QSpacerItem *horizontalSpacer;
     QPushButton *addBtn;
     QPushButton *cancelBtn;
     QLineEdit *productEdit;
     QLineEdit *countEdit;
-    QPushButton *productBtn;
     QLabel *countLb;
+    QLabel *volumeLb;
+    QLabel *measureLb;
+    QLabel *prodNamePh;
+    QLabel *volumePh;
+    QLabel *prodNameLb;
+    QLabel *measurePh;
+    QWidget *editSectionWgt;
+    QGridLayout *gridLayout_3;
+    QLabel *currencyLb;
+    QPushButton *receiptRawBtn;
+    QComboBox *currencyCmb;
+    QSpacerItem *horizontalSpacer_4;
+    QSpacerItem *horizontalSpacer_3;
+    QLineEdit *receiptRawEdit;
+    QWidget *statusWidget;
+    QHBoxLayout *horizontalLayout_3;
+    QPushButton *statusBtn;
+    QLineEdit *statusEdit;
+    QLabel *statusLb;
+    QLabel *statusPh;
+    QLabel *sumLb;
+    QLineEdit *sumEdit;
+    QPushButton *productBtn;
 
     void setupUi(QDialog *CreateRcpRList)
     {
         if (CreateRcpRList->objectName().isEmpty())
             CreateRcpRList->setObjectName(QStringLiteral("CreateRcpRList"));
-        CreateRcpRList->resize(636, 252);
+        CreateRcpRList->resize(660, 244);
         CreateRcpRList->setLocale(QLocale(QLocale::English, QLocale::UnitedStates));
         CreateRcpRList->setModal(false);
         gridLayout = new QGridLayout(CreateRcpRList);
         gridLayout->setObjectName(QStringLiteral("gridLayout"));
         gridLayout->setContentsMargins(11, 11, 11, 17);
-        prodNameLb = new QLabel(CreateRcpRList);
-        prodNameLb->setObjectName(QStringLiteral("prodNameLb"));
-        prodNameLb->setMinimumSize(QSize(70, 0));
-        prodNameLb->setMaximumSize(QSize(70, 16777215));
+        horizontalLayout = new QHBoxLayout();
+        horizontalLayout->setObjectName(QStringLiteral("horizontalLayout"));
+        horizontalSpacer = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
 
-        gridLayout->addWidget(prodNameLb, 1, 0, 1, 1);
+        horizontalLayout->addItem(horizontalSpacer);
+
+        addBtn = new QPushButton(CreateRcpRList);
+        addBtn->setObjectName(QStringLiteral("addBtn"));
+
+        horizontalLayout->addWidget(addBtn);
+
+        cancelBtn = new QPushButton(CreateRcpRList);
+        cancelBtn->setObjectName(QStringLiteral("cancelBtn"));
+
+        horizontalLayout->addWidget(cancelBtn);
+
+
+        gridLayout->addLayout(horizontalLayout, 4, 0, 1, 6);
+
+        productEdit = new QLineEdit(CreateRcpRList);
+        productEdit->setObjectName(QStringLiteral("productEdit"));
+        productEdit->setReadOnly(true);
+
+        gridLayout->addWidget(productEdit, 0, 3, 1, 1);
+
+        countEdit = new QLineEdit(CreateRcpRList);
+        countEdit->setObjectName(QStringLiteral("countEdit"));
+
+        gridLayout->addWidget(countEdit, 2, 3, 1, 1);
+
+        countLb = new QLabel(CreateRcpRList);
+        countLb->setObjectName(QStringLiteral("countLb"));
+        countLb->setMinimumSize(QSize(150, 0));
+
+        gridLayout->addWidget(countLb, 2, 0, 1, 2);
 
         volumeLb = new QLabel(CreateRcpRList);
         volumeLb->setObjectName(QStringLiteral("volumeLb"));
@@ -92,25 +120,32 @@ public:
 
         gridLayout->addWidget(measureLb, 1, 4, 1, 1);
 
-        volumePh = new QLabel(CreateRcpRList);
-        volumePh->setObjectName(QStringLiteral("volumePh"));
-        volumePh->setMinimumSize(QSize(100, 0));
+        prodNamePh = new QLabel(CreateRcpRList);
+        prodNamePh->setObjectName(QStringLiteral("prodNamePh"));
+        prodNamePh->setMinimumSize(QSize(150, 0));
         QFont font;
         font.setFamily(QStringLiteral("Times New Roman"));
         font.setPointSize(12);
         font.setBold(true);
         font.setItalic(true);
         font.setWeight(75);
+        prodNamePh->setFont(font);
+
+        gridLayout->addWidget(prodNamePh, 1, 1, 1, 1);
+
+        volumePh = new QLabel(CreateRcpRList);
+        volumePh->setObjectName(QStringLiteral("volumePh"));
+        volumePh->setMinimumSize(QSize(100, 0));
         volumePh->setFont(font);
 
         gridLayout->addWidget(volumePh, 1, 3, 1, 1);
 
-        prodNamePh = new QLabel(CreateRcpRList);
-        prodNamePh->setObjectName(QStringLiteral("prodNamePh"));
-        prodNamePh->setMinimumSize(QSize(100, 0));
-        prodNamePh->setFont(font);
+        prodNameLb = new QLabel(CreateRcpRList);
+        prodNameLb->setObjectName(QStringLiteral("prodNameLb"));
+        prodNameLb->setMinimumSize(QSize(70, 0));
+        prodNameLb->setMaximumSize(QSize(70, 16777215));
 
-        gridLayout->addWidget(prodNamePh, 1, 1, 1, 1);
+        gridLayout->addWidget(prodNameLb, 1, 0, 1, 1);
 
         measurePh = new QLabel(CreateRcpRList);
         measurePh->setObjectName(QStringLiteral("measurePh"));
@@ -124,18 +159,10 @@ public:
         gridLayout_3 = new QGridLayout(editSectionWgt);
         gridLayout_3->setObjectName(QStringLiteral("gridLayout_3"));
         gridLayout_3->setContentsMargins(0, 0, 0, 0);
-        currencyCmb = new QComboBox(editSectionWgt);
-        currencyCmb->setObjectName(QStringLiteral("currencyCmb"));
-        currencyCmb->setMaximumSize(QSize(150, 16777215));
+        currencyLb = new QLabel(editSectionWgt);
+        currencyLb->setObjectName(QStringLiteral("currencyLb"));
 
-        gridLayout_3->addWidget(currencyCmb, 3, 1, 1, 1);
-
-        receiptRawEdit = new QLineEdit(editSectionWgt);
-        receiptRawEdit->setObjectName(QStringLiteral("receiptRawEdit"));
-        receiptRawEdit->setMaximumSize(QSize(150, 16777215));
-        receiptRawEdit->setReadOnly(true);
-
-        gridLayout_3->addWidget(receiptRawEdit, 0, 1, 1, 1);
+        gridLayout_3->addWidget(currencyLb, 4, 0, 1, 1);
 
         receiptRawBtn = new QPushButton(editSectionWgt);
         receiptRawBtn->setObjectName(QStringLiteral("receiptRawBtn"));
@@ -144,34 +171,26 @@ public:
 
         gridLayout_3->addWidget(receiptRawBtn, 0, 0, 1, 1);
 
-        sumLb = new QLabel(editSectionWgt);
-        sumLb->setObjectName(QStringLiteral("sumLb"));
-        sumLb->setMinimumSize(QSize(150, 0));
+        currencyCmb = new QComboBox(editSectionWgt);
+        currencyCmb->setObjectName(QStringLiteral("currencyCmb"));
+        currencyCmb->setMaximumSize(QSize(150, 16777215));
 
-        gridLayout_3->addWidget(sumLb, 2, 0, 1, 1);
+        gridLayout_3->addWidget(currencyCmb, 4, 1, 1, 1);
 
-        sumEdit = new QLineEdit(editSectionWgt);
-        sumEdit->setObjectName(QStringLiteral("sumEdit"));
-        sumEdit->setMaximumSize(QSize(150, 16777215));
+        horizontalSpacer_4 = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
 
-        gridLayout_3->addWidget(sumEdit, 2, 1, 1, 1);
-
-        currencyLb = new QLabel(editSectionWgt);
-        currencyLb->setObjectName(QStringLiteral("currencyLb"));
-
-        gridLayout_3->addWidget(currencyLb, 3, 0, 1, 1);
-
-        horizontalSpacer_2 = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
-
-        gridLayout_3->addItem(horizontalSpacer_2, 2, 2, 1, 1);
+        gridLayout_3->addItem(horizontalSpacer_4, 4, 2, 1, 1);
 
         horizontalSpacer_3 = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
 
         gridLayout_3->addItem(horizontalSpacer_3, 0, 2, 1, 1);
 
-        horizontalSpacer_4 = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
+        receiptRawEdit = new QLineEdit(editSectionWgt);
+        receiptRawEdit->setObjectName(QStringLiteral("receiptRawEdit"));
+        receiptRawEdit->setMaximumSize(QSize(150, 16777215));
+        receiptRawEdit->setReadOnly(true);
 
-        gridLayout_3->addItem(horizontalSpacer_4, 3, 2, 1, 1);
+        gridLayout_3->addWidget(receiptRawEdit, 0, 1, 1, 1);
 
         statusWidget = new QWidget(editSectionWgt);
         statusWidget->setObjectName(QStringLiteral("statusWidget"));
@@ -212,54 +231,29 @@ public:
 
         gridLayout_3->addWidget(statusWidget, 1, 0, 1, 3);
 
+        sumLb = new QLabel(editSectionWgt);
+        sumLb->setObjectName(QStringLiteral("sumLb"));
+        sumLb->setMinimumSize(QSize(150, 0));
+
+        gridLayout_3->addWidget(sumLb, 2, 0, 1, 1);
+
+        sumEdit = new QLineEdit(editSectionWgt);
+        sumEdit->setObjectName(QStringLiteral("sumEdit"));
+        sumEdit->setMaximumSize(QSize(150, 16777215));
+
+        gridLayout_3->addWidget(sumEdit, 2, 1, 1, 1);
+
 
         gridLayout->addWidget(editSectionWgt, 3, 0, 1, 6);
-
-        horizontalLayout = new QHBoxLayout();
-        horizontalLayout->setObjectName(QStringLiteral("horizontalLayout"));
-        horizontalSpacer = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
-
-        horizontalLayout->addItem(horizontalSpacer);
-
-        addBtn = new QPushButton(CreateRcpRList);
-        addBtn->setObjectName(QStringLiteral("addBtn"));
-
-        horizontalLayout->addWidget(addBtn);
-
-        cancelBtn = new QPushButton(CreateRcpRList);
-        cancelBtn->setObjectName(QStringLiteral("cancelBtn"));
-
-        horizontalLayout->addWidget(cancelBtn);
-
-
-        gridLayout->addLayout(horizontalLayout, 4, 0, 1, 6);
-
-        productEdit = new QLineEdit(CreateRcpRList);
-        productEdit->setObjectName(QStringLiteral("productEdit"));
-        productEdit->setReadOnly(true);
-
-        gridLayout->addWidget(productEdit, 0, 3, 1, 1);
-
-        countEdit = new QLineEdit(CreateRcpRList);
-        countEdit->setObjectName(QStringLiteral("countEdit"));
-
-        gridLayout->addWidget(countEdit, 2, 3, 1, 1);
 
         productBtn = new QPushButton(CreateRcpRList);
         productBtn->setObjectName(QStringLiteral("productBtn"));
 
         gridLayout->addWidget(productBtn, 0, 0, 1, 2);
 
-        countLb = new QLabel(CreateRcpRList);
-        countLb->setObjectName(QStringLiteral("countLb"));
-        countLb->setMinimumSize(QSize(150, 0));
-
-        gridLayout->addWidget(countLb, 2, 0, 1, 2);
-
         QWidget::setTabOrder(productBtn, receiptRawBtn);
         QWidget::setTabOrder(receiptRawBtn, receiptRawEdit);
-        QWidget::setTabOrder(receiptRawEdit, sumEdit);
-        QWidget::setTabOrder(sumEdit, addBtn);
+        QWidget::setTabOrder(receiptRawEdit, addBtn);
         QWidget::setTabOrder(addBtn, cancelBtn);
 
         retranslateUi(CreateRcpRList);
@@ -270,29 +264,29 @@ public:
     void retranslateUi(QDialog *CreateRcpRList)
     {
         CreateRcpRList->setWindowTitle(QApplication::translate("CreateRcpRList", "Create/Update raw in receipt list", 0));
-        prodNameLb->setText(QApplication::translate("CreateRcpRList", "Product name:", 0));
-        volumeLb->setText(QApplication::translate("CreateRcpRList", "Volume:", 0));
-        measureLb->setText(QApplication::translate("CreateRcpRList", "Measure:", 0));
-        volumePh->setText(QString());
-        prodNamePh->setText(QString());
-        measurePh->setText(QString());
-        receiptRawEdit->setText(QString());
-        receiptRawBtn->setText(QApplication::translate("CreateRcpRList", "Select receipt raw", 0));
-        sumLb->setText(QApplication::translate("CreateRcpRList", "Sum:", 0));
-#ifndef QT_NO_TOOLTIP
-        sumEdit->setToolTip(QApplication::translate("CreateRcpRList", "<html><head/><body><p>For example: 300 (pedends on currency, in that case 300 USD)</p></body></html>", 0));
-#endif // QT_NO_TOOLTIP
-        currencyLb->setText(QApplication::translate("CreateRcpRList", "Select currency:", 0));
-        statusBtn->setText(QApplication::translate("CreateRcpRList", "Change status", 0));
-        statusLb->setText(QApplication::translate("CreateRcpRList", "Status name:", 0));
-        statusPh->setText(QString());
         addBtn->setText(QApplication::translate("CreateRcpRList", "Add", 0));
         cancelBtn->setText(QApplication::translate("CreateRcpRList", "Cancel", 0));
 #ifndef QT_NO_TOOLTIP
         countEdit->setToolTip(QApplication::translate("CreateRcpRList", "<html><head/><body><p>For example: 100</p></body></html>", 0));
 #endif // QT_NO_TOOLTIP
-        productBtn->setText(QApplication::translate("CreateRcpRList", "Select product", 0));
         countLb->setText(QApplication::translate("CreateRcpRList", "Count:", 0));
+        volumeLb->setText(QApplication::translate("CreateRcpRList", "Volume:", 0));
+        measureLb->setText(QApplication::translate("CreateRcpRList", "Measure:", 0));
+        prodNamePh->setText(QString());
+        volumePh->setText(QString());
+        prodNameLb->setText(QApplication::translate("CreateRcpRList", "Product name:", 0));
+        measurePh->setText(QString());
+        currencyLb->setText(QApplication::translate("CreateRcpRList", "Select currency:", 0));
+        receiptRawBtn->setText(QApplication::translate("CreateRcpRList", "Select stock transfer", 0));
+        receiptRawEdit->setText(QString());
+        statusBtn->setText(QApplication::translate("CreateRcpRList", "Change status", 0));
+        statusLb->setText(QApplication::translate("CreateRcpRList", "Status name:", 0));
+        statusPh->setText(QString());
+        sumLb->setText(QApplication::translate("CreateRcpRList", "Sum:", 0));
+#ifndef QT_NO_TOOLTIP
+        sumEdit->setToolTip(QApplication::translate("CreateRcpRList", "<html><head/><body><p>For example: 300 (pedends on currency, in that case 300 USD)</p></body></html>", 0));
+#endif // QT_NO_TOOLTIP
+        productBtn->setText(QApplication::translate("CreateRcpRList", "Select product", 0));
     } // retranslateUi
 
 };

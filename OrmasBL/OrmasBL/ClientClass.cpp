@@ -82,10 +82,10 @@ namespace BusinessLayer{
 					return true;
 				return false;
 			}
-			ormasDal.CancelTransaction(errorMessage);
+			//ormasDal.CancelTransaction(errorMessage);
 			return false;
 		}
-		ormasDal.CancelTransaction(errorMessage);
+		//ormasDal.CancelTransaction(errorMessage);
 		return false;
 	}
 	bool Client::CreateClient(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
@@ -104,15 +104,15 @@ namespace BusinessLayer{
 					return true;
 				return false;
 			}
-			ormasDal.CancelTransaction(errorMessage);
+			//ormasDal.CancelTransaction(errorMessage);
 			return false;
 		}
-		ormasDal.CancelTransaction(errorMessage);
+		//ormasDal.CancelTransaction(errorMessage);
 		return false;
 	}
 	bool Client::DeleteClient(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
-		ormasDal.StartTransaction(errorMessage);
+		//ormasDal.StartTransaction(errorMessage);
 		if (!errorMessage.empty())
 			return false;
 		if (ormasDal.DeleteClient(id, errorMessage))
@@ -124,7 +124,7 @@ namespace BusinessLayer{
 					return true;
 			}
 		}
-		ormasDal.CancelTransaction(errorMessage);
+		//ormasDal.CancelTransaction(errorMessage);
 		return false;
 	}
 	bool Client::UpdateClient(DataLayer::OrmasDal& ormasDal, std::string uEmail, std::string uName, std::string uSurname, std::string uPhone,
@@ -151,24 +151,24 @@ namespace BusinessLayer{
 		firmNumber = cFirmNumber;
 		locationID = lID;
 		userID = id;
-		ormasDal.StartTransaction(errorMessage);
+		//ormasDal.StartTransaction(errorMessage);
 		if (!errorMessage.empty())
 			return false;
 		if (0 != id && ormasDal.UpdateUser(id, email, name, surname, phone, address, roleID, password, activated, errorMessage))
 		{
 			if (ormasDal.UpdateClient(userID, firm, firmNumber, locationID, errorMessage))
 			{
-				ormasDal.CommitTransaction(errorMessage);
+				//ormasDal.CommitTransaction(errorMessage);
 				if (!errorMessage.empty())
 				{
 					return false;
 				}
 				return true;
 			}
-			ormasDal.CancelTransaction(errorMessage);
+			//ormasDal.CancelTransaction(errorMessage);
 			return false;
 		}
-		ormasDal.CancelTransaction(errorMessage);
+		//ormasDal.CancelTransaction(errorMessage);
 		return false;
 	}
 	bool Client::UpdateClient(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
@@ -179,7 +179,7 @@ namespace BusinessLayer{
 			if (!IsUnique(ormasDal, phone, errorMessage))
 				return false;
 		}
-		ormasDal.StartTransaction(errorMessage);
+		//ormasDal.StartTransaction(errorMessage);
 		userID = id;
 		if (!errorMessage.empty())
 			return false;
@@ -187,17 +187,17 @@ namespace BusinessLayer{
 		{
 			if (ormasDal.UpdateClient(userID, firm, firmNumber, locationID, errorMessage))
 			{
-				ormasDal.CommitTransaction(errorMessage);
+				//ormasDal.CommitTransaction(errorMessage);
 				if (!errorMessage.empty())
 				{
 					return false;
 				}
 				return true;
 			}
-			ormasDal.CancelTransaction(errorMessage);
+			//ormasDal.CancelTransaction(errorMessage);
 			return false;
 		}
-		ormasDal.CancelTransaction(errorMessage);
+		//ormasDal.CancelTransaction(errorMessage);
 		return false;
 	}
 	std::string Client::GenerateFilter(DataLayer::OrmasDal& ormasDal)

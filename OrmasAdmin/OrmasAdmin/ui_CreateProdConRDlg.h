@@ -357,7 +357,7 @@ public:
         execDateLb->setText(QApplication::translate("CreateProductionConsumeRaw", "Execution date:", 0));
         employeeBtn->setText(QApplication::translate("CreateProductionConsumeRaw", "Select employee", 0));
         dateLb->setText(QApplication::translate("CreateProductionConsumeRaw", "Production \321\201onsume raw date:", 0));
-        stockEmployeeBtn->setText(QApplication::translate("CreateProductionConsumeRaw", "Select stock employee", 0));
+        stockEmployeeBtn->setText(QApplication::translate("CreateProductionConsumeRaw", "Select production stock employee", 0));
         addProdBtn->setText(QApplication::translate("CreateProductionConsumeRaw", "Add products", 0));
         statusBtn->setText(QApplication::translate("CreateProductionConsumeRaw", "Change status", 0));
         statusLb->setText(QApplication::translate("CreateProductionConsumeRaw", "Status name:", 0));

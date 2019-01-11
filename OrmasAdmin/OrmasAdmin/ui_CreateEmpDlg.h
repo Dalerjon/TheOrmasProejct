@@ -32,6 +32,10 @@ class Ui_CreateEmployee
 {
 public:
     QGridLayout *gridLayout;
+    QPushButton *roleBtn;
+    QLabel *passworLb;
+    QLineEdit *surnameEdit;
+    QLineEdit *roleEdit;
     QComboBox *activatedCmbBox;
     QLabel *addressLb;
     QLabel *nameLb;
@@ -40,15 +44,11 @@ public:
     QLineEdit *nameEdit;
     QLineEdit *positionEdit;
     QLabel *activatedLb;
-    QLabel *passworLb;
-    QLineEdit *surnameEdit;
     QLabel *positionNamePh;
     QLabel *positionNameLb;
     QLabel *hireLb;
     QLabel *roleNameLb;
     QDateEdit *birthDateEdit;
-    QPushButton *roleBtn;
-    QLineEdit *roleEdit;
     QLabel *birthLb;
     QDateEdit *hireDateEdit;
     QLineEdit *emailEdit;
@@ -71,7 +71,7 @@ public:
     {
         if (CreateEmployee->objectName().isEmpty())
             CreateEmployee->setObjectName(QStringLiteral("CreateEmployee"));
-        CreateEmployee->resize(381, 448);
+        CreateEmployee->resize(381, 440);
         QSizePolicy sizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
         sizePolicy.setHorizontalStretch(0);
         sizePolicy.setVerticalStretch(0);
@@ -82,6 +82,28 @@ public:
         gridLayout = new QGridLayout(CreateEmployee);
         gridLayout->setObjectName(QStringLiteral("gridLayout"));
         gridLayout->setContentsMargins(11, 11, 11, 11);
+        roleBtn = new QPushButton(CreateEmployee);
+        roleBtn->setObjectName(QStringLiteral("roleBtn"));
+
+        gridLayout->addWidget(roleBtn, 9, 0, 1, 1);
+
+        passworLb = new QLabel(CreateEmployee);
+        passworLb->setObjectName(QStringLiteral("passworLb"));
+
+        gridLayout->addWidget(passworLb, 7, 0, 1, 1);
+
+        surnameEdit = new QLineEdit(CreateEmployee);
+        surnameEdit->setObjectName(QStringLiteral("surnameEdit"));
+
+        gridLayout->addWidget(surnameEdit, 1, 1, 1, 1);
+
+        roleEdit = new QLineEdit(CreateEmployee);
+        roleEdit->setObjectName(QStringLiteral("roleEdit"));
+        roleEdit->setInputMethodHints(Qt::ImhDigitsOnly|Qt::ImhPreferNumbers);
+        roleEdit->setReadOnly(true);
+
+        gridLayout->addWidget(roleEdit, 9, 1, 1, 1);
+
         activatedCmbBox = new QComboBox(CreateEmployee);
         activatedCmbBox->setObjectName(QStringLiteral("activatedCmbBox"));
 
@@ -126,16 +148,6 @@ public:
 
         gridLayout->addWidget(activatedLb, 8, 0, 1, 1);
 
-        passworLb = new QLabel(CreateEmployee);
-        passworLb->setObjectName(QStringLiteral("passworLb"));
-
-        gridLayout->addWidget(passworLb, 7, 0, 1, 1);
-
-        surnameEdit = new QLineEdit(CreateEmployee);
-        surnameEdit->setObjectName(QStringLiteral("surnameEdit"));
-
-        gridLayout->addWidget(surnameEdit, 1, 1, 1, 1);
-
         positionNamePh = new QLabel(CreateEmployee);
         positionNamePh->setObjectName(QStringLiteral("positionNamePh"));
         QFont font;
@@ -167,18 +179,6 @@ public:
         birthDateEdit->setObjectName(QStringLiteral("birthDateEdit"));
 
         gridLayout->addWidget(birthDateEdit, 5, 1, 1, 1);
-
-        roleBtn = new QPushButton(CreateEmployee);
-        roleBtn->setObjectName(QStringLiteral("roleBtn"));
-
-        gridLayout->addWidget(roleBtn, 9, 0, 1, 1);
-
-        roleEdit = new QLineEdit(CreateEmployee);
-        roleEdit->setObjectName(QStringLiteral("roleEdit"));
-        roleEdit->setInputMethodHints(Qt::ImhDigitsOnly|Qt::ImhPreferNumbers);
-        roleEdit->setReadOnly(true);
-
-        gridLayout->addWidget(roleEdit, 9, 1, 1, 1);
 
         birthLb = new QLabel(CreateEmployee);
         birthLb->setObjectName(QStringLiteral("birthLb"));
@@ -289,6 +289,11 @@ public:
     void retranslateUi(QDialog *CreateEmployee)
     {
         CreateEmployee->setWindowTitle(QApplication::translate("CreateEmployee", "Create/Update employee", 0));
+        roleBtn->setText(QApplication::translate("CreateEmployee", "Select role", 0));
+        passworLb->setText(QApplication::translate("CreateEmployee", "Password:", 0));
+#ifndef QT_NO_TOOLTIP
+        surnameEdit->setToolTip(QApplication::translate("CreateEmployee", "<html><head/><body><p>For example: Doe</p></body></html>", 0));
+#endif // QT_NO_TOOLTIP
         addressLb->setText(QApplication::translate("CreateEmployee", "Address:", 0));
         nameLb->setText(QApplication::translate("CreateEmployee", "Name:", 0));
         positionBtn->setText(QApplication::translate("CreateEmployee", "Select position", 0));
@@ -299,10 +304,6 @@ public:
         nameEdit->setToolTip(QApplication::translate("CreateEmployee", "<html><head/><body><p>For expamle: John</p></body></html>", 0));
 #endif // QT_NO_TOOLTIP
         activatedLb->setText(QApplication::translate("CreateEmployee", "Activated:", 0));
-        passworLb->setText(QApplication::translate("CreateEmployee", "Password:", 0));
-#ifndef QT_NO_TOOLTIP
-        surnameEdit->setToolTip(QApplication::translate("CreateEmployee", "<html><head/><body><p>For example: Doe</p></body></html>", 0));
-#endif // QT_NO_TOOLTIP
         positionNamePh->setText(QString());
         positionNameLb->setText(QApplication::translate("CreateEmployee", "Position name:", 0));
         hireLb->setText(QApplication::translate("CreateEmployee", "Hire date:", 0));
@@ -310,7 +311,6 @@ public:
 #ifndef QT_NO_TOOLTIP
         birthDateEdit->setToolTip(QApplication::translate("CreateEmployee", "<html><head/><body><p>Enter your birth date:</p></body></html>", 0));
 #endif // QT_NO_TOOLTIP
-        roleBtn->setText(QApplication::translate("CreateEmployee", "Select role", 0));
         birthLb->setText(QApplication::translate("CreateEmployee", "Birth date:", 0));
 #ifndef QT_NO_TOOLTIP
         hireDateEdit->setToolTip(QApplication::translate("CreateEmployee", "<html><head/><body><p>Enter your hire date</p></body></html>", 0));

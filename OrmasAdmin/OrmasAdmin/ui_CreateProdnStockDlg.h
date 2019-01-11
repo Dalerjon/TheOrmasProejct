@@ -31,18 +31,9 @@ class Ui_CreateProdnStock
 {
 public:
     QGridLayout *gridLayout;
-    QLabel *volumeLb;
-    QLabel *measureLb;
-    QLabel *volumePh;
+    QLabel *measurePh;
     QLabel *prodNamePh;
     QLabel *prodNameLb;
-    QLabel *measurePh;
-    QHBoxLayout *horizontalLayout;
-    QSpacerItem *horizontalSpacer;
-    QPushButton *addBtn;
-    QPushButton *cancelBtn;
-    QLineEdit *countEdit;
-    QLineEdit *productEdit;
     QWidget *editSectionWgt;
     QGridLayout *gridLayout_3;
     QLabel *sumLb;
@@ -58,42 +49,41 @@ public:
     QLabel *statusPh;
     QSpacerItem *horizontalSpacer_3;
     QPushButton *productBtn;
+    QLabel *measureLb;
     QLabel *countLb;
+    QLabel *volumePh;
+    QLineEdit *productEdit;
+    QHBoxLayout *horizontalLayout;
+    QSpacerItem *horizontalSpacer;
+    QPushButton *addBtn;
+    QPushButton *cancelBtn;
+    QLineEdit *countEdit;
+    QLabel *volumeLb;
+    QLabel *warehouseLb;
+    QComboBox *warehouseCmb;
 
     void setupUi(QDialog *CreateProdnStock)
     {
         if (CreateProdnStock->objectName().isEmpty())
             CreateProdnStock->setObjectName(QStringLiteral("CreateProdnStock"));
-        CreateProdnStock->resize(636, 215);
+        CreateProdnStock->resize(636, 241);
         CreateProdnStock->setLocale(QLocale(QLocale::English, QLocale::UnitedStates));
         CreateProdnStock->setModal(false);
         gridLayout = new QGridLayout(CreateProdnStock);
         gridLayout->setObjectName(QStringLiteral("gridLayout"));
         gridLayout->setContentsMargins(11, 11, 11, 17);
-        volumeLb = new QLabel(CreateProdnStock);
-        volumeLb->setObjectName(QStringLiteral("volumeLb"));
-        volumeLb->setMinimumSize(QSize(70, 0));
-        volumeLb->setMaximumSize(QSize(70, 16777215));
-
-        gridLayout->addWidget(volumeLb, 1, 2, 1, 1);
-
-        measureLb = new QLabel(CreateProdnStock);
-        measureLb->setObjectName(QStringLiteral("measureLb"));
-
-        gridLayout->addWidget(measureLb, 1, 4, 1, 1);
-
-        volumePh = new QLabel(CreateProdnStock);
-        volumePh->setObjectName(QStringLiteral("volumePh"));
-        volumePh->setMinimumSize(QSize(100, 0));
+        measurePh = new QLabel(CreateProdnStock);
+        measurePh->setObjectName(QStringLiteral("measurePh"));
+        measurePh->setMinimumSize(QSize(100, 0));
         QFont font;
         font.setFamily(QStringLiteral("Times New Roman"));
         font.setPointSize(12);
         font.setBold(true);
         font.setItalic(true);
         font.setWeight(75);
-        volumePh->setFont(font);
+        measurePh->setFont(font);
 
-        gridLayout->addWidget(volumePh, 1, 3, 1, 1);
+        gridLayout->addWidget(measurePh, 1, 5, 1, 1);
 
         prodNamePh = new QLabel(CreateProdnStock);
         prodNamePh->setObjectName(QStringLiteral("prodNamePh"));
@@ -108,43 +98,6 @@ public:
         prodNameLb->setMaximumSize(QSize(70, 16777215));
 
         gridLayout->addWidget(prodNameLb, 1, 0, 1, 1);
-
-        measurePh = new QLabel(CreateProdnStock);
-        measurePh->setObjectName(QStringLiteral("measurePh"));
-        measurePh->setMinimumSize(QSize(100, 0));
-        measurePh->setFont(font);
-
-        gridLayout->addWidget(measurePh, 1, 5, 1, 1);
-
-        horizontalLayout = new QHBoxLayout();
-        horizontalLayout->setObjectName(QStringLiteral("horizontalLayout"));
-        horizontalSpacer = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
-
-        horizontalLayout->addItem(horizontalSpacer);
-
-        addBtn = new QPushButton(CreateProdnStock);
-        addBtn->setObjectName(QStringLiteral("addBtn"));
-
-        horizontalLayout->addWidget(addBtn);
-
-        cancelBtn = new QPushButton(CreateProdnStock);
-        cancelBtn->setObjectName(QStringLiteral("cancelBtn"));
-
-        horizontalLayout->addWidget(cancelBtn);
-
-
-        gridLayout->addLayout(horizontalLayout, 4, 0, 1, 6);
-
-        countEdit = new QLineEdit(CreateProdnStock);
-        countEdit->setObjectName(QStringLiteral("countEdit"));
-
-        gridLayout->addWidget(countEdit, 2, 3, 1, 1);
-
-        productEdit = new QLineEdit(CreateProdnStock);
-        productEdit->setObjectName(QStringLiteral("productEdit"));
-        productEdit->setReadOnly(true);
-
-        gridLayout->addWidget(productEdit, 0, 3, 1, 1);
 
         editSectionWgt = new QWidget(CreateProdnStock);
         editSectionWgt->setObjectName(QStringLiteral("editSectionWgt"));
@@ -222,18 +175,77 @@ public:
         gridLayout_3->addItem(horizontalSpacer_3, 4, 2, 1, 1);
 
 
-        gridLayout->addWidget(editSectionWgt, 3, 0, 1, 6);
+        gridLayout->addWidget(editSectionWgt, 5, 0, 1, 6);
 
         productBtn = new QPushButton(CreateProdnStock);
         productBtn->setObjectName(QStringLiteral("productBtn"));
 
         gridLayout->addWidget(productBtn, 0, 0, 1, 2);
 
+        measureLb = new QLabel(CreateProdnStock);
+        measureLb->setObjectName(QStringLiteral("measureLb"));
+
+        gridLayout->addWidget(measureLb, 1, 4, 1, 1);
+
         countLb = new QLabel(CreateProdnStock);
         countLb->setObjectName(QStringLiteral("countLb"));
         countLb->setMinimumSize(QSize(150, 0));
 
         gridLayout->addWidget(countLb, 2, 0, 1, 2);
+
+        volumePh = new QLabel(CreateProdnStock);
+        volumePh->setObjectName(QStringLiteral("volumePh"));
+        volumePh->setMinimumSize(QSize(100, 0));
+        volumePh->setFont(font);
+
+        gridLayout->addWidget(volumePh, 1, 3, 1, 1);
+
+        productEdit = new QLineEdit(CreateProdnStock);
+        productEdit->setObjectName(QStringLiteral("productEdit"));
+        productEdit->setReadOnly(true);
+
+        gridLayout->addWidget(productEdit, 0, 3, 1, 1);
+
+        horizontalLayout = new QHBoxLayout();
+        horizontalLayout->setObjectName(QStringLiteral("horizontalLayout"));
+        horizontalSpacer = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
+
+        horizontalLayout->addItem(horizontalSpacer);
+
+        addBtn = new QPushButton(CreateProdnStock);
+        addBtn->setObjectName(QStringLiteral("addBtn"));
+
+        horizontalLayout->addWidget(addBtn);
+
+        cancelBtn = new QPushButton(CreateProdnStock);
+        cancelBtn->setObjectName(QStringLiteral("cancelBtn"));
+
+        horizontalLayout->addWidget(cancelBtn);
+
+
+        gridLayout->addLayout(horizontalLayout, 6, 0, 1, 6);
+
+        countEdit = new QLineEdit(CreateProdnStock);
+        countEdit->setObjectName(QStringLiteral("countEdit"));
+
+        gridLayout->addWidget(countEdit, 2, 3, 1, 1);
+
+        volumeLb = new QLabel(CreateProdnStock);
+        volumeLb->setObjectName(QStringLiteral("volumeLb"));
+        volumeLb->setMinimumSize(QSize(70, 0));
+        volumeLb->setMaximumSize(QSize(70, 16777215));
+
+        gridLayout->addWidget(volumeLb, 1, 2, 1, 1);
+
+        warehouseLb = new QLabel(CreateProdnStock);
+        warehouseLb->setObjectName(QStringLiteral("warehouseLb"));
+
+        gridLayout->addWidget(warehouseLb, 3, 0, 1, 1);
+
+        warehouseCmb = new QComboBox(CreateProdnStock);
+        warehouseCmb->setObjectName(QStringLiteral("warehouseCmb"));
+
+        gridLayout->addWidget(warehouseCmb, 3, 3, 1, 1);
 
         QWidget::setTabOrder(productBtn, sumEdit);
         QWidget::setTabOrder(sumEdit, addBtn);
@@ -247,17 +259,9 @@ public:
     void retranslateUi(QDialog *CreateProdnStock)
     {
         CreateProdnStock->setWindowTitle(QApplication::translate("CreateProdnStock", "Create/Update product in production stock", 0));
-        volumeLb->setText(QApplication::translate("CreateProdnStock", "Volume:", 0));
-        measureLb->setText(QApplication::translate("CreateProdnStock", "Measure:", 0));
-        volumePh->setText(QString());
+        measurePh->setText(QString());
         prodNamePh->setText(QString());
         prodNameLb->setText(QApplication::translate("CreateProdnStock", "Product name:", 0));
-        measurePh->setText(QString());
-        addBtn->setText(QApplication::translate("CreateProdnStock", "Add", 0));
-        cancelBtn->setText(QApplication::translate("CreateProdnStock", "Cancel", 0));
-#ifndef QT_NO_TOOLTIP
-        countEdit->setToolTip(QApplication::translate("CreateProdnStock", "<html><head/><body><p>For example: 100</p></body></html>", 0));
-#endif // QT_NO_TOOLTIP
         sumLb->setText(QApplication::translate("CreateProdnStock", "Sum:", 0));
 #ifndef QT_NO_TOOLTIP
         sumEdit->setToolTip(QApplication::translate("CreateProdnStock", "<html><head/><body><p>For example: 300 (pedends on currency, in that case 300 USD)</p></body></html>", 0));
@@ -267,7 +271,16 @@ public:
         statusLb->setText(QApplication::translate("CreateProdnStock", "Status name:", 0));
         statusPh->setText(QString());
         productBtn->setText(QApplication::translate("CreateProdnStock", "Select product", 0));
+        measureLb->setText(QApplication::translate("CreateProdnStock", "Measure:", 0));
         countLb->setText(QApplication::translate("CreateProdnStock", "Count:", 0));
+        volumePh->setText(QString());
+        addBtn->setText(QApplication::translate("CreateProdnStock", "Add", 0));
+        cancelBtn->setText(QApplication::translate("CreateProdnStock", "Cancel", 0));
+#ifndef QT_NO_TOOLTIP
+        countEdit->setToolTip(QApplication::translate("CreateProdnStock", "<html><head/><body><p>For example: 100</p></body></html>", 0));
+#endif // QT_NO_TOOLTIP
+        volumeLb->setText(QApplication::translate("CreateProdnStock", "Volume:", 0));
+        warehouseLb->setText(QApplication::translate("CreateProdnStock", "Select warehouse:", 0));
     } // retranslateUi
 
 };

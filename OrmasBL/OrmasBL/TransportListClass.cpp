@@ -1,5 +1,7 @@
 #include "stdafx.h"
 #include "TransportListClass.h"
+#include "EntryClass.h"
+#include <codecvt>
 
 namespace BusinessLayer
 {
@@ -182,7 +184,7 @@ namespace BusinessLayer
 
 	bool TransportList::GetTransportListByTransportAndProductID(DataLayer::OrmasDal& ormasDal, int tID, int pID, std::string& errorMessage)
 	{
-		id = tID;
+		transportID = tID;
 		productID = pID;
 		std::string filter = GenerateFilter(ormasDal);
 		std::vector<DataLayer::transportListViewCollection> transportListVector = ormasDal.GetTransportList(errorMessage, filter);
@@ -264,6 +266,50 @@ namespace BusinessLayer
 			return false;
 		}
 		errorMessage = "Transport list with this parameters are already exist! Please avoid the duplication!";
+		return true;
+	}
+
+	std::string TransportList::wstring_to_utf8(const std::wstring& str)
+	{
+		std::wstring_convert<std::codecvt_utf8<wchar_t>> myconv;
+		return myconv.to_bytes(str);
+	}
+
+	bool TransportList::CreateEntry(DataLayer::OrmasDal& ormasDal, int debAccID, double currentSum, int credAccID, std::string& errorMessage)
+	{
+		Entry entry;
+		entry.SetDate(ormasDal.GetSystemDateTime());
+		entry.SetDebitingAccountID(debAccID);
+		entry.SetValue(currentSum);
+		entry.SetCreditingAccountID(credAccID);
+		entry.SetDescription(wstring_to_utf8(L"Коррекция себестоимости товара в транспорте"));
+		if (!entry.CreateEntry(ormasDal, errorMessage))
+		{
+			return false;
+		}
+		return true;
+	}
+	bool TransportList::CreateEntry(DataLayer::OrmasDal& ormasDal, int debAccID, double currentSum, int credAccID, double previousSum, std::string& errorMessage)
+	{
+		Entry entry;
+		entry.SetDate(ormasDal.GetSystemDateTime());
+		entry.SetDebitingAccountID(credAccID);
+		entry.SetValue(previousSum);
+		entry.SetCreditingAccountID(debAccID);
+		entry.SetDescription(wstring_to_utf8(L"Коррекция себестоимости товара в транспорте"));
+		if (!entry.CreateEntry(ormasDal, errorMessage, true))
+		{
+			return false;
+		}
+		entry.Clear();
+		entry.SetDebitingAccountID(debAccID);
+		entry.SetValue(currentSum);
+		entry.SetCreditingAccountID(credAccID);
+		entry.SetDescription(wstring_to_utf8(L"Коррекция себестоимости товара в транспорте"));
+		if (!entry.CreateEntry(ormasDal, errorMessage))
+		{
+			return false;
+		}
 		return true;
 	}
 }

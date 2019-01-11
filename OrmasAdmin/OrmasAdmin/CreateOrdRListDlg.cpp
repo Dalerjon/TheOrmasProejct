@@ -13,6 +13,7 @@ CreateOrdRListDlg::CreateOrdRListDlg(BusinessLayer::OrmasBL *ormasBL, bool updat
 	DataForm *dataFormParent = (DataForm *)this->parentForm;
 	mainForm = (MainForm *)dataFormParent->GetParent();
 	orderRawID = ((DataForm*)parent)->orderRawID;
+	employeeID = ((DataForm*)parent)->employeeID;
 	vDouble = new QDoubleValidator(0.00, 1000000000.00, 3, this);
 	vInt = new QIntValidator(0, 1000000000, this);
 	productEdit->setValidator(vInt);
@@ -78,6 +79,7 @@ void CreateOrdRListDlg::SetID(int ID, QString childName)
 					{
 						measurePh->setText(measure.GetName().c_str());
 					}
+					oldPriceLb->setText(QString::number(product.GetPrice()));
 				}
 			}
 			if (childName == QString("orderRawForm"))
@@ -165,6 +167,14 @@ void CreateOrdRListDlg::AddProductToList()
 	errorMessage.clear();
 	if (0 != productEdit->text().toInt() || 0 != countEdit->text().toDouble())
 	{
+		if (!BlockWrongPrice(newPriceLb->text(), oldPriceLb->text()))
+		{
+			QMessageBox::information(NULL, QString(tr("Warning")),
+				QString(tr("A new price of product is too height or low, please check count and sum fields! Or contact with accountant!")),
+				QString(tr("Ok")));
+			errorMessage.clear();
+			return;
+		}
 		DataForm *parentDataForm = (DataForm*) parentForm;
 		BusinessLayer::Status *status = new BusinessLayer::Status();
 		status->SetName("ORDERED");
@@ -216,11 +226,20 @@ void CreateOrdRListDlg::AddProductToList()
 				return;
 			}
 		}
-	
-		SetOrdRListParams(orderRawID, productEdit->text().toInt(),
-			countEdit->text().toDouble(), (countEdit->text().toDouble() * product->GetPrice()),
-			statusVector.at(0).GetID(), product->GetCurrencyID());
-
+		
+		if (sumEdit->text().toDouble() == 0 || sumEdit->text().isEmpty())
+		{
+			SetOrdRListParams(orderRawID, productEdit->text().toInt(),
+				countEdit->text().toDouble(), (countEdit->text().toDouble() * product->GetPrice()),
+				statusVector.at(0).GetID(), product->GetCurrencyID());
+		}
+		else
+		{
+			SetOrdRListParams(orderRawID, productEdit->text().toInt(),
+				countEdit->text().toDouble(), sumEdit->text().toDouble(),
+				statusVector.at(0).GetID(), product->GetCurrencyID());
+		}
+		orderRawList->employeeID = employeeID;
 		if (dialogBL->CreateOrderRawList(orderRawList, errorMessage))
 		{
 			if (parentDataForm != nullptr)
@@ -283,6 +302,14 @@ void CreateOrdRListDlg::EditProductInList()
 			|| orderRawEdit->text().toInt() != orderRawList->GetOrderRawID() || sumEdit->text().toDouble() != orderRawList->GetSum()
 			|| statusEdit->text().toInt() != orderRawList->GetStatusID() || currencyCmb->currentData().toInt() != orderRawList->GetCurrencyID())
 		{
+			if (!BlockWrongPrice(newPriceLb->text(), oldPriceLb->text()))
+			{
+				QMessageBox::information(NULL, QString(tr("Warning")),
+					QString(tr("A new price of product is too height, please check count and sum fields! Or contact with accountant!")),
+					QString(tr("Ok")));
+				errorMessage.clear();
+				return;
+			}
 			BusinessLayer::Product *product = new BusinessLayer::Product();
 			if (!product->GetProductByID(dialogBL->GetOrmasDal(), productEdit->text().toInt(), errorMessage))
 			{
@@ -293,7 +320,8 @@ void CreateOrdRListDlg::EditProductInList()
 				delete product;
 				return;
 			}
-			if (countEdit->text().toDouble() != orderRawList->GetCount())
+			if (countEdit->text().toDouble() != orderRawList->GetCount() ||
+				productEdit->text().toInt() != orderRawList->GetProductID())
 			{
 				sumEdit->setText(QString::number(countEdit->text().toDouble() * product->GetPrice()));
 			}
@@ -301,6 +329,7 @@ void CreateOrdRListDlg::EditProductInList()
 			SetOrdRListParams(orderRawEdit->text().toInt(),
 				productEdit->text().toInt(), countEdit->text().toDouble(), sumEdit->text().toDouble(), statusEdit->text().toInt(),
 				orderRawList->GetCurrencyID(), orderRawList->GetID());
+			orderRawList->employeeID = employeeID;
 			if (dialogBL->UpdateOrderRawList(orderRawList, errorMessage))
 			{
 				if (parentDataForm != nullptr)
@@ -577,5 +606,20 @@ void CreateOrdRListDlg::TextEditChanged()
 	{
 		sumEdit->setText(sumEdit->text().replace("..", "."));
 	}
+	if (!countEdit->text().isEmpty() && !countEdit->text().isEmpty())
+		InspectPrice();
+}
+
+void CreateOrdRListDlg::InspectPrice()
+{
+	if (sumEdit->text().toDouble() > 0 && countEdit->text().toDouble() > 0)
+		newPriceLb->setText(QString::number(sumEdit->text().toDouble() / countEdit->text().toDouble(), 'f',3));
+}
+
+bool CreateOrdRListDlg::BlockWrongPrice(QString newPrice, QString oldPrice)
+{
+	if (newPrice.toDouble() >= oldPrice.toDouble()/1.25 && newPrice.toDouble() <= oldPrice.toDouble()*1.25)
+		return true;
+	return false;
 }
 

@@ -19,6 +19,7 @@ namespace BusinessLayer{
 		~Refund(){};
 
 		std::string errorMessage = "";
+		int loggedUserID = 0;
 		//Refund class Refundors
 		int GetID();
 		std::string GetDate();

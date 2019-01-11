@@ -288,7 +288,8 @@ void CreateTrsListDlg::EditProductInList()
 				delete product;
 				return;
 			}
-			if (countEdit->text().toDouble() != transportList->GetCount())
+			if (countEdit->text().toDouble() != transportList->GetCount() ||
+				productEdit->text().toInt() != transportList->GetProductID())
 			{
 				sumEdit->setText(QString::number(countEdit->text().toDouble() * product->GetPrice()));
 			}

@@ -1,12 +1,15 @@
 #include "stdafx.h"
 #include "ProductionConsumeRawListClass.h"
+#include "ProductionConsumeRawClass.h"
+#include "StockClass.h"
+#include "WarehouseEmployeeRelationClass.h"
 
 namespace BusinessLayer
 {
 	ProductionConsumeRawList::ProductionConsumeRawList(DataLayer::productionConsumeRawListCollection cListCollection)
 	{
 		id = std::get<0>(cListCollection);
-		ProductionConsumeRawID = std::get<1>(cListCollection);
+		productionConsumeRawID = std::get<1>(cListCollection);
 		productID = std::get<2>(cListCollection);
 		count = std::get<3>(cListCollection);
 		sum = std::get<4>(cListCollection);
@@ -21,7 +24,7 @@ namespace BusinessLayer
 
 	int ProductionConsumeRawList::GetProductionConsumeRawID()
 	{
-		return ProductionConsumeRawID;
+		return productionConsumeRawID;
 	}
 
 	int ProductionConsumeRawList::GetProductID()
@@ -55,7 +58,7 @@ namespace BusinessLayer
 	}
 	void ProductionConsumeRawList::SetProductionConsumeRawID(int cProductionConsumeRawID)
 	{
-		ProductionConsumeRawID = cProductionConsumeRawID;
+		productionConsumeRawID = cProductionConsumeRawID;
 	}
 	void ProductionConsumeRawList::SetProductID(int cProductID)
 	{
@@ -82,13 +85,17 @@ namespace BusinessLayer
 		int sID, int cID, std::string& errorMessage)
 	{
 		id = ormasDal.GenerateID();
-		ProductionConsumeRawID = crID;
+		productionConsumeRawID = crID;
 		productID = pID;
 		count = crlCount;
 		sum = crlSum;
 		statusID = sID;
 		currencyID = cID;
-		if (0 != id && ormasDal.CreateProductionConsumeRawList(id, ProductionConsumeRawID, productID, count, sum, statusID, currencyID, errorMessage))
+		double middlePrice = CalculateMiddleSum(ormasDal, stockEmployeeID, pID, errorMessage);
+		if (0 == middlePrice)
+			return false;
+		sum = crlCount * middlePrice;
+		if (0 != id && ormasDal.CreateProductionConsumeRawList(id, productionConsumeRawID, productID, count, sum, statusID, currencyID, errorMessage))
 		{
 			return true;
 		}
@@ -96,8 +103,12 @@ namespace BusinessLayer
 	}
 	bool ProductionConsumeRawList::CreateProductionConsumeRawList(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
+		double middlePrice = CalculateMiddleSum(ormasDal, stockEmployeeID, productID, errorMessage);
+		if (0 == middlePrice)
+			return false;
+		sum = count * middlePrice;
 		id = ormasDal.GenerateID();
-		if (0 != id && ormasDal.CreateProductionConsumeRawList(id, ProductionConsumeRawID, productID, count, sum, statusID, currencyID, errorMessage))
+		if (0 != id && ormasDal.CreateProductionConsumeRawList(id, productionConsumeRawID, productID, count, sum, statusID, currencyID, errorMessage))
 		{
 			return true;
 		}
@@ -114,8 +125,8 @@ namespace BusinessLayer
 	}
 	bool ProductionConsumeRawList::DeleteListByProductionConsumeRawID(DataLayer::OrmasDal& ormasDal, int crID, std::string& errorMessage)
 	{
-		ProductionConsumeRawID = crID;
-		if (ormasDal.DeleteListByProductionConsumeRawID(ProductionConsumeRawID, errorMessage))
+		productionConsumeRawID = crID;
+		if (ormasDal.DeleteListByProductionConsumeRawID(productionConsumeRawID, errorMessage))
 		{
 			Clear();
 			return true;
@@ -126,13 +137,17 @@ namespace BusinessLayer
 	bool ProductionConsumeRawList::UpdateProductionConsumeRawList(DataLayer::OrmasDal& ormasDal, int crID, int pID, double crlCount, double crlSum,
 		int sID, int cID, std::string& errorMessage)
 	{
-		ProductionConsumeRawID = crID;
+		productionConsumeRawID = crID;
 		productID = pID;
 		count = crlCount;
 		sum = crlSum;
 		statusID = sID;
 		currencyID = cID;
-		if (0 != id && ormasDal.UpdateProductionConsumeRawList(id, ProductionConsumeRawID, productID, count, sum, statusID, currencyID, errorMessage))
+		double middlePrice = CalculateMiddleSum(ormasDal, stockEmployeeID, pID, errorMessage);
+		if (0 == middlePrice)
+			return false;
+		sum = crlCount * middlePrice;
+		if (0 != id && ormasDal.UpdateProductionConsumeRawList(id, productionConsumeRawID, productID, count, sum, statusID, currencyID, errorMessage))
 		{
 			return true;
 		}
@@ -140,7 +155,11 @@ namespace BusinessLayer
 	}
 	bool ProductionConsumeRawList::UpdateProductionConsumeRawList(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
-		if (0 != id && ormasDal.UpdateProductionConsumeRawList(id, ProductionConsumeRawID, productID, count, sum, statusID, currencyID, errorMessage))
+		double middlePrice = CalculateMiddleSum(ormasDal, stockEmployeeID, productID, errorMessage);
+		if (0 == middlePrice)
+			return false;
+		sum = count * middlePrice;
+		if (0 != id && ormasDal.UpdateProductionConsumeRawList(id, productionConsumeRawID, productID, count, sum, statusID, currencyID, errorMessage))
 		{
 			return true;
 		}
@@ -149,9 +168,9 @@ namespace BusinessLayer
 
 	std::string ProductionConsumeRawList::GenerateFilter(DataLayer::OrmasDal& ormasDal)
 	{
-		if (0 != id || 0 != ProductionConsumeRawID || 0 != productID || 0 != count || 0 != sum || 0 != statusID)
+		if (0 != id || 0 != productionConsumeRawID || 0 != productID || 0 != count || 0 != sum || 0 != statusID)
 		{
-			return ormasDal.GetFilterForProductionConsumeRawList(id, ProductionConsumeRawID, productID, count, sum, statusID, currencyID);
+			return ormasDal.GetFilterForProductionConsumeRawList(id, productionConsumeRawID, productID, count, sum, statusID, currencyID);
 		}
 		return "";
 	}
@@ -164,7 +183,7 @@ namespace BusinessLayer
 		if (0 != productionConsumeRawListVector.size())
 		{
 			id = std::get<0>(productionConsumeRawListVector.at(0));
-			ProductionConsumeRawID = std::get<1>(productionConsumeRawListVector.at(0));
+			productionConsumeRawID = std::get<1>(productionConsumeRawListVector.at(0));
 			count = std::get<7>(productionConsumeRawListVector.at(0));
 			sum = std::get<8>(productionConsumeRawListVector.at(0));
 			productID = std::get<11>(productionConsumeRawListVector.at(0));
@@ -181,7 +200,7 @@ namespace BusinessLayer
 
 	bool ProductionConsumeRawList::IsEmpty()
 	{
-		if (0 == id && 0 == ProductionConsumeRawID && 0 == count && 0 == sum && 0 == productID && 0 == statusID && 0 == currencyID)
+		if (0 == id && 0 == productionConsumeRawID && 0 == count && 0 == sum && 0 == productID && 0 == statusID && 0 == currencyID)
 			return true;
 		return false;
 	}
@@ -189,7 +208,7 @@ namespace BusinessLayer
 	void ProductionConsumeRawList::Clear()
 	{
 		id = 0;
-		ProductionConsumeRawID = 0;
+		productionConsumeRawID = 0;
 		count = 0;
 		sum = 0;
 		productID = 0;
@@ -225,7 +244,7 @@ namespace BusinessLayer
 		ProductionConsumeRawList productionConsumeRawList;
 		productionConsumeRawList.Clear();
 		errorMessage.clear();
-		productionConsumeRawList.SetProductionConsumeRawID(ProductionConsumeRawID);
+		productionConsumeRawList.SetProductionConsumeRawID(productionConsumeRawID);
 		productionConsumeRawList.SetProductID(productID);
 		productionConsumeRawList.SetCount(count);
 		productionConsumeRawList.SetSum(sum);
@@ -240,5 +259,23 @@ namespace BusinessLayer
 		}
 		errorMessage = "Production consume raw list with this parameters are already exist! Please avoid the duplication!";
 		return true;
+	}
+	double ProductionConsumeRawList::CalculateMiddleSum(DataLayer::OrmasDal& ormasDal, int seID, int pID, std::string& errorMessage)
+	{
+		WarehouseEmployeeRelation weRel;
+		Stock stock;
+		double mPrice;
+		if (!weRel.GetWarehouseEmployeeByEmployeeID(ormasDal, seID, errorMessage))
+			return 0;
+		if (!stock.GetStockByProductAndWarehouseID(ormasDal, pID, weRel.GetWarehouseID(), errorMessage))
+		{
+			return 0;
+		}
+		else
+		{
+			mPrice = std::round(stock.GetSum() / stock.GetCount() * 1000) / 1000;
+			return mPrice;
+		}
+		return 0;
 	}
 }

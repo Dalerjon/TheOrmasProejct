@@ -291,7 +291,8 @@ void CreatePPlanListDlg::EditProductInList()
 				delete product;
 				return;
 			}
-			if (countEdit->text().toDouble() != productionPlanList->GetCount())
+			if (countEdit->text().toDouble() != productionPlanList->GetCount() ||
+				productEdit->text().toInt() != productionPlanList->GetProductID())
 			{
 				sumEdit->setText(QString::number(countEdit->text().toDouble() * product->GetPrice()));
 			}

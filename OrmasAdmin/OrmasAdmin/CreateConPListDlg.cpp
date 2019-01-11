@@ -224,7 +224,6 @@ void CreateConPListDlg::AddProductToList()
 		SetConPListParams(consumeProductID, productEdit->text().toInt(),
 			countEdit->text().toDouble(), (countEdit->text().toDouble() * nCost->GetValue()),
 			statusVector.at(0).GetID(), product->GetCurrencyID());
-
 		if (dialogBL->CreateConsumeProductList(consumeProductList, errorMessage))
 		{
 			if (parentDataForm != nullptr)
@@ -309,7 +308,8 @@ void CreateConPListDlg::EditProductInList()
 				delete nCost;
 				return;
 			}
-			if (countEdit->text().toDouble() != consumeProductList->GetCount())
+			if (countEdit->text().toDouble() != consumeProductList->GetCount() ||
+				productEdit->text().toInt() != consumeProductList->GetProductID())
 			{
 				sumEdit->setText(QString::number(countEdit->text().toDouble() * nCost->GetValue()));
 			}

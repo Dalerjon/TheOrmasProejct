@@ -162,7 +162,7 @@ namespace BusinessLayer
 	}
 	bool User::DeleteUser(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
-		ormasDal.StartTransaction(errorMessage);
+		//ormasDal.StartTransaction(errorMessage);
 		Balance balance;
 		Subaccount subAcc;
 		if (balance.GetBalanceByUserID(ormasDal, id, errorMessage))
@@ -174,12 +174,12 @@ namespace BusinessLayer
 					&& ormasDal.DeleteUser(id, errorMessage))
 				{
 					Clear();
-					ormasDal.CommitTransaction(errorMessage);
+					//ormasDal.CommitTransaction(errorMessage);
 					return true;
 				}
 			}
 		}
-		ormasDal.CancelTransaction(errorMessage);
+		//ormasDal.CancelTransaction(errorMessage);
 		return false;
 	}
 	bool User::UpdateUser(DataLayer::OrmasDal& ormasDal, std::string uEmail, std::string uName, std::string uSurname,

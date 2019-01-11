@@ -31,97 +31,74 @@ class Ui_CreateOrdRList
 {
 public:
     QGridLayout *gridLayout;
+    QLabel *measureLb;
+    QLabel *prodNamePh;
     QWidget *editSectionWgt;
     QGridLayout *gridLayout_3;
-    QLineEdit *sumEdit;
-    QLabel *sumLb;
-    QLineEdit *orderRawEdit;
-    QSpacerItem *horizontalSpacer_4;
-    QPushButton *orderRawBtn;
-    QSpacerItem *horizontalSpacer_2;
-    QSpacerItem *horizontalSpacer_3;
-    QComboBox *currencyCmb;
     QWidget *statusWidget;
     QHBoxLayout *horizontalLayout_3;
     QPushButton *statusBtn;
     QLineEdit *statusEdit;
     QLabel *statusLb;
     QLabel *statusPh;
+    QSpacerItem *horizontalSpacer_2;
+    QSpacerItem *horizontalSpacer_4;
+    QLineEdit *orderRawEdit;
+    QComboBox *currencyCmb;
+    QPushButton *orderRawBtn;
     QLabel *currencyLb;
-    QLineEdit *productEdit;
+    QLabel *sumLb;
+    QLabel *measurePh;
+    QLineEdit *countEdit;
+    QLabel *prodNameLb;
     QLabel *countLb;
     QPushButton *productBtn;
-    QLineEdit *countEdit;
+    QLabel *label;
+    QLabel *oldPriceLb;
+    QLabel *volumePh;
+    QLineEdit *sumEdit;
+    QLineEdit *productEdit;
+    QLabel *volumeLb;
     QHBoxLayout *horizontalLayout;
     QSpacerItem *horizontalSpacer;
     QPushButton *addBtn;
     QPushButton *cancelBtn;
-    QLabel *measurePh;
-    QLabel *volumePh;
-    QLabel *measureLb;
-    QLabel *volumeLb;
-    QLabel *prodNamePh;
-    QLabel *prodNameLb;
+    QLabel *label_3;
+    QLabel *newPriceLb;
 
     void setupUi(QDialog *CreateOrdRList)
     {
         if (CreateOrdRList->objectName().isEmpty())
             CreateOrdRList->setObjectName(QStringLiteral("CreateOrdRList"));
-        CreateOrdRList->resize(634, 244);
+        CreateOrdRList->resize(671, 292);
         CreateOrdRList->setLocale(QLocale(QLocale::English, QLocale::UnitedStates));
         CreateOrdRList->setModal(false);
         gridLayout = new QGridLayout(CreateOrdRList);
         gridLayout->setObjectName(QStringLiteral("gridLayout"));
         gridLayout->setContentsMargins(11, 11, 11, 17);
+        measureLb = new QLabel(CreateOrdRList);
+        measureLb->setObjectName(QStringLiteral("measureLb"));
+
+        gridLayout->addWidget(measureLb, 1, 4, 1, 1);
+
+        prodNamePh = new QLabel(CreateOrdRList);
+        prodNamePh->setObjectName(QStringLiteral("prodNamePh"));
+        prodNamePh->setMinimumSize(QSize(100, 0));
+        QFont font;
+        font.setFamily(QStringLiteral("Times New Roman"));
+        font.setPointSize(12);
+        font.setBold(true);
+        font.setItalic(true);
+        font.setWeight(75);
+        prodNamePh->setFont(font);
+
+        gridLayout->addWidget(prodNamePh, 1, 1, 1, 1);
+
         editSectionWgt = new QWidget(CreateOrdRList);
         editSectionWgt->setObjectName(QStringLiteral("editSectionWgt"));
         gridLayout_3 = new QGridLayout(editSectionWgt);
         gridLayout_3->setObjectName(QStringLiteral("gridLayout_3"));
         gridLayout_3->setContentsMargins(0, 0, 0, 0);
-        sumEdit = new QLineEdit(editSectionWgt);
-        sumEdit->setObjectName(QStringLiteral("sumEdit"));
-        sumEdit->setMaximumSize(QSize(150, 16777215));
-
-        gridLayout_3->addWidget(sumEdit, 2, 1, 1, 1);
-
-        sumLb = new QLabel(editSectionWgt);
-        sumLb->setObjectName(QStringLiteral("sumLb"));
-        sumLb->setMinimumSize(QSize(150, 0));
-
-        gridLayout_3->addWidget(sumLb, 2, 0, 1, 1);
-
-        orderRawEdit = new QLineEdit(editSectionWgt);
-        orderRawEdit->setObjectName(QStringLiteral("orderRawEdit"));
-        orderRawEdit->setMaximumSize(QSize(150, 16777215));
-        orderRawEdit->setReadOnly(true);
-
-        gridLayout_3->addWidget(orderRawEdit, 0, 1, 1, 1);
-
-        horizontalSpacer_4 = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
-
-        gridLayout_3->addItem(horizontalSpacer_4, 3, 2, 1, 1);
-
-        orderRawBtn = new QPushButton(editSectionWgt);
-        orderRawBtn->setObjectName(QStringLiteral("orderRawBtn"));
-        orderRawBtn->setMinimumSize(QSize(0, 0));
-        orderRawBtn->setMaximumSize(QSize(150, 16777215));
-
-        gridLayout_3->addWidget(orderRawBtn, 0, 0, 1, 1);
-
-        horizontalSpacer_2 = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
-
-        gridLayout_3->addItem(horizontalSpacer_2, 0, 2, 1, 1);
-
-        horizontalSpacer_3 = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
-
-        gridLayout_3->addItem(horizontalSpacer_3, 2, 2, 1, 1);
-
-        currencyCmb = new QComboBox(editSectionWgt);
-        currencyCmb->setObjectName(QStringLiteral("currencyCmb"));
-        currencyCmb->setMaximumSize(QSize(150, 16777215));
-
-        gridLayout_3->addWidget(currencyCmb, 3, 1, 1, 1);
-
         statusWidget = new QWidget(editSectionWgt);
         statusWidget->setObjectName(QStringLiteral("statusWidget"));
         horizontalLayout_3 = new QHBoxLayout(statusWidget);
@@ -154,12 +131,6 @@ public:
         statusPh = new QLabel(statusWidget);
         statusPh->setObjectName(QStringLiteral("statusPh"));
         statusPh->setMinimumSize(QSize(120, 0));
-        QFont font;
-        font.setFamily(QStringLiteral("Times New Roman"));
-        font.setPointSize(12);
-        font.setBold(true);
-        font.setItalic(true);
-        font.setWeight(75);
         statusPh->setFont(font);
 
         horizontalLayout_3->addWidget(statusPh);
@@ -167,13 +138,105 @@ public:
 
         gridLayout_3->addWidget(statusWidget, 1, 0, 1, 3);
 
+        horizontalSpacer_2 = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
+
+        gridLayout_3->addItem(horizontalSpacer_2, 0, 2, 1, 1);
+
+        horizontalSpacer_4 = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
+
+        gridLayout_3->addItem(horizontalSpacer_4, 2, 2, 1, 1);
+
+        orderRawEdit = new QLineEdit(editSectionWgt);
+        orderRawEdit->setObjectName(QStringLiteral("orderRawEdit"));
+        orderRawEdit->setMaximumSize(QSize(150, 16777215));
+        orderRawEdit->setReadOnly(true);
+
+        gridLayout_3->addWidget(orderRawEdit, 0, 1, 1, 1);
+
+        currencyCmb = new QComboBox(editSectionWgt);
+        currencyCmb->setObjectName(QStringLiteral("currencyCmb"));
+        currencyCmb->setMaximumSize(QSize(150, 16777215));
+
+        gridLayout_3->addWidget(currencyCmb, 2, 1, 1, 1);
+
+        orderRawBtn = new QPushButton(editSectionWgt);
+        orderRawBtn->setObjectName(QStringLiteral("orderRawBtn"));
+        orderRawBtn->setMinimumSize(QSize(150, 0));
+        orderRawBtn->setMaximumSize(QSize(150, 16777215));
+
+        gridLayout_3->addWidget(orderRawBtn, 0, 0, 1, 1);
+
         currencyLb = new QLabel(editSectionWgt);
         currencyLb->setObjectName(QStringLiteral("currencyLb"));
 
-        gridLayout_3->addWidget(currencyLb, 3, 0, 1, 1);
+        gridLayout_3->addWidget(currencyLb, 2, 0, 1, 1);
 
 
-        gridLayout->addWidget(editSectionWgt, 3, 0, 1, 6);
+        gridLayout->addWidget(editSectionWgt, 6, 0, 1, 6);
+
+        sumLb = new QLabel(CreateOrdRList);
+        sumLb->setObjectName(QStringLiteral("sumLb"));
+
+        gridLayout->addWidget(sumLb, 4, 0, 1, 2);
+
+        measurePh = new QLabel(CreateOrdRList);
+        measurePh->setObjectName(QStringLiteral("measurePh"));
+        measurePh->setMinimumSize(QSize(100, 0));
+        measurePh->setFont(font);
+
+        gridLayout->addWidget(measurePh, 1, 5, 1, 1);
+
+        countEdit = new QLineEdit(CreateOrdRList);
+        countEdit->setObjectName(QStringLiteral("countEdit"));
+
+        gridLayout->addWidget(countEdit, 3, 3, 1, 1);
+
+        prodNameLb = new QLabel(CreateOrdRList);
+        prodNameLb->setObjectName(QStringLiteral("prodNameLb"));
+        prodNameLb->setMinimumSize(QSize(70, 0));
+        prodNameLb->setMaximumSize(QSize(70, 16777215));
+
+        gridLayout->addWidget(prodNameLb, 1, 0, 1, 1);
+
+        countLb = new QLabel(CreateOrdRList);
+        countLb->setObjectName(QStringLiteral("countLb"));
+        countLb->setMinimumSize(QSize(150, 0));
+
+        gridLayout->addWidget(countLb, 3, 0, 1, 2);
+
+        productBtn = new QPushButton(CreateOrdRList);
+        productBtn->setObjectName(QStringLiteral("productBtn"));
+
+        gridLayout->addWidget(productBtn, 0, 0, 1, 2);
+
+        label = new QLabel(CreateOrdRList);
+        label->setObjectName(QStringLiteral("label"));
+
+        gridLayout->addWidget(label, 2, 0, 1, 1);
+
+        oldPriceLb = new QLabel(CreateOrdRList);
+        oldPriceLb->setObjectName(QStringLiteral("oldPriceLb"));
+        QFont font1;
+        font1.setFamily(QStringLiteral("Tahoma"));
+        font1.setPointSize(10);
+        font1.setBold(true);
+        font1.setItalic(true);
+        font1.setWeight(75);
+        oldPriceLb->setFont(font1);
+
+        gridLayout->addWidget(oldPriceLb, 2, 1, 1, 1);
+
+        volumePh = new QLabel(CreateOrdRList);
+        volumePh->setObjectName(QStringLiteral("volumePh"));
+        volumePh->setMinimumSize(QSize(100, 0));
+        volumePh->setFont(font);
+
+        gridLayout->addWidget(volumePh, 1, 3, 1, 1);
+
+        sumEdit = new QLineEdit(CreateOrdRList);
+        sumEdit->setObjectName(QStringLiteral("sumEdit"));
+
+        gridLayout->addWidget(sumEdit, 4, 3, 1, 1);
 
         productEdit = new QLineEdit(CreateOrdRList);
         productEdit->setObjectName(QStringLiteral("productEdit"));
@@ -181,21 +244,12 @@ public:
 
         gridLayout->addWidget(productEdit, 0, 3, 1, 1);
 
-        countLb = new QLabel(CreateOrdRList);
-        countLb->setObjectName(QStringLiteral("countLb"));
-        countLb->setMinimumSize(QSize(150, 0));
+        volumeLb = new QLabel(CreateOrdRList);
+        volumeLb->setObjectName(QStringLiteral("volumeLb"));
+        volumeLb->setMinimumSize(QSize(70, 0));
+        volumeLb->setMaximumSize(QSize(70, 16777215));
 
-        gridLayout->addWidget(countLb, 2, 0, 1, 2);
-
-        productBtn = new QPushButton(CreateOrdRList);
-        productBtn->setObjectName(QStringLiteral("productBtn"));
-
-        gridLayout->addWidget(productBtn, 0, 0, 1, 2);
-
-        countEdit = new QLineEdit(CreateOrdRList);
-        countEdit->setObjectName(QStringLiteral("countEdit"));
-
-        gridLayout->addWidget(countEdit, 2, 3, 1, 1);
+        gridLayout->addWidget(volumeLb, 1, 2, 1, 1);
 
         horizontalLayout = new QHBoxLayout();
         horizontalLayout->setObjectName(QStringLiteral("horizontalLayout"));
@@ -214,52 +268,22 @@ public:
         horizontalLayout->addWidget(cancelBtn);
 
 
-        gridLayout->addLayout(horizontalLayout, 4, 0, 1, 6);
+        gridLayout->addLayout(horizontalLayout, 7, 0, 1, 6);
 
-        measurePh = new QLabel(CreateOrdRList);
-        measurePh->setObjectName(QStringLiteral("measurePh"));
-        measurePh->setMinimumSize(QSize(100, 0));
-        measurePh->setFont(font);
+        label_3 = new QLabel(CreateOrdRList);
+        label_3->setObjectName(QStringLiteral("label_3"));
 
-        gridLayout->addWidget(measurePh, 1, 5, 1, 1);
+        gridLayout->addWidget(label_3, 5, 0, 1, 1);
 
-        volumePh = new QLabel(CreateOrdRList);
-        volumePh->setObjectName(QStringLiteral("volumePh"));
-        volumePh->setMinimumSize(QSize(100, 0));
-        volumePh->setFont(font);
+        newPriceLb = new QLabel(CreateOrdRList);
+        newPriceLb->setObjectName(QStringLiteral("newPriceLb"));
+        newPriceLb->setFont(font1);
 
-        gridLayout->addWidget(volumePh, 1, 3, 1, 1);
-
-        measureLb = new QLabel(CreateOrdRList);
-        measureLb->setObjectName(QStringLiteral("measureLb"));
-
-        gridLayout->addWidget(measureLb, 1, 4, 1, 1);
-
-        volumeLb = new QLabel(CreateOrdRList);
-        volumeLb->setObjectName(QStringLiteral("volumeLb"));
-        volumeLb->setMinimumSize(QSize(70, 0));
-        volumeLb->setMaximumSize(QSize(70, 16777215));
-
-        gridLayout->addWidget(volumeLb, 1, 2, 1, 1);
-
-        prodNamePh = new QLabel(CreateOrdRList);
-        prodNamePh->setObjectName(QStringLiteral("prodNamePh"));
-        prodNamePh->setMinimumSize(QSize(100, 0));
-        prodNamePh->setFont(font);
-
-        gridLayout->addWidget(prodNamePh, 1, 1, 1, 1);
-
-        prodNameLb = new QLabel(CreateOrdRList);
-        prodNameLb->setObjectName(QStringLiteral("prodNameLb"));
-        prodNameLb->setMinimumSize(QSize(70, 0));
-        prodNameLb->setMaximumSize(QSize(70, 16777215));
-
-        gridLayout->addWidget(prodNameLb, 1, 0, 1, 1);
+        gridLayout->addWidget(newPriceLb, 5, 1, 1, 1);
 
         QWidget::setTabOrder(productBtn, orderRawBtn);
         QWidget::setTabOrder(orderRawBtn, orderRawEdit);
-        QWidget::setTabOrder(orderRawEdit, sumEdit);
-        QWidget::setTabOrder(sumEdit, addBtn);
+        QWidget::setTabOrder(orderRawEdit, addBtn);
         QWidget::setTabOrder(addBtn, cancelBtn);
 
         retranslateUi(CreateOrdRList);
@@ -270,29 +294,30 @@ public:
     void retranslateUi(QDialog *CreateOrdRList)
     {
         CreateOrdRList->setWindowTitle(QApplication::translate("CreateOrdRList", "Create/Update raw in order list", 0));
-#ifndef QT_NO_TOOLTIP
-        sumEdit->setToolTip(QApplication::translate("CreateOrdRList", "<html><head/><body><p>For example: 300 (pedends on currency, in that case 300 USD)</p></body></html>", 0));
-#endif // QT_NO_TOOLTIP
-        sumLb->setText(QApplication::translate("CreateOrdRList", "Sum:", 0));
-        orderRawEdit->setText(QString());
-        orderRawBtn->setText(QApplication::translate("CreateOrdRList", "Select order raw", 0));
+        measureLb->setText(QApplication::translate("CreateOrdRList", "Measure:", 0));
+        prodNamePh->setText(QString());
         statusBtn->setText(QApplication::translate("CreateOrdRList", "Change status", 0));
         statusLb->setText(QApplication::translate("CreateOrdRList", "Status name:", 0));
         statusPh->setText(QString());
+        orderRawEdit->setText(QString());
+        orderRawBtn->setText(QApplication::translate("CreateOrdRList", "Select order raw", 0));
         currencyLb->setText(QApplication::translate("CreateOrdRList", "Select currency:", 0));
-        countLb->setText(QApplication::translate("CreateOrdRList", "Count:", 0));
-        productBtn->setText(QApplication::translate("CreateOrdRList", "Select product", 0));
+        sumLb->setText(QApplication::translate("CreateOrdRList", "Sum:", 0));
+        measurePh->setText(QString());
 #ifndef QT_NO_TOOLTIP
         countEdit->setToolTip(QApplication::translate("CreateOrdRList", "<html><head/><body><p>For example: 100</p></body></html>", 0));
 #endif // QT_NO_TOOLTIP
+        prodNameLb->setText(QApplication::translate("CreateOrdRList", "Product name:", 0));
+        countLb->setText(QApplication::translate("CreateOrdRList", "Count:", 0));
+        productBtn->setText(QApplication::translate("CreateOrdRList", "Select product", 0));
+        label->setText(QApplication::translate("CreateOrdRList", "Previous price:", 0));
+        oldPriceLb->setText(QString());
+        volumePh->setText(QString());
+        volumeLb->setText(QApplication::translate("CreateOrdRList", "Volume:", 0));
         addBtn->setText(QApplication::translate("CreateOrdRList", "Add", 0));
         cancelBtn->setText(QApplication::translate("CreateOrdRList", "Cancel", 0));
-        measurePh->setText(QString());
-        volumePh->setText(QString());
-        measureLb->setText(QApplication::translate("CreateOrdRList", "Measure:", 0));
-        volumeLb->setText(QApplication::translate("CreateOrdRList", "Volume:", 0));
-        prodNamePh->setText(QString());
-        prodNameLb->setText(QApplication::translate("CreateOrdRList", "Product name:", 0));
+        label_3->setText(QApplication::translate("CreateOrdRList", "New price:", 0));
+        newPriceLb->setText(QString());
     } // retranslateUi
 
 };

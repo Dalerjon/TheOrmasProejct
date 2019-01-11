@@ -14,6 +14,7 @@ public:
 	bool FillDlgElements(QTableView*);
 	std::string errorMessage;
 	int orderRawID = 0;
+	int employeeID = 0;
 	private slots:
 	void AddProductToList();
 	void EditProductInList();
@@ -23,6 +24,7 @@ public:
 	void OpenProdDlg();
 	void OpenStsDlg();
 	void TextEditChanged();
+	void InspectPrice();
 	public slots:
 	void SetID(int ID, QString childName);
 signals:
@@ -34,6 +36,7 @@ private:
 	QDoubleValidator *vDouble = nullptr;
 	QIntValidator *vInt = nullptr;
 	void InitComboBox();
+	bool BlockWrongPrice(QString, QString);
 	QWidget* parentForm;
 	MainForm* mainForm;
 };

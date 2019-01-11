@@ -21,6 +21,7 @@ namespace BusinessLayer
 		OrderRawList(){};
 		~OrderRawList(){};
 
+		int employeeID = 0 ;
 		//OrderRawList class Accessors
 		int GetID();
 		int GetOrderRawID();
@@ -58,6 +59,8 @@ namespace BusinessLayer
 		bool IsDuplicate(DataLayer::OrmasDal& ormasDal, int oID, int pID, double olCount, double olSum,
 			int cID, std::string& errorMessage);
 		bool IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string& errorMessage);
+		std::string wstring_to_utf8(const std::wstring& str);
+		int GetSubaccountIDForEmployee(DataLayer::OrmasDal& ormasDal, std::string& errorMessage);
 	};
 }
 #endif

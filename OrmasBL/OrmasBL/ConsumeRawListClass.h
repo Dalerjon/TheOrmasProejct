@@ -21,6 +21,9 @@ namespace BusinessLayer
 		ConsumeRawList(){};
 		~ConsumeRawList(){};
 
+		int employeeID = 0;
+		int stockEmployeeID = 0;
+
 		//ConsumeRawList class Accessors
 		int GetID();
 		int GetConsumeRawID();

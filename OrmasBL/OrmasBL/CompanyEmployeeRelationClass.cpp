@@ -9,12 +9,14 @@ namespace BusinessLayer{
 		id = std::get<0>(ceCollection);
 		companyID = std::get<1>(ceCollection);
 		employeeID = std::get<2>(ceCollection);
+		branchID = std::get<3>(ceCollection);
 	}
 	CompanyEmployeeRelation::CompanyEmployeeRelation()
 	{
 		id = 0;
 		companyID = 0;
 		employeeID = 0;
+		branchID = 0;
 	}
 
 	int CompanyEmployeeRelation::GetID()
@@ -32,6 +34,11 @@ namespace BusinessLayer{
 		return employeeID;
 	}
 
+	int CompanyEmployeeRelation::GetBranchID()
+	{
+		return branchID;
+	}
+
 	void CompanyEmployeeRelation::SetID(int ceID)
 	{
 		id = ceID;
@@ -44,16 +51,21 @@ namespace BusinessLayer{
 	{
 		employeeID = aID;
 	}
+	void CompanyEmployeeRelation::SetBranchID(int aID)
+	{
+		branchID = aID;
+	}
 
-	bool CompanyEmployeeRelation::CreateCompanyEmployeeRelation(DataLayer::OrmasDal &ormasDal, int cID, int eID, std::string& errorMessage)
+	bool CompanyEmployeeRelation::CreateCompanyEmployeeRelation(DataLayer::OrmasDal &ormasDal, int cID, int eID, int bID, std::string& errorMessage)
 	{
 		if (IsDuplicate(ormasDal, cID, eID, errorMessage))
 			return false;
 		id = ormasDal.GenerateID();
 		companyID = cID;
 		employeeID = eID;
+		branchID = bID;
 
-		if (ormasDal.CreateCompanyEmployee(id, companyID, employeeID, errorMessage))
+		if (ormasDal.CreateCompanyEmployee(id, companyID, employeeID, branchID, errorMessage))
 		{
 			return true;
 		}
@@ -68,7 +80,7 @@ namespace BusinessLayer{
 		if (IsDuplicate(ormasDal, errorMessage))
 			return false;
 		id = ormasDal.GenerateID();
-		if (ormasDal.CreateCompanyEmployee(id, companyID, employeeID, errorMessage))
+		if (ormasDal.CreateCompanyEmployee(id, companyID, employeeID, branchID, errorMessage))
 		{
 			return true;
 		}
@@ -92,11 +104,12 @@ namespace BusinessLayer{
 		return false;
 	}
 
-	bool CompanyEmployeeRelation::UpdateCompanyEmployeeRelation(DataLayer::OrmasDal &ormasDal, int cID, int eID, std::string& errorMessage)
+	bool CompanyEmployeeRelation::UpdateCompanyEmployeeRelation(DataLayer::OrmasDal &ormasDal, int cID, int eID, int bID, std::string& errorMessage)
 	{
 		companyID = cID;
 		employeeID = eID;
-		if (0 != id && ormasDal.UpdateCompanyEmployee(id, companyID, employeeID, errorMessage))
+		branchID = bID;
+		if (0 != id && ormasDal.UpdateCompanyEmployee(id, companyID, employeeID, branchID, errorMessage))
 		{
 			return true;
 		}
@@ -108,7 +121,7 @@ namespace BusinessLayer{
 	}
 	bool CompanyEmployeeRelation::UpdateCompanyEmployeeRelation(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
-		if (0 != id && ormasDal.UpdateCompanyEmployee(id, companyID, employeeID, errorMessage))
+		if (0 != id && ormasDal.UpdateCompanyEmployee(id, companyID, employeeID, branchID, errorMessage))
 		{
 			return true;
 		}
@@ -123,7 +136,7 @@ namespace BusinessLayer{
 	{
 		if (0 != id || 0 != companyID || 0 != employeeID)
 		{
-			return ormasDal.GetFilterForCompanyEmployee(id, companyID, employeeID);
+			return ormasDal.GetFilterForCompanyEmployee(id, companyID, employeeID, branchID);
 		}
 		return "";
 	}
@@ -137,8 +150,9 @@ namespace BusinessLayer{
 		if (0 != companyEmployeeVector.size())
 		{
 			id = std::get<0>(companyEmployeeVector.at(0));
-			companyID = std::get<5>(companyEmployeeVector.at(0));
-			employeeID = std::get<6>(companyEmployeeVector.at(0));
+			companyID = std::get<6>(companyEmployeeVector.at(0));
+			employeeID = std::get<7>(companyEmployeeVector.at(0));
+			branchID = std::get<7>(companyEmployeeVector.at(0));
 			return true;
 		}
 		return false;
@@ -153,7 +167,7 @@ namespace BusinessLayer{
 		std::vector<DataLayer::companyEmployeeViewCollection> companyEmployeeVector = ormasDal.GetCompanyEmployee(errorMessage, filter);
 		if (0 != companyEmployeeVector.size())
 		{
-			return std::get<5>(companyEmployeeVector.at(0));
+			return std::get<6>(companyEmployeeVector.at(0));
 		}
 		return 0;
 	}
@@ -167,7 +181,7 @@ namespace BusinessLayer{
 		std::vector<DataLayer::companyEmployeeViewCollection> companyEmployeeVector = ormasDal.GetCompanyEmployee(errorMessage, filter);
 		if (0 != companyEmployeeVector.size())
 		{
-			return std::get<6>(companyEmployeeVector.at(0));
+			return std::get<7>(companyEmployeeVector.at(0));
 		}
 		return 0;
 	}

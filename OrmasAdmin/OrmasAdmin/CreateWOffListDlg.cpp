@@ -11,6 +11,7 @@ CreateWOffListDlg::CreateWOffListDlg(BusinessLayer::OrmasBL *ormasBL, bool updat
 	parentForm = parent;
 	DataForm *dataFormParent = (DataForm *)this->parentForm;
 	mainForm = (MainForm *)dataFormParent->GetParent();
+	writeOffID = ((DataForm*)parent)->writeOffID;
 	vDouble = new QDoubleValidator(0.00, 1000000000.00, 3, this);
 	vInt = new QIntValidator(0, 1000000000, this);
 	productEdit->setValidator(vInt);
@@ -212,7 +213,6 @@ void CreateWOffListDlg::AddProductToList()
 		SetWriteOffListParams(writeOffID, productEdit->text().toInt(),
 			countEdit->text().toDouble(), (countEdit->text().toDouble() * product->GetPrice()),
 			statusVector.at(0).GetID(), product->GetCurrencyID());
-
 		if (dialogBL->CreateWriteOffList(writeOffList, errorMessage))
 		{
 			if (parentDataForm != nullptr)
@@ -285,7 +285,8 @@ void CreateWOffListDlg::EditProductInList()
 				delete product;
 				return;
 			}
-			if (countEdit->text().toDouble() != writeOffList->GetCount())
+			if (countEdit->text().toDouble() != writeOffList->GetCount() ||
+				productEdit->text().toInt() != writeOffList->GetProductID())
 			{
 				sumEdit->setText(QString::number(countEdit->text().toDouble() * product->GetPrice()));
 			}

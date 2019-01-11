@@ -1,5 +1,14 @@
 #include "stdafx.h"
 #include "OrderRawListClass.h"
+#include "ProductClass.h"
+#include "EntryClass.h"
+#include "CompanyAccountRelationClass.h"
+#include "CompanyClass.h"
+#include "WarehouseClass.h"
+#include "WarehouseEmployeeRelationClass.h"
+#include <codecvt>
+
+
 
 namespace BusinessLayer
 {
@@ -81,6 +90,57 @@ namespace BusinessLayer
 	bool OrderRawList::CreateOrderRawList(DataLayer::OrmasDal& ormasDal, int oID, int pID, double olCount, double olSum,
 		int sID, int cID, std::string& errorMessage)
 	{
+		int subAccID = GetSubaccountIDForEmployee(ormasDal, errorMessage);
+		if (0 == subAccID)
+			return false;
+		Product product;
+		if (!product.GetProductByID(ormasDal, pID, errorMessage))
+			return false;
+		if (product.GetPrice()*olCount > olSum || product.GetPrice()*olCount < olSum)
+		{
+			double newPrice = 0;
+			newPrice = round(olSum / olCount * 1000) / 1000;
+			if (newPrice != product.GetPrice())
+			{
+				product.SetPrice(newPrice);
+				if (!product.UpdateProduct(ormasDal,errorMessage))
+					return false;
+				double correctionValue = 0;
+				correctionValue = round((newPrice*olCount - olSum) * 1000) / 1000;
+				if (correctionValue != 0)
+				{
+					int companyID = product.GetCompanyID();
+					int debAccID = 0;
+					int credAccID = 0;
+					CompanyAccountRelation caRel;
+					Entry entry;
+					if (correctionValue > 0)
+					{
+						debAccID = subAccID;
+						credAccID = caRel.GetAccountIDByCompanyID(ormasDal, companyID, "10730", errorMessage);
+						entry.SetValue(correctionValue);
+					}
+					if (correctionValue < 0)
+					{
+						debAccID = caRel.GetAccountIDByCompanyID(ormasDal, companyID, "10730", errorMessage);
+						credAccID = subAccID;
+						entry.SetValue(correctionValue* (-1));
+					}
+					if (0 == debAccID || 0 == credAccID)
+						return false;
+					entry.SetDate(ormasDal.GetSystemDateTime());
+					entry.SetDebitingAccountID(debAccID);
+					entry.SetCreditingAccountID(credAccID);
+					std::string entrytext;
+					entrytext += wstring_to_utf8(L"Коррекция суммы продукта \"");
+					entrytext += product.GetName();
+					entrytext += wstring_to_utf8(L"\". Округление цены продукта для точности суммы на складе.");
+					entry.SetDescription(entrytext);
+					if (!entry.CreateEntry(ormasDal, errorMessage))
+						return false;
+				}
+			}
+		}
 		id = ormasDal.GenerateID();
 		orderRawID = oID;
 		productID = pID;
@@ -96,6 +156,57 @@ namespace BusinessLayer
 	}
 	bool OrderRawList::CreateOrderRawList(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
+		int subAccID = GetSubaccountIDForEmployee(ormasDal, errorMessage);
+		if (0 == subAccID)
+			return false;
+		Product product;
+		if (!product.GetProductByID(ormasDal, productID, errorMessage))
+			return false;
+		if (product.GetPrice()*count > sum || product.GetPrice()*count < sum)
+		{
+			double newPrice = 0;
+			newPrice = round(sum / count * 1000) / 1000;
+			if (newPrice != product.GetPrice())
+			{
+				product.SetPrice(newPrice);
+				if (!product.UpdateProduct(ormasDal, errorMessage))
+					return false;
+				double correctionValue = 0;
+				correctionValue = round((newPrice*count - sum) * 1000) / 1000;
+				if (correctionValue != 0)
+				{
+					int companyID = product.GetCompanyID();
+					int debAccID = 0;
+					int credAccID = 0;
+					CompanyAccountRelation caRel;
+					Entry entry;
+					if (correctionValue > 0)
+					{
+						debAccID = subAccID;
+						credAccID = caRel.GetAccountIDByCompanyID(ormasDal, companyID, "10730", errorMessage);
+						entry.SetValue(correctionValue);
+					}
+					if (correctionValue < 0)
+					{
+						debAccID = caRel.GetAccountIDByCompanyID(ormasDal, companyID, "10730", errorMessage);
+						credAccID = subAccID;
+						entry.SetValue(correctionValue* (-1));
+					}
+					if (0 == debAccID || 0 == credAccID)
+						return false;
+					entry.SetDate(ormasDal.GetSystemDateTime());
+					entry.SetDebitingAccountID(debAccID);
+					entry.SetCreditingAccountID(credAccID);
+					std::string entrytext;
+					entrytext += wstring_to_utf8(L"Коррекция суммы продукта \"");
+					entrytext += product.GetName();
+					entrytext += wstring_to_utf8(L"\". Округление цены продукта для точности суммы на складе.");
+					entry.SetDescription(entrytext);
+					if (!entry.CreateEntry(ormasDal, errorMessage))
+						return false;
+				}
+			}
+		}
 		id = ormasDal.GenerateID();
 		if (0 != id && ormasDal.CreateOrderRawList(id, orderRawID, productID, count, sum, statusID, currencyID, errorMessage))
 		{
@@ -240,5 +351,24 @@ namespace BusinessLayer
 		}
 		errorMessage = "Order raw list with this parameters are already exist! Please avoid the duplication!";
 		return true;
+	}
+
+	std::string OrderRawList::wstring_to_utf8(const std::wstring& str)
+	{
+		std::wstring_convert<std::codecvt_utf8<wchar_t>> myconv;
+		return myconv.to_bytes(str);
+	}
+
+	int OrderRawList::GetSubaccountIDForEmployee(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
+	{
+		WarehouseEmployeeRelation weRel;
+		Warehouse warehouse;
+		if (0 == employeeID)
+			return 0;
+		if (!weRel.GetWarehouseEmployeeByEmployeeID(ormasDal, employeeID, errorMessage))
+			return 0;
+		if (!warehouse.GetWarehouseByID(ormasDal, weRel.GetWarehouseID(), errorMessage))
+			return 0;
+		return warehouse.GetSubaccountID();
 	}
 }

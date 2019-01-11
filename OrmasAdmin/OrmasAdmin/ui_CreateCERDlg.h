@@ -30,11 +30,13 @@ class Ui_CreateCompanyEmployee
 {
 public:
     QGridLayout *gridLayout;
-    QLabel *empPhoneLb;
+    QLabel *companyLb;
+    QComboBox *companyCmb;
     QLabel *empSurnamePh;
     QLabel *empNameLb;
-    QLabel *empNamePh;
+    QLabel *empPhoneLb;
     QLabel *empSurnameLb;
+    QLabel *empNamePh;
     QLabel *empPhonePh;
     QHBoxLayout *horizontalLayout;
     QSpacerItem *horizontalSpacer;
@@ -42,14 +44,14 @@ public:
     QPushButton *cancelBtn;
     QLineEdit *employeeEdit;
     QPushButton *employeeBtn;
-    QLabel *companyLb;
-    QComboBox *companyCmb;
+    QLabel *branchLb;
+    QComboBox *branchCmb;
 
     void setupUi(QDialog *CreateCompanyEmployee)
     {
         if (CreateCompanyEmployee->objectName().isEmpty())
             CreateCompanyEmployee->setObjectName(QStringLiteral("CreateCompanyEmployee"));
-        CreateCompanyEmployee->resize(551, 144);
+        CreateCompanyEmployee->resize(551, 154);
         QSizePolicy sizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
         sizePolicy.setHorizontalStretch(0);
         sizePolicy.setVerticalStretch(0);
@@ -60,10 +62,15 @@ public:
         gridLayout = new QGridLayout(CreateCompanyEmployee);
         gridLayout->setObjectName(QStringLiteral("gridLayout"));
         gridLayout->setContentsMargins(11, 11, 11, 11);
-        empPhoneLb = new QLabel(CreateCompanyEmployee);
-        empPhoneLb->setObjectName(QStringLiteral("empPhoneLb"));
+        companyLb = new QLabel(CreateCompanyEmployee);
+        companyLb->setObjectName(QStringLiteral("companyLb"));
 
-        gridLayout->addWidget(empPhoneLb, 2, 4, 1, 1);
+        gridLayout->addWidget(companyLb, 0, 0, 1, 2);
+
+        companyCmb = new QComboBox(CreateCompanyEmployee);
+        companyCmb->setObjectName(QStringLiteral("companyCmb"));
+
+        gridLayout->addWidget(companyCmb, 0, 3, 1, 3);
 
         empSurnamePh = new QLabel(CreateCompanyEmployee);
         empSurnamePh->setObjectName(QStringLiteral("empSurnamePh"));
@@ -76,35 +83,40 @@ public:
         font.setWeight(75);
         empSurnamePh->setFont(font);
 
-        gridLayout->addWidget(empSurnamePh, 2, 3, 1, 1);
+        gridLayout->addWidget(empSurnamePh, 3, 3, 1, 1);
 
         empNameLb = new QLabel(CreateCompanyEmployee);
         empNameLb->setObjectName(QStringLiteral("empNameLb"));
         empNameLb->setMinimumSize(QSize(0, 0));
         empNameLb->setMaximumSize(QSize(16777215, 16777215));
 
-        gridLayout->addWidget(empNameLb, 2, 0, 1, 1);
+        gridLayout->addWidget(empNameLb, 3, 0, 1, 1);
 
-        empNamePh = new QLabel(CreateCompanyEmployee);
-        empNamePh->setObjectName(QStringLiteral("empNamePh"));
-        empNamePh->setMinimumSize(QSize(100, 0));
-        empNamePh->setFont(font);
+        empPhoneLb = new QLabel(CreateCompanyEmployee);
+        empPhoneLb->setObjectName(QStringLiteral("empPhoneLb"));
 
-        gridLayout->addWidget(empNamePh, 2, 1, 1, 1);
+        gridLayout->addWidget(empPhoneLb, 3, 4, 1, 1);
 
         empSurnameLb = new QLabel(CreateCompanyEmployee);
         empSurnameLb->setObjectName(QStringLiteral("empSurnameLb"));
         empSurnameLb->setMinimumSize(QSize(50, 0));
         empSurnameLb->setMaximumSize(QSize(50, 16777215));
 
-        gridLayout->addWidget(empSurnameLb, 2, 2, 1, 1);
+        gridLayout->addWidget(empSurnameLb, 3, 2, 1, 1);
+
+        empNamePh = new QLabel(CreateCompanyEmployee);
+        empNamePh->setObjectName(QStringLiteral("empNamePh"));
+        empNamePh->setMinimumSize(QSize(100, 0));
+        empNamePh->setFont(font);
+
+        gridLayout->addWidget(empNamePh, 3, 1, 1, 1);
 
         empPhonePh = new QLabel(CreateCompanyEmployee);
         empPhonePh->setObjectName(QStringLiteral("empPhonePh"));
         empPhonePh->setMinimumSize(QSize(100, 0));
         empPhonePh->setFont(font);
 
-        gridLayout->addWidget(empPhonePh, 2, 5, 1, 1);
+        gridLayout->addWidget(empPhonePh, 3, 5, 1, 1);
 
         horizontalLayout = new QHBoxLayout();
         horizontalLayout->setObjectName(QStringLiteral("horizontalLayout"));
@@ -123,29 +135,29 @@ public:
         horizontalLayout->addWidget(cancelBtn);
 
 
-        gridLayout->addLayout(horizontalLayout, 3, 0, 1, 6);
+        gridLayout->addLayout(horizontalLayout, 4, 0, 1, 6);
 
         employeeEdit = new QLineEdit(CreateCompanyEmployee);
         employeeEdit->setObjectName(QStringLiteral("employeeEdit"));
         employeeEdit->setReadOnly(true);
 
-        gridLayout->addWidget(employeeEdit, 1, 3, 1, 1);
+        gridLayout->addWidget(employeeEdit, 2, 3, 1, 1);
 
         employeeBtn = new QPushButton(CreateCompanyEmployee);
         employeeBtn->setObjectName(QStringLiteral("employeeBtn"));
         employeeBtn->setMinimumSize(QSize(150, 0));
 
-        gridLayout->addWidget(employeeBtn, 1, 0, 1, 2);
+        gridLayout->addWidget(employeeBtn, 2, 0, 1, 2);
 
-        companyLb = new QLabel(CreateCompanyEmployee);
-        companyLb->setObjectName(QStringLiteral("companyLb"));
+        branchLb = new QLabel(CreateCompanyEmployee);
+        branchLb->setObjectName(QStringLiteral("branchLb"));
 
-        gridLayout->addWidget(companyLb, 0, 0, 1, 2);
+        gridLayout->addWidget(branchLb, 1, 0, 1, 1);
 
-        companyCmb = new QComboBox(CreateCompanyEmployee);
-        companyCmb->setObjectName(QStringLiteral("companyCmb"));
+        branchCmb = new QComboBox(CreateCompanyEmployee);
+        branchCmb->setObjectName(QStringLiteral("branchCmb"));
 
-        gridLayout->addWidget(companyCmb, 0, 3, 1, 3);
+        gridLayout->addWidget(branchCmb, 1, 3, 1, 3);
 
         QWidget::setTabOrder(okBtn, cancelBtn);
 
@@ -157,16 +169,17 @@ public:
     void retranslateUi(QDialog *CreateCompanyEmployee)
     {
         CreateCompanyEmployee->setWindowTitle(QApplication::translate("CreateCompanyEmployee", "Create company-employee relation", 0));
-        empPhoneLb->setText(QApplication::translate("CreateCompanyEmployee", "Phone:", 0));
+        companyLb->setText(QApplication::translate("CreateCompanyEmployee", "Select company:", 0));
         empSurnamePh->setText(QString());
         empNameLb->setText(QApplication::translate("CreateCompanyEmployee", "Name:", 0));
-        empNamePh->setText(QString());
+        empPhoneLb->setText(QApplication::translate("CreateCompanyEmployee", "Phone:", 0));
         empSurnameLb->setText(QApplication::translate("CreateCompanyEmployee", "Surname:", 0));
+        empNamePh->setText(QString());
         empPhonePh->setText(QString());
         okBtn->setText(QApplication::translate("CreateCompanyEmployee", "OK", 0));
         cancelBtn->setText(QApplication::translate("CreateCompanyEmployee", "Cancel", 0));
         employeeBtn->setText(QApplication::translate("CreateCompanyEmployee", "Select Employee", 0));
-        companyLb->setText(QApplication::translate("CreateCompanyEmployee", "Select company:", 0));
+        branchLb->setText(QApplication::translate("CreateCompanyEmployee", "Select branch:", 0));
     } // retranslateUi
 
 };

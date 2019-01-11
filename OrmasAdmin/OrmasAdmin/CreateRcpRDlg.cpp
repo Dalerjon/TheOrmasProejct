@@ -15,8 +15,8 @@ CreateRcpRDlg::CreateRcpRDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, Q
 	mainForm = (MainForm *)dataFormParent->GetParent();
 	vDouble = new QDoubleValidator(0.00, 1000000000.00, 3, this);
 	vInt = new QIntValidator(0, 1000000000, this);
-	employeeEdit->setValidator(vInt);
-	stockEmployeeEdit->setValidator(vInt);
+	fromStkEmpEdit->setValidator(vInt);
+	toStkEmpEdit->setValidator(vInt);
 	prodCountEdit->setValidator(vDouble);
 	statusEdit->setValidator(vInt);
 	sumEdit->setValidator(vDouble);
@@ -31,8 +31,8 @@ CreateRcpRDlg::CreateRcpRDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, Q
 		receiptRaw->SetID(dialogBL->GenerateID());
 		execDateWidget->setVisible(false);
 		execDateEdit->setDateTime(QDateTime::currentDateTime());
-		employeeEdit->setText("0");
-		stockEmployeeEdit->setText("0");
+		fromStkEmpEdit->setText("0");
+		toStkEmpEdit->setText("0");
 		prodCountEdit->setText("0");
 		statusEdit->setText("0");
 		sumEdit->setText("0");
@@ -57,9 +57,9 @@ CreateRcpRDlg::CreateRcpRDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, Q
 		QObject::connect(okBtn, &QPushButton::released, this, &CreateRcpRDlg::CreateReceiptRaw);
 	}
 	QObject::connect(cancelBtn, &QPushButton::released, this, &CreateRcpRDlg::Close);
-	QObject::connect(employeeBtn, &QPushButton::released, this, &CreateRcpRDlg::OpenEmpDlg);
+	QObject::connect(stockEmpFromBtn, &QPushButton::released, this, &CreateRcpRDlg::OpenEmpDlg);
 	QObject::connect(statusBtn, &QPushButton::released, this, &CreateRcpRDlg::OpenStsDlg);
-	QObject::connect(stockEmployeeBtn, &QPushButton::released, this, &CreateRcpRDlg::OpenSkEmpDlg);
+	QObject::connect(stockEmpToBtn, &QPushButton::released, this, &CreateRcpRDlg::OpenSkEmpDlg);
 	QObject::connect(addProdBtn, &QPushButton::released, this, &CreateRcpRDlg::OpenRcpRListDlg);
 	QObject::connect(statusEdit, &QLineEdit::textChanged, this, &CreateRcpRDlg::StatusWasChenged);
 	QObject::connect(prodCountEdit, &QLineEdit::textChanged, this, &CreateRcpRDlg::TextEditChanged);
@@ -93,13 +93,13 @@ void CreateRcpRDlg::SetReceiptRawParams(int rEmployeeID, QString rDate, QString 
 void CreateRcpRDlg::FillEditElements(int rEmployeeID, QString rDate, QString rExecDate, int rStockEmployeeID, double rCount,
 	double rSum, int rStatusID, int rCurrencyID)
 {
-	employeeEdit->setText(QString::number(rEmployeeID));
+	fromStkEmpEdit->setText(QString::number(rEmployeeID));
 	dateEdit->setDateTime(QDateTime::fromString(rDate, "dd.MM.yyyy hh:mm"));
 	if (!rExecDate.isEmpty())
 	{
 		execDateEdit->setDateTime(QDateTime::fromString(rExecDate, "dd.MM.yyyy hh:mm"));
 	}
-	stockEmployeeEdit->setText(QString::number(rStockEmployeeID));
+	toStkEmpEdit->setText(QString::number(rStockEmployeeID));
 	prodCountEdit->setText(QString::number(rCount));
 	sumEdit->setText(QString::number(rSum));
 	statusEdit->setText(QString::number(rStatusID));
@@ -140,7 +140,42 @@ void CreateRcpRDlg::SetID(int ID, QString childName)
 
 			if (childName == QString("employeeForm"))
 			{
-				employeeEdit->setText(QString::number(ID));
+				BusinessLayer::WarehouseEmployeeRelation weRel;
+				if (!weRel.GetWarehouseEmployeeByEmployeeID(dialogBL->GetOrmasDal(), ID, errorMessage))
+				{
+					QMessageBox::information(NULL, QString(tr("Warning")),
+						QString(tr("This user isn't warehouse employee!")),
+						QString(tr("Ok")));
+					errorMessage.clear();
+					return;
+				}
+				BusinessLayer::Warehouse warehouse;
+				if (!warehouse.GetWarehouseByID(dialogBL->GetOrmasDal(), weRel.GetWarehouseID(), errorMessage))
+				{
+					QMessageBox::information(NULL, QString(tr("Warning")),
+						QString(tr("Cannot find warehouse!")),
+						QString(tr("Ok")));
+					errorMessage.clear();
+					return;
+				}
+				BusinessLayer::WarehouseType warehouseType;
+				if (!warehouseType.GetWarehouseTypeByCode(dialogBL->GetOrmasDal(), "PRODUCT", errorMessage))
+				{
+					QMessageBox::information(NULL, QString(tr("Warning")),
+						QString(tr("Cannot find warehouse type!")),
+						QString(tr("Ok")));
+					errorMessage.clear();
+					return;
+				}
+				if (warehouseType.GetID() != warehouse.GetWarehouseTypeID())
+				{
+					QMessageBox::information(NULL, QString(tr("Warning")),
+						QString(tr("This user isn't product warehouse employee!")),
+						QString(tr("Ok")));
+					errorMessage.clear();
+					return;
+				}
+				fromStkEmpEdit->setText(QString::number(ID));
 				BusinessLayer::User user;
 				if (user.GetUserByID(dialogBL->GetOrmasDal(), ID, errorMessage))
 				{
@@ -160,7 +195,42 @@ void CreateRcpRDlg::SetID(int ID, QString childName)
 			}
 			if (childName == QString("stockEmployeeForm"))
 			{
-				stockEmployeeEdit->setText(QString::number(ID));
+				BusinessLayer::WarehouseEmployeeRelation weRel;
+				if (!weRel.GetWarehouseEmployeeByEmployeeID(dialogBL->GetOrmasDal(), ID, errorMessage))
+				{
+					QMessageBox::information(NULL, QString(tr("Warning")),
+						QString(tr("This user isn't warehouse employee!")),
+						QString(tr("Ok")));
+					errorMessage.clear();
+					return;
+				}
+				BusinessLayer::Warehouse warehouse;
+				if (!warehouse.GetWarehouseByID(dialogBL->GetOrmasDal(), weRel.GetWarehouseID(), errorMessage))
+				{
+					QMessageBox::information(NULL, QString(tr("Warning")),
+						QString(tr("Cannot find warehouse!")),
+						QString(tr("Ok")));
+					errorMessage.clear();
+					return;
+				}
+				BusinessLayer::WarehouseType warehouseType;
+				if (!warehouseType.GetWarehouseTypeByCode(dialogBL->GetOrmasDal(), "PRODUCT", errorMessage))
+				{
+					QMessageBox::information(NULL, QString(tr("Warning")),
+						QString(tr("Cannot find warehouse type!")),
+						QString(tr("Ok")));
+					errorMessage.clear();
+					return;
+				}
+				if (warehouseType.GetID() != warehouse.GetWarehouseTypeID())
+				{
+					QMessageBox::information(NULL, QString(tr("Warning")),
+						QString(tr("This user isn't product warehouse employee!")),
+						QString(tr("Ok")));
+					errorMessage.clear();
+					return;
+				}
+				toStkEmpEdit->setText(QString::number(ID));
 				BusinessLayer::User user;
 				if (user.GetUserByID(dialogBL->GetOrmasDal(), ID, errorMessage))
 				{
@@ -225,19 +295,19 @@ bool CreateRcpRDlg::FillDlgElements(QTableView* cTable)
 void CreateRcpRDlg::CreateReceiptRaw()
 {
 	errorMessage.clear();
-	if (0 != stockEmployeeEdit->text().toInt() 
+	if (0 != toStkEmpEdit->text().toInt() 
 		&& 0 != prodCountEdit->text().toDouble() && 0 != sumEdit->text().toDouble()
 		&& 0 != statusEdit->text().toInt() && 0 != currencyCmb->currentData().toInt())
 	{
 		DataForm *parentDataForm = (DataForm*) parentForm;
 		if (!execDateWidget->isVisible())
 		{
-			SetReceiptRawParams(employeeEdit->text().toInt(), dateEdit->text(), "", stockEmployeeEdit->text().toInt(), prodCountEdit->text().toDouble(),
+			SetReceiptRawParams(fromStkEmpEdit->text().toInt(), dateEdit->text(), "", toStkEmpEdit->text().toInt(), prodCountEdit->text().toDouble(),
 				sumEdit->text().toDouble(), statusEdit->text().toInt(), currencyCmb->currentData().toInt(), receiptRaw->GetID());
 		}
 		else
 		{
-			SetReceiptRawParams(employeeEdit->text().toInt(), dateEdit->text(), execDateEdit->text(), stockEmployeeEdit->text().toInt(), prodCountEdit->text().toDouble(),
+			SetReceiptRawParams(fromStkEmpEdit->text().toInt(), dateEdit->text(), execDateEdit->text(), toStkEmpEdit->text().toInt(), prodCountEdit->text().toDouble(),
 				sumEdit->text().toDouble(), statusEdit->text().toInt(), currencyCmb->currentData().toInt(), receiptRaw->GetID());
 		}
 		
@@ -389,25 +459,25 @@ void CreateRcpRDlg::CreateReceiptRaw()
 void CreateRcpRDlg::EditReceiptRaw()
 {
 	errorMessage.clear();
-	if (0 != stockEmployeeEdit->text().toInt()
+	if (0 != toStkEmpEdit->text().toInt()
 		&& 0 != prodCountEdit->text().toDouble() && 0 != sumEdit->text().toDouble()
 		&& 0 != statusEdit->text().toInt() && 0 != currencyCmb->currentData().toInt())
 	{
-		if (receiptRaw->GetStockEmployeeID() != stockEmployeeEdit->text().toInt() || QString(receiptRaw->GetDate().c_str()) != dateEdit->text() ||
+		if (receiptRaw->GetStockEmployeeID() != toStkEmpEdit->text().toInt() || QString(receiptRaw->GetDate().c_str()) != dateEdit->text() ||
 			QString(receiptRaw->GetExecutionDate().c_str()) != execDateEdit->text() ||
-			receiptRaw->GetEmployeeID() != employeeEdit->text().toInt() || receiptRaw->GetCount() != prodCountEdit->text().toDouble() ||
+			receiptRaw->GetEmployeeID() != fromStkEmpEdit->text().toInt() || receiptRaw->GetCount() != prodCountEdit->text().toDouble() ||
 			receiptRaw->GetSum() != sumEdit->text().toDouble()
 			|| receiptRaw->GetCurrencyID() != currencyCmb->currentData().toInt())
 		{
 			DataForm *parentDataForm = (DataForm*) parentForm;
 			if (!execDateWidget->isVisible())
 			{
-				SetReceiptRawParams(employeeEdit->text().toInt(), dateEdit->text(), "", stockEmployeeEdit->text().toInt(), prodCountEdit->text().toDouble(),
+				SetReceiptRawParams(fromStkEmpEdit->text().toInt(), dateEdit->text(), "", toStkEmpEdit->text().toInt(), prodCountEdit->text().toDouble(),
 					sumEdit->text().toDouble(), statusEdit->text().toInt(), currencyCmb->currentData().toInt(), receiptRaw->GetID());
 			}
 			else
 			{
-				SetReceiptRawParams(employeeEdit->text().toInt(), dateEdit->text(), execDateEdit->text(), stockEmployeeEdit->text().toInt(), prodCountEdit->text().toDouble(),
+				SetReceiptRawParams(fromStkEmpEdit->text().toInt(), dateEdit->text(), execDateEdit->text(), toStkEmpEdit->text().toInt(), prodCountEdit->text().toDouble(),
 					sumEdit->text().toDouble(), statusEdit->text().toInt(), currencyCmb->currentData().toInt(), receiptRaw->GetID());
 			}
 
@@ -560,6 +630,15 @@ void CreateRcpRDlg::Close()
 
 void CreateRcpRDlg::OpenEmpDlg()
 {
+	if (prodCountEdit->text().toInt() > 0)
+	{
+		QString message = tr("Cannot change employy!");
+		mainForm->statusBar()->showMessage(message);
+		QMessageBox::information(NULL, QString(tr("Warning")),
+			QString(tr("Cannot change stock employee after adding product!")),
+			QString(tr("Ok")));
+		return;
+	}
 	this->hide();
 	this->setModal(false);
 	this->show();
@@ -571,7 +650,7 @@ void CreateRcpRDlg::OpenEmpDlg()
 	dForm->setWindowModality(Qt::WindowModal);
 
 	BusinessLayer::Role *role = new BusinessLayer::Role();
-	role->SetName("EXPEDITOR");
+	role->SetName("STOCK MANAGER");
 	std::string roleFilter = dialogBL->GenerateFilter<BusinessLayer::Role>(role);
 	std::vector<BusinessLayer::Role> roleVector = dialogBL->GetAllDataForClass<BusinessLayer::Role>(errorMessage, roleFilter);
 
@@ -638,6 +717,15 @@ void CreateRcpRDlg::OpenEmpDlg()
 
 void CreateRcpRDlg::OpenSkEmpDlg()
 {
+	if (prodCountEdit->text().toInt() > 0)
+	{
+		QString message = tr("Cannot change employy!");
+		mainForm->statusBar()->showMessage(message);
+		QMessageBox::information(NULL, QString(tr("Warning")),
+			QString(tr("Cannot change stock employee after adding product!")),
+			QString(tr("Ok")));
+		return;
+	}
 	this->hide();
 	this->setModal(false);
 	this->show();
@@ -736,6 +824,7 @@ void CreateRcpRDlg::OpenStsDlg()
 		statusWindow->setWidget(dForm);
 		statusWindow->setAttribute(Qt::WA_DeleteOnClose);
 		mainForm->mdiArea->addSubWindow(statusWindow);
+		statusWindow->resize(dForm->size().width() + 18, dForm->size().height() + 30);
 		dForm->topLevelWidget();
 		dForm->activateWindow();
 		QApplication::setActiveWindow(dForm);
@@ -759,6 +848,24 @@ void CreateRcpRDlg::OpenStsDlg()
 
 void CreateRcpRDlg::OpenRcpRListDlg()
 {
+	if (fromStkEmpEdit->text().toInt() == 0 || fromStkEmpEdit->text().toInt() < 0)
+	{
+		QString message = tr("Enter from stock employee before!");
+		mainForm->statusBar()->showMessage(message);
+		QMessageBox::information(NULL, QString(tr("Warning")),
+			QString(tr("Enter from stok employee before!")),
+			QString(tr("Ok")));
+		return;
+	}
+	if (toStkEmpEdit->text().toInt() == 0 || toStkEmpEdit->text().toInt() < 0)
+	{
+		QString message = tr("Enter to stock employee before!");
+		mainForm->statusBar()->showMessage(message);
+		QMessageBox::information(NULL, QString(tr("Warning")),
+			QString(tr("Enter to stock employee before!")),
+			QString(tr("Ok")));
+		return;
+	}
 	this->hide();
 	this->setModal(false);
 	this->show();
@@ -769,6 +876,7 @@ void CreateRcpRDlg::OpenRcpRListDlg()
 	dForm->hide();
 	dForm->setWindowModality(Qt::WindowModal);
 	dForm->receiptRawID = receiptRaw->GetID();
+	dForm->stockEmployeeID = toStkEmpEdit->text().toInt();
 	BusinessLayer::ReceiptRawList receiptRawList;
 	receiptRawList.SetReceiptRawID(receiptRaw->GetID());
 	std::string receiptRawListFilter = receiptRawList.GenerateFilter(dialogBL->GetOrmasDal());

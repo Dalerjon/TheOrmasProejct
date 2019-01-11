@@ -87,6 +87,11 @@
     <ClInclude Include="AccessViewClass.h" />
     <ClInclude Include="AccountClass.h" />
     <ClInclude Include="AccountHistoryClass.h" />
+    <ClInclude Include="BranchClass.h" />
+    <ClInclude Include="CashboxClass.h" />
+    <ClInclude Include="CashboxEmployeeRelationClass.h" />
+    <ClInclude Include="CashboxEmployeeRelationViewClass.h" />
+    <ClInclude Include="CashboxViewClass.h" />
     <ClInclude Include="CloseOfMonth.h" />
     <ClInclude Include="DivisionAccountRelationClass.h" />
     <ClInclude Include="DivisionAccountRelationViewClass.h" />
@@ -224,6 +229,11 @@
     <ClInclude Include="TransportViewClass.h" />
     <ClInclude Include="UserClass.h" />
     <ClInclude Include="UserViewClass.h" />
+    <ClInclude Include="WarehouseClass.h" />
+    <ClInclude Include="WarehouseEmployeeRelationClass.h" />
+    <ClInclude Include="WarehouseEmployeeRelationViewClass.h" />
+    <ClInclude Include="WarehouseTypeClass.h" />
+    <ClInclude Include="WarehouseViewClass.h" />
     <ClInclude Include="WithdrawalClass.h" />
     <ClInclude Include="WithdrawalViewClass.h" />
     <ClInclude Include="WriteOffClass.h" />
@@ -241,6 +251,11 @@
     <ClCompile Include="AccessViewClass.cpp" />
     <ClCompile Include="AccountClass.cpp" />
     <ClCompile Include="AccountHistoryClass.cpp" />
+    <ClCompile Include="BranchClass.cpp" />
+    <ClCompile Include="CashboxClass.cpp" />
+    <ClCompile Include="CashboxEmployeeRelationClass.cpp" />
+    <ClCompile Include="CashboxEmployeeRelationViewClass.cpp" />
+    <ClCompile Include="CashboxViewClass.cpp" />
     <ClCompile Include="DivisionAccountRelationClass.cpp" />
     <ClCompile Include="DivisionAccountRelationViewClass.cpp" />
     <ClCompile Include="DivisionClass.cpp" />
@@ -379,6 +394,11 @@
     <ClCompile Include="TransportViewClass.cpp" />
     <ClCompile Include="UserClass.cpp" />
     <ClCompile Include="UserViewClass.cpp" />
+    <ClCompile Include="WarehouseClass.cpp" />
+    <ClCompile Include="WarehouseEmployeeRelationClass.cpp" />
+    <ClCompile Include="WarehouseEmployeeRelationViewClass.cpp" />
+    <ClCompile Include="WarehouseTypeClass.cpp" />
+    <ClCompile Include="WarehouseViewClass.cpp" />
     <ClCompile Include="WithdrawalClass.cpp" />
     <ClCompile Include="WithdrawalViewClass.cpp" />
     <ClCompile Include="WriteOffClass.cpp" />

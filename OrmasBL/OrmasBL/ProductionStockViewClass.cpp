@@ -14,10 +14,13 @@ namespace BusinessLayer
 		count = std::get<6>(sCollection);
 		sum = std::get<7>(sCollection);
 		sumCurrencyName = std::get<8>(sCollection);
-		statusName = std::get<9>(sCollection);
-		productID = std::get<10>(sCollection);
-		statusID = std::get<11>(sCollection);
-		currencyID = std::get<12>(sCollection);
+		warehouseName = std::get<9>(sCollection);
+		subaccountNumber = std::get<10>(sCollection);
+		statusName = std::get<11>(sCollection);
+		productID = std::get<12>(sCollection);
+		statusID = std::get<13>(sCollection);
+		currencyID = std::get<14>(sCollection);
+		warehouseID = std::get<15>(sCollection);
 	}
 
 	std::string ProductionStockView::GetProductName()
@@ -43,6 +46,14 @@ namespace BusinessLayer
 	std::string ProductionStockView::GetSumCurrencyName()
 	{
 		return sumCurrencyName;
+	}
+	std::string ProductionStockView::GetWarehouseName()
+	{
+		return warehouseName;
+	}
+	std::string ProductionStockView::GetSubaccountNumber()
+	{
+		return subaccountNumber;
 	}
 	std::string ProductionStockView::GetMeasureName()
 	{
