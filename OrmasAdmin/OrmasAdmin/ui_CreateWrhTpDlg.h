@@ -111,7 +111,8 @@ public:
         gridLayout->addWidget(purposeLb, 2, 0, 1, 1);
 
         QWidget::setTabOrder(codeEdit, purposeEdit);
-        QWidget::setTabOrder(purposeEdit, okBtn);
+        QWidget::setTabOrder(purposeEdit, nameEdit);
+        QWidget::setTabOrder(nameEdit, okBtn);
         QWidget::setTabOrder(okBtn, cancelBtn);
 
         retranslateUi(CreateWarehouseType);

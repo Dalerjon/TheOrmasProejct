@@ -86,6 +86,8 @@
   </layout>
  </widget>
  <tabstops>
+  <tabstop>fromDateEdit</tabstop>
+  <tabstop>tillDateEdit</tabstop>
   <tabstop>okBtn</tabstop>
   <tabstop>cancelBtn</tabstop>
  </tabstops>

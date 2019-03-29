@@ -427,7 +427,7 @@
   </action>
   <action name="actionReceiptRaws">
    <property name="text">
-    <string>Receipt raw materials</string>
+    <string>Stock transfer</string>
    </property>
   </action>
   <action name="actionTransports">

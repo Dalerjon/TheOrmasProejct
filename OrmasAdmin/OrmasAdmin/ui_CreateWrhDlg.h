@@ -169,10 +169,12 @@ public:
 
         gridLayout->addWidget(phoneLb, 5, 0, 1, 1);
 
-        QWidget::setTabOrder(numberEdit, nameEdit);
         QWidget::setTabOrder(nameEdit, addressEdit);
-        QWidget::setTabOrder(addressEdit, okBtn);
+        QWidget::setTabOrder(addressEdit, phoneEdit);
+        QWidget::setTabOrder(phoneEdit, wTypeCmb);
+        QWidget::setTabOrder(wTypeCmb, okBtn);
         QWidget::setTabOrder(okBtn, cancelBtn);
+        QWidget::setTabOrder(cancelBtn, numberEdit);
 
         retranslateUi(CreateWarehouse);
 

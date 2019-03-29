@@ -241,7 +241,18 @@ public:
 
         gridLayout->addWidget(descriptionTextEdit, 12, 0, 1, 5);
 
+        QWidget::setTabOrder(dAccBtn, daNumberEdit);
+        QWidget::setTabOrder(daNumberEdit, dSubAccBtn);
+        QWidget::setTabOrder(dSubAccBtn, valueEdit);
+        QWidget::setTabOrder(valueEdit, cAccBtn);
+        QWidget::setTabOrder(cAccBtn, caNumberEdit);
+        QWidget::setTabOrder(caNumberEdit, cSubAccBtn);
+        QWidget::setTabOrder(cSubAccBtn, descriptionTextEdit);
+        QWidget::setTabOrder(descriptionTextEdit, okBtn);
         QWidget::setTabOrder(okBtn, cancelBtn);
+        QWidget::setTabOrder(cancelBtn, dateEdit);
+        QWidget::setTabOrder(dateEdit, daIDEdit);
+        QWidget::setTabOrder(daIDEdit, caIDEdit);
 
         retranslateUi(CreateEntry);
 

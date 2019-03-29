@@ -104,7 +104,17 @@ SOURCES += \
     DocForm.cpp \
     GenerateCmpBlcDlg.cpp \
     GenerateFinRepDlg.cpp \
-    ReworkRawDlg.cpp
+    ReworkRawDlg.cpp \
+    CreateBrhDlg.cpp \
+    CreateCASHERDlg.cpp \
+    CreateCbxDlg.cpp \
+    CreateWERDlg.cpp \
+    CreateWrhDlg.cpp \
+    CreateWrhTpDlg.cpp \
+    GenerateAccRepDlg.cpp \
+    GenerateProfRepDlg.cpp \
+    GenerateSalesRepDlg.cpp \
+    GenerateSpecRepDlg.cpp
 
 HEADERS  += AllDlgHeaders.h \
     ClcWagesDlg.h \
@@ -198,7 +208,17 @@ HEADERS  += AllDlgHeaders.h \
     DocForm.h \
     GenerateCmpBlcDlg.h \
     GenerateFinRepDlg.h \
-    ReworkRawDlg.h
+    ReworkRawDlg.h \
+    CreateBrhDlg.h \
+    CreateCASHERDlg.h \
+    CreateCbxDlg.h \
+    CreateWERDlg.h \
+    CreateWrhDlg.h \
+    CreateWrhTpDlg.h \
+    GenerateAccRepDlg.h \
+    GenerateProfRepDlg.h \
+    GenerateSalesRepDlg.h \
+    GenerateSpecRepDlg.h
 
 FORMS    += ClcWagesDlg.ui \
 	CreateAcсDlg.ui \
@@ -290,7 +310,17 @@ FORMS    += ClcWagesDlg.ui \
     DocForm.ui \
     GenerateCmpBlcDlg.ui \
     GenerateFinRepDlg.ui \
-    ReworkRawDlg.ui
+    ReworkRawDlg.ui \
+    CreateBrhDlg.ui \
+    CreateCASHERDlg.ui \
+    CreateCbxDlg.ui \
+    CreateWERDlg.ui \
+    CreateWrhDlg.ui \
+    CreateWrhTpDlg.ui \
+    GenerateAccRepDlg.ui \
+    GenerateProfRepDlg.ui \
+    GenerateSalesRepDlg.ui \
+    GenerateSpecRepDlg.ui
 
 DISTFILES += \
     ../../OrmasAdmin/OrmasAdmin/OrmasResource.rcc

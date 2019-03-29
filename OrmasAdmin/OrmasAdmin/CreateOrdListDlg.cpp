@@ -114,7 +114,7 @@ void CreateOrdListDlg::FillEditElements(int pOrderID, int pProductID, double pCo
 	orderEdit->setText(QString::number(pOrderID));
 	productEdit->setText(QString::number(pProductID));
 	countEdit->setText(QString::number(pCount));
-	sumEdit->setText(QString::number(pSum));
+	sumEdit->setText(QString::number(pSum,'f',3));
 	statusEdit->setText(QString::number(pStatusID));
 	currencyCmb->setCurrentIndex(currencyCmb->findData(QVariant(pCurrencyID)));
 	BusinessLayer::Product product;
@@ -244,7 +244,7 @@ void CreateOrdListDlg::AddProductToList()
 						<< new QStandardItem(QString::number(product->GetVolume()))
 						<< new QStandardItem(measure->GetName().c_str())
 						<< new QStandardItem(QString::number(orderList->GetCount()))
-						<< new QStandardItem(QString::number(orderList->GetSum()))
+						<< new QStandardItem(QString::number(orderList->GetSum(),'f',3))
 						<< new QStandardItem(sumCurrency->GetShortName().c_str())
 						<< new QStandardItem(statusVector.at(0).GetName().c_str())
 						<< new QStandardItem(QString::number(orderList->GetProductID()))
@@ -338,7 +338,7 @@ void CreateOrdListDlg::EditProductInList()
 						itemModel->item(mIndex.row(), 5)->setText(QString::number(product->GetVolume()));
 						itemModel->item(mIndex.row(), 6)->setText(measure->GetName().c_str());
 						itemModel->item(mIndex.row(), 7)->setText(QString::number(orderList->GetCount()));
-						itemModel->item(mIndex.row(), 8)->setText(QString::number(orderList->GetSum()));
+						itemModel->item(mIndex.row(), 8)->setText(QString::number(orderList->GetSum(),'f',3));
 						itemModel->item(mIndex.row(), 9)->setText(sumCurrency->GetShortName().c_str());
 						itemModel->item(mIndex.row(), 10)->setText(status->GetName().c_str());
 						itemModel->item(mIndex.row(), 11)->setText(QString::number(orderList->GetProductID()));

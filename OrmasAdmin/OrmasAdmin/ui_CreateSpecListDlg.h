@@ -172,10 +172,12 @@ public:
 
         gridLayout->addWidget(countEdit, 2, 2, 1, 1);
 
-        QWidget::setTabOrder(productBtn, specBtn);
-        QWidget::setTabOrder(specBtn, specEdit);
-        QWidget::setTabOrder(specEdit, addBtn);
+        QWidget::setTabOrder(productBtn, countEdit);
+        QWidget::setTabOrder(countEdit, specBtn);
+        QWidget::setTabOrder(specBtn, addBtn);
         QWidget::setTabOrder(addBtn, cancelBtn);
+        QWidget::setTabOrder(cancelBtn, productEdit);
+        QWidget::setTabOrder(productEdit, specEdit);
 
         retranslateUi(CreateSpecList);
 

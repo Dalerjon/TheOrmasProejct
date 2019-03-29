@@ -320,11 +320,13 @@
   <tabstop>passwordEdit</tabstop>
   <tabstop>activatedCmbBox</tabstop>
   <tabstop>roleBtn</tabstop>
-  <tabstop>roleEdit</tabstop>
   <tabstop>positionBtn</tabstop>
-  <tabstop>positionEdit</tabstop>
+  <tabstop>divisionCmbBox</tabstop>
+  <tabstop>isContractChkBox</tabstop>
   <tabstop>okBtn</tabstop>
   <tabstop>cancelBtn</tabstop>
+  <tabstop>roleEdit</tabstop>
+  <tabstop>positionEdit</tabstop>
  </tabstops>
  <resources/>
  <connections/>

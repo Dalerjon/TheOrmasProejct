@@ -100,6 +100,9 @@ public:
 
         gridLayout->addWidget(taxYesCbx, 1, 2, 1, 1);
 
+        QWidget::setTabOrder(fromDateEdit, tillDateEdit);
+        QWidget::setTabOrder(tillDateEdit, taxYesCbx);
+        QWidget::setTabOrder(taxYesCbx, okBtn);
         QWidget::setTabOrder(okBtn, cancelBtn);
 
         retranslateUi(CloseOfMonth);

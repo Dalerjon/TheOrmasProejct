@@ -178,6 +178,7 @@ void CreateWOffListDlg::AddProductToList()
 			return;
 		}
 		BusinessLayer::Product *product = new BusinessLayer::Product();
+		BusinessLayer::NetCost *nCost = new BusinessLayer::NetCost();
 		BusinessLayer::Measure *measure = new BusinessLayer::Measure();
 		BusinessLayer::Currency *currency = new BusinessLayer::Currency();
 		BusinessLayer::Currency *sumCurrency = new BusinessLayer::Currency();
@@ -197,7 +198,8 @@ void CreateWOffListDlg::AddProductToList()
 		{
 			if (!measure->GetMeasureByID(dialogBL->GetOrmasDal(), product->GetMeasureID(), errorMessage)
 				|| !currency->GetCurrencyByID(dialogBL->GetOrmasDal(), product->GetCurrencyID(), errorMessage)
-				|| !sumCurrency->GetCurrencyByID(dialogBL->GetOrmasDal(), writeOffList->GetCurrencyID(), errorMessage))
+				|| !sumCurrency->GetCurrencyByID(dialogBL->GetOrmasDal(), writeOffList->GetCurrencyID(), errorMessage)
+				|| !nCost->GetNetCostByProductID(dialogBL->GetOrmasDal(), product->GetID(), errorMessage))
 			{
 				QMessageBox::information(NULL, QString(tr("Warning")),
 					QString(tr(errorMessage.c_str())),
@@ -206,12 +208,13 @@ void CreateWOffListDlg::AddProductToList()
 				delete product;
 				delete measure;
 				delete currency;
+				delete nCost;
 				return;
 			}
 		}
 
 		SetWriteOffListParams(writeOffID, productEdit->text().toInt(),
-			countEdit->text().toDouble(), (countEdit->text().toDouble() * product->GetPrice()),
+			countEdit->text().toDouble(), (countEdit->text().toDouble() * nCost->GetValue()),
 			statusVector.at(0).GetID(), product->GetCurrencyID());
 		if (dialogBL->CreateWriteOffList(writeOffList, errorMessage))
 		{
@@ -248,6 +251,7 @@ void CreateWOffListDlg::AddProductToList()
 			delete measure;
 			delete product;
 			delete currency;
+			delete nCost;
 			Close();
 		}
 		else
@@ -276,6 +280,7 @@ void CreateWOffListDlg::EditProductInList()
 			|| statusEdit->text().toInt() != writeOffList->GetStatusID() || currencyCmb->currentData().toInt() != writeOffList->GetCurrencyID())
 		{
 			BusinessLayer::Product *product = new BusinessLayer::Product();
+			BusinessLayer::NetCost *nCost = new BusinessLayer::NetCost();
 			if (!product->GetProductByID(dialogBL->GetOrmasDal(), productEdit->text().toInt(), errorMessage))
 			{
 				QMessageBox::information(NULL, QString(tr("Warning")),
@@ -285,10 +290,20 @@ void CreateWOffListDlg::EditProductInList()
 				delete product;
 				return;
 			}
+			if (!nCost->GetNetCostByProductID(dialogBL->GetOrmasDal(), productEdit->text().toInt(), errorMessage))
+			{
+				QMessageBox::information(NULL, QString(tr("Warning")),
+					QString(tr(errorMessage.c_str())),
+					QString(tr("Ok")));
+				errorMessage.clear();
+				delete product;
+				delete nCost;
+				return;
+			}
 			if (countEdit->text().toDouble() != writeOffList->GetCount() ||
 				productEdit->text().toInt() != writeOffList->GetProductID())
 			{
-				sumEdit->setText(QString::number(countEdit->text().toDouble() * product->GetPrice()));
+				sumEdit->setText(QString::number(countEdit->text().toDouble() * nCost->GetValue()));
 			}
 			DataForm *parentDataForm = (DataForm*) parentForm;
 			SetWriteOffListParams(writeOffEdit->text().toInt(),
@@ -344,7 +359,7 @@ void CreateWOffListDlg::EditProductInList()
 					}
 				}
 				delete product;
-				
+				delete nCost;
 				Close();
 			}
 			else

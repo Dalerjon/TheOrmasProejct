@@ -238,7 +238,7 @@ void CreateRtrnDlg::CreateReturn()
 			SetReturnParams(clientEdit->text().toInt(), dateEdit->text(), execDateEdit->text(), employeeEdit->text().toInt(), prodCountEdit->text().toDouble(),
 				sumEdit->text().toDouble(), statusEdit->text().toInt(), currencyCmb->currentData().toInt(), ret->GetID());
 		}
-		
+		ret->warehouseID = warehouseCmb->currentData().toInt();
 		if (dialogBL->CreateReturn(ret, errorMessage))
 		{
 			if (parentDataForm != nullptr)
@@ -386,7 +386,7 @@ void CreateRtrnDlg::EditReturn()
 				SetReturnParams(clientEdit->text().toInt(), dateEdit->text(), execDateEdit->text(), employeeEdit->text().toInt(), prodCountEdit->text().toDouble(),
 					sumEdit->text().toDouble(), statusEdit->text().toInt(), currencyCmb->currentData().toInt(), ret->GetID());
 			}
-			
+			ret->warehouseID = warehouseCmb->currentData().toInt();
 			if (dialogBL->UpdateReturn(ret, errorMessage))
 			{
 				if (parentDataForm != nullptr)
@@ -788,6 +788,21 @@ void CreateRtrnDlg::InitComboBox()
 			currencyCmb->addItem(curVector[i].GetShortName().c_str(), QVariant(curVector[i].GetID()));
 		}
 	}
+
+	BusinessLayer::Warehouse warehouse;
+	BusinessLayer::WarehouseType warehouseType;
+	if (!warehouseType.GetWarehouseTypeByCode(dialogBL->GetOrmasDal(), "PRODUCT", errorMessage))
+		return;
+	warehouse.SetWarehouseTypeID(warehouseType.GetID());
+	std::string filter = warehouse.GenerateFilter(dialogBL->GetOrmasDal());
+	std::vector<BusinessLayer::WarehouseView> werVector = dialogBL->GetAllDataForClass<BusinessLayer::WarehouseView>(errorMessage, filter);
+	if (!werVector.empty())
+	{
+		for (unsigned int i = 0; i < werVector.size(); i++)
+		{
+			warehouseCmb->addItem(werVector[i].GetName().c_str(), QVariant(werVector[i].GetID()));
+		}
+	}
 }
 
 void CreateRtrnDlg::TextEditChanged()
@@ -809,4 +824,3 @@ void CreateRtrnDlg::TextEditChanged()
 		sumEdit->setText(sumEdit->text().replace("..", "."));
 	}
 }
-

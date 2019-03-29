@@ -255,11 +255,16 @@ public:
 
         gridLayout->addWidget(countEdit, 2, 3, 1, 1);
 
-        QWidget::setTabOrder(productBtn, writeOffBtn);
-        QWidget::setTabOrder(writeOffBtn, writeOffEdit);
-        QWidget::setTabOrder(writeOffEdit, sumEdit);
-        QWidget::setTabOrder(sumEdit, addBtn);
+        QWidget::setTabOrder(productBtn, countEdit);
+        QWidget::setTabOrder(countEdit, writeOffBtn);
+        QWidget::setTabOrder(writeOffBtn, statusBtn);
+        QWidget::setTabOrder(statusBtn, addBtn);
         QWidget::setTabOrder(addBtn, cancelBtn);
+        QWidget::setTabOrder(cancelBtn, writeOffEdit);
+        QWidget::setTabOrder(writeOffEdit, statusEdit);
+        QWidget::setTabOrder(statusEdit, sumEdit);
+        QWidget::setTabOrder(sumEdit, currencyCmb);
+        QWidget::setTabOrder(currencyCmb, productEdit);
 
         retranslateUi(CreateWOffList);
 

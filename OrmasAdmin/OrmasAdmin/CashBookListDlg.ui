@@ -76,6 +76,7 @@
   </layout>
  </widget>
  <tabstops>
+  <tabstop>forDateEdit</tabstop>
   <tabstop>okBtn</tabstop>
   <tabstop>cancelBtn</tabstop>
  </tabstops>

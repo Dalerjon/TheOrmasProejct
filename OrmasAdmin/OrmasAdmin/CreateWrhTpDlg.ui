@@ -149,6 +149,7 @@
  <tabstops>
   <tabstop>codeEdit</tabstop>
   <tabstop>purposeEdit</tabstop>
+  <tabstop>nameEdit</tabstop>
   <tabstop>okBtn</tabstop>
   <tabstop>cancelBtn</tabstop>
  </tabstops>

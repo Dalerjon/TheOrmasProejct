@@ -20,6 +20,21 @@ CreateWOffDlg::CreateWOffDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, Q
 	statusEdit->setValidator(vInt);
 	sumEdit->setValidator(vDouble);
 	sumEdit->setMaxLength(17);
+	sumEdit->setVisible(false);
+	sumLb->setVisible(false);
+
+
+	//hide employee, because it's not needed
+	clNamePh->setVisible(false);
+	clSurnamePh->setVisible(false);
+	clPhonePh->setVisible(false);
+	clNameLb->setVisible(false);
+	clSurnameLb->setVisible(false);
+	clPhoneLb->setVisible(false);
+	clientBtn->setVisible(false);
+	clientEdit->setVisible(false);
+	//
+	
 	if (true == updateFlag)
 	{
 		QObject::connect(okBtn, &QPushButton::released, this, &CreateWOffDlg::EditWriteOff);
@@ -192,7 +207,7 @@ bool CreateWOffDlg::FillDlgElements(QTableView* cTable)
 void CreateWOffDlg::CreateWriteOff()
 {
 	errorMessage.clear();
-	if (0 != clientEdit->text().toInt() && !dateEdit->text().isEmpty()
+	if (!dateEdit->text().isEmpty()
 		&& 0 != prodCountEdit->text().toDouble() && 0 != sumEdit->text().toDouble()
 		&& 0 != statusEdit->text().toInt() && !currencyCmb->currentText().isEmpty())
 	{
@@ -318,8 +333,7 @@ void CreateWOffDlg::CreateWriteOff()
 void CreateWOffDlg::EditWriteOff()
 {
 	errorMessage.clear();
-	if (0 != clientEdit->text().toInt() && !dateEdit->text().isEmpty()
-		&& 0 != prodCountEdit->text().toDouble() && 0 != sumEdit->text().toDouble()
+	if (0 != prodCountEdit->text().toDouble() && 0 != sumEdit->text().toDouble()
 		&& 0 != statusEdit->text().toInt() && !currencyCmb->currentText().isEmpty())
 	{
 		if (writeOff->GetClientID() != clientEdit->text().toInt() || QString(writeOff->GetDate().c_str()) != dateEdit->text() ||
@@ -557,7 +571,7 @@ void CreateWOffDlg::OpenEmpDlg()
 	dForm->setWindowModality(Qt::WindowModal);
 
 	BusinessLayer::Role *role = new BusinessLayer::Role();
-	role->SetName("EXPEDITOR");
+	role->SetName("STOCK MANAGER");
 	std::string roleFilter = dialogBL->GenerateFilter<BusinessLayer::Role>(role);
 	std::vector<BusinessLayer::Role> roleVector = dialogBL->GetAllDataForClass<BusinessLayer::Role>(errorMessage, roleFilter);
 
@@ -580,7 +594,7 @@ void CreateWOffDlg::OpenEmpDlg()
 	if (employeeVector.size() == 0)
 	{
 		delete role;
-		QString message = tr("Sorry could not find employee with \"expeditor\" role!");
+		QString message = tr("Sorry could not find employee with \"Stock manager\" role!");
 		mainForm->statusBar()->showMessage(message);
 		QMessageBox::information(NULL, QString(tr("Warning")),
 			QString(message),

@@ -368,11 +368,17 @@
  </widget>
  <tabstops>
   <tabstop>numberEdit</tabstop>
+  <tabstop>chartOfAccBtn</tabstop>
   <tabstop>startBalanceEdit</tabstop>
   <tabstop>currentBalanceEdit</tabstop>
+  <tabstop>currencyCmb</tabstop>
+  <tabstop>statusBtn</tabstop>
+  <tabstop>openedDateEdit</tabstop>
   <tabstop>detailsEdit</tabstop>
   <tabstop>okBtn</tabstop>
   <tabstop>cancelBtn</tabstop>
+  <tabstop>chartOfAccEdit</tabstop>
+  <tabstop>statusEdit</tabstop>
  </tabstops>
  <resources/>
  <connections/>

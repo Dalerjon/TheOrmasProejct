@@ -235,11 +235,13 @@
   </layout>
  </widget>
  <tabstops>
-  <tabstop>numberEdit</tabstop>
   <tabstop>nameEdit</tabstop>
   <tabstop>addressEdit</tabstop>
+  <tabstop>phoneEdit</tabstop>
+  <tabstop>wTypeCmb</tabstop>
   <tabstop>okBtn</tabstop>
   <tabstop>cancelBtn</tabstop>
+  <tabstop>numberEdit</tabstop>
  </tabstops>
  <resources/>
  <connections/>

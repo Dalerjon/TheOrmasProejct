@@ -248,8 +248,19 @@ public:
 
         gridLayout->addWidget(targetEdit, 4, 2, 1, 5);
 
-        QWidget::setTabOrder(userBtn, okBtn);
+        QWidget::setTabOrder(userBtn, subAccBtn);
+        QWidget::setTabOrder(subAccBtn, saNumberEdit);
+        QWidget::setTabOrder(saNumberEdit, targetEdit);
+        QWidget::setTabOrder(targetEdit, currencyCmb);
+        QWidget::setTabOrder(currencyCmb, dateEdit);
+        QWidget::setTabOrder(dateEdit, balanceEdit);
+        QWidget::setTabOrder(balanceEdit, currencyNameEdit);
+        QWidget::setTabOrder(currencyNameEdit, yesCheckBox);
+        QWidget::setTabOrder(yesCheckBox, valueEdit);
+        QWidget::setTabOrder(valueEdit, okBtn);
         QWidget::setTabOrder(okBtn, cancelBtn);
+        QWidget::setTabOrder(cancelBtn, userEdit);
+        QWidget::setTabOrder(userEdit, saIDEdit);
 
         retranslateUi(CreateWithdrawal);
 

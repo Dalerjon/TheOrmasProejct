@@ -214,6 +214,12 @@ INSERT INTO "OrmasSchema".access_items(
     VALUES ((SELECT nextval('"OrmasSchema".id_seq')), 'actionStock', 'actionStock', 'MENUITEM');
 INSERT INTO "OrmasSchema".access_items(
             access_item_id, access_item_eng, access_item_ru, access_division)
+    VALUES ((SELECT nextval('"OrmasSchema".id_seq')), 'actionRawStock', 'actionRawStock', 'MENUITEM');
+INSERT INTO "OrmasSchema".access_items(
+            access_item_id, access_item_eng, access_item_ru, access_division)
+    VALUES ((SELECT nextval('"OrmasSchema".id_seq')), 'actionProductStock', 'actionProductStock', 'MENUITEM');
+INSERT INTO "OrmasSchema".access_items(
+            access_item_id, access_item_eng, access_item_ru, access_division)
     VALUES ((SELECT nextval('"OrmasSchema".id_seq')), 'actionOrderRaws', 'actionOrderRaws', 'MENUITEM');
 INSERT INTO "OrmasSchema".access_items(
             access_item_id, access_item_eng, access_item_ru, access_division)

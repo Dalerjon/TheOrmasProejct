@@ -14,3 +14,4 @@ user
 chart_of_accounts
 entry_routing //not needed now
 division
+warehouse_type

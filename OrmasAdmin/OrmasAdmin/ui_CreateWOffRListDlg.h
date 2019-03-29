@@ -251,11 +251,16 @@ public:
 
         gridLayout->addWidget(countLb, 2, 0, 1, 2);
 
-        QWidget::setTabOrder(productBtn, writeOffRawBtn);
-        QWidget::setTabOrder(writeOffRawBtn, writeOffRawEdit);
-        QWidget::setTabOrder(writeOffRawEdit, sumEdit);
-        QWidget::setTabOrder(sumEdit, addBtn);
+        QWidget::setTabOrder(productBtn, countEdit);
+        QWidget::setTabOrder(countEdit, writeOffRawBtn);
+        QWidget::setTabOrder(writeOffRawBtn, statusBtn);
+        QWidget::setTabOrder(statusBtn, addBtn);
         QWidget::setTabOrder(addBtn, cancelBtn);
+        QWidget::setTabOrder(cancelBtn, productEdit);
+        QWidget::setTabOrder(productEdit, writeOffRawEdit);
+        QWidget::setTabOrder(writeOffRawEdit, statusEdit);
+        QWidget::setTabOrder(statusEdit, sumEdit);
+        QWidget::setTabOrder(sumEdit, currencyCmb);
 
         retranslateUi(CreateWOffRList);
 

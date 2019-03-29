@@ -255,11 +255,16 @@ public:
 
         gridLayout->addWidget(prodNameLb, 1, 0, 1, 1);
 
-        QWidget::setTabOrder(productBtn, inventorizationBtn);
-        QWidget::setTabOrder(inventorizationBtn, inventorizationEdit);
-        QWidget::setTabOrder(inventorizationEdit, sumEdit);
-        QWidget::setTabOrder(sumEdit, addBtn);
+        QWidget::setTabOrder(productBtn, countEdit);
+        QWidget::setTabOrder(countEdit, inventorizationBtn);
+        QWidget::setTabOrder(inventorizationBtn, statusBtn);
+        QWidget::setTabOrder(statusBtn, addBtn);
         QWidget::setTabOrder(addBtn, cancelBtn);
+        QWidget::setTabOrder(cancelBtn, productEdit);
+        QWidget::setTabOrder(productEdit, inventorizationEdit);
+        QWidget::setTabOrder(inventorizationEdit, statusEdit);
+        QWidget::setTabOrder(statusEdit, sumEdit);
+        QWidget::setTabOrder(sumEdit, currencyCmb);
 
         retranslateUi(CreateInvList);
 

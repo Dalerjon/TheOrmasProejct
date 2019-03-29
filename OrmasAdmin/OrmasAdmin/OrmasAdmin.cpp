@@ -39,12 +39,14 @@ int main(int argc, char* argv[])
 	}
 	BusinessLayer::User *loggedUser = new BusinessLayer::User();
 	LoginForm logForm(oBL, loggedUser);
+	logForm.setWindowIcon(QIcon("./images/ormas.png"));
 	logForm.exec();
 	if (!loggedUser->IsEmpty())
 	{
 		MainForm startForm(oBL, loggedUser);
 		startForm.setWindowState(Qt::WindowMaximized);
 		startForm.show();
+		startForm.setWindowIcon(QIcon("./images/ormas.png"));
 		return app.exec();
 	}
 }

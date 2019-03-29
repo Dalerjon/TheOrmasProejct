@@ -255,11 +255,16 @@ public:
 
         gridLayout->addWidget(prodNameLb, 1, 0, 1, 1);
 
-        QWidget::setTabOrder(productBtn, productionPlanBtn);
-        QWidget::setTabOrder(productionPlanBtn, productionPlanEdit);
-        QWidget::setTabOrder(productionPlanEdit, sumEdit);
-        QWidget::setTabOrder(sumEdit, addBtn);
+        QWidget::setTabOrder(productBtn, countEdit);
+        QWidget::setTabOrder(countEdit, productionPlanBtn);
+        QWidget::setTabOrder(productionPlanBtn, statusBtn);
+        QWidget::setTabOrder(statusBtn, addBtn);
         QWidget::setTabOrder(addBtn, cancelBtn);
+        QWidget::setTabOrder(cancelBtn, productEdit);
+        QWidget::setTabOrder(productEdit, productionPlanEdit);
+        QWidget::setTabOrder(productionPlanEdit, statusEdit);
+        QWidget::setTabOrder(statusEdit, sumEdit);
+        QWidget::setTabOrder(sumEdit, currencyCmb);
 
         retranslateUi(CreatePPlanList);
 

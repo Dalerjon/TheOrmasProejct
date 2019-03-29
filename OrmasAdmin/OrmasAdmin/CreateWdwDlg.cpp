@@ -111,7 +111,7 @@ void CreateWdwDlg::SetWithdrawalParams(QString wDate, double wValue, int wUserID
 void CreateWdwDlg::FillEditElements(QString wDate, double wValue, int wUserID, int wSubAccId, QString wTarget, int wCurrencyID)
 {
 	dateEdit->setDateTime(QDateTime::fromString(wDate, "dd.MM.yyyy hh:mm"));
-	valueEdit->setText(QString::number(wValue));
+	valueEdit->setText(QString::number(wValue,'f',3));
 	userEdit->setText(QString::number(wUserID));
 	saIDEdit->setText(QString::number(wSubAccId));
 	targetEdit->setText(wTarget);
@@ -207,7 +207,7 @@ void CreateWdwDlg::CreateWithdrawal()
 					QList<QStandardItem*> withdrawalItem;
 					withdrawalItem << new QStandardItem(QString::number(withdrawal->GetID()))
 						<< new QStandardItem(withdrawal->GetDate().c_str())
-						<< new QStandardItem(QString::number(withdrawal->GetValue()));
+						<< new QStandardItem(QString::number(withdrawal->GetValue(),'f',3));
 					if (userEdit->text().isEmpty() || user.IsEmpty())
 					{
 						withdrawalItem << new QStandardItem("")
@@ -306,7 +306,7 @@ void CreateWdwDlg::EditWithdrawal()
 						QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
 						QModelIndex mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
 						itemModel->item(mIndex.row(), 1)->setText(withdrawal->GetDate().c_str());
-						itemModel->item(mIndex.row(), 2)->setText(QString::number(withdrawal->GetValue()));
+						itemModel->item(mIndex.row(), 2)->setText(QString::number(withdrawal->GetValue(),'f',3));
 						if (userEdit->text().isEmpty() || user.IsEmpty())
 						{
 							itemModel->item(mIndex.row(), 3)->setText("");

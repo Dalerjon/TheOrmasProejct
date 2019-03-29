@@ -225,11 +225,12 @@
   </layout>
  </widget>
  <tabstops>
-  <tabstop>numberEdit</tabstop>
   <tabstop>informationEdit</tabstop>
   <tabstop>addressEdit</tabstop>
+  <tabstop>currencyCmb</tabstop>
   <tabstop>okBtn</tabstop>
   <tabstop>cancelBtn</tabstop>
+  <tabstop>numberEdit</tabstop>
  </tabstops>
  <resources/>
  <connections/>

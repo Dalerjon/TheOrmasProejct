@@ -4,6 +4,11 @@
 namespace DataLayer{
 	ConnectionString::ConnectionString()
 	{
+		dbname = "";
+		username = "";
+		password = "";
+		host = "";
+		port = 0;
 	}
 	ConnectionString::~ConnectionString()
 	{
@@ -19,11 +24,14 @@ namespace DataLayer{
 
 	ConnectionString::ConnectionString(std::string dbname, std::string username, std::string password, std::string host, int port)
 	{
-		this->dbname = dbname;
-		this->username = username;
-		this->password = password;
-		this->host = host;
-		this->port = port;
+		if (!dbname.empty() && !username.empty() && !password.empty() && !host.empty() && 0 != port)
+		{
+			this->dbname = dbname;
+			this->username = username;
+			this->password = password;
+			this->host = host;
+			this->port = port;
+		}
 	}
 	
 
@@ -89,10 +97,20 @@ namespace DataLayer{
 	
 	void ConnectionString::SetDBParams(std::string dbname, std::string username, std::string password, std::string host, int port)
 	{
-		this->dbname = dbname;
-		this->username = username;
-		this->password = password;
-		this->host = host;
-		this->port = port;
+		if (!dbname.empty() && !username.empty() && !password.empty() && !host.empty() && 0 != port)
+		{
+			this->dbname = dbname;
+			this->username = username;
+			this->password = password;
+			this->host = host;
+			this->port = port;
+		}
+	}
+
+	bool ConnectionString::IsDBParamsSet()
+	{
+		if (!dbname.empty() && !username.empty() && !password.empty() && !host.empty() && 0 != port)
+			return true;
+		return false;
 	}
 }

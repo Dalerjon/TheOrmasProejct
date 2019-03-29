@@ -533,7 +533,7 @@ public:
         actionRefund->setText(QApplication::translate("MainWindow", "Refund", 0));
         actionPayslip->setText(QApplication::translate("MainWindow", "Payslip", 0));
         actionOrderRaws->setText(QApplication::translate("MainWindow", "Order raw materials", 0));
-        actionReceiptRaws->setText(QApplication::translate("MainWindow", "Receipt raw materials", 0));
+        actionReceiptRaws->setText(QApplication::translate("MainWindow", "Stock transfer", 0));
         actionTransports->setText(QApplication::translate("MainWindow", "Transports", 0));
         actionReceiptProducts->setText(QApplication::translate("MainWindow", "Receipt products", 0));
         actionConsumptionRaws->setText(QApplication::translate("MainWindow", "Consumption raw materials", 0));

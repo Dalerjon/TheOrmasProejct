@@ -446,10 +446,16 @@
  </widget>
  <tabstops>
   <tabstop>productBtn</tabstop>
+  <tabstop>countEdit</tabstop>
+  <tabstop>sumEdit</tabstop>
   <tabstop>orderRawBtn</tabstop>
-  <tabstop>orderRawEdit</tabstop>
+  <tabstop>statusBtn</tabstop>
   <tabstop>addBtn</tabstop>
   <tabstop>cancelBtn</tabstop>
+  <tabstop>productEdit</tabstop>
+  <tabstop>orderRawEdit</tabstop>
+  <tabstop>statusEdit</tabstop>
+  <tabstop>currencyCmb</tabstop>
  </tabstops>
  <resources/>
  <connections/>

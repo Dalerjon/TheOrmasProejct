@@ -32,15 +32,6 @@ class Ui_CreateReceiptProduct
 {
 public:
     QGridLayout *gridLayout;
-    QLabel *empStockNameLb;
-    QLabel *empStockNamePh;
-    QLabel *empStockSurnamePh;
-    QLabel *empStockSurnameLb;
-    QLabel *empStockPhoneLb;
-    QLabel *empStockPhonePh;
-    QLabel *empNameLb;
-    QLabel *empNamePh;
-    QLabel *empSurnameLb;
     QLabel *empSurnamePh;
     QLabel *empPhoneLb;
     QLabel *empPhonePh;
@@ -48,20 +39,9 @@ public:
     QSpacerItem *horizontalSpacer;
     QPushButton *okBtn;
     QPushButton *cancelBtn;
-    QWidget *statusWidget;
-    QHBoxLayout *horizontalLayout_3;
-    QPushButton *statusBtn;
-    QLineEdit *statusEdit;
-    QLabel *statusLb;
-    QLabel *statusPh;
     QComboBox *currencyCmb;
     QLineEdit *sumEdit;
     QDateTimeEdit *dateEdit;
-    QWidget *execDateWidget;
-    QHBoxLayout *horizontalLayout_2;
-    QLabel *execDateLb;
-    QSpacerItem *horizontalSpacer_2;
-    QDateTimeEdit *execDateEdit;
     QPushButton *employeeBtn;
     QPushButton *stockEmployeeBtn;
     QLabel *sumLb;
@@ -72,87 +52,48 @@ public:
     QLineEdit *employeeEdit;
     QLineEdit *stockEmployeeEdit;
     QPushButton *addProdBtn;
+    QLabel *empStockNamePh;
+    QLabel *empStockNameLb;
+    QWidget *statusWidget;
+    QHBoxLayout *horizontalLayout_3;
+    QPushButton *statusBtn;
+    QLineEdit *statusEdit;
+    QLabel *statusLb;
+    QLabel *statusPh;
+    QWidget *execDateWidget;
+    QHBoxLayout *horizontalLayout_2;
+    QLabel *execDateLb;
+    QSpacerItem *horizontalSpacer_2;
+    QDateTimeEdit *execDateEdit;
+    QLabel *empStockSurnamePh;
+    QLabel *empStockPhonePh;
+    QLabel *empStockPhoneLb;
+    QLabel *empNameLb;
+    QLabel *empStockSurnameLb;
+    QLabel *empNamePh;
+    QLabel *empSurnameLb;
+    QLabel *sumLb2;
+    QLabel *priceSumLb;
 
     void setupUi(QDialog *CreateReceiptProduct)
     {
         if (CreateReceiptProduct->objectName().isEmpty())
             CreateReceiptProduct->setObjectName(QStringLiteral("CreateReceiptProduct"));
-        CreateReceiptProduct->resize(635, 319);
+        CreateReceiptProduct->resize(635, 343);
         CreateReceiptProduct->setLocale(QLocale(QLocale::English, QLocale::UnitedStates));
         CreateReceiptProduct->setModal(false);
         gridLayout = new QGridLayout(CreateReceiptProduct);
         gridLayout->setObjectName(QStringLiteral("gridLayout"));
         gridLayout->setContentsMargins(11, 11, 11, 11);
-        empStockNameLb = new QLabel(CreateReceiptProduct);
-        empStockNameLb->setObjectName(QStringLiteral("empStockNameLb"));
-        empStockNameLb->setMinimumSize(QSize(50, 0));
-        empStockNameLb->setMaximumSize(QSize(50, 16777215));
-
-        gridLayout->addWidget(empStockNameLb, 5, 0, 1, 1);
-
-        empStockNamePh = new QLabel(CreateReceiptProduct);
-        empStockNamePh->setObjectName(QStringLiteral("empStockNamePh"));
-        empStockNamePh->setMinimumSize(QSize(100, 0));
+        empSurnamePh = new QLabel(CreateReceiptProduct);
+        empSurnamePh->setObjectName(QStringLiteral("empSurnamePh"));
+        empSurnamePh->setMinimumSize(QSize(100, 0));
         QFont font;
         font.setFamily(QStringLiteral("Times New Roman"));
         font.setPointSize(12);
         font.setBold(true);
         font.setItalic(true);
         font.setWeight(75);
-        empStockNamePh->setFont(font);
-
-        gridLayout->addWidget(empStockNamePh, 5, 1, 1, 1);
-
-        empStockSurnamePh = new QLabel(CreateReceiptProduct);
-        empStockSurnamePh->setObjectName(QStringLiteral("empStockSurnamePh"));
-        empStockSurnamePh->setMinimumSize(QSize(100, 0));
-        empStockSurnamePh->setFont(font);
-
-        gridLayout->addWidget(empStockSurnamePh, 5, 3, 1, 1);
-
-        empStockSurnameLb = new QLabel(CreateReceiptProduct);
-        empStockSurnameLb->setObjectName(QStringLiteral("empStockSurnameLb"));
-        empStockSurnameLb->setMinimumSize(QSize(50, 0));
-        empStockSurnameLb->setMaximumSize(QSize(50, 16777215));
-
-        gridLayout->addWidget(empStockSurnameLb, 5, 2, 1, 1);
-
-        empStockPhoneLb = new QLabel(CreateReceiptProduct);
-        empStockPhoneLb->setObjectName(QStringLiteral("empStockPhoneLb"));
-
-        gridLayout->addWidget(empStockPhoneLb, 5, 4, 1, 1);
-
-        empStockPhonePh = new QLabel(CreateReceiptProduct);
-        empStockPhonePh->setObjectName(QStringLiteral("empStockPhonePh"));
-        empStockPhonePh->setMinimumSize(QSize(100, 0));
-        empStockPhonePh->setFont(font);
-
-        gridLayout->addWidget(empStockPhonePh, 5, 5, 1, 1);
-
-        empNameLb = new QLabel(CreateReceiptProduct);
-        empNameLb->setObjectName(QStringLiteral("empNameLb"));
-        empNameLb->setMinimumSize(QSize(50, 0));
-        empNameLb->setMaximumSize(QSize(50, 16777215));
-
-        gridLayout->addWidget(empNameLb, 1, 0, 1, 1);
-
-        empNamePh = new QLabel(CreateReceiptProduct);
-        empNamePh->setObjectName(QStringLiteral("empNamePh"));
-        empNamePh->setMinimumSize(QSize(100, 0));
-        empNamePh->setFont(font);
-
-        gridLayout->addWidget(empNamePh, 1, 1, 1, 1);
-
-        empSurnameLb = new QLabel(CreateReceiptProduct);
-        empSurnameLb->setObjectName(QStringLiteral("empSurnameLb"));
-        empSurnameLb->setMinimumSize(QSize(50, 0));
-        empSurnameLb->setMaximumSize(QSize(50, 16777215));
-
-        gridLayout->addWidget(empSurnameLb, 1, 2, 1, 1);
-
-        empSurnamePh = new QLabel(CreateReceiptProduct);
-        empSurnamePh->setObjectName(QStringLiteral("empSurnamePh"));
-        empSurnamePh->setMinimumSize(QSize(100, 0));
         empSurnamePh->setFont(font);
 
         gridLayout->addWidget(empSurnamePh, 1, 3, 1, 1);
@@ -186,7 +127,91 @@ public:
         horizontalLayout->addWidget(cancelBtn);
 
 
-        gridLayout->addLayout(horizontalLayout, 10, 0, 1, 6);
+        gridLayout->addLayout(horizontalLayout, 11, 0, 1, 6);
+
+        currencyCmb = new QComboBox(CreateReceiptProduct);
+        currencyCmb->setObjectName(QStringLiteral("currencyCmb"));
+
+        gridLayout->addWidget(currencyCmb, 10, 2, 1, 1);
+
+        sumEdit = new QLineEdit(CreateReceiptProduct);
+        sumEdit->setObjectName(QStringLiteral("sumEdit"));
+        sumEdit->setReadOnly(true);
+
+        gridLayout->addWidget(sumEdit, 9, 2, 1, 1);
+
+        dateEdit = new QDateTimeEdit(CreateReceiptProduct);
+        dateEdit->setObjectName(QStringLiteral("dateEdit"));
+
+        gridLayout->addWidget(dateEdit, 2, 3, 1, 1);
+
+        employeeBtn = new QPushButton(CreateReceiptProduct);
+        employeeBtn->setObjectName(QStringLiteral("employeeBtn"));
+        employeeBtn->setMinimumSize(QSize(200, 0));
+
+        gridLayout->addWidget(employeeBtn, 0, 0, 1, 2);
+
+        stockEmployeeBtn = new QPushButton(CreateReceiptProduct);
+        stockEmployeeBtn->setObjectName(QStringLiteral("stockEmployeeBtn"));
+
+        gridLayout->addWidget(stockEmployeeBtn, 4, 0, 1, 2);
+
+        sumLb = new QLabel(CreateReceiptProduct);
+        sumLb->setObjectName(QStringLiteral("sumLb"));
+
+        gridLayout->addWidget(sumLb, 9, 0, 1, 2);
+
+        currencyLb = new QLabel(CreateReceiptProduct);
+        currencyLb->setObjectName(QStringLiteral("currencyLb"));
+
+        gridLayout->addWidget(currencyLb, 10, 0, 1, 2);
+
+        prodCountEdit = new QLineEdit(CreateReceiptProduct);
+        prodCountEdit->setObjectName(QStringLiteral("prodCountEdit"));
+        prodCountEdit->setReadOnly(true);
+
+        gridLayout->addWidget(prodCountEdit, 6, 3, 1, 1);
+
+        prodCountLb = new QLabel(CreateReceiptProduct);
+        prodCountLb->setObjectName(QStringLiteral("prodCountLb"));
+
+        gridLayout->addWidget(prodCountLb, 6, 2, 1, 1);
+
+        dateLb = new QLabel(CreateReceiptProduct);
+        dateLb->setObjectName(QStringLiteral("dateLb"));
+
+        gridLayout->addWidget(dateLb, 2, 0, 1, 2);
+
+        employeeEdit = new QLineEdit(CreateReceiptProduct);
+        employeeEdit->setObjectName(QStringLiteral("employeeEdit"));
+        employeeEdit->setReadOnly(true);
+
+        gridLayout->addWidget(employeeEdit, 0, 2, 1, 2);
+
+        stockEmployeeEdit = new QLineEdit(CreateReceiptProduct);
+        stockEmployeeEdit->setObjectName(QStringLiteral("stockEmployeeEdit"));
+        stockEmployeeEdit->setReadOnly(true);
+
+        gridLayout->addWidget(stockEmployeeEdit, 4, 2, 1, 2);
+
+        addProdBtn = new QPushButton(CreateReceiptProduct);
+        addProdBtn->setObjectName(QStringLiteral("addProdBtn"));
+
+        gridLayout->addWidget(addProdBtn, 6, 0, 1, 2);
+
+        empStockNamePh = new QLabel(CreateReceiptProduct);
+        empStockNamePh->setObjectName(QStringLiteral("empStockNamePh"));
+        empStockNamePh->setMinimumSize(QSize(100, 0));
+        empStockNamePh->setFont(font);
+
+        gridLayout->addWidget(empStockNamePh, 5, 1, 1, 1);
+
+        empStockNameLb = new QLabel(CreateReceiptProduct);
+        empStockNameLb->setObjectName(QStringLiteral("empStockNameLb"));
+        empStockNameLb->setMinimumSize(QSize(50, 0));
+        empStockNameLb->setMaximumSize(QSize(50, 16777215));
+
+        gridLayout->addWidget(empStockNameLb, 5, 0, 1, 1);
 
         statusWidget = new QWidget(CreateReceiptProduct);
         statusWidget->setObjectName(QStringLiteral("statusWidget"));
@@ -226,22 +251,6 @@ public:
 
         gridLayout->addWidget(statusWidget, 7, 0, 1, 6);
 
-        currencyCmb = new QComboBox(CreateReceiptProduct);
-        currencyCmb->setObjectName(QStringLiteral("currencyCmb"));
-
-        gridLayout->addWidget(currencyCmb, 9, 2, 1, 1);
-
-        sumEdit = new QLineEdit(CreateReceiptProduct);
-        sumEdit->setObjectName(QStringLiteral("sumEdit"));
-        sumEdit->setReadOnly(true);
-
-        gridLayout->addWidget(sumEdit, 8, 2, 1, 1);
-
-        dateEdit = new QDateTimeEdit(CreateReceiptProduct);
-        dateEdit->setObjectName(QStringLiteral("dateEdit"));
-
-        gridLayout->addWidget(dateEdit, 2, 3, 1, 1);
-
         execDateWidget = new QWidget(CreateReceiptProduct);
         execDateWidget->setObjectName(QStringLiteral("execDateWidget"));
         horizontalLayout_2 = new QHBoxLayout(execDateWidget);
@@ -272,59 +281,68 @@ public:
 
         gridLayout->addWidget(execDateWidget, 3, 0, 1, 4);
 
-        employeeBtn = new QPushButton(CreateReceiptProduct);
-        employeeBtn->setObjectName(QStringLiteral("employeeBtn"));
-        employeeBtn->setMinimumSize(QSize(200, 0));
+        empStockSurnamePh = new QLabel(CreateReceiptProduct);
+        empStockSurnamePh->setObjectName(QStringLiteral("empStockSurnamePh"));
+        empStockSurnamePh->setMinimumSize(QSize(100, 0));
+        empStockSurnamePh->setFont(font);
 
-        gridLayout->addWidget(employeeBtn, 0, 0, 1, 2);
+        gridLayout->addWidget(empStockSurnamePh, 5, 3, 1, 1);
 
-        stockEmployeeBtn = new QPushButton(CreateReceiptProduct);
-        stockEmployeeBtn->setObjectName(QStringLiteral("stockEmployeeBtn"));
+        empStockPhonePh = new QLabel(CreateReceiptProduct);
+        empStockPhonePh->setObjectName(QStringLiteral("empStockPhonePh"));
+        empStockPhonePh->setMinimumSize(QSize(100, 0));
+        empStockPhonePh->setFont(font);
 
-        gridLayout->addWidget(stockEmployeeBtn, 4, 0, 1, 2);
+        gridLayout->addWidget(empStockPhonePh, 5, 5, 1, 1);
 
-        sumLb = new QLabel(CreateReceiptProduct);
-        sumLb->setObjectName(QStringLiteral("sumLb"));
+        empStockPhoneLb = new QLabel(CreateReceiptProduct);
+        empStockPhoneLb->setObjectName(QStringLiteral("empStockPhoneLb"));
 
-        gridLayout->addWidget(sumLb, 8, 0, 1, 2);
+        gridLayout->addWidget(empStockPhoneLb, 5, 4, 1, 1);
 
-        currencyLb = new QLabel(CreateReceiptProduct);
-        currencyLb->setObjectName(QStringLiteral("currencyLb"));
+        empNameLb = new QLabel(CreateReceiptProduct);
+        empNameLb->setObjectName(QStringLiteral("empNameLb"));
+        empNameLb->setMinimumSize(QSize(50, 0));
+        empNameLb->setMaximumSize(QSize(50, 16777215));
 
-        gridLayout->addWidget(currencyLb, 9, 0, 1, 2);
+        gridLayout->addWidget(empNameLb, 1, 0, 1, 1);
 
-        prodCountEdit = new QLineEdit(CreateReceiptProduct);
-        prodCountEdit->setObjectName(QStringLiteral("prodCountEdit"));
-        prodCountEdit->setReadOnly(true);
+        empStockSurnameLb = new QLabel(CreateReceiptProduct);
+        empStockSurnameLb->setObjectName(QStringLiteral("empStockSurnameLb"));
+        empStockSurnameLb->setMinimumSize(QSize(50, 0));
+        empStockSurnameLb->setMaximumSize(QSize(50, 16777215));
 
-        gridLayout->addWidget(prodCountEdit, 6, 3, 1, 1);
+        gridLayout->addWidget(empStockSurnameLb, 5, 2, 1, 1);
 
-        prodCountLb = new QLabel(CreateReceiptProduct);
-        prodCountLb->setObjectName(QStringLiteral("prodCountLb"));
+        empNamePh = new QLabel(CreateReceiptProduct);
+        empNamePh->setObjectName(QStringLiteral("empNamePh"));
+        empNamePh->setMinimumSize(QSize(100, 0));
+        empNamePh->setFont(font);
 
-        gridLayout->addWidget(prodCountLb, 6, 2, 1, 1);
+        gridLayout->addWidget(empNamePh, 1, 1, 1, 1);
 
-        dateLb = new QLabel(CreateReceiptProduct);
-        dateLb->setObjectName(QStringLiteral("dateLb"));
+        empSurnameLb = new QLabel(CreateReceiptProduct);
+        empSurnameLb->setObjectName(QStringLiteral("empSurnameLb"));
+        empSurnameLb->setMinimumSize(QSize(50, 0));
+        empSurnameLb->setMaximumSize(QSize(50, 16777215));
 
-        gridLayout->addWidget(dateLb, 2, 0, 1, 2);
+        gridLayout->addWidget(empSurnameLb, 1, 2, 1, 1);
 
-        employeeEdit = new QLineEdit(CreateReceiptProduct);
-        employeeEdit->setObjectName(QStringLiteral("employeeEdit"));
-        employeeEdit->setReadOnly(true);
+        sumLb2 = new QLabel(CreateReceiptProduct);
+        sumLb2->setObjectName(QStringLiteral("sumLb2"));
 
-        gridLayout->addWidget(employeeEdit, 0, 2, 1, 2);
+        gridLayout->addWidget(sumLb2, 8, 0, 1, 1);
 
-        stockEmployeeEdit = new QLineEdit(CreateReceiptProduct);
-        stockEmployeeEdit->setObjectName(QStringLiteral("stockEmployeeEdit"));
-        stockEmployeeEdit->setReadOnly(true);
+        priceSumLb = new QLabel(CreateReceiptProduct);
+        priceSumLb->setObjectName(QStringLiteral("priceSumLb"));
+        QFont font1;
+        font1.setFamily(QStringLiteral("Times New Roman"));
+        font1.setPointSize(11);
+        font1.setBold(true);
+        font1.setWeight(75);
+        priceSumLb->setFont(font1);
 
-        gridLayout->addWidget(stockEmployeeEdit, 4, 2, 1, 2);
-
-        addProdBtn = new QPushButton(CreateReceiptProduct);
-        addProdBtn->setObjectName(QStringLiteral("addProdBtn"));
-
-        gridLayout->addWidget(addProdBtn, 6, 0, 1, 2);
+        gridLayout->addWidget(priceSumLb, 8, 2, 1, 1);
 
         QWidget::setTabOrder(employeeBtn, stockEmployeeBtn);
         QWidget::setTabOrder(stockEmployeeBtn, addProdBtn);
@@ -339,24 +357,11 @@ public:
     void retranslateUi(QDialog *CreateReceiptProduct)
     {
         CreateReceiptProduct->setWindowTitle(QApplication::translate("CreateReceiptProduct", "Create/Update receipt product", 0));
-        empStockNameLb->setText(QApplication::translate("CreateReceiptProduct", "Name:", 0));
-        empStockNamePh->setText(QString());
-        empStockSurnamePh->setText(QString());
-        empStockSurnameLb->setText(QApplication::translate("CreateReceiptProduct", "Surname:", 0));
-        empStockPhoneLb->setText(QApplication::translate("CreateReceiptProduct", "Phone:", 0));
-        empStockPhonePh->setText(QString());
-        empNameLb->setText(QApplication::translate("CreateReceiptProduct", "Name:", 0));
-        empNamePh->setText(QString());
-        empSurnameLb->setText(QApplication::translate("CreateReceiptProduct", "Surname:", 0));
         empSurnamePh->setText(QString());
         empPhoneLb->setText(QApplication::translate("CreateReceiptProduct", "Phone:", 0));
         empPhonePh->setText(QString());
         okBtn->setText(QApplication::translate("CreateReceiptProduct", "OK", 0));
         cancelBtn->setText(QApplication::translate("CreateReceiptProduct", "Cancel", 0));
-        statusBtn->setText(QApplication::translate("CreateReceiptProduct", "Change status", 0));
-        statusLb->setText(QApplication::translate("CreateReceiptProduct", "Status name:", 0));
-        statusPh->setText(QString());
-        execDateLb->setText(QApplication::translate("CreateReceiptProduct", "Execution date:", 0));
         employeeBtn->setText(QApplication::translate("CreateReceiptProduct", "Select employee", 0));
         stockEmployeeBtn->setText(QApplication::translate("CreateReceiptProduct", "Select stock employee", 0));
         sumLb->setText(QApplication::translate("CreateReceiptProduct", "Total amount:", 0));
@@ -370,6 +375,21 @@ public:
         stockEmployeeEdit->setToolTip(QApplication::translate("CreateReceiptProduct", "<html><head/><body><p>Enter employee ID</p></body></html>", 0));
 #endif // QT_NO_TOOLTIP
         addProdBtn->setText(QApplication::translate("CreateReceiptProduct", "Add products", 0));
+        empStockNamePh->setText(QString());
+        empStockNameLb->setText(QApplication::translate("CreateReceiptProduct", "Name:", 0));
+        statusBtn->setText(QApplication::translate("CreateReceiptProduct", "Change status", 0));
+        statusLb->setText(QApplication::translate("CreateReceiptProduct", "Status name:", 0));
+        statusPh->setText(QString());
+        execDateLb->setText(QApplication::translate("CreateReceiptProduct", "Execution date:", 0));
+        empStockSurnamePh->setText(QString());
+        empStockPhonePh->setText(QString());
+        empStockPhoneLb->setText(QApplication::translate("CreateReceiptProduct", "Phone:", 0));
+        empNameLb->setText(QApplication::translate("CreateReceiptProduct", "Name:", 0));
+        empStockSurnameLb->setText(QApplication::translate("CreateReceiptProduct", "Surname:", 0));
+        empNamePh->setText(QString());
+        empSurnameLb->setText(QApplication::translate("CreateReceiptProduct", "Surname:", 0));
+        sumLb2->setText(QApplication::translate("CreateReceiptProduct", "Sum:", 0));
+        priceSumLb->setText(QString());
     } // retranslateUi
 
 };

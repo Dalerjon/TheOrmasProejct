@@ -113,7 +113,7 @@ void CreateConPListDlg::FillEditElements(int cConsumeProductID, int cProductID, 
 	consumeProductEdit->setText(QString::number(cConsumeProductID));
 	productEdit->setText(QString::number(cProductID));
 	countEdit->setText(QString::number(cCount));
-	sumEdit->setText(QString::number(cSum));
+	sumEdit->setText(QString::number(cSum,'f',3));
 	statusEdit->setText(QString::number(cStatusID));
 	currencyCmb->setCurrentIndex(currencyCmb->findData(QVariant(cCurrencyID)));
 	BusinessLayer::Product product;
@@ -246,7 +246,7 @@ void CreateConPListDlg::AddProductToList()
 						<< new QStandardItem(QString::number(product->GetVolume()))
 						<< new QStandardItem(measure->GetName().c_str())
 						<< new QStandardItem(QString::number(consumeProductList->GetCount()))
-						<< new QStandardItem(QString::number(consumeProductList->GetSum()))
+						<< new QStandardItem(QString::number(consumeProductList->GetSum(), 'f', 3))
 						<< new QStandardItem(sumCurrency->GetShortName().c_str())
 						<< new QStandardItem(statusVector.at(0).GetName().c_str())
 						<< new QStandardItem(QString::number(consumeProductList->GetProductID()))
@@ -353,7 +353,7 @@ void CreateConPListDlg::EditProductInList()
 						itemModel->item(mIndex.row(), 5)->setText(QString::number(product->GetVolume()));
 						itemModel->item(mIndex.row(), 6)->setText(measure->GetName().c_str());
 						itemModel->item(mIndex.row(), 7)->setText(QString::number(consumeProductList->GetCount()));
-						itemModel->item(mIndex.row(), 8)->setText(QString::number(consumeProductList->GetSum()));
+						itemModel->item(mIndex.row(), 8)->setText(QString::number(consumeProductList->GetSum(), 'f', 3));
 						itemModel->item(mIndex.row(), 9)->setText(sumCurrency->GetShortName().c_str());
 						itemModel->item(mIndex.row(), 10)->setText(status->GetName().c_str());
 						itemModel->item(mIndex.row(), 11)->setText(QString::number(consumeProductList->GetProductID()));

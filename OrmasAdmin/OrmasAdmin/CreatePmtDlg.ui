@@ -310,9 +310,15 @@
   </layout>
  </widget>
  <tabstops>
+  <tabstop>dateEdit</tabstop>
+  <tabstop>valueEdit</tabstop>
   <tabstop>userBtn</tabstop>
+  <tabstop>statusBtn</tabstop>
   <tabstop>okBtn</tabstop>
   <tabstop>cancelBtn</tabstop>
+  <tabstop>currencyCmb</tabstop>
+  <tabstop>userEdit</tabstop>
+  <tabstop>statusEdit</tabstop>
  </tabstops>
  <resources/>
  <connections/>

@@ -94,6 +94,16 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <CustomBuild Include="SearchDlg.h">
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\moc.exe"  "SearchDlg.h" -o "moc_SearchDlg.cpp"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\moc.exe"  "SearchDlg.h" -o "moc_SearchDlg.cpp"</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Geterating moc file form SearchDlg.h...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Geterating moc file form SearchDlg.h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">moc_SearchDlg.cpp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">moc_SearchDlg.cpp</Outputs>
+    </CustomBuild>
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="ui_SearchDlg.h" />
     <CustomBuild Include="ReworkRawDlg.h">
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\moc.exe"  "ReworkRawDlg.h" -o "moc_ReworkRawDlg.cpp"</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Geterating moc file form ReworkRawDlg.h...</Message>
@@ -1509,8 +1519,13 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="moc_SearchDlg.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="OrmasAdmin.cpp" />
     <ClCompile Include="ReworkRawDlg.cpp" />
+    <ClCompile Include="SearchDlg.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
@@ -2494,21 +2509,38 @@
     <CustomBuild Include="CreateWrhDlg.ui">
       <FileType>Document</FileType>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\uic.exe"  "CreateWrhDlg.ui" -o "ui_CreateWrhDlg.h"</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\uic.exe"  "CreateWhrDlg.ui" -o "ui_CreateWhrDlg.h"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\uic.exe"  "CreateWrhDlg.ui" -o "ui_CreateWrhDlg.h"</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Generating ui_CreateWrhDlg.h file...</Message>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Generating ui_CreateWhrDlg.h file...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Generating ui_CreateWrhDlg.h file...</Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">ui_CreateWrhDlg.h</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">ui_CreateWhrDlg.h</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">ui_CreateWrhDlg.h</Outputs>
     </CustomBuild>
     <CustomBuild Include="CreateWrhTpDlg.ui">
       <FileType>Document</FileType>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\uic.exe"  "CreateWrhTpDlg.ui" -o "ui_CreateWrhTpDlg.h"</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\uic.exe"  "CreateWhrTpDlg.ui" -o "ui_CreateWhrTpDlg.h"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\uic.exe"  "CreateWrhTpDlg.ui" -o "ui_CreateWrhTpDlg.h"</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Generating ui_CreateWrhTpDlg.h file...</Message>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Generating ui_CreateWhrTpDlg.h file...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Generating ui_CreateWrhTpDlg.h file...</Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">ui_CreateWrhTpDlg.h</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">ui_CreateWhrTpDlg.h</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">ui_CreateWrhTpDlg.h</Outputs>
     </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="SearchDlg.ui">
+      <FileType>Document</FileType>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\uic.exe"  "SearchDlg.ui" -o "ui_SearchDlg.h"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\uic.exe"  "SearchDlg.ui" -o "ui_SearchDlg.h"</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Generating ui_SearchDlg.h file...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Generating ui_SearchDlg.h file...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">ui_SearchDlg.h</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">ui_SearchDlg.h</Outputs>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="OrmasAdmin.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="ormas.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

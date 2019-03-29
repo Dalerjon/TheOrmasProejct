@@ -147,7 +147,10 @@ public:
 
         gridLayout->addWidget(warehouseCmb, 0, 3, 1, 3);
 
+        QWidget::setTabOrder(warehouseCmb, employeeBtn);
+        QWidget::setTabOrder(employeeBtn, okBtn);
         QWidget::setTabOrder(okBtn, cancelBtn);
+        QWidget::setTabOrder(cancelBtn, employeeEdit);
 
         retranslateUi(CreateWarehouseEmployee);
 

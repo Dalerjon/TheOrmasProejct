@@ -275,11 +275,13 @@ public:
         QWidget::setTabOrder(hireDateEdit, passwordEdit);
         QWidget::setTabOrder(passwordEdit, activatedCmbBox);
         QWidget::setTabOrder(activatedCmbBox, roleBtn);
-        QWidget::setTabOrder(roleBtn, roleEdit);
-        QWidget::setTabOrder(roleEdit, positionBtn);
-        QWidget::setTabOrder(positionBtn, positionEdit);
-        QWidget::setTabOrder(positionEdit, okBtn);
+        QWidget::setTabOrder(roleBtn, positionBtn);
+        QWidget::setTabOrder(positionBtn, divisionCmbBox);
+        QWidget::setTabOrder(divisionCmbBox, isContractChkBox);
+        QWidget::setTabOrder(isContractChkBox, okBtn);
         QWidget::setTabOrder(okBtn, cancelBtn);
+        QWidget::setTabOrder(cancelBtn, roleEdit);
+        QWidget::setTabOrder(roleEdit, positionEdit);
 
         retranslateUi(CreateEmployee);
 

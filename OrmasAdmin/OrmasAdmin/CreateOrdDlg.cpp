@@ -98,7 +98,7 @@ void CreateOrdDlg::FillEditElements(int oClientID, QString oDate, QString oExecD
 	}
 	employeeEdit->setText(QString::number(oEmployeeID));
 	prodCountEdit->setText(QString::number(oCount));
-	sumEdit->setText(QString::number(oSum));
+	sumEdit->setText(QString::number(oSum,'f',3));
 	statusEdit->setText(QString::number(oStatusID));
 	currencyCmb->setCurrentIndex(currencyCmb->findData(QVariant(oCurrencyID)));
 	BusinessLayer::User user1;
@@ -325,7 +325,7 @@ void CreateOrdDlg::CreateOrder()
 					}
 
 					orderItem << new QStandardItem(QString::number(order->GetCount()))
-						<< new QStandardItem(QString::number(order->GetSum()))
+						<< new QStandardItem(QString::number(order->GetSum(),'f',3))
 						<< new QStandardItem(currency->GetShortName().c_str())
 						<< new QStandardItem(QString::number(order->GetEmployeeID()))
 						<< new QStandardItem(QString::number(order->GetClientID()))
@@ -455,7 +455,7 @@ void CreateOrdDlg::EditOrder()
 						}
 
 						itemModel->item(mIndex.row(), 13)->setText(QString::number(order->GetCount()));
-						itemModel->item(mIndex.row(), 14)->setText(QString::number(order->GetSum()));
+						itemModel->item(mIndex.row(), 14)->setText(QString::number(order->GetSum(), 'f', 3));
 						itemModel->item(mIndex.row(), 15)->setText(currency->GetShortName().c_str());
 						itemModel->item(mIndex.row(), 16)->setText(QString::number(order->GetEmployeeID()));
 						itemModel->item(mIndex.row(), 17)->setText(QString::number(order->GetClientID()));

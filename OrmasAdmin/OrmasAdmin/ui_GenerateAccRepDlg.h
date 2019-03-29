@@ -161,7 +161,13 @@ public:
 
         gridLayout->addWidget(sAccBtn, 2, 1, 1, 1);
 
+        QWidget::setTabOrder(fromDateEdit, tillDateEdit);
+        QWidget::setTabOrder(tillDateEdit, accBtn);
+        QWidget::setTabOrder(accBtn, accNumberEdit);
+        QWidget::setTabOrder(accNumberEdit, sAccBtn);
+        QWidget::setTabOrder(sAccBtn, okBtn);
         QWidget::setTabOrder(okBtn, cancelBtn);
+        QWidget::setTabOrder(cancelBtn, accIDEdit);
 
         retranslateUi(GenerateAccountCardReport);
 

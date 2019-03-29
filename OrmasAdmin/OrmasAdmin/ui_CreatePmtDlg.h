@@ -212,8 +212,14 @@ public:
 
         gridLayout->addWidget(statusWidget, 7, 0, 1, 6);
 
-        QWidget::setTabOrder(userBtn, okBtn);
+        QWidget::setTabOrder(dateEdit, valueEdit);
+        QWidget::setTabOrder(valueEdit, userBtn);
+        QWidget::setTabOrder(userBtn, statusBtn);
+        QWidget::setTabOrder(statusBtn, okBtn);
         QWidget::setTabOrder(okBtn, cancelBtn);
+        QWidget::setTabOrder(cancelBtn, currencyCmb);
+        QWidget::setTabOrder(currencyCmb, userEdit);
+        QWidget::setTabOrder(userEdit, statusEdit);
 
         retranslateUi(CreatePayment);
 

@@ -129,7 +129,7 @@ namespace BusinessLayer
 		{
 			if (statusID == statusMap.find("EXECUTED")->second)
 			{
-				if (ChangesAtStock(ormasDal, id, clientID, employeeID, errorMessage))
+				if (ChangesAtStock(ormasDal, id, clientID, warehouseID, errorMessage))
 				{
 					//ormasDal.CommitTransaction(errorMessage);
 					return true;
@@ -162,7 +162,7 @@ namespace BusinessLayer
 		{
 			if (statusID == statusMap.find("EXECUTED")->second)
 			{
-				if (ChangesAtStock(ormasDal, id, clientID, employeeID, errorMessage))
+				if (ChangesAtStock(ormasDal, id, clientID, warehouseID, errorMessage))
 				{
 					//ormasDal.CommitTransaction(errorMessage);
 					return true;
@@ -248,7 +248,7 @@ namespace BusinessLayer
 		{
 			if (statusID == statusMap.find("EXECUTED")->second && previousStatusID != statusMap.find("EXECUTED")->second)
 			{
-				if (!ChangesAtStock(ormasDal, id, clientID, employeeID, errorMessage))
+				if (!ChangesAtStock(ormasDal, id, clientID, warehouseID, errorMessage))
 				{
 					//ormasDal.CancelTransaction(errorMessage);
 					return false;
@@ -263,7 +263,7 @@ namespace BusinessLayer
 			{
 				if (count != previousCount || sum != previousSum)
 				{
-					if (ChangesAtStock(ormasDal, id, clientID, employeeID, prodCountMap, previousSum, errorMessage))
+					if (ChangesAtStock(ormasDal, id, clientID, warehouseID, prodCountMap, previousSum, errorMessage))
 					{
 						//ormasDal.CommitTransaction(errorMessage);
 						return true;
@@ -306,7 +306,7 @@ namespace BusinessLayer
 		{
 			if (statusID == statusMap.find("EXECUTED")->second && previousStatusID != statusMap.find("EXECUTED")->second)
 			{
-				if (ChangesAtStock(ormasDal, id, clientID, employeeID, errorMessage))
+				if (ChangesAtStock(ormasDal, id, clientID, warehouseID, errorMessage))
 				{
 					//ormasDal.CommitTransaction(errorMessage);
 					return true;
@@ -321,7 +321,7 @@ namespace BusinessLayer
 			{
 				if (count != previousCount || sum != previousSum)
 				{
-					if (ChangesAtStock(ormasDal, id, clientID, employeeID, prodCountMap, previousSum, errorMessage))
+					if (ChangesAtStock(ormasDal, id, clientID, warehouseID, prodCountMap, previousSum, errorMessage))
 					{
 						//ormasDal.CommitTransaction(errorMessage);
 						return true;

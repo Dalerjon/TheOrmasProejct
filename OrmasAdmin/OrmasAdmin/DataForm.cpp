@@ -26,6 +26,7 @@ DataForm::DataForm(BusinessLayer::OrmasBL *ormasBL, QWidget *parent) :QWidget(pa
 		connect(tableView, SIGNAL(cellClicked(int, int)), this, SLOT(OpenList(int, int)));
 	}
 	HileSomeRow();
+	this->setWindowIcon(QIcon("./images/ormas.png"));
 }
 
 // All Slots ----------------------------------------------------------------------------
@@ -34,6 +35,23 @@ void DataForm::CloseDataForm()
 	QMdiSubWindow *dataFromWindow = ((MainForm*)parentForm)->GetWindowByName(this->objectName());
 	if (dataFromWindow != nullptr)
 		dataFromWindow->close();
+}
+
+void DataForm::Search(QString searchText)
+{
+	if (!searchText.isEmpty()){
+		for (int i = 0; i <= tableView->model()->columnCount(); i++){
+			for (int j = 0; j <= tableView->model()->rowCount(); j++){
+				QModelIndex index = tableView->model()->index(j, i);
+				if (index.data().toString().compare(searchText, Qt::CaseInsensitive) == 0
+					|| index.data().toString().contains(searchText))
+				{
+					tableView->setCurrentIndex(index);
+					((QStandardItemModel *)tableView->model())->item(j,i)->setBackground(Qt::yellow);
+				}
+			}
+		}
+	}
 }
 
 bool DataForm::IsClosed()
@@ -987,6 +1005,7 @@ void DataForm::OnRowsNumberChanged()
 	{
 		std::string errorMessage = "";
 		double sum = 0;
+		double priceSum = 0;
 		double count = 0;
 		int currencyID = 0;
 		if (parentDialog->objectName() == "CreateSpecification")
@@ -1018,6 +1037,45 @@ void DataForm::OnRowsNumberChanged()
 					nCost.GetNetCostByProductID(dataFormBL->GetOrmasDal(), product.GetID(), errorMessage);
 					count = count + tableView->model()->data(tableView->model()->index(i, 7)).toDouble();
 					sum = sum + (tableView->model()->data(tableView->model()->index(i, 7)).toDouble() * nCost.GetValue());
+					priceSum = priceSum + (tableView->model()->data(tableView->model()->index(i, 7)).toDouble() * product.GetPrice());
+				}
+				currencyID = product.GetCurrencyID();
+			}
+		}
+		else if (parentDialog->objectName() == "CreateRecieptProduct" || parentDialog->objectName() == "CreateRecieptProduct")
+		{
+			if (tableView->model()->rowCount() > 0)
+			{
+				BusinessLayer::Product product;
+				BusinessLayer::NetCost nCost;
+				for (int i = 0; i < tableView->model()->rowCount(); i++)
+				{
+					product.Clear();
+					product.GetProductByID(dataFormBL->GetOrmasDal(), tableView->model()->data(tableView->model()->index(i, 11)).toInt(), errorMessage);
+					nCost.Clear();
+					nCost.GetNetCostByProductID(dataFormBL->GetOrmasDal(), product.GetID(), errorMessage);
+					count = count + tableView->model()->data(tableView->model()->index(i, 7)).toDouble();
+					sum = sum + (tableView->model()->data(tableView->model()->index(i, 7)).toDouble() * nCost.GetValue());
+					priceSum = priceSum + (tableView->model()->data(tableView->model()->index(i, 7)).toDouble() * product.GetPrice());
+				}
+				currencyID = product.GetCurrencyID();
+			}
+		}
+		else if (parentDialog->objectName() == "CreateWriteOff" || parentDialog->objectName() == "CreateWriteOff")
+		{
+			if (tableView->model()->rowCount() > 0)
+			{
+				BusinessLayer::Product product;
+				BusinessLayer::NetCost nCost;
+				for (int i = 0; i < tableView->model()->rowCount(); i++)
+				{
+					product.Clear();
+					product.GetProductByID(dataFormBL->GetOrmasDal(), tableView->model()->data(tableView->model()->index(i, 11)).toInt(), errorMessage);
+					nCost.Clear();
+					nCost.GetNetCostByProductID(dataFormBL->GetOrmasDal(), product.GetID(), errorMessage);
+					count = count + tableView->model()->data(tableView->model()->index(i, 7)).toDouble();
+					sum = sum + (tableView->model()->data(tableView->model()->index(i, 7)).toDouble() * nCost.GetValue());
+					priceSum = priceSum + (tableView->model()->data(tableView->model()->index(i, 7)).toDouble() * product.GetPrice());
 				}
 				currencyID = product.GetCurrencyID();
 			}
@@ -1038,91 +1096,94 @@ void DataForm::OnRowsNumberChanged()
 		if (parentDialog->objectName() == "CreateConsumeProduct")
 		{
 			((CreateConPDlg*)parentDialog)->prodCountEdit->setText(QString::number(count));
-			((CreateConPDlg*)parentDialog)->sumEdit->setText(QString::number(sum));
+			((CreateConPDlg*)parentDialog)->sumEdit->setText(QString::number(sum,'f',3));
+			((CreateConPDlg*)parentDialog)->priceSumLb->setText(QString::number(priceSum));
 			((CreateConPDlg*)parentDialog)->currencyCmb->setCurrentIndex(((CreateConPDlg*)parentDialog)->currencyCmb->findData(QVariant(currencyID)));
 		}
 		else if (parentDialog->objectName() == "CreateConsumeRaw")
 		{
 			((CreateConRDlg*)parentDialog)->prodCountEdit->setText(QString::number(count));
-			((CreateConRDlg*)parentDialog)->sumEdit->setText(QString::number(sum));
+			((CreateConRDlg*)parentDialog)->sumEdit->setText(QString::number(sum, 'f', 3));
 			((CreateConRDlg*)parentDialog)->currencyCmb->setCurrentIndex(((CreateConRDlg*)parentDialog)->currencyCmb->findData(QVariant(currencyID)));
 		}
 		else if (parentDialog->objectName() == "CreateInventorization")
 		{
 			((CreateInvDlg*)parentDialog)->prodCountEdit->setText(QString::number(count));
-			((CreateInvDlg*)parentDialog)->sumEdit->setText(QString::number(sum));
+			((CreateInvDlg*)parentDialog)->sumEdit->setText(QString::number(sum, 'f', 3));
 			((CreateInvDlg*)parentDialog)->currencyCmb->setCurrentIndex(((CreateInvDlg*)parentDialog)->currencyCmb->findData(QVariant(currencyID)));
 		}
 		else if (parentDialog->objectName() == "CreateOrder")
 		{
 			((CreateOrdDlg*)parentDialog)->prodCountEdit->setText(QString::number(count));
-			((CreateOrdDlg*)parentDialog)->sumEdit->setText(QString::number(sum));
+			((CreateOrdDlg*)parentDialog)->sumEdit->setText(QString::number(sum, 'f', 3));
 			((CreateOrdDlg*)parentDialog)->currencyCmb->setCurrentIndex(((CreateOrdDlg*)parentDialog)->currencyCmb->findData(QVariant(currencyID)));
 		}
 		else if (parentDialog->objectName() == "CreateOrderRaw")
 		{
 			((CreateOrdRDlg*)parentDialog)->prodCountEdit->setText(QString::number(count));
-			((CreateOrdRDlg*)parentDialog)->sumEdit->setText(QString::number(sum));
+			((CreateOrdRDlg*)parentDialog)->sumEdit->setText(QString::number(sum, 'f', 3));
 			((CreateOrdRDlg*)parentDialog)->currencyCmb->setCurrentIndex(((CreateOrdRDlg*)parentDialog)->currencyCmb->findData(QVariant(currencyID)));
 		}
 		else if (parentDialog->objectName() == "CreateReceiptProduct")
 		{
 			((CreateRcpPDlg*)parentDialog)->prodCountEdit->setText(QString::number(count));
-			((CreateRcpPDlg*)parentDialog)->sumEdit->setText(QString::number(sum));
+			((CreateRcpPDlg*)parentDialog)->sumEdit->setText(QString::number(sum, 'f', 3));
+			((CreateConPDlg*)parentDialog)->priceSumLb->setText(QString::number(priceSum));
 			((CreateRcpPDlg*)parentDialog)->currencyCmb->setCurrentIndex(((CreateRcpPDlg*)parentDialog)->currencyCmb->findData(QVariant(currencyID)));
 		}
 		else if (parentDialog->objectName() == "CreateReceiptRaw")
 		{
 			((CreateRcpRDlg*)parentDialog)->prodCountEdit->setText(QString::number(count));
-			((CreateRcpRDlg*)parentDialog)->sumEdit->setText(QString::number(sum));
+			((CreateRcpRDlg*)parentDialog)->sumEdit->setText(QString::number(sum, 'f', 3));
 			((CreateRcpRDlg*)parentDialog)->currencyCmb->setCurrentIndex(((CreateRcpRDlg*)parentDialog)->currencyCmb->findData(QVariant(currencyID)));
 		}
 		else if (parentDialog->objectName() == "CreateProductionConsumeRaw")
 		{
 			((CreateProdConRDlg*)parentDialog)->prodCountEdit->setText(QString::number(count));
-			((CreateProdConRDlg*)parentDialog)->sumEdit->setText(QString::number(sum));
+			((CreateProdConRDlg*)parentDialog)->sumEdit->setText(QString::number(sum, 'f', 3));
 			((CreateProdConRDlg*)parentDialog)->currencyCmb->setCurrentIndex(((CreateProdConRDlg*)parentDialog)->currencyCmb->findData(QVariant(currencyID)));
 		}
 		else if (parentDialog->objectName() == "CreateProductionPlan")
 		{
 			((CreatePPlanDlg*)parentDialog)->prodCountEdit->setText(QString::number(count));
-			((CreatePPlanDlg*)parentDialog)->sumEdit->setText(QString::number(sum));
+			((CreatePPlanDlg*)parentDialog)->sumEdit->setText(QString::number(sum, 'f', 3));
 			((CreatePPlanDlg*)parentDialog)->currencyCmb->setCurrentIndex(((CreatePPlanDlg*)parentDialog)->currencyCmb->findData(QVariant(currencyID)));
 		}
 		else if (parentDialog->objectName() == "CreateTransport")
 		{
 			((CreateTrsDlg*)parentDialog)->prodCountEdit->setText(QString::number(count));
-			((CreateTrsDlg*)parentDialog)->sumEdit->setText(QString::number(sum));
+			((CreateTrsDlg*)parentDialog)->sumEdit->setText(QString::number(sum, 'f', 3));
 			((CreateTrsDlg*)parentDialog)->currencyCmb->setCurrentIndex(((CreateTrsDlg*)parentDialog)->currencyCmb->findData(QVariant(currencyID)));
 		}
 		else if (parentDialog->objectName() == "CreateReturn")
 		{
 			((CreateRtrnDlg*)parentDialog)->prodCountEdit->setText(QString::number(count));
-			((CreateRtrnDlg*)parentDialog)->sumEdit->setText(QString::number(sum));
+			((CreateRtrnDlg*)parentDialog)->sumEdit->setText(QString::number(sum, 'f', 3));
 			((CreateRtrnDlg*)parentDialog)->currencyCmb->setCurrentIndex(((CreateRtrnDlg*)parentDialog)->currencyCmb->findData(QVariant(currencyID)));
 		}
 		else if (parentDialog->objectName() == "CreateSpecification")
 		{
 			((CreateSpecDlg*)parentDialog)->prodCountPh->setText(QString::number(count));
-			((CreateSpecDlg*)parentDialog)->sumEdit->setText(QString::number(sum));
+			((CreateSpecDlg*)parentDialog)->sumEdit->setText(QString::number(sum, 'f', 3));
 			((CreateSpecDlg*)parentDialog)->currencyCmb->setCurrentIndex(((CreateSpecDlg*)parentDialog)->currencyCmb->findData(QVariant(currencyID)));
 		}
 		else if (parentDialog->objectName() == "CreateSpoilage")
 		{
 			((CreateSplDlg*)parentDialog)->prodCountEdit->setText(QString::number(count));
-			((CreateSplDlg*)parentDialog)->sumEdit->setText(QString::number(sum));
+			((CreateSplDlg*)parentDialog)->sumEdit->setText(QString::number(sum, 'f', 3));
 			((CreateSplDlg*)parentDialog)->currencyCmb->setCurrentIndex(((CreateSplDlg*)parentDialog)->currencyCmb->findData(QVariant(currencyID)));
 		}
 		else if (parentDialog->objectName() == "CreateWriteOff")
 		{
 			((CreateWOffDlg*)parentDialog)->prodCountEdit->setText(QString::number(count));
-			((CreateWOffDlg*)parentDialog)->sumEdit->setText(QString::number(sum));
+			((CreateWOffDlg*)parentDialog)->sumEdit->setText(QString::number(sum, 'f', 3));
+			((CreateWOffDlg*)parentDialog)->priceSumLb->setText(QString::number(priceSum));
 			((CreateWOffDlg*)parentDialog)->currencyCmb->setCurrentIndex(((CreateWOffDlg*)parentDialog)->currencyCmb->findData(QVariant(currencyID)));
 		}
 		else if (parentDialog->objectName() == "CreateWriteOffR")
 		{
 			((CreateWOffRDlg*)parentDialog)->prodCountEdit->setText(QString::number(count));
-			((CreateWOffRDlg*)parentDialog)->sumEdit->setText(QString::number(sum));
+			((CreateWOffRDlg*)parentDialog)->sumEdit->setText(QString::number(sum, 'f', 3));
 			((CreateWOffRDlg*)parentDialog)->currencyCmb->setCurrentIndex(((CreateWOffRDlg*)parentDialog)->currencyCmb->findData(QVariant(currencyID)));
 		}
 	}
@@ -2121,6 +2182,7 @@ void DataForm::ViewConPDlg()
 	BusinessLayer::Currency currency;
 	BusinessLayer::NetCost netCost;
 	QString tableBody;
+	double sum = 0;
 	for each (auto item in vecConProdList)
 	{
 		product.Clear();
@@ -2160,14 +2222,15 @@ void DataForm::ViewConPDlg()
 		tableBody += "<td>" + QString(product.GetName().c_str()) + "</td>";
 		tableBody += "<td>" + QString(measure.GetShortName().c_str()) + "</td>";
 		tableBody += "<td>" + QString::number(item.GetCount()) + "</td>";
-		tableBody += "<td>" + QString::number(item.GetSum() / item.GetCount(), 'f', 3) + "</td>";
-		tableBody += "<td>" + QString::number(item.GetSum()) + "</td>";
+		tableBody += "<td>" + QString::number(product.GetPrice(), 'f', 3) + "</td>";
+		tableBody += "<td>" + QString::number(item.GetCount()*product.GetPrice(), 'f', 3) + "</td>";
 		tableBody += "<td>" + QString(currency.GetShortName().c_str()) + "</td>";
 		tableBody += "</tr>";
+		sum += item.GetCount()*product.GetPrice();
 		i++;
 	}
 	reportText.replace(QString("TableBodyPh"), tableBody, Qt::CaseInsensitive);
-	reportText.replace(QString("SumPh"), QString::number(consumeProdcut.GetSum()), Qt::CaseInsensitive);
+	reportText.replace(QString("SumPh"), QString::number(sum), Qt::CaseInsensitive);
 	reportText.replace(QString("CurrencyPh"), QString(currency.GetShortName().c_str()), Qt::CaseInsensitive);
 
 	docForm->webEngineView->setHtml(reportText);
@@ -4607,6 +4670,115 @@ void DataForm::DelProdnDlg()
 	}
 }
 
+void DataForm::ViewProdnDlg()
+{
+	std::string errorMessage = "";
+	int id = GetIDFromTable(tableView, errorMessage);
+	BusinessLayer::Production production;
+	if (!production.GetProductionByID(dataFormBL->GetOrmasDal(), id, errorMessage))
+	{
+		QMessageBox::information(NULL, QString(tr("Warning")),
+			QString(tr("Connot show information for this row!")),
+			QString(tr("Ok")));
+		return;
+	}
+	BusinessLayer::ProductionList productionList;
+	
+	DocForm *docForm = new DocForm(dataFormBL, this);
+	docForm->setAttribute(Qt::WA_DeleteOnClose);
+	docForm->setWindowTitle(tr("Print report"));
+	QMdiSubWindow *printRepWindow = new QMdiSubWindow;
+	printRepWindow->setWidget(docForm);
+	printRepWindow->setAttribute(Qt::WA_DeleteOnClose);
+	printRepWindow->resize(docForm->size().width() + 18, docForm->size().height() + 30);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(printRepWindow);
+
+	QFile file;
+	file.setFileName(":/docs/production.html");
+	if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+	{
+		QMessageBox::information(NULL, QString(tr("Info")),
+			QString(tr("Cannot find report tamplate!")),
+			QString(tr("Ok")));
+		return;
+	}
+	QString reportText = file.readAll();
+	productionList.SetProductionID(production.GetID());
+	std::string filter = productionList.GenerateFilter(dataFormBL->GetOrmasDal());
+	std::vector<BusinessLayer::ProductionListView> vecProdnList = dataFormBL->GetAllDataForClass<BusinessLayer::ProductionListView>(errorMessage, filter);
+	if (vecProdnList.size() == 0)
+	{
+		QMessageBox::information(NULL, QString(tr("Info")),
+			QString(tr("List is empty!")),
+			QString(tr("Ok")));
+		return;
+	}
+
+	//generating report
+	reportText.replace(QString("NumberPh"), QString::number(production.GetID()), Qt::CaseInsensitive);
+	reportText.replace(QString("DatePh"), QString(production.GetProductionDate().c_str()), Qt::CaseInsensitive);
+	int i = 1;
+	BusinessLayer::Product product;
+	BusinessLayer::Measure measure;
+	BusinessLayer::Currency currency;
+	BusinessLayer::NetCost netCost;
+	QString tableBody;
+	double sum = 0;
+	for each (auto item in vecProdnList)
+	{
+		product.Clear();
+		measure.Clear();
+		currency.Clear();
+		netCost.Clear();
+		if (!product.GetProductByID(dataFormBL->GetOrmasDal(), item.GetProductID(), errorMessage))
+		{
+			QMessageBox::information(NULL, QString(tr("Info")),
+				QString(tr("Product is wrong!")),
+				QString(tr("Ok")));
+			return;
+		}
+		if (!netCost.GetNetCostByProductID(dataFormBL->GetOrmasDal(), item.GetProductID(), errorMessage))
+		{
+			QMessageBox::information(NULL, QString(tr("Info")),
+				QString(tr("Product is wrong!")),
+				QString(tr("Ok")));
+			return;
+		}
+		if (!measure.GetMeasureByID(dataFormBL->GetOrmasDal(), product.GetMeasureID(), errorMessage))
+		{
+			QMessageBox::information(NULL, QString(tr("Info")),
+				QString(tr("Measure is wrong!")),
+				QString(tr("Ok")));
+			return;
+		}
+		if (!currency.GetCurrencyByID(dataFormBL->GetOrmasDal(), product.GetCurrencyID(), errorMessage))
+		{
+			QMessageBox::information(NULL, QString(tr("Info")),
+				QString(tr("Currency is wrong!")),
+				QString(tr("Ok")));
+			return;
+		}
+		tableBody += "<tr>";
+		tableBody += "<td>" + QString::number(i) + "</td>";
+		tableBody += "<td>" + QString(product.GetName().c_str()) + "</td>";
+		tableBody += "<td>" + QString(measure.GetShortName().c_str()) + "</td>";
+		tableBody += "<td>" + QString::number(item.GetCount()) + "</td>";
+		tableBody += "<td>" + QString::number(product.GetPrice()) + "</td>";
+		tableBody += "<td>" + QString::number(item.GetCount() * product.GetPrice(), 'f', 3) + "</td>";
+		tableBody += "<td>" + QString(currency.GetShortName().c_str()) + "</td>";
+		tableBody += "</tr>";
+		sum += item.GetCount() * product.GetPrice();
+		i++;
+	}
+	reportText.replace(QString("TableBodyPh"), tableBody, Qt::CaseInsensitive);
+	reportText.replace(QString("SumPh"), QString::number(sum, 'f', 3), Qt::CaseInsensitive);
+	reportText.replace(QString("CurrencyPh"), QString(currency.GetShortName().c_str()), Qt::CaseInsensitive);
+
+	docForm->webEngineView->setHtml(reportText);
+	docForm->SetContent(reportText);
+	docForm->webEngineView->show();
+	docForm->show();
+}
 
 void DataForm::CrtProdnStockDlg()
 {
@@ -5538,6 +5710,7 @@ void DataForm::ViewRcpPDlg()
 	BusinessLayer::Currency currency;
 	BusinessLayer::NetCost netCost;
 	QString tableBody;
+	double sum = 0;
 	for each (auto item in vecRcpProdList)
 	{
 		product.Clear();
@@ -5577,14 +5750,15 @@ void DataForm::ViewRcpPDlg()
 		tableBody += "<td>" + QString(product.GetName().c_str()) + "</td>";
 		tableBody += "<td>" + QString(measure.GetShortName().c_str()) + "</td>";
 		tableBody += "<td>" + QString::number(item.GetCount()) + "</td>";
-		tableBody += "<td>" + QString::number(item.GetSum() / item.GetCount(), 'f', 3) + "</td>";
-		tableBody += "<td>" + QString::number(item.GetSum()) + "</td>";
+		tableBody += "<td>" + QString::number(product.GetPrice(), 'f', 3) + "</td>";
+		tableBody += "<td>" + QString::number(item.GetCount()*product.GetPrice(), 'f', 3) + "</td>";
 		tableBody += "<td>" + QString(currency.GetShortName().c_str()) + "</td>";
 		tableBody += "</tr>";
+		sum += item.GetCount() * product.GetPrice();
 		i++;
 	}
 	reportText.replace(QString("TableBodyPh"), tableBody, Qt::CaseInsensitive);
-	reportText.replace(QString("SumPh"), QString::number(receiptProdcut.GetSum()), Qt::CaseInsensitive);
+	reportText.replace(QString("SumPh"), QString::number(sum, 'f',3), Qt::CaseInsensitive);
 	reportText.replace(QString("CurrencyPh"), QString(currency.GetShortName().c_str()), Qt::CaseInsensitive);
 
 	docForm->webEngineView->setHtml(reportText);
@@ -7410,6 +7584,7 @@ void DataForm::ViewTrsDlg()
 	BusinessLayer::Measure measure;
 	BusinessLayer::Currency currency;
 	QString tableBody;
+	double sum = 0;
 	for each (auto item in vecTrsList)
 	{
 		product.Clear();
@@ -7441,14 +7616,15 @@ void DataForm::ViewTrsDlg()
 		tableBody += "<td>" + QString(product.GetName().c_str()) + "</td>";
 		tableBody += "<td>" + QString(measure.GetShortName().c_str()) + "</td>";
 		tableBody += "<td>" + QString::number(item.GetCount()) + "</td>";
-		tableBody += "<td>" + QString::number(item.GetSum() / item.GetCount(), 'f', 3) + "</td>";
-		tableBody += "<td>" + QString::number(item.GetSum()) + "</td>";
+		tableBody += "<td>" + QString::number(product.GetPrice(), 'f', 3) + "</td>";
+		tableBody += "<td>" + QString::number(item.GetCount() * product.GetPrice(), 'f', 3) + "</td>";
 		tableBody += "<td>" + QString(currency.GetShortName().c_str()) + "</td>";
 		tableBody += "</tr>";
 		i++;
+		sum += item.GetCount() * product.GetPrice();
 	}
 	reportText.replace(QString("TableBodyPh"), tableBody, Qt::CaseInsensitive);
-	reportText.replace(QString("SumPh"), QString::number(transport.GetSum()), Qt::CaseInsensitive);
+	reportText.replace(QString("SumPh"), QString::number(sum, 'f' ,3), Qt::CaseInsensitive);
 	reportText.replace(QString("CurrencyPh"), QString(currency.GetShortName().c_str()), Qt::CaseInsensitive);
 
 	docForm->webEngineView->setHtml(reportText);
@@ -8171,6 +8347,7 @@ void DataForm::ViewWOffDlg()
 	BusinessLayer::Measure measure;
 	BusinessLayer::Currency currency;
 	QString tableBody;
+	double sum = 0;
 	for each (auto item in vecWOffList)
 	{
 		product.Clear();
@@ -8202,14 +8379,15 @@ void DataForm::ViewWOffDlg()
 		tableBody += "<td>" + QString(product.GetName().c_str()) + "</td>";
 		tableBody += "<td>" + QString(measure.GetShortName().c_str()) + "</td>";
 		tableBody += "<td>" + QString::number(item.GetCount()) + "</td>";
-		tableBody += "<td>" + QString::number(item.GetSum() / item.GetCount(), 'f', 3) + "</td>";
-		tableBody += "<td>" + QString::number(item.GetSum()) + "</td>";
+		tableBody += "<td>" + QString::number(product.GetPrice(), 'f', 3) + "</td>";
+		tableBody += "<td>" + QString::number(item.GetCount() * product.GetPrice(), 'f', 3) + "</td>";
 		tableBody += "<td>" + QString(currency.GetShortName().c_str()) + "</td>";
 		tableBody += "</tr>";
 		i++;
+		sum += item.GetCount() * product.GetPrice();
 	}
 	reportText.replace(QString("TableBodyPh"), tableBody, Qt::CaseInsensitive);
-	reportText.replace(QString("SumPh"), QString::number(wOff.GetSum()), Qt::CaseInsensitive);
+	reportText.replace(QString("SumPh"), QString::number(sum, 'f',3), Qt::CaseInsensitive);
 	reportText.replace(QString("CurrencyPh"), QString(currency.GetShortName().c_str()), Qt::CaseInsensitive);
 
 	docForm->webEngineView->setHtml(reportText);
@@ -14614,5 +14792,26 @@ void DataForm::QtConnect<BusinessLayer::WriteOffRawListView>()
 		connect(this, SIGNAL(SendID(int, QString)), ((CreateWOffRDlg*)parentDialog), SLOT(SetID(int, QString)));
 		connect(tableView->model(), SIGNAL(rowsInserted(QModelIndex, int, int)), this, SLOT(OnRowsNumberChanged()));
 		connect(tableView->model(), SIGNAL(rowsRemoved(QModelIndex, int, int)), this, SLOT(OnRowsNumberChanged()));
+	}
+}
+
+
+
+void DataForm::keyPressEvent(QKeyEvent *event) {
+	if (QApplication::keyboardModifiers() & Qt::ControlModifier) 
+	{
+		int key = event->key();
+		if (key == Qt::Key::Key_F) 
+		{ 
+			//event is Ctrl+F, search
+			SearchInTableDlg *searchDlg = new SearchInTableDlg(this);
+			searchDlg->setAttribute(Qt::WA_DeleteOnClose);
+			searchDlg->setWindowTitle(tr("Search in table"));
+			QMdiSubWindow *invWindow = new QMdiSubWindow;
+			invWindow->setWidget(searchDlg);
+			invWindow->setAttribute(Qt::WA_DeleteOnClose);
+			((MainForm*)parentForm)->mdiArea->addSubWindow(invWindow);
+			searchDlg->show();
+		}
 	}
 }

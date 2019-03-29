@@ -220,7 +220,7 @@ private slots:
 	void CrtProdnDlg();
 	void UdpProdnDlg();
 	void DelProdnDlg();
-	void ViewProdnDlg(){};
+	void ViewProdnDlg();
 
 	void CrtProdConRDlg();
 	void UdpProdConRDlg();
@@ -397,10 +397,12 @@ private slots:
 	void GetIDValue(QModelIndex index);
 	void OnRowsNumberChanged();
 	void AcsDenied();
+
 	
 	public slots:
 	void CloseDataForm();
-	
+	void Search(QString);
+
 	signals:
 	void SendID(int ID, QString childName);
 	
@@ -430,5 +432,7 @@ public:
 	unsigned int writeOffRawID = 0;
 	unsigned int employeeID = 0;
 	unsigned int stockEmployeeID = 0;
+protected:
+	virtual void keyPressEvent(QKeyEvent *event);
 };
 #endif //DATAFORM_H

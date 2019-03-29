@@ -49,6 +49,42 @@ INSERT INTO "OrmasSchema".roles(
 INSERT INTO "OrmasSchema".roles(
             role_id, role_code, role_name, comment)
     VALUES ((SELECT nextval('"OrmasSchema".id_seq')), '0017', 'ANYKEY', 'This employee do many tasks');
+INSERT INTO "OrmasSchema".roles(
+            role_id, role_code, role_name, comment)
+    VALUES ((SELECT nextval('"OrmasSchema".id_seq')), '0018', 'CASHIER', 'The cashier of company');
+INSERT INTO "OrmasSchema".roles(
+            role_id, role_code, role_name, comment)
+    VALUES ((SELECT nextval('"OrmasSchema".id_seq')), '0019', 'DRIVER', 'A driver');
+INSERT INTO "OrmasSchema".roles(
+            role_id, role_code, role_name, comment)
+    VALUES ((SELECT nextval('"OrmasSchema".id_seq')), '0020', 'TRAINEE', 'A trainee');
+INSERT INTO "OrmasSchema".roles(
+            role_id, role_code, role_name, comment)
+    VALUES ((SELECT nextval('"OrmasSchema".id_seq')), '0021', 'SECURITY', 'Security guard');
+INSERT INTO "OrmasSchema".roles(
+            role_id, role_code, role_name, comment)
+    VALUES ((SELECT nextval('"OrmasSchema".id_seq')), '0022', 'FACILITIES MANAGER', 'Facilities Manager');
+INSERT INTO "OrmasSchema".roles(
+            role_id, role_code, role_name, comment)
+    VALUES ((SELECT nextval('"OrmasSchema".id_seq')), '0023', 'COOK', 'Ther kitchener');
+INSERT INTO "OrmasSchema".roles(
+            role_id, role_code, role_name, comment)
+    VALUES ((SELECT nextval('"OrmasSchema".id_seq')), '0024', 'MECHANIC', 'A mechanic');
+INSERT INTO "OrmasSchema".roles(
+            role_id, role_code, role_name, comment)
+    VALUES ((SELECT nextval('"OrmasSchema".id_seq')), '0025', 'HEALTH AND SAFETY MANAGER', 'A health and safety manager in company');
+INSERT INTO "OrmasSchema".roles(
+            role_id, role_code, role_name, comment)
+    VALUES ((SELECT nextval('"OrmasSchema".id_seq')), '0026', 'ANALYST', 'The analyst');
+INSERT INTO "OrmasSchema".roles(
+            role_id, role_code, role_name, comment)
+    VALUES ((SELECT nextval('"OrmasSchema".id_seq')), '0027', 'MEDICAL OFFICER', 'The medical offincer in company');
+
+
+
+
+
+
 
 
 

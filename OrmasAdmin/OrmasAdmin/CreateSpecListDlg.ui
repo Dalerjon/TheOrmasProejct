@@ -272,10 +272,12 @@
  </widget>
  <tabstops>
   <tabstop>productBtn</tabstop>
+  <tabstop>countEdit</tabstop>
   <tabstop>specBtn</tabstop>
-  <tabstop>specEdit</tabstop>
   <tabstop>addBtn</tabstop>
   <tabstop>cancelBtn</tabstop>
+  <tabstop>productEdit</tabstop>
+  <tabstop>specEdit</tabstop>
  </tabstops>
  <resources/>
  <connections/>

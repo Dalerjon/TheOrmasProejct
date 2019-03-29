@@ -17,6 +17,7 @@ namespace DataLayer{
 		std::string GetConString();
 		void InitFromConfigFile(std::string path);
 		void SetDBParams(std::string dbname, std::string username, std::string password, std::string host, int port);
+		bool IsDBParamsSet();
 		
 		//overloaded operators
 		ConnectionString& operator=(const ConnectionString& cs)

@@ -1974,15 +1974,13 @@ namespace BusinessLayer
 		return true;
 	}
 
-	bool Stock::ChangingByReturnProduct(DataLayer::OrmasDal& ormasDal, int rpID, int cID, int empID, std::string& errorMessage)
+	bool Stock::ChangingByReturnProduct(DataLayer::OrmasDal& ormasDal, int rpID, int cID, int wareID, std::string& errorMessage)
 	{
 		ReturnList rList;
 		std::vector<ReturnListView> rListVec;
 		double totalSum = 0.0;
 		double netSum = 0.0;
 		int companyID = 0;
-		int subAccID = 0;
-		int warehouseID = 0;
 
 		rList.SetReturnID(rpID);
 		std::string filter = rList.GenerateFilter(ormasDal);
@@ -2001,8 +1999,6 @@ namespace BusinessLayer
 		}
 		if (rListVec.size() > 0)
 		{
-			if (!GetSubIDAndWerhIDFromRtrnProd(ormasDal, empID, warehouseID, subAccID, errorMessage))
-				return false;
 			Stock stock;
 			Product product;
 			Status status;
@@ -2014,7 +2010,7 @@ namespace BusinessLayer
 				product.Clear();
 				status.Clear();
 				nCost.Clear();
-				if (!stock.GetStockByProductAndWarehouseID(ormasDal, item.GetProductID(), warehouseID, errorMessage))
+				if (!stock.GetStockByProductAndWarehouseID(ormasDal, item.GetProductID(), wareID, errorMessage))
 				{
 					errorMessage.clear();
 					if (!status.GetStatusByName(ormasDal, "IN STOCK", errorMessage))
@@ -2025,7 +2021,7 @@ namespace BusinessLayer
 					}
 					if (!product.GetProductByID(ormasDal, item.GetProductID(), errorMessage))
 						return false;
-					if (!nCost.GetNetCostByID(ormasDal, item.GetProductID(), errorMessage))
+					if (!nCost.GetNetCostByProductID(ormasDal, item.GetProductID(), errorMessage))
 						return false;
 					companyID = product.GetCompanyID();
 					totalSum += (item.GetSum() - item.GetCount()*nCost.GetValue());
@@ -2045,7 +2041,7 @@ namespace BusinessLayer
 				{
 					if (!product.GetProductByID(ormasDal, item.GetProductID(), errorMessage))
 						return false;
-					if (!nCost.GetNetCostByID(ormasDal, item.GetProductID(), errorMessage))
+					if (!nCost.GetNetCostByProductID(ormasDal, item.GetProductID(), errorMessage))
 						return false;
 					companyID = product.GetCompanyID();
 					totalSum += (item.GetSum() - item.GetCount()*nCost.GetValue());
@@ -2073,7 +2069,13 @@ namespace BusinessLayer
 			//ormasDal.CancelTransaction(errorMessage);
 			return false;
 		}
-		int debAccID10740 = subAccID;
+		Warehouse warehouse;
+		if (!warehouse.GetWarehouseByID(ormasDal, wareID, errorMessage))
+		{
+			//ormasDal.CancelTransaction(errorMessage);
+			return false;
+		}
+		int debAccID10740 = warehouse.GetSubaccountID();
 		int credAccID = balance.GetSubaccountID();
 		int debAccID44090 = caRel.GetAccountIDByCompanyID(ormasDal, companyID, "44090", errorMessage);
 		if (0 == debAccID10740 || 0 == credAccID || 0 == debAccID44090)
@@ -2082,8 +2084,12 @@ namespace BusinessLayer
 			return false;
 		}
 
-		if (!this->CreateEntry(ormasDal, rpID, debAccID10740, netSum, credAccID, errorMessage) &&
-			!this->CreateEntry(ormasDal, rpID, debAccID44090, totalSum, credAccID, errorMessage))
+		if (!this->CreateEntry(ormasDal, rpID, debAccID10740, netSum, credAccID, errorMessage))
+		{
+			//ormasDal.CancelTransaction(errorMessage);
+			return false;
+		}
+		if (!this->CreateEntry(ormasDal, rpID, debAccID44090, totalSum, credAccID, errorMessage))
 		{
 			//ormasDal.CancelTransaction(errorMessage);
 			return false;
@@ -2091,15 +2097,13 @@ namespace BusinessLayer
 		return true;
 	}
 
-	bool Stock::ChangingByReturnProduct(DataLayer::OrmasDal& ormasDal, int rpID, int cID, int empID, std::map<int, double> pProdCountMap, double pSum, std::string& errorMessage)
+	bool Stock::ChangingByReturnProduct(DataLayer::OrmasDal& ormasDal, int rpID, int cID, int wareID, std::map<int, double> pProdCountMap, double pSum, std::string& errorMessage)
 	{
 		ReturnList rList;
 		std::vector<ReturnListView> rListVec;
 		double totalSum = 0.0;
 		double netSum = 0.0;
 		int companyID = 0;
-		int subAccID = 0;
-		int warehouseID = 0;
 
 		rList.SetReturnID(rpID);
 		std::string filter = rList.GenerateFilter(ormasDal);
@@ -2118,8 +2122,6 @@ namespace BusinessLayer
 		}
 		if (rListVec.size() > 0)
 		{
-			if (!GetSubIDAndWerhIDFromRtrnProd(ormasDal, empID, warehouseID, subAccID, errorMessage))
-				return false;
 			Stock stock;
 			Product product;
 			Status status;
@@ -2131,7 +2133,7 @@ namespace BusinessLayer
 				product.Clear();
 				status.Clear();
 				nCost.Clear();
-				if (!stock.GetStockByProductAndWarehouseID(ormasDal, item.GetProductID(), warehouseID, errorMessage))
+				if (!stock.GetStockByProductAndWarehouseID(ormasDal, item.GetProductID(), wareID, errorMessage))
 				{
 					errorMessage.clear();
 					if (!status.GetStatusByName(ormasDal, "IN STOCK", errorMessage))
@@ -2142,7 +2144,7 @@ namespace BusinessLayer
 					}
 					if (!product.GetProductByID(ormasDal, item.GetProductID(), errorMessage))
 						return false;
-					if (!nCost.GetNetCostByID(ormasDal, item.GetProductID(), errorMessage))
+					if (!nCost.GetNetCostByProductID(ormasDal, item.GetProductID(), errorMessage))
 						return false;
 					companyID = product.GetCompanyID();
 					totalSum += (item.GetSum() - item.GetCount()*nCost.GetValue());
@@ -2162,7 +2164,7 @@ namespace BusinessLayer
 				{
 					if (!product.GetProductByID(ormasDal, item.GetProductID(), errorMessage))
 						return false;
-					if (!nCost.GetNetCostByID(ormasDal, item.GetProductID(), errorMessage))
+					if (!nCost.GetNetCostByProductID(ormasDal, item.GetProductID(), errorMessage))
 						return false;
 					companyID = product.GetCompanyID();
 					totalSum += (item.GetSum() - item.GetCount()*nCost.GetValue());
@@ -2190,7 +2192,13 @@ namespace BusinessLayer
 			//ormasDal.CancelTransaction(errorMessage);
 			return false;
 		}
-		int debAccID10740 = subAccID;
+		Warehouse warehouse;
+		if (!warehouse.GetWarehouseByID(ormasDal, wareID, errorMessage))
+		{
+			//ormasDal.CancelTransaction(errorMessage);
+			return false;
+		}
+		int debAccID10740 = warehouse.GetSubaccountID();
 		int credAccID = balance.GetSubaccountID();
 		int debAccID44090 = caRel.GetAccountIDByCompanyID(ormasDal, companyID, "44090", errorMessage);
 		if (0 == debAccID10740 || 0 == credAccID || 0 == debAccID44090)
@@ -2199,8 +2207,12 @@ namespace BusinessLayer
 			return false;
 		}
 
-		if (!this->CreateEntry(ormasDal, rpID, debAccID10740, netSum, credAccID, errorMessage) &&
-			!this->CreateEntry(ormasDal, rpID, debAccID44090, totalSum, credAccID, errorMessage))
+		if (!this->CreateEntry(ormasDal, rpID, debAccID10740, netSum, credAccID, errorMessage))
+		{
+			//ormasDal.CancelTransaction(errorMessage);
+			return false;
+		}
+		if (!this->CreateEntry(ormasDal, rpID, debAccID44090, totalSum, credAccID, errorMessage))
 		{
 			//ormasDal.CancelTransaction(errorMessage);
 			return false;

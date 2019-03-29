@@ -21,6 +21,8 @@ CreateConPDlg::CreateConPDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, Q
 	statusEdit->setValidator(vInt);
 	sumEdit->setValidator(vDouble);
 	sumEdit->setMaxLength(17);
+	sumEdit->setVisible(false);
+	sumLb->setVisible(false);
 	dialogBL->StartTransaction(errorMessage);
 	if (true == updateFlag)
 	{
@@ -100,7 +102,7 @@ void CreateConPDlg::FillEditElements(int cEmployeeID, QString cDate, QString cEx
 	}
 	stockEmployeeEdit->setText(QString::number(cStockEmployeeID));
 	prodCountEdit->setText(QString::number(cCount));
-	sumEdit->setText(QString::number(cSum));
+	sumEdit->setText(QString::number(cSum,'f',3));
 	statusEdit->setText(QString::number(cStatusID));
 	currencyCmb->setCurrentIndex(currencyCmb->findData(QVariant(cCurrencyID)));
 	BusinessLayer::User user1;
@@ -384,7 +386,7 @@ void CreateConPDlg::CreateConsumeProduct()
 					}
 
 					consumeProductItem << new QStandardItem(QString::number(consumeProduct->GetCount()))
-						<< new QStandardItem(QString::number(consumeProduct->GetSum()))
+						<< new QStandardItem(QString::number(consumeProduct->GetSum(), 'f', 3))
 						<< new QStandardItem(currency->GetShortName().c_str())
 						<< new QStandardItem(QString::number(consumeProduct->GetStockEmployeeID()))
 						<< new QStandardItem(QString::number(consumeProduct->GetEmployeeID()))
@@ -546,7 +548,7 @@ void CreateConPDlg::EditConsumeProduct()
 						}
 
 						itemModel->item(mIndex.row(), 13)->setText(QString::number(consumeProduct->GetCount()));
-						itemModel->item(mIndex.row(), 14)->setText(QString::number(consumeProduct->GetSum()));
+						itemModel->item(mIndex.row(), 14)->setText(QString::number(consumeProduct->GetSum(), 'f', 3));
 						itemModel->item(mIndex.row(), 15)->setText(currency->GetShortName().c_str());
 						itemModel->item(mIndex.row(), 16)->setText(QString::number(consumeProduct->GetStockEmployeeID()));
 						itemModel->item(mIndex.row(), 17)->setText(QString::number(consumeProduct->GetEmployeeID()));

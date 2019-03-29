@@ -21,6 +21,8 @@ CreateRcpPDlg::CreateRcpPDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, Q
 	statusEdit->setValidator(vInt);
 	sumEdit->setValidator(vDouble);
 	sumEdit->setMaxLength(17);
+	sumEdit->setVisible(false);
+	sumLb->setVisible(false);
 	dialogBL->StartTransaction(errorMessage);
 	if (true == updateFlag)
 	{

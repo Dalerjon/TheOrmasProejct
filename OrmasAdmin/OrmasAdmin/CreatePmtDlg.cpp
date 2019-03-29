@@ -106,7 +106,7 @@ void CreatePmtDlg::SetPaymentParams(QString pDate, double pValue, int pUserID, i
 void CreatePmtDlg::FillEditElements(QString pDate, double pValue, int pUserID, int pCurrencyID, int pStatusID)
 {
 	dateEdit->setDateTime(QDateTime::fromString(pDate, "dd.MM.yyyy hh:mm"));
-	valueEdit->setText(QString::number(pValue));
+	valueEdit->setText(QString::number(pValue,'f',3));
 	userEdit->setText(QString::number(pUserID));
 	statusEdit->setText(QString::number(pStatusID));
 	currencyCmb->setCurrentIndex(currencyCmb->findData(QVariant(pCurrencyID)));
@@ -205,7 +205,7 @@ void CreatePmtDlg::CreatePayment()
 						<< new QStandardItem(user->GetName().c_str())
 						<< new QStandardItem(user->GetSurname().c_str())
 						<< new QStandardItem(user->GetPhone().c_str())
-						<< new QStandardItem(QString::number(payment->GetValue()))
+						<< new QStandardItem(QString::number(payment->GetValue(),'f',3))
 						<< new QStandardItem(currency->GetShortName().c_str())
 						<< new QStandardItem(status->GetName().c_str())
 						<< new QStandardItem(QString::number(payment->GetUserID()))
@@ -284,7 +284,7 @@ void CreatePmtDlg::EditPayment()
 						itemModel->item(mIndex.row(), 2)->setText(user->GetName().c_str());
 						itemModel->item(mIndex.row(), 3)->setText(user->GetSurname().c_str());
 						itemModel->item(mIndex.row(), 4)->setText(user->GetPhone().c_str());
-						itemModel->item(mIndex.row(), 5)->setText(QString::number(payment->GetValue()));
+						itemModel->item(mIndex.row(), 5)->setText(QString::number(payment->GetValue(),'f',3));
 						itemModel->item(mIndex.row(), 6)->setText(currency->GetShortName().c_str());
 						itemModel->item(mIndex.row(), 7)->setText(status->GetName().c_str());
 						itemModel->item(mIndex.row(), 8)->setText(QString::number(payment->GetUserID()));

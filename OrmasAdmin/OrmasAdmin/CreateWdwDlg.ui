@@ -344,8 +344,19 @@
  </widget>
  <tabstops>
   <tabstop>userBtn</tabstop>
+  <tabstop>subAccBtn</tabstop>
+  <tabstop>saNumberEdit</tabstop>
+  <tabstop>targetEdit</tabstop>
+  <tabstop>currencyCmb</tabstop>
+  <tabstop>dateEdit</tabstop>
+  <tabstop>balanceEdit</tabstop>
+  <tabstop>currencyNameEdit</tabstop>
+  <tabstop>yesCheckBox</tabstop>
+  <tabstop>valueEdit</tabstop>
   <tabstop>okBtn</tabstop>
   <tabstop>cancelBtn</tabstop>
+  <tabstop>userEdit</tabstop>
+  <tabstop>saIDEdit</tabstop>
  </tabstops>
  <resources/>
  <connections/>

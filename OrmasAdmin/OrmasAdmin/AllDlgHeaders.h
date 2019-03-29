@@ -89,5 +89,6 @@
 #include "GenerateAccDlg.h"
 #include "GenerateOneAccDlg.h"
 #include "ReworkRawDlg.h"
+#include "SearchDlg.h"
 
 #endif

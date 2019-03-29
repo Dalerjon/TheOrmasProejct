@@ -4127,7 +4127,7 @@ namespace BusinessLayer{
 					return false;
 				}
 				delete cur;
-				order->SetSum(roundSum);
+				order->SetSum(order->GetSum());
 				return order->CreateOrder(ormasDal, errorMessage);
 			}
 			else
@@ -4160,7 +4160,7 @@ namespace BusinessLayer{
 					return false;
 				}
 				delete cur;
-				order->SetSum(roundSum);
+				order->SetSum(order->GetSum());
 				return order->UpdateOrder(ormasDal, errorMessage);
 			}
 			else
@@ -7496,7 +7496,7 @@ namespace BusinessLayer{
 	{
 		try
 		{
-			if (!writeOff->GetDate().empty() && 0 != writeOff->GetClientID() && 0 != writeOff->GetCount()
+			if (!writeOff->GetDate().empty()  && 0 != writeOff->GetCount()
 				&& 0 != writeOff->GetSum() && 0 != writeOff->GetStatusID() && 0 != writeOff->GetCurrencyID())
 			{
 				double roundSum = 0;
@@ -7529,7 +7529,7 @@ namespace BusinessLayer{
 	{
 		try
 		{
-			if (!writeOff->GetDate().empty() && 0 != writeOff->GetClientID() && 0 != writeOff->GetCount()
+			if (!writeOff->GetDate().empty() && 0 != writeOff->GetCount()
 				&& 0 != writeOff->GetSum() && 0 != writeOff->GetStatusID() && 0 != writeOff->GetCurrencyID())
 			{
 				double roundSum = 0;
@@ -7646,7 +7646,7 @@ namespace BusinessLayer{
 	{
 		try
 		{
-			if (!writeOffRaw->GetDate().empty() && 0 != writeOffRaw->GetEmployeeID() && 0 != writeOffRaw->GetCount()
+			if (!writeOffRaw->GetDate().empty() &&  0 != writeOffRaw->GetCount()
 				&& 0 != writeOffRaw->GetSum() && 0 != writeOffRaw->GetStatusID() && 0 != writeOffRaw->GetCurrencyID()
 				&& 0 != writeOffRaw->GetStockEmployeeID())
 			{
@@ -7680,7 +7680,7 @@ namespace BusinessLayer{
 	{
 		try
 		{
-			if (!writeOffRaw->GetDate().empty() && 0 != writeOffRaw->GetEmployeeID() && 0 != writeOffRaw->GetCount()
+			if (!writeOffRaw->GetDate().empty()  && 0 != writeOffRaw->GetCount()
 				&& 0 != writeOffRaw->GetSum() && 0 != writeOffRaw->GetStatusID() && 0 != writeOffRaw->GetCurrencyID()
 				&& 0 != writeOffRaw->GetStockEmployeeID())
 			{

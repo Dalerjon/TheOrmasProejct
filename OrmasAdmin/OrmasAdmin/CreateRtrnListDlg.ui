@@ -423,11 +423,16 @@
  </widget>
  <tabstops>
   <tabstop>productBtn</tabstop>
+  <tabstop>countEdit</tabstop>
   <tabstop>returnBtn</tabstop>
-  <tabstop>returnEdit</tabstop>
-  <tabstop>sumEdit</tabstop>
+  <tabstop>statusBtn</tabstop>
   <tabstop>addBtn</tabstop>
   <tabstop>cancelBtn</tabstop>
+  <tabstop>productEdit</tabstop>
+  <tabstop>returnEdit</tabstop>
+  <tabstop>statusEdit</tabstop>
+  <tabstop>sumEdit</tabstop>
+  <tabstop>currencyCmb</tabstop>
  </tabstops>
  <resources/>
  <connections/>

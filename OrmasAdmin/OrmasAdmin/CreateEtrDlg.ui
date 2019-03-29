@@ -348,8 +348,19 @@ p, li { white-space: pre-wrap; }
   </layout>
  </widget>
  <tabstops>
+  <tabstop>dAccBtn</tabstop>
+  <tabstop>daNumberEdit</tabstop>
+  <tabstop>dSubAccBtn</tabstop>
+  <tabstop>valueEdit</tabstop>
+  <tabstop>cAccBtn</tabstop>
+  <tabstop>caNumberEdit</tabstop>
+  <tabstop>cSubAccBtn</tabstop>
+  <tabstop>descriptionTextEdit</tabstop>
   <tabstop>okBtn</tabstop>
   <tabstop>cancelBtn</tabstop>
+  <tabstop>dateEdit</tabstop>
+  <tabstop>daIDEdit</tabstop>
+  <tabstop>caIDEdit</tabstop>
  </tabstops>
  <resources/>
  <connections/>

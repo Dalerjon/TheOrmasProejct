@@ -87,6 +87,8 @@ public:
 
         gridLayout->addWidget(fromLb, 0, 1, 1, 1);
 
+        QWidget::setTabOrder(fromDateEdit, tillDateEdit);
+        QWidget::setTabOrder(tillDateEdit, okBtn);
         QWidget::setTabOrder(okBtn, cancelBtn);
 
         retranslateUi(GenerateCompanyBalance);

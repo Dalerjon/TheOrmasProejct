@@ -197,8 +197,14 @@
   </layout>
  </widget>
  <tabstops>
+  <tabstop>fromDateEdit</tabstop>
+  <tabstop>tillDateEdit</tabstop>
+  <tabstop>accBtn</tabstop>
+  <tabstop>accNumberEdit</tabstop>
+  <tabstop>sAccBtn</tabstop>
   <tabstop>okBtn</tabstop>
   <tabstop>cancelBtn</tabstop>
+  <tabstop>accIDEdit</tabstop>
  </tabstops>
  <resources/>
  <connections/>

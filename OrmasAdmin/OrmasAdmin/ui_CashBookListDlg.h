@@ -75,6 +75,7 @@ public:
 
         gridLayout->addLayout(horizontalLayout, 1, 1, 1, 3);
 
+        QWidget::setTabOrder(forDateEdit, okBtn);
         QWidget::setTabOrder(okBtn, cancelBtn);
 
         retranslateUi(CashBookList);

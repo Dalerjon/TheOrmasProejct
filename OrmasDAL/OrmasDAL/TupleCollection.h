@@ -26,6 +26,16 @@ namespace DataLayer{
 
 	typedef std::tuple<int,std::string, std::string, double, std::string, int, int> balancesViewCollection;
 
+	typedef std::tuple<int, std::string, std::string, std::string, std::string> branchesCollection;
+
+	typedef std::tuple<int, int, std::string, std::string> cashboxCollection;
+
+	typedef std::tuple<int, std::string, std::string, std::string, int> cashboxViewCollection;
+
+	typedef std::tuple<int, int, int> cashboxEmployeeCollection;
+
+	typedef std::tuple<int, std::string, std::string, std::string, std::string, std::string, std::string, int, int> cashboxEmployeeViewCollection;
+
 	typedef std::tuple<int, std::string, std::string, int> chartOfAccountsCollection;
 
 	typedef std::tuple<int, std::string, std::string, std::string, int> chartOfAccountsViewCollection;
@@ -41,9 +51,9 @@ namespace DataLayer{
 
 	typedef std::tuple<int, std::string, std::string, int, int> companyAccountViewCollection;
 
-	typedef std::tuple<int, int, int> companyEmployeeCollection;
+	typedef std::tuple<int, int, int, int> companyEmployeeCollection;
 
-	typedef std::tuple<int, std::string, std::string, std::string, std::string, int, int> companyEmployeeViewCollection;
+	typedef std::tuple<int, std::string, std::string, std::string, std::string, std::string, int, int, int> companyEmployeeViewCollection;
 
 	typedef std::tuple<int, int, int, double, double, int, int> consumeProductListCollection;
 
@@ -188,10 +198,10 @@ namespace DataLayer{
 	typedef std::tuple<int, std::string, double, double, std::string, std::string, std::string, std::string, std::string, std::string,
 		 int, int, int> productionPlanViewCollection;
 
-	typedef std::tuple<int, int, double, double, int, int> productionStockCollection;
+	typedef std::tuple<int, int, double, double, int, int, int> productionStockCollection;
 
 	typedef std::tuple<int, std::string, double, std::string, double, std::string, double, double, std::string,
-		std::string, int, int, int> productionStockViewCollection;
+		std::string, std::string, std::string, int, int, int, int> productionStockViewCollection;
 	
 	typedef std::tuple<int, int, std::string, double, int, double, int, int, int> productsCollection;
 
@@ -280,10 +290,10 @@ namespace DataLayer{
 
 	typedef std::tuple<int, std::string, std::string, int> statusRuleViewCollection;
 
-	typedef std::tuple<int, int, double, double, int, int> stockCollection;
+	typedef std::tuple<int, int, double, double, int, int, int> stockCollection;
 
 	typedef std::tuple<int, std::string, double, std::string, double, std::string, double, double, std::string,
-		std::string, int, int, int> stockViewCollection;
+		std::string, std::string, std::string, int, int, int, int> stockViewCollection;
 
 	typedef std::tuple<int, int, double, double, std::string, std::string> subaccountHistoryCollection;
 
@@ -314,9 +324,19 @@ namespace DataLayer{
 	typedef std::tuple<int, std::string, std::string, std::string, std::string, std::string, std::string,
 		std::string, bool, int> usersViewCollection;
 
-	typedef std::tuple<int, std::string, double, int, int> withdrawalsCollection;
+	typedef std::tuple<int, std::string, std::string, std::string, int, int> warehouseCollection;
 
-	typedef std::tuple<int, std::string, double, std::string, int, int> withdrawalsViewCollection;
+	typedef std::tuple<int, std::string, std::string, std::string, std::string, std::string, int, int> warehouseViewCollection;
+
+	typedef std::tuple<int, int, int> warehouseEmployeeCollection;
+
+	typedef std::tuple<int, std::string, std::string, std::string, std::string, std::string, std::string, int, int> warehouseEmployeeViewCollection;
+
+	typedef std::tuple<int, std::string, std::string, std::string> warehouseTypeCollection;
+
+	typedef std::tuple<int, std::string, double,int,int, std::string, int> withdrawalsCollection;
+
+	typedef std::tuple<int, std::string, double, std::string, std::string, std::string, std::string, std::string, int, int, int> withdrawalsViewCollection;
 
 	typedef std::tuple<int, int, int, double, double, int, int> writeOffListCollection;
 

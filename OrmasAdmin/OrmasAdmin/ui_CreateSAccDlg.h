@@ -241,11 +241,17 @@ public:
 
         gridLayout->addWidget(statusWidget, 7, 0, 1, 4);
 
-        QWidget::setTabOrder(numberEdit, startBalanceEdit);
+        QWidget::setTabOrder(numberEdit, chartOfAccBtn);
+        QWidget::setTabOrder(chartOfAccBtn, startBalanceEdit);
         QWidget::setTabOrder(startBalanceEdit, currentBalanceEdit);
-        QWidget::setTabOrder(currentBalanceEdit, detailsEdit);
+        QWidget::setTabOrder(currentBalanceEdit, currencyCmb);
+        QWidget::setTabOrder(currencyCmb, statusBtn);
+        QWidget::setTabOrder(statusBtn, openedDateEdit);
+        QWidget::setTabOrder(openedDateEdit, detailsEdit);
         QWidget::setTabOrder(detailsEdit, okBtn);
         QWidget::setTabOrder(okBtn, cancelBtn);
+        QWidget::setTabOrder(cancelBtn, chartOfAccEdit);
+        QWidget::setTabOrder(chartOfAccEdit, statusEdit);
 
         retranslateUi(CreateSubaccount);
 

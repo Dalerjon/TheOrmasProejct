@@ -360,6 +360,12 @@
     <ClInclude Include="ui_CreateWrhTpDlg.h">
       <Filter>Header Files\UI Headers</Filter>
     </ClInclude>
+    <ClInclude Include="ui_SearchDlg.h">
+      <Filter>Header Files\UI Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -989,6 +995,12 @@
     <ClCompile Include="CreateWERDlg.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="moc_SearchDlg.cpp">
+      <Filter>MOC Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SearchDlg.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="MainForm.ui">
@@ -1600,5 +1612,21 @@
     <CustomBuild Include="CreateWrhTpDlg.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
+    <CustomBuild Include="SearchDlg.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="SearchDlg.ui">
+      <Filter>User Interface</Filter>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="OrmasAdmin.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="ormas.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>

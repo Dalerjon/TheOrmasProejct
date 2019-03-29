@@ -157,10 +157,11 @@ public:
 
         gridLayout->addWidget(label, 0, 2, 1, 1);
 
-        QWidget::setTabOrder(numberEdit, informationEdit);
         QWidget::setTabOrder(informationEdit, addressEdit);
-        QWidget::setTabOrder(addressEdit, okBtn);
+        QWidget::setTabOrder(addressEdit, currencyCmb);
+        QWidget::setTabOrder(currencyCmb, okBtn);
         QWidget::setTabOrder(okBtn, cancelBtn);
+        QWidget::setTabOrder(cancelBtn, numberEdit);
 
         retranslateUi(CreateCashbox);
 

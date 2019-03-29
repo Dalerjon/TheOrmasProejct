@@ -1,7 +1,23 @@
 <!DOCTYPE RCC><RCC version="1.0">
 <qresource>
     <file>images/lock.png</file>
-	<file>docs/financial_report.html</file>
+	<file>images/ormas.png</file>
+	<file>docs/account_card.html</file>
+	<file>docs/cash_list.html</file>
 	<file>docs/company_balance.html</file>
+	<file>docs/consumption.html</file>
+	<file>docs/financial_report.html</file>
+	<file>docs/income.html</file>
+	<file>docs/inventarization.html</file>
+	<file>docs/invoice.html</file>
+	<file>docs/order.html</file>
+	<file>docs/profitability.html</file>
+	<file>docs/production.html</file>
+	<file>docs/return.html</file>
+	<file>docs/sales.html</file>
+	<file>docs/specification.html</file>
+	<file>docs/spoilage.html</file>
+	<file>docs/transport.html</file>
+	<file>docs/write_off.html</file>
 </qresource>
 </RCC>

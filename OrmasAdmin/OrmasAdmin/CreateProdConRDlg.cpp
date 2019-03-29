@@ -844,7 +844,7 @@ void CreateProdConRDlg::OpenProdConRListDlg()
 	if (errorMessage.empty())
 	{
 		dForm->parentDialog = this;
-		dForm->setObjectName("prodConsumeRawListForm");
+		dForm->setObjectName("productionConsumeRawListForm");
 		dForm->QtConnect<BusinessLayer::ProductionConsumeRawListView>();
 		QMdiSubWindow *pConsumeRawWindow = new QMdiSubWindow;
 		pConsumeRawWindow->setWidget(dForm);
