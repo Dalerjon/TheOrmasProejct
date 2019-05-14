@@ -731,6 +731,9 @@ namespace DataLayer{
 		std::string GetFilterForWriteOffRawList(int writeOffRawListID, int writeOffRawID, int productID, double writeOffRawListCount, double writeOffRawListSum, int statusID, int currencyID);
 		std::string GetFilterForWriteOffRaw(int writeOffRawID, int employeeID, std::string writeOffRawListDate, int stockEmployeeID, double writeOffRawListCount, double writeOffRawListSum, int statusID, int currencyID);
 
+		//counting methods
+		bool HaveChildAccount(std::string rootNumber);
+
 		//overloaded  operators
 		OrmasDal& operator=(const OrmasDal& ormasDal)
 		{

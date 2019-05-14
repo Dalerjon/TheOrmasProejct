@@ -10,7 +10,7 @@ CreateWOffDlg::CreateWOffDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, Q
 	parentForm = parent;
 	DataForm *dataFormParent = (DataForm *)this->parentForm;
 	mainForm = (MainForm *)dataFormParent->GetParent();
-	dialogBL->StartTransaction(errorMessage);
+	
 	vDouble = new QDoubleValidator(0.00, 1000000000.00, 3, this);
 	vInt = new QIntValidator(0, 1000000000, this);
 	clientEdit->setValidator(vInt);
@@ -83,7 +83,7 @@ CreateWOffDlg::~CreateWOffDlg()
 	delete vDouble;
 	delete vInt;
 	emit CloseCreatedForms();
-	dialogBL->CancelTransaction(errorMessage);
+	
 }
 
 void CreateWOffDlg::SetWriteOffParams(int wClientID, QString wDate, int wEmployeeID, double wCount, double wSum, int wStatusID, int wCurrencyID, int id)
@@ -215,7 +215,7 @@ void CreateWOffDlg::CreateWriteOff()
 
 		SetWriteOffParams(clientEdit->text().toInt(), dateEdit->text(), employeeEdit->text().toInt(), prodCountEdit->text().toDouble(),
 			sumEdit->text().toDouble(), statusEdit->text().toInt(), currencyCmb->currentData().toInt(), writeOff->GetID());
-		
+		dialogBL->StartTransaction(errorMessage);
 		if (dialogBL->CreateWriteOff(writeOff, errorMessage))
 		{
 			if (parentDataForm != nullptr)
@@ -343,7 +343,7 @@ void CreateWOffDlg::EditWriteOff()
 			DataForm *parentDataForm = (DataForm*) parentForm;
 			SetWriteOffParams(clientEdit->text().toInt(), dateEdit->text(), employeeEdit->text().toInt(), prodCountEdit->text().toDouble(),
 				sumEdit->text().toDouble(), statusEdit->text().toInt(), currencyCmb->currentData().toInt(), writeOff->GetID());
-
+			dialogBL->StartTransaction(errorMessage);
 			if (dialogBL->UpdateWriteOff(writeOff, errorMessage))
 			{
 				if (parentDataForm != nullptr)

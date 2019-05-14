@@ -153,8 +153,8 @@ namespace BusinessLayer
 	}
 	bool WriteOffRaw::DeleteWriteOffRaw(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
-		if (!ormasDal.StartTransaction(errorMessage))
-			return false;
+		//if (!ormasDal.StartTransaction(errorMessage))
+		//	return false;
 		if (ormasDal.DeleteWriteOffRaw(id, errorMessage))
 		{
 			if (ormasDal.DeleteListByWriteOffRawID(id, errorMessage))

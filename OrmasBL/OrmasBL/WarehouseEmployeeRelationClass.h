@@ -44,6 +44,7 @@ namespace BusinessLayer{
 		int GetEmployeeIDByWarehouseID(DataLayer::OrmasDal& ormasDal, int wID, std::string& errorMessage);
 		bool IsEmpty();
 		void Clear();
+		std::vector<int> GetWarehouseIDListByEmployeeID(DataLayer::OrmasDal& ormasDal, int eID);
 	private:
 		bool IsDuplicate(DataLayer::OrmasDal& ormasDal, int wID, int eID, std::string& errorMessage);
 		bool IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string& errorMessage);

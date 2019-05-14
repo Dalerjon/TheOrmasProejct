@@ -104,6 +104,8 @@ namespace BusinessLayer{
 		//ormasDal.StartTransaction(errorMessage);
 		Subaccount dSAcc;
 		Subaccount cSAcc;
+		Account dAccount;
+		Account cAccount;
 		int dSAccParentID = 0;
 		int cSAccParentID = 0;
 		if (!dSAcc.GetSubaccountByID(ormasDal, debitingAccountID, errorMessage))
@@ -111,6 +113,10 @@ namespace BusinessLayer{
 			dSAccParentID = debitingAccountID;
 			dSAcc.Clear();
 			errorMessage.clear();
+			//if (dAccount.HaveSubaccount(ormasDal, dSAccParentID))
+			//{
+			//	return false;
+			//}
 		}
 		else
 		{
@@ -122,6 +128,10 @@ namespace BusinessLayer{
 			cSAccParentID = creditingAccountID;
 			cSAcc.Clear();
 			errorMessage.clear();
+			//if (cAccount.HaveSubaccount(ormasDal, cSAccParentID))
+			//{
+			//	return false;
+			//}
 		}
 		else
 		{
@@ -179,7 +189,9 @@ namespace BusinessLayer{
 		id = ormasDal.GenerateID();
 		//ormasDal.StartTransaction(errorMessage);
 		Subaccount dSAcc;
-		Subaccount cSAcc;
+		Subaccount cSAcc; 
+		Account cAccount;
+		Account dAccount;
 		int dSAccParentID = 0;
 		int cSAccParentID = 0;
 		if (!dSAcc.GetSubaccountByID(ormasDal, debitingAccountID, errorMessage))
@@ -187,6 +199,10 @@ namespace BusinessLayer{
 			dSAccParentID = debitingAccountID;
 			dSAcc.Clear();
 			errorMessage.clear();
+			//if (dAccount.HaveSubaccount(ormasDal, dSAccParentID))
+			//{
+			//	return false;
+			//}
 		}
 		else
 		{
@@ -198,6 +214,10 @@ namespace BusinessLayer{
 			cSAccParentID = creditingAccountID;
 			cSAcc.Clear();
 			errorMessage.clear();
+			///if (cAccount.HaveSubaccount(ormasDal, cSAccParentID))
+			//{
+			//	return false;
+			//}
 		}
 		else
 		{

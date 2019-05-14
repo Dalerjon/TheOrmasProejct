@@ -185,8 +185,8 @@ namespace BusinessLayer
 	}
 	bool ProductionConsumeRaw::DeleteProductionConsumeRaw(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
-		if (!ormasDal.StartTransaction(errorMessage))
-			return false;
+		//if (!ormasDal.StartTransaction(errorMessage))
+		//	return false;
 		ProductionConsumeRaw cRaw;
 		if (!cRaw.GetProductionConsumeRawByID(ormasDal, id, errorMessage))
 		{
@@ -359,7 +359,7 @@ namespace BusinessLayer
 
 	std::string ProductionConsumeRaw::GenerateFilterForPeriod(DataLayer::OrmasDal& ormasDal, std::string fromDate, std::string toDate)
 	{
-		if (0 != id || 0 != employeeID || !date.empty() || !executionDate.empty() || 0 != stockEmployeeID || 0 != count || 0 != sum || 0 != statusID)
+		if (!toDate.empty() && !fromDate.empty())
 		{
 			return ormasDal.GetFilterForProductionConsumeRawForPeriod(id, employeeID, date, executionDate, stockEmployeeID, count, sum, statusID, currencyID, fromDate, toDate);
 		}

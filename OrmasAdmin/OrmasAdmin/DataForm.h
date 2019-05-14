@@ -20,6 +20,8 @@ public:
 	{
 		QStringList header = GetTableHeader<T>();
 		//QStandardItem *item;
+		SetColumnFilter(header);
+		SetTypeFilter();
 		QStandardItemModel *itemModel = new QStandardItemModel(this);
 		itemModel->setHorizontalHeaderLabels(header);
 		tableView->setModel(itemModel);
@@ -38,6 +40,9 @@ public:
 
 	template<class T>
 	QStringList GetTableHeader();
+
+	void SetColumnFilter(QStringList);
+	void SetTypeFilter();
 	
 
 	template<class T>
@@ -398,11 +403,13 @@ private slots:
 	void OnRowsNumberChanged();
 	void AcsDenied();
 
+	void Search(QString);
+	void Filter();
+	void ClearFilter();
 	
 	public slots:
 	void CloseDataForm();
-	void Search(QString);
-
+	
 	signals:
 	void SendID(int ID, QString childName);
 	

@@ -183,8 +183,8 @@ namespace BusinessLayer
 	}
 	bool ConsumeRaw::DeleteConsumeRaw(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
-		if (!ormasDal.StartTransaction(errorMessage))
-			return false;
+		//if (!ormasDal.StartTransaction(errorMessage))
+		//	return false;
 		ConsumeRaw cRaw;
 		if (!cRaw.GetConsumeRawByID(ormasDal, id, errorMessage))
 		{

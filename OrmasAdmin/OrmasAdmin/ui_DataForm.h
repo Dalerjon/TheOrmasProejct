@@ -64,13 +64,18 @@ public:
     QLabel *valueSearchLb;
     QLabel *columnSearchLb;
     QPushButton *searchBtn;
+    QWidget *filterWidget;
+    QHBoxLayout *horizontalLayout_2;
+    QLabel *currentFilterLb;
+    QLabel *filterTextLb;
+    QPushButton *clearBtn;
 
     void setupUi(QWidget *DataForm)
     {
         if (DataForm->objectName().isEmpty())
             DataForm->setObjectName(QStringLiteral("DataForm"));
-        DataForm->resize(800, 500);
-        DataForm->setMinimumSize(QSize(800, 500));
+        DataForm->resize(800, 600);
+        DataForm->setMinimumSize(QSize(800, 600));
         DataForm->setLocale(QLocale(QLocale::English, QLocale::UnitedStates));
         gridLayout = new QGridLayout(DataForm);
         gridLayout->setObjectName(QStringLiteral("gridLayout"));
@@ -202,7 +207,7 @@ public:
         valueEdit = new QLineEdit(tab1);
         valueEdit->setObjectName(QStringLiteral("valueEdit"));
         valueEdit->setMaximumSize(QSize(100, 16777215));
-        valueEdit->setReadOnly(true);
+        valueEdit->setReadOnly(false);
 
         gridLayout_3->addWidget(valueEdit, 0, 5, 1, 1);
 
@@ -264,6 +269,33 @@ public:
 
         gridLayout->addWidget(functionWidget, 0, 0, 1, 2);
 
+        filterWidget = new QWidget(DataForm);
+        filterWidget->setObjectName(QStringLiteral("filterWidget"));
+        filterWidget->setMinimumSize(QSize(0, 18));
+        horizontalLayout_2 = new QHBoxLayout(filterWidget);
+        horizontalLayout_2->setSpacing(0);
+        horizontalLayout_2->setObjectName(QStringLiteral("horizontalLayout_2"));
+        horizontalLayout_2->setContentsMargins(0, 0, 0, 0);
+        currentFilterLb = new QLabel(filterWidget);
+        currentFilterLb->setObjectName(QStringLiteral("currentFilterLb"));
+        currentFilterLb->setMaximumSize(QSize(70, 16777215));
+
+        horizontalLayout_2->addWidget(currentFilterLb);
+
+        filterTextLb = new QLabel(filterWidget);
+        filterTextLb->setObjectName(QStringLiteral("filterTextLb"));
+
+        horizontalLayout_2->addWidget(filterTextLb);
+
+        clearBtn = new QPushButton(filterWidget);
+        clearBtn->setObjectName(QStringLiteral("clearBtn"));
+        clearBtn->setMaximumSize(QSize(100, 16777215));
+
+        horizontalLayout_2->addWidget(clearBtn);
+
+
+        gridLayout->addWidget(filterWidget, 1, 0, 1, 2);
+
         QWidget::setTabOrder(tableView, createBtn);
         QWidget::setTabOrder(createBtn, editBtn);
         QWidget::setTabOrder(editBtn, deleteBtn);
@@ -299,6 +331,9 @@ public:
         columnSearchLb->setText(QApplication::translate("DataForm", "Column:", 0));
         searchBtn->setText(QApplication::translate("DataForm", "Search", 0));
         tabWidget->setTabText(tabWidget->indexOf(tab2), QApplication::translate("DataForm", "Search", 0));
+        currentFilterLb->setText(QApplication::translate("DataForm", "Current filter:", 0));
+        filterTextLb->setText(QString());
+        clearBtn->setText(QApplication::translate("DataForm", "Clear filter", 0));
     } // retranslateUi
 
 };

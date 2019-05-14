@@ -150,8 +150,8 @@ namespace BusinessLayer
 	}
 	bool Inventorization::DeleteInventorization(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
-		if (!ormasDal.StartTransaction(errorMessage))
-			return false;
+		//if (!ormasDal.StartTransaction(errorMessage))
+		//	return false;
 		if (ormasDal.DeleteInventorization(id, errorMessage))
 		{
 			if (ormasDal.DeleteListByInventorizationID(id, errorMessage))

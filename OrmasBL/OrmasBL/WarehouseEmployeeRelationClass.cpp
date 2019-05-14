@@ -256,4 +256,22 @@ namespace BusinessLayer{
 		errorMessage = "Warehouse-employee Relation with this parameters are already exist! Please avoid the duplication!";
 		return true;
 	}
+
+	std::vector<int> WarehouseEmployeeRelation::GetWarehouseIDListByEmployeeID(DataLayer::OrmasDal& ormasDal, int eID)
+	{
+		std::vector<int> warehouseIDVector;
+		WarehouseEmployeeRelation ceRelation;
+		ceRelation.SetEmployeeID(eID);
+		ceRelation.SetWarehouseID(0);
+		std::string filter = ceRelation.GenerateFilter(ormasDal);
+		std::vector<DataLayer::warehouseEmployeeViewCollection> warehouseEmployeeVector = ormasDal.GetWarehouseEmployee(errorMessage, filter);
+		if (0 < warehouseEmployeeVector.size())
+		{
+			for each (auto weItem in warehouseEmployeeVector)
+			{
+				warehouseIDVector.push_back(std::get<7>(weItem));
+			}
+		}
+		return warehouseIDVector;
+	}
 }

@@ -23,6 +23,8 @@ public:
 	void UserIsChanged();
 	void OpenSAccDlg();
 	void OpenUserDlg();
+	void AccountIsChenged();
+	void SortTable(QTableView *);
 	public slots:
 	void SetID(int ID, QString childName);
 private:

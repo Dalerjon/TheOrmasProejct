@@ -23,7 +23,7 @@ CreateRcpPDlg::CreateRcpPDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, Q
 	sumEdit->setMaxLength(17);
 	sumEdit->setVisible(false);
 	sumLb->setVisible(false);
-	dialogBL->StartTransaction(errorMessage);
+	
 	if (true == updateFlag)
 	{
 		QObject::connect(okBtn, &QPushButton::released, this, &CreateRcpPDlg::EditReceiptProduct);
@@ -75,7 +75,7 @@ CreateRcpPDlg::~CreateRcpPDlg()
 	delete vDouble;
 	delete vInt;
 	emit CloseCreatedForms();
-	dialogBL->CancelTransaction(errorMessage);
+	
 }
 
 void CreateRcpPDlg::SetReceiptProductParams(int rEmployeeID, QString rDate, QString rExecDate, int rStockEmployeeID, double rCount,
@@ -313,7 +313,7 @@ void CreateRcpPDlg::CreateReceiptProduct()
 				sumEdit->text().toDouble(), statusEdit->text().toInt(), currencyCmb->currentData().toInt(), receiptProduct->GetID());
 		}
 		
-
+		dialogBL->StartTransaction(errorMessage);
 		if (dialogBL->CreateReceiptProduct(receiptProduct, errorMessage))
 		{
 			if (parentDataForm != nullptr)
@@ -483,7 +483,7 @@ void CreateRcpPDlg::EditReceiptProduct()
 				SetReceiptProductParams(employeeEdit->text().toInt(), dateEdit->text(), execDateEdit->text(), stockEmployeeEdit->text().toInt(), prodCountEdit->text().toDouble(),
 					sumEdit->text().toDouble(), statusEdit->text().toInt(), currencyCmb->currentData().toInt(), receiptProduct->GetID());
 			}
-
+			dialogBL->StartTransaction(errorMessage);
 			if (dialogBL->UpdateReceiptProduct(receiptProduct, errorMessage))
 			{
 				if (parentDataForm != nullptr)

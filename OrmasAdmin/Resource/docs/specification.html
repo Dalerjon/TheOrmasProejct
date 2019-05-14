@@ -2,62 +2,46 @@
 	<body style="padding: 20px;">
 		<div id="report-header" style="margin:auto;	position:relative;	width:250px;">
 			<div id="report-name">
-				<b>Отчет о расходах сырья</b>
-			</div></br>
+				<b>Спецификация</b><b> №</b><b>NumberPh</b>
+			</div>
 			<div id="report-period" ><b>
-				за fromDatePh - tillDatePh
+				на DatePh 
 			</b></div>
 		</div>
+		<div id = "row">
+			Предприятие: ComName2Ph
+		</div>
+		</br>
+		<div id = "row">
+			Технолог: UserName2Ph
+		</div>
+		</br></br>
 		<div id="content">
-			<h3>Произведенная продукция за отчетный период</h3>
-			<table style="width:800px; border: 1px solid black;font-size:12px; border-collapse: collapse;">
-				<th>ID продукта</th>
-				<th>Наименование продукта</th>
-				<th>Количество</th>
-				<th>Цена продукта</th>
-				<th>Сумма</th>
-				ProductTableBodyPh
-				<tr>
-					<td style="border: 1px solid black; text-align: center;"></td>
-					<td style="border: 1px solid black; text-align: center;"></td>
-					<td style="border: 1px solid black; text-align: center;"></td>
-					<td style="border: 1px solid black; text-align: center;">Произведенно на сумму</td>
-					<td style="border: 1px solid black; text-align: center;">AllProdPh</td>					
-				</tr>
-			</table>
-			<br/>
-			<h3>Расход сырья за отчетный период</h3>
-			<table style="width:800px; border: 1px solid black;font-size:12px; border-collapse: collapse;">
-				<th>Наименование продукта</th>
-				<th>Расход по спецификации</th>
-				<th>Мера</th>
-				<th>Производственный расход</th>
-				<th>Мера</th>
-				<th>Перерасход</th>
-				<th>Мера</th>
-				<th>Cумма разницы</th>
-				SpecTableBodyPh
-				<tr>
-					<td style="border: 1px solid black; text-align: center;"></td>
-					<td style="border: 1px solid black; text-align: center;"></td>
-					<td style="border: 1px solid black; text-align: center;"></td>
-					<td style="border: 1px solid black; text-align: center;"></td>
-					<td style="border: 1px solid black; text-align: center;"></td>
-					<td style="border: 1px solid black; text-align: center;"></td>
-					<td style="border: 1px solid black; text-align: center;">Вся сумма разницы</td>
-					<td style="border: 1px solid black; text-align: center;">SumPh</td>					
-				</tr>
-				<tr>
-					<td style="border: 1px solid black; text-align: center;"></td>
-					<td style="border: 1px solid black; text-align: center;"></td>
-					<td style="border: 1px solid black; text-align: center;"></td>
-					<td style="border: 1px solid black; text-align: center;"></td>
-					<td style="border: 1px solid black; text-align: center;"></td>
-					<td style="border: 1px solid black; text-align: center;"></td>
-					<td style="border: 1px solid black; text-align: center;">Сырья израсходовоно на сумму</td>
-					<td style="border: 1px solid black; text-align: center;">AllSummPh</td>					
-				</tr>
+			<table width="100%" border = 1px  cellpadding=5 style="border-spacing:0px;">
+				<th><b>№ п/п</b></th>
+				<th><b>Наименование</b></th>
+				<th><b>Ед. изм.</b></th>
+				<th><b>Цена</b></th>
+				<th><b>Количество</b></th>
+				<th><b>Сумма</b></th>
+				TableBodyPh
 			</table>
 		</div>
+		</br></br>
+		<div id = "row">
+			На общию сумму: SumPh  CurrencyPh 
+		</div>
+		</br>
+		<div id = "row">
+			Технолог: _________________ (подпись)
+		</div>
+		</br>
+		<div id = "row">
+			Главный бухгалтер: ____________________________ (подпись)
+		</div>
+		</br>
+		<div id = "row">
+			Руководитель: __________________________ (подпись)
+		</div> 
 	</body>
 </html>

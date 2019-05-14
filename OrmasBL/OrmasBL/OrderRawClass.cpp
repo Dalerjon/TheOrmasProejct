@@ -178,8 +178,8 @@ namespace BusinessLayer
 	}
 	bool OrderRaw::DeleteOrderRaw(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
-		if (!ormasDal.StartTransaction(errorMessage))
-			return false;
+		//if (!ormasDal.StartTransaction(errorMessage))
+		//	return false;
 		OrderRaw oRaw;
 		if (!oRaw.GetOrderRawByID(ormasDal, id, errorMessage))
 		{

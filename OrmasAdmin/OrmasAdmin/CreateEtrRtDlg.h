@@ -21,7 +21,7 @@ private:
 	BusinessLayer::EntryRouting *entryRouting = new BusinessLayer::EntryRouting();
 	void SetEntryRoutingParams(QString, int, int, int = 0);
 	void FillEditElements(QString, int, int);
-	QIntValidator *vInt = nullptr;
+	void InitComboBox();
 	QWidget* parentForm;
 };
 

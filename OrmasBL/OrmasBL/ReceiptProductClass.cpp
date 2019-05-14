@@ -186,8 +186,8 @@ namespace BusinessLayer
 	}
 	bool ReceiptProduct::DeleteReceiptProduct(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
-		if (!ormasDal.StartTransaction(errorMessage))
-			return false;
+		//if (!ormasDal.StartTransaction(errorMessage))
+		//	return false;
 		ReceiptProduct rProduct;
 		if (!rProduct.GetReceiptProductByID(ormasDal, id, errorMessage))
 		{

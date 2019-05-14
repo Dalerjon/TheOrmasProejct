@@ -32,6 +32,7 @@ CreateWdwDlg::CreateWdwDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, QWi
 	QObject::connect(subAccBtn, &QPushButton::released, this, &CreateWdwDlg::OpenSAccDlg);
 	QObject::connect(saNumberEdit, &QLineEdit::textChanged, this, &CreateWdwDlg::SATextChanged);
 	QObject::connect(userEdit, &QLineEdit::textChanged, this, &CreateWdwDlg::UserIsChanged);
+	QObject::connect(accountCmb, &QComboBox::currentTextChanged, this, &CreateWdwDlg::AccountIsChenged);
 	InitComboBox();
 }
 
@@ -384,6 +385,7 @@ void CreateWdwDlg::OpenUserDlg()
 		dForm->activateWindow();
 		QApplication::setActiveWindow(dForm);
 		dForm->HileSomeRow();
+		SortTable(dForm->tableView);
 		dForm->show();
 		dForm->raise();
 		dForm->setWindowFlags(dForm->windowFlags() | Qt::WindowStaysOnTopHint);
@@ -413,7 +415,15 @@ void CreateWdwDlg::OpenSAccDlg()
 	dForm->setWindowTitle(tr("Subccounts"));
 	dForm->hide();
 	dForm->setWindowModality(Qt::WindowModal);
-	dForm->FillTable<BusinessLayer::SubaccountView>(errorMessage);
+	std::string filter = "";
+	BusinessLayer::Subaccount sabaccount;
+	BusinessLayer::EntryRouting entryRouting;
+	if (entryRouting.GetEntryRoutingByID(dialogBL->GetOrmasDal(), accountCmb->currentData().toInt(), errorMessage))
+	{
+		sabaccount.SetParentAccountID(entryRouting.GetDebitAccountID());
+		filter = sabaccount.GenerateFilter(dialogBL->GetOrmasDal());
+	}
+	dForm->FillTable<BusinessLayer::SubaccountView>(errorMessage, filter);
 	if (errorMessage.empty())
 	{
 		dForm->parentDialog = this;
@@ -455,6 +465,40 @@ void CreateWdwDlg::InitComboBox()
 			currencyCmb->addItem(curVector[i].GetShortName().c_str(), QVariant(curVector[i].GetID()));
 		}
 	}
+
+	BusinessLayer::ChartOfAccounts coAcc;
+	BusinessLayer::Account account;
+	BusinessLayer::Account account10110;
+	BusinessLayer::EntryRouting entryRouting;
+	if (account.GetAccountByNumber(dialogBL->GetOrmasDal(), "10110", errorMessage))
+	{
+		std::string comboText = "";
+		entryRouting.SetCreditAccountID(account.GetID());
+		std::string filter = entryRouting.GenerateFilter(dialogBL->GetOrmasDal());
+		std::vector<BusinessLayer::EntryRouting> entRoutVec = dialogBL->GetAllDataForClass<BusinessLayer::EntryRouting>(errorMessage, filter);
+		accountCmb->addItem(tr("All"), 0);
+		if (!entRoutVec.empty())
+		{
+			for (unsigned int i = 0; i < entRoutVec.size(); i++)
+			{
+				account.Clear();
+				if (!account.GetAccountByID(dialogBL->GetOrmasDal(), entRoutVec[i].GetDebitAccountID(), errorMessage))
+					continue;
+				coAcc.Clear();
+				if (!coAcc.GetChartOfAccountsByNumber(dialogBL->GetOrmasDal(), account.GetNumber(), errorMessage))
+					continue;
+				comboText = "";
+				comboText += account.GetNumber();
+				comboText += " - ";
+				comboText += coAcc.GetName();
+				accountCmb->addItem(comboText.c_str(), QVariant(entRoutVec[i].GetID()));
+			}
+		}
+		else
+		{
+			errorMessage = "";
+		}
+	}
 }
 
 void CreateWdwDlg::TextEditChanged()
@@ -466,6 +510,26 @@ void CreateWdwDlg::TextEditChanged()
 	if (valueEdit->text().contains(".."))
 	{
 		valueEdit->setText(valueEdit->text().replace("..", "."));
+	}
+}
+
+void CreateWdwDlg::AccountIsChenged()
+{
+	if (accountCmb->currentData().toInt() == 0)
+	{
+		targetEdit->setText("");
+	}
+	else
+	{
+		BusinessLayer::EntryRouting entRouting;
+		if (entRouting.GetEntryRoutingByID(dialogBL->GetOrmasDal(), accountCmb->currentData().toInt(), errorMessage))
+		{
+			targetEdit->setText(entRouting.GetOperation().c_str());
+		}
+		else
+		{
+			targetEdit->setText("");
+		}
 	}
 }
 
@@ -513,4 +577,34 @@ void CreateWdwDlg::UserIsChanged()
 			saNumberEdit->setText(suba.GetNumber().c_str());
 		}
 	}
+}
+
+void CreateWdwDlg::SortTable(QTableView *table)
+{
+	BusinessLayer::Balance balance;
+	BusinessLayer::Subaccount subAccount;
+	BusinessLayer::EntryRouting entryRouting;
+	for (int i = 0; i < table->model()->rowCount(); i++)
+	{
+		balance.Clear();
+		subAccount.Clear();
+		entryRouting.Clear();
+		QModelIndex index = table->model()->index(i, 0);
+		if (!balance.GetBalanceByUserID(dialogBL->GetOrmasDal(), index.data().toInt(), errorMessage))
+			continue;
+		if (!subAccount.GetSubaccountByID(dialogBL->GetOrmasDal(), balance.GetSubaccountID(), errorMessage))
+			continue;
+		
+		if (!entryRouting.GetEntryRoutingByID(dialogBL->GetOrmasDal(), accountCmb->currentData().toInt(), errorMessage))
+			continue;
+		if (subAccount.GetParentAccountID() == entryRouting.GetDebitAccountID())
+		{
+			table->showRow(i);
+		}
+		else
+		{
+			table->hideRow(i);
+		}
+	}
+	errorMessage = "";
 }

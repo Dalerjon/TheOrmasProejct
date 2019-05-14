@@ -21,7 +21,7 @@ CreateRcpRDlg::CreateRcpRDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, Q
 	statusEdit->setValidator(vInt);
 	sumEdit->setValidator(vDouble);
 	sumEdit->setMaxLength(17);
-	dialogBL->StartTransaction(errorMessage);
+	
 	if (true == updateFlag)
 	{
 		QObject::connect(okBtn, &QPushButton::released, this, &CreateRcpRDlg::EditReceiptRaw);
@@ -73,7 +73,7 @@ CreateRcpRDlg::~CreateRcpRDlg()
 	delete vDouble;
 	delete vInt;
 	emit CloseCreatedForms();
-	dialogBL->CancelTransaction(errorMessage);
+	
 }
 
 void CreateRcpRDlg::SetReceiptRawParams(int rEmployeeID, QString rDate, QString rExecDate, int rStockEmployeeID, double rCount,
@@ -311,7 +311,7 @@ void CreateRcpRDlg::CreateReceiptRaw()
 				sumEdit->text().toDouble(), statusEdit->text().toInt(), currencyCmb->currentData().toInt(), receiptRaw->GetID());
 		}
 		
-
+		dialogBL->StartTransaction(errorMessage);
 		if (dialogBL->CreateReceiptRaw(receiptRaw, errorMessage))
 		{
 			if (parentDataForm != nullptr)
@@ -480,7 +480,7 @@ void CreateRcpRDlg::EditReceiptRaw()
 				SetReceiptRawParams(fromStkEmpEdit->text().toInt(), dateEdit->text(), execDateEdit->text(), toStkEmpEdit->text().toInt(), prodCountEdit->text().toDouble(),
 					sumEdit->text().toDouble(), statusEdit->text().toInt(), currencyCmb->currentData().toInt(), receiptRaw->GetID());
 			}
-
+			dialogBL->StartTransaction(errorMessage);
 			if (dialogBL->UpdateReceiptRaw(receiptRaw, errorMessage))
 			{
 				if (parentDataForm != nullptr)

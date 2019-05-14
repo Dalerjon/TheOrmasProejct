@@ -12,6 +12,7 @@ DataForm::DataForm(BusinessLayer::OrmasBL *ormasBL, QWidget *parent) :QWidget(pa
 	tableView->verticalHeader()->hide();
 	tableView->setSelectionBehavior(QAbstractItemView::SelectRows);
 	tableView->setSelectionMode(QAbstractItemView::SingleSelection);
+	filterWidget->hide();
 	editBtn->setDisabled(true);
 	deleteBtn->setDisabled(true);
 	dataFormBL = ormasBL;
@@ -25,6 +26,8 @@ DataForm::DataForm(BusinessLayer::OrmasBL *ormasBL, QWidget *parent) :QWidget(pa
 	{
 		connect(tableView, SIGNAL(cellClicked(int, int)), this, SLOT(OpenList(int, int)));
 	}
+	connect(filterBtn, &QPushButton::released, this, &DataForm::Filter);
+	connect(clearBtn, &QPushButton::released, this, &DataForm::ClearFilter);
 	HileSomeRow();
 	this->setWindowIcon(QIcon("./images/ormas.png"));
 }
@@ -39,9 +42,12 @@ void DataForm::CloseDataForm()
 
 void DataForm::Search(QString searchText)
 {
-	if (!searchText.isEmpty()){
-		for (int i = 0; i <= tableView->model()->columnCount(); i++){
-			for (int j = 0; j <= tableView->model()->rowCount(); j++){
+	if (!searchText.isEmpty())
+	{
+		for (int i = 0; i <= tableView->model()->columnCount(); i++)
+		{
+			for (int j = 0; j <= tableView->model()->rowCount(); j++)
+			{
 				QModelIndex index = tableView->model()->index(j, i);
 				if (index.data().toString().compare(searchText, Qt::CaseInsensitive) == 0
 					|| index.data().toString().contains(searchText))
@@ -52,6 +58,93 @@ void DataForm::Search(QString searchText)
 			}
 		}
 	}
+}
+
+void DataForm::ClearFilter()
+{
+	for (int i = 0; i <= tableView->model()->rowCount(); i++)
+	{
+		tableView->showRow(i);
+	}
+	filterWidget->hide();
+	filterTextLb->setText("");
+}
+
+void DataForm::Filter()
+{
+	QString filterText = valueEdit->text();
+	if (!filterText.isEmpty())
+	{
+		for (int i = 0; i <= tableView->model()->rowCount(); i++)
+		{
+			QModelIndex index = tableView->model()->index(i, columnCmb->currentData().toInt());
+			if (0 == typeCmb->currentData().toInt())
+			{
+				if (index.data().toString().compare(filterText, Qt::CaseInsensitive) > 0)
+				{
+					tableView->showRow(i);
+				}
+				else
+				{
+					tableView->hideRow(i);
+				}
+			}
+			if (1 == typeCmb->currentData().toInt())
+			{
+				if (index.data().toString().compare(filterText, Qt::CaseInsensitive) < 0)
+				{
+					tableView->showRow(i);
+				}
+				else
+				{
+					tableView->hideRow(i);
+				}
+			}
+			if (2 == typeCmb->currentData().toInt())
+			{
+				std::string test = index.data().toString().toStdString();
+				if (index.data().toString().compare(filterText, Qt::CaseInsensitive) == 0 )
+				{
+					tableView->showRow(i);
+				}
+				else
+				{
+					tableView->hideRow(i);
+				}
+			}
+			if (3 == typeCmb->currentData().toInt())
+			{
+				if (index.data().toString().contains(filterText))
+				{
+					tableView->showRow(i);
+				}
+				else
+				{
+					tableView->hideRow(i);
+				}
+			}
+		}
+	}
+	QString filterTextRow = columnCmb->currentText() + " " + typeCmb->currentText() + " " + filterText;
+	filterTextLb->setText(filterTextRow);
+	filterWidget->show();
+}
+
+void DataForm::SetColumnFilter(QStringList header)
+{
+	for (int i = 0; i < header.size(); i++)
+	{
+		columnCmb->addItem(header.at(i), i);
+		columnSearchCmb->addItem(header.at(i), i);
+	}
+}
+
+void DataForm::SetTypeFilter()
+{
+	typeCmb->addItem(tr("MORE(>)"), 0);
+	typeCmb->addItem(tr("LESS(<)"), 1);
+	typeCmb->addItem(tr("EQUAL(=)"), 2);
+	typeCmb->addItem(tr("LIKE"), 3);
 }
 
 bool DataForm::IsClosed()
@@ -2078,13 +2171,16 @@ void DataForm::DelConPDlg()
 	consumeProdcut.SetID(id);
 	if (0 != id)
 	{
+		dataFormBL->StartTransaction(errorMessage);
 		if (dataFormBL->DeleteConsumeProduct(&consumeProdcut, errorMessage))
 		{
+			dataFormBL->CommitTransaction(errorMessage);
 			tableView->model()->removeRow(tableView->selectionModel()->currentIndex().row());
 			ChangeBtnState();
 		}
 		else
 		{
+			dataFormBL->CancelTransaction(errorMessage);
 			QMessageBox::information(NULL, QString(tr("Warning")),
 				QString(tr(errorMessage.c_str())),
 				QString(tr("Ok")));
@@ -2351,13 +2447,16 @@ void DataForm::DelConRDlg()
 	consumeRaw.SetID(id);
 	if (0 != id)
 	{
+		dataFormBL->StartTransaction(errorMessage);
 		if (dataFormBL->DeleteConsumeRaw(&consumeRaw, errorMessage))
 		{
+			dataFormBL->CommitTransaction(errorMessage);
 			tableView->model()->removeRow(tableView->selectionModel()->currentIndex().row());
 			ChangeBtnState();
 		}
 		else
 		{
+			dataFormBL->CancelTransaction(errorMessage);
 			QMessageBox::information(NULL, QString(tr("Warning")),
 				QString(tr(errorMessage.c_str())),
 				QString(tr("Ok")));
@@ -2933,13 +3032,16 @@ void DataForm::DelInvDlg()
 	inv.SetID(id);
 	if (0 != id)
 	{
+		dataFormBL->StartTransaction(errorMessage);
 		if (dataFormBL->DeleteInventorization(&inv, errorMessage))
 		{
+			dataFormBL->CommitTransaction(errorMessage);
 			tableView->model()->removeRow(tableView->selectionModel()->currentIndex().row());
 			ChangeBtnState();
 		}
 		else
 		{
+			dataFormBL->CancelTransaction(errorMessage);
 			QMessageBox::information(NULL, QString(tr("Warning")),
 				QString(tr(errorMessage.c_str())),
 				QString(tr("Ok")));
@@ -3519,13 +3621,16 @@ void DataForm::DelOrdDlg()
 	order.SetID(id);
 	if (0 != id)
 	{
+		dataFormBL->StartTransaction(errorMessage);
 		if (dataFormBL->DeleteOrder(&order, errorMessage))
 		{
+			dataFormBL->CommitTransaction(errorMessage);
 			tableView->model()->removeRow(tableView->selectionModel()->currentIndex().row());
 			ChangeBtnState();
 		}
 		else
 		{
+			dataFormBL->CancelTransaction(errorMessage);
 			QMessageBox::information(NULL, QString(tr("Warning")),
 				QString(tr(errorMessage.c_str())),
 				QString(tr("Ok")));
@@ -3782,13 +3887,16 @@ void DataForm::DelOrdRDlg()
 	orderRaw.SetID(id);
 	if (0 != id)
 	{
+		dataFormBL->StartTransaction(errorMessage);
 		if (dataFormBL->DeleteOrderRaw(&orderRaw, errorMessage))
 		{
+			dataFormBL->CommitTransaction(errorMessage);
 			tableView->model()->removeRow(tableView->selectionModel()->currentIndex().row());
 			ChangeBtnState();
 		}
 		else
 		{
+			dataFormBL->CancelTransaction(errorMessage);
 			QMessageBox::information(NULL, QString(tr("Warning")),
 				QString(tr(errorMessage.c_str())),
 				QString(tr("Ok")));
@@ -4650,13 +4758,16 @@ void DataForm::DelProdnDlg()
 	prodn.SetID(id);
 	if (0 != id)
 	{
+		dataFormBL->StartTransaction(errorMessage);
 		if (dataFormBL->DeleteProduction(&prodn, errorMessage))
 		{
+			dataFormBL->CommitTransaction(errorMessage);
 			tableView->model()->removeRow(tableView->selectionModel()->currentIndex().row());
 			ChangeBtnState();
 		}
 		else
 		{
+			dataFormBL->CancelTransaction(errorMessage);
 			QMessageBox::information(NULL, QString(tr("Warning")),
 				QString(tr(errorMessage.c_str())),
 				QString(tr("Ok")));
@@ -4956,13 +5067,16 @@ void DataForm::DelProdConRDlg()
 	pConsumeRaw.SetID(id);
 	if (0 != id)
 	{
+		dataFormBL->StartTransaction(errorMessage);
 		if (dataFormBL->DeleteProductionConsumeRaw(&pConsumeRaw, errorMessage))
 		{
+			dataFormBL->CommitTransaction(errorMessage);
 			tableView->model()->removeRow(tableView->selectionModel()->currentIndex().row());
 			ChangeBtnState();
 		}
 		else
 		{
+			dataFormBL->CancelTransaction(errorMessage);
 			QMessageBox::information(NULL, QString(tr("Warning")),
 				QString(tr(errorMessage.c_str())),
 				QString(tr("Ok")));
@@ -5218,13 +5332,17 @@ void DataForm::DelPPlanDlg()
 	pPlan.SetID(id);
 	if (0 != id)
 	{
+		dataFormBL->StartTransaction(errorMessage);
+
 		if (dataFormBL->DeleteProductionPlan(&pPlan, errorMessage))
 		{
+			dataFormBL->CommitTransaction(errorMessage);
 			tableView->model()->removeRow(tableView->selectionModel()->currentIndex().row());
 			ChangeBtnState();
 		}
 		else
 		{
+			dataFormBL->CancelTransaction(errorMessage);
 			QMessageBox::information(NULL, QString(tr("Warning")),
 				QString(tr(errorMessage.c_str())),
 				QString(tr("Ok")));
@@ -5606,13 +5724,16 @@ void DataForm::DelRcpPDlg()
 	receiptProdcut.SetID(id);
 	if (0 != id)
 	{
+		dataFormBL->StartTransaction(errorMessage);
 		if (dataFormBL->DeleteReceiptProduct(&receiptProdcut, errorMessage))
 		{
+			dataFormBL->CommitTransaction(errorMessage);
 			tableView->model()->removeRow(tableView->selectionModel()->currentIndex().row());
 			ChangeBtnState();
 		}
 		else
 		{
+			dataFormBL->CancelTransaction(errorMessage);
 			QMessageBox::information(NULL, QString(tr("Warning")),
 				QString(tr(errorMessage.c_str())),
 				QString(tr("Ok")));
@@ -5879,13 +6000,16 @@ void DataForm::DelRcpRDlg()
 	receiptRaw.SetID(id);
 	if (0 != id)
 	{
+		dataFormBL->StartTransaction(errorMessage);
 		if (dataFormBL->DeleteReceiptRaw(&receiptRaw, errorMessage))
 		{
+			dataFormBL->CommitTransaction(errorMessage);
 			tableView->model()->removeRow(tableView->selectionModel()->currentIndex().row());
 			ChangeBtnState();
 		}
 		else
 		{
+			dataFormBL->CancelTransaction(errorMessage);
 			QMessageBox::information(NULL, QString(tr("Warning")),
 				QString(tr(errorMessage.c_str())),
 				QString(tr("Ok")));
@@ -6269,13 +6393,16 @@ void DataForm::DelRtrnDlg()
 	ret.SetID(id);
 	if (0 != id)
 	{
+		dataFormBL->StartTransaction(errorMessage);
 		if (dataFormBL->DeleteReturn(&ret, errorMessage))
 		{
+			dataFormBL->CommitTransaction(errorMessage);
 			tableView->model()->removeRow(tableView->selectionModel()->currentIndex().row());
 			ChangeBtnState();
 		}
 		else
 		{
+			dataFormBL->CancelTransaction(errorMessage);
 			QMessageBox::information(NULL, QString(tr("Warning")),
 				QString(tr(errorMessage.c_str())),
 				QString(tr("Ok")));
@@ -6789,13 +6916,16 @@ void DataForm::DelSpecDlg()
 	specification.SetID(id);
 	if (0 != id)
 	{
+		dataFormBL->StartTransaction(errorMessage);
 		if (dataFormBL->DeleteSpecification(&specification, errorMessage))
 		{
+			dataFormBL->CommitTransaction(errorMessage);
 			tableView->model()->removeRow(tableView->selectionModel()->currentIndex().row());
 			ChangeBtnState();
 		}
 		else
 		{
+			dataFormBL->CancelTransaction(errorMessage);
 			QMessageBox::information(NULL, QString(tr("Warning")),
 				QString(tr(errorMessage.c_str())),
 				QString(tr("Ok")));
@@ -6912,12 +7042,14 @@ void DataForm::ViewSpecDlg()
 		tableBody += "<td>" + QString::number(i) + "</td>";
 		tableBody += "<td>" + QString(product.GetName().c_str()) + "</td>";
 		tableBody += "<td>" + QString(measure.GetShortName().c_str()) + "</td>";
+		tableBody += "<td>" + QString::number(product.GetPrice()) + "</td>";
 		tableBody += "<td>" + QString::number(item.GetCount()) + "</td>";
+		tableBody += "<td>" + QString::number(item.GetCount()*product.GetPrice(),'f',3) + "</td>";
 		tableBody += "</tr>";
 		i++;
 	}
 	reportText.replace(QString("TableBodyPh"), tableBody, Qt::CaseInsensitive);
-	reportText.replace(QString("SumPh"), QString::number(spec.GetSum()), Qt::CaseInsensitive);
+	reportText.replace(QString("SumPh"), QString::number(spec.GetSum(), 'f',3), Qt::CaseInsensitive);
 	reportText.replace(QString("CurrencyPh"), QString(currency.GetShortName().c_str()), Qt::CaseInsensitive);
 
 	docForm->webEngineView->setHtml(reportText);
@@ -7038,13 +7170,16 @@ void DataForm::DelSplDlg()
 	spoilage.SetID(id);
 	if (0 != id)
 	{
+		dataFormBL->StartTransaction(errorMessage);
 		if (dataFormBL->DeleteSpoilage(&spoilage, errorMessage))
 		{
+			dataFormBL->CommitTransaction(errorMessage);
 			tableView->model()->removeRow(tableView->selectionModel()->currentIndex().row());
 			ChangeBtnState();
 		}
 		else
 		{
+			dataFormBL->CancelTransaction(errorMessage);
 			QMessageBox::information(NULL, QString(tr("Warning")),
 				QString(tr(errorMessage.c_str())),
 				QString(tr("Ok")));
@@ -7491,13 +7626,16 @@ void DataForm::DelTrsDlg()
 	transport.SetID(id);
 	if (0 != id)
 	{
+		dataFormBL->StartTransaction(errorMessage);
 		if (dataFormBL->DeleteTransport(&transport, errorMessage))
 		{
+			dataFormBL->CommitTransaction(errorMessage);
 			tableView->model()->removeRow(tableView->selectionModel()->currentIndex().row());
 			ChangeBtnState();
 		}
 		else
 		{
+			dataFormBL->CancelTransaction(errorMessage);
 			QMessageBox::information(NULL, QString(tr("Warning")),
 				QString(tr(errorMessage.c_str())),
 				QString(tr("Ok")));
@@ -8253,13 +8391,16 @@ void DataForm::DelWOffDlg()
 	writeOff.SetID(id);
 	if (0 != id)
 	{
+		dataFormBL->StartTransaction(errorMessage);
 		if (dataFormBL->DeleteWriteOff(&writeOff, errorMessage))
 		{
+			dataFormBL->CommitTransaction(errorMessage);
 			tableView->model()->removeRow(tableView->selectionModel()->currentIndex().row());
 			ChangeBtnState();
 		}
 		else
 		{
+			dataFormBL->CancelTransaction(errorMessage);
 			QMessageBox::information(NULL, QString(tr("Warning")),
 				QString(tr(errorMessage.c_str())),
 				QString(tr("Ok")));
@@ -8508,13 +8649,16 @@ void DataForm::DelWOffRDlg()
 	writeOffRaw.SetID(id);
 	if (0 != id)
 	{
+		dataFormBL->StartTransaction(errorMessage);
 		if (dataFormBL->DeleteWriteOffRaw(&writeOffRaw, errorMessage))
 		{
+			dataFormBL->CommitTransaction(errorMessage);
 			tableView->model()->removeRow(tableView->selectionModel()->currentIndex().row());
 			ChangeBtnState();
 		}
 		else
 		{
+			dataFormBL->CancelTransaction(errorMessage);
 			QMessageBox::information(NULL, QString(tr("Warning")),
 				QString(tr(errorMessage.c_str())),
 				QString(tr("Ok")));

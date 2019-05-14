@@ -201,8 +201,8 @@ namespace BusinessLayer
 	}
 	bool ConsumeProduct::DeleteConsumeProduct(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
-		if (!ormasDal.StartTransaction(errorMessage))
-			return false;
+		//if (!ormasDal.StartTransaction(errorMessage))
+		//	return false;
 		ConsumeProduct cProduct;
 		if (!cProduct.GetConsumeProductByID(ormasDal, id, errorMessage))
 		{

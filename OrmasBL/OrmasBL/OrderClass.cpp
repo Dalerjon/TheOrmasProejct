@@ -204,8 +204,8 @@ namespace BusinessLayer
 	}
 	bool Order::DeleteOrder(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
-		if (!ormasDal.StartTransaction(errorMessage))
-			return false;
+		//if (!ormasDal.StartTransaction(errorMessage))
+		//	return false;
 		Order ord;
 		if (!ord.GetOrderByID(ormasDal, id, errorMessage))
 		{

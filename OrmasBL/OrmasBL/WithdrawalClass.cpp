@@ -174,15 +174,22 @@ namespace BusinessLayer{
 			return false;
 		if (ormasDal.DeleteWithdrawal(id, errorMessage))
 		{
-			if (CancelWithdrawal(ormasDal, userID, currencyID, errorMessage))
+			if (0 < userID)
 			{
-				Clear();
-				return true;
+
+				if (CancelWithdrawal(ormasDal, userID, currencyID, errorMessage))
+				{
+					Clear();
+					return true;
+				}
 			}
-			if (CancelWithdrawal(ormasDal, subaccountID, errorMessage))
+			else
 			{
-				Clear();
-				return true;
+				if (CancelWithdrawal(ormasDal, subaccountID, errorMessage))
+				{
+					Clear();
+					return true;
+				}
 			}
 		}
 		if (errorMessage.empty())
@@ -205,7 +212,7 @@ namespace BusinessLayer{
 		//ormasDal.StartTransaction(errorMessage);
 		if (0 != id && ormasDal.UpdateWithdrawal(id, date, value, userID, subaccountID, target, currencyID, errorMessage))
 		{
-			if (0 == subaccountID)
+			if (0 < userID)
 			{
 				if (Payout(ormasDal, userID, currencyID, currentValue, errorMessage))
 				{
@@ -237,7 +244,7 @@ namespace BusinessLayer{
 		//ormasDal.StartTransaction(errorMessage);
 		if (0 != id && ormasDal.UpdateWithdrawal(id, date, value, userID, subaccountID, target, currencyID, errorMessage))
 		{
-			if (0 == subaccountID)
+			if (0 < userID)
 			{
 				if (Payout(ormasDal, userID, currencyID, currentValue, errorMessage))
 				{

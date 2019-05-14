@@ -109,8 +109,8 @@ namespace BusinessLayer
 	}
 	bool Specification::DeleteSpecification(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
-		if (!ormasDal.StartTransaction(errorMessage))
-			return false;
+		//if (!ormasDal.StartTransaction(errorMessage))
+		//	return false;
 		if (ormasDal.DeleteSpecification(id, errorMessage))
 		{
 			if (ormasDal.DeleteListBySpecificationID(id, errorMessage))

@@ -118,8 +118,8 @@ namespace BusinessLayer
 	}
 	bool Production::DeleteProduction(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
-		if (!ormasDal.StartTransaction(errorMessage))
-			return false;
+		//if (!ormasDal.StartTransaction(errorMessage))
+		//	return false;
 		//ormasDal.StartTransaction(errorMessage);
 		if (ormasDal.DeleteProduction(id, errorMessage))
 		{

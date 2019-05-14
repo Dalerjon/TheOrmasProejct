@@ -619,7 +619,7 @@ namespace BusinessLayer
 						if (!product.GetProductByID(ormasDal, item.GetProductID(), errorMessage))
 							return false;
 						companyID = product.GetCompanyID();
-						totalSum= totalSum+ item.GetSum();
+						totalSum = totalSum + product.GetPrice()* item.GetCount();
 						stock.SetCount(stock.GetCount() - item.GetCount());
 						if (0 == stock.GetCount())
 						{
@@ -627,7 +627,7 @@ namespace BusinessLayer
 						}
 						else
 						{
-							stock.SetSum((stock.GetSum() - item.GetSum()));
+							stock.SetSum((stock.GetSum() - (product.GetPrice()* item.GetCount())));
 						}
 						if (!stock.UpdateStock(ormasDal, errorMessage))
 						{
@@ -731,7 +731,7 @@ namespace BusinessLayer
 						if (!product.GetProductByID(ormasDal, item.GetProductID(), errorMessage))
 							return false;
 						companyID = product.GetCompanyID();
-						totalSum= totalSum+ item.GetSum();
+						totalSum = totalSum + product.GetPrice()* item.GetCount();
 						stock.SetCount(stock.GetCount() - (item.GetCount() - pProdCountMap.find(product.GetID())->second));
 						if (0 == stock.GetCount())
 						{
@@ -739,7 +739,7 @@ namespace BusinessLayer
 						}
 						else
 						{
-							stock.SetSum(stock.GetSum() - (item.GetSum() - (pProdCountMap.find(product.GetID())->second * product.GetPrice())));	
+							stock.SetSum(stock.GetSum() - (product.GetPrice()* item.GetCount() - (pProdCountMap.find(product.GetID())->second * product.GetPrice())));
 						}
 						if (!stock.UpdateStock(ormasDal, errorMessage))
 						{

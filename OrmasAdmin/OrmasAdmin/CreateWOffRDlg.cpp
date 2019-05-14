@@ -18,7 +18,7 @@ CreateWOffRDlg::CreateWOffRDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag,
 	statusEdit->setValidator(vInt);
 	sumEdit->setValidator(vDouble);
 	sumEdit->setMaxLength(17);
-	dialogBL->StartTransaction(errorMessage);
+	
 	if (true == updateFlag)
 	{
 		QObject::connect(okBtn, &QPushButton::released, this, &CreateWOffRDlg::EditWriteOffRaw);
@@ -68,7 +68,7 @@ CreateWOffRDlg::~CreateWOffRDlg()
 	delete vDouble;
 	delete vInt;
 	emit CloseCreatedForms();
-	dialogBL->CancelTransaction(errorMessage);
+	
 }
 
 void CreateWOffRDlg::SetWriteOffRawParams(int wEmployeeID, QString wDate, int wStockEmployeeID, double wCount,
@@ -236,7 +236,7 @@ void CreateWOffRDlg::CreateWriteOffRaw()
 		DataForm *parentDataForm = (DataForm*) parentForm;
 		SetWriteOffRawParams(employeeEdit->text().toInt(), dateEdit->text(), stockEmployeeEdit->text().toInt(), prodCountEdit->text().toDouble(),
 			sumEdit->text().toDouble(), statusEdit->text().toInt(), currencyCmb->currentData().toInt(), writeOffRaw->GetID());
-
+		dialogBL->StartTransaction(errorMessage);
 		if (dialogBL->CreateWriteOffRaw(writeOffRaw, errorMessage))
 		{
 			if (parentDataForm != nullptr)
@@ -395,7 +395,7 @@ void CreateWOffRDlg::EditWriteOffRaw()
 			DataForm *parentDataForm = (DataForm*) parentForm;
 			SetWriteOffRawParams(employeeEdit->text().toInt(), dateEdit->text(), stockEmployeeEdit->text().toInt(), prodCountEdit->text().toDouble(),
 				sumEdit->text().toDouble(), statusEdit->text().toInt(), currencyCmb->currentData().toInt(), writeOffRaw->GetID());
-
+			dialogBL->StartTransaction(errorMessage);
 			if (dialogBL->UpdateWriteOffRaw(writeOffRaw, errorMessage))
 			{
 				if (parentDataForm != nullptr)

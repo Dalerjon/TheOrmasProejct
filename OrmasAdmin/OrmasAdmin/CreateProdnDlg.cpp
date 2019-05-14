@@ -13,7 +13,6 @@ CreateProdnDlg::CreateProdnDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag,
 	parentForm = parent;
 	DataForm *dataFormParent = (DataForm *)this->parentForm;
 	mainForm = (MainForm *)dataFormParent->GetParent();
-	dialogBL->StartTransaction(errorMessage);
 	QDate currentDate = QDate::currentDate();
 	int day = currentDate.day();
 	int month = currentDate.month();
@@ -46,7 +45,6 @@ CreateProdnDlg::CreateProdnDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag,
 CreateProdnDlg::~CreateProdnDlg()
 {
 	emit CloseCreatedForms();
-	dialogBL->CancelTransaction(errorMessage);
 }
 
 
@@ -99,6 +97,7 @@ void CreateProdnDlg::CreateProduction()
 		DataForm *parentDataForm = (DataForm*) parentForm;
 		SetProductionParams(prdDateEdit->text(), expiryDateEdit->text(), sesStartTimeEdit->text(), sesEndTimeEdit->text(), production->GetID());
 		production->warehouseID = warehouseCmb->currentData().toInt();
+		dialogBL->StartTransaction(errorMessage);
 		if (dialogBL->CreateProduction(production, errorMessage))
 		{
 			if (parentDataForm != nullptr)
@@ -149,6 +148,7 @@ void CreateProdnDlg::EditProduction()
 			DataForm *parentDataForm = (DataForm*) parentForm;
 			SetProductionParams(prdDateEdit->text(), expiryDateEdit->text(), sesStartTimeEdit->text(), sesEndTimeEdit->text(), production->GetID());
 			production->warehouseID = warehouseCmb->currentData().toInt();
+			dialogBL->StartTransaction(errorMessage);
 			if (dialogBL->UpdateProduction(production, errorMessage))
 			{
 				if (parentDataForm != nullptr)
@@ -248,8 +248,11 @@ void CreateProdnDlg::OpenProdnListDlg()
 
 void CreateProdnDlg::InitComboBox()
 {
+	DataForm *dataFormParent = (DataForm *)this->parentForm;
 	BusinessLayer::Warehouse warehouse;
 	BusinessLayer::WarehouseType warehouseType;
+	BusinessLayer::WarehouseEmployeeRelation weRelation;
+	std::vector<int> warehouseIDVector = weRelation.GetWarehouseIDListByEmployeeID(dialogBL->GetOrmasDal(), dataFormParent->loggedUser->GetID());
 	if (!warehouseType.GetWarehouseTypeByCode(dialogBL->GetOrmasDal(), "PRODUCTION", errorMessage))
 		return;
 	warehouse.SetWarehouseTypeID(warehouseType.GetID());
@@ -257,9 +260,31 @@ void CreateProdnDlg::InitComboBox()
 	std::vector<BusinessLayer::WarehouseView> werVector = dialogBL->GetAllDataForClass<BusinessLayer::WarehouseView>(errorMessage, filter);
 	if (!werVector.empty())
 	{
-		for (unsigned int i = 0; i < werVector.size(); i++)
+		if (warehouseIDVector.size() > 0)
 		{
-			warehouseCmb->addItem(werVector[i].GetName().c_str(), QVariant(werVector[i].GetID()));
+			for (unsigned int j = 0; j < warehouseIDVector.size(); j++)
+			{
+				for (unsigned int i = 0; i < werVector.size(); i++)
+				{
+					if (werVector[i].GetID() == warehouseIDVector.at(j))
+						warehouseCmb->addItem(werVector[i].GetName().c_str(), QVariant(werVector[i].GetID()));
+				}
+			}
+			if (warehouseCmb->count() == 0)
+			{
+				for (unsigned int i = 0; i < werVector.size(); i++)
+				{
+					warehouseCmb->addItem(werVector[i].GetName().c_str(), QVariant(werVector[i].GetID()));
+				}
+			}
 		}
+		else
+		{
+			for (unsigned int i = 0; i < werVector.size(); i++)
+			{
+				warehouseCmb->addItem(werVector[i].GetName().c_str(), QVariant(werVector[i].GetID()));
+			}
+		}
+		
 	}
 }

@@ -185,8 +185,8 @@ namespace BusinessLayer
 	}
 	bool Return::DeleteReturn(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
-		if (!ormasDal.StartTransaction(errorMessage))
-			return false;
+		//if (!ormasDal.StartTransaction(errorMessage))
+		//	return false;
 		Return ret;
 		if (!ret.GetReturnByID(ormasDal, id, errorMessage))
 		{

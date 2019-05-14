@@ -164,13 +164,24 @@ namespace BusinessLayer{
 	}
 	bool Payment::DeletePayment(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
+		
 		if (!this->GetPaymentByID(ormasDal, id, errorMessage))
 			return false;
 		if (ormasDal.DeletePayment(id, errorMessage))
 		{
-			if (CancelPayment(ormasDal, userID, currencyID, errorMessage))
+			std::map<std::string, int> statusMap = BusinessLayer::Status::GetStatusesAsMap(ormasDal, errorMessage);
+			if (0 == statusMap.size())
+				return false;
+			if (statusID == statusMap.find("EXECUTED")->second)
 			{
-				Clear();
+				if (CancelPayment(ormasDal, userID, currencyID, errorMessage))
+				{
+					Clear();
+					return true;
+				}
+			}
+			else
+			{
 				return true;
 			}
 		}
@@ -498,9 +509,9 @@ namespace BusinessLayer{
 	{
 		Entry entry;
 		entry.SetDate(oExecDate);
-		entry.SetDebitingAccountID(credAccID);
+		entry.SetDebitingAccountID(debAccID);
 		entry.SetValue(currentSum);
-		entry.SetCreditingAccountID(debAccID);
+		entry.SetCreditingAccountID(credAccID);
 		entry.SetDescription(wstring_to_utf8(L"Операция отмена оплаты клиента"));
 		if (!entry.CreateEntry(ormasDal, errorMessage, true))
 		{

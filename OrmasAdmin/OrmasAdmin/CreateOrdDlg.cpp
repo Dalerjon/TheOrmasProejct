@@ -21,7 +21,7 @@ CreateOrdDlg::CreateOrdDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, QWi
 	statusEdit->setValidator(vInt);
 	sumEdit->setValidator(vDouble);
 	sumEdit->setMaxLength(17);
-	dialogBL->StartTransaction(errorMessage);
+	
 	if (true == updateFlag)
 	{
 		QObject::connect(okBtn, &QPushButton::released, this, &CreateOrdDlg::EditOrder);
@@ -72,7 +72,6 @@ CreateOrdDlg::~CreateOrdDlg()
 	delete vDouble;
 	delete vInt;
 	emit CloseCreatedForms();
-	dialogBL->CancelTransaction(errorMessage);
 }
 
 void CreateOrdDlg::SetOrderParams(int oClientID, QString oDate, QString oExecDate, int oEmployeeID, double oCount, double oSum, int oStatusID, int oCurrencyID, int id)
@@ -238,7 +237,7 @@ void CreateOrdDlg::CreateOrder()
 			SetOrderParams(clientEdit->text().toInt(), dateEdit->text(), execDateEdit->text(), employeeEdit->text().toInt(), prodCountEdit->text().toDouble(),
 				sumEdit->text().toDouble(), statusEdit->text().toInt(), currencyCmb->currentData().toInt(), order->GetID());
 		}
-			
+		dialogBL->StartTransaction(errorMessage);
 		if (dialogBL->CreateOrder(order, errorMessage))
 		{
 			if (parentDataForm != nullptr)
@@ -387,7 +386,7 @@ void CreateOrdDlg::EditOrder()
 				SetOrderParams(clientEdit->text().toInt(), dateEdit->text(), execDateEdit->text(), employeeEdit->text().toInt(), prodCountEdit->text().toDouble(),
 					sumEdit->text().toDouble(), statusEdit->text().toInt(), currencyCmb->currentData().toInt(), order->GetID());
 			}
-			
+			dialogBL->StartTransaction(errorMessage);
 			if (dialogBL->UpdateOrder(order, errorMessage))
 			{
 				if (parentDataForm != nullptr)

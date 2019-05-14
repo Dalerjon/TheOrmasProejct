@@ -22,8 +22,7 @@ CreateConPDlg::CreateConPDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, Q
 	sumEdit->setValidator(vDouble);
 	sumEdit->setMaxLength(17);
 	sumEdit->setVisible(false);
-	sumLb->setVisible(false);
-	dialogBL->StartTransaction(errorMessage);
+	sumLb->setVisible(false);	
 	if (true == updateFlag)
 	{
 		QObject::connect(okBtn, &QPushButton::released, this, &CreateConPDlg::EditConsumeProduct);
@@ -74,7 +73,6 @@ CreateConPDlg::~CreateConPDlg()
 	delete vDouble;
 	delete vInt;
 	emit CloseCreatedForms();
-	dialogBL->CancelTransaction(errorMessage);
 }
 
 void CreateConPDlg::SetConsumeProductParams(int cEmployeeID, QString cDate, QString cExecDate, int cStockEmployeeID, double cCount,
@@ -277,7 +275,7 @@ void CreateConPDlg::CreateConsumeProduct()
 				sumEdit->text().toDouble(), statusEdit->text().toInt(), currencyCmb->currentData().toInt(), consumeProduct->GetID());
 		}
 		
-
+		dialogBL->StartTransaction(errorMessage);
 		if (dialogBL->CreateConsumeProduct(consumeProduct, errorMessage))
 		{
 			if (parentDataForm != nullptr)
@@ -447,7 +445,7 @@ void CreateConPDlg::EditConsumeProduct()
 					sumEdit->text().toDouble(), statusEdit->text().toInt(), currencyCmb->currentData().toInt(), consumeProduct->GetID());
 			}
 
-
+			dialogBL->StartTransaction(errorMessage);
 			if (dialogBL->UpdateConsumeProduct(consumeProduct, errorMessage))
 			{
 				if (parentDataForm != nullptr)

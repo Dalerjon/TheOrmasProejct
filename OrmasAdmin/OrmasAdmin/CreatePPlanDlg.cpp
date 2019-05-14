@@ -20,7 +20,7 @@ CreatePPlanDlg::CreatePPlanDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag,
 	statusEdit->setValidator(vInt);
 	sumEdit->setValidator(vDouble);
 	sumEdit->setMaxLength(17);
-	dialogBL->StartTransaction(errorMessage);
+	
 	if (true == updateFlag)
 	{
 		QObject::connect(okBtn, &QPushButton::released, this, &CreatePPlanDlg::EditProductionPlan);
@@ -66,7 +66,7 @@ CreatePPlanDlg::~CreatePPlanDlg()
 	delete vDouble;
 	delete vInt;
 	emit CloseCreatedForms();
-	dialogBL->CancelTransaction(errorMessage);
+	
 }
 
 void CreatePPlanDlg::SetProductionPlanParams(QString pDate, int pEmployeeID, double pCount, double pSum, int pStatusID, int pCurrencyID, int id)
@@ -174,7 +174,7 @@ void CreatePPlanDlg::CreateProductionPlan()
 		DataForm *parentDataForm = (DataForm*) parentForm;
 		SetProductionPlanParams(dateEdit->text(), employeeEdit->text().toInt(), prodCountEdit->text().toDouble(),
 			sumEdit->text().toDouble(), statusEdit->text().toInt(), currencyCmb->currentData().toInt(), productionPlan->GetID());
-
+		dialogBL->StartTransaction(errorMessage);
 		if (dialogBL->CreateProductionPlan(productionPlan, errorMessage))
 		{
 			if (parentDataForm != nullptr)
@@ -297,7 +297,7 @@ void CreatePPlanDlg::EditProductionPlan()
 			DataForm *parentDataForm = (DataForm*) parentForm;
 			SetProductionPlanParams(dateEdit->text(), employeeEdit->text().toInt(), prodCountEdit->text().toDouble(),
 				sumEdit->text().toDouble(), statusEdit->text().toInt(), currencyCmb->currentData().toInt(), productionPlan->GetID());
-
+			dialogBL->StartTransaction(errorMessage);
 			if (dialogBL->UpdateProductionPlan(productionPlan, errorMessage))
 			{
 				if (parentDataForm != nullptr)

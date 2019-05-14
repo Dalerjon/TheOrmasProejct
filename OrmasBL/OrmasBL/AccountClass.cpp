@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "AccountClass.h"
+#include "SubaccountClass.h"
 #include "ChartOfAccountsClass.h"
 #include "AccountTypeClass.h"
 #include <boost/algorithm/string.hpp>
@@ -189,6 +190,42 @@ namespace BusinessLayer{
 		if (0 == id && number.empty() && 0.0 == startBalance && 0.0 == currentBalance)
 			return true;
 		return false;
+	}
+
+	bool Account::HaveSubaccount(DataLayer::OrmasDal& ormasDal, int accountID)
+	{
+		id = accountID;
+		std::string filter = GenerateFilter(ormasDal);
+		std::vector<DataLayer::accountsCollection> accountVector = ormasDal.GetAccounts(errorMessage, filter);
+		if (0 != accountVector.size())
+		{
+			id = std::get<0>(accountVector.at(0));
+			number = std::get<1>(accountVector.at(0));
+			startBalance = std::get<2>(accountVector.at(0));
+			currentBalance = std::get<3>(accountVector.at(0));
+		}
+		else
+		{
+			errorMessage = "Cannot find account with this id";
+			return true;
+		}
+		if (number.substr(3,2).compare("00") == 0)
+		{
+			std::string accountRootNumber = number.substr(0, 3);
+			if (!ormasDal.HaveChildAccount(accountRootNumber))
+			{
+				return false;
+			}
+		}
+		Subaccount subaccount;
+		subaccount.SetParentAccountID(accountID);
+		std::string subFilter = subaccount.GenerateFilter(ormasDal);
+		std::vector<DataLayer::subaccountsViewCollection> subaccountVector = ormasDal.GetSubaccounts(errorMessage, subFilter);
+		if (0 == subaccountVector.size())
+		{
+			return false;
+		}
+		return true;
 	}
 
 	void Account::Clear()

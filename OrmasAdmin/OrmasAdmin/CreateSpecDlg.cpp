@@ -19,7 +19,7 @@ CreateSpecDlg::CreateSpecDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, Q
 	productEdit->setValidator(vInt);
 	sumEdit->setValidator(vDouble);
 	sumEdit->setMaxLength(17);
-	dialogBL->StartTransaction(errorMessage);
+	
 	if (true == updateFlag)
 	{
 		QObject::connect(okBtn, &QPushButton::released, this, &CreateSpecDlg::EditSpecification);
@@ -47,7 +47,7 @@ CreateSpecDlg::~CreateSpecDlg()
 	delete vDouble;
 	delete vInt;
 	emit CloseCreatedForms();
-	dialogBL->CancelTransaction(errorMessage);
+	
 }
 
 void CreateSpecDlg::SetSpecificationParams(int pID, double sSum, int cID, int eID, QString sDate, int id)
@@ -163,7 +163,7 @@ void CreateSpecDlg::CreateSpecification()
 		DataForm *parentDataForm = (DataForm*) parentForm;
 		SetSpecificationParams(productEdit->text().toInt(), sumEdit->text().toDouble(), currencyCmb->currentData().toInt(),
 			employeeEdit->text().toInt(), dateEdit->text(), specification->GetID());
-
+		dialogBL->StartTransaction(errorMessage);
 		if (dialogBL->CreateSpecification(specification, errorMessage))
 		{
 			if (parentDataForm != nullptr)
@@ -257,7 +257,7 @@ void CreateSpecDlg::EditSpecification()
 			DataForm *parentDataForm = (DataForm*) parentForm;
 			SetSpecificationParams(productEdit->text().toInt(), sumEdit->text().toDouble(), currencyCmb->currentData().toInt(),
 				employeeEdit->text().toInt(), dateEdit->text(), specification->GetID());
-
+			dialogBL->StartTransaction(errorMessage);
 			if (dialogBL->UpdateSpecification(specification, errorMessage))
 			{
 				if (parentDataForm != nullptr)

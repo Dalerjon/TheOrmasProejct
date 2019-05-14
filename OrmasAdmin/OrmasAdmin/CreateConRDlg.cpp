@@ -21,7 +21,7 @@ CreateConRDlg::CreateConRDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, Q
 	statusEdit->setValidator(vInt);
 	sumEdit->setValidator(vDouble);
 	sumEdit->setMaxLength(17);
-	dialogBL->StartTransaction(errorMessage);
+	
 	if (true == updateFlag)
 	{
 		QObject::connect(okBtn, &QPushButton::released, this, &CreateConRDlg::EditConsumeRaw);
@@ -73,7 +73,6 @@ CreateConRDlg::~CreateConRDlg()
 	delete vDouble;
 	delete vInt;
 	emit CloseCreatedForms();
-	dialogBL->CancelTransaction(errorMessage);
 }
 
 void CreateConRDlg::SetConsumeRawParams(int cEmployeeID, QString cDate, QString cExecDate, int cStockEmployeeID, double cCount,
@@ -310,7 +309,7 @@ void CreateConRDlg::CreateConsumeRaw()
 			SetConsumeRawParams(employeeEdit->text().toInt(), dateEdit->text(), execDateEdit->text(), stockEmployeeEdit->text().toInt(), prodCountEdit->text().toDouble(),
 				sumEdit->text().toDouble(), statusEdit->text().toInt(), currencyCmb->currentData().toInt(), consumeRaw->GetID());
 		}
-
+		dialogBL->StartTransaction(errorMessage);
 		if (dialogBL->CreateConsumeRaw(consumeRaw, errorMessage))
 		{
 			if (parentDataForm != nullptr)
@@ -480,7 +479,7 @@ void CreateConRDlg::EditConsumeRaw()
 				SetConsumeRawParams(employeeEdit->text().toInt(), dateEdit->text(), execDateEdit->text(), stockEmployeeEdit->text().toInt(), prodCountEdit->text().toDouble(),
 					sumEdit->text().toDouble(), statusEdit->text().toInt(), currencyCmb->currentData().toInt(), consumeRaw->GetID());
 			}
-
+			dialogBL->StartTransaction(errorMessage);
 			if (dialogBL->UpdateConsumeRaw(consumeRaw, errorMessage))
 			{
 				if (parentDataForm != nullptr)

@@ -8014,121 +8014,125 @@ namespace BusinessLayer{
 								{
 									try
 									{
-										if (salaryItem.GetSalaryTypeID() == salaryTypeMap.find("FIXED")->second)
+										if (salaryItem.GetValue() > 0)
 										{
-											payslip.Clear();
-											payslip.SetDate(ormasDal.GetSystemDateTime());
-											payslip.SetSalaryID(salaryItem.GetID());
-											payslip.SetCurrencyID(salaryItem.GetCurrencyID());
-											payslip.SetValue(salaryItem.GetValue());
-											if (!payslip.CreatePayslip(ormasDal, errorMessage))
-												return false;
-										}
-										if (salaryItem.GetSalaryTypeID() == salaryTypeMap.find("PERCENT")->second)
-										{
-											order.Clear();
-											order.SetEmployeeID(salary.GetEmployeeID());
-											order.SetStatusID(statusMap.find("EXECUTED")->second);
-											orderFilter.clear();
-											orderFilter = order.GenerateFilterForPeriod(ormasDal, fromDate, tillDate);
-											orderVector.clear();
-											orderVector = this->GetAllDataForClass<OrderView>(errorMessage, orderFilter);
-											sum = 0;
-											if (orderVector.size() > 0)
-											{
-												for each (auto orderItem in orderVector)
-												{
-													sum += orderItem.GetSum();
-												}
-											}
-											if (sum > 0)
+											if (salaryItem.GetSalaryTypeID() == salaryTypeMap.find("FIXED")->second)
 											{
 												payslip.Clear();
 												payslip.SetDate(ormasDal.GetSystemDateTime());
 												payslip.SetSalaryID(salaryItem.GetID());
 												payslip.SetCurrencyID(salaryItem.GetCurrencyID());
-												payslip.SetValue(sum * salaryItem.GetValue() / 1000);
+												payslip.SetValue(salaryItem.GetValue());
+
 												if (!payslip.CreatePayslip(ormasDal, errorMessage))
 													return false;
 											}
-										}
-										if (salaryItem.GetSalaryTypeID() == salaryTypeMap.find("HOURLY")->second)
-										{
-											timesheet.Clear();
-											timesheet.SetSalaryID(salary.GetID());
-											timesheetFilter.clear();
-											timesheetFilter = timesheet.GenerateFilterForPeriod(ormasDal, fromDate, tillDate);
-											timesheetVector.clear();
-											timesheetVector = this->GetAllDataForClass<TimesheetView>(errorMessage, timesheetFilter);
-											count = 0;
-											if (timesheetVector.size() > 0)
+											if (salaryItem.GetSalaryTypeID() == salaryTypeMap.find("PERCENT")->second)
 											{
-												for each (auto timesheetItem in timesheetVector)
-												{
-													count += timesheetItem.GetWorkedTime();
-												}
-											}
-											if (count > 0)
-											{
-												payslip.Clear();
-												payslip.SetDate(ormasDal.GetSystemDateTime());
-												payslip.SetSalaryID(salaryItem.GetID());
-												payslip.SetCurrencyID(salaryItem.GetCurrencyID());
-												payslip.SetValue(std::round(salaryItem.GetValue()* count * 100) / 100);
-												if (!payslip.CreatePayslip(ormasDal, errorMessage))
-													return false;
-											}
-										}
-										if (salaryItem.GetSalaryTypeID() == salaryTypeMap.find("SHIFT")->second)
-										{
-											/*payslip.Clear();
-											payslip.SetDate(ormasDal.GetSystemDateTime());
-											payslip.SetSalaryID(salaryItem.GetID());
-											payslip.SetCurrencyID(salaryItem.GetCurrencyID());
-											payslip.SetValue(salaryItem.GetValue());
-											if (!payslip.CreatePayslip(ormasDal, errorMessage))
-												return false;*/
-										}
-										if (salaryItem.GetSalaryTypeID() == salaryTypeMap.find("PIECE")->second)
-										{
-											jobsheet.Clear();
-											jobsheet.SetEmployeeID(salary.GetEmployeeID());
-											jobsheetFilter.clear();
-											jobsheetFilter = jobsheet.GenerateFilterForPeriod(ormasDal, fromDate, tillDate);
-											jobsheetVector.clear();
-											jobsheetVector = this->GetAllDataForClass<JobsheetView>(errorMessage, timesheetFilter);
-											if (jobsheetVector.size() > 0)
-											{
-												for each (auto jobsheetItem in jobsheetVector)
-												{
-													if (workedPieceMap.find(jobsheetItem.GetProductID()) == workedPieceMap.end())
-													{
-														workedPieceMap.insert(std::make_pair(jobsheetItem.GetProductID(), jobsheetItem.GetCount()));
-													}
-													else
-													{
-														workedPieceMap.find(jobsheetItem.GetProductID())->second = workedPieceMap.find(jobsheetItem.GetProductID())->second + jobsheetItem.GetCount();
-													}
-												}
-											}
-											if (workedPieceMap.size() > 0)
-											{
+												order.Clear();
+												order.SetEmployeeID(salary.GetEmployeeID());
+												order.SetStatusID(statusMap.find("EXECUTED")->second);
+												orderFilter.clear();
+												orderFilter = order.GenerateFilterForPeriod(ormasDal, fromDate, tillDate);
+												orderVector.clear();
+												orderVector = this->GetAllDataForClass<OrderView>(errorMessage, orderFilter);
 												sum = 0;
-												for each (auto workedPieceItem in workedPieceMap)
+												if (orderVector.size() > 0)
 												{
-													jobprice.Clear();
-													if (!jobprice.GetJobpriceByID(ormasDal, workedPieceItem.first, errorMessage))
+													for each (auto orderItem in orderVector)
+													{
+														sum += orderItem.GetSum();
+													}
+												}
+												if (sum > 0)
+												{
+													payslip.Clear();
+													payslip.SetDate(ormasDal.GetSystemDateTime());
+													payslip.SetSalaryID(salaryItem.GetID());
+													payslip.SetCurrencyID(salaryItem.GetCurrencyID());
+													payslip.SetValue(sum * salaryItem.GetValue() / 1000);
+													if (!payslip.CreatePayslip(ormasDal, errorMessage))
 														return false;
-													sum += std::round(jobprice.GetValue() * workedPieceItem.second * 100) / 100;
 												}
 											}
-											payslip.Clear();
-											payslip.SetDate(ormasDal.GetSystemDateTime());
-											payslip.SetSalaryID(salaryItem.GetID());
-											payslip.SetCurrencyID(salaryItem.GetCurrencyID());
-											payslip.SetValue(sum);
-											if (!payslip.CreatePayslip(ormasDal, errorMessage))
-												return false;
+											if (salaryItem.GetSalaryTypeID() == salaryTypeMap.find("HOURLY")->second)
+											{
+												timesheet.Clear();
+												timesheet.SetSalaryID(salary.GetID());
+												timesheetFilter.clear();
+												timesheetFilter = timesheet.GenerateFilterForPeriod(ormasDal, fromDate, tillDate);
+												timesheetVector.clear();
+												timesheetVector = this->GetAllDataForClass<TimesheetView>(errorMessage, timesheetFilter);
+												count = 0;
+												if (timesheetVector.size() > 0)
+												{
+													for each (auto timesheetItem in timesheetVector)
+													{
+														count += timesheetItem.GetWorkedTime();
+													}
+												}
+												if (count > 0)
+												{
+													payslip.Clear();
+													payslip.SetDate(ormasDal.GetSystemDateTime());
+													payslip.SetSalaryID(salaryItem.GetID());
+													payslip.SetCurrencyID(salaryItem.GetCurrencyID());
+													payslip.SetValue(std::round(salaryItem.GetValue()* count * 100) / 100);
+													if (!payslip.CreatePayslip(ormasDal, errorMessage))
+														return false;
+												}
+											}
+											if (salaryItem.GetSalaryTypeID() == salaryTypeMap.find("SHIFT")->second)
+											{
+												/*payslip.Clear();
+												payslip.SetDate(ormasDal.GetSystemDateTime());
+												payslip.SetSalaryID(salaryItem.GetID());
+												payslip.SetCurrencyID(salaryItem.GetCurrencyID());
+												payslip.SetValue(salaryItem.GetValue());
+												if (!payslip.CreatePayslip(ormasDal, errorMessage))
+												return false;*/
+											}
+											if (salaryItem.GetSalaryTypeID() == salaryTypeMap.find("PIECE")->second)
+											{
+												jobsheet.Clear();
+												jobsheet.SetEmployeeID(salary.GetEmployeeID());
+												jobsheetFilter.clear();
+												jobsheetFilter = jobsheet.GenerateFilterForPeriod(ormasDal, fromDate, tillDate);
+												jobsheetVector.clear();
+												jobsheetVector = this->GetAllDataForClass<JobsheetView>(errorMessage, timesheetFilter);
+												if (jobsheetVector.size() > 0)
+												{
+													for each (auto jobsheetItem in jobsheetVector)
+													{
+														if (workedPieceMap.find(jobsheetItem.GetProductID()) == workedPieceMap.end())
+														{
+															workedPieceMap.insert(std::make_pair(jobsheetItem.GetProductID(), jobsheetItem.GetCount()));
+														}
+														else
+														{
+															workedPieceMap.find(jobsheetItem.GetProductID())->second = workedPieceMap.find(jobsheetItem.GetProductID())->second + jobsheetItem.GetCount();
+														}
+													}
+												}
+												if (workedPieceMap.size() > 0)
+												{
+													sum = 0;
+													for each (auto workedPieceItem in workedPieceMap)
+													{
+														jobprice.Clear();
+														if (!jobprice.GetJobpriceByID(ormasDal, workedPieceItem.first, errorMessage))
+															return false;
+														sum += std::round(jobprice.GetValue() * workedPieceItem.second * 100) / 100;
+													}
+												}
+												payslip.Clear();
+												payslip.SetDate(ormasDal.GetSystemDateTime());
+												payslip.SetSalaryID(salaryItem.GetID());
+												payslip.SetCurrencyID(salaryItem.GetCurrencyID());
+												payslip.SetValue(sum);
+												if (!payslip.CreatePayslip(ormasDal, errorMessage))
+													return false;
+											}
 										}
 									}
 									catch (...)
@@ -8315,9 +8319,9 @@ namespace BusinessLayer{
 			}
 		}
 		std::map<double, int> mapNetCost;
-		for each (auto item in vecForSpec)
+		for(unsigned int i = 0; i < vecForSpec.size(); i++)
 		{
-			mapNetCost.insert(std::make_pair(item.GetSum(), item.GetProductID()));
+			mapNetCost.insert(std::make_pair(vecForSpec[i].GetSum(), vecForSpec[i].GetProductID()));
 		}
 
 		//Calculate product coificient
@@ -8744,6 +8748,11 @@ namespace BusinessLayer{
 		Account account33210;
 		if (!account33210.GetAccountByNumber(ormasDal, "33210", errorMessage))
 			return false;
+		
+		account33210.SetStartBalance(account33210.GetCurrentBalance());
+		if (!account33210.UpdateAccount(ormasDal, errorMessage))
+			return false;
+		
 		double correctingValue = 0;
 		correctingValue = account70000.GetCurrentBalance()*(-1);
 
@@ -8776,10 +8785,6 @@ namespace BusinessLayer{
 			if (!entry.CreateEntry(ormasDal, errorMessage))
 				return false;
 		}
-		
-		account33210.SetStartBalance(account33210.GetCurrentBalance());
-		if (!account33210.UpdateAccount(ormasDal, errorMessage))
-			return false;
 		return true;
 	}
 

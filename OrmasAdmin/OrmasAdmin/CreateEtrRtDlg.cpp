@@ -12,11 +12,6 @@ CreateEtrRtDlg::CreateEtrRtDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag,
 	setModal(true);
 	dialogBL = ormasBL;
 	parentForm = parent;
-	vInt = new QIntValidator(0, 1000000000, this);
-	debitEdit->setValidator(vInt);
-	creditEdit->setValidator(vInt);
-	debitEdit->setMaxLength(7);
-	creditEdit->setMaxLength(7);
 	if (true == updateFlag)
 	{
 		QObject::connect(okBtn, &QPushButton::released, this, &CreateEtrRtDlg::EditEntryRouting);
@@ -26,11 +21,12 @@ CreateEtrRtDlg::CreateEtrRtDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag,
 		QObject::connect(okBtn, &QPushButton::released, this, &CreateEtrRtDlg::CreateEntryRouting);
 	}
 	QObject::connect(cancelBtn, &QPushButton::released, this, &CreateEtrRtDlg::Close);
+	InitComboBox();
 }
 
 CreateEtrRtDlg::~CreateEtrRtDlg()
 {
-	delete vInt;
+
 }
 
 void CreateEtrRtDlg::SetEntryRoutingParams(QString eOperation, int eDebit, int eCredit, int id)
@@ -44,8 +40,8 @@ void CreateEtrRtDlg::SetEntryRoutingParams(QString eOperation, int eDebit, int e
 void CreateEtrRtDlg::FillEditElements(QString eOperation, int eDebit, int eCredit)
 {
 	operationEdit->setText(eOperation);
-	debitEdit->setText(QString::number(eDebit));
-	creditEdit->setText(QString::number(eCredit));
+	dAccCmb->setCurrentIndex(dAccCmb->findData(QVariant(eDebit)));
+	cAccCmb->setCurrentIndex(cAccCmb->findData(QVariant(eCredit)));
 }
 
 bool CreateEtrRtDlg::FillDlgElements(QTableView* pTable)
@@ -71,10 +67,10 @@ bool CreateEtrRtDlg::FillDlgElements(QTableView* pTable)
 void CreateEtrRtDlg::CreateEntryRouting()
 {
 	errorMessage.clear();
-	if (0 != debitEdit->text().toInt() && 0 != creditEdit->text().toInt() && !operationEdit->text().isEmpty())
+	if (0 != dAccCmb->currentData().toInt() && 0 != cAccCmb->currentData().toInt() && !operationEdit->text().isEmpty())
 	{
 		DataForm *parentDataForm = (DataForm*) parentForm;
-		SetEntryRoutingParams(operationEdit->text(), debitEdit->text().toInt(), creditEdit->text().toInt());
+		SetEntryRoutingParams(operationEdit->text(), dAccCmb->currentData().toInt(), cAccCmb->currentData().toInt());
 		dialogBL->StartTransaction(errorMessage);
 		if (dialogBL->CreateEntryRouting(entryRouting, errorMessage))
 		{
@@ -118,13 +114,13 @@ void CreateEtrRtDlg::CreateEntryRouting()
 void CreateEtrRtDlg::EditEntryRouting()
 {
 	errorMessage.clear();
-	if (0 != debitEdit->text().toInt() && 0 != creditEdit->text().toInt() && !operationEdit->text().isEmpty())
+	if (0 != dAccCmb->currentData().toInt() && 0 != cAccCmb->currentData().toInt() && !operationEdit->text().isEmpty())
 	{
-		if (QString(entryRouting->GetOperation().c_str()) != operationEdit->text() || entryRouting->GetDebitAccountID() != creditEdit->text().toInt()
-			|| entryRouting->GetCreditAccountID() != debitEdit->text().toInt())
+		if (QString(entryRouting->GetOperation().c_str()) != operationEdit->text() || entryRouting->GetDebitAccountID() != cAccCmb->currentData().toInt()
+			|| entryRouting->GetCreditAccountID() != dAccCmb->currentData().toInt())
 		{
 			DataForm *parentDataForm = (DataForm*) parentForm;
-			SetEntryRoutingParams(operationEdit->text(), debitEdit->text().toInt(), creditEdit->text().toInt(), entryRouting->GetID());
+			SetEntryRoutingParams(operationEdit->text(), dAccCmb->currentData().toInt(), cAccCmb->currentData().toInt(), entryRouting->GetID());
 			dialogBL->StartTransaction(errorMessage);
 			if (dialogBL->UpdateEntryRouting(entryRouting, errorMessage))
 			{
@@ -170,4 +166,26 @@ void CreateEtrRtDlg::EditEntryRouting()
 void CreateEtrRtDlg::Close()
 {
 	this->parentWidget()->close();
+}
+
+void CreateEtrRtDlg::InitComboBox()
+{
+	BusinessLayer::ChartOfAccounts coAcc;
+	std::string comboText = "";
+	std::vector<BusinessLayer::Account> accountVec = dialogBL->GetAllDataForClass<BusinessLayer::Account>(errorMessage);
+	if (!accountVec.empty())
+	{
+		for (unsigned int i = 0; i < accountVec.size(); i++)
+		{
+			coAcc.Clear();
+			if (!coAcc.GetChartOfAccountsByNumber(dialogBL->GetOrmasDal(), accountVec[i].GetNumber(), errorMessage))
+				continue;
+			comboText = "";
+			comboText += accountVec[i].GetNumber();
+			comboText += " - ";
+			comboText += coAcc.GetName();
+			dAccCmb->addItem(comboText.c_str(), QVariant(accountVec[i].GetID()));
+			cAccCmb->addItem(comboText.c_str(), QVariant(accountVec[i].GetID()));
+		}
+	}
 }

@@ -20,7 +20,7 @@ CreateSplDlg::CreateSplDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, QWi
 	statusEdit->setValidator(vInt);
 	sumEdit->setValidator(vDouble);
 	sumEdit->setMaxLength(17);
-	dialogBL->StartTransaction(errorMessage);
+	
 	if (true == updateFlag)
 	{
 		QObject::connect(okBtn, &QPushButton::released, this, &CreateSplDlg::EditSpoilage);
@@ -66,7 +66,7 @@ CreateSplDlg::~CreateSplDlg()
 	delete vDouble;
 	delete vInt;
 	emit CloseCreatedForms();
-	dialogBL->CancelTransaction(errorMessage);
+	
 }
 
 void CreateSplDlg::SetSpoilageParams(QString sDate, int sEmployeeID, double sCount, double sSum, int sStatusID, int sCurrencyID, int id)
@@ -174,7 +174,7 @@ void CreateSplDlg::CreateSpoilage()
 		DataForm *parentDataForm = (DataForm*) parentForm;
 		SetSpoilageParams(dateEdit->text(), employeeEdit->text().toInt(), prodCountEdit->text().toDouble(),
 			sumEdit->text().toDouble(), statusEdit->text().toInt(), currencyCmb->currentData().toInt(), spoilage->GetID());
-
+		dialogBL->StartTransaction(errorMessage);
 		if (dialogBL->CreateSpoilage(spoilage, errorMessage))
 		{
 			if (parentDataForm != nullptr)
@@ -296,7 +296,7 @@ void CreateSplDlg::EditSpoilage()
 			DataForm *parentDataForm = (DataForm*) parentForm;
 			SetSpoilageParams(dateEdit->text(), employeeEdit->text().toInt(), prodCountEdit->text().toDouble(),
 				sumEdit->text().toDouble(), statusEdit->text().toInt(), currencyCmb->currentData().toInt(), spoilage->GetID());
-
+			dialogBL->StartTransaction(errorMessage);
 			if (dialogBL->UpdateSpoilage(spoilage, errorMessage))
 			{
 				if (parentDataForm != nullptr)

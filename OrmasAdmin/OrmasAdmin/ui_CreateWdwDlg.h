@@ -32,105 +32,54 @@ class Ui_CreateWithdrawal
 {
 public:
     QGridLayout *gridLayout;
-    QLabel *currencyLb;
-    QLineEdit *balanceEdit;
-    QLabel *namePh;
-    QLabel *nameLb;
-    QLabel *surnameLb;
-    QLabel *surnamePh;
-    QLabel *phoneLb;
-    QLabel *phonePh;
+    QPushButton *userBtn;
     QHBoxLayout *horizontalLayout;
     QSpacerItem *horizontalSpacer;
     QPushButton *okBtn;
     QPushButton *cancelBtn;
-    QLabel *isBonusLb;
+    QLabel *namePh;
+    QLineEdit *valueEdit;
     QLabel *allLb;
     QLabel *label;
-    QLabel *balanceLb;
-    QLabel *dateLb;
-    QPushButton *userBtn;
-    QLineEdit *valueEdit;
-    QCheckBox *yesCheckBox;
-    QLineEdit *currencyNameEdit;
-    QDateTimeEdit *dateEdit;
+    QLabel *surnamePh;
+    QLabel *isBonusLb;
+    QLabel *currencyLb;
+    QLineEdit *balanceEdit;
     QComboBox *currencyCmb;
     QLineEdit *userEdit;
     QPushButton *subAccBtn;
     QLineEdit *saIDEdit;
+    QDateTimeEdit *dateEdit;
+    QLineEdit *currencyNameEdit;
+    QLabel *nameLb;
+    QLabel *surnameLb;
+    QCheckBox *yesCheckBox;
+    QLabel *dateLb;
+    QLabel *balanceLb;
     QLabel *daLb;
     QLineEdit *saNumberEdit;
     QLabel *targetLB;
     QLineEdit *targetEdit;
+    QLabel *phoneLb;
+    QLabel *phonePh;
+    QLabel *accountNameLb;
+    QComboBox *accountCmb;
 
     void setupUi(QDialog *CreateWithdrawal)
     {
         if (CreateWithdrawal->objectName().isEmpty())
             CreateWithdrawal->setObjectName(QStringLiteral("CreateWithdrawal"));
-        CreateWithdrawal->resize(657, 318);
+        CreateWithdrawal->resize(657, 336);
         CreateWithdrawal->setLocale(QLocale(QLocale::English, QLocale::UnitedStates));
         CreateWithdrawal->setModal(false);
         gridLayout = new QGridLayout(CreateWithdrawal);
         gridLayout->setObjectName(QStringLiteral("gridLayout"));
         gridLayout->setContentsMargins(11, 11, 11, 11);
-        currencyLb = new QLabel(CreateWithdrawal);
-        currencyLb->setObjectName(QStringLiteral("currencyLb"));
+        userBtn = new QPushButton(CreateWithdrawal);
+        userBtn->setObjectName(QStringLiteral("userBtn"));
+        userBtn->setMinimumSize(QSize(150, 0));
 
-        gridLayout->addWidget(currencyLb, 9, 1, 1, 2);
-
-        balanceEdit = new QLineEdit(CreateWithdrawal);
-        balanceEdit->setObjectName(QStringLiteral("balanceEdit"));
-        balanceEdit->setReadOnly(true);
-
-        gridLayout->addWidget(balanceEdit, 12, 3, 1, 2);
-
-        namePh = new QLabel(CreateWithdrawal);
-        namePh->setObjectName(QStringLiteral("namePh"));
-        namePh->setMinimumSize(QSize(100, 0));
-        QFont font;
-        font.setFamily(QStringLiteral("Times New Roman"));
-        font.setPointSize(12);
-        font.setBold(true);
-        font.setItalic(true);
-        font.setWeight(75);
-        namePh->setFont(font);
-
-        gridLayout->addWidget(namePh, 2, 2, 1, 1);
-
-        nameLb = new QLabel(CreateWithdrawal);
-        nameLb->setObjectName(QStringLiteral("nameLb"));
-        nameLb->setMinimumSize(QSize(50, 0));
-        nameLb->setMaximumSize(QSize(50, 16777215));
-
-        gridLayout->addWidget(nameLb, 2, 1, 1, 1);
-
-        surnameLb = new QLabel(CreateWithdrawal);
-        surnameLb->setObjectName(QStringLiteral("surnameLb"));
-        surnameLb->setMinimumSize(QSize(50, 0));
-        surnameLb->setMaximumSize(QSize(50, 16777215));
-
-        gridLayout->addWidget(surnameLb, 2, 3, 1, 1);
-
-        surnamePh = new QLabel(CreateWithdrawal);
-        surnamePh->setObjectName(QStringLiteral("surnamePh"));
-        surnamePh->setMinimumSize(QSize(100, 0));
-        surnamePh->setFont(font);
-
-        gridLayout->addWidget(surnamePh, 2, 4, 1, 1);
-
-        phoneLb = new QLabel(CreateWithdrawal);
-        phoneLb->setObjectName(QStringLiteral("phoneLb"));
-        phoneLb->setMinimumSize(QSize(50, 0));
-        phoneLb->setMaximumSize(QSize(50, 16777215));
-
-        gridLayout->addWidget(phoneLb, 2, 5, 1, 1);
-
-        phonePh = new QLabel(CreateWithdrawal);
-        phonePh->setObjectName(QStringLiteral("phonePh"));
-        phonePh->setMinimumSize(QSize(100, 0));
-        phonePh->setFont(font);
-
-        gridLayout->addWidget(phonePh, 2, 6, 1, 1);
+        gridLayout->addWidget(userBtn, 2, 1, 1, 2);
 
         horizontalLayout = new QHBoxLayout();
         horizontalLayout->setObjectName(QStringLiteral("horizontalLayout"));
@@ -149,104 +98,167 @@ public:
         horizontalLayout->addWidget(cancelBtn);
 
 
-        gridLayout->addLayout(horizontalLayout, 18, 1, 1, 6);
+        gridLayout->addLayout(horizontalLayout, 19, 1, 1, 6);
 
-        isBonusLb = new QLabel(CreateWithdrawal);
-        isBonusLb->setObjectName(QStringLiteral("isBonusLb"));
+        namePh = new QLabel(CreateWithdrawal);
+        namePh->setObjectName(QStringLiteral("namePh"));
+        namePh->setMinimumSize(QSize(100, 0));
+        QFont font;
+        font.setFamily(QStringLiteral("Times New Roman"));
+        font.setPointSize(12);
+        font.setBold(true);
+        font.setItalic(true);
+        font.setWeight(75);
+        namePh->setFont(font);
 
-        gridLayout->addWidget(isBonusLb, 17, 1, 1, 2);
-
-        allLb = new QLabel(CreateWithdrawal);
-        allLb->setObjectName(QStringLiteral("allLb"));
-
-        gridLayout->addWidget(allLb, 16, 1, 1, 2);
-
-        label = new QLabel(CreateWithdrawal);
-        label->setObjectName(QStringLiteral("label"));
-
-        gridLayout->addWidget(label, 13, 1, 1, 2);
-
-        balanceLb = new QLabel(CreateWithdrawal);
-        balanceLb->setObjectName(QStringLiteral("balanceLb"));
-
-        gridLayout->addWidget(balanceLb, 12, 1, 1, 2);
-
-        dateLb = new QLabel(CreateWithdrawal);
-        dateLb->setObjectName(QStringLiteral("dateLb"));
-
-        gridLayout->addWidget(dateLb, 11, 1, 1, 2);
-
-        userBtn = new QPushButton(CreateWithdrawal);
-        userBtn->setObjectName(QStringLiteral("userBtn"));
-        userBtn->setMinimumSize(QSize(150, 0));
-
-        gridLayout->addWidget(userBtn, 1, 1, 1, 2);
+        gridLayout->addWidget(namePh, 3, 2, 1, 1);
 
         valueEdit = new QLineEdit(CreateWithdrawal);
         valueEdit->setObjectName(QStringLiteral("valueEdit"));
 
-        gridLayout->addWidget(valueEdit, 17, 3, 1, 2);
+        gridLayout->addWidget(valueEdit, 18, 3, 1, 2);
 
-        yesCheckBox = new QCheckBox(CreateWithdrawal);
-        yesCheckBox->setObjectName(QStringLiteral("yesCheckBox"));
+        allLb = new QLabel(CreateWithdrawal);
+        allLb->setObjectName(QStringLiteral("allLb"));
 
-        gridLayout->addWidget(yesCheckBox, 16, 3, 1, 2);
+        gridLayout->addWidget(allLb, 17, 1, 1, 2);
 
-        currencyNameEdit = new QLineEdit(CreateWithdrawal);
-        currencyNameEdit->setObjectName(QStringLiteral("currencyNameEdit"));
-        currencyNameEdit->setReadOnly(true);
+        label = new QLabel(CreateWithdrawal);
+        label->setObjectName(QStringLiteral("label"));
 
-        gridLayout->addWidget(currencyNameEdit, 13, 3, 1, 2);
+        gridLayout->addWidget(label, 14, 1, 1, 2);
 
-        dateEdit = new QDateTimeEdit(CreateWithdrawal);
-        dateEdit->setObjectName(QStringLiteral("dateEdit"));
+        surnamePh = new QLabel(CreateWithdrawal);
+        surnamePh->setObjectName(QStringLiteral("surnamePh"));
+        surnamePh->setMinimumSize(QSize(100, 0));
+        surnamePh->setFont(font);
 
-        gridLayout->addWidget(dateEdit, 11, 3, 1, 2);
+        gridLayout->addWidget(surnamePh, 3, 4, 1, 1);
+
+        isBonusLb = new QLabel(CreateWithdrawal);
+        isBonusLb->setObjectName(QStringLiteral("isBonusLb"));
+
+        gridLayout->addWidget(isBonusLb, 18, 1, 1, 2);
+
+        currencyLb = new QLabel(CreateWithdrawal);
+        currencyLb->setObjectName(QStringLiteral("currencyLb"));
+
+        gridLayout->addWidget(currencyLb, 10, 1, 1, 2);
+
+        balanceEdit = new QLineEdit(CreateWithdrawal);
+        balanceEdit->setObjectName(QStringLiteral("balanceEdit"));
+        balanceEdit->setReadOnly(true);
+
+        gridLayout->addWidget(balanceEdit, 13, 3, 1, 2);
 
         currencyCmb = new QComboBox(CreateWithdrawal);
         currencyCmb->setObjectName(QStringLiteral("currencyCmb"));
 
-        gridLayout->addWidget(currencyCmb, 9, 3, 1, 2);
+        gridLayout->addWidget(currencyCmb, 10, 3, 1, 2);
 
         userEdit = new QLineEdit(CreateWithdrawal);
         userEdit->setObjectName(QStringLiteral("userEdit"));
         userEdit->setReadOnly(true);
 
-        gridLayout->addWidget(userEdit, 1, 3, 1, 2);
+        gridLayout->addWidget(userEdit, 2, 3, 1, 2);
 
         subAccBtn = new QPushButton(CreateWithdrawal);
         subAccBtn->setObjectName(QStringLiteral("subAccBtn"));
 
-        gridLayout->addWidget(subAccBtn, 3, 1, 1, 1);
+        gridLayout->addWidget(subAccBtn, 4, 1, 1, 1);
 
         saIDEdit = new QLineEdit(CreateWithdrawal);
         saIDEdit->setObjectName(QStringLiteral("saIDEdit"));
         saIDEdit->setMaximumSize(QSize(120, 16777215));
         saIDEdit->setReadOnly(true);
 
-        gridLayout->addWidget(saIDEdit, 3, 2, 1, 1);
+        gridLayout->addWidget(saIDEdit, 4, 2, 1, 1);
+
+        dateEdit = new QDateTimeEdit(CreateWithdrawal);
+        dateEdit->setObjectName(QStringLiteral("dateEdit"));
+
+        gridLayout->addWidget(dateEdit, 12, 3, 1, 2);
+
+        currencyNameEdit = new QLineEdit(CreateWithdrawal);
+        currencyNameEdit->setObjectName(QStringLiteral("currencyNameEdit"));
+        currencyNameEdit->setReadOnly(true);
+
+        gridLayout->addWidget(currencyNameEdit, 14, 3, 1, 2);
+
+        nameLb = new QLabel(CreateWithdrawal);
+        nameLb->setObjectName(QStringLiteral("nameLb"));
+        nameLb->setMinimumSize(QSize(50, 0));
+        nameLb->setMaximumSize(QSize(50, 16777215));
+
+        gridLayout->addWidget(nameLb, 3, 1, 1, 1);
+
+        surnameLb = new QLabel(CreateWithdrawal);
+        surnameLb->setObjectName(QStringLiteral("surnameLb"));
+        surnameLb->setMinimumSize(QSize(50, 0));
+        surnameLb->setMaximumSize(QSize(50, 16777215));
+
+        gridLayout->addWidget(surnameLb, 3, 3, 1, 1);
+
+        yesCheckBox = new QCheckBox(CreateWithdrawal);
+        yesCheckBox->setObjectName(QStringLiteral("yesCheckBox"));
+
+        gridLayout->addWidget(yesCheckBox, 17, 3, 1, 2);
+
+        dateLb = new QLabel(CreateWithdrawal);
+        dateLb->setObjectName(QStringLiteral("dateLb"));
+
+        gridLayout->addWidget(dateLb, 12, 1, 1, 2);
+
+        balanceLb = new QLabel(CreateWithdrawal);
+        balanceLb->setObjectName(QStringLiteral("balanceLb"));
+
+        gridLayout->addWidget(balanceLb, 13, 1, 1, 2);
 
         daLb = new QLabel(CreateWithdrawal);
         daLb->setObjectName(QStringLiteral("daLb"));
 
-        gridLayout->addWidget(daLb, 3, 3, 1, 1);
+        gridLayout->addWidget(daLb, 4, 3, 1, 1);
 
         saNumberEdit = new QLineEdit(CreateWithdrawal);
         saNumberEdit->setObjectName(QStringLiteral("saNumberEdit"));
         saNumberEdit->setMinimumSize(QSize(150, 0));
         saNumberEdit->setMaximumSize(QSize(150, 16777215));
 
-        gridLayout->addWidget(saNumberEdit, 3, 6, 1, 1);
+        gridLayout->addWidget(saNumberEdit, 4, 6, 1, 1);
 
         targetLB = new QLabel(CreateWithdrawal);
         targetLB->setObjectName(QStringLiteral("targetLB"));
 
-        gridLayout->addWidget(targetLB, 4, 1, 1, 1);
+        gridLayout->addWidget(targetLB, 5, 1, 1, 1);
 
         targetEdit = new QLineEdit(CreateWithdrawal);
         targetEdit->setObjectName(QStringLiteral("targetEdit"));
 
-        gridLayout->addWidget(targetEdit, 4, 2, 1, 5);
+        gridLayout->addWidget(targetEdit, 5, 2, 1, 5);
+
+        phoneLb = new QLabel(CreateWithdrawal);
+        phoneLb->setObjectName(QStringLiteral("phoneLb"));
+        phoneLb->setMinimumSize(QSize(50, 0));
+        phoneLb->setMaximumSize(QSize(50, 16777215));
+
+        gridLayout->addWidget(phoneLb, 3, 5, 1, 1);
+
+        phonePh = new QLabel(CreateWithdrawal);
+        phonePh->setObjectName(QStringLiteral("phonePh"));
+        phonePh->setMinimumSize(QSize(100, 0));
+        phonePh->setFont(font);
+
+        gridLayout->addWidget(phonePh, 3, 6, 1, 1);
+
+        accountNameLb = new QLabel(CreateWithdrawal);
+        accountNameLb->setObjectName(QStringLiteral("accountNameLb"));
+
+        gridLayout->addWidget(accountNameLb, 1, 1, 1, 1);
+
+        accountCmb = new QComboBox(CreateWithdrawal);
+        accountCmb->setObjectName(QStringLiteral("accountCmb"));
+
+        gridLayout->addWidget(accountCmb, 1, 2, 1, 5);
 
         QWidget::setTabOrder(userBtn, subAccBtn);
         QWidget::setTabOrder(subAccBtn, saNumberEdit);
@@ -270,32 +282,33 @@ public:
     void retranslateUi(QDialog *CreateWithdrawal)
     {
         CreateWithdrawal->setWindowTitle(QApplication::translate("CreateWithdrawal", "Create/Update withdrawal", 0));
+        userBtn->setText(QApplication::translate("CreateWithdrawal", "Select user", 0));
+        okBtn->setText(QApplication::translate("CreateWithdrawal", "OK", 0));
+        cancelBtn->setText(QApplication::translate("CreateWithdrawal", "Cancel", 0));
+        namePh->setText(QString());
+        allLb->setText(QApplication::translate("CreateWithdrawal", "Payout full amount?", 0));
+        label->setText(QApplication::translate("CreateWithdrawal", "Currency name:", 0));
+        surnamePh->setText(QString());
+        isBonusLb->setText(QApplication::translate("CreateWithdrawal", "Payment amount:", 0));
         currencyLb->setText(QApplication::translate("CreateWithdrawal", "Select currency:", 0));
 #ifndef QT_NO_TOOLTIP
         balanceEdit->setToolTip(QApplication::translate("CreateWithdrawal", "<html><head/><body><p>For example: 1000 (depends on currency, in that case 1000 USD)</p></body></html>", 0));
 #endif // QT_NO_TOOLTIP
-        namePh->setText(QString());
-        nameLb->setText(QApplication::translate("CreateWithdrawal", "Name:", 0));
-        surnameLb->setText(QApplication::translate("CreateWithdrawal", "Surname:", 0));
-        surnamePh->setText(QString());
-        phoneLb->setText(QApplication::translate("CreateWithdrawal", "Phone:", 0));
-        phonePh->setText(QString());
-        okBtn->setText(QApplication::translate("CreateWithdrawal", "OK", 0));
-        cancelBtn->setText(QApplication::translate("CreateWithdrawal", "Cancel", 0));
-        isBonusLb->setText(QApplication::translate("CreateWithdrawal", "Payment amount:", 0));
-        allLb->setText(QApplication::translate("CreateWithdrawal", "Payout full amount?", 0));
-        label->setText(QApplication::translate("CreateWithdrawal", "Currency name:", 0));
-        balanceLb->setText(QApplication::translate("CreateWithdrawal", "Balance:", 0));
-        dateLb->setText(QApplication::translate("CreateWithdrawal", "Date:", 0));
-        userBtn->setText(QApplication::translate("CreateWithdrawal", "Select user", 0));
-        yesCheckBox->setText(QApplication::translate("CreateWithdrawal", "Yes", 0));
 #ifndef QT_NO_TOOLTIP
         userEdit->setToolTip(QApplication::translate("CreateWithdrawal", "Must not be empty", 0));
 #endif // QT_NO_TOOLTIP
         subAccBtn->setText(QApplication::translate("CreateWithdrawal", "Select subaccount", 0));
+        nameLb->setText(QApplication::translate("CreateWithdrawal", "Name:", 0));
+        surnameLb->setText(QApplication::translate("CreateWithdrawal", "Surname:", 0));
+        yesCheckBox->setText(QApplication::translate("CreateWithdrawal", "Yes", 0));
+        dateLb->setText(QApplication::translate("CreateWithdrawal", "Date:", 0));
+        balanceLb->setText(QApplication::translate("CreateWithdrawal", "Balance:", 0));
         daLb->setText(QApplication::translate("CreateWithdrawal", "Enter account number:", 0));
         saNumberEdit->setText(QString());
         targetLB->setText(QApplication::translate("CreateWithdrawal", "Target:", 0));
+        phoneLb->setText(QApplication::translate("CreateWithdrawal", "Phone:", 0));
+        phonePh->setText(QString());
+        accountNameLb->setText(QApplication::translate("CreateWithdrawal", "Account name:", 0));
     } // retranslateUi
 
 };

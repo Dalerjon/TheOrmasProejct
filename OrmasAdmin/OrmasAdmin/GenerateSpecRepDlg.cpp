@@ -191,7 +191,7 @@ void GenerateSpecRep::Generate()
 
 		//read template
 		QFile file;
-		file.setFileName(":/docs/specification.html");
+		file.setFileName(":/docs/spec_consume_report.html");
 		if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
 		{
 			QMessageBox::information(NULL, QString(tr("Info")),

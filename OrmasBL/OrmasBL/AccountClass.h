@@ -45,6 +45,7 @@ namespace BusinessLayer{
 		std::string GetName(DataLayer::OrmasDal& ormasDal);
 		bool AccountOperationValidation(DataLayer::OrmasDal& ormasDal, double aValue);
 		bool IsEmpty();
+		bool HaveSubaccount(DataLayer::OrmasDal& ormasDal, int accountID);
 		void Clear();
 		void BalanceShortInfo(DataLayer::OrmasDal& ormasDal, double &active, double &passive, std::string& errorMessage);
 	private:

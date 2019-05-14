@@ -21,7 +21,7 @@ CreateInvDlg::CreateInvDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, QWi
 	statusEdit->setValidator(vInt);
 	sumEdit->setValidator(vDouble);
 	sumEdit->setMaxLength(17);
-	dialogBL->StartTransaction(errorMessage);
+	
 	if (true == updateFlag)
 	{
 		QObject::connect(okBtn, &QPushButton::released, this, &CreateInvDlg::EditInventorization);
@@ -73,7 +73,7 @@ CreateInvDlg::~CreateInvDlg()
 	delete vDouble;
 	delete vInt;
 	emit CloseCreatedForms();
-	dialogBL->CancelTransaction(errorMessage);
+	
 }
 
 void CreateInvDlg::SetInventorizationParams(int iEmployeeID, QString iDate, QString iExecDate, int iStockEmployeeID, double iCount,
@@ -241,7 +241,7 @@ void CreateInvDlg::CreateInventorization()
 				sumEdit->text().toDouble(), statusEdit->text().toInt(), currencyCmb->currentData().toInt(), inventorization->GetID());
 		}
 		
-
+		dialogBL->StartTransaction(errorMessage);
 		if (dialogBL->CreateInventorization(inventorization, errorMessage))
 		{
 			if (parentDataForm != nullptr)
@@ -411,7 +411,7 @@ void CreateInvDlg::EditInventorization()
 				SetInventorizationParams(employeeEdit->text().toInt(), dateEdit->text(), execDateEdit->text(), stockEmployeeEdit->text().toInt(), prodCountEdit->text().toDouble(),
 					sumEdit->text().toDouble(), statusEdit->text().toInt(), currencyCmb->currentData().toInt(), inventorization->GetID());
 			}
-
+			dialogBL->StartTransaction(errorMessage);
 			if (dialogBL->UpdateInventorization(inventorization, errorMessage))
 			{
 				if (parentDataForm != nullptr)

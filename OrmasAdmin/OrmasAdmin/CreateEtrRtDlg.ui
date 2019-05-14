@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>379</width>
+    <width>600</width>
     <height>125</height>
    </rect>
   </property>
@@ -15,6 +15,12 @@
     <horstretch>0</horstretch>
     <verstretch>0</verstretch>
    </sizepolicy>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>600</width>
+    <height>125</height>
+   </size>
   </property>
   <property name="windowTitle">
    <string>Create account routing</string>
@@ -38,7 +44,7 @@
    <property name="bottomMargin">
     <number>11</number>
    </property>
-   <item row="3" column="0" colspan="4">
+   <item row="4" column="0" colspan="4">
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
       <spacer name="horizontalSpacer">
@@ -69,7 +75,21 @@
      </item>
     </layout>
    </item>
-   <item row="0" column="0">
+   <item row="2" column="0">
+    <widget class="QLabel" name="caLb">
+     <property name="text">
+      <string>Credit account:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="0">
+    <widget class="QLabel" name="daLb">
+     <property name="text">
+      <string>Debit account:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="0">
     <widget class="QLabel" name="operationLb">
      <property name="minimumSize">
       <size>
@@ -78,64 +98,18 @@
       </size>
      </property>
      <property name="text">
-      <string>Operation:</string>
+      <string>Operation name:</string>
      </property>
     </widget>
    </item>
-   <item row="2" column="0">
-    <widget class="QLabel" name="caLb">
-     <property name="text">
-      <string>Credit:</string>
-     </property>
-    </widget>
+   <item row="3" column="1">
+    <widget class="QLineEdit" name="operationEdit"/>
    </item>
    <item row="1" column="1">
-    <widget class="QLineEdit" name="debitEdit">
-     <property name="minimumSize">
-      <size>
-       <width>0</width>
-       <height>0</height>
-      </size>
-     </property>
-     <property name="maximumSize">
-      <size>
-       <width>16777215</width>
-       <height>16777215</height>
-      </size>
-     </property>
-     <property name="text">
-      <string/>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="0">
-    <widget class="QLabel" name="daLb">
-     <property name="text">
-      <string>Debit:</string>
-     </property>
-    </widget>
+    <widget class="QComboBox" name="dAccCmb"/>
    </item>
    <item row="2" column="1">
-    <widget class="QLineEdit" name="creditEdit">
-     <property name="minimumSize">
-      <size>
-       <width>0</width>
-       <height>0</height>
-      </size>
-     </property>
-     <property name="maximumSize">
-      <size>
-       <width>16777215</width>
-       <height>16777215</height>
-      </size>
-     </property>
-     <property name="text">
-      <string/>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="1">
-    <widget class="QLineEdit" name="operationEdit"/>
+    <widget class="QComboBox" name="cAccCmb"/>
    </item>
   </layout>
  </widget>

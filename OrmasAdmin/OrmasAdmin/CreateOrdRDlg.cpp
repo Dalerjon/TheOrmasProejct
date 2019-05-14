@@ -21,7 +21,7 @@ CreateOrdRDlg::CreateOrdRDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, Q
 	statusEdit->setValidator(vInt);
 	sumEdit->setValidator(vDouble);
 	sumEdit->setMaxLength(17);
-	dialogBL->StartTransaction(errorMessage);
+	
 	if (true == updateFlag)
 	{
 		QObject::connect(okBtn, &QPushButton::released, this, &CreateOrdRDlg::EditOrderRaw);
@@ -73,7 +73,7 @@ CreateOrdRDlg::~CreateOrdRDlg()
 	delete vDouble;
 	delete vInt;
 	emit CloseCreatedForms();
-	dialogBL->CancelTransaction(errorMessage);
+
 }
 
 void CreateOrdRDlg::SetOrderRawParams(int oPurveyorID, QString oDate, QString oExecDate, int oEmployeeID, double oCount,
@@ -276,7 +276,7 @@ void CreateOrdRDlg::CreateOrderRaw()
 				sumEdit->text().toDouble(), statusEdit->text().toInt(), currencyCmb->currentData().toInt(), orderRaw->GetID());
 		}
 		
-
+		dialogBL->StartTransaction(errorMessage);
 		if (dialogBL->CreateOrderRaw(orderRaw, errorMessage))
 		{
 			if (parentDataForm != nullptr)
@@ -426,7 +426,7 @@ void CreateOrdRDlg::EditOrderRaw()
 				SetOrderRawParams(purveyorEdit->text().toInt(), dateEdit->text(), execDateEdit->text(), employeeEdit->text().toInt(), prodCountEdit->text().toDouble(),
 					sumEdit->text().toDouble(), statusEdit->text().toInt(), currencyCmb->currentData().toInt(), orderRaw->GetID());
 			}
-
+			dialogBL->StartTransaction(errorMessage);
 			if (dialogBL->UpdateOrderRaw(orderRaw, errorMessage))
 			{
 				if (parentDataForm != nullptr)

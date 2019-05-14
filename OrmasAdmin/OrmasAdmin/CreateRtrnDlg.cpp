@@ -11,7 +11,7 @@ CreateRtrnDlg::CreateRtrnDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, Q
 	parentForm = parent;
 	DataForm *dataFormParent = (DataForm *)this->parentForm;
 	mainForm = (MainForm *)dataFormParent->GetParent();
-	dialogBL->StartTransaction(errorMessage);
+
 	vDouble = new QDoubleValidator(0.00, 1000000000.00, 3, this);
 	vInt = new QIntValidator(0, 1000000000, this);
 	clientEdit->setValidator(vInt);
@@ -73,7 +73,7 @@ CreateRtrnDlg::~CreateRtrnDlg()
 	delete vDouble;
 	delete vInt;
 	emit CloseCreatedForms();
-	dialogBL->CancelTransaction(errorMessage);
+
 }
 
 void CreateRtrnDlg::SetReturnParams(int rClientID, QString rDate, QString rExecDate, int rEmployeeID, double rCount, double rSum, int rStatusID, int rCurrencyID, int id)
@@ -239,6 +239,7 @@ void CreateRtrnDlg::CreateReturn()
 				sumEdit->text().toDouble(), statusEdit->text().toInt(), currencyCmb->currentData().toInt(), ret->GetID());
 		}
 		ret->warehouseID = warehouseCmb->currentData().toInt();
+		dialogBL->StartTransaction(errorMessage);
 		if (dialogBL->CreateReturn(ret, errorMessage))
 		{
 			if (parentDataForm != nullptr)
@@ -387,6 +388,7 @@ void CreateRtrnDlg::EditReturn()
 					sumEdit->text().toDouble(), statusEdit->text().toInt(), currencyCmb->currentData().toInt(), ret->GetID());
 			}
 			ret->warehouseID = warehouseCmb->currentData().toInt();
+			dialogBL->StartTransaction(errorMessage);
 			if (dialogBL->UpdateReturn(ret, errorMessage))
 			{
 				if (parentDataForm != nullptr)

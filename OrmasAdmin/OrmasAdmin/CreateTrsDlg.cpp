@@ -20,7 +20,7 @@ CreateTrsDlg::CreateTrsDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, QWi
 	statusEdit->setValidator(vInt);
 	sumEdit->setValidator(vDouble);
 	sumEdit->setMaxLength(17);
-	dialogBL->StartTransaction(errorMessage);
+	
 
 	//hide employee, because it's not needed
 	empNamePh->setVisible(false);
@@ -83,7 +83,7 @@ CreateTrsDlg::~CreateTrsDlg()
 	delete vDouble;
 	delete vInt;
 	emit CloseCreatedForms();
-	dialogBL->CancelTransaction(errorMessage);
+	
 }
 
 void CreateTrsDlg::SetTransportParams(int tUserID, QString tDate, QString tExecDate, int tEmployeeID, double tCount,
@@ -251,7 +251,7 @@ void CreateTrsDlg::CreateTransport()
 				sumEdit->text().toDouble(), statusEdit->text().toInt(), currencyCmb->currentData().toInt(), transport->GetID());
 		}
 		
-
+		dialogBL->StartTransaction(errorMessage);
 		if (dialogBL->CreateTransport(transport, errorMessage))
 		{
 			if (parentDataForm != nullptr)
@@ -419,7 +419,7 @@ void CreateTrsDlg::EditTransport()
 				SetTransportParams(employeeEdit->text().toInt(), dateEdit->text(), execDateEdit->text(), stockEmployeeEdit->text().toInt(), prodCountEdit->text().toDouble(),
 					sumEdit->text().toDouble(), statusEdit->text().toInt(), currencyCmb->currentData().toInt(), transport->GetID());
 			}
-
+			dialogBL->StartTransaction(errorMessage);
 			if (dialogBL->UpdateTransport(transport, errorMessage))
 			{
 				if (parentDataForm != nullptr)

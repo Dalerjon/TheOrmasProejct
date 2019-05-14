@@ -163,8 +163,8 @@ namespace BusinessLayer
 	}
 	bool Transport::DeleteTransport(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
-		if (!ormasDal.StartTransaction(errorMessage))
-			return false;
+		//if (!ormasDal.StartTransaction(errorMessage))
+		//	return false;
 		if (ormasDal.DeleteTransport(id, errorMessage))
 		{
 			if (ormasDal.DeleteListByTransportID(id, errorMessage))

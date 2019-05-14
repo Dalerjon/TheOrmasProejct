@@ -21,7 +21,7 @@ CreateProdConRDlg::CreateProdConRDlg(BusinessLayer::OrmasBL *ormasBL, bool updat
 	statusEdit->setValidator(vInt);
 	sumEdit->setValidator(vDouble);
 	sumEdit->setMaxLength(17);
-	dialogBL->StartTransaction(errorMessage);
+	
 
 	//hide employee, because it's not needed
 	empNamePh->setVisible(false);
@@ -84,7 +84,7 @@ CreateProdConRDlg::~CreateProdConRDlg()
 	delete vDouble;
 	delete vInt;
 	emit CloseCreatedForms();
-	dialogBL->CancelTransaction(errorMessage);
+	
 }
 
 void CreateProdConRDlg::SetConsumeRawParams(int cEmployeeID, QString cDate, QString cExecDate, int cStockEmployeeID, double cCount,
@@ -286,7 +286,7 @@ void CreateProdConRDlg::CreateConsumeRaw()
 			SetConsumeRawParams(employeeEdit->text().toInt(), dateEdit->text(), execDateEdit->text(), stockEmployeeEdit->text().toInt(), prodCountEdit->text().toDouble(),
 				sumEdit->text().toDouble(), statusEdit->text().toInt(), currencyCmb->currentData().toInt(), pConsumeRaw->GetID());
 		}
-
+		dialogBL->StartTransaction(errorMessage);
 		if (dialogBL->CreateProductionConsumeRaw(pConsumeRaw, errorMessage))
 		{
 			if (parentDataForm != nullptr)
@@ -456,7 +456,7 @@ void CreateProdConRDlg::EditConsumeRaw()
 				SetConsumeRawParams(employeeEdit->text().toInt(), dateEdit->text(), execDateEdit->text(), stockEmployeeEdit->text().toInt(), prodCountEdit->text().toDouble(),
 					sumEdit->text().toDouble(), statusEdit->text().toInt(), currencyCmb->currentData().toInt(), pConsumeRaw->GetID());
 			}
-
+			dialogBL->StartTransaction(errorMessage);
 			if (dialogBL->UpdateProductionConsumeRaw(pConsumeRaw, errorMessage))
 			{
 				if (parentDataForm != nullptr)
