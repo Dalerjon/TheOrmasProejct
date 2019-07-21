@@ -18,6 +18,17 @@ CreateWOffRDlg::CreateWOffRDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag,
 	statusEdit->setValidator(vInt);
 	sumEdit->setValidator(vDouble);
 	sumEdit->setMaxLength(17);
+
+	//hide employee, because it's not needed
+	empNamePh->setVisible(false);
+	empSurnamePh->setVisible(false);
+	empPhonePh->setVisible(false);
+	empNameLb->setVisible(false);
+	empSurnameLb->setVisible(false);
+	empPhoneLb->setVisible(false);
+	employeeBtn->setVisible(false);
+	employeeEdit->setVisible(false);
+	//
 	
 	if (true == updateFlag)
 	{
@@ -26,13 +37,16 @@ CreateWOffRDlg::CreateWOffRDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag,
 	else
 	{
 		writeOffRaw->SetID(dialogBL->GenerateID());
+		execDateWidget->setVisible(false);
+		execDateEdit->setDateTime(QDateTime::currentDateTime());
 		employeeEdit->setText("0");
 		stockEmployeeEdit->setText("0");
 		prodCountEdit->setText("0");
 		statusEdit->setText("0");
 		sumEdit->setText("0");
 		dateEdit->setDateTime(QDateTime::currentDateTime());
-
+		
+		
 		BusinessLayer::Status *status = new BusinessLayer::Status();
 		status->SetName("WRITE-OFFED");
 		std::string statusFilter = dialogBL->GenerateFilter<BusinessLayer::Status>(status);
@@ -57,6 +71,7 @@ CreateWOffRDlg::CreateWOffRDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag,
 	QObject::connect(stockEmployeeBtn, &QPushButton::released, this, &CreateWOffRDlg::OpenSkEmpDlg);
 	QObject::connect(addProdBtn, &QPushButton::released, this, &CreateWOffRDlg::OpenWOffRListDlg);
 	QObject::connect(prodCountEdit, &QLineEdit::textChanged, this, &CreateWOffRDlg::TextEditChanged);
+	QObject::connect(statusEdit, &QLineEdit::textChanged, this, &CreateWOffRDlg::StatusWasChenged);
 	QObject::connect(sumEdit, &QLineEdit::textChanged, this, &CreateWOffRDlg::TextEditChanged);
 
 	QObject::connect(this, SIGNAL(CloseCreatedForms()), ((MainForm*)((DataForm*)parent)->GetParent()), SLOT(CloseChildsByName()));
@@ -71,11 +86,17 @@ CreateWOffRDlg::~CreateWOffRDlg()
 	
 }
 
-void CreateWOffRDlg::SetWriteOffRawParams(int wEmployeeID, QString wDate, int wStockEmployeeID, double wCount,
+void CreateWOffRDlg::SetWriteOffRawParams(int wEmployeeID, QString wDate, QString wExecDate, int wStockEmployeeID, double wCount,
 	double wSum, int wStatusID, int wCurrencyID, int id)
 {
 	writeOffRaw->SetEmployeeID(wEmployeeID);
 	writeOffRaw->SetDate(wDate.toUtf8().constData());
+	QDateTime execDate;
+	execDate.fromString(wExecDate, "dd.mm.yyyy");
+	if (execDate != QDateTime::fromString("01.01.2000", "dd.mm.yyyy"))
+	{
+		writeOffRaw->SetExecutionDate(wExecDate.toUtf8().constData());
+	}	
 	writeOffRaw->SetStockEmployeeID(wStockEmployeeID);
 	writeOffRaw->SetCount(wCount);
 	writeOffRaw->SetSum(wSum);
@@ -84,11 +105,15 @@ void CreateWOffRDlg::SetWriteOffRawParams(int wEmployeeID, QString wDate, int wS
 	writeOffRaw->SetID(id);
 }
 
-void CreateWOffRDlg::FillEditElements(int wEmployeeID, QString wDate, int wStockEmployeeID, double wCount,
+void CreateWOffRDlg::FillEditElements(int wEmployeeID, QString wDate, QString wExecDate, int wStockEmployeeID, double wCount,
 	double wSum, int wStatusID, int wCurrencyID)
 {
 	employeeEdit->setText(QString::number(wEmployeeID));
 	dateEdit->setDateTime(QDateTime::fromString(wDate, "dd.MM.yyyy hh:mm"));
+	if (!wExecDate.isEmpty())
+	{
+		execDateEdit->setDateTime(QDateTime::fromString(wExecDate, "dd.MM.yyyy hh:mm"));
+	}
 	stockEmployeeEdit->setText(QString::number(wStockEmployeeID));
 	prodCountEdit->setText(QString::number(wCount));
 	sumEdit->setText(QString::number(wSum));
@@ -203,22 +228,25 @@ bool CreateWOffRDlg::FillDlgElements(QTableView* cTable)
 	QModelIndex mIndex = cTable->selectionModel()->currentIndex();
 	if (mIndex.row() >= 0)
 	{
-		SetWriteOffRawParams(cTable->model()->data(cTable->model()->index(mIndex.row(), 16)).toInt(),
+		SetWriteOffRawParams(cTable->model()->data(cTable->model()->index(mIndex.row(), 17)).toInt(),
 			cTable->model()->data(cTable->model()->index(mIndex.row(), 1)).toString().toUtf8().constData(),
-			cTable->model()->data(cTable->model()->index(mIndex.row(), 15)).toInt(),
-			cTable->model()->data(cTable->model()->index(mIndex.row(), 12)).toDouble(),
+			cTable->model()->data(cTable->model()->index(mIndex.row(), 2)).toString().toUtf8().constData(),
+			cTable->model()->data(cTable->model()->index(mIndex.row(), 16)).toInt(),
 			cTable->model()->data(cTable->model()->index(mIndex.row(), 13)).toDouble(),
-			cTable->model()->data(cTable->model()->index(mIndex.row(), 17)).toInt(),
+			cTable->model()->data(cTable->model()->index(mIndex.row(), 14)).toDouble(),
 			cTable->model()->data(cTable->model()->index(mIndex.row(), 18)).toInt(),
+			cTable->model()->data(cTable->model()->index(mIndex.row(), 19)).toInt(),
 			cTable->model()->data(cTable->model()->index(mIndex.row(), 0)).toInt());
-		FillEditElements(cTable->model()->data(cTable->model()->index(mIndex.row(), 16)).toInt(),
+		FillEditElements(cTable->model()->data(cTable->model()->index(mIndex.row(), 17)).toInt(),
 			cTable->model()->data(cTable->model()->index(mIndex.row(), 1)).toString().toUtf8().constData(),
-			cTable->model()->data(cTable->model()->index(mIndex.row(), 15)).toInt(),
-			cTable->model()->data(cTable->model()->index(mIndex.row(), 12)).toDouble(),
+			cTable->model()->data(cTable->model()->index(mIndex.row(), 2)).toString().toUtf8().constData(),
+			cTable->model()->data(cTable->model()->index(mIndex.row(), 16)).toInt(),
 			cTable->model()->data(cTable->model()->index(mIndex.row(), 13)).toDouble(),
-			cTable->model()->data(cTable->model()->index(mIndex.row(), 17)).toInt(),
-			cTable->model()->data(cTable->model()->index(mIndex.row(), 18)).toInt());
-		return true;
+			cTable->model()->data(cTable->model()->index(mIndex.row(), 14)).toDouble(),
+			cTable->model()->data(cTable->model()->index(mIndex.row(), 18)).toInt(),
+			cTable->model()->data(cTable->model()->index(mIndex.row(), 19)).toInt());
+		
+		return CheckAccess();
 	}
 	else
 	{
@@ -234,8 +262,17 @@ void CreateWOffRDlg::CreateWriteOffRaw()
 		&& 0 != statusEdit->text().toInt() && !currencyCmb->currentText().isEmpty())
 	{
 		DataForm *parentDataForm = (DataForm*) parentForm;
-		SetWriteOffRawParams(employeeEdit->text().toInt(), dateEdit->text(), stockEmployeeEdit->text().toInt(), prodCountEdit->text().toDouble(),
-			sumEdit->text().toDouble(), statusEdit->text().toInt(), currencyCmb->currentData().toInt(), writeOffRaw->GetID());
+		if (!execDateWidget->isVisible())
+		{
+			SetWriteOffRawParams(employeeEdit->text().toInt(), dateEdit->text(),"", stockEmployeeEdit->text().toInt(), prodCountEdit->text().toDouble(),
+				sumEdit->text().toDouble(), statusEdit->text().toInt(), currencyCmb->currentData().toInt(), writeOffRaw->GetID());
+		}
+		else
+		{
+			SetWriteOffRawParams(employeeEdit->text().toInt(), dateEdit->text(), execDateEdit->text(), stockEmployeeEdit->text().toInt(), prodCountEdit->text().toDouble(),
+				sumEdit->text().toDouble(), statusEdit->text().toInt(), currencyCmb->currentData().toInt(), writeOffRaw->GetID());
+		}
+		
 		dialogBL->StartTransaction(errorMessage);
 		if (dialogBL->CreateWriteOffRaw(writeOffRaw, errorMessage))
 		{
@@ -257,6 +294,7 @@ void CreateWOffRDlg::CreateWriteOffRaw()
 					QList<QStandardItem*> writeOffRawItem;
 					writeOffRawItem << new QStandardItem(QString::number(writeOffRaw->GetID()))
 						<< new QStandardItem(writeOffRaw->GetDate().c_str())
+						<< new QStandardItem(writeOffRaw->GetExecutionDate().c_str())
 						<< new QStandardItem(status->GetCode().c_str())
 						<< new QStandardItem(status->GetName().c_str());
 
@@ -264,8 +302,7 @@ void CreateWOffRDlg::CreateWriteOffRaw()
 					BusinessLayer::Employee *stockEmployee = new BusinessLayer::Employee();
 					BusinessLayer::Currency *currency = new BusinessLayer::Currency;
 
-					if (!employee->GetEmployeeByID(dialogBL->GetOrmasDal(), writeOffRaw->GetEmployeeID(), errorMessage)
-						|| !currency->GetCurrencyByID(dialogBL->GetOrmasDal(), writeOffRaw->GetCurrencyID(), errorMessage))
+					if (!currency->GetCurrencyByID(dialogBL->GetOrmasDal(), writeOffRaw->GetCurrencyID(), errorMessage))
 					{
 						dialogBL->CancelTransaction(errorMessage);
 						QMessageBox::information(NULL, QString(tr("Warning")),
@@ -389,12 +426,20 @@ void CreateWOffRDlg::EditWriteOffRaw()
 	{
 		if (writeOffRaw->GetStockEmployeeID() != stockEmployeeEdit->text().toInt() || QString(writeOffRaw->GetDate().c_str()) != dateEdit->text() ||
 			writeOffRaw->GetEmployeeID() != employeeEdit->text().toInt() || writeOffRaw->GetCount() != prodCountEdit->text().toDouble() ||
-			writeOffRaw->GetSum() != sumEdit->text().toDouble()
+			writeOffRaw->GetSum() != sumEdit->text().toDouble() || writeOffRaw->GetStatusID() != statusEdit->text().toInt()
 			|| writeOffRaw->GetCurrencyID() != currencyCmb->currentData().toInt())
 		{
 			DataForm *parentDataForm = (DataForm*) parentForm;
-			SetWriteOffRawParams(employeeEdit->text().toInt(), dateEdit->text(), stockEmployeeEdit->text().toInt(), prodCountEdit->text().toDouble(),
-				sumEdit->text().toDouble(), statusEdit->text().toInt(), currencyCmb->currentData().toInt(), writeOffRaw->GetID());
+			if (!execDateWidget->isVisible())
+			{
+				SetWriteOffRawParams(employeeEdit->text().toInt(), dateEdit->text(), "", stockEmployeeEdit->text().toInt(), prodCountEdit->text().toDouble(),
+					sumEdit->text().toDouble(), statusEdit->text().toInt(), currencyCmb->currentData().toInt(), writeOffRaw->GetID());
+			}
+			else
+			{
+				SetWriteOffRawParams(employeeEdit->text().toInt(), dateEdit->text(), execDateEdit->text(), stockEmployeeEdit->text().toInt(), prodCountEdit->text().toDouble(),
+					sumEdit->text().toDouble(), statusEdit->text().toInt(), currencyCmb->currentData().toInt(), writeOffRaw->GetID());
+			}
 			dialogBL->StartTransaction(errorMessage);
 			if (dialogBL->UpdateWriteOffRaw(writeOffRaw, errorMessage))
 			{
@@ -406,14 +451,14 @@ void CreateWOffRDlg::EditWriteOffRaw()
 						QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
 						QModelIndex mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
 						itemModel->item(mIndex.row(), 1)->setText(writeOffRaw->GetDate().c_str());
+						itemModel->item(mIndex.row(), 2)->setText(writeOffRaw->GetExecutionDate().c_str());
 
 						BusinessLayer::Employee *employee = new BusinessLayer::Employee();
 						BusinessLayer::Employee *stockEmployee = new BusinessLayer::Employee();
 						BusinessLayer::Currency *currency = new BusinessLayer::Currency();
 						BusinessLayer::Status *status = new BusinessLayer::Status;
 
-						if (!employee->GetEmployeeByID(dialogBL->GetOrmasDal(), writeOffRaw->GetEmployeeID(), errorMessage)
-							|| !currency->GetCurrencyByID(dialogBL->GetOrmasDal(), writeOffRaw->GetCurrencyID(), errorMessage)
+						if (!currency->GetCurrencyByID(dialogBL->GetOrmasDal(), writeOffRaw->GetCurrencyID(), errorMessage)
 							|| !status->GetStatusByID(dialogBL->GetOrmasDal(), writeOffRaw->GetStatusID(), errorMessage))
 						{
 							dialogBL->CancelTransaction(errorMessage);
@@ -440,8 +485,8 @@ void CreateWOffRDlg::EditWriteOffRaw()
 								return;
 							}
 						}
-						itemModel->item(mIndex.row(), 2)->setText(status->GetCode().c_str());
-						itemModel->item(mIndex.row(), 3)->setText(status->GetName().c_str());
+						itemModel->item(mIndex.row(), 3)->setText(status->GetCode().c_str());
+						itemModel->item(mIndex.row(), 4)->setText(status->GetName().c_str());
 						if (writeOffRaw->GetEmployeeID() > 0)
 						{
 							BusinessLayer::Position *ePosition = new BusinessLayer::Position();
@@ -455,17 +500,17 @@ void CreateWOffRDlg::EditWriteOffRaw()
 								delete ePosition;
 								return;
 							}
-							itemModel->item(mIndex.row(), 4)->setText(employee->GetName().c_str());
-							itemModel->item(mIndex.row(), 5)->setText(employee->GetSurname().c_str());
-							itemModel->item(mIndex.row(), 6)->setText(employee->GetPhone().c_str());
-							itemModel->item(mIndex.row(), 7)->setText(ePosition->GetName().c_str());
+							itemModel->item(mIndex.row(), 5)->setText(employee->GetName().c_str());
+							itemModel->item(mIndex.row(), 6)->setText(employee->GetSurname().c_str());
+							itemModel->item(mIndex.row(), 7)->setText(employee->GetPhone().c_str());
+							itemModel->item(mIndex.row(), 8)->setText(ePosition->GetName().c_str());
 						}
 						else
 						{
-							itemModel->item(mIndex.row(), 4)->setText("");
 							itemModel->item(mIndex.row(), 5)->setText("");
 							itemModel->item(mIndex.row(), 6)->setText("");
 							itemModel->item(mIndex.row(), 7)->setText("");
+							itemModel->item(mIndex.row(), 8)->setText("");
 						}
 						if (writeOffRaw->GetStockEmployeeID() > 0)
 						{
@@ -480,26 +525,26 @@ void CreateWOffRDlg::EditWriteOffRaw()
 								delete sePosition;
 								return;
 							}
-							itemModel->item(mIndex.row(), 8)->setText(stockEmployee->GetName().c_str());
-							itemModel->item(mIndex.row(), 9)->setText(stockEmployee->GetSurname().c_str());
-							itemModel->item(mIndex.row(), 10)->setText(stockEmployee->GetPhone().c_str());
-							itemModel->item(mIndex.row(), 11)->setText(sePosition->GetName().c_str());
+							itemModel->item(mIndex.row(), 9)->setText(stockEmployee->GetName().c_str());
+							itemModel->item(mIndex.row(), 10)->setText(stockEmployee->GetSurname().c_str());
+							itemModel->item(mIndex.row(), 11)->setText(stockEmployee->GetPhone().c_str());
+							itemModel->item(mIndex.row(), 12)->setText(sePosition->GetName().c_str());
 						}
 						else
 						{
-							itemModel->item(mIndex.row(), 8)->setText("");
 							itemModel->item(mIndex.row(), 9)->setText("");
 							itemModel->item(mIndex.row(), 10)->setText("");
 							itemModel->item(mIndex.row(), 11)->setText("");
+							itemModel->item(mIndex.row(), 12)->setText("");
 						}
 
-						itemModel->item(mIndex.row(), 12)->setText(QString::number(writeOffRaw->GetCount()));
-						itemModel->item(mIndex.row(), 13)->setText(QString::number(writeOffRaw->GetSum()));
-						itemModel->item(mIndex.row(), 14)->setText(currency->GetShortName().c_str());
-						itemModel->item(mIndex.row(), 15)->setText(QString::number(writeOffRaw->GetStockEmployeeID()));
-						itemModel->item(mIndex.row(), 16)->setText(QString::number(writeOffRaw->GetEmployeeID()));
-						itemModel->item(mIndex.row(), 17)->setText(QString::number(writeOffRaw->GetStatusID()));
-						itemModel->item(mIndex.row(), 18)->setText(QString::number(writeOffRaw->GetCurrencyID()));
+						itemModel->item(mIndex.row(), 13)->setText(QString::number(writeOffRaw->GetCount()));
+						itemModel->item(mIndex.row(), 14)->setText(QString::number(writeOffRaw->GetSum()));
+						itemModel->item(mIndex.row(), 15)->setText(currency->GetShortName().c_str());
+						itemModel->item(mIndex.row(), 16)->setText(QString::number(writeOffRaw->GetStockEmployeeID()));
+						itemModel->item(mIndex.row(), 17)->setText(QString::number(writeOffRaw->GetEmployeeID()));
+						itemModel->item(mIndex.row(), 18)->setText(QString::number(writeOffRaw->GetStatusID()));
+						itemModel->item(mIndex.row(), 19)->setText(QString::number(writeOffRaw->GetCurrencyID()));
 
 						emit itemModel->dataChanged(mIndex, mIndex);
 						delete employee;
@@ -839,3 +884,66 @@ void CreateWOffRDlg::TextEditChanged()
 	}
 }
 
+void CreateWOffRDlg::StatusWasChenged()
+{
+	errorMessage = "";
+	statusMap = BusinessLayer::Status::GetStatusesAsMap(dialogBL->GetOrmasDal(), errorMessage);
+	if (statusEdit->text().toInt() == statusMap.find("EXECUTED")->second)
+	{
+		execDateWidget->setVisible(true);
+		execDateEdit->setDateTime(QDateTime::currentDateTime());
+	}
+	else
+	{
+		execDateWidget->setVisible(false);
+		execDateEdit->setDateTime(QDateTime::fromString("01.01.2000", "dd.mm.yyyy"));
+	}
+}
+
+bool CreateWOffRDlg::CheckAccess()
+{
+	std::map<std::string, int> rolesMap = BusinessLayer::Role::GetRolesAsMap(dialogBL->GetOrmasDal(), errorMessage);
+	if (0 == rolesMap.size())
+		return false;
+	BusinessLayer::Status *status = new BusinessLayer::Status;
+	if (!status->GetStatusByID(dialogBL->GetOrmasDal(), writeOffRaw->GetStatusID(), errorMessage))
+	{
+		QMessageBox::information(NULL, QString(tr("Warning")),
+			QString(tr(errorMessage.c_str())),
+			QString(tr("Ok")));
+		errorMessage.clear();
+		delete status;
+		return false;
+	}
+
+	if (0 == status->GetName().compare("EXECUTED"))
+	{
+		if (mainForm->GetLoggedUser()->GetRoleID() == rolesMap.find("SUPERUSER")->second ||
+			mainForm->GetLoggedUser()->GetRoleID() == rolesMap.find("CHIEF ACCOUNTANT")->second ||
+			mainForm->GetLoggedUser()->GetRoleID() == rolesMap.find("ACCOUNTANT")->second)
+		{
+			return true;
+		}
+		else
+		{
+			QMessageBox::information(NULL, QString(tr("Warning")),
+				QString(tr("This document have an \"EXECUTED\" status. The document with \"EXECUTED\" status cannot be changed!")),
+				QString(tr("Ok")));
+			errorMessage.clear();
+			delete status;
+			return false;
+		}
+	}
+
+	if (0 == status->GetName().compare("ERROR"))
+	{
+		QMessageBox::information(NULL, QString(tr("Warning")),
+			QString(tr("This document have an \"ERROR\" status. The document with \"ERROR\" status cannot be changed!")),
+			QString(tr("Ok")));
+		errorMessage.clear();
+		delete status;
+		return false;
+	}
+
+	return true;
+}

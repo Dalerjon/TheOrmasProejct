@@ -195,26 +195,8 @@ bool CreateInvDlg::FillDlgElements(QTableView* cTable)
 			cTable->model()->data(cTable->model()->index(mIndex.row(), 14)).toDouble(),
 			cTable->model()->data(cTable->model()->index(mIndex.row(), 18)).toInt(),
 			cTable->model()->data(cTable->model()->index(mIndex.row(), 19)).toInt());
-		BusinessLayer::Status *status = new BusinessLayer::Status;
-		if (!status->GetStatusByID(dialogBL->GetOrmasDal(), inventorization->GetStatusID(), errorMessage))
-		{
-			QMessageBox::information(NULL, QString(tr("Warning")),
-				QString(tr(errorMessage.c_str())),
-				QString(tr("Ok")));
-			errorMessage.clear();
-			delete status;
-			return false;
-		}
-		if (0 == status->GetName().compare("EXECUTED"))
-		{
-			QMessageBox::information(NULL, QString(tr("Warning")),
-				QString(tr("This document have an \"EXECUTED\" status. The document with \"EXECUTED\" status cannot be changed!")),
-				QString(tr("Ok")));
-			errorMessage.clear();
-			delete status;
-			return false;
-		}
-		return true;
+		
+		return CheckAccess();
 	}
 	else
 	{
@@ -849,4 +831,52 @@ void CreateInvDlg::TextEditChanged()
 	{
 		sumEdit->setText(sumEdit->text().replace("..", "."));
 	}
+}
+
+bool CreateInvDlg::CheckAccess()
+{
+	std::map<std::string, int> rolesMap = BusinessLayer::Role::GetRolesAsMap(dialogBL->GetOrmasDal(), errorMessage);
+	if (0 == rolesMap.size())
+		return false;
+	BusinessLayer::Status *status = new BusinessLayer::Status;
+	if (!status->GetStatusByID(dialogBL->GetOrmasDal(), inventorization->GetStatusID(), errorMessage))
+	{
+		QMessageBox::information(NULL, QString(tr("Warning")),
+			QString(tr(errorMessage.c_str())),
+			QString(tr("Ok")));
+		errorMessage.clear();
+		delete status;
+		return false;
+	}
+
+	if (0 == status->GetName().compare("EXECUTED"))
+	{
+		if (mainForm->GetLoggedUser()->GetRoleID() == rolesMap.find("SUPERUSER")->second ||
+			mainForm->GetLoggedUser()->GetRoleID() == rolesMap.find("CHIEF ACCOUNTANT")->second ||
+			mainForm->GetLoggedUser()->GetRoleID() == rolesMap.find("ACCOUNTANT")->second)
+		{
+			return true;
+		}
+		else
+		{
+			QMessageBox::information(NULL, QString(tr("Warning")),
+				QString(tr("This document have an \"EXECUTED\" status. The document with \"EXECUTED\" status cannot be changed!")),
+				QString(tr("Ok")));
+			errorMessage.clear();
+			delete status;
+			return false;
+		}
+	}
+
+	if (0 == status->GetName().compare("ERROR"))
+	{
+		QMessageBox::information(NULL, QString(tr("Warning")),
+			QString(tr("This document have an \"ERROR\" status. The document with \"ERROR\" status cannot be changed!")),
+			QString(tr("Ok")));
+		errorMessage.clear();
+		delete status;
+		return false;
+	}
+
+	return true;
 }

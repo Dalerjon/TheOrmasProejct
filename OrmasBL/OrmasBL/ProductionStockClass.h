@@ -58,8 +58,8 @@ namespace BusinessLayer
 
 		bool ChangingByProduction(DataLayer::OrmasDal& ormasDal, int cpID, std::string& errorMessage);
 		bool ChangingByProduction(DataLayer::OrmasDal& ormasDal, int cpID, std::map<int, double> pProdCountMap, std::string& errorMessage);
-		bool ChangingByReceiptRaw(DataLayer::OrmasDal& ormasDal, int rrID, std::string& errorMessage);
-		bool ChangingByReceiptRaw(DataLayer::OrmasDal& ormasDal, int rrID, std::map<int, double> pProdCountMap, double pSum, std::string& errorMessage);
+		bool ChangingByStockTransfer(DataLayer::OrmasDal& ormasDal, int rrID, std::string& errorMessage);
+		bool ChangingByStockTransfer(DataLayer::OrmasDal& ormasDal, int rrID, std::map<int, double> pProdCountMap, double pSum, std::string& errorMessage);
 		bool ChangingByConsumeProduct(DataLayer::OrmasDal& ormasDal, int cpID, std::string& errorMessage);
 		bool ChangingByConsumeProduct(DataLayer::OrmasDal& ormasDal, int cpID, std::map<int, double> pProdCountMap, double pSum, std::string& errorMessage);
 		bool ChangingByConsumeRaw(DataLayer::OrmasDal& ormasDal, int cpID, std::string& errorMessage);

@@ -167,6 +167,8 @@ namespace BusinessLayer
 
 	bool ProductionList::GetProductionListByID(DataLayer::OrmasDal& ormasDal, int pID, std::string& errorMessage)
 	{
+		if (pID <= 0)
+			return false;
 		id = pID;
 		std::string filter = GenerateFilter(ormasDal);
 		std::vector<DataLayer::productionListViewCollection> productionListVector = ormasDal.GetProductionList(errorMessage, filter);

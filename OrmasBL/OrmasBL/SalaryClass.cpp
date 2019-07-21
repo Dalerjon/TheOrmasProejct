@@ -185,6 +185,8 @@ namespace BusinessLayer{
 
 	bool Salary::GetSalaryByID(DataLayer::OrmasDal& ormasDal, int sID, std::string& errorMessage)
 	{
+		if (sID <= 0)
+			return false;
 		id = sID;
 		std::string filter = GenerateFilter(ormasDal);
 		std::vector<DataLayer::salariesViewCollection> salaryVector = ormasDal.GetSalaries(errorMessage, filter);

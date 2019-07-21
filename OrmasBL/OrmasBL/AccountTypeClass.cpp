@@ -140,6 +140,8 @@ namespace BusinessLayer{
 
 	bool AccountType::GetAccountTypeByID(DataLayer::OrmasDal& ormasDal, int aID, std::string& errorMessage)
 	{
+		if (aID <= 0)
+			return false;
 		id = aID;
 		std::string filter = GenerateFilter(ormasDal);
 		std::vector<DataLayer::accountTypeCollection> accountTypesVector = ormasDal.GetAccountType(errorMessage, filter);
@@ -160,6 +162,8 @@ namespace BusinessLayer{
 
 	bool AccountType::GetAccountTypeByNumber(DataLayer::OrmasDal& ormasDal, int aNumber, std::string& errorMessage)
 	{
+		if (aNumber <= 0)
+			return false;
 		number = aNumber;
 		std::string filter = GenerateFilter(ormasDal);
 		std::vector<DataLayer::accountTypeCollection> accountTypesVector = ormasDal.GetAccountType(errorMessage, filter);

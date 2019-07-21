@@ -135,6 +135,8 @@ namespace BusinessLayer{
 
 	bool Relation::GetRelationByID(DataLayer::OrmasDal& ormasDal, int bID, std::string& errorMessage)
 	{
+		if (bID <= 0)
+			return false;
 		id = bID;
 		std::string filter = GenerateFilter(ormasDal);
 		std::vector<DataLayer::relationsViewCollection> relationVector = ormasDal.GetRelations(errorMessage, filter);

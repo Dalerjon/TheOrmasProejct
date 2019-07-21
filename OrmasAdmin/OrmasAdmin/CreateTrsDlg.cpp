@@ -224,6 +224,15 @@ bool CreateTrsDlg::FillDlgElements(QTableView* cTable)
 			delete status;
 			return false;
 		}
+		if (0 == status->GetName().compare("ERROR"))
+		{
+			QMessageBox::information(NULL, QString(tr("Warning")),
+				QString(tr("This document have an \"ERROR\" status. The document with \"ERROR\" status cannot be changed!")),
+				QString(tr("Ok")));
+			errorMessage.clear();
+			delete status;
+			return false;
+		}
 		return true;
 	}
 	else

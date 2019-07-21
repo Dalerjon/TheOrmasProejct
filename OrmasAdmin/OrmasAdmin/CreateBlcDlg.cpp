@@ -153,7 +153,8 @@ void CreateBlcDlg::CreateBalance()
 							<< new QStandardItem("");
 					}
 
-					balanceItem << new QStandardItem(QString::number(subaccount->GetCurrentBalance()))
+					balanceItem << new QStandardItem(subaccount->GetNumber().c_str())
+						<< new QStandardItem(QString::number(subaccount->GetCurrentBalance()))
 						<< new QStandardItem(currency->GetShortName().c_str())
 						<< new QStandardItem(QString::number(balance->GetUserID()))
 						<< new QStandardItem(QString::number(balance->GetSubaccountID()));
@@ -237,10 +238,11 @@ void CreateBlcDlg::EditBalance()
 							itemModel->item(mIndex.row(), 2)->setText("");
 						}
 
-						itemModel->item(mIndex.row(), 3)->setText(QString::number(subaccount->GetCurrentBalance()));
-						itemModel->item(mIndex.row(), 4)->setText(currency->GetShortName().c_str());
-						itemModel->item(mIndex.row(), 5)->setText(QString::number(balance->GetUserID()));
-						itemModel->item(mIndex.row(), 6)->setText(QString::number(balance->GetSubaccountID()));
+						itemModel->item(mIndex.row(), 3)->setText(subaccount->GetNumber().c_str());
+						itemModel->item(mIndex.row(), 4)->setText(QString::number(subaccount->GetCurrentBalance()));
+						itemModel->item(mIndex.row(), 5)->setText(currency->GetShortName().c_str());
+						itemModel->item(mIndex.row(), 6)->setText(QString::number(balance->GetUserID()));
+						itemModel->item(mIndex.row(), 7)->setText(QString::number(balance->GetSubaccountID()));
 						emit itemModel->dataChanged(mIndex, mIndex);
 
 						delete user;

@@ -218,9 +218,18 @@ void GenerateSalesRep::Generate()
 		std::map<int, double> productCount;
 		std::map<int, double> productSum;
 		std::vector<BusinessLayer::OrderListView> vecOrderList;
+
+		BusinessLayer::Return ret;
+		BusinessLayer::ReturnList returnList;
+		std::string returnListFilter;
+		std::map<int, double> productCountRet;
+		std::map<int, double> productSumRet;
+		std::vector<BusinessLayer::ReturnListView> vecReturnList;
+
 		BusinessLayer::Product product;
 		BusinessLayer::NetCost nCost;
 		double sum = 0;
+		double sumRet = 0;
 		QString documentBody;
 		QString tableBody;
 
@@ -231,6 +240,13 @@ void GenerateSalesRep::Generate()
 		for each (BusinessLayer::EmployeeView expeditor in vecEmployee)
 		{
 			tableBody.clear();
+
+			ret.Clear();
+			ret.SetStatusID(status.GetID());
+			ret.SetEmployeeID(expeditor.GetID());
+			std::string filterRet = ret.GenerateFilterForPeriod(dialogBL->GetOrmasDal(), fromDateEdit->text().toUtf8().constData(), tillDateEdit->text().toUtf8().constData());
+			std::vector<BusinessLayer::ReturnView> vecReturn = dialogBL->GetAllDataForClass<BusinessLayer::ReturnView>(errorMessage, filterRet);
+
 			order.Clear();
 			order.SetStatusID(status.GetID());
 			order.SetEmployeeID(expeditor.GetID());
@@ -247,7 +263,10 @@ void GenerateSalesRep::Generate()
 				{
 					productCount.clear();
 					productSum.clear();
+					productCountRet.clear();
+					productSumRet.clear();
 					sum = 0;
+					sumRet = 0;
 					tableBody += "Сотрудник: ";
 					tableBody += expeditor.GetSurname().c_str();
 					tableBody += " ";
@@ -260,8 +279,12 @@ void GenerateSalesRep::Generate()
 					tableBody += "<table width='100 % ' border = 1px  cellpadding=5 style='border-spacing:0px; '>";
 					tableBody += "<th><b>" + QString::fromUtf8("ID продукта")+"< / b>< / th>";
 					tableBody += "<th><b>Наименование продукта</b></th>";
-					tableBody += "<th><b>Количество</b></th>";
-					tableBody += "<th><b>Сумма</b></th>";
+					tableBody += "<th><b>Продажа количество</b></th>";
+					tableBody += "<th><b>Продажа сумма</b></th>";
+					tableBody += "<th><b>Возврат количество</b></th>";
+					tableBody += "<th><b>Возврат сумма</b></th>";
+					tableBody += "<th><b>Итого количество</b></th>";
+					tableBody += "<th><b>Итого сумма</b></th>";
 					
 					for each (auto item in vecOrder)
 					{
@@ -289,6 +312,33 @@ void GenerateSalesRep::Generate()
 						}
 					}
 
+					for each (auto item in vecReturn)
+					{
+						returnList.Clear();
+						returnListFilter.clear();
+						returnList.SetReturnID(item.GetID());
+						returnListFilter = returnList.GenerateFilter(dialogBL->GetOrmasDal());
+						vecReturnList.clear();
+						vecReturnList = dialogBL->GetAllDataForClass<BusinessLayer::ReturnListView>(errorMessage, returnListFilter);
+						if (vecReturnList.size() > 0)
+						{
+							for each (auto listItem in vecReturnList)
+							{
+								if (productCountRet.find(listItem.GetProductID()) != productCountRet.end())
+								{
+									productCountRet.find(listItem.GetProductID())->second = productCountRet.find(listItem.GetProductID())->second + listItem.GetCount();
+									productSumRet.find(listItem.GetProductID())->second = productSumRet.find(listItem.GetProductID())->second + listItem.GetSum();
+								}
+								else
+								{
+									productCountRet.insert(std::make_pair(listItem.GetProductID(), listItem.GetCount()));
+									productSumRet.insert(std::make_pair(listItem.GetProductID(), listItem.GetSum()));
+								}
+							}
+						}
+					}
+
+
 					if (productCount.size() != productSum.size())
 					{
 						QMessageBox::information(NULL, QString(tr("Info")),
@@ -303,20 +353,64 @@ void GenerateSalesRep::Generate()
 						product.GetProductByID(dialogBL->GetOrmasDal(), mapCountItem.first, errorMessage);
 						nCost.Clear();
 						nCost.GetNetCostByProductID(dialogBL->GetOrmasDal(), mapCountItem.first, errorMessage);
+						
+						if (productCountRet.find(mapCountItem.first) != productCountRet.end())
+						{
+							sumRet += productSumRet.find(mapCountItem.first)->second;
+						}
+
 						sum += productSum.find(mapCountItem.first)->second;
 						tableBody += "<tr>";
 						tableBody += "<td>" + QString::number(mapCountItem.first) + "</td>";
 						tableBody += "<td>" + QString(product.GetName().c_str()) + "</td>";
 						tableBody += "<td>" + QString::number(mapCountItem.second) + "</td>";
 						tableBody += "<td>" + QString::number(productSum.find(mapCountItem.first)->second, 'f', 3) + "</td>";
+						if (productCountRet.find(mapCountItem.first) != productCountRet.end())
+						{
+							tableBody += "<td>" + QString::number(productCountRet.find(mapCountItem.first)->second) + "</td>";
+						}
+						else
+						{
+							tableBody += "<td> 0 </td>";
+						}
+						if (productCountRet.find(mapCountItem.first) != productCountRet.end())
+						{
+							tableBody += "<td>" + QString::number(productSumRet.find(mapCountItem.first)->second, 'f', 3) + "</td>";
+						}
+						else
+						{
+							tableBody += "<td> 0 </td>";
+						}
+						if (productCountRet.find(mapCountItem.first) != productCountRet.end())
+						{
+							tableBody += "<td>" + QString::number(mapCountItem.second - productCountRet.find(mapCountItem.first)->second) + "</td>";
+						}
+						else
+						{
+							tableBody += "<td>" + QString::number(mapCountItem.second) + "</td>";
+						}
+						if (productCountRet.find(mapCountItem.first) != productCountRet.end())
+						{
+							tableBody += "<td>" + QString::number(productSum.find(mapCountItem.first)->second - productSumRet.find(mapCountItem.first)->second) + "</td>";
+						}
+						else
+						{
+							tableBody += "<td>" + QString::number(productSum.find(mapCountItem.first)->second, 'f', 3) + "</td>";
+						}
+
+						
 						tableBody += "</tr>";
 					}
 
 					tableBody += "<tr>";
 					tableBody += "<td></td>";
 					tableBody += "<td></td>";
-					tableBody += "<td>"+ QString::fromUtf8("Вся выручка") + "</td>";
+					tableBody += "<td></td>";
+					tableBody += "<td></td>";
+					tableBody += "<td>" + QString::fromUtf8("Вся выручка") + "</td>";
 					tableBody += "<td>" + QString::number(sum, 'f', 3) + "</td>";
+					tableBody += "<td>"+ QString::fromUtf8("Вся выручка с вычетом возврата") + "</td>";
+					tableBody += "<td>" + QString::number(sum-sumRet, 'f', 3) + "</td>";
 					tableBody += "</tr>";
 					tableBody += "</table>";
 					tableBody += "<br/><br/>";

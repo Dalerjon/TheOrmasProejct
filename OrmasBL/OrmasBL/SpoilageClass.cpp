@@ -3,6 +3,7 @@
 #include "StatusClass.h"
 #include "UserClass.h"
 #include "EntryClass.h"
+#include "EntryOperationRelationClass.h"
 #include "StatusClass.h"
 #include "CompanyAccountRelationClass.h"
 #include "CompanyEmployeeRelationClass.h"
@@ -180,6 +181,11 @@ namespace BusinessLayer
 			errorMessage = "Cannot delete document with \"EXECUTED\" status!";
 			return false;
 		}
+		if (spl.GetStatusID() == statusMap.find("ERROR")->second)
+		{
+			errorMessage = "Cannot delete document with \"ERROR\" status!";
+			return false;
+		}
 		if (ormasDal.DeleteSpoilage(id, errorMessage))
 		{
 			if (ormasDal.DeleteListBySpoilageID(id, errorMessage))
@@ -332,6 +338,8 @@ namespace BusinessLayer
 
 	bool Spoilage::GetSpoilageByID(DataLayer::OrmasDal& ormasDal, int oID, std::string& errorMessage)
 	{
+		if (oID <= 0)
+			return false;
 		id = oID;
 		std::string filter = GenerateFilter(ormasDal);
 		std::vector<DataLayer::spoilageViewCollection> spoilageVector = ormasDal.GetSpoilage(errorMessage, filter);
@@ -479,12 +487,22 @@ namespace BusinessLayer
 	bool Spoilage::CreateEntry(DataLayer::OrmasDal& ormasDal, int debAccID, double currentSum, int credAccID, std::string oExecDate, std::string& errorMessage)
 	{
 		Entry entry;
+		EntryOperationRelation eoRelation;
 		entry.SetDate(oExecDate);
 		entry.SetDebitingAccountID(debAccID);
 		entry.SetValue(currentSum);
 		entry.SetCreditingAccountID(credAccID);
 		entry.SetDescription(wstring_to_utf8(L"Операция списания"));
-		if (!entry.CreateEntry(ormasDal, errorMessage))
+		if (entry.CreateEntry(ormasDal, errorMessage))
+		{
+			eoRelation.SetEntryID(entry.GetID());
+			eoRelation.SetOperationID(id);
+			if (!eoRelation.CreateEntryOperationRelation(ormasDal, errorMessage))
+			{
+				return false;
+			}
+		}
+		else
 		{
 			return false;
 		}
@@ -493,22 +511,43 @@ namespace BusinessLayer
 	bool Spoilage::CreateEntry(DataLayer::OrmasDal& ormasDal, int debAccID, double currentSum, int credAccID, double previousSum, std::string oExecDate, std::string& errorMessage)
 	{
 		Entry entry;
+		EntryOperationRelation eoRelation;
 		entry.SetDate(oExecDate);
 		entry.SetDebitingAccountID(credAccID);
 		entry.SetValue(previousSum);
 		entry.SetCreditingAccountID(debAccID);
-		entry.SetDescription(wstring_to_utf8(L"Операция списания"));
-		if (!entry.CreateEntry(ormasDal, errorMessage))
+		entry.SetDescription(wstring_to_utf8(L"Отмена списания"));
+		if (entry.CreateEntry(ormasDal, errorMessage, true))
+		{
+			eoRelation.SetEntryID(entry.GetID());
+			eoRelation.SetOperationID(id);
+			if (!eoRelation.CreateEntryOperationRelation(ormasDal, errorMessage))
+			{
+				return false;
+			}
+		}
+		else
 		{
 			return false;
 		}
+		entry.Clear();
+		eoRelation.Clear();
 		entry.Clear();
 		entry.SetDate(oExecDate);
 		entry.SetDebitingAccountID(debAccID);
 		entry.SetValue(currentSum);
 		entry.SetCreditingAccountID(credAccID);
 		entry.SetDescription(wstring_to_utf8(L"Операция списания"));
-		if (!entry.CreateEntry(ormasDal, errorMessage))
+		if (entry.CreateEntry(ormasDal, errorMessage))
+		{
+			eoRelation.SetEntryID(entry.GetID());
+			eoRelation.SetOperationID(id);
+			if (!eoRelation.CreateEntryOperationRelation(ormasDal, errorMessage))
+			{
+				return false;
+			}
+		}
+		else
 		{
 			return false;
 		}

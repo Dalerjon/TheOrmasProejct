@@ -21,6 +21,10 @@ private slots :
 	void OpenClientForm();
 	void OpenEmployeeForm();
 	void OpenPurveyorForm();
+	void OpenAccountableForm();
+	void OpenBorrowerForm();
+	void OpenCreditorForm(){};
+	void OpenShareholderForm(){};
 	void OpenCompanyEmployeeForm();
 	void OpenCashboxEmployeeForm();
 	void OpenWarehouseEmployeeForm();
@@ -36,6 +40,8 @@ private slots :
 	void OpenSpecificationListForm();
 	void OpenPriceForm();
 	void OpenNetCostForm();
+	void OpenEmployeeProductForm();
+	void OpenBranchProductForm();
 
 	void OpenOrderForm();	
 	void OpenOrderListForm();
@@ -88,7 +94,7 @@ private slots :
 	void OpenStockRawForm();
 	void OpenStockProductForm();
 	void OpenOrderRawForm();
-	void OpenReceiptRawForm();
+	void OpenStockTransferForm();
 	void OpenConsumeRawForm();
 	void OpenWriteOffRawForm();
 	void OpenTransportForm();

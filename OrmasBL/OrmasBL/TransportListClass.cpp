@@ -161,6 +161,8 @@ namespace BusinessLayer
 
 	bool TransportList::GetTransportListByID(DataLayer::OrmasDal& ormasDal, int tID, std::string& errorMessage)
 	{
+		if (tID <= 0)
+			return false;
 		id = tID;
 		std::string filter = GenerateFilter(ormasDal);
 		std::vector<DataLayer::transportListViewCollection> transportListVector = ormasDal.GetTransportList(errorMessage, filter);
@@ -184,6 +186,10 @@ namespace BusinessLayer
 
 	bool TransportList::GetTransportListByTransportAndProductID(DataLayer::OrmasDal& ormasDal, int tID, int pID, std::string& errorMessage)
 	{
+		if (tID <= 0)
+			return false;
+		if (pID <= 0)
+			return false;
 		transportID = tID;
 		productID = pID;
 		std::string filter = GenerateFilter(ormasDal);
@@ -296,7 +302,7 @@ namespace BusinessLayer
 		entry.SetDebitingAccountID(credAccID);
 		entry.SetValue(previousSum);
 		entry.SetCreditingAccountID(debAccID);
-		entry.SetDescription(wstring_to_utf8(L"Коррекция себестоимости товара в транспорте"));
+		entry.SetDescription(wstring_to_utf8(L"Отмена коррекция себестоимости товара в транспорте"));
 		if (!entry.CreateEntry(ormasDal, errorMessage, true))
 		{
 			return false;

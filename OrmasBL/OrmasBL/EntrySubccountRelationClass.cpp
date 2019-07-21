@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "EntrySubccountRelationClass.h"
+#include "EntrySubaccountRelationClass.h"
 
 
 namespace BusinessLayer{
@@ -122,7 +122,7 @@ namespace BusinessLayer{
 
 	std::vector<int> EntrySubaccountRelation::GetAllSubaccountByEntryID(DataLayer::OrmasDal& ormasDal, int eID, std::string& errorMessage)
 	{
-		std::vector<int> accountIDVector;
+		std::vector<int> subaccountIDVector;
 		EntrySubaccountRelation aeRelation;
 		aeRelation.SetSubaccountID(0);
 		aeRelation.SetEntryID(eID);
@@ -132,10 +132,10 @@ namespace BusinessLayer{
 		{
 			for each (auto item in entrySubaccountVector)
 			{
-				accountIDVector.push_back(std::get<0>(item));
+				subaccountIDVector.push_back(std::get<2>(item));
 			}
 		}
-		return accountIDVector;
+		return subaccountIDVector;
 	}
 
 

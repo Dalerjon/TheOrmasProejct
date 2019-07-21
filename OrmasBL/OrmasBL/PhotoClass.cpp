@@ -145,6 +145,8 @@ namespace BusinessLayer{
 
 	bool Photo::GetPhotoByID(DataLayer::OrmasDal& ormasDal, int bID, std::string& errorMessage)
 	{
+		if (bID <= 0)
+			return false;
 		id = bID;
 		std::string filter = GenerateFilter(ormasDal);
 		std::vector<DataLayer::photosCollection> photoVector = ormasDal.GetPhotos(errorMessage, filter);

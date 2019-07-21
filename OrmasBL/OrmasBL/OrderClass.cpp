@@ -3,6 +3,7 @@
 #include "BalanceClass.h"
 #include "UserClass.h"
 #include "EntryClass.h"
+#include "EntryOperationRelationClass.h"
 #include "StatusClass.h"
 #include "CompanyAccountRelationClass.h"
 #include "CompanyEmployeeRelationClass.h"
@@ -219,6 +220,11 @@ namespace BusinessLayer
 			errorMessage = "Cannot delete document with \"EXECUTED\" status!";
 			return false;
 		}
+		if (ord.GetStatusID() == statusMap.find("ERROR")->second)
+		{
+			errorMessage = "Cannot delete document with \"ERROR\" status!";
+			return false;
+		}
 		if (ormasDal.DeleteOrder(id, errorMessage))
 		{			
 			if (ormasDal.DeleteListByOrderID(id, errorMessage))
@@ -262,7 +268,65 @@ namespace BusinessLayer
 		//ormasDal.StartTransaction(errorMessage);
 		if (0 != id && ormasDal.UpdateOrder(id, clientID, date, executionDate, employeeID, count, sum, statusID, currencyID, errorMessage))
 		{
-			if (statusID == statusMap.find("EXECUTED")->second && previousStatusID != statusMap.find("EXECUTED")->second)
+			if (previousStatusID != statusMap.find("EXECUTED")->second)
+			{
+				if (statusID == statusMap.find("EXECUTED")->second)
+				{
+					if (CreateOrderEntry(ormasDal, clientID, employeeID, sum, currencyID, executionDate, errorMessage))
+					{
+						if (ChangesAtTransport(ormasDal, id, errorMessage))
+						{
+							//ormasDal.CommitTransaction(errorMessage);
+							return true;
+						}
+						else
+						{
+							//ormasDal.CancelTransaction(errorMessage);
+							return false;
+						}
+					}
+					else
+					{
+						//ormasDal.CommitTransaction(errorMessage);
+						return false;
+					}
+				}
+				else
+				{
+					return true;
+				}
+			}
+			else
+			{
+				if (statusID == statusMap.find("ERROR")->second)
+				{
+
+					if (CreateOrderEntryCancel(ormasDal, clientID, employeeID, sum, currencyID, executionDate, errorMessage))
+					{
+						if (ChangesAtTransportCancel(ormasDal, id, errorMessage))
+						{
+							//ormasDal.CommitTransaction(errorMessage);
+							return true;
+						}
+						else
+						{
+							//ormasDal.CancelTransaction(errorMessage);
+							return false;
+						}
+					}
+					else
+					{
+						//ormasDal.CommitTransaction(errorMessage);
+						return false;
+					}
+				}
+				else
+				{
+					errorMessage = "Cannot update this document, only \"Error\" status is acceptable!";
+					return false;
+				}
+			}
+			/*if (statusID == statusMap.find("EXECUTED")->second && previousStatusID != statusMap.find("EXECUTED")->second)
 			{
 				if (CreateOrderEntry(ormasDal, clientID, employeeID, sum, currencyID, executionDate, errorMessage))
 				{
@@ -303,7 +367,7 @@ namespace BusinessLayer
 				}
 			}
 			//ormasDal.CommitTransaction(errorMessage);
-			return true;
+			return true;*/
 		}
 		if (errorMessage.empty())
 		{
@@ -323,7 +387,65 @@ namespace BusinessLayer
 		//ormasDal.StartTransaction(errorMessage);
 		if (0 != id && ormasDal.UpdateOrder(id, clientID, date, executionDate, employeeID, count, sum, statusID, currencyID, errorMessage))
 		{
-			if (statusID == statusMap.find("EXECUTED")->second && previousStatusID != statusMap.find("EXECUTED")->second)
+			if (previousStatusID != statusMap.find("EXECUTED")->second)
+			{
+				if (statusID == statusMap.find("EXECUTED")->second)
+				{
+					if (CreateOrderEntry(ormasDal, clientID, employeeID, sum, currencyID, executionDate, errorMessage))
+					{
+						if (ChangesAtTransport(ormasDal, id, errorMessage))
+						{
+							//ormasDal.CommitTransaction(errorMessage);
+							return true;
+						}
+						else
+						{
+							//ormasDal.CancelTransaction(errorMessage);
+							return false;
+						}
+					}
+					else
+					{
+						//ormasDal.CommitTransaction(errorMessage);
+						return false;
+					}
+				}
+				else
+				{
+					return true;
+				}
+			}
+			else
+			{
+				if (statusID == statusMap.find("ERROR")->second)
+				{
+
+					if (CreateOrderEntryCancel(ormasDal, clientID, employeeID, sum, currencyID, executionDate, errorMessage))
+					{
+						if (ChangesAtTransportCancel(ormasDal, id, errorMessage))
+						{
+							//ormasDal.CommitTransaction(errorMessage);
+							return true;
+						}
+						else
+						{
+							//ormasDal.CancelTransaction(errorMessage);
+							return false;
+						}
+					}
+					else
+					{
+						//ormasDal.CommitTransaction(errorMessage);
+						return false;
+					}
+				}
+				else
+				{
+					errorMessage = "Cannot update this document, only \"Error\" status is acceptable!";
+					return false;
+				}
+			}
+			/*if (statusID == statusMap.find("EXECUTED")->second && previousStatusID != statusMap.find("EXECUTED")->second)
 			{
 				if (CreateOrderEntry(ormasDal, clientID, employeeID, sum, currencyID, executionDate, errorMessage))
 				{
@@ -361,7 +483,7 @@ namespace BusinessLayer
 				}
 			}
 			//ormasDal.CommitTransaction(errorMessage);
-			return true;
+			return true;*/
 		}
 		if (errorMessage.empty())
 		{
@@ -391,6 +513,8 @@ namespace BusinessLayer
 
 	bool Order::GetOrderByID(DataLayer::OrmasDal& ormasDal, int oID, std::string& errorMessage)
 	{
+		if (oID <= 0)
+			return false;
 		id = oID;
 		std::string filter = GenerateFilter(ormasDal);
 		std::vector<DataLayer::ordersViewCollection> orderVector = ormasDal.GetOrders(errorMessage, filter);
@@ -501,6 +625,27 @@ namespace BusinessLayer
 		return false;
 	}
 
+	bool Order::CreateOrderEntryCancel(DataLayer::OrmasDal& ormasDal, int clID, int eID, double oSum, int cID, std::string oExecDate, std::string& errorMessage)
+	{
+		Balance balance;
+		CompanyAccountRelation cAccRel;
+		CompanyEmployeeRelation cEmpRel;
+
+		if (balance.GetBalanceByUserID(ormasDal, clID, errorMessage))
+		{
+			int debAccID = 0;
+			int credAccID = 0;
+			int companyID = cEmpRel.GetCompanyByEmployeeID(ormasDal, eID, errorMessage);
+			debAccID = balance.GetSubaccountID();
+			credAccID = cAccRel.GetAccountIDByCompanyID(ormasDal, companyID, "44010", errorMessage);
+			if (this->CreateEntry(ormasDal, credAccID, oSum, debAccID, oExecDate, errorMessage))
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+
 	bool Order::CreateOrderEntry(DataLayer::OrmasDal& ormasDal, int clID, int eID, double oSum, double prevSum, int cID, std::string oExecDate, std::string& errorMessage)
 	{
 		Balance balance;
@@ -549,36 +694,92 @@ namespace BusinessLayer
 	bool Order::CreateEntry(DataLayer::OrmasDal& ormasDal, int debAccID, double currentSum, int credAccID, std::string oExecDate, std::string& errorMessage)
 	{
 		Entry entry;
+		EntryOperationRelation eoRelation;
 		entry.SetDate(oExecDate);
 		entry.SetDebitingAccountID(debAccID);
 		entry.SetValue(currentSum);
 		entry.SetCreditingAccountID(credAccID);
 		entry.SetDescription(wstring_to_utf8(L"Товар продан и отгружен клиенту с ID =") + std::to_string(clientID));
-		if (!entry.CreateEntry(ormasDal, errorMessage))
+		if (entry.CreateEntry(ormasDal, errorMessage))
+		{
+			eoRelation.SetEntryID(entry.GetID());
+			eoRelation.SetOperationID(id);
+			if (!eoRelation.CreateEntryOperationRelation(ormasDal, errorMessage))
+			{
+				return false;
+			}
+		}
+		else
 		{
 			return false;
 		}
 		return true;
 	}
+	
+	bool Order::CreateEntryCancel(DataLayer::OrmasDal& ormasDal, int debAccID, double currentSum, int credAccID, std::string oExecDate, std::string& errorMessage)
+	{
+		Entry entry;
+		EntryOperationRelation eoRelation;
+		entry.SetDate(oExecDate);
+		entry.SetDebitingAccountID(debAccID);
+		entry.SetValue(currentSum);
+		entry.SetCreditingAccountID(credAccID);
+		entry.SetDescription(wstring_to_utf8(L"Отмена продажи товара клиенту с ID =") + std::to_string(clientID));
+		if (entry.CreateEntry(ormasDal, errorMessage))
+		{
+			eoRelation.SetEntryID(entry.GetID());
+			eoRelation.SetOperationID(id);
+			if (!eoRelation.CreateEntryOperationRelation(ormasDal, errorMessage))
+			{
+				return false;
+			}
+		}
+		else
+		{
+			return false;
+		}
+		return true;
+	}
+
 	bool Order::CreateEntry(DataLayer::OrmasDal& ormasDal, int debAccID, double currentSum, int credAccID, double previousSum, std::string oExecDate, std::string& errorMessage)
 	{
 		Entry entry;
+		EntryOperationRelation eoRelation;
 		entry.SetDate(oExecDate);
 		entry.SetDebitingAccountID(credAccID);
 		entry.SetValue(previousSum);
 		entry.SetCreditingAccountID(debAccID);
-		entry.SetDescription(wstring_to_utf8(L"Товар продан и отгружен клиенту с ID =") + std::to_string(clientID));
-		if (!entry.CreateEntry(ormasDal, errorMessage, true))
+		entry.SetDescription(wstring_to_utf8(L"Отмена продажи или отгрузки товара клиенту с ID =") + std::to_string(clientID));
+		if (entry.CreateEntry(ormasDal, errorMessage, true))
+		{
+			eoRelation.SetEntryID(entry.GetID());
+			eoRelation.SetOperationID(id);
+			if (!eoRelation.CreateEntryOperationRelation(ormasDal, errorMessage))
+			{
+				return false;
+			}
+		}
+		else
 		{
 			return false;
 		}
 		entry.Clear();
+		eoRelation.Clear();
 		entry.SetDate(oExecDate);
 		entry.SetDebitingAccountID(debAccID);
 		entry.SetValue(currentSum);
 		entry.SetCreditingAccountID(credAccID);
 		entry.SetDescription(wstring_to_utf8(L"Товар продан и отгружен клиенту с ID =") + std::to_string(clientID));
-		if (!entry.CreateEntry(ormasDal, errorMessage))
+		if (entry.CreateEntry(ormasDal, errorMessage))
+		{
+			eoRelation.SetEntryID(entry.GetID());
+			eoRelation.SetOperationID(id);
+			if (!eoRelation.CreateEntryOperationRelation(ormasDal, errorMessage))
+			{
+				return false;
+			}
+		}
+		else
 		{
 			return false;
 		}
@@ -589,6 +790,12 @@ namespace BusinessLayer
 	{
 		Transport transport;
 		return transport.ChangingByConsumeProduct(ormasDal, oID, errorMessage);
+	}
+
+	bool Order::ChangesAtTransportCancel(DataLayer::OrmasDal& ormasDal, int oID, std::string& errorMessage)
+	{
+		Transport transport;
+		return transport.ChangingByConsumeProductCancel(ormasDal, oID, errorMessage);
 	}
 
 	bool Order::ChangesAtTransport(DataLayer::OrmasDal& ormasDal, int oID, std::map<int, double> pProdCountMap, double previousSum, std::string& errorMessage)

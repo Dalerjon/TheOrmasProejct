@@ -56,7 +56,7 @@ INSERT INTO "OrmasSchema".chart_of_accounts(
 																				WHERE account_type_name = 'ACTIVE') );
 INSERT INTO "OrmasSchema".chart_of_accounts(
             chart_of_account_id, number_of_account, name_of_account, account_type_id)
-    VALUES ((SELECT nextval('"OrmasSchema".id_seq')), '10330', '10330', (SELECT account_type_id from "OrmasSchema".account_type 
+    VALUES ((SELECT nextval('"OrmasSchema".id_seq')), '10330', 'Займы выданные', (SELECT account_type_id from "OrmasSchema".account_type 
 																				WHERE account_type_name = 'ACTIVE') );
 INSERT INTO "OrmasSchema".chart_of_accounts(
             chart_of_account_id, number_of_account, name_of_account, account_type_id)
@@ -120,8 +120,7 @@ INSERT INTO "OrmasSchema".chart_of_accounts(
 																				WHERE account_type_name = 'ACTIVE') );
 INSERT INTO "OrmasSchema".chart_of_accounts(
             chart_of_account_id, number_of_account, name_of_account, account_type_id)
-    VALUES ((SELECT nextval('"OrmasSchema".id_seq')), '10580', 'Дебиторская задолженность дочерних (материнских)
-																				предприятий', (SELECT account_type_id from "OrmasSchema".account_type 
+    VALUES ((SELECT nextval('"OrmasSchema".id_seq')), '10580', 'Дебиторская задолженность дочерних (материнских) предприятий', (SELECT account_type_id from "OrmasSchema".account_type 
 																				WHERE account_type_name = 'ACTIVE') );
 INSERT INTO "OrmasSchema".chart_of_accounts(
             chart_of_account_id, number_of_account, name_of_account, account_type_id)
@@ -129,8 +128,7 @@ INSERT INTO "OrmasSchema".chart_of_accounts(
 																				WHERE account_type_name = 'ACTIVE') );
 INSERT INTO "OrmasSchema".chart_of_accounts(
             chart_of_account_id, number_of_account, name_of_account, account_type_id)
-    VALUES ((SELECT nextval('"OrmasSchema".id_seq')), '10600', 'Задолженность учредителей (участников) по вкладам в
-																		уставный капитал', (SELECT account_type_id from "OrmasSchema".account_type 
+    VALUES ((SELECT nextval('"OrmasSchema".id_seq')), '10600', 'Задолженность учредителей (участников) по вкладам в уставный капитал', (SELECT account_type_id from "OrmasSchema".account_type 
 																				WHERE account_type_name = 'ACTIVE') );
 INSERT INTO "OrmasSchema".chart_of_accounts(
             chart_of_account_id, number_of_account, name_of_account, account_type_id)

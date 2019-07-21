@@ -186,9 +186,6 @@
     <ClInclude Include="ui_CreateRcpPListDlg.h">
       <Filter>Header Files\UI Headers</Filter>
     </ClInclude>
-    <ClInclude Include="ui_CreateRcpRDlg.h">
-      <Filter>Header Files\UI Headers</Filter>
-    </ClInclude>
     <ClInclude Include="ui_CreateStockDlg.h">
       <Filter>Header Files\UI Headers</Filter>
     </ClInclude>
@@ -196,9 +193,6 @@
       <Filter>Header Files\UI Headers</Filter>
     </ClInclude>
     <ClInclude Include="ui_CreateTrsListDlg.h">
-      <Filter>Header Files\UI Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="ui_CreateRcpRListDlg.h">
       <Filter>Header Files\UI Headers</Filter>
     </ClInclude>
     <ClInclude Include="ui_CreateWOffRListDlg.h">
@@ -365,6 +359,30 @@
     </ClInclude>
     <ClInclude Include="resource.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ui_CreateShrDlg.h">
+      <Filter>Header Files\UI Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="ui_CreateAcctbDlg.h">
+      <Filter>Header Files\UI Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="ui_CreateBrwDlg.h">
+      <Filter>Header Files\UI Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="ui_CreateCrdDlg.h">
+      <Filter>Header Files\UI Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="ui_CreateEmpPrdDlg.h">
+      <Filter>Header Files\UI Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="ui_CreatePrdBrnDlg.h">
+      <Filter>Header Files\UI Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="ui_CreateStockTrDlg.h">
+      <Filter>Header Files\UI Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="ui_CreateStocTrListDlg.h">
+      <Filter>Header Files\UI Headers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -626,12 +644,6 @@
     <ClCompile Include="CreateRcpPListDlg.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="CreateRcpRDlg.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="CreateRcpRListDlg.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="CreateStockDlg.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -690,12 +702,6 @@
       <Filter>MOC Files</Filter>
     </ClCompile>
     <ClCompile Include="moc_CreateRcpPListDlg.cpp">
-      <Filter>MOC Files</Filter>
-    </ClCompile>
-    <ClCompile Include="moc_CreateRcpRDlg.cpp">
-      <Filter>MOC Files</Filter>
-    </ClCompile>
-    <ClCompile Include="moc_CreateRcpRListDlg.cpp">
       <Filter>MOC Files</Filter>
     </ClCompile>
     <ClCompile Include="moc_CreateJbpDlg.cpp">
@@ -1001,6 +1007,54 @@
     <ClCompile Include="SearchDlg.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="moc_CreateAcctbDlg.cpp">
+      <Filter>MOC Files</Filter>
+    </ClCompile>
+    <ClCompile Include="moc_CreateBrwDlg.cpp">
+      <Filter>MOC Files</Filter>
+    </ClCompile>
+    <ClCompile Include="moc_CreateCrdDlg.cpp">
+      <Filter>MOC Files</Filter>
+    </ClCompile>
+    <ClCompile Include="moc_CreateEmpPrdDlg.cpp">
+      <Filter>MOC Files</Filter>
+    </ClCompile>
+    <ClCompile Include="moc_CreatePrdBrnDlg.cpp">
+      <Filter>MOC Files</Filter>
+    </ClCompile>
+    <ClCompile Include="moc_CreateShrDlg.cpp">
+      <Filter>MOC Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CreateAcctbDlg.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CreateShrDlg.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CreateBrwDlg.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CreateCrdDlg.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CreateEmpPrdDlg.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CreatePrdBrnDlg.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="moc_CreateStockTrDlg.cpp">
+      <Filter>MOC Files</Filter>
+    </ClCompile>
+    <ClCompile Include="moc_CreateStockTrListDlg.cpp">
+      <Filter>MOC Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CreateStockTrDlg.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CreateStockTrListDlg.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="MainForm.ui">
@@ -1258,12 +1312,6 @@
     <CustomBuild Include="CreateRcpPListDlg.ui">
       <Filter>User Interface</Filter>
     </CustomBuild>
-    <CustomBuild Include="CreateRcpRDlg.ui">
-      <Filter>User Interface</Filter>
-    </CustomBuild>
-    <CustomBuild Include="CreateRcpRListDlg.ui">
-      <Filter>User Interface</Filter>
-    </CustomBuild>
     <CustomBuild Include="CreateStockDlg.ui">
       <Filter>User Interface</Filter>
     </CustomBuild>
@@ -1301,12 +1349,6 @@
       <Filter>Header Files</Filter>
     </CustomBuild>
     <CustomBuild Include="CreateRcpPListDlg.h">
-      <Filter>Header Files</Filter>
-    </CustomBuild>
-    <CustomBuild Include="CreateRcpRDlg.h">
-      <Filter>Header Files</Filter>
-    </CustomBuild>
-    <CustomBuild Include="CreateRcpRListDlg.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
     <CustomBuild Include="CreateStockDlg.h">
@@ -1617,6 +1659,54 @@
     </CustomBuild>
     <CustomBuild Include="SearchDlg.ui">
       <Filter>User Interface</Filter>
+    </CustomBuild>
+    <CustomBuild Include="CreateAcctbDlg.ui">
+      <Filter>User Interface</Filter>
+    </CustomBuild>
+    <CustomBuild Include="CreateBrwDlg.ui">
+      <Filter>User Interface</Filter>
+    </CustomBuild>
+    <CustomBuild Include="CreateCrdDlg.ui">
+      <Filter>User Interface</Filter>
+    </CustomBuild>
+    <CustomBuild Include="CreateEmpPrdDlg.ui">
+      <Filter>User Interface</Filter>
+    </CustomBuild>
+    <CustomBuild Include="CreateShrDlg.ui">
+      <Filter>User Interface</Filter>
+    </CustomBuild>
+    <CustomBuild Include="CreateBrwDlg.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="CreateCrdDlg.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="CreateEmpPrdDlg.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="CreatePrdBrnDlg.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="CreateShrDlg.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="CreateAcctbDlg.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="CreatePrdBrnDlg.ui">
+      <Filter>User Interface</Filter>
+    </CustomBuild>
+    <CustomBuild Include="CreateStockTrDlg.ui">
+      <Filter>User Interface</Filter>
+    </CustomBuild>
+    <CustomBuild Include="CreateStockTrListDlg.ui">
+      <Filter>User Interface</Filter>
+    </CustomBuild>
+    <CustomBuild Include="CreateStockTrDlg.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="CreateStockTrListDlg.h">
+      <Filter>Header Files</Filter>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>

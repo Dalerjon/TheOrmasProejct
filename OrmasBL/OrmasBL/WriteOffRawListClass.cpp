@@ -158,6 +158,8 @@ namespace BusinessLayer
 
 	bool WriteOffRawList::GetWriteOffRawListByID(DataLayer::OrmasDal& ormasDal, int pID, std::string& errorMessage)
 	{
+		if (pID <= 0)
+			return false;
 		id = pID;
 		std::string filter = GenerateFilter(ormasDal);
 		std::vector<DataLayer::writeOffRawListViewCollection> writeOffRawListVector = ormasDal.GetWriteOffRawList(errorMessage, filter);

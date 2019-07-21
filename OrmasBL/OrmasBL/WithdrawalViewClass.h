@@ -10,6 +10,8 @@ namespace BusinessLayer{
 		std::string userSurname = "";
 		std::string subaccountNumber = "";
 		std::string currencyName = "";
+		std::string statusName = "";
+		std::string accountNumber = "";
 	public:
 		WithdrawalView(DataLayer::withdrawalsViewCollection);
 		WithdrawalView(){};
@@ -20,6 +22,8 @@ namespace BusinessLayer{
 		std::string GetUserSurname();
 		std::string GetSubaccountNumber();
 		std::string GetCurrencyName();
+		std::string GetStatusName();
+		std::string GetAccountNumber();
 	};
 }
 

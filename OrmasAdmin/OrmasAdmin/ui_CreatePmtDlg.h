@@ -32,148 +32,49 @@ class Ui_CreatePayment
 {
 public:
     QGridLayout *gridLayout;
-    QLineEdit *userEdit;
-    QLabel *phoneLb;
-    QLabel *surnameLb;
-    QLabel *surnamePh;
-    QLabel *phonePh;
-    QHBoxLayout *horizontalLayout;
-    QSpacerItem *horizontalSpacer;
-    QPushButton *okBtn;
-    QPushButton *cancelBtn;
-    QLabel *nameLb;
-    QLabel *dateLb;
-    QLabel *valieLb;
-    QLabel *namePh;
-    QLabel *currencyLb;
-    QPushButton *userBtn;
-    QComboBox *currencyCmb;
-    QLineEdit *valueEdit;
-    QDateTimeEdit *dateEdit;
     QWidget *statusWidget;
     QHBoxLayout *horizontalLayout_3;
     QPushButton *statusBtn;
     QLineEdit *statusEdit;
     QLabel *statusLb;
     QLabel *statusPh;
+    QLabel *accountNameLb;
+    QLabel *targetLB;
+    QLabel *surnameLb;
+    QLineEdit *userEdit;
+    QLineEdit *targetEdit;
+    QComboBox *accountCmb;
+    QLabel *phoneLb;
+    QLineEdit *accNumberEdit;
+    QLabel *valieLb;
+    QDateTimeEdit *dateEdit;
+    QLineEdit *valueEdit;
+    QLabel *currencyLb;
+    QPushButton *userBtn;
+    QComboBox *currencyCmb;
+    QLineEdit *accIDEdit;
+    QLabel *daLb_2;
+    QHBoxLayout *horizontalLayout;
+    QSpacerItem *horizontalSpacer;
+    QPushButton *okBtn;
+    QPushButton *cancelBtn;
+    QLabel *nameLb;
+    QLabel *dateLb;
+    QLabel *surnamePh;
+    QLabel *namePh;
+    QLabel *phonePh;
+    QPushButton *accBtn;
 
     void setupUi(QDialog *CreatePayment)
     {
         if (CreatePayment->objectName().isEmpty())
             CreatePayment->setObjectName(QStringLiteral("CreatePayment"));
-        CreatePayment->resize(537, 209);
+        CreatePayment->resize(687, 290);
         CreatePayment->setLocale(QLocale(QLocale::English, QLocale::UnitedStates));
         CreatePayment->setModal(false);
         gridLayout = new QGridLayout(CreatePayment);
         gridLayout->setObjectName(QStringLiteral("gridLayout"));
         gridLayout->setContentsMargins(11, 11, 11, 11);
-        userEdit = new QLineEdit(CreatePayment);
-        userEdit->setObjectName(QStringLiteral("userEdit"));
-        userEdit->setReadOnly(true);
-
-        gridLayout->addWidget(userEdit, 4, 3, 1, 1);
-
-        phoneLb = new QLabel(CreatePayment);
-        phoneLb->setObjectName(QStringLiteral("phoneLb"));
-
-        gridLayout->addWidget(phoneLb, 5, 4, 1, 1);
-
-        surnameLb = new QLabel(CreatePayment);
-        surnameLb->setObjectName(QStringLiteral("surnameLb"));
-        surnameLb->setMinimumSize(QSize(50, 0));
-        surnameLb->setMaximumSize(QSize(50, 16777215));
-
-        gridLayout->addWidget(surnameLb, 5, 2, 1, 1);
-
-        surnamePh = new QLabel(CreatePayment);
-        surnamePh->setObjectName(QStringLiteral("surnamePh"));
-        surnamePh->setMinimumSize(QSize(100, 0));
-        QFont font;
-        font.setFamily(QStringLiteral("Times New Roman"));
-        font.setPointSize(12);
-        font.setBold(true);
-        font.setItalic(true);
-        font.setWeight(75);
-        surnamePh->setFont(font);
-
-        gridLayout->addWidget(surnamePh, 5, 3, 1, 1);
-
-        phonePh = new QLabel(CreatePayment);
-        phonePh->setObjectName(QStringLiteral("phonePh"));
-        phonePh->setMinimumSize(QSize(100, 0));
-        phonePh->setFont(font);
-
-        gridLayout->addWidget(phonePh, 5, 5, 1, 1);
-
-        horizontalLayout = new QHBoxLayout();
-        horizontalLayout->setObjectName(QStringLiteral("horizontalLayout"));
-        horizontalSpacer = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
-
-        horizontalLayout->addItem(horizontalSpacer);
-
-        okBtn = new QPushButton(CreatePayment);
-        okBtn->setObjectName(QStringLiteral("okBtn"));
-
-        horizontalLayout->addWidget(okBtn);
-
-        cancelBtn = new QPushButton(CreatePayment);
-        cancelBtn->setObjectName(QStringLiteral("cancelBtn"));
-
-        horizontalLayout->addWidget(cancelBtn);
-
-
-        gridLayout->addLayout(horizontalLayout, 8, 0, 1, 6);
-
-        nameLb = new QLabel(CreatePayment);
-        nameLb->setObjectName(QStringLiteral("nameLb"));
-        nameLb->setMinimumSize(QSize(50, 0));
-        nameLb->setMaximumSize(QSize(50, 16777215));
-
-        gridLayout->addWidget(nameLb, 5, 0, 1, 1);
-
-        dateLb = new QLabel(CreatePayment);
-        dateLb->setObjectName(QStringLiteral("dateLb"));
-
-        gridLayout->addWidget(dateLb, 0, 0, 1, 1);
-
-        valieLb = new QLabel(CreatePayment);
-        valieLb->setObjectName(QStringLiteral("valieLb"));
-
-        gridLayout->addWidget(valieLb, 2, 0, 1, 1);
-
-        namePh = new QLabel(CreatePayment);
-        namePh->setObjectName(QStringLiteral("namePh"));
-        namePh->setMinimumSize(QSize(100, 0));
-        namePh->setFont(font);
-
-        gridLayout->addWidget(namePh, 5, 1, 1, 1);
-
-        currencyLb = new QLabel(CreatePayment);
-        currencyLb->setObjectName(QStringLiteral("currencyLb"));
-
-        gridLayout->addWidget(currencyLb, 6, 0, 1, 2);
-
-        userBtn = new QPushButton(CreatePayment);
-        userBtn->setObjectName(QStringLiteral("userBtn"));
-        userBtn->setMinimumSize(QSize(150, 0));
-
-        gridLayout->addWidget(userBtn, 4, 0, 1, 2);
-
-        currencyCmb = new QComboBox(CreatePayment);
-        currencyCmb->setObjectName(QStringLiteral("currencyCmb"));
-
-        gridLayout->addWidget(currencyCmb, 6, 2, 1, 2);
-
-        valueEdit = new QLineEdit(CreatePayment);
-        valueEdit->setObjectName(QStringLiteral("valueEdit"));
-
-        gridLayout->addWidget(valueEdit, 2, 3, 1, 1);
-
-        dateEdit = new QDateTimeEdit(CreatePayment);
-        dateEdit->setObjectName(QStringLiteral("dateEdit"));
-
-        gridLayout->addWidget(dateEdit, 0, 3, 1, 1);
-
         statusWidget = new QWidget(CreatePayment);
         statusWidget->setObjectName(QStringLiteral("statusWidget"));
         horizontalLayout_3 = new QHBoxLayout(statusWidget);
@@ -205,21 +106,169 @@ public:
         statusPh = new QLabel(statusWidget);
         statusPh->setObjectName(QStringLiteral("statusPh"));
         statusPh->setMinimumSize(QSize(120, 0));
+        QFont font;
+        font.setFamily(QStringLiteral("Times New Roman"));
+        font.setPointSize(12);
+        font.setBold(true);
+        font.setItalic(true);
+        font.setWeight(75);
         statusPh->setFont(font);
 
         horizontalLayout_3->addWidget(statusPh);
 
 
-        gridLayout->addWidget(statusWidget, 7, 0, 1, 6);
+        gridLayout->addWidget(statusWidget, 13, 0, 1, 6);
 
-        QWidget::setTabOrder(dateEdit, valueEdit);
-        QWidget::setTabOrder(valueEdit, userBtn);
+        accountNameLb = new QLabel(CreatePayment);
+        accountNameLb->setObjectName(QStringLiteral("accountNameLb"));
+
+        gridLayout->addWidget(accountNameLb, 1, 0, 1, 1);
+
+        targetLB = new QLabel(CreatePayment);
+        targetLB->setObjectName(QStringLiteral("targetLB"));
+
+        gridLayout->addWidget(targetLB, 9, 0, 1, 1);
+
+        surnameLb = new QLabel(CreatePayment);
+        surnameLb->setObjectName(QStringLiteral("surnameLb"));
+        surnameLb->setMinimumSize(QSize(50, 0));
+        surnameLb->setMaximumSize(QSize(50, 16777215));
+
+        gridLayout->addWidget(surnameLb, 7, 2, 1, 1);
+
+        userEdit = new QLineEdit(CreatePayment);
+        userEdit->setObjectName(QStringLiteral("userEdit"));
+        userEdit->setReadOnly(true);
+
+        gridLayout->addWidget(userEdit, 6, 2, 1, 2);
+
+        targetEdit = new QLineEdit(CreatePayment);
+        targetEdit->setObjectName(QStringLiteral("targetEdit"));
+
+        gridLayout->addWidget(targetEdit, 9, 1, 1, 5);
+
+        accountCmb = new QComboBox(CreatePayment);
+        accountCmb->setObjectName(QStringLiteral("accountCmb"));
+
+        gridLayout->addWidget(accountCmb, 1, 1, 1, 5);
+
+        phoneLb = new QLabel(CreatePayment);
+        phoneLb->setObjectName(QStringLiteral("phoneLb"));
+
+        gridLayout->addWidget(phoneLb, 7, 4, 1, 1);
+
+        accNumberEdit = new QLineEdit(CreatePayment);
+        accNumberEdit->setObjectName(QStringLiteral("accNumberEdit"));
+        accNumberEdit->setMinimumSize(QSize(150, 0));
+        accNumberEdit->setMaximumSize(QSize(150, 16777215));
+
+        gridLayout->addWidget(accNumberEdit, 8, 5, 1, 1);
+
+        valieLb = new QLabel(CreatePayment);
+        valieLb->setObjectName(QStringLiteral("valieLb"));
+
+        gridLayout->addWidget(valieLb, 11, 0, 1, 1);
+
+        dateEdit = new QDateTimeEdit(CreatePayment);
+        dateEdit->setObjectName(QStringLiteral("dateEdit"));
+
+        gridLayout->addWidget(dateEdit, 10, 2, 1, 2);
+
+        valueEdit = new QLineEdit(CreatePayment);
+        valueEdit->setObjectName(QStringLiteral("valueEdit"));
+
+        gridLayout->addWidget(valueEdit, 11, 2, 1, 2);
+
+        currencyLb = new QLabel(CreatePayment);
+        currencyLb->setObjectName(QStringLiteral("currencyLb"));
+
+        gridLayout->addWidget(currencyLb, 12, 0, 1, 2);
+
+        userBtn = new QPushButton(CreatePayment);
+        userBtn->setObjectName(QStringLiteral("userBtn"));
+        userBtn->setMinimumSize(QSize(150, 0));
+
+        gridLayout->addWidget(userBtn, 6, 0, 1, 2);
+
+        currencyCmb = new QComboBox(CreatePayment);
+        currencyCmb->setObjectName(QStringLiteral("currencyCmb"));
+
+        gridLayout->addWidget(currencyCmb, 12, 2, 1, 2);
+
+        accIDEdit = new QLineEdit(CreatePayment);
+        accIDEdit->setObjectName(QStringLiteral("accIDEdit"));
+        accIDEdit->setMaximumSize(QSize(120, 16777215));
+        accIDEdit->setReadOnly(true);
+
+        gridLayout->addWidget(accIDEdit, 8, 1, 1, 1);
+
+        daLb_2 = new QLabel(CreatePayment);
+        daLb_2->setObjectName(QStringLiteral("daLb_2"));
+
+        gridLayout->addWidget(daLb_2, 8, 3, 1, 1);
+
+        horizontalLayout = new QHBoxLayout();
+        horizontalLayout->setObjectName(QStringLiteral("horizontalLayout"));
+        horizontalSpacer = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
+
+        horizontalLayout->addItem(horizontalSpacer);
+
+        okBtn = new QPushButton(CreatePayment);
+        okBtn->setObjectName(QStringLiteral("okBtn"));
+
+        horizontalLayout->addWidget(okBtn);
+
+        cancelBtn = new QPushButton(CreatePayment);
+        cancelBtn->setObjectName(QStringLiteral("cancelBtn"));
+
+        horizontalLayout->addWidget(cancelBtn);
+
+
+        gridLayout->addLayout(horizontalLayout, 14, 0, 1, 6);
+
+        nameLb = new QLabel(CreatePayment);
+        nameLb->setObjectName(QStringLiteral("nameLb"));
+        nameLb->setMinimumSize(QSize(50, 0));
+        nameLb->setMaximumSize(QSize(50, 16777215));
+
+        gridLayout->addWidget(nameLb, 7, 0, 1, 1);
+
+        dateLb = new QLabel(CreatePayment);
+        dateLb->setObjectName(QStringLiteral("dateLb"));
+
+        gridLayout->addWidget(dateLb, 10, 0, 1, 1);
+
+        surnamePh = new QLabel(CreatePayment);
+        surnamePh->setObjectName(QStringLiteral("surnamePh"));
+        surnamePh->setMinimumSize(QSize(100, 0));
+        surnamePh->setFont(font);
+
+        gridLayout->addWidget(surnamePh, 7, 3, 1, 1);
+
+        namePh = new QLabel(CreatePayment);
+        namePh->setObjectName(QStringLiteral("namePh"));
+        namePh->setMinimumSize(QSize(100, 0));
+        namePh->setFont(font);
+
+        gridLayout->addWidget(namePh, 7, 1, 1, 1);
+
+        phonePh = new QLabel(CreatePayment);
+        phonePh->setObjectName(QStringLiteral("phonePh"));
+        phonePh->setMinimumSize(QSize(100, 0));
+        phonePh->setFont(font);
+
+        gridLayout->addWidget(phonePh, 7, 5, 1, 1);
+
+        accBtn = new QPushButton(CreatePayment);
+        accBtn->setObjectName(QStringLiteral("accBtn"));
+
+        gridLayout->addWidget(accBtn, 8, 0, 1, 1);
+
         QWidget::setTabOrder(userBtn, statusBtn);
         QWidget::setTabOrder(statusBtn, okBtn);
         QWidget::setTabOrder(okBtn, cancelBtn);
         QWidget::setTabOrder(cancelBtn, currencyCmb);
-        QWidget::setTabOrder(currencyCmb, userEdit);
-        QWidget::setTabOrder(userEdit, statusEdit);
+        QWidget::setTabOrder(currencyCmb, statusEdit);
 
         retranslateUi(CreatePayment);
 
@@ -229,27 +278,32 @@ public:
     void retranslateUi(QDialog *CreatePayment)
     {
         CreatePayment->setWindowTitle(QApplication::translate("CreatePayment", "Create/Update payment", 0));
+        statusBtn->setText(QApplication::translate("CreatePayment", "Change status", 0));
+        statusLb->setText(QApplication::translate("CreatePayment", "Status name:", 0));
+        statusPh->setText(QString());
+        accountNameLb->setText(QApplication::translate("CreatePayment", "Account name:", 0));
+        targetLB->setText(QApplication::translate("CreatePayment", "Target:", 0));
+        surnameLb->setText(QApplication::translate("CreatePayment", "Surname:", 0));
 #ifndef QT_NO_TOOLTIP
         userEdit->setToolTip(QApplication::translate("CreatePayment", "Must not be empty", 0));
 #endif // QT_NO_TOOLTIP
         phoneLb->setText(QApplication::translate("CreatePayment", "Phone:", 0));
-        surnameLb->setText(QApplication::translate("CreatePayment", "Surname:", 0));
-        surnamePh->setText(QString());
-        phonePh->setText(QString());
+        accNumberEdit->setText(QString());
+        valieLb->setText(QApplication::translate("CreatePayment", "Sum:", 0));
+#ifndef QT_NO_TOOLTIP
+        valueEdit->setToolTip(QApplication::translate("CreatePayment", "<html><head/><body><p>For example: 300 (depending on currency, in that case 300 USD)</p></body></html>", 0));
+#endif // QT_NO_TOOLTIP
+        currencyLb->setText(QApplication::translate("CreatePayment", "Select currency:", 0));
+        userBtn->setText(QApplication::translate("CreatePayment", "Select user", 0));
+        daLb_2->setText(QApplication::translate("CreatePayment", "Enter account number:", 0));
         okBtn->setText(QApplication::translate("CreatePayment", "OK", 0));
         cancelBtn->setText(QApplication::translate("CreatePayment", "Cancel", 0));
         nameLb->setText(QApplication::translate("CreatePayment", "Name:", 0));
         dateLb->setText(QApplication::translate("CreatePayment", "Date:", 0));
-        valieLb->setText(QApplication::translate("CreatePayment", "Sum:", 0));
+        surnamePh->setText(QString());
         namePh->setText(QString());
-        currencyLb->setText(QApplication::translate("CreatePayment", "Select currency:", 0));
-        userBtn->setText(QApplication::translate("CreatePayment", "Select user", 0));
-#ifndef QT_NO_TOOLTIP
-        valueEdit->setToolTip(QApplication::translate("CreatePayment", "<html><head/><body><p>For example: 300 (depending on currency, in that case 300 USD)</p></body></html>", 0));
-#endif // QT_NO_TOOLTIP
-        statusBtn->setText(QApplication::translate("CreatePayment", "Change status", 0));
-        statusLb->setText(QApplication::translate("CreatePayment", "Status name:", 0));
-        statusPh->setText(QString());
+        phonePh->setText(QString());
+        accBtn->setText(QApplication::translate("CreatePayment", "Select account", 0));
     } // retranslateUi
 
 };

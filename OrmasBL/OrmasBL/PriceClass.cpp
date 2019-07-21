@@ -171,6 +171,8 @@ namespace BusinessLayer{
 
 	bool Price::GetPriceByID(DataLayer::OrmasDal& ormasDal, int bID, std::string& errorMessage)
 	{
+		if (bID <= 0)
+			return false;
 		id = bID;
 		std::string filter = GenerateFilter(ormasDal);
 		std::vector<DataLayer::pricesViewCollection> priceVector = ormasDal.GetPrices(errorMessage, filter);
@@ -193,6 +195,8 @@ namespace BusinessLayer{
 
 	bool Price::GetPriceByProductID(DataLayer::OrmasDal& ormasDal, int pID, std::string& errorMessage)
 	{
+		if (pID <= 0)
+			return false;
 		productID = pID;
 		std::string filter = GenerateFilter(ormasDal);
 		std::vector<DataLayer::pricesViewCollection> priceVector = ormasDal.GetPrices(errorMessage, filter);

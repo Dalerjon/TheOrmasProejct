@@ -158,6 +158,8 @@ namespace BusinessLayer
 
 	bool SpoilageList::GetSpoilageListByID(DataLayer::OrmasDal& ormasDal, int pID, std::string& errorMessage)
 	{
+		if (pID <= 0)
+			return false;
 		id = pID;
 		std::string filter = GenerateFilter(ormasDal);
 		std::vector<DataLayer::spoilageListViewCollection> spoilageListVector = ormasDal.GetSpoilageList(errorMessage, filter);

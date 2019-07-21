@@ -186,7 +186,7 @@ void CreateCERDlg::EditCompanyEmployee()
 		if (companyEmployee->GetCompanyID() != companyCmb->currentData().toInt() || companyEmployee->GetEmployeeID() != employeeEdit->text().toInt())
 		{
 			DataForm *parentDataForm = (DataForm*) parentForm;
-			SetCompanyEmployeeParams(companyCmb->currentData().toInt(), employeeEdit->text().toInt(), companyEmployee->GetID());
+			SetCompanyEmployeeParams(companyCmb->currentData().toInt(), employeeEdit->text().toInt(), branchCmb->currentData().toInt(), companyEmployee->GetID());
 			dialogBL->StartTransaction(errorMessage);
 			if (dialogBL->UpdateCompanyEmployeeRelation(companyEmployee, errorMessage))
 			{
@@ -222,7 +222,7 @@ void CreateCERDlg::EditCompanyEmployee()
 						itemModel->item(mIndex.row(), 5)->setText(employee->GetPhone().c_str());
 						itemModel->item(mIndex.row(), 6)->setText(QString::number(companyEmployee->GetCompanyID()));
 						itemModel->item(mIndex.row(), 7)->setText(QString::number(companyEmployee->GetEmployeeID()));
-						itemModel->item(mIndex.row(), 7)->setText(QString::number(companyEmployee->GetBranchID()));
+						itemModel->item(mIndex.row(), 8)->setText(QString::number(companyEmployee->GetBranchID()));
 						emit itemModel->dataChanged(mIndex, mIndex);
 						delete company;
 						delete employee;

@@ -220,6 +220,8 @@ namespace BusinessLayer{
 
 	bool Employee::GetEmployeeByID(DataLayer::OrmasDal& ormasDal, int uID, std::string& errorMessage)
 	{
+		if (uID <= 0)
+			return false;
 		id = uID;
 		std::string filter = GenerateFilter(ormasDal);
 		std::vector<DataLayer::employeesViewCollection> employeeVector = ormasDal.GetEmployees(errorMessage, filter);
@@ -257,6 +259,8 @@ namespace BusinessLayer{
 		{
 			email = uEmail;
 		}
+		if (password.empty())
+			return false;
 		password = uPassword;
 		std::string filter = GenerateFilter(ormasDal);
 		std::vector<DataLayer::employeesViewCollection> employeeVector = ormasDal.GetEmployees(errorMessage, filter);

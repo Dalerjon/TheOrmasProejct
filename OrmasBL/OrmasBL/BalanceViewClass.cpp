@@ -7,10 +7,11 @@ namespace BusinessLayer{
 		id = std::get<0>(bCollection);
 		userName = std::get<1>(bCollection);
 		userSurname = std::get<2>(bCollection);
-		currentBalance = std::get<3>(bCollection);
-		currencyName = std::get<4>(bCollection);
-		userID = std::get<5>(bCollection);
-		subaccountID = std::get<6>(bCollection);
+		subaccountNumber = std::get<3>(bCollection);
+		currentBalance = std::get<4>(bCollection);
+		currencyName = std::get<5>(bCollection);
+		userID = std::get<6>(bCollection);
+		subaccountID = std::get<7>(bCollection);
 	}
 
 	std::string BalanceView::GetUsername()
@@ -20,6 +21,10 @@ namespace BusinessLayer{
 	std::string BalanceView::GetUserSurname()
 	{
 		return userSurname;
+	}
+	std::string BalanceView::GetSubaccountNumber()
+	{
+		return subaccountNumber;
 	}
 	double BalanceView::GetCurrentBalance()
 	{

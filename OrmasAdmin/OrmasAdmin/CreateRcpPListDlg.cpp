@@ -201,7 +201,7 @@ void CreateRcpPListDlg::AddProductToList()
 		{
 			if (!measure->GetMeasureByID(dialogBL->GetOrmasDal(), product->GetMeasureID(), errorMessage)
 				|| !currency->GetCurrencyByID(dialogBL->GetOrmasDal(), product->GetCurrencyID(), errorMessage)
-				|| !sumCurrency->GetCurrencyByID(dialogBL->GetOrmasDal(), receiptProductList->GetCurrencyID(), errorMessage)
+				|| !sumCurrency->GetCurrencyByID(dialogBL->GetOrmasDal(), product->GetCurrencyID(), errorMessage)
 				|| !nCost->GetNetCostByProductID(dialogBL->GetOrmasDal(), product->GetID(), errorMessage))
 			{
 				QMessageBox::information(NULL, QString(tr("Warning")),

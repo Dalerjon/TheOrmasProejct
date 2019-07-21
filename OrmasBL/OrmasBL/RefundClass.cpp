@@ -4,6 +4,7 @@
 #include "BalanceClass.h"
 #include "BalanceRefundRelationClass.h"
 #include "EntryClass.h"
+#include "EntryOperationRelationClass.h"
 #include "CashboxEmployeeRelationClass.h"
 #include "CashboxClass.h"
 #include <codecvt>
@@ -199,6 +200,8 @@ namespace BusinessLayer{
 
 	bool Refund::GetRefundByID(DataLayer::OrmasDal& ormasDal, int bID, std::string& errorMessage)
 	{
+		if (bID <= 0)
+			return false;
 		id = bID;
 		std::string filter = GenerateFilter(ormasDal);
 		std::vector<DataLayer::refundsViewCollection> refundVector = ormasDal.GetRefunds(errorMessage, filter);
@@ -392,12 +395,22 @@ namespace BusinessLayer{
 	bool Refund::CreateEntry(DataLayer::OrmasDal& ormasDal, int debAccID, double currentSum, int credAccID, std::string oExecDate, std::string& errorMessage)
 	{
 		Entry entry;
+		EntryOperationRelation eoRelation;
 		entry.SetDate(oExecDate);
 		entry.SetDebitingAccountID(debAccID);
 		entry.SetValue(currentSum);
 		entry.SetCreditingAccountID(credAccID);
 		entry.SetDescription(wstring_to_utf8(L"Отмена возврата суммы клиенту"));
-		if (!entry.CreateEntry(ormasDal, errorMessage))
+		if (entry.CreateEntry(ormasDal, errorMessage))
+		{
+			eoRelation.SetEntryID(entry.GetID());
+			eoRelation.SetOperationID(id);
+			if (!eoRelation.CreateEntryOperationRelation(ormasDal, errorMessage))
+			{
+				return false;
+			}
+		}
+		else
 		{
 			return false;
 		}
@@ -406,22 +419,42 @@ namespace BusinessLayer{
 	bool Refund::CreateEntry(DataLayer::OrmasDal& ormasDal, int debAccID, double currentSum, int credAccID, double previousSum, std::string oExecDate, std::string& errorMessage)
 	{
 		Entry entry;
+		EntryOperationRelation eoRelation;
 		entry.SetDate(oExecDate);
 		entry.SetDebitingAccountID(credAccID);
 		entry.SetValue(previousSum);
 		entry.SetCreditingAccountID(debAccID);
 		entry.SetDescription(wstring_to_utf8(L"Отмена возврата суммы клиенту"));
-		if (!entry.CreateEntry(ormasDal, errorMessage))
+		if (entry.CreateEntry(ormasDal, errorMessage, true))
+		{
+			eoRelation.SetEntryID(entry.GetID());
+			eoRelation.SetOperationID(id);
+			if (!eoRelation.CreateEntryOperationRelation(ormasDal, errorMessage))
+			{
+				return false;
+			}
+		}
+		else
 		{
 			return false;
 		}
 		entry.Clear();
+		eoRelation.Clear();
 		entry.SetDate(oExecDate);
 		entry.SetDebitingAccountID(debAccID);
 		entry.SetValue(currentSum);
 		entry.SetCreditingAccountID(credAccID);
 		entry.SetDescription(wstring_to_utf8(L"Отмена возврата суммы клиенту"));
-		if (!entry.CreateEntry(ormasDal, errorMessage))
+		if (entry.CreateEntry(ormasDal, errorMessage))
+		{
+			eoRelation.SetEntryID(entry.GetID());
+			eoRelation.SetOperationID(id);
+			if (!eoRelation.CreateEntryOperationRelation(ormasDal, errorMessage))
+			{
+				return false;
+			}
+		}
+		else
 		{
 			return false;
 		}
@@ -430,12 +463,22 @@ namespace BusinessLayer{
 	bool Refund::CorrectingEntry(DataLayer::OrmasDal& ormasDal, int debAccID, double currentSum, int credAccID, std::string oExecDate, std::string& errorMessage)
 	{
 		Entry entry;
+		EntryOperationRelation eoRelation;
 		entry.SetDate(oExecDate);
 		entry.SetDebitingAccountID(credAccID);
 		entry.SetValue(currentSum);
 		entry.SetCreditingAccountID(debAccID);
 		entry.SetDescription(wstring_to_utf8(L"Отмена возврата суммы клиенту"));
-		if (!entry.CreateEntry(ormasDal, errorMessage))
+		if (entry.CreateEntry(ormasDal, errorMessage))
+		{
+			eoRelation.SetEntryID(entry.GetID());
+			eoRelation.SetOperationID(id);
+			if (!eoRelation.CreateEntryOperationRelation(ormasDal, errorMessage))
+			{
+				return false;
+			}
+		}
+		else
 		{
 			return false;
 		}

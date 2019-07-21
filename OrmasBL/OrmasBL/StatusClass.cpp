@@ -143,6 +143,8 @@ namespace BusinessLayer
 
 	bool Status::GetStatusByID(DataLayer::OrmasDal& ormasDal, int sID, std::string& errorMessage)
 	{
+		if (sID <= 0)
+			return false;
 		id = sID;
 		std::string filter = GenerateFilter(ormasDal);
 		std::vector<DataLayer::statusCollection> statusVector = ormasDal.GetStatus(errorMessage, filter);
@@ -165,6 +167,8 @@ namespace BusinessLayer
 	{
 		if (!sName.empty())
 			boost::trim(sName);
+		if (sName.empty())
+			return false;
 		name = boost::to_upper_copy(sName);
 		std::string filter = GenerateFilter(ormasDal);
 		std::vector<DataLayer::statusCollection> statusVector = ormasDal.GetStatus(errorMessage, filter);

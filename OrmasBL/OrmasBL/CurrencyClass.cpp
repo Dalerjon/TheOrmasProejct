@@ -200,6 +200,8 @@ namespace BusinessLayer
 
 	bool Currency::GetCurrencyByID(DataLayer::OrmasDal& ormasDal, int cID, std::string& errorMessage)
 	{
+		if (cID <= 0)
+			return false;
 		id = cID;
 		std::string filter = GenerateFilter(ormasDal);
 		std::vector<DataLayer::currenciesCollection> currencyVector = ormasDal.GetCurrencies(errorMessage, filter);

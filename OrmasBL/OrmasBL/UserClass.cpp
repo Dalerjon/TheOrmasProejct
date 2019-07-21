@@ -236,6 +236,8 @@ namespace BusinessLayer
 
 	bool User::GetUserByID(DataLayer::OrmasDal& ormasDal, int uID, std::string& errorMessage)
 	{
+		if (uID <= 0)
+			return false;
 		id = uID;
 		std::string filter = GenerateFilter(ormasDal);
 		std::vector<DataLayer::usersViewCollection> userVector = ormasDal.GetUsers(errorMessage, filter);
@@ -264,6 +266,10 @@ namespace BusinessLayer
 		std::string errorMessage = "";
 		if (!uPhone.empty() && !uPassword.empty())
 		{
+			if (uPhone.empty())
+				return false;
+			if (uPassword.empty())
+				return false;
 			phone = uPhone;
 			password = uPassword;
 			std::string filter = GenerateFilter(ormasDal);
@@ -456,6 +462,177 @@ namespace BusinessLayer
 				return false;
 			Balance balance;
 			balance.SetUserID(id);
+			balance.SetSubaccountID(subaccount.GetID());
+			if (balance.CreateBalance(ormasDal, errorMessage))
+				return true;
+		}
+		return false;
+	}
+
+	bool User::CreateBalanceForAccountable(DataLayer::OrmasDal& ormasDal, int uID, std::string& errorMessage)
+	{
+		User user;
+		if (!user.GetUserByID(ormasDal, uID, errorMessage))
+			return false;
+		Currency currency;
+		std::string number = "";
+		std::string genAccRawNumber = "";
+		int currID = currency.GetMainTradeCurrencyID(ormasDal, errorMessage);
+		if (0 != currID)
+		{
+			Status status;
+			if (!status.GetStatusByName(ormasDal, "OPEN", errorMessage))
+				return false;
+			if (!currency.GetCurrencyByID(ormasDal, currID, errorMessage))
+				return false;
+			Subaccount subaccount;
+			Account account;
+			
+			account.Clear();
+			if (account.GetAccountByNumber(ormasDal, "10520", errorMessage))
+				number = std::to_string(10520);
+			if (number.empty())
+				return false;
+
+			number.append(std::to_string(currency.GetCode()));
+			genAccRawNumber = subaccount.GenerateRawNumber(ormasDal, errorMessage);
+			if (genAccRawNumber.empty())
+				return false;
+			number.append(genAccRawNumber);
+
+			std::string owner;
+			owner += user.GetSurname();
+			owner += " ";
+			owner += user.GetName();
+
+			subaccount.SetParentAccountID(account.GetID());
+			subaccount.SetNumber(number);
+			subaccount.SetStartBalance(0.0);
+			subaccount.SetCurrentBalance(0.0);
+			subaccount.SetCurrencyID(currID);
+			subaccount.SetStatusID(status.GetID());
+			subaccount.SetOpenedDate(ormasDal.GetSystemDate());
+			subaccount.SetClosedDate("");
+			subaccount.SetDetails(owner);
+
+			if (!subaccount.CreateSubaccount(ormasDal, errorMessage))
+				return false;
+			Balance balance;
+			balance.SetUserID(user.GetID());
+			balance.SetSubaccountID(subaccount.GetID());
+			if (balance.CreateBalance(ormasDal, errorMessage))
+				return true;
+		}
+		return false;
+	}
+
+	bool User::CreateBalanceForBorrower(DataLayer::OrmasDal& ormasDal, int uID, std::string& errorMessage)
+	{
+		User user;
+		if (!user.GetUserByID(ormasDal, uID, errorMessage))
+			return false;
+		Currency currency;
+		std::string number = "";
+		std::string genAccRawNumber = "";
+		int currID = currency.GetMainTradeCurrencyID(ormasDal, errorMessage);
+		if (0 != currID)
+		{
+			Status status;
+			if (!status.GetStatusByName(ormasDal, "OPEN", errorMessage))
+				return false;
+			if (!currency.GetCurrencyByID(ormasDal, currID, errorMessage))
+				return false;
+			Subaccount subaccount;
+			Account account;
+
+			account.Clear();
+			if (account.GetAccountByNumber(ormasDal, "11620", errorMessage))
+				number = std::to_string(11620);
+			if (number.empty())
+				return false;
+
+			number.append(std::to_string(currency.GetCode()));
+			genAccRawNumber = subaccount.GenerateRawNumber(ormasDal, errorMessage);
+			if (genAccRawNumber.empty())
+				return false;
+			number.append(genAccRawNumber);
+
+			std::string owner;
+			owner += user.GetSurname();
+			owner += " ";
+			owner += user.GetName();
+
+			subaccount.SetParentAccountID(account.GetID());
+			subaccount.SetNumber(number);
+			subaccount.SetStartBalance(0.0);
+			subaccount.SetCurrentBalance(0.0);
+			subaccount.SetCurrencyID(currID);
+			subaccount.SetStatusID(status.GetID());
+			subaccount.SetOpenedDate(ormasDal.GetSystemDate());
+			subaccount.SetClosedDate("");
+			subaccount.SetDetails(owner);
+
+			if (!subaccount.CreateSubaccount(ormasDal, errorMessage))
+				return false;
+			Balance balance;
+			balance.SetUserID(user.GetID());
+			balance.SetSubaccountID(subaccount.GetID());
+			if (balance.CreateBalance(ormasDal, errorMessage))
+				return true;
+		}
+		return false;
+	}
+
+	bool User::CreateBalanceForShareholder(DataLayer::OrmasDal& ormasDal, int uID, std::string& errorMessage)
+	{
+		User user;
+		if (!user.GetUserByID(ormasDal, uID, errorMessage))
+			return false;
+		Currency currency;
+		std::string number = "";
+		std::string genAccRawNumber = "";
+		int currID = currency.GetMainTradeCurrencyID(ormasDal, errorMessage);
+		if (0 != currID)
+		{
+			Status status;
+			if (!status.GetStatusByName(ormasDal, "OPEN", errorMessage))
+				return false;
+			if (!currency.GetCurrencyByID(ormasDal, currID, errorMessage))
+				return false;
+			Subaccount subaccount;
+			Account account;
+
+			account.Clear();
+			if (account.GetAccountByNumber(ormasDal, "33010", errorMessage))
+				number = std::to_string(33010);
+			if (number.empty())
+				return false;
+
+			number.append(std::to_string(currency.GetCode()));
+			genAccRawNumber = subaccount.GenerateRawNumber(ormasDal, errorMessage);
+			if (genAccRawNumber.empty())
+				return false;
+			number.append(genAccRawNumber);
+
+			std::string owner;
+			owner += user.GetSurname();
+			owner += " ";
+			owner += user.GetName();
+
+			subaccount.SetParentAccountID(account.GetID());
+			subaccount.SetNumber(number);
+			subaccount.SetStartBalance(0.0);
+			subaccount.SetCurrentBalance(0.0);
+			subaccount.SetCurrencyID(currID);
+			subaccount.SetStatusID(status.GetID());
+			subaccount.SetOpenedDate(ormasDal.GetSystemDate());
+			subaccount.SetClosedDate("");
+			subaccount.SetDetails(owner);
+
+			if (!subaccount.CreateSubaccount(ormasDal, errorMessage))
+				return false;
+			Balance balance;
+			balance.SetUserID(user.GetID());
 			balance.SetSubaccountID(subaccount.GetID());
 			if (balance.CreateBalance(ormasDal, errorMessage))
 				return true;

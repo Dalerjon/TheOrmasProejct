@@ -120,6 +120,8 @@ namespace BusinessLayer
 
 	bool SpecificationList::GetSpecificationListByID(DataLayer::OrmasDal& ormasDal, int sID, std::string& errorMessage)
 	{
+		if (sID <= 0)
+			return false;
 		id = sID;
 		std::string filter = GenerateFilter(ormasDal);
 		std::vector<DataLayer::specificationListViewCollection> specificationListVector = ormasDal.GetSpecificationList(errorMessage, filter);

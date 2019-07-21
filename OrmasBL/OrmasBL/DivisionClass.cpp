@@ -134,6 +134,8 @@ namespace BusinessLayer{
 
 	bool Division::GetDivisionByID(DataLayer::OrmasDal& ormasDal, int dID, std::string& errorMessage)
 	{
+		if (dID <= 0)
+			return false;
 		id = dID;
 		std::string filter = GenerateFilter(ormasDal);
 		std::vector<DataLayer::divisionsCollection> divisionVector = ormasDal.GetDivisions(errorMessage, filter);

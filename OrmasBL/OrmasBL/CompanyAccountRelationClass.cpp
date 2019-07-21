@@ -130,6 +130,8 @@ namespace BusinessLayer{
 
 	bool CompanyAccountRelation::GetCompanyAccountByID(DataLayer::OrmasDal& ormasDal, int id, std::string& errorMessage)
 	{
+		if (id <= 0)
+			return false;
 		CompanyAccountRelation ceRelation;
 		ceRelation.SetID(id);
 		std::string filter = ceRelation.GenerateFilter(ormasDal);

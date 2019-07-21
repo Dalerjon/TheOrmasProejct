@@ -238,6 +238,8 @@ namespace BusinessLayer{
 
 	bool Subaccount::GetSubaccountByID(DataLayer::OrmasDal& ormasDal, int aID, std::string& errorMessage)
 	{
+		if (aID <= 0)
+			return false;
 		id = aID;
 		std::string filter = GenerateFilter(ormasDal);
 		std::vector<DataLayer::subaccountsViewCollection> subaccountVector = ormasDal.GetSubaccounts(errorMessage, filter);
@@ -264,6 +266,8 @@ namespace BusinessLayer{
 
 	bool Subaccount::GetSubaccountByNumber(DataLayer::OrmasDal& ormasDal, std::string aNumber, std::string& errorMessage)
 	{
+		if (aNumber.empty())
+			return false;
 		number = aNumber;
 		std::string filter = GenerateFilter(ormasDal);
 		std::vector<DataLayer::subaccountsViewCollection> subaccountVector = ormasDal.GetSubaccounts(errorMessage, filter);

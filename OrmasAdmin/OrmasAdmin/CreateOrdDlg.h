@@ -39,5 +39,6 @@ private:
 	void InitComboBox();
 	QWidget* parentForm;
 	MainForm* mainForm;
+	bool CheckAccess();
 };
 #endif //CREATEORDDLG_H

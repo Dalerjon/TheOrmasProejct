@@ -5,7 +5,7 @@ INSERT INTO "OrmasSchema".warehouse_type(
 INSERT INTO "OrmasSchema".warehouse_type(
             warehouse_type_id, warehouse_type_code, warehouse_type_purpose, 
             warehouse_type_name)
-    VALUES ((SELECT nextval('"OrmasSchema".id_seq')), 'GOODS', 'Товарный склад', 'Склад сырья');
+    VALUES ((SELECT nextval('"OrmasSchema".id_seq')), 'GOODS', 'Товарный склад', 'Товарный склад');
 INSERT INTO "OrmasSchema".warehouse_type(
             warehouse_type_id, warehouse_type_code, warehouse_type_purpose, 
             warehouse_type_name)

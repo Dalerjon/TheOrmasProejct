@@ -129,6 +129,8 @@ namespace BusinessLayer
 
 	bool StatusRule::GetStatusRuleByID(DataLayer::OrmasDal& ormasDal, int sID, std::string& errorMessage)
 	{
+		if (sID <= 0)
+			return false;
 		id = sID;
 		std::string filter = GenerateFilter(ormasDal);
 		std::vector<DataLayer::statusRuleViewCollection> statusRuleVector = ormasDal.GetStatusRule(errorMessage, filter);
@@ -150,6 +152,8 @@ namespace BusinessLayer
 	{
 		if (!sOperation.empty())
 			boost::trim(sOperation);
+		if (sOperation.empty())
+			return false;
 		operation = boost::to_upper_copy(sOperation);
 		std::string filter = GenerateFilter(ormasDal);
 		std::vector<DataLayer::statusRuleViewCollection> statusRuleVector = ormasDal.GetStatusRule(errorMessage, filter);

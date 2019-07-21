@@ -7,23 +7,24 @@ namespace BusinessLayer
 	{
 		id = std::get<0>(wCollection);
 		date = std::get<1>(wCollection);
-		statusCode = std::get<2>(wCollection);
-		statusName = std::get<3>(wCollection);
-		employeeName = std::get<4>(wCollection);
-		employeeSurname = std::get<5>(wCollection);
-		employeePhone = std::get<6>(wCollection);
-		employeePosition = std::get<7>(wCollection);
-		stockEmployeeName = std::get<8>(wCollection);
-		stockEmployeeSurname = std::get<9>(wCollection);
-		stockEmployeePhone = std::get<10>(wCollection);
-		stockEmployeePosition = std::get<11>(wCollection);
-		count = std::get<12>(wCollection);
-		sum = std::get<13>(wCollection);
-		currencyName = std::get<14>(wCollection);
-		stockEmployeeID = std::get<15>(wCollection);
-		employeeID = std::get<16>(wCollection);
-		statusID = std::get<17>(wCollection);
-		currencyID = std::get<18>(wCollection);
+		executionDate = std::get<2>(wCollection);
+		statusCode = std::get<3>(wCollection);
+		statusName = std::get<4>(wCollection);
+		employeeName = std::get<5>(wCollection);
+		employeeSurname = std::get<6>(wCollection);
+		employeePhone = std::get<7>(wCollection);
+		employeePosition = std::get<8>(wCollection);
+		stockEmployeeName = std::get<9>(wCollection);
+		stockEmployeeSurname = std::get<10>(wCollection);
+		stockEmployeePhone = std::get<11>(wCollection);
+		stockEmployeePosition = std::get<12>(wCollection);
+		count = std::get<13>(wCollection);
+		sum = std::get<14>(wCollection);
+		currencyName = std::get<15>(wCollection);
+		stockEmployeeID = std::get<16>(wCollection);
+		employeeID = std::get<17>(wCollection);
+		statusID = std::get<18>(wCollection);
+		currencyID = std::get<19>(wCollection);
 	}
 
 	std::string WriteOffRawView::GetStatusCode()

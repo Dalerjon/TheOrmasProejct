@@ -165,6 +165,8 @@ namespace BusinessLayer{
 
 	bool Jobsheet::GetJobsheetByID(DataLayer::OrmasDal& ormasDal, int bID, std::string& errorMessage)
 	{
+		if (bID <= 0)
+			return false;
 		id = bID;
 		std::string filter = GenerateFilter(ormasDal);
 		std::vector<DataLayer::jobsheetViewCollection> jobsheetVector = ormasDal.GetJobsheet(errorMessage, filter);

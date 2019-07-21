@@ -188,6 +188,8 @@ namespace BusinessLayer{
 
 	bool AccountHistory::GetAccountHistoryByID(DataLayer::OrmasDal& ormasDal, int aID, std::string& errorMessage)
 	{
+		if (aID <= 0)
+			return false;
 		id = aID;
 		std::string filter = GenerateFilter(ormasDal);
 		std::vector<DataLayer::accountHistoryCollection> accountHistoryVector = ormasDal.GetAccountHistory(errorMessage, filter);
@@ -211,7 +213,9 @@ namespace BusinessLayer{
 
 	bool AccountHistory::GetAccountHistoryByAccountID(DataLayer::OrmasDal& ormasDal, int aAccountID, std::string& errorMessage)
 	{
-		accountID = id;
+		if (aAccountID <= 0)
+			return false;
+		accountID = aAccountID;
 		std::string filter = GenerateFilter(ormasDal);
 		std::vector<DataLayer::accountHistoryCollection> accountHistoryVector = ormasDal.GetAccountHistory(errorMessage, filter);
 		if (0 != accountHistoryVector.size())

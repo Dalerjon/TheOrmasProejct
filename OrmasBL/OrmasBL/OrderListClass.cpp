@@ -158,6 +158,8 @@ namespace BusinessLayer
 
 	bool OrderList::GetOrderListByID(DataLayer::OrmasDal& ormasDal, int pID, std::string& errorMessage)
 	{
+		if (pID <= 0)
+			return false;
 		id = pID;
 		std::string filter = GenerateFilter(ormasDal);
 		std::vector<DataLayer::orderListViewCollection> orderListVector = ormasDal.GetOrderList(errorMessage, filter);

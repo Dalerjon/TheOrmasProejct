@@ -177,6 +177,8 @@ namespace BusinessLayer
 
 	bool ProductionConsumeRawList::GetProductionConsumeRawListByID(DataLayer::OrmasDal& ormasDal, int pID, std::string& errorMessage)
 	{
+		if (pID <= 0)
+			return false;
 		id = pID;
 		std::string filter = GenerateFilter(ormasDal);
 		std::vector<DataLayer::productionConsumeRawListViewCollection> productionConsumeRawListVector = ormasDal.GetProductionConsumeRawList(errorMessage, filter);

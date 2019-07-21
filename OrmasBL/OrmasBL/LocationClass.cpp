@@ -157,6 +157,8 @@ namespace BusinessLayer
 
 	bool Location::GetLocationByID(DataLayer::OrmasDal& ormasDal, int lID, std::string& errorMessage)
 	{
+		if (lID <= 0)
+			return false;
 		id = lID;
 		std::string filter = GenerateFilter(ormasDal);
 		std::vector<DataLayer::locationsCollection> locationVector = ormasDal.GetLocations(errorMessage, filter);

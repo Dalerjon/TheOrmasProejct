@@ -159,6 +159,8 @@ namespace BusinessLayer
 
 	bool ConsumeProductList::GetConsumeProductListByID(DataLayer::OrmasDal& ormasDal, int pID, std::string& errorMessage)
 	{
+		if (pID <= 0)
+			return false;
 		id = pID;
 		std::string filter = GenerateFilter(ormasDal);
 		std::vector<DataLayer::consumeProductListViewCollection> consumeProductListVector = ormasDal.GetConsumeProductList(errorMessage, filter);

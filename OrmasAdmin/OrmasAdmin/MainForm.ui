@@ -64,6 +64,10 @@
     <addaction name="actionClients"/>
     <addaction name="actionEmployees"/>
     <addaction name="actionPurveyors"/>
+    <addaction name="actionAccountables"/>
+    <addaction name="actionBorrowers"/>
+    <addaction name="actionCreditors"/>
+    <addaction name="actionShareholders"/>
     <addaction name="separator"/>
     <addaction name="actionCompanyEmployees"/>
     <addaction name="actionCashboxEmployees"/>
@@ -85,6 +89,8 @@
     <addaction name="actionSpecificationList"/>
     <addaction name="actionPrices"/>
     <addaction name="actionNetCost"/>
+    <addaction name="actionEmployeeProducts"/>
+    <addaction name="actionBranchProducts"/>
    </widget>
    <widget class="QMenu" name="menuOrders">
     <property name="title">
@@ -180,7 +186,7 @@
     <addaction name="actionRawStock"/>
     <addaction name="actionProductStock"/>
     <addaction name="actionOrderRaws"/>
-    <addaction name="actionReceiptRaws"/>
+    <addaction name="actionStockTransfers"/>
     <addaction name="actionConsumptionRaws"/>
     <addaction name="actionWriteOffRaws"/>
     <addaction name="actionTransports"/>
@@ -425,7 +431,7 @@
     <string>Order raw materials</string>
    </property>
   </action>
-  <action name="actionReceiptRaws">
+  <action name="actionStockTransfers">
    <property name="text">
     <string>Stock transfer</string>
    </property>
@@ -688,6 +694,36 @@
   <action name="actionProductStock">
    <property name="text">
     <string>Product stock</string>
+   </property>
+  </action>
+  <action name="actionAccountables">
+   <property name="text">
+    <string>Accountables</string>
+   </property>
+  </action>
+  <action name="actionBorrowers">
+   <property name="text">
+    <string>Borrower</string>
+   </property>
+  </action>
+  <action name="actionCreditors">
+   <property name="text">
+    <string>Creditor</string>
+   </property>
+  </action>
+  <action name="actionShareholders">
+   <property name="text">
+    <string>Shareholders</string>
+   </property>
+  </action>
+  <action name="actionEmployeeProducts">
+   <property name="text">
+    <string>Employeee products</string>
+   </property>
+  </action>
+  <action name="actionBranchProducts">
+   <property name="text">
+    <string>Branch products</string>
    </property>
   </action>
  </widget>

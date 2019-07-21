@@ -130,6 +130,8 @@ namespace BusinessLayer{
 
 	bool CashboxEmployeeRelation::GetCashboxEmployeeByID(DataLayer::OrmasDal& ormasDal, int id, std::string& errorMessage)
 	{
+		if (id <= 0)
+			return false;
 		CashboxEmployeeRelation ceRelation;
 		ceRelation.SetID(id);
 		std::string filter = ceRelation.GenerateFilter(ormasDal);
@@ -160,6 +162,8 @@ namespace BusinessLayer{
 
 	bool CashboxEmployeeRelation::GetCashboxByEmployeeID(DataLayer::OrmasDal& ormasDal, int eID, std::string& errorMessage)
 	{
+		if (eID <= 0)
+			return false;
 		CashboxEmployeeRelation ceRelation;
 		ceRelation.SetID(id);
 		std::string filter = ceRelation.GenerateFilter(ormasDal);

@@ -143,6 +143,8 @@ namespace BusinessLayer{
 
 	bool DivisionEmployeeRelation::GetDivisionEmployeeRelationByID(DataLayer::OrmasDal& ormasDal, int dID, std::string& errorMessage)
 	{
+		if (dID <= 0)
+			return false;
 		id = dID;
 		std::string filter = GenerateFilter(ormasDal);
 		std::vector<DataLayer::divisionEmployeeCollection> DivisionEmployeeRelationVector = ormasDal.GetDivisionEmployee(errorMessage, filter);
@@ -163,6 +165,8 @@ namespace BusinessLayer{
 
 	bool DivisionEmployeeRelation::GetDivisionEmployeeRelationByEmployeeID(DataLayer::OrmasDal& ormasDal, int eID, std::string& errorMessage)
 	{
+		if (eID <= 0)
+			return false;
 		employeeID = eID;
 		std::string filter = GenerateFilter(ormasDal);
 		std::vector<DataLayer::divisionEmployeeCollection> DivisionEmployeeRelationVector = ormasDal.GetDivisionEmployee(errorMessage, filter);

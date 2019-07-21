@@ -8,6 +8,7 @@ namespace BusinessLayer{
 	{
 		std::string userName = "";
 		std::string userSurname = "";
+		std::string subaccountNumber = "";
 		double currentBalance = 0.0;
 		std::string currencyName = "";
 	public:
@@ -18,6 +19,7 @@ namespace BusinessLayer{
 		// BalanceView class Accessors
 		std::string GetUsername();
 		std::string GetUserSurname();
+		std::string GetSubaccountNumber();
 		double GetCurrentBalance();
 		std::string GetCurrencyName();
 	};

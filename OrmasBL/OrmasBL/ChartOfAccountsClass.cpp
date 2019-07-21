@@ -142,6 +142,8 @@ namespace BusinessLayer{
 
 	bool ChartOfAccounts::GetChartOfAccountsByID(DataLayer::OrmasDal& ormasDal, int cID, std::string& errorMessage)
 	{
+		if (cID <= 0)
+			return false;
 		id = cID;
 		std::string filter = GenerateFilter(ormasDal);
 		std::vector<DataLayer::chartOfAccountsViewCollection> chartOfAccountssVector = ormasDal.GetChartOfAccounts(errorMessage, filter);
@@ -162,6 +164,8 @@ namespace BusinessLayer{
 
 	bool ChartOfAccounts::GetChartOfAccountsByNumber(DataLayer::OrmasDal& ormasDal, std::string cNumber, std::string& errorMessage)
 	{
+		if (cNumber.empty())
+			return false;
 		number = cNumber;
 		std::string filter = GenerateFilter(ormasDal);
 		std::vector<DataLayer::chartOfAccountsViewCollection> chartOfAccountssVector = ormasDal.GetChartOfAccounts(errorMessage, filter);

@@ -136,6 +136,8 @@ namespace BusinessLayer
 
 	bool State::GetStateByID(DataLayer::OrmasDal& ormasDal, int sID, std::string& errorMessage)
 	{
+		if (sID <= 0)
+			return false;
 		id = sID;
 		std::string filter = GenerateFilter(ormasDal);
 		std::vector<DataLayer::stateCollection> stateVector = ormasDal.GetState(errorMessage, filter);
@@ -156,6 +158,8 @@ namespace BusinessLayer
 
 	bool State::GetStateByUniversalID(DataLayer::OrmasDal& ormasDal, int uID, std::string& errorMessage)
 	{
+		if (uID <= 0)
+			return false;
 		universalID = uID;
 		std::string filter = GenerateFilter(ormasDal);
 		std::vector<DataLayer::stateCollection> stateVector = ormasDal.GetState(errorMessage, filter);

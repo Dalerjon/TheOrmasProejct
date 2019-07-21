@@ -2,8 +2,10 @@
 #include "PaymentClass.h"
 #include "UserClass.h"
 #include "BalanceClass.h"
+#include "SubaccountClass.h"
 #include "BalancePaymentRelationClass.h"
 #include "EntryClass.h"
+#include "EntryOperationRelationClass.h"
 #include "CashboxEmployeeRelationClass.h"
 #include "CashboxClass.h"
 #include "StatusClass.h"
@@ -15,17 +17,21 @@ namespace BusinessLayer{
 		id = std::get<0>(pCollection);
 		date = std::get<1>(pCollection);
 		value = std::get<2>(pCollection);
-		userID = std::get<3>(pCollection);
-		currencyID = std::get<4>(pCollection);
-		statusID = std::get<5>(pCollection);
+		target = std::get<3>(pCollection);
+		userID = std::get<4>(pCollection);
+		currencyID = std::get<5>(pCollection);
+		statusID = std::get<6>(pCollection);
+		accountID = std::get<7>(pCollection);
 	}
 	Payment::Payment()
 	{
 		date = "";
 		value = 0.0;
+		target = "";
 		userID = 0;
 		currencyID = 0;
 		statusID = 0;
+		accountID = 0;
 	}
 	int Payment::GetID()
 	{
@@ -40,6 +46,11 @@ namespace BusinessLayer{
 	double Payment::GetValue()
 	{
 		return value;
+	}
+
+	std::string Payment::GetTarget()
+	{
+		return target;
 	}
 
 	int Payment::GetUserID()
@@ -57,6 +68,11 @@ namespace BusinessLayer{
 		return statusID;
 	}
 
+	int Payment::GetAccountID()
+	{
+		return accountID;
+	}
+
 	void Payment::SetID(int pID)
 	{
 		id = pID;
@@ -70,6 +86,11 @@ namespace BusinessLayer{
 	void Payment::SetValue(double pValue)
 	{
 		value = pValue;
+	}
+	
+	void Payment::SetTarget(std::string pTarget)
+	{
+		target = pTarget;
 	}
 
 	void Payment::SetUserID(int uID)
@@ -86,10 +107,15 @@ namespace BusinessLayer{
 		statusID = sID;
 	}
 
-	bool Payment::CreatePayment(DataLayer::OrmasDal &ormasDal, std::string pDate, double pValue, int uID, int cID, int sID,
-		std::string& errorMessage)
+	void Payment::SetAccountID(int aID)
 	{
-		if (IsDuplicate(ormasDal, pDate, pValue, uID, cID, errorMessage))
+		accountID = aID;
+	}
+
+	bool Payment::CreatePayment(DataLayer::OrmasDal &ormasDal, std::string pDate, double pValue, std::string pTarget, int uID,
+		int cID, int sID, int aID, std::string& errorMessage)
+	{
+		if (IsDuplicate(ormasDal, pDate, pValue, uID, cID, aID, errorMessage))
 			return false;
 		std::map<std::string, int> statusMap = BusinessLayer::Status::GetStatusesAsMap(ormasDal, errorMessage);
 		if (0 == statusMap.size())
@@ -97,16 +123,18 @@ namespace BusinessLayer{
 		id = ormasDal.GenerateID();
 		date = pDate;
 		value = pValue;
+		target = pTarget;
 		userID = uID;
 		currencyID = cID;
 		statusID = sID;
+		accountID = aID;
 		//ormasDal.StartTransaction(errorMessage);
-		if (0 != id && ormasDal.CreatePayment(id, date, value, userID, currencyID, statusID, errorMessage))
+		if (0 != id && ormasDal.CreatePayment(id, date, value, target, userID, currencyID, statusID, accountID, errorMessage))
 		{
 			if (statusID == statusMap.find("EXECUTED")->second)
 			{
 
-				if (Replenishment(ormasDal, userID, currencyID, errorMessage))
+				if (Replenishment(ormasDal, userID, currencyID, accountID, errorMessage))
 				{
 					//ormasDal.CommitTransaction(errorMessage);
 					return true;
@@ -136,12 +164,12 @@ namespace BusinessLayer{
 			return false;
 		id = ormasDal.GenerateID();
 		//ormasDal.StartTransaction(errorMessage);
-		if (0 != id && ormasDal.CreatePayment(id, date, value, userID, currencyID, statusID, errorMessage))
+		if (0 != id && ormasDal.CreatePayment(id, date, value, target, userID, currencyID, statusID, accountID, errorMessage))
 		{
 			if (statusID == statusMap.find("EXECUTED")->second)
 			{
 
-				if (Replenishment(ormasDal, userID, currencyID, errorMessage))
+				if (Replenishment(ormasDal, userID, currencyID, accountID, errorMessage))
 				{
 					//ormasDal.CommitTransaction(errorMessage);
 					return true;
@@ -164,26 +192,25 @@ namespace BusinessLayer{
 	}
 	bool Payment::DeletePayment(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
-		
+		std::map<std::string, int> statusMap = BusinessLayer::Status::GetStatusesAsMap(ormasDal, errorMessage);
+		if (0 == statusMap.size())
+			return false;
 		if (!this->GetPaymentByID(ormasDal, id, errorMessage))
 			return false;
+		if (this->GetStatusID() == statusMap.find("EXECUTED")->second)
+		{
+			errorMessage = "Cannot delete document with \"EXECUTED\" status!";
+			return false;
+		}
+		if (this->GetStatusID() == statusMap.find("ERROR")->second)
+		{
+			errorMessage = "Cannot delete document with \"ERROR\" status!";
+			return false;
+		}
 		if (ormasDal.DeletePayment(id, errorMessage))
 		{
-			std::map<std::string, int> statusMap = BusinessLayer::Status::GetStatusesAsMap(ormasDal, errorMessage);
-			if (0 == statusMap.size())
-				return false;
-			if (statusID == statusMap.find("EXECUTED")->second)
-			{
-				if (CancelPayment(ormasDal, userID, currencyID, errorMessage))
-				{
-					Clear();
-					return true;
-				}
-			}
-			else
-			{
-				return true;
-			}
+			Clear();
+			return true;
 		}
 		if (errorMessage.empty())
 		{
@@ -192,24 +219,71 @@ namespace BusinessLayer{
 		return false;
 	}
 
-	bool Payment::UpdatePayment(DataLayer::OrmasDal &ormasDal, std::string pDate, double pValue, int uID, int cID, int sID,
-		std::string& errorMessage)
+	bool Payment::UpdatePayment(DataLayer::OrmasDal &ormasDal, std::string pDate, double pValue, std::string pTarget, int uID,
+		int cID, int sID, int aID, std::string& errorMessage)
 	{
 		std::map<std::string, int> statusMap = BusinessLayer::Status::GetStatusesAsMap(ormasDal, errorMessage);
 		if (0 == statusMap.size())
 			return false;
 		date = pDate;
 		value = pValue;
+		target = pTarget;
 		userID = uID;
 		currencyID = cID;
 		statusID = sID;
+		accountID = aID;
 		currentValue = GetCurrentValue(ormasDal, id, errorMessage);
+		previousStatusID = GetCurrentStatusID(ormasDal, id, errorMessage);
 		//ormasDal.StartTransaction(errorMessage);
-		if (0 != id && ormasDal.UpdatePayment(id, date, value, userID, currencyID, statusID, errorMessage))
+		if (0 != id && ormasDal.UpdatePayment(id, date, value, target, userID, currencyID, statusID, accountID, errorMessage))
 		{
-			if (statusID == statusMap.find("EXECUTED")->second)
+			if (previousStatusID != statusMap.find("EXECUTED")->second)
 			{
-				if (Replenishment(ormasDal, userID, currencyID, currentValue, errorMessage))
+				if (statusID == statusMap.find("EXECUTED")->second)
+				{
+					if (Replenishment(ormasDal, userID, currencyID, accountID, errorMessage))
+					{
+						currentValue = 0.0;
+						//ormasDal.CommitTransaction(errorMessage);
+						return true;
+					}
+					else
+					{
+						//ormasDal.CancelTransaction(errorMessage);
+						return false;
+					}
+				}
+				else
+				{
+					return true;
+				}
+			}
+			else
+			{
+				if (statusID == statusMap.find("ERROR")->second)
+				{
+
+					if (CancelPayment(ormasDal, userID, currencyID, accountID, errorMessage))
+					{
+						currentValue = 0.0;
+						//ormasDal.CommitTransaction(errorMessage);
+						return true;
+					}
+					else
+					{
+						//ormasDal.CancelTransaction(errorMessage);
+						return false;
+					}
+				}
+				else
+				{
+					errorMessage = "Cannot update this document, only \"Error\" status is acceptable!";
+					return false;
+				}
+			}
+			/*if (statusID == statusMap.find("EXECUTED")->second)
+			{
+				if (Replenishment(ormasDal, userID, currencyID, aID, currentValue, errorMessage))
 				{
 					currentValue = 0.0;
 					//ormasDal.CommitTransaction(errorMessage);
@@ -222,7 +296,7 @@ namespace BusinessLayer{
 				}
 			}
 			//ormasDal.CommitTransaction(errorMessage);
-			return true;
+			return true;*/
 		}
 		if (errorMessage.empty())
 		{
@@ -237,12 +311,57 @@ namespace BusinessLayer{
 		if (0 == statusMap.size())
 			return false;
 		currentValue = GetCurrentValue(ormasDal, id, errorMessage);
+		previousStatusID = GetCurrentStatusID(ormasDal, id, errorMessage);
 		//ormasDal.StartTransaction(errorMessage);
-		if (0 != id && ormasDal.UpdatePayment(id, date, value, userID, currencyID, statusID, errorMessage))
+		if (0 != id && ormasDal.UpdatePayment(id, date, value, target, userID, currencyID, statusID, accountID, errorMessage))
 		{
-			if (statusID == statusMap.find("EXECUTED")->second)
+			if (previousStatusID != statusMap.find("EXECUTED")->second)
 			{
-				if (Replenishment(ormasDal, userID, currencyID, errorMessage))
+				if (statusID == statusMap.find("EXECUTED")->second)
+				{
+					if (Replenishment(ormasDal, userID, currencyID, accountID,  errorMessage))
+					{
+						currentValue = 0.0;
+						//ormasDal.CommitTransaction(errorMessage);
+						return true;
+					}
+					else
+					{
+						//ormasDal.CancelTransaction(errorMessage);
+						return false;
+					}
+				}
+				else
+				{
+					return true;
+				}
+			}
+			else
+			{
+				if (statusID == statusMap.find("ERROR")->second)
+				{
+
+					if (CancelPayment(ormasDal, userID, currencyID, accountID, errorMessage))
+					{
+						currentValue = 0.0;
+						//ormasDal.CommitTransaction(errorMessage);
+						return true;
+					}
+					else
+					{
+						//ormasDal.CancelTransaction(errorMessage);
+						return false;
+					}
+				}
+				else
+				{
+					errorMessage = "Cannot update this document, only \"Error\" status is acceptable!";
+					return false;
+				}
+			}
+			/*if (statusID == statusMap.find("EXECUTED")->second)
+			{
+				if (Replenishment(ormasDal, userID, currencyID, accountID, errorMessage))
 				{
 					//ormasDal.CommitTransaction(errorMessage);
 					return true;
@@ -254,7 +373,7 @@ namespace BusinessLayer{
 				}
 			}
 			//ormasDal.CommitTransaction(errorMessage);
-			return true;
+			return true;*/
 		}
 		if (errorMessage.empty())
 		{
@@ -266,9 +385,9 @@ namespace BusinessLayer{
 
 	std::string Payment::GenerateFilter(DataLayer::OrmasDal& ormasDal)
 	{
-		if (0 != id || date.empty() || 0 != userID || 0 != currencyID || 0 != value || 0 != statusID)
+		if (0 != id || date.empty() || 0 != userID || target.empty() || 0 != currencyID || 0 != value || 0 != statusID || 0 != accountID)
 		{
-			return ormasDal.GetFilterForPayment(id, date, value, userID, currencyID, statusID);
+			return ormasDal.GetFilterForPayment(id, date, value, target, userID, currencyID, statusID, accountID);
 		}
 		return "";
 	}
@@ -283,9 +402,11 @@ namespace BusinessLayer{
 			id = std::get<0>(paymentVector.at(0));
 			date = std::get<1>(paymentVector.at(0));
 			value = std::get<5>(paymentVector.at(0));
-			userID = std::get<8>(paymentVector.at(0));
-			currencyID = std::get<9>(paymentVector.at(0));
-			statusID = std::get<10>(paymentVector.at(0));
+			target = std::get<7>(paymentVector.at(0));
+			userID = std::get<10>(paymentVector.at(0));
+			currencyID = std::get<11>(paymentVector.at(0));
+			statusID = std::get<12>(paymentVector.at(0));
+			accountID = std::get<13>(paymentVector.at(0));
 			return true;
 		}
 		else
@@ -297,7 +418,7 @@ namespace BusinessLayer{
 
 	bool Payment::IsEmpty()
 	{
-		if (0 == id && date.empty() && 0.0 == value && 0 == userID && 0 == currencyID && 0 == statusID)
+		if (0 == id && date.empty() && 0.0 == value && target.empty() && 0 == userID && 0 == currencyID && 0 == statusID && 0 != accountID)
 			return true;
 		return false;
 	}
@@ -307,12 +428,14 @@ namespace BusinessLayer{
 		id = 0;
 		date.clear();
 		value = 0;
+		target.clear();
 		userID = 0;
 		currencyID = 0;
 		statusID = 0;
+		accountID = 0;
 	}
 
-	bool Payment::IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string pDate, double pValue, int uID, int cID,
+	bool Payment::IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string pDate, double pValue, int uID, int cID, int aID,
 		std::string& errorMessage)
 	{
 		Payment payment;
@@ -322,6 +445,7 @@ namespace BusinessLayer{
 		payment.SetValue(pValue);
 		payment.SetUserID(uID);
 		payment.SetCurrencyID(cID);
+		payment.SetAccountID(aID);
 		std::string filter = payment.GenerateFilter(ormasDal);
 		std::vector<DataLayer::paymentsViewCollection> paymentVector = ormasDal.GetPayments(errorMessage, filter);
 		if (!errorMessage.empty())
@@ -343,6 +467,7 @@ namespace BusinessLayer{
 		payment.SetValue(value);
 		payment.SetUserID(userID);
 		payment.SetCurrencyID(currencyID);
+		payment.SetAccountID(accountID);
 		std::string filter = payment.GenerateFilter(ormasDal);
 		std::vector<DataLayer::paymentsViewCollection> paymentVector = ormasDal.GetPayments(errorMessage, filter);
 		if (!errorMessage.empty())
@@ -355,7 +480,7 @@ namespace BusinessLayer{
 		return true;
 	}
 
-	bool Payment::Replenishment(DataLayer::OrmasDal& ormasDal, int uID, int cID, std::string& errorMessage)
+	bool Payment::Replenishment(DataLayer::OrmasDal& ormasDal, int uID, int cID, int aID, std::string& errorMessage)
 	{
 		CashboxEmployeeRelation cashEmpRel;
 		if (!cashEmpRel.GetCashboxByEmployeeID(ormasDal, loggedUserID, errorMessage))
@@ -363,17 +488,62 @@ namespace BusinessLayer{
 			errorMessage = "Access denied! You haven't rights for doing operations with cashbox!";
 			return false;
 		}
-
-		Balance balance;
 		Cashbox cashbox;
 		if (!cashbox.GetCashboxByID(ormasDal, cashEmpRel.GetCashboxID(), errorMessage))
 		{
 			errorMessage = "Access denied! You haven't rights for doing operations with cashbox!";
 			return false;
 		}
-		if (balance.GetBalanceByUserID(ormasDal, uID, errorMessage))
+
+		if (uID > 0)
 		{
-			int credAccID = balance.GetSubaccountID();
+			Balance balance;
+			Subaccount sub;
+			Payment payment;
+			payment.SetUserID(uID);
+			std::string filter = payment.GenerateFilter(ormasDal);
+			std::vector<DataLayer::balancesViewCollection> balanceVector = ormasDal.GetBalances(errorMessage, filter);
+			if (0 < balanceVector.size())
+			{
+				for each (auto item in balanceVector)
+				{
+					sub.Clear();
+					if (sub.GetSubaccountByID(ormasDal, std::get<6>(item), errorMessage))
+					{
+						if (sub.GetParentAccountID() == aID)
+						{
+							balance.SetSubaccountID(sub.GetID());
+						}
+					}
+				}
+			}
+			else
+			{
+				return false;
+			}
+			if (balance.GetSubaccountID() <= 0)
+				return false;
+			if (balance.GetBalanceBySubaccountID(ormasDal, balance.GetSubaccountID(), errorMessage))
+			{
+				int credAccID = balance.GetSubaccountID();
+				int debAccID = cashbox.GetSubaccountID();
+				if (0 == debAccID || 0 == credAccID)
+				{
+					return false;
+				}
+				if (this->CreateEntry(ormasDal, debAccID, value, credAccID, ormasDal.GetSystemDateTime(), errorMessage))
+				{
+					BalancePaymentRelation bpRelation;
+					bpRelation.SetBalanceID(balance.GetID());
+					bpRelation.SetPaymentID(this->id);
+					if (bpRelation.CreateBalancePaymentRelation(ormasDal, errorMessage))
+						return true;
+				}
+			}
+		}
+		else if (aID > 0)
+		{
+			int credAccID = aID;
 			int debAccID = cashbox.GetSubaccountID();
 			if (0 == debAccID || 0 == credAccID)
 			{
@@ -381,17 +551,13 @@ namespace BusinessLayer{
 			}
 			if (this->CreateEntry(ormasDal, debAccID, value, credAccID, ormasDal.GetSystemDateTime(), errorMessage))
 			{
-				BalancePaymentRelation bpRelation;
-				bpRelation.SetBalanceID(balance.GetID());
-				bpRelation.SetPaymentID(this->id);
-				if (bpRelation.CreateBalancePaymentRelation(ormasDal, errorMessage))
 					return true;
 			}
 		}
 		return false;
 	}
 
-	bool Payment::Replenishment(DataLayer::OrmasDal& ormasDal, int uID, int cID, double previousValue, std::string& errorMessage)
+	bool Payment::Replenishment(DataLayer::OrmasDal& ormasDal, int uID, int cID, int aID, double previousValue, std::string& errorMessage)
 	{
 		CashboxEmployeeRelation cashEmpRel;
 		if (!cashEmpRel.GetCashboxByEmployeeID(ormasDal, loggedUserID, errorMessage))
@@ -399,17 +565,58 @@ namespace BusinessLayer{
 			errorMessage = "Access denied! You haven't rights for doing operations with cashbox!";
 			return false;
 		}
-
-		Balance balance;
 		Cashbox cashbox;
 		if (!cashbox.GetCashboxByID(ormasDal, cashEmpRel.GetCashboxID(), errorMessage))
 		{
 			errorMessage = "Access denied! You haven't rights for doing operations with cashbox!";
 			return false;
 		}
-		if (balance.GetBalanceByUserID(ormasDal, uID, errorMessage))
+
+		if (uID > 0)
 		{
-			int credAccID = balance.GetSubaccountID();
+			Balance balance;
+			Subaccount sub;
+			Payment payment;
+			payment.SetUserID(uID);
+			std::string filter = payment.GenerateFilter(ormasDal);
+			std::vector<DataLayer::balancesViewCollection> balanceVector = ormasDal.GetBalances(errorMessage, filter);
+			if (0 < balanceVector.size())
+			{
+				for each (auto item in balanceVector)
+				{
+					sub.Clear();
+					if (sub.GetSubaccountByID(ormasDal, std::get<6>(item), errorMessage))
+					{
+						if (sub.GetParentAccountID() == aID)
+						{
+							balance.SetSubaccountID(sub.GetID());
+						}
+					}
+				}
+			}
+			else
+			{
+				return false;
+			}
+			if (balance.GetSubaccountID() <= 0)
+				return false;
+			if (balance.GetBalanceBySubaccountID(ormasDal, balance.GetSubaccountID(), errorMessage))
+			{
+				int credAccID = balance.GetSubaccountID();
+				int debAccID = cashbox.GetSubaccountID();
+				if (0 == debAccID || 0 == credAccID)
+				{
+					return false;
+				}
+				if (this->CreateEntry(ormasDal, debAccID, value, credAccID, previousValue, ormasDal.GetSystemDateTime(), errorMessage))
+				{
+					return true;
+				}
+			}
+		}
+		else if (aID > 0)
+		{
+			int credAccID = aID;
 			int debAccID = cashbox.GetSubaccountID();
 			if (0 == debAccID || 0 == credAccID)
 			{
@@ -431,7 +638,7 @@ namespace BusinessLayer{
 		return 0;
 	}
 
-	bool Payment::CancelPayment(DataLayer::OrmasDal& ormasDal, int uID, int cID, std::string& errorMessage)
+	bool Payment::CancelPayment(DataLayer::OrmasDal& ormasDal, int uID, int cID, int aID, std::string& errorMessage)
 	{
 		CashboxEmployeeRelation cashEmpRel;
 		if (!cashEmpRel.GetCashboxByEmployeeID(ormasDal, loggedUserID, errorMessage))
@@ -439,17 +646,62 @@ namespace BusinessLayer{
 			errorMessage = "Access denied! You haven't rights for doing operations with cashbox!";
 			return false;
 		}
-		
-		Balance balance;
 		Cashbox cashbox;
 		if (!cashbox.GetCashboxByID(ormasDal, cashEmpRel.GetCashboxID(), errorMessage))
 		{
 			errorMessage = "Access denied! You haven't rights for doing operations with cashbox!";
 			return false;
 		}
-		if (balance.GetBalanceByUserID(ormasDal, uID, errorMessage))
+		
+		if (uID > 0)
 		{
-			int debAccID = balance.GetSubaccountID();
+			Balance balance;
+			Subaccount sub;
+			Payment payment;
+			payment.SetUserID(uID);
+			std::string filter = payment.GenerateFilter(ormasDal);
+			std::vector<DataLayer::balancesViewCollection> balanceVector = ormasDal.GetBalances(errorMessage, filter);
+			if (0 < balanceVector.size())
+			{
+				for each (auto item in balanceVector)
+				{
+					sub.Clear();
+					if (sub.GetSubaccountByID(ormasDal, std::get<6>(item), errorMessage))
+					{
+						if (sub.GetParentAccountID() == aID)
+						{
+							balance.SetSubaccountID(sub.GetID());
+						}
+					}
+				}
+			}
+			else
+			{
+				return false;
+			}
+			if (balance.GetSubaccountID() <= 0)
+				return false;
+			if (balance.GetBalanceBySubaccountID(ormasDal, balance.GetSubaccountID(), errorMessage))
+			{
+				int debAccID = balance.GetSubaccountID();
+				int credAccID = cashbox.GetSubaccountID();
+				if (0 == debAccID || 0 == credAccID)
+				{
+					return false;
+				}
+				if (this->CorrectingEntry(ormasDal, debAccID, value, credAccID, ormasDal.GetSystemDateTime(), errorMessage))
+				{
+					BalancePaymentRelation bpRelation;
+					bpRelation.SetBalanceID(balance.GetID());
+					bpRelation.SetPaymentID(this->id);
+					if (bpRelation.DeleteBalancePaymentRelation(ormasDal, errorMessage))
+						return true;
+				}
+			}
+		}
+		else if (aID > 0)
+		{
+			int debAccID = aID;
 			int credAccID = cashbox.GetSubaccountID();
 			if (0 == debAccID || 0 == credAccID)
 			{
@@ -457,10 +709,6 @@ namespace BusinessLayer{
 			}
 			if (this->CorrectingEntry(ormasDal, debAccID, value, credAccID, ormasDal.GetSystemDateTime(), errorMessage))
 			{
-				BalancePaymentRelation bpRelation;
-				bpRelation.SetBalanceID(balance.GetID());
-				bpRelation.SetPaymentID(this->id);
-				if (bpRelation.DeleteBalancePaymentRelation(ormasDal, errorMessage))
 					return true;
 			}
 		}
@@ -470,12 +718,22 @@ namespace BusinessLayer{
 	bool Payment::CreateEntry(DataLayer::OrmasDal& ormasDal, int debAccID, double currentSum, int credAccID, std::string oExecDate, std::string& errorMessage)
 	{
 		Entry entry;
+		EntryOperationRelation eoRelation;
 		entry.SetDate(oExecDate);
 		entry.SetDebitingAccountID(debAccID);
 		entry.SetValue(currentSum);
 		entry.SetCreditingAccountID(credAccID);
-		entry.SetDescription(wstring_to_utf8(L"Произведена оплата товара/устуги или пополнен счет клиента"));
-		if (!entry.CreateEntry(ormasDal, errorMessage))
+		entry.SetDescription(target);
+		if (entry.CreateEntry(ormasDal, errorMessage))
+		{
+			eoRelation.SetEntryID(entry.GetID());
+			eoRelation.SetOperationID(id);
+			if (!eoRelation.CreateEntryOperationRelation(ormasDal, errorMessage))
+			{
+				return false;
+			}
+		}
+		else
 		{
 			return false;
 		}
@@ -484,22 +742,42 @@ namespace BusinessLayer{
 	bool Payment::CreateEntry(DataLayer::OrmasDal& ormasDal, int debAccID, double currentSum, int credAccID, double previousSum, std::string oExecDate, std::string& errorMessage)
 	{
 		Entry entry;
+		EntryOperationRelation eoRelation;
 		entry.SetDate(oExecDate);
 		entry.SetDebitingAccountID(credAccID);
 		entry.SetValue(previousSum);
 		entry.SetCreditingAccountID(debAccID);
-		entry.SetDescription(wstring_to_utf8(L"Произведена оплата товара/устуги или пополнен счет клиента"));
-		if (!entry.CreateEntry(ormasDal, errorMessage, true))
+		entry.SetDescription(wstring_to_utf8(L"Отмена оплаты, для коррекции"));
+		if (entry.CreateEntry(ormasDal, errorMessage, true))
+		{
+			eoRelation.SetEntryID(entry.GetID());
+			eoRelation.SetOperationID(id);
+			if (!eoRelation.CreateEntryOperationRelation(ormasDal, errorMessage))
+			{
+				return false;
+			}
+		}
+		else
 		{
 			return false;
 		}
 		entry.Clear();
+		eoRelation.Clear();
 		entry.SetDate(oExecDate);
 		entry.SetDebitingAccountID(debAccID);
 		entry.SetValue(currentSum);
 		entry.SetCreditingAccountID(credAccID);
-		entry.SetDescription(wstring_to_utf8(L"Произведена оплата товара/устуги или пополнен счет клиента"));
-		if (!entry.CreateEntry(ormasDal, errorMessage))
+		entry.SetDescription(target);
+		if (entry.CreateEntry(ormasDal, errorMessage))
+		{
+			eoRelation.SetEntryID(entry.GetID());
+			eoRelation.SetOperationID(id);
+			if (!eoRelation.CreateEntryOperationRelation(ormasDal, errorMessage))
+			{
+				return false;
+			}
+		}
+		else
 		{
 			return false;
 		}
@@ -508,12 +786,22 @@ namespace BusinessLayer{
 	bool Payment::CorrectingEntry(DataLayer::OrmasDal& ormasDal, int debAccID, double currentSum, int credAccID, std::string oExecDate, std::string& errorMessage)
 	{
 		Entry entry;
+		EntryOperationRelation eoRelation;
 		entry.SetDate(oExecDate);
 		entry.SetDebitingAccountID(debAccID);
 		entry.SetValue(currentSum);
 		entry.SetCreditingAccountID(credAccID);
-		entry.SetDescription(wstring_to_utf8(L"Операция отмена оплаты клиента"));
-		if (!entry.CreateEntry(ormasDal, errorMessage, true))
+		entry.SetDescription(wstring_to_utf8(L"Отмена оплаты"));
+		if (entry.CreateEntry(ormasDal, errorMessage))
+		{
+			eoRelation.SetEntryID(entry.GetID());
+			eoRelation.SetOperationID(id);
+			if (!eoRelation.CreateEntryOperationRelation(ormasDal, errorMessage))
+			{
+				return false;
+			}
+		}
+		else
 		{
 			return false;
 		}

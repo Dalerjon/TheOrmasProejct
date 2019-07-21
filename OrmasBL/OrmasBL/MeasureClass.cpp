@@ -139,6 +139,8 @@ namespace BusinessLayer{
 
 	bool Measure::GetMeasureByID(DataLayer::OrmasDal& ormasDal, int mID, std::string& errorMessage)
 	{
+		if (mID <= 0)
+			return false;
 		id = mID;
 		std::string filter = GenerateFilter(ormasDal);
 		std::vector<DataLayer::measuresCollection> measuresVector = ormasDal.GetMeasures(errorMessage, filter);

@@ -130,6 +130,8 @@ namespace BusinessLayer{
 
 	bool WarehouseEmployeeRelation::GetWarehouseEmployeeByID(DataLayer::OrmasDal& ormasDal, int id, std::string& errorMessage)
 	{
+		if (id <= 0)
+			return false;
 		WarehouseEmployeeRelation ceRelation;
 		ceRelation.SetID(id);
 		std::string filter = ceRelation.GenerateFilter(ormasDal);
@@ -146,6 +148,8 @@ namespace BusinessLayer{
 
 	bool WarehouseEmployeeRelation::GetWarehouseEmployeeByWarehouseID(DataLayer::OrmasDal& ormasDal, int wID, std::string& errorMessage)
 	{
+		if (wID <= 0)
+			return false;
 		WarehouseEmployeeRelation ceRelation;
 		ceRelation.SetWarehouseID(wID);
 		std::string filter = ceRelation.GenerateFilter(ormasDal);
@@ -162,6 +166,8 @@ namespace BusinessLayer{
 
 	bool WarehouseEmployeeRelation::GetWarehouseEmployeeByEmployeeID(DataLayer::OrmasDal& ormasDal, int eID, std::string& errorMessage)
 	{
+		if (eID <= 0)
+			return false;
 		WarehouseEmployeeRelation ceRelation;
 		ceRelation.SetEmployeeID(eID);
 		std::string filter = ceRelation.GenerateFilter(ormasDal);

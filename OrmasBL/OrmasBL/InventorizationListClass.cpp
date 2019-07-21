@@ -158,6 +158,8 @@ namespace BusinessLayer
 
 	bool InventorizationList::GetInventorizationListByID(DataLayer::OrmasDal& ormasDal, int iID, std::string& errorMessage)
 	{
+		if (iID <= 0)
+			return false;
 		id = iID;
 		std::string filter = GenerateFilter(ormasDal);
 		std::vector<DataLayer::inventorizationListViewCollection> inventorizationListVector = ormasDal.GetInventorizationList(errorMessage, filter);

@@ -142,6 +142,8 @@ namespace BusinessLayer{
 
 	bool EntryRouting::GetEntryRoutingByID(DataLayer::OrmasDal& ormasDal, int eID, std::string& errorMessage)
 	{
+		if (eID <= 0)
+			return false;
 		id = eID;
 		std::string filter = GenerateFilter(ormasDal);
 		std::vector<DataLayer::entryRoutingCollection> entryRoutingVector = ormasDal.GetEntryRouting(errorMessage, filter);

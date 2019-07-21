@@ -22,6 +22,7 @@ public:
 	void OpenEmpDlg();
 	void OpenSkEmpDlg();
 	void OpenStsDlg();
+	void StatusWasChenged();
 	void TextEditChanged();
 	void OpenWOffRListDlg();
 	public slots:
@@ -30,13 +31,14 @@ signals:
 	void CloseCreatedForms();
 private:
 	BusinessLayer::WriteOffRaw *writeOffRaw = new BusinessLayer::WriteOffRaw();
-	void SetWriteOffRawParams(int, QString, int, double, double, int, int, int = 0);
-	void FillEditElements(int, QString, int, double, double, int, int);
+	void SetWriteOffRawParams(int, QString, QString, int, double, double, int, int, int = 0);
+	void FillEditElements(int, QString, QString, int, double, double, int, int);
 	QDoubleValidator *vDouble = nullptr;
 	QIntValidator *vInt = nullptr;
 	std::map<std::string, int> statusMap;
 	void InitComboBox();
 	QWidget* parentForm;
 	MainForm* mainForm;
+	bool CheckAccess();
 };
 #endif //CREATEWOFFRDLG_H

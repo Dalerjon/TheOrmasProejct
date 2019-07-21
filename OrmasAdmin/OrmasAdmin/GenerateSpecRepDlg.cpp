@@ -157,7 +157,16 @@ GenerateSpecRep::~GenerateSpecRep()
 
 void GenerateSpecRep::Generate()
 {
+	BusinessLayer::Status status;
+	if (!status.GetStatusByName(dialogBL->GetOrmasDal(), "EXECUTED", errorMessage))
+	{
+		QMessageBox::information(NULL, QString(tr("Info")),
+			QString(tr("Please contact with administrator, you have same troubles with statuses!")),
+			QString(tr("Ok")));
+		return;
+	}
 	BusinessLayer::ProductionConsumeRaw prRaw;
+	prRaw.SetStatusID(status.GetID());
 	std::string filterprRaw = prRaw.GenerateFilterForPeriod(dialogBL->GetOrmasDal(), fromDateEdit->text().toUtf8().constData(), tillDateEdit->text().toUtf8().constData());
 	std::vector<BusinessLayer::ProductionConsumeRawView> vecConRaw = dialogBL->GetAllDataForClass<BusinessLayer::ProductionConsumeRawView>(errorMessage, filterprRaw);
 	if (vecConRaw.size() == 0)

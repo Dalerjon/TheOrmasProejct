@@ -24,18 +24,21 @@ public:
 	void OpenStsDlg();
 	void OpenWOffListDlg();
 	void TextEditChanged();
+	void StatusWasChenged();
 	public slots:
 	void SetID(int ID, QString childName);
 	signals:
 	void CloseCreatedForms();
 private:
 	BusinessLayer::WriteOff *writeOff = new BusinessLayer::WriteOff();
-	void SetWriteOffParams(int, QString, int, double, double, int, int, int = 0);
-	void FillEditElements(int, QString, int, double, double, int, int);
+	void SetWriteOffParams(int, QString, QString, int, double, double, int, int, int = 0);
+	void FillEditElements(int, QString, QString, int, double, double, int, int);
 	QDoubleValidator *vDouble = nullptr;
 	QIntValidator *vInt = nullptr;
+	std::map<std::string, int> statusMap;
 	void InitComboBox();
 	QWidget* parentForm;
 	MainForm* mainForm;
+	bool CheckAccess();
 };
 #endif //CREATEWOFFDLG_H

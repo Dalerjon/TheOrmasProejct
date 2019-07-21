@@ -56,6 +56,18 @@ INSERT INTO "OrmasSchema".access_items(
     VALUES ((SELECT nextval('"OrmasSchema".id_seq')), 'actionPurveyors', 'actionPurveyors', 'MENUITEM');
 INSERT INTO "OrmasSchema".access_items(
             access_item_id, access_item_eng, access_item_ru, access_division)
+    VALUES ((SELECT nextval('"OrmasSchema".id_seq')), 'actionAccountables', 'actionAccountables', 'MENUITEM');
+INSERT INTO "OrmasSchema".access_items(
+            access_item_id, access_item_eng, access_item_ru, access_division)
+    VALUES ((SELECT nextval('"OrmasSchema".id_seq')), 'actionBorrowers', 'actionBorrowers', 'MENUITEM');
+INSERT INTO "OrmasSchema".access_items(
+            access_item_id, access_item_eng, access_item_ru, access_division)
+    VALUES ((SELECT nextval('"OrmasSchema".id_seq')), 'actionCreditors', 'actionCreditors', 'MENUITEM');
+INSERT INTO "OrmasSchema".access_items(
+            access_item_id, access_item_eng, access_item_ru, access_division)
+    VALUES ((SELECT nextval('"OrmasSchema".id_seq')), 'actionShareholders', 'actionShareholders', 'MENUITEM');
+INSERT INTO "OrmasSchema".access_items(
+            access_item_id, access_item_eng, access_item_ru, access_division)
     VALUES ((SELECT nextval('"OrmasSchema".id_seq')), 'actionCompanyEmployees', 'actionCompanyEmployees', 'MENUITEM');
 INSERT INTO "OrmasSchema".access_items(
             access_item_id, access_item_eng, access_item_ru, access_division)
@@ -91,6 +103,12 @@ INSERT INTO "OrmasSchema".access_items(
 INSERT INTO "OrmasSchema".access_items(
             access_item_id, access_item_eng, access_item_ru, access_division)
     VALUES ((SELECT nextval('"OrmasSchema".id_seq')), 'actionNetCost', 'actionNetCost', 'MENUITEM');
+INSERT INTO "OrmasSchema".access_items(
+            access_item_id, access_item_eng, access_item_ru, access_division)
+    VALUES ((SELECT nextval('"OrmasSchema".id_seq')), 'actionEmployeeProducts', 'actionEmployeeProducts', 'MENUITEM');
+INSERT INTO "OrmasSchema".access_items(
+            access_item_id, access_item_eng, access_item_ru, access_division)
+    VALUES ((SELECT nextval('"OrmasSchema".id_seq')), 'actionBranchProducts', 'actionBranchProducts', 'MENUITEM');
 ---------------------------------------------------------------------------------------------------------------
 INSERT INTO "OrmasSchema".access_items(
             access_item_id, access_item_eng, access_item_ru, access_division)

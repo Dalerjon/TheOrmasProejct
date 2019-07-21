@@ -2,6 +2,7 @@
 #define ROLECLASS_H
 
 #include "OrmasDAL.h"
+#include <map>
 
 namespace BusinessLayer
 {
@@ -40,6 +41,7 @@ namespace BusinessLayer
 		std::string GenerateFilter(DataLayer::OrmasDal& ormasDal);
 		bool GetRoleByID(DataLayer::OrmasDal& ormasDal, int rID, std::string& errorMessage);
 		int GetRoleIDByName(DataLayer::OrmasDal& ormasDal, std::string rName, std::string& errorMessage);
+		static std::map<std::string, int> GetRolesAsMap(DataLayer::OrmasDal& ormasDal, std::string& errorMessage);
 		bool IsEmpty();
 		void Clear();
 	private:

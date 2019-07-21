@@ -144,6 +144,8 @@ namespace BusinessLayer
 
 	bool ProductType::GetProductTypeByID(DataLayer::OrmasDal& ormasDal, int pID, std::string& errorMessage)
 	{
+		if (pID <= 0)
+			return false;
 		id = pID;
 		std::string filter = GenerateFilter(ormasDal);
 		std::vector<DataLayer::productTypeCollection> productTypeVector = ormasDal.GetProductTypes(errorMessage, filter);
@@ -164,6 +166,8 @@ namespace BusinessLayer
 
 	bool ProductType::GetProductTypeByCode(DataLayer::OrmasDal& ormasDal, std::string pCode, std::string& errorMessage)
 	{
+		if (pCode.empty())
+			return false;
 		code = pCode;
 		std::string filter = GenerateFilter(ormasDal);
 		std::vector<DataLayer::productTypeCollection> productTypeVector = ormasDal.GetProductTypes(errorMessage, filter);

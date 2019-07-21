@@ -12,11 +12,12 @@ namespace BusinessLayer
 		id = std::get<0>(wCollection);
 		employeeID = std::get<1>(wCollection);
 		date = std::get<2>(wCollection);
-		stockEmployeeID = std::get<3>(wCollection);
-		count = std::get<4>(wCollection);
-		sum = std::get<5>(wCollection);
-		statusID = std::get<6>(wCollection);
-		currencyID = std::get<7>(wCollection);
+		executionDate = std::get<3>(wCollection);
+		stockEmployeeID = std::get<4>(wCollection);
+		count = std::get<5>(wCollection);
+		sum = std::get<6>(wCollection);
+		statusID = std::get<7>(wCollection);
+		currencyID = std::get<8>(wCollection);
 	}
 
 	int WriteOffRaw::GetID()
@@ -32,6 +33,11 @@ namespace BusinessLayer
 	std::string WriteOffRaw::GetDate()
 	{
 		return date;
+	}
+
+	std::string WriteOffRaw::GetExecutionDate()
+	{
+		return executionDate;
 	}
 
 	int WriteOffRaw::GetStockEmployeeID()
@@ -71,6 +77,10 @@ namespace BusinessLayer
 	{
 		date = wDate;
 	}
+	void WriteOffRaw::SetExecutionDate(std::string wExecutionDate)
+	{
+		executionDate = wExecutionDate;
+	}
 	void WriteOffRaw::SetStockEmployeeID(int wStockEmployeeID)
 	{
 		stockEmployeeID = wStockEmployeeID;
@@ -96,7 +106,7 @@ namespace BusinessLayer
 		currencyID = wCurrencyID;
 	}
 
-	bool WriteOffRaw::CreateWriteOffRaw(DataLayer::OrmasDal& ormasDal, int uID, std::string wDate,
+	bool WriteOffRaw::CreateWriteOffRaw(DataLayer::OrmasDal& ormasDal, int uID, std::string wDate, std::string wExecutionDate,
 		int seID, double wCount, double wSum, int sID, int cID, std::string& errorMessage)
 	{
 		if (IsDuplicate(ormasDal, uID, wDate, seID , wCount, wSum, cID, errorMessage))
@@ -106,19 +116,29 @@ namespace BusinessLayer
 			return false;
 		employeeID = uID;
 		date = wDate;
+		executionDate = wExecutionDate;
 		stockEmployeeID = seID;
 		count = wCount;
 		sum = wSum;
 		statusID = sID;
 		currencyID = cID;
 		//ormasDal.StartTransaction(errorMessage);
-		if (0 != id && ormasDal.CreateWriteOffRaw(id, employeeID, date, stockEmployeeID, count, sum, statusID, currencyID, errorMessage))
+		if (0 != id && ormasDal.CreateWriteOffRaw(id, employeeID, date, executionDate, stockEmployeeID, count, sum, statusID, currencyID, errorMessage))
 		{
-			if (ChangesAtStock(ormasDal, id, stockEmployeeID, errorMessage))
+			if (statusID == statusMap.find("EXECUTED")->second)
 			{
-				//ormasDal.CommitTransaction(errorMessage);
-				return true;
+				if (ChangesAtStock(ormasDal, id, stockEmployeeID, errorMessage))
+				{
+					//ormasDal.CommitTransaction(errorMessage);
+					return true;
+				}
+				else
+				{
+					//ormasDal.CancelTransaction(errorMessage);
+					return false;
+				}
 			}
+			return true;
 		}
 		if (errorMessage.empty())
 		{
@@ -136,13 +156,22 @@ namespace BusinessLayer
 		if (0 == statusMap.size())
 			return false;
 		//ormasDal.StartTransaction(errorMessage);
-		if (0 != id && ormasDal.CreateWriteOffRaw(id, employeeID, date, stockEmployeeID, count, sum, statusID, currencyID, errorMessage))
+		if (0 != id && ormasDal.CreateWriteOffRaw(id, employeeID, date, executionDate, stockEmployeeID, count, sum, statusID, currencyID, errorMessage))
 		{
-			if (ChangesAtStock(ormasDal, id, stockEmployeeID, errorMessage))
+			if (statusID == statusMap.find("EXECUTED")->second)
 			{
-				//ormasDal.CommitTransaction(errorMessage);
-				return true;
+				if (ChangesAtStock(ormasDal, id, stockEmployeeID, errorMessage))
+				{
+					//ormasDal.CommitTransaction(errorMessage);
+					return true;
+				}
+				else
+				{
+					//ormasDal.CancelTransaction(errorMessage);
+					return false;
+				}
 			}
+			return true;
 		}
 		if (errorMessage.empty())
 		{
@@ -155,6 +184,24 @@ namespace BusinessLayer
 	{
 		//if (!ormasDal.StartTransaction(errorMessage))
 		//	return false;
+		WriteOffRaw wOffRaw;
+		if (!wOffRaw.GetWriteOffRawByID(ormasDal, id, errorMessage))
+		{
+			return false;
+		}
+		std::map<std::string, int> statusMap = BusinessLayer::Status::GetStatusesAsMap(ormasDal, errorMessage);
+		if (0 == statusMap.size())
+			return false;
+		if (wOffRaw.GetStatusID() == statusMap.find("EXECUTED")->second)
+		{
+			errorMessage = "Cannot delete document with \"EXECUTED\" status!";
+			return false;
+		}
+		if (wOffRaw.GetStatusID() == statusMap.find("ERROR")->second)
+		{
+			errorMessage = "Cannot delete document with \"ERROR\" status!";
+			return false;
+		}
 		if (ormasDal.DeleteWriteOffRaw(id, errorMessage))
 		{
 			if (ormasDal.DeleteListByWriteOffRawID(id, errorMessage))
@@ -178,7 +225,7 @@ namespace BusinessLayer
 		}
 		return false;
 	}
-	bool WriteOffRaw::UpdateWriteOffRaw(DataLayer::OrmasDal& ormasDal, int uID, std::string wDate, 
+	bool WriteOffRaw::UpdateWriteOffRaw(DataLayer::OrmasDal& ormasDal, int uID, std::string wDate, std::string wExecDate,
 		int eID, double wCount, double wSum, int sID, int cID, std::string& errorMessage)
 	{
 		std::map<std::string, int> statusMap = BusinessLayer::Status::GetStatusesAsMap(ormasDal, errorMessage);
@@ -189,6 +236,7 @@ namespace BusinessLayer
 			return false;
 		employeeID = uID;
 		date = wDate;
+		executionDate = wExecDate;
 		stockEmployeeID = eID;
 		count = wCount;
 		sum = wSum;
@@ -196,14 +244,87 @@ namespace BusinessLayer
 		currencyID = cID;
 		prevSum = GetCurrentSum(ormasDal, id, errorMessage);
 		prevCount = GetCurrentCount(ormasDal, id, errorMessage);
+		previousStatusID = GetCurrentStatusID(ormasDal, id, errorMessage);
 		//ormasDal.StartTransaction(errorMessage);
-		if (0 != id && ormasDal.UpdateWriteOffRaw(id, employeeID, date, stockEmployeeID, count, sum, statusID, currencyID, errorMessage))
+		if (0 != id && ormasDal.UpdateWriteOffRaw(id, employeeID, date, executionDate, stockEmployeeID, count, sum, statusID, currencyID, errorMessage))
 		{
-			if (ChangesAtStock(ormasDal, id, stockEmployeeID, prodCountMap, prevSum, errorMessage))
+			if (previousStatusID != statusMap.find("EXECUTED")->second)
 			{
-				//ormasDal.CommitTransaction(errorMessage);
-				return true;
+				if (statusID == statusMap.find("EXECUTED")->second)
+				{
+					if (ChangesAtStock(ormasDal, id, stockEmployeeID, errorMessage))
+					{
+							//ormasDal.CommitTransaction(errorMessage);
+							return true;
+					}
+					else
+					{
+						//ormasDal.CommitTransaction(errorMessage);
+						return false;
+					}
+				}
+				else
+				{
+					return true;
+				}
 			}
+			else
+			{
+				if (statusID == statusMap.find("ERROR")->second)
+				{
+					if (ChangesAtStockCancel(ormasDal, id, stockEmployeeID, errorMessage))
+					{
+						//ormasDal.CommitTransaction(errorMessage);
+						return true;
+					}
+					else
+					{
+						//ormasDal.CommitTransaction(errorMessage);
+						return false;
+					}
+				}
+				else
+				{
+					errorMessage = "Cannot update this document, only \"Error\" status is acceptable!";
+					return false;
+				}
+			}
+			/*if (statusID == statusMap.find("EXECUTED")->second && previousStatusID != statusMap.find("EXECUTED")->second)
+			{
+				if (ChangesAtStock(ormasDal, id, stockEmployeeID, errorMessage))
+				{
+					//ormasDal.CommitTransaction(errorMessage);
+					return true;
+				}
+				else
+				{
+					//ormasDal.CommitTransaction(errorMessage);
+					return false;
+				}
+			}
+			if (statusID == statusMap.find("EXECUTED")->second && previousStatusID == statusMap.find("EXECUTED")->second && prevSum != sum)
+			{
+				if (count != prevCount || sum != prevSum)
+				{
+					if (ChangesAtStock(ormasDal, id, stockEmployeeID, prodCountMap, prevSum, errorMessage))
+					{
+						//ormasDal.CommitTransaction(errorMessage);
+						return true;
+					}
+					else
+					{
+						//ormasDal.CommitTransaction(errorMessage);
+						return false;
+					}
+				}
+				else
+				{
+					//ormasDal.CommitTransaction(errorMessage);
+					return true;
+				}
+			}
+			//ormasDal.CancelTransaction(errorMessage);
+			return true;*/
 		}
 		if (errorMessage.empty())
 		{
@@ -222,14 +343,87 @@ namespace BusinessLayer
 			return false;
 		prevSum = GetCurrentSum(ormasDal, id, errorMessage);
 		prevCount = GetCurrentCount(ormasDal, id, errorMessage);
+		previousStatusID = GetCurrentStatusID(ormasDal, id, errorMessage);
 		//ormasDal.StartTransaction(errorMessage);
-		if (0 != id && ormasDal.UpdateWriteOffRaw(id, employeeID, date, stockEmployeeID, count, sum, statusID, currencyID, errorMessage))
+		if (0 != id && ormasDal.UpdateWriteOffRaw(id, employeeID, date, executionDate, stockEmployeeID, count, sum, statusID, currencyID, errorMessage))
 		{
-			if (ChangesAtStock(ormasDal, id, stockEmployeeID, prodCountMap, prevSum, errorMessage))
+			if (previousStatusID != statusMap.find("EXECUTED")->second)
 			{
-				//ormasDal.CommitTransaction(errorMessage);
-				return true;
+				if (statusID == statusMap.find("EXECUTED")->second)
+				{
+					if (ChangesAtStock(ormasDal, id, stockEmployeeID, errorMessage))
+					{
+						//ormasDal.CommitTransaction(errorMessage);
+						return true;
+					}
+					else
+					{
+						//ormasDal.CommitTransaction(errorMessage);
+						return false;
+					}
+				}
+				else
+				{
+					return true;
+				}
 			}
+			else
+			{
+				if (statusID == statusMap.find("ERROR")->second)
+				{
+					if (ChangesAtStockCancel(ormasDal, id, stockEmployeeID, errorMessage))
+					{
+						//ormasDal.CommitTransaction(errorMessage);
+						return true;
+					}
+					else
+					{
+						//ormasDal.CommitTransaction(errorMessage);
+						return false;
+					}
+				}
+				else
+				{
+					errorMessage = "Cannot update this document, only \"Error\" status is acceptable!";
+					return false;
+				}
+			}
+			/*if (statusID == statusMap.find("EXECUTED")->second && previousStatusID != statusMap.find("EXECUTED")->second)
+			{
+				if (ChangesAtStock(ormasDal, id, stockEmployeeID, errorMessage))
+				{
+					//ormasDal.CommitTransaction(errorMessage);
+					return true;
+				}
+				else
+				{
+					//ormasDal.CommitTransaction(errorMessage);
+					return false;
+				}
+			}
+			if (statusID == statusMap.find("EXECUTED")->second && previousStatusID == statusMap.find("EXECUTED")->second && prevSum != sum)
+			{
+				if (count != prevCount || sum != prevSum)
+				{
+					if (ChangesAtStock(ormasDal, id, stockEmployeeID, prodCountMap, prevSum, errorMessage))
+					{
+						//ormasDal.CommitTransaction(errorMessage);
+						return true;
+					}
+					else
+					{
+						//ormasDal.CommitTransaction(errorMessage);
+						return false;
+					}
+				}
+				else
+				{
+					//ormasDal.CommitTransaction(errorMessage);
+					return true;
+				}
+			}
+			//ormasDal.CancelTransaction(errorMessage);
+			return true;*/
 		}
 		if (errorMessage.empty())
 		{
@@ -241,15 +435,17 @@ namespace BusinessLayer
 
 	std::string WriteOffRaw::GenerateFilter(DataLayer::OrmasDal& ormasDal)
 	{
-		if (0 != id || 0 != employeeID || !date.empty() || 0 != stockEmployeeID || 0 != count || 0 != sum || 0 != statusID)
+		if (0 != id || 0 != employeeID || !date.empty() || !executionDate.empty() || 0 != stockEmployeeID || 0 != count || 0 != sum || 0 != statusID)
 		{
-			return ormasDal.GetFilterForWriteOffRaw(id, employeeID, date, stockEmployeeID, count, sum, statusID, currencyID);
+			return ormasDal.GetFilterForWriteOffRaw(id, employeeID, date, executionDate, stockEmployeeID, count, sum, statusID, currencyID);
 		}
 		return "";
 	}
 
 	bool WriteOffRaw::GetWriteOffRawByID(DataLayer::OrmasDal& ormasDal, int cID, std::string& errorMessage)
 	{
+		if (cID <= 0)
+			return false;
 		id = cID;
 		std::string filter = GenerateFilter(ormasDal);
 		std::vector<DataLayer::writeOffRawsViewCollection> writeOffRawVector = ormasDal.GetWriteOffRaws(errorMessage, filter);
@@ -257,12 +453,12 @@ namespace BusinessLayer
 		{
 			id = std::get<0>(writeOffRawVector.at(0));
 			date = std::get<1>(writeOffRawVector.at(0));
-			count = std::get<12>(writeOffRawVector.at(0));
-			sum = std::get<13>(writeOffRawVector.at(0));
-			stockEmployeeID = std::get<15>(writeOffRawVector.at(0));
-			employeeID = std::get<16>(writeOffRawVector.at(0));
-			statusID = std::get<17>(writeOffRawVector.at(0));
-			currencyID = std::get<18>(writeOffRawVector.at(0));
+			count = std::get<13>(writeOffRawVector.at(0));
+			sum = std::get<14>(writeOffRawVector.at(0));
+			stockEmployeeID = std::get<16>(writeOffRawVector.at(0));
+			employeeID = std::get<17>(writeOffRawVector.at(0));
+			statusID = std::get<18>(writeOffRawVector.at(0));
+			currencyID = std::get<19>(writeOffRawVector.at(0));
 			return true;
 		}
 		else
@@ -274,7 +470,7 @@ namespace BusinessLayer
 
 	bool WriteOffRaw::IsEmpty()
 	{
-		if (0 == id && date == "" && 0 == count && 0 == sum && 0 == stockEmployeeID && 0 == employeeID && 0 == statusID
+		if (0 == id && date == "" && executionDate == "" && 0 == count && 0 == sum && 0 == stockEmployeeID && 0 == employeeID && 0 == statusID
 			&& 0 == currencyID)
 			return false;
 		return true;
@@ -284,6 +480,7 @@ namespace BusinessLayer
 	{
 		id = 0;
 		date.clear();
+		executionDate.clear();
 		count = 0;
 		sum = 0;
 		stockEmployeeID = 0;
@@ -345,6 +542,12 @@ namespace BusinessLayer
 		return stock.ChangingByWriteOffRaw(ormasDal, cpID, empID, errorMessage);
 	}
 
+	bool WriteOffRaw::ChangesAtStockCancel(DataLayer::OrmasDal& ormasDal, int cpID, int empID, std::string& errorMessage)
+	{
+		Stock stock;
+		return stock.ChangingByWriteOffRawCancel(ormasDal, cpID, empID, errorMessage);
+	}
+
 	bool WriteOffRaw::ChangesAtStock(DataLayer::OrmasDal& ormasDal, int cpID, int empID, std::map<int, double> pProdCountMap, double pSum, std::string& errorMessage)
 	{
 		Stock stock;
@@ -383,4 +586,14 @@ namespace BusinessLayer
 		}
 		return mapProdCount;
 	}
+
+	int WriteOffRaw::GetCurrentStatusID(DataLayer::OrmasDal& ormasDal, int rID, std::string& errorMessage)
+	{
+		WriteOffRaw wOff;
+		wOff.GetWriteOffRawByID(ormasDal, rID, errorMessage);
+		if (errorMessage.empty())
+			return wOff.GetStatusID();
+		return 0;
+	}
+
 }

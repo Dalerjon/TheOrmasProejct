@@ -126,6 +126,8 @@ namespace BusinessLayer{
 
 	bool RelationType::GetRelationTypeByID(DataLayer::OrmasDal& ormasDal, int aID, std::string& errorMessage)
 	{
+		if (aID <= 0)
+			return false;
 		id = aID;
 		std::string filter = GenerateFilter(ormasDal);
 		std::vector<DataLayer::relationTypeCollection> relationTypeVector = ormasDal.GetRelationType(errorMessage, filter);

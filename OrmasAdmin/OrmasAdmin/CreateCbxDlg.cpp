@@ -262,7 +262,7 @@ void CreateCbxDlg::GenerateSubaccount()
 			number += std::to_string(curr.GetCode());
 			std::string genNumber = std::to_string(dialogBL->GetOrmasDal().GenerateAccountID());
 			std::string prefix = "";
-			int additionalZero = 7 - genNumber.length();
+			unsigned int additionalZero = 7 - genNumber.length();
 			while (prefix.length() < additionalZero)
 			{
 				prefix += "0";
@@ -286,7 +286,7 @@ void CreateCbxDlg::GenerateSubaccount()
 			number += std::to_string(curr.GetCode());
 			std::string genNumber = std::to_string(dialogBL->GetOrmasDal().GenerateAccountID());
 			std::string prefix = "";
-			int additionalZero = 7 - genNumber.length();
+			unsigned int additionalZero = 7 - genNumber.length();
 			while (prefix.length() < additionalZero)
 			{
 				prefix += "0";

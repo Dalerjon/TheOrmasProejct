@@ -129,6 +129,8 @@ namespace BusinessLayer{
 
 	bool Access::GetAccessByID(DataLayer::OrmasDal& ormasDal, int bID, std::string& errorMessage)
 	{
+		if (bID <= 0)
+			return false;
 		id = bID;
 		std::string filter = GenerateFilter(ormasDal);
 		std::vector<DataLayer::accessesViewCollection> accessVector = ormasDal.GetAccesses(errorMessage, filter);

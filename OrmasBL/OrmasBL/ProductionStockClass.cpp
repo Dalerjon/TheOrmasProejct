@@ -6,6 +6,7 @@
 #include "ProductClass.h"
 #include "StatusClass.h"
 #include "EntryClass.h"
+#include "EntryOperationRelationClass.h"
 #include "AccountClass.h"
 #include "SubaccountClass.h"
 #include "CompanyAccountRelationClass.h"
@@ -176,6 +177,8 @@ namespace BusinessLayer
 
 	bool ProductionStock::GetProductionStockByID(DataLayer::OrmasDal& ormasDal, int pID, std::string& errorMessage)
 	{
+		if (pID <= 0)
+			return false;
 		id = pID;
 		std::string filter = GenerateFilter(ormasDal);
 		std::vector<DataLayer::productionStockViewCollection> productionStockVector = ormasDal.GetProductionStock(errorMessage, filter);
@@ -199,6 +202,8 @@ namespace BusinessLayer
 
 	bool ProductionStock::GetProductionStockByProductID(DataLayer::OrmasDal& ormasDal, int pID, std::string& errorMessage)
 	{
+		if (pID <= 0)
+			return false;
 		productID = pID;
 		std::string filter = GenerateFilter(ormasDal);
 		std::vector<DataLayer::productionStockViewCollection> productionStockVector = ormasDal.GetProductionStock(errorMessage, filter);
@@ -274,7 +279,7 @@ namespace BusinessLayer
 		return true;
 	}
 
-	bool ProductionStock::ChangingByReceiptRaw(DataLayer::OrmasDal& ormasDal, int rrID, std::string& errorMessage)
+	bool ProductionStock::ChangingByStockTransfer(DataLayer::OrmasDal& ormasDal, int rrID, std::string& errorMessage)
 	{
 		ConsumeRawList cRList;
 		std::vector<ConsumeRawListView> rRListVec;
@@ -356,7 +361,7 @@ namespace BusinessLayer
 		return true;
 	}
 
-	bool ProductionStock::ChangingByReceiptRaw(DataLayer::OrmasDal& ormasDal, int rrID, std::map<int, double> pProdCountMap, double pSum, std::string& errorMessage)
+	bool ProductionStock::ChangingByStockTransfer(DataLayer::OrmasDal& ormasDal, int rrID, std::map<int, double> pProdCountMap, double pSum, std::string& errorMessage)
 	{
 		ConsumeRawList cRList;
 		std::vector<ConsumeRawListView> rRListVec;
@@ -1037,12 +1042,22 @@ namespace BusinessLayer
 	bool ProductionStock::CreateEntry(DataLayer::OrmasDal& ormasDal, int debAccID, double currentSum, int credAccID, std::string& errorMessage)
 	{
 		Entry entry;
+		EntryOperationRelation eoRelation;
 		entry.SetDate(ormasDal.GetSystemDateTime());
 		entry.SetDebitingAccountID(debAccID);
 		entry.SetValue(currentSum);
 		entry.SetCreditingAccountID(credAccID);
 		entry.SetDescription(wstring_to_utf8(L"Складская операция"));
-		if (!entry.CreateEntry(ormasDal, errorMessage))
+		if (entry.CreateEntry(ormasDal, errorMessage))
+		{
+			eoRelation.SetEntryID(entry.GetID());
+			eoRelation.SetOperationID(id);
+			if (!eoRelation.CreateEntryOperationRelation(ormasDal, errorMessage))
+			{
+				return false;
+			}
+		}
+		else
 		{
 			return false;
 		}
@@ -1051,21 +1066,41 @@ namespace BusinessLayer
 	bool ProductionStock::CreateEntry(DataLayer::OrmasDal& ormasDal, int debAccID, double currentSum, int credAccID, double previousSum, std::string& errorMessage)
 	{
 		Entry entry;
+		EntryOperationRelation eoRelation;
 		entry.SetDate(ormasDal.GetSystemDateTime());
 		entry.SetDebitingAccountID(credAccID);
 		entry.SetValue(previousSum);
 		entry.SetCreditingAccountID(debAccID);
-		entry.SetDescription(wstring_to_utf8(L"Складская операция"));
-		if (!entry.CreateEntry(ormasDal, errorMessage, true))
+		entry.SetDescription(wstring_to_utf8(L"Складская операция, обратная проводка"));
+		if (entry.CreateEntry(ormasDal, errorMessage, true))
+		{
+			eoRelation.SetEntryID(entry.GetID());
+			eoRelation.SetOperationID(id);
+			if (!eoRelation.CreateEntryOperationRelation(ormasDal, errorMessage))
+			{
+				return false;
+			}
+		}
+		else
 		{
 			return false;
 		}
 		entry.Clear();
+		eoRelation.Clear();
 		entry.SetDebitingAccountID(debAccID);
 		entry.SetValue(currentSum);
 		entry.SetCreditingAccountID(credAccID);
 		entry.SetDescription(wstring_to_utf8(L"Складская операция"));
-		if (!entry.CreateEntry(ormasDal, errorMessage))
+		if (entry.CreateEntry(ormasDal, errorMessage))
+		{
+			eoRelation.SetEntryID(entry.GetID());
+			eoRelation.SetOperationID(id);
+			if (!eoRelation.CreateEntryOperationRelation(ormasDal, errorMessage))
+			{
+				return false;
+			}
+		}
+		else
 		{
 			return false;
 		}

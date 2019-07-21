@@ -20,8 +20,11 @@ public:
 	void Close();
 	void TextEditChanged();
 	void SATextChanged();
+	void AccTextChanged();
 	void UserIsChanged();
 	void OpenSAccDlg();
+	void OpenAccDlg();
+	void OpenStatusDlg();
 	void OpenUserDlg();
 	void AccountIsChenged();
 	void SortTable(QTableView *);
@@ -29,13 +32,15 @@ public:
 	void SetID(int ID, QString childName);
 private:
 	BusinessLayer::Withdrawal *withdrawal = new BusinessLayer::Withdrawal();
-	void SetWithdrawalParams(QString, double, int, int, QString, int, int = 0);
-	void FillEditElements(QString, double, int, int, QString, int);
+	void SetWithdrawalParams(QString, double, int, int, QString, int, int, int, int = 0);
+	void FillEditElements(QString, double, int, int, QString, int, int, int);
 	QDoubleValidator *vDouble = nullptr;
 	QIntValidator *vInt = nullptr;
 	void InitComboBox();
+	int GetAccountIDFromCmb();
 	QWidget* parentForm;
 	MainForm* mainForm;
+	bool CheckAccess();
 };
 
 #endif //CREATEWDWDLG_H

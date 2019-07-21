@@ -214,6 +214,8 @@ namespace BusinessLayer
 
 	bool ProductionPlan::GetProductionPlanByID(DataLayer::OrmasDal& ormasDal, int oID, std::string& errorMessage)
 	{
+		if (oID <= 0)
+			return false;
 		id = oID;
 		std::string filter = GenerateFilter(ormasDal);
 		std::vector<DataLayer::productionPlanViewCollection> productionPlanVector = ormasDal.GetProductionPlan(errorMessage, filter);

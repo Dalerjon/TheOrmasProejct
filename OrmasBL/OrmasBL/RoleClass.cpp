@@ -140,6 +140,8 @@ namespace BusinessLayer
 
 	bool Role::GetRoleByID(DataLayer::OrmasDal& ormasDal, int rID, std::string& errorMessage)
 	{
+		if (rID <= 0)
+			return false;
 		id = rID;
 		std::string filter = GenerateFilter(ormasDal);
 		std::vector<DataLayer::rolesCollection> roleVector = ormasDal.GetRoles(errorMessage, filter);
@@ -160,6 +162,8 @@ namespace BusinessLayer
 
 	int Role::GetRoleIDByName(DataLayer::OrmasDal& ormasDal, std::string rName, std::string& errorMessage)
 	{
+		if (rName.empty())
+			return false;
 		name = rName;
 		std::string filter = GenerateFilter(ormasDal);
 		std::vector<DataLayer::rolesCollection> roleVector = ormasDal.GetRoles(errorMessage, filter);
@@ -233,5 +237,19 @@ namespace BusinessLayer
 		}
 		errorMessage = "Role with this parameters are already exist! Please avoid the duplication!";
 		return true;
+	}
+	
+	std::map<std::string, int> Role::GetRolesAsMap(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
+	{
+		std::map<std::string, int> roleMap;
+		std::vector<DataLayer::rolesCollection> roleVector = ormasDal.GetRoles(errorMessage);
+		if (roleVector.size() > 0)
+		{
+			for each (auto item in roleVector)
+			{
+				roleMap.insert(std::make_pair(std::get<2>(item), std::get<0>(item)));
+			}
+		}
+		return roleMap;
 	}
 }

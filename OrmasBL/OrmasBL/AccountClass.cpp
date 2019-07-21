@@ -147,6 +147,8 @@ namespace BusinessLayer{
 
 	bool Account::GetAccountByID(DataLayer::OrmasDal& ormasDal, int aID, std::string& errorMessage)
 	{
+		if (aID <= 0)
+			return false;
 		id = aID;
 		std::string filter = GenerateFilter(ormasDal);
 		std::vector<DataLayer::accountsCollection> accountVector = ormasDal.GetAccounts(errorMessage, filter);
@@ -167,6 +169,8 @@ namespace BusinessLayer{
 
 	bool Account::GetAccountByNumber(DataLayer::OrmasDal& ormasDal, std::string aNumber, std::string& errorMessage)
 	{
+		if (aNumber.empty())
+			return false;
 		number = aNumber;
 		std::string filter = GenerateFilter(ormasDal);
 		std::vector<DataLayer::accountsCollection> accountVector = ormasDal.GetAccounts(errorMessage, filter);
@@ -208,6 +212,10 @@ namespace BusinessLayer{
 		{
 			errorMessage = "Cannot find account with this id";
 			return true;
+		}
+		if (number.substr(0, 5).compare("22210") == 0)
+		{
+			return false;
 		}
 		if (number.substr(3,2).compare("00") == 0)
 		{

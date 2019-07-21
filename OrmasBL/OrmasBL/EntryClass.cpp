@@ -4,7 +4,7 @@
 #include "AccountClass.h"
 #include "SubaccountClass.h"
 #include "AccountTypeClass.h"
-#include "EntrySubccountRelationClass.h"
+#include "EntrySubaccountRelationClass.h"
 
 namespace BusinessLayer{
 	Entry::Entry(DataLayer::entriesCollection eCollection)
@@ -113,10 +113,10 @@ namespace BusinessLayer{
 			dSAccParentID = debitingAccountID;
 			dSAcc.Clear();
 			errorMessage.clear();
-			//if (dAccount.HaveSubaccount(ormasDal, dSAccParentID))
-			//{
-			//	return false;
-			//}
+			if (dAccount.HaveSubaccount(ormasDal, dSAccParentID))
+			{
+				return false;
+			}
 		}
 		else
 		{
@@ -128,10 +128,10 @@ namespace BusinessLayer{
 			cSAccParentID = creditingAccountID;
 			cSAcc.Clear();
 			errorMessage.clear();
-			//if (cAccount.HaveSubaccount(ormasDal, cSAccParentID))
-			//{
-			//	return false;
-			//}
+			if (cAccount.HaveSubaccount(ormasDal, cSAccParentID))
+			{
+				return false;
+			}
 		}
 		else
 		{
@@ -199,10 +199,10 @@ namespace BusinessLayer{
 			dSAccParentID = debitingAccountID;
 			dSAcc.Clear();
 			errorMessage.clear();
-			//if (dAccount.HaveSubaccount(ormasDal, dSAccParentID))
-			//{
-			//	return false;
-			//}
+			if (dAccount.HaveSubaccount(ormasDal, dSAccParentID))
+			{
+				return false;
+			}
 		}
 		else
 		{
@@ -214,10 +214,10 @@ namespace BusinessLayer{
 			cSAccParentID = creditingAccountID;
 			cSAcc.Clear();
 			errorMessage.clear();
-			///if (cAccount.HaveSubaccount(ormasDal, cSAccParentID))
-			//{
-			//	return false;
-			//}
+			if (cAccount.HaveSubaccount(ormasDal, cSAccParentID))
+			{
+				return false;
+			}
 		}
 		else
 		{
@@ -336,6 +336,8 @@ namespace BusinessLayer{
 
 	bool Entry::GetEntryByID(DataLayer::OrmasDal& ormasDal, int eID, std::string& errorMessage)
 	{
+		if (eID <= 0)
+			return false;
 		id = eID;
 		std::string filter = GenerateFilter(ormasDal);
 		std::vector<DataLayer::entriesViewCollection> entryVector = ormasDal.GetEntries(errorMessage, filter);

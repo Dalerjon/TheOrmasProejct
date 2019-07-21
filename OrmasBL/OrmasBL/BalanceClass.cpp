@@ -126,14 +126,16 @@ namespace BusinessLayer{
 
 	bool Balance::GetBalanceByID(DataLayer::OrmasDal& ormasDal, int bID, std::string& errorMessage)
 	{
+		if (bID <= 0)
+			return false;
 		id = bID;
 		std::string filter = GenerateFilter(ormasDal);
 		std::vector<DataLayer::balancesViewCollection> balanceVector = ormasDal.GetBalances(errorMessage, filter);
 		if (0 != balanceVector.size())
 		{
 			id = std::get<0>(balanceVector.at(0));
-			userID = std::get<5>(balanceVector.at(0));
-			subaccountID = std::get<6>(balanceVector.at(0));
+			userID = std::get<6>(balanceVector.at(0));
+			subaccountID = std::get<7>(balanceVector.at(0));
 			return true;
 		}
 		else
@@ -145,14 +147,37 @@ namespace BusinessLayer{
 
 	bool Balance::GetBalanceByUserID(DataLayer::OrmasDal& ormasDal, int cID, std::string& errorMessage)
 	{
+		if (cID <= 0)
+			return false;
 		userID = cID;
 		std::string filter = GenerateFilter(ormasDal);
 		std::vector<DataLayer::balancesViewCollection> balanceVector = ormasDal.GetBalances(errorMessage, filter);
 		if (0 != balanceVector.size())
 		{
 			id = std::get<0>(balanceVector.at(0));
-			userID = std::get<5>(balanceVector.at(0));
-			subaccountID = std::get<6>(balanceVector.at(0));
+			userID = std::get<6>(balanceVector.at(0));
+			subaccountID = std::get<7>(balanceVector.at(0));
+			return true;
+		}
+		else
+		{
+			errorMessage = "Cannot find balance with this user id";
+		}
+		return false;
+	}
+
+	bool Balance::GetBalanceBySubaccountID(DataLayer::OrmasDal& ormasDal, int sID, std::string& errorMessage)
+	{
+		if (sID <= 0)
+			return false;
+		subaccountID = sID;
+		std::string filter = GenerateFilter(ormasDal);
+		std::vector<DataLayer::balancesViewCollection> balanceVector = ormasDal.GetBalances(errorMessage, filter);
+		if (0 != balanceVector.size())
+		{
+			id = std::get<0>(balanceVector.at(0));
+			userID = std::get<6>(balanceVector.at(0));
+			subaccountID = std::get<7>(balanceVector.at(0));
 			return true;
 		}
 		else

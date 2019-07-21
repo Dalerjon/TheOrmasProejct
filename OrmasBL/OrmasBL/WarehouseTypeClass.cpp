@@ -150,6 +150,8 @@ namespace BusinessLayer{
 
 	bool WarehouseType::GetWarehouseTypeByID(DataLayer::OrmasDal& ormasDal, int wID, std::string& errorMessage)
 	{
+		if (wID <= 0)
+			return false;
 		id = wID;
 		std::string filter = GenerateFilter(ormasDal);
 		std::vector<DataLayer::warehouseTypeCollection> warehouseTypeVector = ormasDal.GetWarehouseType(errorMessage, filter);
@@ -170,6 +172,8 @@ namespace BusinessLayer{
 
 	bool WarehouseType::GetWarehouseTypeByCode(DataLayer::OrmasDal& ormasDal, std::string wtCode, std::string& errorMessage)
 	{
+		if (wtCode.empty())
+			return false;
 		code = wtCode;
 		std::string filter = GenerateFilter(ormasDal);
 		std::vector<DataLayer::warehouseTypeCollection> warehouseTypeVector = ormasDal.GetWarehouseType(errorMessage, filter);

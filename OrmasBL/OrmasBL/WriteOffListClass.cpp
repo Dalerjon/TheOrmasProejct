@@ -158,6 +158,8 @@ namespace BusinessLayer
 
 	bool WriteOffList::GetWriteOffListByID(DataLayer::OrmasDal& ormasDal, int pID, std::string& errorMessage)
 	{
+		if (pID <= 0)
+			return false;
 		id = pID;
 		std::string filter = GenerateFilter(ormasDal);
 		std::vector<DataLayer::writeOffListViewCollection> writeOffListVector = ormasDal.GetWriteOffList(errorMessage, filter);

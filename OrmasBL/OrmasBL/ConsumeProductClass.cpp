@@ -138,7 +138,7 @@ namespace BusinessLayer
 					else
 					{
 						//ormasDal.CancelTransaction(errorMessage);
-						return true;
+						return false;
 					}
 				}
 				else
@@ -180,7 +180,7 @@ namespace BusinessLayer
 					else
 					{
 						//ormasDal.CancelTransaction(errorMessage);
-						return true;
+						return false;
 					}
 				}
 				else
@@ -214,6 +214,11 @@ namespace BusinessLayer
 		if (cProduct.GetStatusID() == statusMap.find("EXECUTED")->second)
 		{
 			errorMessage = "Cannot delete document with \"EXECUTED\" status!";
+			return false;
+		}
+		if (cProduct.GetStatusID() == statusMap.find("ERROR")->second)
+		{
+			errorMessage = "Cannot delete document with \"ERROR\" status!";
 			return false;
 		}
 		if (ormasDal.DeleteConsumeProduct(id, errorMessage))
@@ -262,29 +267,65 @@ namespace BusinessLayer
 		//ormasDal.StartTransaction(errorMessage);
 		if (0 != id && ormasDal.UpdateConsumeProduct(id, employeeID, date, executionDate, stockEmployeeID, count, sum, statusID, currencyID, errorMessage))
 		{
-			
-			if (statusID == statusMap.find("EXECUTED")->second && previousStatusID != statusMap.find("EXECUTED")->second)
+			if (previousStatusID != statusMap.find("EXECUTED")->second)
 			{
-				if (ChangesAtStock(ormasDal, id, stockEmployeeID, errorMessage))
+				if (statusID == statusMap.find("EXECUTED")->second)
 				{
-					if (ChangesAtTransport(ormasDal, id, errorMessage))
+					if (ChangesAtStock(ormasDal, id, stockEmployeeID, errorMessage))
 					{
-						//ormasDal.CommitTransaction(errorMessage);
-						return true;
+						if (ChangesAtTransport(ormasDal, id, errorMessage))
+						{
+							//ormasDal.CommitTransaction(errorMessage);
+							return true;
+						}
+						else
+						{
+							//ormasDal.CancelTransaction(errorMessage);
+							return false;
+						}
 					}
 					else
 					{
-						//ormasDal.CancelTransaction(errorMessage);
-						return true;
+						//ormasDal.CommitTransaction(errorMessage);
+						return false;
 					}
 				}
 				else
 				{
-					//ormasDal.CommitTransaction(errorMessage);
+					return true;
+				}
+			}
+			else
+			{
+				if (statusID == statusMap.find("ERROR")->second)
+				{
+
+					if (ChangesAtStockCancel(ormasDal, id, stockEmployeeID, errorMessage))
+					{
+						if (ChangesAtTransportCancel(ormasDal, id, errorMessage))
+						{
+							//ormasDal.CommitTransaction(errorMessage);
+							return true;
+						}
+						else
+						{
+							//ormasDal.CancelTransaction(errorMessage);
+							return false;
+						}
+					}
+					else
+					{
+						//ormasDal.CommitTransaction(errorMessage);
+						return false;
+					}
+				}
+				else
+				{
+					errorMessage = "Cannot update this document, only \"Error\" status is acceptable!";
 					return false;
 				}
 			}
-			if (statusID == statusMap.find("EXECUTED")->second && previousStatusID == statusMap.find("EXECUTED")->second)
+			/*if (statusID == statusMap.find("EXECUTED")->second && previousStatusID == statusMap.find("EXECUTED")->second)
 			{
 				if (count != prevCount || sum != prevSum)
 				{
@@ -312,9 +353,10 @@ namespace BusinessLayer
 					//ormasDal.CommitTransaction(errorMessage);
 					return true;
 				}
-			}
-			//ormasDal.CommitTransaction(errorMessage);
-			return true;
+				
+				
+				return false;
+			}*/
 		}
 		if (errorMessage.empty())
 		{
@@ -333,31 +375,69 @@ namespace BusinessLayer
 			return false;
 		prevSum = GetCurrentSum(ormasDal, id, errorMessage);
 		prevCount = GetCurrentCount(ormasDal, id, errorMessage);
+		previousStatusID = GetCurrentStatusID(ormasDal, id, errorMessage);
 		//ormasDal.StartTransaction(errorMessage);
 		if (0 != id && ormasDal.UpdateConsumeProduct(id, employeeID, date, executionDate, stockEmployeeID, count, sum, statusID, currencyID, errorMessage))
 		{
-			if (statusID == statusMap.find("EXECUTED")->second && previousStatusID != statusMap.find("EXECUTED")->second)
+			if (previousStatusID != statusMap.find("EXECUTED")->second)
 			{
-				if (ChangesAtStock(ormasDal, id, stockEmployeeID, errorMessage))
+				if (statusID == statusMap.find("EXECUTED")->second)
 				{
-					if (ChangesAtTransport(ormasDal, id, errorMessage))
+					if (ChangesAtStock(ormasDal, id, stockEmployeeID, errorMessage))
 					{
-						//ormasDal.CommitTransaction(errorMessage);
-						return true;
+						if (ChangesAtTransport(ormasDal, id, errorMessage))
+						{
+							//ormasDal.CommitTransaction(errorMessage);
+							return true;
+						}
+						else
+						{
+							//ormasDal.CancelTransaction(errorMessage);
+							return false;
+						}
 					}
 					else
 					{
-						//ormasDal.CancelTransaction(errorMessage);
-						return true;
+						//ormasDal.CommitTransaction(errorMessage);
+						return false;
 					}
 				}
 				else
 				{
-					//ormasDal.CommitTransaction(errorMessage);
+					return true;
+				}
+			}
+			else
+			{
+				if (statusID == statusMap.find("ERROR")->second)
+				{
+
+					if (ChangesAtStockCancel(ormasDal, id, stockEmployeeID, errorMessage))
+					{
+						if (ChangesAtTransportCancel(ormasDal, id,  errorMessage))
+						{
+							//ormasDal.CommitTransaction(errorMessage);
+							return true;
+						}
+						else
+						{
+							//ormasDal.CancelTransaction(errorMessage);
+							return false;
+						}
+					}
+					else
+					{
+						//ormasDal.CommitTransaction(errorMessage);
+						return false;
+					}
+				}
+				else
+				{
+					errorMessage = "Cannot update this document, only \"Error\" status is acceptable!";
 					return false;
 				}
 			}
-			if (statusID == statusMap.find("EXECUTED")->second && previousStatusID == statusMap.find("EXECUTED")->second)
+			/*if (statusID == statusMap.find("EXECUTED")->second && previousStatusID == statusMap.find("EXECUTED")->second)
 			{
 				if (count != prevCount || sum != prevSum)
 				{
@@ -385,9 +465,7 @@ namespace BusinessLayer
 					//ormasDal.CommitTransaction(errorMessage);
 					return true;
 				}
-			}
-			//ormasDal.CommitTransaction(errorMessage);
-			return true;
+			}*/
 		}
 		if (errorMessage.empty())
 		{
@@ -408,6 +486,8 @@ namespace BusinessLayer
 
 	bool ConsumeProduct::GetConsumeProductByID(DataLayer::OrmasDal& ormasDal, int cID, std::string& errorMessage)
 	{
+		if (cID <= 0)
+			return false;
 		id = cID;
 		std::string filter = GenerateFilter(ormasDal);
 		std::vector<DataLayer::consumeProductsViewCollection> consumeProductVector = ormasDal.GetConsumeProducts(errorMessage, filter);
@@ -521,6 +601,18 @@ namespace BusinessLayer
 	{
 		Transport transport;
 		return transport.ChangingByReceiptProduct(ormasDal, cpID, pProdCountMap, previousSum, errorMessage);
+	}
+
+	bool ConsumeProduct::ChangesAtStockCancel(DataLayer::OrmasDal& ormasDal, int cpID, int stockEmpID, std::string& errorMessage)
+	{
+		Stock stock;
+		return stock.ChangingByConsumeProductCancel(ormasDal, cpID, stockEmpID, errorMessage);
+	}
+
+	bool ConsumeProduct::ChangesAtTransportCancel(DataLayer::OrmasDal& ormasDal, int cpID, std::string& errorMessage)
+	{
+		Transport transport;
+		return transport.ChangingByReceiptProductCancel(ormasDal, cpID, errorMessage);
 	}
 
 	double ConsumeProduct::GetCurrentSum(DataLayer::OrmasDal& ormasDal, int cpID, std::string& errorMessage)

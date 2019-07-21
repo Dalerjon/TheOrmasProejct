@@ -158,6 +158,8 @@ namespace BusinessLayer
 
 	bool ReceiptProductList::GetReceiptProductListByID(DataLayer::OrmasDal& ormasDal, int rID, std::string& errorMessage)
 	{
+		if (rID <= 0)
+			return false;
 		id = rID;
 		std::string filter = GenerateFilter(ormasDal);
 		std::vector<DataLayer::receiptProductListViewCollection> receiptProductListVector = ormasDal.GetReceiptProductList(errorMessage, filter);

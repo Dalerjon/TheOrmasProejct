@@ -37,6 +37,7 @@ namespace BusinessLayer{
 		std::string GenerateFilter(DataLayer::OrmasDal& ormasDal);
 		bool GetBalanceByID(DataLayer::OrmasDal& ormasDal, int bID, std::string& errorMessage);
 		bool GetBalanceByUserID(DataLayer::OrmasDal& ormasDal, int cID, std::string& errorMessage);
+		bool GetBalanceBySubaccountID(DataLayer::OrmasDal& ormasDal, int sID, std::string& errorMessage);
 		bool IsEmpty();
 		void Clear();
 	private:

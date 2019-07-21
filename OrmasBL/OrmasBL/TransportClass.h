@@ -64,14 +64,16 @@ namespace BusinessLayer
 		bool IsEmpty();
 		void Clear();
 		bool ChangingByConsumeProduct(DataLayer::OrmasDal& ormasDal, int oID, std::string& errorMessage);
+		bool ChangingByConsumeProductCancel(DataLayer::OrmasDal& ormasDal, int oID, std::string& errorMessage);
 		bool ChangingByConsumeProduct(DataLayer::OrmasDal& ormasDal, int oID, std::map<int, double> pProdCountMap, double pSum, std::string& errorMessage);
 		bool ChangingByReceiptProduct(DataLayer::OrmasDal& ormasDal, int cpID, std::string& errorMessage);
+		bool ChangingByReceiptProductCancel(DataLayer::OrmasDal& ormasDal, int oID, std::string& errorMessage);
 		bool ChangingByReceiptProduct(DataLayer::OrmasDal& ormasDal, int cpID, std::map<int, double> pProdCountMap, double pSum, std::string& errorMessage);
 	private:
 		bool IsDuplicate(DataLayer::OrmasDal& ormasDal, int eID, std::string& errorMessage);
 		bool IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string& errorMessage);
-		bool CreateEntry(DataLayer::OrmasDal& ormasDal, int debAccID, double currentSum, int credAccID, std::string& errorMessage);
-		bool CreateEntry(DataLayer::OrmasDal& ormasDal, int debAccID, double currentSum, int credAccID, double previousSum, std::string& errorMessage);
+		bool CreateEntry(DataLayer::OrmasDal& ormasDal, int oID, int debAccID, double currentSum, int credAccID, std::string& errorMessage);
+		bool CreateEntry(DataLayer::OrmasDal& ormasDal, int oID, int debAccID, double currentSum, int credAccID, double previousSum, std::string& errorMessage);
 		std::string wstring_to_utf8(const std::wstring& str);
 	};
 }

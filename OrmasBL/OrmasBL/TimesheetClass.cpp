@@ -153,6 +153,8 @@ namespace BusinessLayer{
 
 	bool Timesheet::GetTimesheetByID(DataLayer::OrmasDal& ormasDal, int bID, std::string& errorMessage)
 	{
+		if (bID <= 0)
+			return false;
 		id = bID;
 		std::string filter = GenerateFilter(ormasDal);
 		std::vector<DataLayer::timesheetViewCollection> timesheetVector = ormasDal.GetTimesheet(errorMessage, filter);

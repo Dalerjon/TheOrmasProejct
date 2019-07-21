@@ -171,6 +171,8 @@ namespace BusinessLayer{
 
 	bool NetCost::GetNetCostByID(DataLayer::OrmasDal& ormasDal, int nID, std::string& errorMessage)
 	{
+		if (nID <= 0)
+			return false;
 		id = nID;
 		std::string filter = GenerateFilter(ormasDal);
 		std::vector<DataLayer::netCostViewCollection> netCostVector = ormasDal.GetNetCost(errorMessage, filter);
@@ -193,6 +195,8 @@ namespace BusinessLayer{
 
 	bool NetCost::GetNetCostByProductID(DataLayer::OrmasDal& ormasDal, int pID, std::string& errorMessage)
 	{
+		if (pID <= 0)
+			return false;
 		productID = pID;
 		std::string filter = GenerateFilter(ormasDal);
 		std::vector<DataLayer::netCostViewCollection> netCostVector = ormasDal.GetNetCost(errorMessage, filter);

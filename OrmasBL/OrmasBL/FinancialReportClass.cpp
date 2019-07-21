@@ -357,6 +357,8 @@ namespace BusinessLayer{
 
 	bool FinancialReport::GetFinancialReportByID(DataLayer::OrmasDal& ormasDal, int fID, std::string& errorMessage)
 	{
+		if (fID <= 0)
+			return false;
 		id = fID;
 		std::string filter = GenerateFilter(ormasDal);
 		std::vector<DataLayer::financialReportCollection> financialReportVector = ormasDal.GetFinancialReport(errorMessage, filter);

@@ -175,6 +175,8 @@ namespace BusinessLayer
 
 	bool Specification::GetSpecificationByID(DataLayer::OrmasDal& ormasDal, int oID, std::string& errorMessage)
 	{
+		if (oID <= 0)
+			return false;
 		id = oID;
 		std::string filter = GenerateFilter(ormasDal);
 		std::vector<DataLayer::specificationsViewCollection> specificationVector = ormasDal.GetSpecifications(errorMessage, filter);
@@ -197,6 +199,8 @@ namespace BusinessLayer
 
 	bool Specification::GetSpecificationByProductID(DataLayer::OrmasDal& ormasDal, int pID, std::string& errorMessage)
 	{
+		if (pID <= 0)
+			return false;
 		productID = pID;
 		std::string filter = GenerateFilter(ormasDal);
 		std::vector<DataLayer::specificationsViewCollection> specificationVector = ormasDal.GetSpecifications(errorMessage, filter);

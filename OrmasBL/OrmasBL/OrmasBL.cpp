@@ -126,6 +126,50 @@ namespace BusinessLayer{
 	}
 
 	template<>
+	std::vector<AccountableView> OrmasBL::GetAllDataForClass<AccountableView>(std::string& errorMessage, std::string filter)
+	{
+		std::vector<AccountableView> vecForAccountable;
+		std::vector<DataLayer::accountableViewCollection> dataCollection;
+		if (filter.empty())
+		{
+			dataCollection = ormasDal.GetAccountable(errorMessage);
+		}
+		else
+		{
+			dataCollection = ormasDal.GetAccountable(errorMessage, filter);
+		}
+		if (!dataCollection.empty()){
+			for (auto data : dataCollection)
+			{
+				vecForAccountable.push_back(AccountableView(data));
+			}
+		}
+		return vecForAccountable;
+	}
+
+	template<>
+	std::vector<AccountableTransaction> OrmasBL::GetAllDataForClass<AccountableTransaction>(std::string& errorMessage, std::string filter)
+	{
+		std::vector<AccountableTransaction> vecForAccountableTr;
+		std::vector<DataLayer::accountableTransactionCollection> dataCollection;
+		if (filter.empty())
+		{
+			dataCollection = ormasDal.GetAccountableTransaction(errorMessage);
+		}
+		else
+		{
+			dataCollection = ormasDal.GetAccountableTransaction(errorMessage, filter);
+		}
+		if (!dataCollection.empty()){
+			for (auto data : dataCollection)
+			{
+				vecForAccountableTr.push_back(AccountableTransaction(data));
+			}
+		}
+		return vecForAccountableTr;
+	}
+
+	template<>
 	std::vector<AccountHistory> OrmasBL::GetAllDataForClass<AccountHistory>(std::string& errorMessage, std::string filter)
 	{
 		std::vector<AccountHistory> vecForAccountHis;
@@ -212,6 +256,28 @@ namespace BusinessLayer{
 			}
 		}
 		return vecForBranch;
+	}
+
+	template<>
+	std::vector<BorrowerView> OrmasBL::GetAllDataForClass<BorrowerView>(std::string& errorMessage, std::string filter)
+	{
+		std::vector<BorrowerView> vecForBorrower;
+		std::vector<DataLayer::borrowersViewCollection> dataCollection;
+		if (filter.empty())
+		{
+			dataCollection = ormasDal.GetBorrowers(errorMessage);
+		}
+		else
+		{
+			dataCollection = ormasDal.GetBorrowers(errorMessage, filter);
+		}
+		if (!dataCollection.empty()){
+			for (auto data : dataCollection)
+			{
+				vecForBorrower.push_back(BorrowerView(data));
+			}
+		}
+		return vecForBorrower;
 	}
 
 	template<>
@@ -479,6 +545,28 @@ namespace BusinessLayer{
 	}
 
 	template<>
+	std::vector<Creditor> OrmasBL::GetAllDataForClass<Creditor>(std::string& errorMessage, std::string filter)
+	{
+		std::vector<Creditor> vecForCreditor;
+		std::vector<DataLayer::creditorsCollection> dataCollection;
+		if (filter.empty())
+		{
+			dataCollection = ormasDal.GetCreditors(errorMessage);
+		}
+		else
+		{
+			dataCollection = ormasDal.GetCreditors(errorMessage, filter);
+		}
+		if (!dataCollection.empty()){
+			for (auto data : dataCollection)
+			{
+				vecForCreditor.push_back(Creditor(data));
+			}
+		}
+		return vecForCreditor;
+	}
+
+	template<>
 	std::vector<DivisionAccountRelationView> OrmasBL::GetAllDataForClass<DivisionAccountRelationView>(std::string& errorMessage, std::string filter)
 	{
 		std::vector<DivisionAccountRelationView> vecForDivisionAccount;
@@ -565,6 +653,29 @@ namespace BusinessLayer{
 		}
 		return vecForEmployee;
 	}
+
+	template<>
+	std::vector<EmployeeProductRelationView> OrmasBL::GetAllDataForClass<EmployeeProductRelationView>(std::string& errorMessage, std::string filter)
+	{
+		std::vector<EmployeeProductRelationView> vecForEmplProd;
+		std::vector<DataLayer::employeeProductViewCollection> dataCollection;
+		if (filter.empty())
+		{
+			dataCollection = ormasDal.GetEmployeeProduct(errorMessage);
+		}
+		else
+		{
+			dataCollection = ormasDal.GetEmployeeProduct(errorMessage, filter);
+		}
+		if (!dataCollection.empty()){
+			for (auto data : dataCollection)
+			{
+				vecForEmplProd.push_back(EmployeeProductRelationView(data));
+			}
+		}
+		return vecForEmplProd;
+	}
+
 
 	template<>
 	std::vector<EntryView> OrmasBL::GetAllDataForClass<EntryView>(std::string& errorMessage, std::string filter)
@@ -1208,6 +1319,28 @@ namespace BusinessLayer{
 	}
 
 	template<>
+	std::vector<ProductBranchRelationView> OrmasBL::GetAllDataForClass<ProductBranchRelationView>(std::string& errorMessage, std::string filter)
+	{
+		std::vector<ProductBranchRelationView> vecForProductBranch;
+		std::vector<DataLayer::productBranchViewCollection> dataCollection;
+		if (filter.empty())
+		{
+			dataCollection = ormasDal.GetProductBranch(errorMessage);
+		}
+		else
+		{
+			dataCollection = ormasDal.GetProductBranch(errorMessage, filter);
+		}
+		if (!dataCollection.empty()){
+			for (auto data : dataCollection)
+			{
+				vecForProductBranch.push_back(ProductBranchRelationView(data));
+			}
+		}
+		return vecForProductBranch;
+	}
+
+	template<>
 	std::vector<PurveyorView> OrmasBL::GetAllDataForClass<PurveyorView>(std::string& errorMessage, std::string filter)
 	{
 		std::vector<PurveyorView> vecForProductType;
@@ -1274,47 +1407,47 @@ namespace BusinessLayer{
 	}
 
 	template<>
-	std::vector<ReceiptRawView> OrmasBL::GetAllDataForClass<ReceiptRawView>(std::string& errorMessage, std::string filter)
+	std::vector<StockTransferView> OrmasBL::GetAllDataForClass<StockTransferView>(std::string& errorMessage, std::string filter)
 	{
-		std::vector<ReceiptRawView> vecForReceiptRaw;
-		std::vector<DataLayer::receiptRawsViewCollection> dataCollection;
+		std::vector<StockTransferView> vecForStockTransfer;
+		std::vector<DataLayer::stockTransferViewCollection> dataCollection;
 		if (filter.empty())
 		{
-			dataCollection = ormasDal.GetReceiptRaws(errorMessage);
+			dataCollection = ormasDal.GetStockTransfer(errorMessage);
 		}
 		else
 		{
-			dataCollection = ormasDal.GetReceiptRaws(errorMessage, filter);
+			dataCollection = ormasDal.GetStockTransfer(errorMessage, filter);
 		}
 		if (!dataCollection.empty()){
 			for (auto data : dataCollection)
 			{
-				vecForReceiptRaw.push_back(ReceiptRawView(data));
+				vecForStockTransfer.push_back(StockTransferView(data));
 			}
 		}
-		return vecForReceiptRaw;
+		return vecForStockTransfer;
 	}
 
 	template<>
-	std::vector<ReceiptRawListView> OrmasBL::GetAllDataForClass<ReceiptRawListView>(std::string& errorMessage, std::string filter)
+	std::vector<StockTransferListView> OrmasBL::GetAllDataForClass<StockTransferListView>(std::string& errorMessage, std::string filter)
 	{
-		std::vector<ReceiptRawListView> vecForReceiptRawList;
-		std::vector<DataLayer::receiptRawListViewCollection> dataCollection;
+		std::vector<StockTransferListView> vecForStockTransferList;
+		std::vector<DataLayer::stockTransferListViewCollection> dataCollection;
 		if (filter.empty())
 		{
-			dataCollection = ormasDal.GetReceiptRawList(errorMessage);
+			dataCollection = ormasDal.GetStockTransferList(errorMessage);
 		}
 		else
 		{
-			dataCollection = ormasDal.GetReceiptRawList(errorMessage, filter);
+			dataCollection = ormasDal.GetStockTransferList(errorMessage, filter);
 		}
 		if (!dataCollection.empty()){
 			for (auto data : dataCollection)
 			{
-				vecForReceiptRawList.push_back(ReceiptRawListView(data));
+				vecForStockTransferList.push_back(StockTransferListView(data));
 			}
 		}
-		return vecForReceiptRawList;
+		return vecForStockTransferList;
 	}
 
 	template<>
@@ -1470,6 +1603,28 @@ namespace BusinessLayer{
 			}
 		}
 		return vecForSalary;
+	}
+
+	template<>
+	std::vector<ShareholderView> OrmasBL::GetAllDataForClass<ShareholderView>(std::string& errorMessage, std::string filter)
+	{
+		std::vector<ShareholderView> vecForSareholder;
+		std::vector<DataLayer::shareholdersViewCollection> dataCollection;
+		if (filter.empty())
+		{
+			dataCollection = ormasDal.GetShareholders(errorMessage);
+		}
+		else
+		{
+			dataCollection = ormasDal.GetShareholders(errorMessage, filter);
+		}
+		if (!dataCollection.empty()){
+			for (auto data : dataCollection)
+			{
+				vecForSareholder.push_back(ShareholderView(data));
+			}
+		}
+		return vecForSareholder;
 	}
 
 	template<>
@@ -1668,6 +1823,28 @@ namespace BusinessLayer{
 			}
 		}
 		return vecForStock;
+	}
+
+	template<>
+	std::vector<StockHistoryView> OrmasBL::GetAllDataForClass<StockHistoryView>(std::string& errorMessage, std::string filter)
+	{
+		std::vector<StockHistoryView> vecForStockHistory;
+		std::vector<DataLayer::stockHistoryViewCollection> dataCollection;
+		if (filter.empty())
+		{
+			dataCollection = ormasDal.GetStockHistory(errorMessage);
+		}
+		else
+		{
+			dataCollection = ormasDal.GetStockHistory(errorMessage, filter);
+		}
+		if (!dataCollection.empty()){
+			for (auto data : dataCollection)
+			{
+				vecForStockHistory.push_back(StockHistoryView(data));
+			}
+		}
+		return vecForStockHistory;
 	}
 
 	template<>
@@ -2188,6 +2365,128 @@ namespace BusinessLayer{
 		return false;
 	}
 
+	bool OrmasBL::CreateAccountable(BusinessLayer::Accountable* accountable, std::string& errorMessage)
+	{
+		try
+		{
+			if (0 != accountable->GetEmployeeID())
+			{
+				return accountable->CreateAccountable(ormasDal, errorMessage);
+			}
+			else
+			{
+				errorMessage = "Error! All fields must not be empty. Please fill up them!";
+			}
+		}
+		catch (...)
+		{
+			errorMessage = "Fatal error! Please contact with application provider.";
+		}
+		return false;
+	}
+
+	bool OrmasBL::UpdateAccountable(BusinessLayer::Accountable* accountable, std::string& errorMessage)
+	{
+		try
+		{
+			if (0 != accountable->GetEmployeeID())
+			{
+				return accountable->UpdateAccountable(ormasDal, errorMessage);
+			}
+			else
+			{
+				errorMessage = "Error! All fields must not be empty. Please fill up them!";
+			}
+		}
+		catch (...)
+		{
+			errorMessage = "Fatal error! Please contact with application provider.";
+		}
+		return false;
+	}
+
+	bool OrmasBL::DeleteAccountable(BusinessLayer::Accountable* accountable, std::string& errorMessage)
+	{
+		try
+		{
+			if (0 != accountable->GetID())
+			{
+				return accountable->DeleteAccountable(ormasDal, errorMessage);
+			}
+			else
+			{
+				errorMessage = "Error! Accountable item ID is 0. Some thing goes wrong!";
+			}
+		}
+		catch (...)
+		{
+			errorMessage = "Fatal error! Please contact with application provider.";
+		}
+		return false;
+	}
+
+	bool OrmasBL::CreateAccountableTransaction(BusinessLayer::AccountableTransaction* accountableTransaction, std::string& errorMessage)
+	{
+		try
+		{
+			if (0 != accountableTransaction->GetAccountableID() && 0 != accountableTransaction->GetStartValue() &&
+				accountableTransaction->GetEndValue() && 0 != accountableTransaction->GetOperationID())
+			{
+				return accountableTransaction->CreateAccountableTransaction(ormasDal, errorMessage);
+			}
+			else
+			{
+				errorMessage = "Error! All fields must not be empty. Please fill up them!";
+			}
+		}
+		catch (...)
+		{
+			errorMessage = "Fatal error! Please contact with application provider.";
+		}
+		return false;
+	}
+
+	bool OrmasBL::UpdateAccountableTransaction(BusinessLayer::AccountableTransaction* accountableTransaction, std::string& errorMessage)
+	{
+		try
+		{
+			if (0 != accountableTransaction->GetAccountableID() && 0 != accountableTransaction->GetStartValue() &&
+				accountableTransaction->GetEndValue() && 0 != accountableTransaction->GetOperationID())
+			{
+				return accountableTransaction->UpdateAccountableTransaction(ormasDal, errorMessage);
+			}
+			else
+			{
+				errorMessage = "Error! All fields must not be empty. Please fill up them!";
+			}
+		}
+		catch (...)
+		{
+			errorMessage = "Fatal error! Please contact with application provider.";
+		}
+		return false;
+	}
+
+	bool OrmasBL::DeleteAccountableTransaction(BusinessLayer::AccountableTransaction* accountableTransaction, std::string& errorMessage)
+	{
+		try
+		{
+			if (0 != accountableTransaction->GetID())
+			{
+				return accountableTransaction->DeleteAccountableTransaction(ormasDal, errorMessage);
+			}
+			else
+			{
+				errorMessage = "Error! Accountable transaction item ID is 0. Some thing goes wrong!";
+			}
+		}
+		catch (...)
+		{
+			errorMessage = "Fatal error! Please contact with application provider.";
+		}
+		return false;
+	}
+
 	bool OrmasBL::CreateAccountHistory(BusinessLayer::AccountHistory* accountHis, std::string& errorMessage)
 	{
 		try
@@ -2421,6 +2720,67 @@ namespace BusinessLayer{
 			else
 			{
 				errorMessage = "Error! Branch ID is 0. Some thing goes wrong!";
+			}
+		}
+		catch (...)
+		{
+			errorMessage = "Fatal error! Please contact with application provider.";
+		}
+		return false;
+	}
+
+
+	bool OrmasBL::CreateBorrower(BusinessLayer::Borrower* borrower, std::string& errorMessage)
+	{
+		try
+		{
+			if (0 != borrower->GetUserID() || (!borrower->GetName().empty() && !borrower->GetAddress().empty() && !borrower->GetPhone().empty()))
+			{
+				return borrower->CreateBorrower(ormasDal, errorMessage);
+			}
+			else
+			{
+				errorMessage = "Error! Name, address and phone must not be empty. Please fill up them!";
+			}
+		}
+		catch (...)
+		{
+			errorMessage = "Fatal error! Please contact with application provider.";
+		}
+		return false;
+	}
+
+	bool OrmasBL::UpdateBorrower(BusinessLayer::Borrower* borrower, std::string& errorMessage)
+	{
+		try
+		{
+			if (0 != borrower->GetUserID() || (!borrower->GetName().empty() && !borrower->GetAddress().empty() && !borrower->GetPhone().empty()))
+			{
+				return borrower->UpdateBorrower(ormasDal, errorMessage);
+			}
+			else
+			{
+				errorMessage = "Error!  Name, address and phone must not be empty. Please fill up them!";
+			}
+		}
+		catch (...)
+		{
+			errorMessage = "Fatal error! Please contact with application provider.";
+		}
+		return false;
+	}
+
+	bool OrmasBL::DeleteBorrower(BusinessLayer::Borrower* borrower, std::string& errorMessage)
+	{
+		try
+		{
+			if (0 != borrower->GetID())
+			{
+				return borrower->DeleteBorrower(ormasDal, errorMessage);
+			}
+			else
+			{
+				errorMessage = "Error! Borrower ID is 0. Some thing goes wrong!";
 			}
 		}
 		catch (...)
@@ -3225,6 +3585,66 @@ namespace BusinessLayer{
 		return false;
 	}
 
+	bool OrmasBL::CreateCreditor(BusinessLayer::Creditor* creditor, std::string& errorMessage)
+	{
+		try
+		{
+			if (!creditor->GetName().empty() && !creditor->GetAddress().empty() && !creditor->GetPhone().empty())
+			{
+				return creditor->CreateCreditor(ormasDal, errorMessage);
+			}
+			else
+			{
+				errorMessage = "Error! Creditor name, phone and address must not be empty. Please fill up them!";
+			}
+		}
+		catch (...)
+		{
+			errorMessage = "Fatal error! Please contact with application provider.";
+		}
+		return false;
+	}
+
+	bool OrmasBL::UpdateCreditor(BusinessLayer::Creditor* creditor, std::string& errorMessage)
+	{
+		try
+		{
+			if (!creditor->GetName().empty() && !creditor->GetAddress().empty() && !creditor->GetPhone().empty())
+			{
+				return creditor->UpdateCreditor(ormasDal, errorMessage);
+			}
+			else
+			{
+				errorMessage = "Error! Creditor name, phone and address must not be empty. Please fill up them!";
+			}
+		}
+		catch (...)
+		{
+			errorMessage = "Fatal error! Please contact with application provider.";
+		}
+		return false;
+	}
+
+	bool OrmasBL::DeleteCreditor(BusinessLayer::Creditor* creditor, std::string& errorMessage)
+	{
+		try
+		{
+			if (0 != creditor->GetID())
+			{
+				return creditor->DeleteCreditor(ormasDal, errorMessage);
+			}
+			else
+			{
+				errorMessage = "Error! Creditor ID is 0. Some thing goes wrong!";
+			}
+		}
+		catch (...)
+		{
+			errorMessage = "Fatal error! Please contact with application provider.";
+		}
+		return false;
+	}
+
 	bool OrmasBL::CreateDivisionAccountRelation(BusinessLayer::DivisionAccountRelation* divisionAccountReletion, std::string& errorMessage)
 	{
 		try
@@ -3460,6 +3880,66 @@ namespace BusinessLayer{
 			else
 			{
 				errorMessage = "Error! Employee ID is 0. Some thing goes wrong!";
+			}
+		}
+		catch (...)
+		{
+			errorMessage = "Fatal error! Please contact with application provider.";
+		}
+		return false;
+	}
+
+	bool OrmasBL::CreateEmployeeProductRelation(BusinessLayer::EmployeeProductRelation* employeeProduct, std::string& errorMessage)
+	{
+		try
+		{
+			if (0 != employeeProduct->GetEmployeeID() && 0 != employeeProduct->GetProductID())
+			{
+				return employeeProduct->CreateEmployeeProductRelation(ormasDal, errorMessage);
+			}
+			else
+			{
+				errorMessage = "Error! All fields must not be empty. Please fill up them!";
+			}
+		}
+		catch (...)
+		{
+			errorMessage = "Fatal error! Please contact with application provider.";
+		}
+		return false;
+	}
+
+	bool OrmasBL::UpdateEmployeeProductRelation(BusinessLayer::EmployeeProductRelation* employeeProduct, std::string& errorMessage)
+	{
+		try
+		{
+			if (0 != employeeProduct->GetEmployeeID() && 0 != employeeProduct->GetProductID())
+			{
+				return employeeProduct->UpdateEmployeeProductRelation(ormasDal, errorMessage);
+			}
+			else
+			{
+				errorMessage = "Error! All fields must not be empty. Please fill up them!";
+			}
+		}
+		catch (...)
+		{
+			errorMessage = "Fatal error! Please contact with application provider.";
+		}
+		return false;
+	}
+
+	bool OrmasBL::DeleteEmployeeProductRelation(BusinessLayer::EmployeeProductRelation* employeeProduct, std::string& errorMessage)
+	{
+		try
+		{
+			if (0 != employeeProduct->GetID())
+			{
+				return employeeProduct->DeleteEmployeeProductRelation(ormasDal, errorMessage);
+			}
+			else
+			{
+				errorMessage = "Error! Employee-product ID is 0. Some thing goes wrong!";
 			}
 		}
 		catch (...)
@@ -4417,14 +4897,14 @@ namespace BusinessLayer{
 		payment->loggedUserID = loggedUser->GetID();
 		try
 		{
-			if (0 != payment->GetUserID() && 0.0 != payment->GetValue() && 0 != payment->GetCurrencyID() && !payment->GetDate().empty()
+			if (0.0 != payment->GetValue() && 0 != payment->GetCurrencyID() && !payment->GetDate().empty()
 				&& 0 != payment->GetStatusID())
 			{
 				return payment->CreatePayment(ormasDal, errorMessage);
 			}
 			else
 			{
-				errorMessage = "Error! User, currency, date and value must not be empty. Please fill up them!";
+				errorMessage = "Error! Currency, date and value must not be empty. Please fill up them!";
 			}
 		}
 		catch (...)
@@ -4439,14 +4919,14 @@ namespace BusinessLayer{
 		payment->loggedUserID = loggedUser->GetID();
 		try
 		{
-			if (0 != payment->GetUserID() && 0.0 != payment->GetValue() && 0 != payment->GetCurrencyID() && !payment->GetDate().empty()
+			if (0.0 != payment->GetValue() && 0 != payment->GetCurrencyID() && !payment->GetDate().empty()
 				&& 0 != payment->GetStatusID())
 			{
 				return payment->UpdatePayment(ormasDal, errorMessage);
 			}
 			else
 			{
-				errorMessage = "Error! User, currency, date and value must not be empty. Please fill up them!";
+				errorMessage = "Error! Currency, date and value must not be empty. Please fill up them!";
 			}
 		}
 		catch (...)
@@ -4830,6 +5310,66 @@ namespace BusinessLayer{
 			else
 			{
 				errorMessage = "Error! Product ID is 0. Something goes wrong!";
+			}
+		}
+		catch (...)
+		{
+			errorMessage = "Fatal error! Please contact with application provider.";
+		}
+		return false;
+	}
+
+	bool OrmasBL::CreateProductBranchRelation(BusinessLayer::ProductBranchRelation* prodcutBranch, std::string& errorMessage)
+	{
+		try
+		{
+			if (0 != prodcutBranch->GetBranchID() && 0 != prodcutBranch->GetProductID())
+			{
+				return prodcutBranch->CreateProductBranchRelation(ormasDal, errorMessage);
+			}
+			else
+			{
+				errorMessage = "Error! All fields must not be empty. Please fill up them!";
+			}
+		}
+		catch (...)
+		{
+			errorMessage = "Fatal error! Please contact with application provider.";
+		}
+		return false;
+	}
+
+	bool OrmasBL::UpdateProductBranchRelation(BusinessLayer::ProductBranchRelation* employeeProduct, std::string& errorMessage)
+	{
+		try
+		{
+			if (0 != employeeProduct->GetBranchID() && 0 != employeeProduct->GetProductID())
+			{
+				return employeeProduct->UpdateProductBranchRelation(ormasDal, errorMessage);
+			}
+			else
+			{
+				errorMessage = "Error! All fields must not be empty. Please fill up them!";
+			}
+		}
+		catch (...)
+		{
+			errorMessage = "Fatal error! Please contact with application provider.";
+		}
+		return false;
+	}
+
+	bool OrmasBL::DeleteProductBranchRelation(BusinessLayer::ProductBranchRelation* employeeProduct, std::string& errorMessage)
+	{
+		try
+		{
+			if (0 != employeeProduct->GetID())
+			{
+				return employeeProduct->DeleteProductBranchRelation(ormasDal, errorMessage);
+			}
+			else
+			{
+				errorMessage = "Error! Employee-product ID is 0. Some thing goes wrong!";
 			}
 		}
 		catch (...)
@@ -5607,27 +6147,27 @@ namespace BusinessLayer{
 		return false;
 	}
 
-	bool OrmasBL::CreateReceiptRaw(BusinessLayer::ReceiptRaw* receiptRaw, std::string& errorMessage)
+	bool OrmasBL::CreateStockTransfer(BusinessLayer::StockTransfer* stockTransfer, std::string& errorMessage)
 	{
 		try
 		{
-			if (!receiptRaw->GetDate().empty() && 0 != receiptRaw->GetEmployeeID() && 0 != receiptRaw->GetCount()
-				&& 0 != receiptRaw->GetSum() && 0 != receiptRaw->GetStatusID() && 0 != receiptRaw->GetCurrencyID()
-				&& 0 != receiptRaw->GetStockEmployeeID())
+			if (!stockTransfer->GetDate().empty() && 0 != stockTransfer->GetEmployeeID() && 0 != stockTransfer->GetCount()
+				&& 0 != stockTransfer->GetSum() && 0 != stockTransfer->GetStatusID() && 0 != stockTransfer->GetCurrencyID()
+				&& 0 != stockTransfer->GetStockEmployeeID())
 			{
 				double roundSum = 0;
 				Currency *cur = new Currency();
-				if (cur->GetCurrencyByID(ormasDal, receiptRaw->GetCurrencyID(), errorMessage))
+				if (cur->GetCurrencyByID(ormasDal, stockTransfer->GetCurrencyID(), errorMessage))
 				{
-					roundSum = round(receiptRaw->GetSum() * cur->GetUnit()) / cur->GetUnit();
+					roundSum = round(stockTransfer->GetSum() * cur->GetUnit()) / cur->GetUnit();
 				}
 				else
 				{
 					return false;
 				}
 				delete cur;
-				receiptRaw->SetSum(roundSum);
-				return receiptRaw->CreateReceiptRaw(ormasDal, errorMessage);
+				stockTransfer->SetSum(roundSum);
+				return stockTransfer->CreateStockTransfer(ormasDal, errorMessage);
 			}
 			else
 			{
@@ -5641,27 +6181,27 @@ namespace BusinessLayer{
 		return false;
 	}
 
-	bool OrmasBL::UpdateReceiptRaw(BusinessLayer::ReceiptRaw* receiptRaw, std::string& errorMessage)
+	bool OrmasBL::UpdateStockTransfer(BusinessLayer::StockTransfer* stockTransfer, std::string& errorMessage)
 	{
 		try
 		{
-			if (!receiptRaw->GetDate().empty() && 0 != receiptRaw->GetEmployeeID() && 0 != receiptRaw->GetCount()
-				&& 0 != receiptRaw->GetSum() && 0 != receiptRaw->GetStatusID() && 0 != receiptRaw->GetCurrencyID()
-				&& 0 != receiptRaw->GetStockEmployeeID())
+			if (!stockTransfer->GetDate().empty() && 0 != stockTransfer->GetEmployeeID() && 0 != stockTransfer->GetCount()
+				&& 0 != stockTransfer->GetSum() && 0 != stockTransfer->GetStatusID() && 0 != stockTransfer->GetCurrencyID()
+				&& 0 != stockTransfer->GetStockEmployeeID())
 			{
 				double roundSum = 0;
 				Currency *cur = new Currency();
-				if (cur->GetCurrencyByID(ormasDal, receiptRaw->GetCurrencyID(), errorMessage))
+				if (cur->GetCurrencyByID(ormasDal, stockTransfer->GetCurrencyID(), errorMessage))
 				{
-					roundSum = round(receiptRaw->GetSum() * cur->GetUnit()) / cur->GetUnit();
+					roundSum = round(stockTransfer->GetSum() * cur->GetUnit()) / cur->GetUnit();
 				}
 				else
 				{
 					return false;
 				}
 				delete cur;
-				receiptRaw->SetSum(roundSum);
-				return receiptRaw->UpdateReceiptRaw(ormasDal, errorMessage);
+				stockTransfer->SetSum(roundSum);
+				return stockTransfer->UpdateStockTransfer(ormasDal, errorMessage);
 			}
 			else
 			{
@@ -5675,17 +6215,17 @@ namespace BusinessLayer{
 		return false;
 	}
 
-	bool OrmasBL::DeleteReceiptRaw(BusinessLayer::ReceiptRaw* receiptRaw, std::string& errorMessage)
+	bool OrmasBL::DeleteStockTransfer(BusinessLayer::StockTransfer* stockTransfer, std::string& errorMessage)
 	{
 		try
 		{
-			if (0 != receiptRaw->GetID())
+			if (0 != stockTransfer->GetID())
 			{
-				return receiptRaw->DeleteReceiptRaw(ormasDal, errorMessage);
+				return stockTransfer->DeleteStockTransfer(ormasDal, errorMessage);
 			}
 			else
 			{
-				errorMessage = "Error! Receipt raw ID is 0. Something goes wrong!";
+				errorMessage = "Error! Stock transfer ID is 0. Something goes wrong!";
 			}
 		}
 		catch (...)
@@ -5695,15 +6235,15 @@ namespace BusinessLayer{
 		return false;
 	}
 
-	bool OrmasBL::CreateReceiptRawList(BusinessLayer::ReceiptRawList* receiptRawList, std::string& errorMessage)
+	bool OrmasBL::CreateStockTransferList(BusinessLayer::StockTransferList* stockTransferList, std::string& errorMessage)
 	{
 		try
 		{
-			if (0 != receiptRawList->GetReceiptRawID() && 0 != receiptRawList->GetProductID()
-				&& 0 != receiptRawList->GetCount() && 0 != receiptRawList->GetSum() && 0 != receiptRawList->GetStatusID()
-				&& 0 != receiptRawList->GetCurrencyID())
+			if (0 != stockTransferList->GetStockTransferID() && 0 != stockTransferList->GetProductID()
+				&& 0 != stockTransferList->GetCount() && 0 != stockTransferList->GetSum() && 0 != stockTransferList->GetStatusID()
+				&& 0 != stockTransferList->GetCurrencyID())
 			{
-				return receiptRawList->CreateReceiptRawList(ormasDal, errorMessage);
+				return stockTransferList->CreateStockTransferList(ormasDal, errorMessage);
 			}
 			else
 			{
@@ -5717,15 +6257,15 @@ namespace BusinessLayer{
 		return false;
 	}
 
-	bool OrmasBL::UpdateReceiptRawList(BusinessLayer::ReceiptRawList* receiptRawList, std::string& errorMessage)
+	bool OrmasBL::UpdateStockTransferList(BusinessLayer::StockTransferList* stockTransferList, std::string& errorMessage)
 	{
 		try
 		{
-			if (0 != receiptRawList->GetReceiptRawID() && 0 != receiptRawList->GetProductID()
-				&& 0 != receiptRawList->GetCount() && 0 != receiptRawList->GetSum() && 0 != receiptRawList->GetStatusID()
-				&& 0 != receiptRawList->GetCurrencyID())
+			if (0 != stockTransferList->GetStockTransferID() && 0 != stockTransferList->GetProductID()
+				&& 0 != stockTransferList->GetCount() && 0 != stockTransferList->GetSum() && 0 != stockTransferList->GetStatusID()
+				&& 0 != stockTransferList->GetCurrencyID())
 			{
-				return receiptRawList->UpdateReceiptRawList(ormasDal, errorMessage);
+				return stockTransferList->UpdateStockTransferList(ormasDal, errorMessage);
 			}
 			else
 			{
@@ -5739,17 +6279,17 @@ namespace BusinessLayer{
 		return false;
 	}
 
-	bool OrmasBL::DeleteReceiptRawList(BusinessLayer::ReceiptRawList* receiptRawList, std::string& errorMessage)
+	bool OrmasBL::DeleteStockTransferList(BusinessLayer::StockTransferList* stockTransferList, std::string& errorMessage)
 	{
 		try
 		{
-			if (0 != receiptRawList->GetID())
+			if (0 != stockTransferList->GetID())
 			{
-				return receiptRawList->DeleteReceiptRawList(ormasDal, errorMessage);
+				return stockTransferList->DeleteStockTransferList(ormasDal, errorMessage);
 			}
 			else
 			{
-				errorMessage = "Error! Receipt raw list ID is 0. Something goes wrong!";
+				errorMessage = "Error! Stock transfer list ID is 0. Something goes wrong!";
 			}
 		}
 		catch (...)
@@ -6274,6 +6814,66 @@ namespace BusinessLayer{
 		return false;
 	}
 
+	bool OrmasBL::CreateShareholder(BusinessLayer::Shareholder* shareholder, std::string& errorMessage)
+	{
+		try
+		{
+			if (0 != shareholder->GetUserID() || (!shareholder->GetName().empty() && !shareholder->GetAddress().empty() && !shareholder->GetPhone().empty()))
+			{
+				return shareholder->CreateShareholder(ormasDal, errorMessage);
+			}
+			else
+			{
+				errorMessage = "Error! Name, address and phone must not be empty. Please fill up them!";
+			}
+		}
+		catch (...)
+		{
+			errorMessage = "Fatal error! Please contact with application provider.";
+		}
+		return false;
+	}
+
+	bool OrmasBL::UpdateShareholder(BusinessLayer::Shareholder* shareholder, std::string& errorMessage)
+	{
+		try
+		{
+			if (0 != shareholder->GetUserID() || (!shareholder->GetName().empty() && !shareholder->GetAddress().empty() && !shareholder->GetPhone().empty()))
+			{
+				return shareholder->UpdateShareholder(ormasDal, errorMessage);
+			}
+			else
+			{
+				errorMessage = "Error!  Name, address and phone must not be empty. Please fill up them!";
+			}
+		}
+		catch (...)
+		{
+			errorMessage = "Fatal error! Please contact with application provider.";
+		}
+		return false;
+	}
+
+	bool OrmasBL::DeleteShareholder(BusinessLayer::Shareholder* shareholder, std::string& errorMessage)
+	{
+		try
+		{
+			if (0 != shareholder->GetID())
+			{
+				return shareholder->DeleteShareholder(ormasDal, errorMessage);
+			}
+			else
+			{
+				errorMessage = "Error! Shareholder ID is 0. Some thing goes wrong!";
+			}
+		}
+		catch (...)
+		{
+			errorMessage = "Fatal error! Please contact with application provider.";
+		}
+		return false;
+	}
+
 	bool OrmasBL::CreateSpecification(BusinessLayer::Specification* specification, std::string& errorMessage)
 	{
 		try
@@ -6782,6 +7382,70 @@ namespace BusinessLayer{
 			else
 			{
 				errorMessage = "Error! Stock ID is 0. Something goes wrong!";
+			}
+		}
+		catch (...)
+		{
+			errorMessage = "Fatal error! Please contact with application provider.";
+		}
+		return false;
+	}
+
+	bool OrmasBL::CreateStockHistory(BusinessLayer::StockHistory* stockHistory, std::string& errorMessage)
+	{
+		try
+		{
+			if (0 != stockHistory->GetProductID() && 0 != stockHistory->GetCount() &&
+				0 != stockHistory->GetSum() && 0 != stockHistory->GetStatusID() && 0 != stockHistory->GetCurrencyID()
+				&& !stockHistory->GetHistoryDate().empty())
+			{
+				return stockHistory->CreateStockHistory(ormasDal, errorMessage);
+			}
+			else
+			{
+				errorMessage = "Error! One or several feilds are emplty. Please fill up them!";
+			}
+		}
+		catch (...)
+		{
+			errorMessage = "Fatal error! Please contact with application provider.";
+		}
+		return false;
+	}
+
+	bool OrmasBL::UpdateStockHistory(BusinessLayer::StockHistory* stockHistory, std::string& errorMessage)
+	{
+		try
+		{
+			if (0 != stockHistory->GetProductID() && 0 != stockHistory->GetCount() &&
+				0 != stockHistory->GetSum() && 0 != stockHistory->GetStatusID() && 0 != stockHistory->GetCurrencyID()
+				&& !stockHistory->GetHistoryDate().empty())
+			{
+				return stockHistory->UpdateStockHistory(ormasDal, errorMessage);
+			}
+			else
+			{
+				errorMessage = "Error! One of feilds are emplty. Please fill up them!";
+			}
+		}
+		catch (...)
+		{
+			errorMessage = "Fatal error! Please contact with application provider.";
+		}
+		return false;
+	}
+
+	bool OrmasBL::DeleteStockHistory(BusinessLayer::StockHistory* stockHistory, std::string& errorMessage)
+	{
+		try
+		{
+			if (0 != stockHistory->GetID())
+			{
+				return stockHistory->DeleteStockHistory(ormasDal, errorMessage);
+			}
+			else
+			{
+				errorMessage = "Error! Stock history ID is 0. Something goes wrong!";
 			}
 		}
 		catch (...)

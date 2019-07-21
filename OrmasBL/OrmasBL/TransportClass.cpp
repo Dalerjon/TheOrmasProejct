@@ -14,6 +14,10 @@
 #include "NetCostClass.h"
 #include "CompanyAccountRelationClass.h"
 #include "EntryClass.h"
+#include "EntryOperationRelationClass.h"
+#include "WarehouseClass.h"
+#include "WarehouseTypeClass.h"
+#include "WarehouseEmployeeRelationClass.h"
 #include <codecvt>
 
 namespace BusinessLayer
@@ -239,6 +243,8 @@ namespace BusinessLayer
 
 	bool Transport::GetTransportByID(DataLayer::OrmasDal& ormasDal, int tID, std::string& errorMessage)
 	{
+		if (tID <= 0)
+			return false;
 		id = tID;
 		std::string filter = GenerateFilter(ormasDal);
 		std::vector<DataLayer::transportsViewCollection> transportVector = ormasDal.GetTransports(errorMessage, filter);
@@ -264,6 +270,8 @@ namespace BusinessLayer
 
 	bool Transport::GetTransportByEmployeeID(DataLayer::OrmasDal& ormasDal, int eID, std::string& errorMessage)
 	{
+		if (eID <= 0)
+			return false;
 		employeeID = eID;
 		std::string filter = GenerateFilter(ormasDal);
 		std::vector<DataLayer::transportsViewCollection> transportVector = ormasDal.GetTransports(errorMessage, filter);
@@ -398,6 +406,115 @@ namespace BusinessLayer
 					{
 						//ormasDal.CancelTransaction(errorMessage);
 						return false;
+					}
+				}
+			}
+		}
+		else
+		{
+			errorMessage = "ERROR! Transport list is empty!";
+			//ormasDal.CancelTransaction(errorMessage);
+			return false;
+		}
+		return true;
+	}
+
+	bool Transport::ChangingByReceiptProductCancel(DataLayer::OrmasDal& ormasDal, int cpID, std::string& errorMessage)
+	{
+		ConsumeProduct consumeProduct;
+		if (!consumeProduct.GetConsumeProductByID(ormasDal, cpID, errorMessage))
+			return false;
+		Transport transport;
+		if (!transport.GetTransportByEmployeeID(ormasDal, consumeProduct.GetEmployeeID(), errorMessage))
+		{
+			transport.Clear();
+			transport.SetID(ormasDal.GenerateID());
+			transport.SetDate(ormasDal.GetSystemDate());
+			transport.SetEmployeeID(consumeProduct.GetEmployeeID());
+			if (!transport.CreateTransport(ormasDal, errorMessage))
+				return false;
+		}
+
+		ConsumeProductList cPList;
+		std::vector<ConsumeProductListView> cPListVec;
+		double totalSum = 0.0;
+		int companyID = 0;
+
+		cPList.SetConsumeProductID(cpID);
+		std::string filter = cPList.GenerateFilter(ormasDal);
+		std::vector<DataLayer::consumeProductListViewCollection> productListVector = ormasDal.GetConsumeProductList(errorMessage, filter);
+		if (productListVector.size() > 0)
+		{
+			for each (auto item in productListVector)
+			{
+				cPListVec.push_back(ConsumeProductListView(item));
+			}
+		}
+		else
+		{
+			errorMessage = "ERROR! Consume product list is empty!";
+			return false;
+		}
+		if (cPListVec.size() > 0)
+		{
+			Product product;
+			TransportList tList;
+			Status status;
+			NetCost nCost;
+			//ormasDal.StartTransaction(errorMessage);
+			for each (auto item in cPListVec)
+			{
+				tList.Clear();
+				product.Clear();
+				status.Clear();
+				nCost.Clear();
+				if (!tList.GetTransportListByTransportAndProductID(ormasDal, transport.GetID(), item.GetProductID(), errorMessage))
+				{
+					if (!product.GetProductByID(ormasDal, item.GetProductID(), errorMessage))
+						return false;
+					errorMessage = "ERROR! This product is out of transport:";
+					errorMessage += product.GetName();
+					//ormasDal.CancelTransaction(errorMessage);
+					return false;
+				}
+				else
+				{
+					if (tList.GetCount() < item.GetCount())
+					{
+						if (product.GetProductByID(ormasDal, item.GetProductID(), errorMessage))
+						{
+							errorMessage = "ERROR! There is not enough product in the transport!";
+							errorMessage += " Product name:";
+							errorMessage += product.GetName();
+							errorMessage += ", Product count:";
+							errorMessage += std::to_string(transport.GetCount());
+
+						}
+						//ormasDal.CancelTransaction(errorMessage);
+						return false;
+					}
+					else
+					{
+						if (!product.GetProductByID(ormasDal, item.GetProductID(), errorMessage))
+							return false;
+						if (!nCost.GetNetCostByProductID(ormasDal, product.GetID(), errorMessage))
+							return false;
+						companyID = product.GetCompanyID();
+						totalSum = totalSum + round(item.GetCount()*nCost.GetValue() * 1000) / 1000;
+						tList.SetCount(tList.GetCount() - item.GetCount());
+						if (0 == tList.GetCount())
+						{
+							tList.SetSum(0);
+						}
+						else
+						{
+							tList.SetSum(tList.GetSum() - (item.GetCount()*nCost.GetValue()));
+						}
+						if (!tList.UpdateTransportList(ormasDal, errorMessage))
+						{
+							//ormasDal.CancelTransaction(errorMessage);
+							return false;
+						}
 					}
 				}
 			}
@@ -625,7 +742,120 @@ namespace BusinessLayer
 			return false;
 		}
 
-		if (!this->CreateEntry(ormasDal, debAccID, totalSum, credAccID, errorMessage))
+		if (!this->CreateEntry(ormasDal, oID, debAccID, totalSum, credAccID, errorMessage))
+		{
+			//ormasDal.CancelTransaction(errorMessage);
+			return false;
+		}
+		return true;
+	}
+
+	bool Transport::ChangingByConsumeProductCancel(DataLayer::OrmasDal& ormasDal, int oID, std::string& errorMessage)
+	{
+		Order order;
+		if (!order.GetOrderByID(ormasDal, oID, errorMessage))
+			return false;
+		Transport transport;
+		if (!transport.GetTransportByEmployeeID(ormasDal, order.GetEmployeeID(), errorMessage))
+		{
+			errorMessage = "This employee does not have a transport!";
+			return false;
+		}
+
+		OrderList oList;
+		std::vector<OrderListView> oListVec;
+		double totalSum = 0.0;
+		int companyID = 0;
+
+		oList.SetOrderID(oID);
+		std::string filter = oList.GenerateFilter(ormasDal);
+		std::vector<DataLayer::orderListViewCollection> productListVector = ormasDal.GetOrderList(errorMessage, filter);
+		if (productListVector.size() > 0)
+		{
+			for each (auto item in productListVector)
+			{
+				oListVec.push_back(OrderListView(item));
+			}
+		}
+		else
+		{
+			errorMessage = "ERROR! Order list is empty!";
+			return false;
+		}
+		if (oListVec.size() > 0)
+		{
+			Product product;
+			TransportList tList;
+			Status status;
+			NetCost nCost;
+			//ormasDal.StartTransaction(errorMessage);
+			for each (auto item in oListVec)
+			{
+				tList.Clear();
+				product.Clear();
+				status.Clear();
+				nCost.Clear();
+				if (!tList.GetTransportListByTransportAndProductID(ormasDal, transport.GetID(), item.GetProductID(), errorMessage))
+				{
+					errorMessage.clear();
+					if (!status.GetStatusByName(ormasDal, "TRANSPORTING", errorMessage))
+					{
+						errorMessage = "ERROR! Cannot transport this product, status is not valied!";
+						//ormasDal.CancelTransaction(errorMessage);
+						return false;
+					}
+					if (!product.GetProductByID(ormasDal, item.GetProductID(), errorMessage))
+						return false;
+					if (!nCost.GetNetCostByProductID(ormasDal, product.GetID(), errorMessage))
+						return false;
+					companyID = product.GetCompanyID();
+					totalSum = totalSum + item.GetCount()*nCost.GetValue();
+					tList.SetTransportID(transport.GetID());
+					tList.SetProductID(item.GetProductID());
+					tList.SetCount(item.GetCount());
+					tList.SetSum((item.GetCount()*nCost.GetValue()));
+					tList.SetCurrencyID(item.GetCurrencyID());
+					tList.SetStatusID(status.GetID());
+					if (!tList.CreateTransportList(ormasDal, errorMessage))
+					{
+						//ormasDal.CancelTransaction(errorMessage);
+						return false;
+					}
+				}
+				else
+				{
+					if (!product.GetProductByID(ormasDal, item.GetProductID(), errorMessage))
+						return false;
+					if (!nCost.GetNetCostByProductID(ormasDal, product.GetID(), errorMessage))
+						return false;
+					companyID = product.GetCompanyID();
+					totalSum = totalSum + item.GetCount()*nCost.GetValue();
+					tList.SetCount(tList.GetCount() + item.GetCount());
+					tList.SetSum(tList.GetSum() + (item.GetCount()*nCost.GetValue()));
+					if (!tList.UpdateTransportList(ormasDal, errorMessage))
+					{
+						//ormasDal.CancelTransaction(errorMessage);
+						return false;
+					}
+				}
+			}
+		}
+		else
+		{
+			errorMessage = "ERROR! Transport list is empty!";
+			//ormasDal.CancelTransaction(errorMessage);
+			return false;
+		}
+		CompanyAccountRelation caRel;
+		int debAccID = caRel.GetAccountIDByCompanyID(ormasDal, companyID, "55010", errorMessage);
+		int credAccID = caRel.GetAccountIDByCompanyID(ormasDal, companyID, "10742", errorMessage);
+		if (0 == debAccID || 0 == credAccID)
+		{
+			//ormasDal.CancelTransaction(errorMessage);
+			return false;
+		}
+
+		if (!this->CreateEntry(ormasDal, oID, credAccID, totalSum, debAccID, errorMessage))
 		{
 			//ormasDal.CancelTransaction(errorMessage);
 			return false;
@@ -744,7 +974,7 @@ namespace BusinessLayer
 			return false;
 		}
 
-		if (!this->CreateEntry(ormasDal, debAccID, totalSum, credAccID, errorMessage))
+		if (!this->CreateEntry(ormasDal, oID, debAccID, totalSum, credAccID, errorMessage))
 		{
 			//ormasDal.CancelTransaction(errorMessage);
 			return false;
@@ -788,38 +1018,68 @@ namespace BusinessLayer
 		return true;
 	}
 
-	bool Transport::CreateEntry(DataLayer::OrmasDal& ormasDal, int debAccID, double currentSum, int credAccID, std::string& errorMessage)
+	bool Transport::CreateEntry(DataLayer::OrmasDal& ormasDal, int operationID, int debAccID, double currentSum, int credAccID, std::string& errorMessage)
 	{
 		Entry entry;
+		EntryOperationRelation eoRelation;
 		entry.SetDate(ormasDal.GetSystemDateTime());
 		entry.SetDebitingAccountID(debAccID);
 		entry.SetValue(currentSum);
 		entry.SetCreditingAccountID(credAccID);
 		entry.SetDescription(wstring_to_utf8(L"Операция по приему и выдаче товара из транспортного средства"));
-		if (!entry.CreateEntry(ormasDal, errorMessage))
+		if (entry.CreateEntry(ormasDal, errorMessage))
+		{
+			eoRelation.SetEntryID(entry.GetID());
+			eoRelation.SetOperationID(operationID);
+			if (!eoRelation.CreateEntryOperationRelation(ormasDal, errorMessage))
+			{
+				return false;
+			}
+		}
+		else
 		{
 			return false;
 		}
 		return true;
 	}
-	bool Transport::CreateEntry(DataLayer::OrmasDal& ormasDal, int debAccID, double currentSum, int credAccID, double previousSum, std::string& errorMessage)
+	bool Transport::CreateEntry(DataLayer::OrmasDal& ormasDal, int operationID, int debAccID, double currentSum, int credAccID, double previousSum, std::string& errorMessage)
 	{
 		Entry entry;
+		EntryOperationRelation eoRelation;
 		entry.SetDate(ormasDal.GetSystemDateTime());
 		entry.SetDebitingAccountID(credAccID);
 		entry.SetValue(previousSum);
 		entry.SetCreditingAccountID(debAccID);
-		entry.SetDescription(wstring_to_utf8(L"Операция по приему и выдаче товара из транспортного средства"));
-		if (!entry.CreateEntry(ormasDal, errorMessage, true))
+		entry.SetDescription(wstring_to_utf8(L"Отмена выдачи товара из транспортного средства"));
+		if (entry.CreateEntry(ormasDal, errorMessage, true))
+		{
+			eoRelation.SetEntryID(entry.GetID());
+			eoRelation.SetOperationID(operationID);
+			if (!eoRelation.CreateEntryOperationRelation(ormasDal, errorMessage))
+			{
+				return false;
+			}
+		}
+		else
 		{
 			return false;
 		}
 		entry.Clear();
+		eoRelation.Clear();
 		entry.SetDebitingAccountID(debAccID);
 		entry.SetValue(currentSum);
 		entry.SetCreditingAccountID(credAccID);
 		entry.SetDescription(wstring_to_utf8(L"Операция по приему и выдаче товара из транспортного средства"));
-		if (!entry.CreateEntry(ormasDal, errorMessage))
+		if (entry.CreateEntry(ormasDal, errorMessage))
+		{
+			eoRelation.SetEntryID(entry.GetID());
+			eoRelation.SetOperationID(operationID);
+			if (!eoRelation.CreateEntryOperationRelation(ormasDal, errorMessage))
+			{
+				return false;
+			}
+		}
+		else
 		{
 			return false;
 		}

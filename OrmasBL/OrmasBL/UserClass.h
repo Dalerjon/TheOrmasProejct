@@ -17,6 +17,7 @@ namespace BusinessLayer
 		int roleID = 0;
 		std::string password = "";
 		bool activated = false;
+
 		void TrimStrings(std::string&, std::string&, std::string&, std::string&, std::string&, std::string&);
 		bool IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string uName, std::string uSurname, std::string uPhone,
 			std::string uAddress, int uRoleID, std::string& errorMessage);
@@ -24,6 +25,9 @@ namespace BusinessLayer
 		bool IsUnique(DataLayer::OrmasDal& ormasDal, std::string uPhone, std::string& errorMessage);
 		bool IsUnique(DataLayer::OrmasDal& ormasDal, std::string& errorMessage);
 		bool CreateBalance(DataLayer::OrmasDal& ormasDal, std::string& errorMessage);
+		bool CreateBalanceForAccountable(DataLayer::OrmasDal& ormasDal, int uID, std::string& errorMessage);
+		bool CreateBalanceForBorrower(DataLayer::OrmasDal& ormasDal, int uID, std::string& errorMessage);
+		bool CreateBalanceForShareholder(DataLayer::OrmasDal& ormasDal, int uID, std::string& errorMessage);
 	public:
 		User(int uID, std::string uEmail, std::string uName, std::string uSurname, std::string uPhone, std::string uAddress, 
 			int uRoleID, std::string uPassword, bool uActivated) :id(uID), email(uEmail), name(uName), phone(uPhone), surname(uSurname)

@@ -1,5 +1,5 @@
 /********************************************************************************
-** Form generated from reading UI file 'CreateRcpRListDlg.ui'
+** Form generated from reading UI file 'CreateStockTrListDlg.ui'
 **
 ** Created by: Qt User Interface Compiler version 5.6.2
 **
@@ -26,7 +26,7 @@
 
 QT_BEGIN_NAMESPACE
 
-class Ui_CreateRcpRList
+class Ui_CreateStockTrList
 {
 public:
     QGridLayout *gridLayout;
@@ -43,35 +43,35 @@ public:
     QLabel *sumLb;
     QLineEdit *sumEdit;
     QPushButton *statusBtn;
-    QPushButton *receiptRawBtn;
+    QPushButton *StockTransferBtn;
     QLineEdit *statusEdit;
-    QLineEdit *receiptRawEdit;
+    QLineEdit *StockTransferEdit;
     QPushButton *currencyBtn;
     QLineEdit *currencyEdit;
 
-    void setupUi(QDialog *CreateRcpRList)
+    void setupUi(QDialog *CreateStockTrList)
     {
-        if (CreateRcpRList->objectName().isEmpty())
-            CreateRcpRList->setObjectName(QStringLiteral("CreateRcpRList"));
-        CreateRcpRList->resize(396, 221);
-        CreateRcpRList->setLocale(QLocale(QLocale::English, QLocale::UnitedStates));
-        CreateRcpRList->setModal(false);
-        gridLayout = new QGridLayout(CreateRcpRList);
+        if (CreateStockTrList->objectName().isEmpty())
+            CreateStockTrList->setObjectName(QStringLiteral("CreateStockTrList"));
+        CreateStockTrList->resize(396, 221);
+        CreateStockTrList->setLocale(QLocale(QLocale::English, QLocale::UnitedStates));
+        CreateStockTrList->setModal(false);
+        gridLayout = new QGridLayout(CreateStockTrList);
         gridLayout->setObjectName(QStringLiteral("gridLayout"));
         gridLayout->setContentsMargins(11, 11, 11, 17);
-        countLb = new QLabel(CreateRcpRList);
+        countLb = new QLabel(CreateStockTrList);
         countLb->setObjectName(QStringLiteral("countLb"));
         countLb->setMinimumSize(QSize(150, 0));
 
         gridLayout->addWidget(countLb, 1, 0, 1, 1);
 
-        productEdit = new QLineEdit(CreateRcpRList);
+        productEdit = new QLineEdit(CreateStockTrList);
         productEdit->setObjectName(QStringLiteral("productEdit"));
         productEdit->setReadOnly(true);
 
         gridLayout->addWidget(productEdit, 0, 1, 1, 1);
 
-        productBtn = new QPushButton(CreateRcpRList);
+        productBtn = new QPushButton(CreateStockTrList);
         productBtn->setObjectName(QStringLiteral("productBtn"));
 
         gridLayout->addWidget(productBtn, 0, 0, 1, 1);
@@ -82,12 +82,12 @@ public:
 
         horizontalLayout->addItem(horizontalSpacer);
 
-        addBtn = new QPushButton(CreateRcpRList);
+        addBtn = new QPushButton(CreateStockTrList);
         addBtn->setObjectName(QStringLiteral("addBtn"));
 
         horizontalLayout->addWidget(addBtn);
 
-        cancelBtn = new QPushButton(CreateRcpRList);
+        cancelBtn = new QPushButton(CreateStockTrList);
         cancelBtn->setObjectName(QStringLiteral("cancelBtn"));
 
         horizontalLayout->addWidget(cancelBtn);
@@ -95,12 +95,12 @@ public:
 
         gridLayout->addLayout(horizontalLayout, 3, 0, 1, 2);
 
-        countEdit = new QLineEdit(CreateRcpRList);
+        countEdit = new QLineEdit(CreateStockTrList);
         countEdit->setObjectName(QStringLiteral("countEdit"));
 
         gridLayout->addWidget(countEdit, 1, 1, 1, 1);
 
-        editSectionWgt = new QWidget(CreateRcpRList);
+        editSectionWgt = new QWidget(CreateStockTrList);
         editSectionWgt->setObjectName(QStringLiteral("editSectionWgt"));
         gridLayout_3 = new QGridLayout(editSectionWgt);
         gridLayout_3->setObjectName(QStringLiteral("gridLayout_3"));
@@ -121,11 +121,11 @@ public:
 
         gridLayout_3->addWidget(statusBtn, 1, 0, 1, 1);
 
-        receiptRawBtn = new QPushButton(editSectionWgt);
-        receiptRawBtn->setObjectName(QStringLiteral("receiptRawBtn"));
-        receiptRawBtn->setMinimumSize(QSize(150, 0));
+        StockTransferBtn = new QPushButton(editSectionWgt);
+        StockTransferBtn->setObjectName(QStringLiteral("StockTransferBtn"));
+        StockTransferBtn->setMinimumSize(QSize(150, 0));
 
-        gridLayout_3->addWidget(receiptRawBtn, 0, 0, 1, 1);
+        gridLayout_3->addWidget(StockTransferBtn, 0, 0, 1, 1);
 
         statusEdit = new QLineEdit(editSectionWgt);
         statusEdit->setObjectName(QStringLiteral("statusEdit"));
@@ -133,11 +133,11 @@ public:
 
         gridLayout_3->addWidget(statusEdit, 1, 1, 1, 1);
 
-        receiptRawEdit = new QLineEdit(editSectionWgt);
-        receiptRawEdit->setObjectName(QStringLiteral("receiptRawEdit"));
-        receiptRawEdit->setReadOnly(true);
+        StockTransferEdit = new QLineEdit(editSectionWgt);
+        StockTransferEdit->setObjectName(QStringLiteral("StockTransferEdit"));
+        StockTransferEdit->setReadOnly(true);
 
-        gridLayout_3->addWidget(receiptRawEdit, 0, 1, 1, 1);
+        gridLayout_3->addWidget(StockTransferEdit, 0, 1, 1, 1);
 
         currencyBtn = new QPushButton(editSectionWgt);
         currencyBtn->setObjectName(QStringLiteral("currencyBtn"));
@@ -155,9 +155,9 @@ public:
 
         QWidget::setTabOrder(productBtn, productEdit);
         QWidget::setTabOrder(productEdit, countEdit);
-        QWidget::setTabOrder(countEdit, receiptRawBtn);
-        QWidget::setTabOrder(receiptRawBtn, receiptRawEdit);
-        QWidget::setTabOrder(receiptRawEdit, statusBtn);
+        QWidget::setTabOrder(countEdit, StockTransferBtn);
+        QWidget::setTabOrder(StockTransferBtn, StockTransferEdit);
+        QWidget::setTabOrder(StockTransferEdit, statusBtn);
         QWidget::setTabOrder(statusBtn, statusEdit);
         QWidget::setTabOrder(statusEdit, sumEdit);
         QWidget::setTabOrder(sumEdit, currencyBtn);
@@ -165,35 +165,35 @@ public:
         QWidget::setTabOrder(currencyEdit, addBtn);
         QWidget::setTabOrder(addBtn, cancelBtn);
 
-        retranslateUi(CreateRcpRList);
+        retranslateUi(CreateStockTrList);
 
-        QMetaObject::connectSlotsByName(CreateRcpRList);
+        QMetaObject::connectSlotsByName(CreateStockTrList);
     } // setupUi
 
-    void retranslateUi(QDialog *CreateRcpRList)
+    void retranslateUi(QDialog *CreateStockTrList)
     {
-        CreateRcpRList->setWindowTitle(QApplication::translate("CreateRcpRList", "Create/Update raw in receipt list", 0));
-        countLb->setText(QApplication::translate("CreateRcpRList", "Count:", 0));
-        productBtn->setText(QApplication::translate("CreateRcpRList", "Select product", 0));
-        addBtn->setText(QApplication::translate("CreateRcpRList", "Add", 0));
-        cancelBtn->setText(QApplication::translate("CreateRcpRList", "Cancel", 0));
+        CreateStockTrList->setWindowTitle(QApplication::translate("CreateStockTrList", "Create/Update raw in receipt list", 0));
+        countLb->setText(QApplication::translate("CreateStockTrList", "Count:", 0));
+        productBtn->setText(QApplication::translate("CreateStockTrList", "Select product", 0));
+        addBtn->setText(QApplication::translate("CreateStockTrList", "Add", 0));
+        cancelBtn->setText(QApplication::translate("CreateStockTrList", "Cancel", 0));
 #ifndef QT_NO_TOOLTIP
-        countEdit->setToolTip(QApplication::translate("CreateRcpRList", "<html><head/><body><p>For example: 100</p></body></html>", 0));
+        countEdit->setToolTip(QApplication::translate("CreateStockTrList", "<html><head/><body><p>For example: 100</p></body></html>", 0));
 #endif // QT_NO_TOOLTIP
-        sumLb->setText(QApplication::translate("CreateRcpRList", "Sum:", 0));
+        sumLb->setText(QApplication::translate("CreateStockTrList", "Sum:", 0));
 #ifndef QT_NO_TOOLTIP
-        sumEdit->setToolTip(QApplication::translate("CreateRcpRList", "<html><head/><body><p>For example: 300 (pedends on currency, in that case 300 USD)</p></body></html>", 0));
+        sumEdit->setToolTip(QApplication::translate("CreateStockTrList", "<html><head/><body><p>For example: 300 (pedends on currency, in that case 300 USD)</p></body></html>", 0));
 #endif // QT_NO_TOOLTIP
-        statusBtn->setText(QApplication::translate("CreateRcpRList", "Select status", 0));
-        receiptRawBtn->setText(QApplication::translate("CreateRcpRList", "Select receipt raw", 0));
-        receiptRawEdit->setText(QString());
-        currencyBtn->setText(QApplication::translate("CreateRcpRList", "Select currency", 0));
+        statusBtn->setText(QApplication::translate("CreateStockTrList", "Select status", 0));
+        StockTransferBtn->setText(QApplication::translate("CreateStockTrList", "Select receipt raw", 0));
+        StockTransferEdit->setText(QString());
+        currencyBtn->setText(QApplication::translate("CreateStockTrList", "Select currency", 0));
     } // retranslateUi
 
 };
 
 namespace Ui {
-    class CreateRcpRList: public Ui_CreateRcpRList {};
+    class CreateStockTrList: public Ui_CreateStockTrList {};
 } // namespace Ui
 
 QT_END_NAMESPACE

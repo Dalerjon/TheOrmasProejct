@@ -200,6 +200,11 @@ namespace BusinessLayer
 			errorMessage = "Cannot delete document with \"EXECUTED\" status!";
 			return false;
 		}
+		if (ret.GetStatusID() == statusMap.find("ERROR")->second)
+		{
+			errorMessage = "Cannot delete document with \"ERROR\" status!";
+			return false;
+		}
 		if (ormasDal.DeleteReturn(id, errorMessage))
 		{
 			if (ormasDal.DeleteListByReturnID(id, errorMessage))
@@ -246,7 +251,49 @@ namespace BusinessLayer
 		//ormasDal.StartTransaction(errorMessage);
 		if (0 != id && ormasDal.UpdateReturn(id, clientID, date, executionDate, employeeID, count, sum, statusID, currencyID, errorMessage))
 		{
-			if (statusID == statusMap.find("EXECUTED")->second && previousStatusID != statusMap.find("EXECUTED")->second)
+			if (previousStatusID != statusMap.find("EXECUTED")->second)
+			{
+				if (statusID == statusMap.find("EXECUTED")->second)
+				{
+					if (ChangesAtStock(ormasDal, id, clientID, warehouseID, errorMessage))
+					{
+						//ormasDal.CancelTransaction(errorMessage);
+						return true;
+					}
+					else
+					{
+						//ormasDal.CommitTransaction(errorMessage);
+						return false;
+					}
+				}
+				else
+				{
+					return true;
+				}
+			}
+			else
+			{
+				if (statusID == statusMap.find("ERROR")->second)
+				{
+
+					if (ChangesAtStockCancel(ormasDal, id, clientID, warehouseID, errorMessage))
+					{
+						//ormasDal.CancelTransaction(errorMessage);
+						return true;
+					}
+					else
+					{
+						//ormasDal.CommitTransaction(errorMessage);
+						return false;
+					}
+				}
+				else
+				{
+					errorMessage = "Cannot update this document, only \"Error\" status is acceptable!";
+					return false;
+				}
+			}
+			/*if (statusID == statusMap.find("EXECUTED")->second && previousStatusID != statusMap.find("EXECUTED")->second)
 			{
 				if (!ChangesAtStock(ormasDal, id, clientID, warehouseID, errorMessage))
 				{
@@ -279,7 +326,7 @@ namespace BusinessLayer
 					//ormasDal.CommitTransaction(errorMessage);
 					return true;
 				}
-			}
+			}*/
 			//ormasDal.CancelTransaction(errorMessage);
 			return true;
 		}
@@ -304,7 +351,49 @@ namespace BusinessLayer
 		//ormasDal.StartTransaction(errorMessage);
 		if (0 != id && ormasDal.UpdateReturn(id, clientID, date, executionDate, employeeID, count, sum, statusID, currencyID, errorMessage))
 		{
-			if (statusID == statusMap.find("EXECUTED")->second && previousStatusID != statusMap.find("EXECUTED")->second)
+			if (previousStatusID != statusMap.find("EXECUTED")->second)
+			{
+				if (statusID == statusMap.find("EXECUTED")->second)
+				{
+					if (ChangesAtStock(ormasDal, id, clientID, warehouseID, errorMessage))
+					{
+						//ormasDal.CancelTransaction(errorMessage);
+						return true;
+					}
+					else
+					{
+						//ormasDal.CommitTransaction(errorMessage);
+						return false;
+					}
+				}
+				else
+				{
+					return true;
+				}
+			}
+			else
+			{
+				if (statusID == statusMap.find("ERROR")->second)
+				{
+
+					if (ChangesAtStockCancel(ormasDal, id, clientID, warehouseID, errorMessage))
+					{
+						//ormasDal.CancelTransaction(errorMessage);
+						return true;
+					}
+					else
+					{
+						//ormasDal.CommitTransaction(errorMessage);
+						return false;
+					}
+				}
+				else
+				{
+					errorMessage = "Cannot update this document, only \"Error\" status is acceptable!";
+					return false;
+				}
+			}
+			/*if (statusID == statusMap.find("EXECUTED")->second && previousStatusID != statusMap.find("EXECUTED")->second)
 			{
 				if (ChangesAtStock(ormasDal, id, clientID, warehouseID, errorMessage))
 				{
@@ -337,7 +426,7 @@ namespace BusinessLayer
 					//ormasDal.CommitTransaction(errorMessage);
 					return true;
 				}
-			}
+			}*/
 			//ormasDal.CancelTransaction(errorMessage);
 			return true;
 		}
@@ -358,8 +447,20 @@ namespace BusinessLayer
 		return "";
 	}
 
+	std::string Return::GenerateFilterForPeriod(DataLayer::OrmasDal& ormasDal, std::string fromDate, std::string toDate)
+	{
+		if (!toDate.empty() && !fromDate.empty())
+		{
+			return ormasDal.GetFilterForReturnForPeriod(id, clientID, date, executionDate, employeeID, count, sum, statusID, currencyID, fromDate, toDate);
+		}
+		return "";
+	}
+
+
 	bool Return::GetReturnByID(DataLayer::OrmasDal& ormasDal, int rID, std::string& errorMessage)
 	{
+		if (rID <= 0)
+			return false;
 		id = rID;
 		std::string filter = GenerateFilter(ormasDal);
 		std::vector<DataLayer::returnsViewCollection> returnVector = ormasDal.GetReturns(errorMessage, filter);
@@ -469,6 +570,12 @@ namespace BusinessLayer
 	{
 		Stock stock;
 		return stock.ChangingByReturnProduct(ormasDal, rID, cID,  empID, errorMessage);
+	}
+
+	bool Return::ChangesAtStockCancel(DataLayer::OrmasDal& ormasDal, int rID, int cID, int empID, std::string& errorMessage)
+	{
+		Stock stock;
+		return stock.ChangingByReturnProductCancel(ormasDal, rID, cID, empID, errorMessage);
 	}
 
 	bool Return::ChangesAtStock(DataLayer::OrmasDal& ormasDal, int rID, int cID, int empID, std::map<int, double> pProdCountMap, double rSum, std::string& errorMessage)

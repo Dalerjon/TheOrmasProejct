@@ -184,6 +184,8 @@ namespace BusinessLayer{
 
 	bool Tax::GetTaxByID(DataLayer::OrmasDal& ormasDal, int aID, std::string& errorMessage)
 	{
+		if (aID <= 0)
+			return false;
 		id = aID;
 		std::string filter = GenerateFilter(ormasDal);
 		std::vector<DataLayer::taxesCollection> taxVector = ormasDal.GetTaxes(errorMessage, filter);

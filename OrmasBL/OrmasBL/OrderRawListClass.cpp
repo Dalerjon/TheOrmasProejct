@@ -2,6 +2,7 @@
 #include "OrderRawListClass.h"
 #include "ProductClass.h"
 #include "EntryClass.h"
+#include "EntryOperationRelationClass.h"
 #include "CompanyAccountRelationClass.h"
 #include "CompanyClass.h"
 #include "WarehouseClass.h"
@@ -136,8 +137,20 @@ namespace BusinessLayer
 					entrytext += product.GetName();
 					entrytext += wstring_to_utf8(L"\". Округление цены продукта для точности суммы на складе.");
 					entry.SetDescription(entrytext);
-					if (!entry.CreateEntry(ormasDal, errorMessage))
+					EntryOperationRelation eoRelation;
+					if (entry.CreateEntry(ormasDal, errorMessage))
+					{
+						eoRelation.SetEntryID(entry.GetID());
+						eoRelation.SetOperationID(id);
+						if (!eoRelation.CreateEntryOperationRelation(ormasDal, errorMessage))
+						{
+							return false;
+						}
+					}
+					else
+					{
 						return false;
+					}
 				}
 			}
 		}
@@ -202,8 +215,20 @@ namespace BusinessLayer
 					entrytext += product.GetName();
 					entrytext += wstring_to_utf8(L"\". Округление цены продукта для точности суммы на складе.");
 					entry.SetDescription(entrytext);
-					if (!entry.CreateEntry(ormasDal, errorMessage))
+					EntryOperationRelation eoRelation;
+					if (entry.CreateEntry(ormasDal, errorMessage))
+					{
+						eoRelation.SetEntryID(entry.GetID());
+						eoRelation.SetOperationID(id);
+						if (!eoRelation.CreateEntryOperationRelation(ormasDal, errorMessage))
+						{
+							return false;
+						}
+					}
+					else
+					{
 						return false;
+					}
 				}
 			}
 		}
@@ -269,6 +294,8 @@ namespace BusinessLayer
 
 	bool OrderRawList::GetOrderRawListByID(DataLayer::OrmasDal& ormasDal, int oID, std::string& errorMessage)
 	{
+		if (oID <= 0)
+			return false;
 		id = oID;
 		std::string filter = GenerateFilter(ormasDal);
 		std::vector<DataLayer::orderRawListViewCollection> orderRawListVector = ormasDal.GetOrderRawList(errorMessage, filter);

@@ -150,6 +150,8 @@ namespace BusinessLayer{
 
 	bool Cashbox::GetCashboxByID(DataLayer::OrmasDal& ormasDal, int cID, std::string& errorMessage)
 	{
+		if (cID <= 0)
+			return false;
 		id = cID;
 		std::string filter = GenerateFilter(ormasDal);
 		std::vector<DataLayer::cashboxViewCollection> cashboxVector = ormasDal.GetCashbox(errorMessage, filter);

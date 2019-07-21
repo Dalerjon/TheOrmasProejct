@@ -143,6 +143,8 @@ namespace BusinessLayer{
 
 	bool CompanyEmployeeRelation::GetCompanyEmployeeByID(DataLayer::OrmasDal& ormasDal, int id, std::string& errorMessage)
 	{
+		if (id <= 0)
+			return false;
 		CompanyEmployeeRelation ceRelation;
 		ceRelation.SetID(id);
 		std::string filter = ceRelation.GenerateFilter(ormasDal);

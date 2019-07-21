@@ -298,7 +298,7 @@ void CreateWrhDlg::GenerateSubaccount()
 			number += std::to_string(curVec.at(0).GetCode());
 			std::string genNumber = std::to_string(dialogBL->GetOrmasDal().GenerateAccountID());
 			std::string prefix = "";
-			int additionalZero = 7 - genNumber.length();
+			unsigned int additionalZero = 7 - genNumber.length();
 			while (prefix.length() < additionalZero)
 			{
 				prefix += "0";
@@ -322,7 +322,7 @@ void CreateWrhDlg::GenerateSubaccount()
 			number += std::to_string(curVec.at(0).GetCode());
 			std::string genNumber = std::to_string(dialogBL->GetOrmasDal().GenerateAccountID());
 			std::string prefix = "";
-			int additionalZero = 7 - genNumber.length();
+			unsigned int additionalZero = 7 - genNumber.length();
 			while (prefix.length() < additionalZero)
 			{
 				prefix += "0";
