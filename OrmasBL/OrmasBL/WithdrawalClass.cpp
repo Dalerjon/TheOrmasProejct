@@ -23,6 +23,7 @@ namespace BusinessLayer{
 		currencyID = std::get<6>(wCollection);
 		statusID = std::get<7>(wCollection);
 		accountID = std::get<8>(wCollection);
+		who = std::get<9>(wCollection);
 	}
 	Withdrawal::Withdrawal()
 	{
@@ -80,6 +81,11 @@ namespace BusinessLayer{
 		return statusID;
 	}
 
+	std::string Withdrawal::GetWho()
+	{
+		return who;
+	}
+
 	void Withdrawal::SetID(int wID)
 	{
 		id = wID;
@@ -121,8 +127,13 @@ namespace BusinessLayer{
 		statusID = stsID;
 	}
 
+	void Withdrawal::SetWho(std::string wWho)
+	{
+		who = wWho;
+	}
+
 	bool Withdrawal::CreateWithdrawal(DataLayer::OrmasDal &ormasDal, std::string wDate, double wValue, int uID, int sID, std::string wTaeget,
-		int cID, int stsID, int aID, std::string& errorMessage)
+		int cID, int stsID, int aID, std::string wWho, std::string& errorMessage)
 	{
 		if (IsDuplicate(ormasDal, wDate, wValue, uID, cID, aID, errorMessage))
 			return false;
@@ -138,12 +149,13 @@ namespace BusinessLayer{
 		subaccountID = sID;
 		statusID = stsID;
 		accountID = aID;
+		who = wWho;
 		//ormasDal.StartTransaction(errorMessage);
-		if (0 != id && ormasDal.CreateWithdrawal(id, date, value, userID,subaccountID,target, currencyID, statusID, accountID, errorMessage))
+		if (0 != id && ormasDal.CreateWithdrawal(id, date, value, userID,subaccountID,target, currencyID, statusID, accountID, who, errorMessage))
 		{
 			if (statusID == statusMap.find("EXECUTED")->second)
 			{
-				if (0 != subaccountID)
+				if (userID <= 0 && accountID <= 0)
 				{
 					if (Payout(ormasDal, subaccountID, errorMessage))
 					{
@@ -187,11 +199,11 @@ namespace BusinessLayer{
 			return false;
 		id = ormasDal.GenerateID();
 		//ormasDal.StartTransaction(errorMessage);
-		if (0 != id && ormasDal.CreateWithdrawal(id, date, value, userID, subaccountID, target, currencyID, statusID, accountID, errorMessage))
+		if (0 != id && ormasDal.CreateWithdrawal(id, date, value, userID, subaccountID, target, currencyID, statusID, accountID, who, errorMessage))
 		{
 			if (statusID == statusMap.find("EXECUTED")->second)
 			{
-				if (0 != subaccountID)
+				if (userID <= 0 && accountID <= 0)
 				{
 					if (Payout(ormasDal, subaccountID, errorMessage))
 					{
@@ -256,7 +268,7 @@ namespace BusinessLayer{
 	}
 
 	bool Withdrawal::UpdateWithdrawal(DataLayer::OrmasDal &ormasDal, std::string wDate, double wValue, int uID, int sID, std::string wTaeget,
-		int cID, int stsID, int aID, std::string& errorMessage)
+		int cID, int stsID, int aID, std::string wWho, std::string& errorMessage)
 	{
 		std::map<std::string, int> statusMap = BusinessLayer::Status::GetStatusesAsMap(ormasDal, errorMessage);
 		if (0 == statusMap.size())
@@ -269,25 +281,43 @@ namespace BusinessLayer{
 		subaccountID = sID;
 		statusID = stsID;
 		accountID = aID;
+		who = wWho;
 		currentValue = GetCurrentValue(ormasDal, id, errorMessage);
 		previousStatusID = GetCurrentStatusID(ormasDal, id, errorMessage);
 		//ormasDal.StartTransaction(errorMessage);
-		if (0 != id && ormasDal.UpdateWithdrawal(id, date, value, userID, subaccountID, target, currencyID, statusID, accountID, errorMessage))
+		if (0 != id && ormasDal.UpdateWithdrawal(id, date, value, userID, subaccountID, target, currencyID, statusID, accountID, who, errorMessage))
 		{
 			if (previousStatusID != statusMap.find("EXECUTED")->second)
 			{
 				if (statusID == statusMap.find("EXECUTED")->second)
 				{
-					if (Payout(ormasDal, userID, currencyID, accountID, errorMessage))
+					if (userID <= 0 && accountID <= 0)
 					{
-						currentValue = 0.0;
-						//ormasDal.CommitTransaction(errorMessage);
-						return true;
+						if (Payout(ormasDal, subaccountID, errorMessage))
+						{
+							currentValue = 0.0;
+							//ormasDal.CommitTransaction(errorMessage);
+							return true;
+						}
+						else
+						{
+							//ormasDal.CancelTransaction(errorMessage);
+							return false;
+						}
 					}
 					else
 					{
-						//ormasDal.CancelTransaction(errorMessage);
-						return false;
+						if (Payout(ormasDal, userID, currencyID, accountID, errorMessage))
+						{
+							currentValue = 0.0;
+							//ormasDal.CommitTransaction(errorMessage);
+							return true;
+						}
+						else
+						{
+							//ormasDal.CancelTransaction(errorMessage);
+							return false;
+						}
 					}
 				}
 				else
@@ -363,22 +393,39 @@ namespace BusinessLayer{
 		currentValue = GetCurrentValue(ormasDal, id, errorMessage);
 		previousStatusID = GetCurrentStatusID(ormasDal, id, errorMessage);
 		//ormasDal.StartTransaction(errorMessage);
-		if (0 != id && ormasDal.UpdateWithdrawal(id, date, value, userID, subaccountID, target, currencyID, statusID, accountID, errorMessage))
+		if (0 != id && ormasDal.UpdateWithdrawal(id, date, value, userID, subaccountID, target, currencyID, statusID, accountID, who, errorMessage))
 		{
 			if (previousStatusID != statusMap.find("EXECUTED")->second)
 			{
 				if (statusID == statusMap.find("EXECUTED")->second)
 				{
-					if (Payout(ormasDal, userID, currencyID, accountID, errorMessage))
+					if (userID <= 0 && accountID <= 0)
 					{
-						currentValue = 0.0;
-						//ormasDal.CommitTransaction(errorMessage);
-						return true;
+						if (Payout(ormasDal, subaccountID, errorMessage))
+						{
+							currentValue = 0.0;
+							//ormasDal.CommitTransaction(errorMessage);
+							return true;
+						}
+						else
+						{
+							//ormasDal.CancelTransaction(errorMessage);
+							return false;
+						}
 					}
 					else
 					{
-						//ormasDal.CancelTransaction(errorMessage);
-						return false;
+						if (Payout(ormasDal, userID, currencyID, accountID, errorMessage))
+						{
+							currentValue = 0.0;
+							//ormasDal.CommitTransaction(errorMessage);
+							return true;
+						}
+						else
+						{
+							//ormasDal.CancelTransaction(errorMessage);
+							return false;
+						}
 					}
 				}
 				else
@@ -450,9 +497,18 @@ namespace BusinessLayer{
 	std::string Withdrawal::GenerateFilter(DataLayer::OrmasDal& ormasDal)
 	{
 		if (0 != id || !date.empty() || !target.empty() || 0 != userID || 0 != subaccountID || 0 != currencyID || 0 != value
-			|| 0 != statusID || 0 != accountID)
+			|| 0 != statusID || 0 != accountID ||  !who.empty())
 		{
-			return ormasDal.GetFilterForWithdrawal(id, date, value, userID, subaccountID, target, currencyID, statusID, accountID);
+			return ormasDal.GetFilterForWithdrawal(id, date, value, userID, subaccountID, target, currencyID, statusID, accountID, who);
+		}
+		return "";
+	}
+
+	std::string Withdrawal::GenerateFilterForPeriod(DataLayer::OrmasDal& ormasDal, std::string fromDate, std::string toDate)
+	{
+		if (!toDate.empty() && !fromDate.empty())
+		{
+			return ormasDal.GetFilterForWithdrawalForPeriod(id, date, value, userID, subaccountID, target, currencyID, statusID, accountID, who, fromDate, toDate);
 		}
 		return "";
 	}
@@ -469,12 +525,13 @@ namespace BusinessLayer{
 			id = std::get<0>(withdrawalVector.at(0));
 			date = std::get<1>(withdrawalVector.at(0));
 			value = std::get<2>(withdrawalVector.at(0));
-			userID = std::get<10>(withdrawalVector.at(0));
-			subaccountID = std::get<12>(withdrawalVector.at(0));
-			target = std::get<9>(withdrawalVector.at(0));
-			currencyID = std::get<11>(withdrawalVector.at(0));
-			statusID = std::get<13>(withdrawalVector.at(0));
-			accountID = std::get<14>(withdrawalVector.at(0));
+			who = std::get<10>(withdrawalVector.at(0));
+			userID = std::get<12>(withdrawalVector.at(0));
+			subaccountID = std::get<14>(withdrawalVector.at(0));
+			target = std::get<11>(withdrawalVector.at(0));
+			currencyID = std::get<13>(withdrawalVector.at(0));
+			statusID = std::get<15>(withdrawalVector.at(0));
+			accountID = std::get<16>(withdrawalVector.at(0));
 			return true;
 		}
 		else
@@ -487,7 +544,7 @@ namespace BusinessLayer{
 	bool Withdrawal::IsEmpty()
 	{
 		if (0 == id && date.empty() && 0.0 == value && 0 == userID && 0 == currencyID && 0== subaccountID && target.empty() 
-			&& 0 == statusID && 0 == accountID)
+			&& 0 == statusID && 0 == accountID && who.empty())
 			return true;
 		return false;
 	}
@@ -503,6 +560,7 @@ namespace BusinessLayer{
 		subaccountID = 0;
 		statusID = 0;
 		accountID = 0;
+		who = "";
 	}
 
 	bool Withdrawal::IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string pDate, double pValue, int uID, int cID, int aID,
@@ -568,6 +626,7 @@ namespace BusinessLayer{
 		if (uID > 0)
 		{
 			Balance balance;
+			Balance tempBalance;
 			Subaccount sub;
 			Withdrawal withdrawal;
 			withdrawal.SetUserID(uID);
@@ -578,7 +637,10 @@ namespace BusinessLayer{
 				for each (auto item in balanceVector)
 				{
 					sub.Clear();
-					if (sub.GetSubaccountByID(ormasDal, std::get<6>(item), errorMessage))
+					tempBalance.Clear();
+					if (!tempBalance.GetBalanceByID(ormasDal, std::get<0>(item), errorMessage))
+						return false;
+					if (sub.GetSubaccountByID(ormasDal, tempBalance.GetSubaccountID(), errorMessage))
 					{
 						if (sub.GetParentAccountID() == aID)
 						{
@@ -673,6 +735,7 @@ namespace BusinessLayer{
 		if (userID > 0)
 		{
 			Balance balance;
+			Balance tempBalance;
 			Subaccount sub;
 			Withdrawal withdrawal;
 			withdrawal.SetUserID(uID);
@@ -683,7 +746,10 @@ namespace BusinessLayer{
 				for each (auto item in balanceVector)
 				{
 					sub.Clear();
-					if (sub.GetSubaccountByID(ormasDal, std::get<6>(item), errorMessage))
+					tempBalance.Clear();
+					if (!tempBalance.GetBalanceByID(ormasDal, std::get<0>(item), errorMessage))
+						return false;
+					if (sub.GetSubaccountByID(ormasDal, tempBalance.GetSubaccountID(), errorMessage))
 					{
 						if (sub.GetParentAccountID() == aID)
 						{
@@ -783,6 +849,7 @@ namespace BusinessLayer{
 		if (userID > 0)
 		{
 			Balance balance;
+			Balance tempBalance;
 			Subaccount sub;
 			Withdrawal withdrawal;
 			withdrawal.SetUserID(uID);
@@ -793,7 +860,10 @@ namespace BusinessLayer{
 				for each (auto item in balanceVector)
 				{
 					sub.Clear();
-					if (sub.GetSubaccountByID(ormasDal, std::get<6>(item), errorMessage))
+					tempBalance.Clear();
+					if (!tempBalance.GetBalanceByID(ormasDal, std::get<0>(item), errorMessage))
+						return false;
+					if (sub.GetSubaccountByID(ormasDal, tempBalance.GetSubaccountID(), errorMessage))
 					{
 						if (sub.GetParentAccountID() == aID)
 						{

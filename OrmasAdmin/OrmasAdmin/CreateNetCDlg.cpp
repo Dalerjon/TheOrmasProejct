@@ -21,6 +21,9 @@ CreateNetCDlg::CreateNetCDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, Q
 	isOutdatedCmb->addItem("true");
 	if (true == updateFlag)
 	{
+		DataForm *parentDataForm = (DataForm*)parentForm;
+		itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
+		mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
 		QObject::connect(okBtn, &QPushButton::released, this, &CreateNetCDlg::EditNetCost);
 	}
 	else
@@ -257,8 +260,7 @@ void CreateNetCDlg::EditNetCost()
 							errorMessage.clear();
 							delete measure;
 						}
-						QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
-						QModelIndex mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
+						
 						itemModel->item(mIndex.row(), 1)->setText(netCost->GetDate().c_str());
 						itemModel->item(mIndex.row(), 2)->setText(product->GetName().c_str());
 						itemModel->item(mIndex.row(), 3)->setText(QString::number(product->GetVolume()));

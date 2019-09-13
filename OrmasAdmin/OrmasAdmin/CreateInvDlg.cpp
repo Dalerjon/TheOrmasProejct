@@ -24,6 +24,9 @@ CreateInvDlg::CreateInvDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, QWi
 	
 	if (true == updateFlag)
 	{
+		DataForm *parentDataForm = (DataForm*)parentForm;
+		itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
+		mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
 		QObject::connect(okBtn, &QPushButton::released, this, &CreateInvDlg::EditInventorization);
 	}
 	else
@@ -100,8 +103,8 @@ void CreateInvDlg::FillEditElements(int iEmployeeID, QString iDate, QString iExe
 		execDateEdit->setDateTime(QDateTime::fromString(iExecDate, "dd.MM.yyyy hh:mm"));
 	}
 	stockEmployeeEdit->setText(QString::number(iStockEmployeeID));
-	prodCountEdit->setText(QString::number(iCount));
-	sumEdit->setText(QString::number(iSum));
+	prodCountEdit->setText(QString::number(iCount, 'f', 3));
+	sumEdit->setText(QString::number(iSum, 'f', 3));
 	statusEdit->setText(QString::number(iStatusID));
 	currencyCmb->setCurrentIndex(currencyCmb->findData(QVariant(iCurrencyID)));
 	BusinessLayer::User user1;
@@ -331,8 +334,8 @@ void CreateInvDlg::CreateInventorization()
 							<< new QStandardItem("");
 					}
 
-					inventorizationItem << new QStandardItem(QString::number(inventorization->GetCount()))
-						<< new QStandardItem(QString::number(inventorization->GetSum()))
+					inventorizationItem << new QStandardItem(QString::number(inventorization->GetCount(), 'f', 3))
+						<< new QStandardItem(QString::number(inventorization->GetSum(),'f',3))
 						<< new QStandardItem(currency->GetShortName().c_str())
 						<< new QStandardItem(QString::number(inventorization->GetStockEmployeeID()))
 						<< new QStandardItem(QString::number(inventorization->GetEmployeeID()))
@@ -401,8 +404,6 @@ void CreateInvDlg::EditInventorization()
 					if (!parentDataForm->IsClosed())
 					{
 						//updating Inventorization data
-						QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
-						QModelIndex mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
 						itemModel->item(mIndex.row(), 1)->setText(inventorization->GetDate().c_str());
 						itemModel->item(mIndex.row(), 2)->setText(inventorization->GetExecutionDate().c_str());
 
@@ -493,8 +494,8 @@ void CreateInvDlg::EditInventorization()
 							itemModel->item(mIndex.row(), 12)->setText("");
 						}
 
-						itemModel->item(mIndex.row(), 13)->setText(QString::number(inventorization->GetCount()));
-						itemModel->item(mIndex.row(), 14)->setText(QString::number(inventorization->GetSum()));
+						itemModel->item(mIndex.row(), 13)->setText(QString::number(inventorization->GetCount(), 'f', 3));
+						itemModel->item(mIndex.row(), 14)->setText(QString::number(inventorization->GetSum(),'f',3));
 						itemModel->item(mIndex.row(), 15)->setText(currency->GetShortName().c_str());
 						itemModel->item(mIndex.row(), 16)->setText(QString::number(inventorization->GetStockEmployeeID()));
 						itemModel->item(mIndex.row(), 17)->setText(QString::number(inventorization->GetEmployeeID()));
@@ -794,10 +795,17 @@ void CreateInvDlg::StatusWasChenged()
 {
 	errorMessage = "";
 	statusMap = BusinessLayer::Status::GetStatusesAsMap(dialogBL->GetOrmasDal(), errorMessage);
-	if (statusEdit->text().toInt() == statusMap.find("EXECUTED")->second)
+	if (statusEdit->text().toInt() == statusMap.find("EXECUTED")->second
+		|| statusEdit->text().toInt() == statusMap.find("RETURN")->second
+		|| statusEdit->text().toInt() == statusMap.find("ERROR")->second)
 	{
 		execDateWidget->setVisible(true);
 		execDateEdit->setDateTime(QDateTime::currentDateTime());
+	}
+	else
+	{
+		execDateWidget->setVisible(false);
+		execDateEdit->setDateTime(QDateTime::fromString("01.01.2000", "dd.mm.yyyy"));
 	}
 }
 

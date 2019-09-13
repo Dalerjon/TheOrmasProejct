@@ -18,6 +18,9 @@ CreateMsrDlg::CreateMsrDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, QWi
 	unitEdit->setMaxLength(10);
 	if (true == updateFlag)
 	{
+		DataForm *parentDataForm = (DataForm*)parentForm;
+		itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
+		mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
 		QObject::connect(okBtn, &QPushButton::released, this, &CreateMsrDlg::EditMeasure);
 	}
 	else
@@ -127,8 +130,6 @@ void CreateMsrDlg::EditMeasure()
 				{
 					if (!parentDataForm->IsClosed())
 					{
-						QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
-						QModelIndex mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
 						itemModel->item(mIndex.row(), 1)->setText(measure->GetName().c_str());
 						itemModel->item(mIndex.row(), 2)->setText(shortNameEdit->text());
 						itemModel->item(mIndex.row(), 3)->setText(QString::number(unitEdit->text().toInt()));

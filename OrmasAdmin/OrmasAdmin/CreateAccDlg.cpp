@@ -20,6 +20,9 @@ CreateAccDlg::CreateAccDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, QWi
 	currentBalanceEdit->setMaxLength(17);
 	if (true == updateFlag)
 	{
+		DataForm *parentDataForm = (DataForm*)parentForm;
+		itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
+		mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
 		QObject::connect(okBtn, &QPushButton::released, this, &CreateAccDlg::EditAccount);
 	}
 	else
@@ -172,8 +175,6 @@ void CreateAccDlg::EditAccount()
 				{
 					if (!parentDataForm->IsClosed())
 					{
-						QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
-						QModelIndex mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
 						itemModel->item(mIndex.row(), 1)->setText(account->GetNumber().c_str());
 						itemModel->item(mIndex.row(), 2)->setText(QString::number(account->GetStartBalance(), 'f', 3));
 						itemModel->item(mIndex.row(), 3)->setText(QString::number(account->GetCurrentBalance(), 'f', 3));

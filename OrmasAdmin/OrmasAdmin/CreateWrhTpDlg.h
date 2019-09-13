@@ -2,6 +2,7 @@
 #define CREATEWRHTYPEDLG_H
 #include "ui_CreateWrhTpDlg.h"
 #include "OrmasBL.h"
+#include <QStandardItemModel>
 
 class CreateWrhTypeDlg : public QDialog, public Ui::CreateWarehouseType
 {
@@ -22,6 +23,8 @@ private:
 	void SetWarehouseTypeParams(QString, QString, QString, int = 0);
 	void FillEditElements(QString, QString, QString);
 	QWidget* parentForm;
+	QStandardItemModel *itemModel;
+	QModelIndex mIndex;
 };
 
 #endif //CREATEWRHTYPEDLG_H

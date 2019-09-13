@@ -20,6 +20,9 @@ CreateJbsDlg::CreateJbsDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, QWi
 	countEdit->setMaxLength(17);
 	if (true == updateFlag)
 	{
+		DataForm *parentDataForm = (DataForm*)parentForm;
+		itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
+		mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
 		QObject::connect(okBtn, &QPushButton::released, this, &CreateJbsDlg::EditJobsheet);
 	}
 	else
@@ -94,7 +97,7 @@ void CreateJbsDlg::SetJobsheetParams(QString jDate, double jCount, int pID, int 
 void CreateJbsDlg::FillEditElements(QString jDate, double jCount, int pID, int eID)
 {
 	dateEdit->setDate(QDate::fromString(jDate, "dd.MM.yyyy"));
-	countEdit->setText(QString::number(jCount));
+	countEdit->setText(QString::number(jCount, 'f', 3));
 	productEdit->setText(QString::number(pID));
 	employeeEdit->setText(QString::number(eID));
 	BusinessLayer::Product product;
@@ -188,7 +191,7 @@ void CreateJbsDlg::CreateJobsheet()
 						<< new QStandardItem(employee->GetSurname().c_str())
 						<< new QStandardItem(employee->GetPhone().c_str())
 						<< new QStandardItem(product->GetName().c_str())
-						<< new QStandardItem(QString::number(jobsheet->GetCount()))
+						<< new QStandardItem(QString::number(jobsheet->GetCount(), 'f', 3))
 						<< new QStandardItem(measure->GetName().c_str())
 						<< new QStandardItem(QString::number(jobsheet->GetProductID()))
 						<< new QStandardItem(QString::number(jobsheet->GetEmployeeID()));
@@ -270,14 +273,12 @@ void CreateJbsDlg::EditJobsheet()
 							return;
 						}
 
-						QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
-						QModelIndex mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
 						itemModel->item(mIndex.row(), 1)->setText(jobsheet->GetDate().c_str());
 						itemModel->item(mIndex.row(), 2)->setText(employee->GetName().c_str());
 						itemModel->item(mIndex.row(), 3)->setText(employee->GetSurname().c_str());
 						itemModel->item(mIndex.row(), 4)->setText(employee->GetPhone().c_str());
 						itemModel->item(mIndex.row(), 5)->setText(product->GetName().c_str());
-						itemModel->item(mIndex.row(), 6)->setText(QString::number(jobsheet->GetCount()));
+						itemModel->item(mIndex.row(), 6)->setText(QString::number(jobsheet->GetCount(), 'f', 3));
 						itemModel->item(mIndex.row(), 7)->setText(measure->GetName().c_str());
 						itemModel->item(mIndex.row(), 8)->setText(QString::number(jobsheet->GetProductID()));
 						itemModel->item(mIndex.row(), 9)->setText(QString::number(jobsheet->GetEmployeeID()));

@@ -20,6 +20,9 @@ CreateProdnStockDlg::CreateProdnStockDlg(BusinessLayer::OrmasBL *ormasBL, bool u
 	sumEdit->setMaxLength(17);
 	if (true == updateFlag)
 	{
+		DataForm *parentDataForm = (DataForm*)parentForm;
+		itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
+		mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
 		QObject::connect(addBtn, &QPushButton::released, this, &CreateProdnStockDlg::EditProduct);
 	}
 	else
@@ -101,8 +104,8 @@ void CreateProdnStockDlg::SetProdnStockParams(int sProductID, double sCount, dou
 void CreateProdnStockDlg::FillEditElements(int sProductID, double sCount, double sSum, int sStatusID, int sCurrencyID, int sWarehouseID)
 {
 	productEdit->setText(QString::number(sProductID));
-	countEdit->setText(QString::number(sCount));
-	sumEdit->setText(QString::number(sSum));
+	countEdit->setText(QString::number(sCount, 'f', 3));
+	sumEdit->setText(QString::number(sSum, 'f', 3));
 	statusEdit->setText(QString::number(sStatusID));
 	currencyCmb->setCurrentIndex(currencyCmb->findData(QVariant(sCurrencyID)));
 	warehouseCmb->setCurrentIndex(warehouseCmb->findData(QVariant(sWarehouseID)));
@@ -249,8 +252,8 @@ void CreateProdnStockDlg::AddProduct()
 						<< new QStandardItem(currency->GetShortName().c_str())
 						<< new QStandardItem(QString::number(product->GetVolume()))
 						<< new QStandardItem(measure->GetName().c_str())
-						<< new QStandardItem(QString::number(prodnStock->GetCount()))
-						<< new QStandardItem(QString::number(prodnStock->GetSum()))
+						<< new QStandardItem(QString::number(prodnStock->GetCount(), 'f', 3))
+						<< new QStandardItem(QString::number(prodnStock->GetSum(),'f',3))
 						<< new QStandardItem(sumCurrency->GetShortName().c_str())
 						<< new QStandardItem(warehouseCmb->currentText())
 						<< new QStandardItem(subacc.GetNumber().c_str())
@@ -368,15 +371,14 @@ void CreateProdnStockDlg::EditProduct()
 							}
 						}
 
-						QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
-						QModelIndex mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
+						
 						itemModel->item(mIndex.row(), 1)->setText(product->GetName().c_str());
 						itemModel->item(mIndex.row(), 2)->setText(QString::number(product->GetPrice()));
 						itemModel->item(mIndex.row(), 3)->setText(currency->GetShortName().c_str());
 						itemModel->item(mIndex.row(), 4)->setText(QString::number(product->GetVolume()));
 						itemModel->item(mIndex.row(), 5)->setText(measure->GetName().c_str());
-						itemModel->item(mIndex.row(), 6)->setText(QString::number(prodnStock->GetCount()));
-						itemModel->item(mIndex.row(), 7)->setText(QString::number(prodnStock->GetSum()));
+						itemModel->item(mIndex.row(), 6)->setText(QString::number(prodnStock->GetCount(), 'f', 3));
+						itemModel->item(mIndex.row(), 7)->setText(QString::number(prodnStock->GetSum(),'f',3));
 						itemModel->item(mIndex.row(), 8)->setText(sumCurrency->GetShortName().c_str());
 						itemModel->item(mIndex.row(), 9)->setText(warehouseCmb->currentText());
 						itemModel->item(mIndex.row(), 10)->setText(subacc.GetNumber().c_str());

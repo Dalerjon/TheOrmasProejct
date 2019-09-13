@@ -24,6 +24,9 @@ CreateConRDlg::CreateConRDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, Q
 	
 	if (true == updateFlag)
 	{
+		DataForm *parentDataForm = (DataForm*)parentForm;
+		itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
+		mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
 		QObject::connect(okBtn, &QPushButton::released, this, &CreateConRDlg::EditConsumeRaw);
 	}
 	else
@@ -99,8 +102,8 @@ void CreateConRDlg::FillEditElements(int cEmployeeID, QString cDate, QString cEx
 		execDateEdit->setDateTime(QDateTime::fromString(cExecDate, "dd.MM.yyyy hh:mm"));
 	}
 	stockEmployeeEdit->setText(QString::number(cStockEmployeeID));
-	prodCountEdit->setText(QString::number(cCount));
-	sumEdit->setText(QString::number(cSum));
+	prodCountEdit->setText(QString::number(cCount, 'f', 3));
+	sumEdit->setText(QString::number(cSum, 'f', 3));
 	statusEdit->setText(QString::number(cStatusID));
 	currencyCmb->setCurrentIndex(currencyCmb->findData(QVariant(cCurrencyID)));
 	BusinessLayer::User user1;
@@ -399,8 +402,8 @@ void CreateConRDlg::CreateConsumeRaw()
 							<< new QStandardItem("");
 					}
 
-					consumeRawItem << new QStandardItem(QString::number(consumeRaw->GetCount()))
-						<< new QStandardItem(QString::number(consumeRaw->GetSum()))
+					consumeRawItem << new QStandardItem(QString::number(consumeRaw->GetCount(), 'f', 3))
+						<< new QStandardItem(QString::number(consumeRaw->GetSum(),'f',3))
 						<< new QStandardItem(currency->GetShortName().c_str())
 						<< new QStandardItem(QString::number(consumeRaw->GetStockEmployeeID()))
 						<< new QStandardItem(QString::number(consumeRaw->GetEmployeeID()))
@@ -469,8 +472,6 @@ void CreateConRDlg::EditConsumeRaw()
 					if (!parentDataForm->IsClosed())
 					{
 						//updating ConsumeRaw data
-						QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
-						QModelIndex mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
 						itemModel->item(mIndex.row(), 1)->setText(consumeRaw->GetDate().c_str());
 						itemModel->item(mIndex.row(), 2)->setText(consumeRaw->GetExecutionDate().c_str());
 
@@ -561,8 +562,8 @@ void CreateConRDlg::EditConsumeRaw()
 							itemModel->item(mIndex.row(), 12)->setText("");
 						}
 
-						itemModel->item(mIndex.row(), 13)->setText(QString::number(consumeRaw->GetCount()));
-						itemModel->item(mIndex.row(), 14)->setText(QString::number(consumeRaw->GetSum()));
+						itemModel->item(mIndex.row(), 13)->setText(QString::number(consumeRaw->GetCount(), 'f', 3));
+						itemModel->item(mIndex.row(), 14)->setText(QString::number(consumeRaw->GetSum(),'f',3));
 						itemModel->item(mIndex.row(), 15)->setText(currency->GetShortName().c_str());
 						itemModel->item(mIndex.row(), 16)->setText(QString::number(consumeRaw->GetStockEmployeeID()));
 						itemModel->item(mIndex.row(), 17)->setText(QString::number(consumeRaw->GetEmployeeID()));
@@ -899,10 +900,17 @@ void CreateConRDlg::StatusWasChenged()
 {
 	errorMessage = "";
 	statusMap = BusinessLayer::Status::GetStatusesAsMap(dialogBL->GetOrmasDal(), errorMessage);
-	if (statusEdit->text().toInt() == statusMap.find("EXECUTED")->second)
+	if (statusEdit->text().toInt() == statusMap.find("EXECUTED")->second
+		|| statusEdit->text().toInt() == statusMap.find("RETURN")->second
+		|| statusEdit->text().toInt() == statusMap.find("ERROR")->second)
 	{
 		execDateWidget->setVisible(true);
 		execDateEdit->setDateTime(QDateTime::currentDateTime());
+	}
+	else
+	{
+		execDateWidget->setVisible(false);
+		execDateEdit->setDateTime(QDateTime::fromString("01.01.2000", "dd.mm.yyyy"));
 	}
 }
 
@@ -966,6 +974,25 @@ bool CreateConRDlg::CheckAccess()
 		{
 			QMessageBox::information(NULL, QString(tr("Warning")),
 				QString(tr("This document have an \"EXECUTED\" status. The document with \"EXECUTED\" status cannot be changed!")),
+				QString(tr("Ok")));
+			errorMessage.clear();
+			delete status;
+			return false;
+		}
+	}
+	
+	if (0 == status->GetName().compare("RETURN"))
+	{
+		if (mainForm->GetLoggedUser()->GetRoleID() == rolesMap.find("SUPERUSER")->second ||
+			mainForm->GetLoggedUser()->GetRoleID() == rolesMap.find("CHIEF ACCOUNTANT")->second ||
+			mainForm->GetLoggedUser()->GetRoleID() == rolesMap.find("ACCOUNTANT")->second)
+		{
+			return true;
+		}
+		else
+		{
+			QMessageBox::information(NULL, QString(tr("Warning")),
+				QString(tr("This document have an \"RETURN\" status. The document with \"EXECUTED\" status cannot be changed!")),
 				QString(tr("Ok")));
 			errorMessage.clear();
 			delete status;

@@ -2,6 +2,7 @@
 #define CREATEBRHDLG_H
 #include "ui_CreateBrhDlg.h"
 #include "OrmasBL.h"
+#include <QStandardItemModel>
 
 class CreateBrhDlg : public QDialog, public Ui::CreateBranch
 {
@@ -22,6 +23,8 @@ private:
 	void SetBranchParams(QString, QString, QString, QString, int = 0);
 	void FillEditElements(QString, QString, QString, QString);
 	QWidget* parentForm;
+	QStandardItemModel *itemModel;
+	QModelIndex mIndex;
 };
 
 #endif //CREATEBRHDLG_H

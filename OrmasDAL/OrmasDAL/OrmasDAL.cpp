@@ -853,7 +853,7 @@ namespace DataLayer{
 	// Get all balances from DB
 	std::vector<balancesViewCollection> OrmasDal::GetBalances(std::string& errorMessage, std::string filter)
 	{
-		balancesViewCollection rowTuple;
+		balancesViewCollection rowBTuple;
 		std::vector<balancesViewCollection> resultVector;
 		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
@@ -889,8 +889,8 @@ namespace DataLayer{
 						currencyName = PQgetvalue(result, i, 5);
 						userID = std::stoi(std::string(PQgetvalue(result, i, 6)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 6)));
 						accountID = std::stoi(std::string(PQgetvalue(result, i, 7)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 7)));
-						rowTuple = std::make_tuple(balanceID, userName, userSurname, subaccountNumber, balanceValue, currencyName, userID, accountID);
-						resultVector.push_back(rowTuple);
+						rowBTuple = std::make_tuple(balanceID, userName, userSurname, subaccountNumber, balanceValue, currencyName, userID, accountID);
+						resultVector.push_back(rowBTuple);
 					}
 					PQclear(result);
 					return resultVector;
@@ -3037,14 +3037,18 @@ namespace DataLayer{
 						double paymentValue = std::stod(std::string(PQgetvalue(result, i, 5)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 5)));
 						std::string currencyName = PQgetvalue(result, i, 6);
 						std::string paymentTarget = PQgetvalue(result, i, 7);
-						std::string statusName = PQgetvalue(result, i, 8);
-						std::string accountNumber = PQgetvalue(result, i, 9);
-						int userID = std::stoi(std::string(PQgetvalue(result, i, 10)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 10)));
-						int currencyID = std::stoi(std::string(PQgetvalue(result, i, 11)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 11)));
-						int statusID = std::stoi(std::string(PQgetvalue(result, i, 12)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 12)));
-						int accountID = std::stoi(std::string(PQgetvalue(result, i, 13)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 13)));
+						std::string accountNumber = PQgetvalue(result, i, 8);
+						std::string subaccountNumber = PQgetvalue(result, i, 9);
+						std::string who = PQgetvalue(result, i, 10);
+						std::string statusName = PQgetvalue(result, i, 11);
+						int userID = std::stoi(std::string(PQgetvalue(result, i, 12)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 12)));
+						int currencyID = std::stoi(std::string(PQgetvalue(result, i, 13)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 13)));
+						int statusID = std::stoi(std::string(PQgetvalue(result, i, 14)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 14)));
+						int accountID = std::stoi(std::string(PQgetvalue(result, i, 15)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 15)));
+						int subaccountID = std::stoi(std::string(PQgetvalue(result, i, 16)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 16)));
 						rowTuple = std::make_tuple(paymentID, paymentDate, userName, userSurname, userPhone, paymentValue, 
-							currencyName, paymentTarget, statusName, accountNumber, userID, currencyID, statusID, accountID);
+							currencyName, paymentTarget, accountNumber, subaccountNumber, who, statusName, userID, currencyID, 
+							statusID, accountID, subaccountID);
 						resultVector.push_back(rowTuple);
 					}
 					PQclear(result);
@@ -5301,7 +5305,7 @@ namespace DataLayer{
 		else
 		{
 			PGresult * result;
-			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".subaccount_history_view ";
+			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".stock_history_view ";
 			sqlCommand += filter;
 			sqlCommand += " ORDER BY product_name ASC LIMIT 400;";
 			result = PQexec(dbConnection, sqlCommand.c_str());
@@ -5949,17 +5953,19 @@ namespace DataLayer{
 						std::string currencyName = PQgetvalue(result, i, 3);
 						std::string userName = PQgetvalue(result, i, 4);
 						std::string userSurname = PQgetvalue(result, i, 5);
-						std::string statusName = PQgetvalue(result, i, 6);
-						std::string accountNumber = PQgetvalue(result, i, 7);
-						std::string subaccountNumber = PQgetvalue(result, i, 8);
-						std::string withdrawalTarget = PQgetvalue(result, i, 9);
-						int userID = std::stoi(std::string(PQgetvalue(result, i, 10)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 10)));
-						int currencyID = std::stoi(std::string(PQgetvalue(result, i, 11)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 11)));
-						int subaccountID = std::stoi(std::string(PQgetvalue(result, i, 12)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 12)));
-						int statusID = std::stoi(std::string(PQgetvalue(result, i, 13)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 13)));
-						int accountID = std::stoi(std::string(PQgetvalue(result, i, 14)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 14)));
-						rowTuple = std::make_tuple(withdrawalID, withdrawalDate, withdrawalValue, currencyName, userName, userSurname, statusName,
-							accountNumber, subaccountNumber, withdrawalTarget, userID, currencyID, subaccountID, statusID, accountID);
+						std::string userPhone = PQgetvalue(result, i, 6);
+						std::string statusName = PQgetvalue(result, i, 7);
+						std::string accountNumber = PQgetvalue(result, i, 8);
+						std::string subaccountNumber = PQgetvalue(result, i, 9);
+						std::string who = PQgetvalue(result, i, 10);
+						std::string withdrawalTarget = PQgetvalue(result, i, 11);
+						int userID = std::stoi(std::string(PQgetvalue(result, i, 12)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 12)));
+						int currencyID = std::stoi(std::string(PQgetvalue(result, i, 13)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 13)));
+						int subaccountID = std::stoi(std::string(PQgetvalue(result, i, 14)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 14)));
+						int statusID = std::stoi(std::string(PQgetvalue(result, i, 15)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 15)));
+						int accountID = std::stoi(std::string(PQgetvalue(result, i, 16)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 16)));
+						rowTuple = std::make_tuple(withdrawalID, withdrawalDate, withdrawalValue, currencyName, userName, userSurname, userPhone, statusName,
+							accountNumber, subaccountNumber, who, withdrawalTarget, userID, currencyID, subaccountID, statusID, accountID);
 						resultVector.push_back(rowTuple);
 					}
 					PQclear(result);
@@ -6876,7 +6882,7 @@ namespace DataLayer{
 	// Get all balances from DB
 	std::vector<balancesViewCollection> OrmasDal::GetBalances(int offset, std::string& errorMessage, std::string filter)
 	{
-		balancesViewCollection rowTuple;
+		balancesViewCollection rowBTuple;
 		std::vector<balancesViewCollection> resultVector;
 		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
@@ -6911,8 +6917,8 @@ namespace DataLayer{
 						std::string currencyName = PQgetvalue(result, i, 5);
 						int userID = std::stoi(std::string(PQgetvalue(result, i, 6)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 6)));
 						int accountID = std::stoi(std::string(PQgetvalue(result, i, 7)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 7)));
-						rowTuple = std::make_tuple(balanceID, userName, userSurname, subaccountNumber, balanceValue, currencyName, userID, accountID);
-						resultVector.push_back(rowTuple);
+						rowBTuple = std::make_tuple(balanceID, userName, userSurname, subaccountNumber, balanceValue, currencyName, userID, accountID);
+						resultVector.push_back(rowBTuple);
 					}
 					PQclear(result);
 					return resultVector;
@@ -9275,14 +9281,18 @@ namespace DataLayer{
 						double paymentValue = std::stod(std::string(PQgetvalue(result, i, 5)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 5)));
 						std::string currencyName = PQgetvalue(result, i, 6);
 						std::string paymentTarget = PQgetvalue(result, i, 7);
-						std::string statusName = PQgetvalue(result, i, 8);
-						std::string accountNumber = PQgetvalue(result, i, 9);
-						int userID = std::stoi(std::string(PQgetvalue(result, i, 10)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 10)));
-						int currencyID = std::stoi(std::string(PQgetvalue(result, i, 11)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 11)));
-						int statusID = std::stoi(std::string(PQgetvalue(result, i, 12)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 12)));
-						int accountID = std::stoi(std::string(PQgetvalue(result, i, 13)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 13)));
+						std::string accountNumber = PQgetvalue(result, i, 8);
+						std::string subaccountNumber = PQgetvalue(result, i, 9);
+						std::string who = PQgetvalue(result, i, 10);
+						std::string statusName = PQgetvalue(result, i, 11);
+						int userID = std::stoi(std::string(PQgetvalue(result, i, 12)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 12)));
+						int currencyID = std::stoi(std::string(PQgetvalue(result, i, 13)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 13)));
+						int statusID = std::stoi(std::string(PQgetvalue(result, i, 14)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 14)));
+						int accountID = std::stoi(std::string(PQgetvalue(result, i, 15)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 15)));
+						int subaccountID = std::stoi(std::string(PQgetvalue(result, i, 16)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 16)));
 						rowTuple = std::make_tuple(paymentID, paymentDate, userName, userSurname, userPhone, paymentValue,
-							currencyName, paymentTarget, statusName, accountNumber, userID, currencyID, statusID, accountID);
+							currencyName, paymentTarget, accountNumber, subaccountNumber, who, statusName, userID, currencyID,
+							statusID, accountID, subaccountID);
 						resultVector.push_back(rowTuple);
 					}
 					PQclear(result);
@@ -11834,7 +11844,7 @@ namespace DataLayer{
 		else
 		{
 			PGresult * result;
-			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".subaccount_history_view ";
+			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".stock_history_view ";
 			sqlCommand += filter;
 			sqlCommand += " ORDER BY product_name ASC LIMIT 400 ";
 			if (offset > 0)
@@ -12488,17 +12498,19 @@ namespace DataLayer{
 						std::string currencyName = PQgetvalue(result, i, 3);
 						std::string userName = PQgetvalue(result, i, 4);
 						std::string userSurname = PQgetvalue(result, i, 5);
-						std::string statusName = PQgetvalue(result, i, 6);
-						std::string accountNumber = PQgetvalue(result, i, 7);
-						std::string subaccountNumber = PQgetvalue(result, i, 8);
-						std::string withdrawalTarget = PQgetvalue(result, i, 9);
-						int userID = std::stoi(std::string(PQgetvalue(result, i, 10)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 10)));
-						int currencyID = std::stoi(std::string(PQgetvalue(result, i, 11)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 11)));
-						int subaccountID = std::stoi(std::string(PQgetvalue(result, i, 12)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 12)));
-						int statusID = std::stoi(std::string(PQgetvalue(result, i, 13)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 13)));
-						int accountID = std::stoi(std::string(PQgetvalue(result, i, 14)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 14)));
-						rowTuple = std::make_tuple(withdrawalID, withdrawalDate, withdrawalValue, currencyName, userName, userSurname, statusName,
-							accountNumber, subaccountNumber, withdrawalTarget, userID, currencyID, subaccountID, statusID, accountID);
+						std::string userPhone = PQgetvalue(result, i, 6);
+						std::string statusName = PQgetvalue(result, i, 7);
+						std::string accountNumber = PQgetvalue(result, i, 8);
+						std::string subaccountNumber = PQgetvalue(result, i, 9);
+						std::string who = PQgetvalue(result, i, 10);
+						std::string withdrawalTarget = PQgetvalue(result, i, 11);
+						int userID = std::stoi(std::string(PQgetvalue(result, i, 12)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 12)));
+						int currencyID = std::stoi(std::string(PQgetvalue(result, i, 13)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 13)));
+						int subaccountID = std::stoi(std::string(PQgetvalue(result, i, 14)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 14)));
+						int statusID = std::stoi(std::string(PQgetvalue(result, i, 15)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 15)));
+						int accountID = std::stoi(std::string(PQgetvalue(result, i, 16)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 16)));
+						rowTuple = std::make_tuple(withdrawalID, withdrawalDate, withdrawalValue, currencyName, userName, userSurname, userPhone, statusName,
+							accountNumber, subaccountNumber, who, withdrawalTarget, userID, currencyID, subaccountID, statusID, accountID);
 						resultVector.push_back(rowTuple);
 					}
 					PQclear(result);
@@ -14538,7 +14550,8 @@ namespace DataLayer{
 	}
 
 	// Create payment
-	bool OrmasDal::CreatePayment(int paymentID, std::string paymentDate, double paymentValue, std::string paymentTarget, int userID, int currencyID, int statusID, int accountID, std::string& errorMessage)
+	bool OrmasDal::CreatePayment(int paymentID, std::string paymentDate, double paymentValue, std::string paymentTarget, int userID, 
+		int currencyID, int statusID, int accountID, int subaccountID, std::string paymentWho, std::string& errorMessage)
 	{
 		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
@@ -14546,7 +14559,8 @@ namespace DataLayer{
 			return false;
 		}
 		PGresult * result;
-		std::string sqlCommand = "INSERT INTO \"OrmasSchema\".payments(payment_id, payment_date, payment_value, payment_target, user_id, currency_id, status_id, account_id) VALUES(";
+		std::string sqlCommand = "INSERT INTO \"OrmasSchema\".payments(payment_id, payment_date, payment_value, payment_target, \
+								 user_id, currency_id, status_id, account_id, subaccount_id, who) VALUES(";
 		sqlCommand += boost::lexical_cast<std::string>(paymentID);
 		sqlCommand += ", '";
 		sqlCommand += paymentDate;
@@ -14562,7 +14576,11 @@ namespace DataLayer{
 		sqlCommand += boost::lexical_cast<std::string>(statusID);
 		sqlCommand += ", ";
 		sqlCommand += boost::lexical_cast<std::string>(accountID);
-		sqlCommand += ");";
+		sqlCommand += ", ";
+		sqlCommand += boost::lexical_cast<std::string>(subaccountID);
+		sqlCommand += ", '";
+		sqlCommand += paymentWho;
+		sqlCommand += "');";
 		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
@@ -16450,7 +16468,7 @@ namespace DataLayer{
 
 	// Create withdrawal
 	bool OrmasDal::CreateWithdrawal(int withdrawalID, std::string withdrawalDate, double withdrawalValue, int userID, int sabID, 
-		std::string withdrawalTarget, int currencyID, int statusID, int accountID, std::string& errorMessage)
+		std::string withdrawalTarget, int currencyID, int statusID, int accountID, std::string withdrawalWho, std::string& errorMessage)
 	{
 		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
@@ -16459,7 +16477,7 @@ namespace DataLayer{
 		}
 		PGresult * result;
 		std::string sqlCommand = "INSERT INTO \"OrmasSchema\".withdrawals(withdrawal_id, withdrawal_date, withdrawal_value,\
-								  user_id, subaccount_id,withdrawal_target, currency_id, status_id, account_id) VALUES(";
+								  user_id, subaccount_id,withdrawal_target, currency_id, status_id, account_id, who) VALUES(";
 		sqlCommand += boost::lexical_cast<std::string>(withdrawalID);
 		sqlCommand += ", '";
 		sqlCommand += withdrawalDate;
@@ -16477,7 +16495,9 @@ namespace DataLayer{
 		sqlCommand += boost::lexical_cast<std::string>(statusID);
 		sqlCommand += ", ";
 		sqlCommand += boost::lexical_cast<std::string>(accountID);
-		sqlCommand += ");";
+		sqlCommand += ", '";
+		sqlCommand += withdrawalWho;
+		sqlCommand += "');";
 		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
@@ -22065,7 +22085,7 @@ namespace DataLayer{
 
 	
 	bool OrmasDal::UpdatePayment(int paymentID, std::string paymentDate, double paymentValue, std::string paymentTarget, 
-		int userID, int currencyID, int statusID, int accountID, std::string& errorMessage)
+		int userID, int currencyID, int statusID, int accountID, int subaccountID, std::string paymentWho, std::string& errorMessage)
 	{
 		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
@@ -22074,7 +22094,7 @@ namespace DataLayer{
 		}
 		PGresult * result;
 		std::string sqlCommand = "UPDATE \"OrmasSchema\".payments SET(payment_date, payment_value,\
-			payment_target, user_id, currency_id, status_id, account_id) = ('";
+			payment_target, user_id, currency_id, status_id, account_id, subaccount_id, who) = ('";
 		sqlCommand += paymentDate;
 		sqlCommand += "', ";
 		sqlCommand += boost::lexical_cast<std::string>(paymentValue);
@@ -22088,7 +22108,11 @@ namespace DataLayer{
 		sqlCommand += boost::lexical_cast<std::string>(statusID);
 		sqlCommand += ", ";
 		sqlCommand += boost::lexical_cast<std::string>(accountID);
-		sqlCommand += ") WHERE payment_id=";
+		sqlCommand += ", ";
+		sqlCommand += boost::lexical_cast<std::string>(subaccountID);
+		sqlCommand += ", '";
+		sqlCommand += paymentWho;
+		sqlCommand += "') WHERE payment_id=";
 		sqlCommand += boost::lexical_cast<std::string>(paymentID);
 		sqlCommand += ";";
 		result = PQexec(dbConnection, sqlCommand.c_str());
@@ -23968,7 +23992,7 @@ namespace DataLayer{
 	}
 
 	bool OrmasDal::UpdateWithdrawal(int withdrawalID, std::string withdrawalDate, double withdrawalValue, int userID, int sabID, 
-		std::string withdrawalTarget, int currencyID, int statusID, int accountID, std::string& errorMessage)
+		std::string withdrawalTarget, int currencyID, int statusID, int accountID, std::string withdrawalWho, std::string& errorMessage)
 	{
 		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
@@ -23977,7 +24001,7 @@ namespace DataLayer{
 		}
 		PGresult * result;
 		std::string sqlCommand = "UPDATE \"OrmasSchema\".withdrawals SET(withdrawal_date, withdrawal_value, user_id,subaccount_id,\
-								  withdrawal_target, currency_id, status_id, account_id) = ('";
+								  withdrawal_target, currency_id, status_id, account_id, who) = ('";
 		sqlCommand += withdrawalDate;
 		sqlCommand += "', ";
 		sqlCommand += boost::lexical_cast<std::string>(withdrawalValue);
@@ -23993,7 +24017,9 @@ namespace DataLayer{
 		sqlCommand += boost::lexical_cast<std::string>(statusID);
 		sqlCommand += ", ";
 		sqlCommand += boost::lexical_cast<std::string>(accountID);
-		sqlCommand += ") WHERE withdrawal_id=";
+		sqlCommand += ", '";
+		sqlCommand += withdrawalWho;
+		sqlCommand += "') WHERE withdrawal_id=";
 		sqlCommand += boost::lexical_cast<std::string>(withdrawalID);
 		sqlCommand += ";";
 		result = PQexec(dbConnection, sqlCommand.c_str());
@@ -24196,6 +24222,44 @@ namespace DataLayer{
 		}
 		PQclear(result);
 		return true;
+	}
+
+	//Concatenate filters
+	std::string OrmasDal::ConcatenateFilters(std::vector<std::string> filterList)
+	{
+		std::string filter = "";
+		std::string whereWord = "where";
+		std::vector<std::string> conditionVec;
+		if (filterList.size() == 0)
+		{
+			return  filter;
+		}
+		if (filterList.size() == 1)
+		{
+			return filterList.at(0);
+		}
+		if (filterList.size() > 1)
+		{
+			std::string tempString = "";
+			for (unsigned int i = 1; i < filterList.size(); i++)
+			{
+				tempString = filterList.at(i);
+				if (!tempString.empty())
+				{
+					try
+					{
+						size_t wherePosition = tempString.find(whereWord);
+						tempString.replace(wherePosition, 5, " AND ");
+						filterList.at(0) += tempString;
+					}
+					catch (...)
+					{
+						continue;
+					}
+				}
+			}
+		}
+		return filterList.at(0);
 	}
 
 	// Fillter section ----------------------------------------------
@@ -25533,6 +25597,95 @@ namespace DataLayer{
 		return filter;
 	}
 
+	std::string OrmasDal::GetFilterForConsumeProductForPeriod(int consumeProductID, int employeeID, std::string consumeProductDate,
+		std::string consumeProductExecutionDate, int stockEmployeeID, double consumeProductCount, double consumeProductSum,
+		int statusID, int currencyID, std::string fromDate, std::string toDate)
+	{
+		std::string tempString = "";
+		std::string filter = " where ";
+		std::vector<std::string> conditionVec;
+		if (0 != consumeProductID)
+		{
+			tempString = "";
+			tempString += " consume_product_id = ";
+			tempString += boost::lexical_cast<std::string>(consumeProductID);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != employeeID)
+		{
+			tempString = "";
+			tempString += " user_id = ";
+			tempString += boost::lexical_cast<std::string>(employeeID);
+			conditionVec.push_back(tempString);
+		}
+		if (!fromDate.empty() && !toDate.empty())
+		{
+			tempString = "";
+			tempString += " (DATE(execution_date) BETWEEN '";
+			tempString += fromDate;
+			tempString += "' AND '";
+			if (toDate.empty())
+			{
+				tempString += GetSystemDate();
+			}
+			else
+			{
+				tempString += toDate;
+			}
+			tempString += "')";
+			conditionVec.push_back(tempString);
+		}
+		if (0 != stockEmployeeID)
+		{
+			tempString = "";
+			tempString += " employee_id = ";
+			tempString += boost::lexical_cast<std::string>(stockEmployeeID);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != consumeProductCount)
+		{
+			tempString = "";
+			tempString += " count = ";
+			tempString += boost::lexical_cast<std::string>(consumeProductCount);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != consumeProductSum)
+		{
+			tempString = "";
+			tempString += " sum = ";
+			tempString += boost::lexical_cast<std::string>(consumeProductSum);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != statusID)
+		{
+			tempString = "";
+			tempString += " status_id = ";
+			tempString += boost::lexical_cast<std::string>(statusID);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != currencyID)
+		{
+			tempString = "";
+			tempString += " currency_id = ";
+			tempString += boost::lexical_cast<std::string>(currencyID);
+			conditionVec.push_back(tempString);
+		}
+		if (conditionVec.size() >= 1)
+		{
+			filter += conditionVec.at(0);
+			for (unsigned int i = 1; i < conditionVec.size(); i++)
+			{
+				filter += " AND ";
+				filter += conditionVec.at(i);
+			}
+		}
+		else
+		{
+			return "";
+		}
+		return filter;
+	}
+
 	std::string OrmasDal::GetFilterForConsumeRawList(int consuleRawListID, int consumeRawID, int productID,
 		double consumeRawListCount, double consumeRawListSum, int statusID, int currencyID)
 	{
@@ -25639,6 +25792,95 @@ namespace DataLayer{
 			tempString += " execution_date = '";
 			tempString += consumeRawExecutionDate;
 			tempString += "'";
+			conditionVec.push_back(tempString);
+		}
+		if (0 != stockEmployeeID)
+		{
+			tempString = "";
+			tempString += " employee_id = ";
+			tempString += boost::lexical_cast<std::string>(stockEmployeeID);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != consumeRawaCount)
+		{
+			tempString = "";
+			tempString += " count = ";
+			tempString += boost::lexical_cast<std::string>(consumeRawaCount);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != conusmeRawSum)
+		{
+			tempString = "";
+			tempString += " sum = ";
+			tempString += boost::lexical_cast<std::string>(conusmeRawSum);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != statusID)
+		{
+			tempString = "";
+			tempString += " status_id = ";
+			tempString += boost::lexical_cast<std::string>(statusID);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != currencyID)
+		{
+			tempString = "";
+			tempString += " currency_id = ";
+			tempString += boost::lexical_cast<std::string>(currencyID);
+			conditionVec.push_back(tempString);
+		}
+		if (conditionVec.size() >= 1)
+		{
+			filter += conditionVec.at(0);
+			for (unsigned int i = 1; i < conditionVec.size(); i++)
+			{
+				filter += " AND ";
+				filter += conditionVec.at(i);
+			}
+		}
+		else
+		{
+			return "";
+		}
+		return filter;
+	}
+
+	std::string OrmasDal::GetFilterForConsumeRawForPeriod(int consumeRawID, int userID, std::string consumeRawDate,
+		std::string consumeRawExecutionDate, int stockEmployeeID, double consumeRawaCount, double conusmeRawSum, int statusID,
+		int currencyID, std::string fromDate, std::string toDate)
+	{
+		std::string tempString = "";
+		std::string filter = " where ";
+		std::vector<std::string> conditionVec;
+		if (0 != consumeRawID)
+		{
+			tempString = "";
+			tempString += " consume_raw_id = ";
+			tempString += boost::lexical_cast<std::string>(consumeRawID);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != userID)
+		{
+			tempString = "";
+			tempString += " user_id = ";
+			tempString += boost::lexical_cast<std::string>(userID);
+			conditionVec.push_back(tempString);
+		}
+		if (!fromDate.empty() && !toDate.empty())
+		{
+			tempString = "";
+			tempString += " (DATE(execution_date) BETWEEN '";
+			tempString += fromDate;
+			tempString += "' AND '";
+			if (toDate.empty())
+			{
+				tempString += GetSystemDate();
+			}
+			else
+			{
+				tempString += toDate;
+			}
+			tempString += "')";
 			conditionVec.push_back(tempString);
 		}
 		if (0 != stockEmployeeID)
@@ -25818,6 +26060,26 @@ namespace DataLayer{
 		return filter;
 	}
 
+	std::string OrmasDal::GetINFilterForCreditorID(std::vector<int> creditorIDList)
+	{
+		std::string filter = " where creditor_id IN(";
+		std::vector<std::string> conditionVec;
+		if (creditorIDList.size() > 0)
+		{
+			filter += boost::lexical_cast<std::string>(creditorIDList.at(0));
+			for (unsigned int i = 1; i < creditorIDList.size(); i++)
+			{
+				filter += ", ";
+				filter += boost::lexical_cast<std::string>(creditorIDList.at(i));
+			}
+			filter += ")";
+		}
+		else
+		{
+			return "";
+		}
+		return filter;
+	}
 
 	std::string OrmasDal::GetFilterForDivisionAccount(int divisionAccountID, int disvisionID, 
 		int accountID, std::string accountCode)
@@ -26064,6 +26326,47 @@ namespace DataLayer{
 		return filter;
 	}
 
+	std::string OrmasDal::GetINFilterForEmployeeID(std::vector<int> employeeIDList)
+	{
+		std::string filter = " where employee_id IN(";
+		std::vector<std::string> conditionVec;
+		if (employeeIDList.size() > 0)
+		{
+			filter += boost::lexical_cast<std::string>(employeeIDList.at(0));
+			for (unsigned int i = 1; i < employeeIDList.size(); i++)
+			{
+				filter += ", ";
+				filter += boost::lexical_cast<std::string>(employeeIDList.at(i));
+			}
+			filter += ")";
+		}
+		else
+		{
+			return "";
+		}
+		return filter;
+	}
+
+	std::string OrmasDal::GetINFilterForStockEmployeeID(std::vector<int> stockEmployeeIDList)
+	{
+		std::string filter = " where stock_employee_id IN(";
+		std::vector<std::string> conditionVec;
+		if (stockEmployeeIDList.size() > 0)
+		{
+			filter += boost::lexical_cast<std::string>(stockEmployeeIDList.at(0));
+			for (unsigned int i = 1; i < stockEmployeeIDList.size(); i++)
+			{
+				filter += ", ";
+				filter += boost::lexical_cast<std::string>(stockEmployeeIDList.at(i));
+			}
+			filter += ")";
+		}
+		else
+		{
+			return "";
+		}
+		return filter;
+	}
 	std::string OrmasDal::GetFilterForEmployeeProduct(int epID, int employeeID, int productID)
 	{
 		std::string tempString = "";
@@ -27464,7 +27767,96 @@ namespace DataLayer{
 		return filter;
 	}
 
-	std::string OrmasDal::GetFilterForPayment(int paymentID, std::string paymentDate, double paymentValue, std::string paymentTarget, int userID, int currencyID, int statusID, int accountID)
+	std::string OrmasDal::GetFilterForOrderRawForPeriod(int orderRawID, int productID, std::string orderRawDate, std::string orderRawExecutionDate,
+		int employeeID, double orderRawCount, double orderRawSum, int statusID, int currencyID, std::string fromDate, std::string toDate)
+	{
+		std::string tempString = "";
+		std::string filter = " where ";
+		std::vector<std::string> conditionVec;
+		if (0 != orderRawID)
+		{
+			tempString = "";
+			tempString += " order_raw_id = ";
+			tempString += boost::lexical_cast<std::string>(orderRawID);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != productID)
+		{
+			tempString = "";
+			tempString += " purveyor_id = ";
+			tempString += boost::lexical_cast<std::string>(productID);
+			conditionVec.push_back(tempString);
+		}
+		if (!fromDate.empty() && !toDate.empty())
+		{
+			tempString = "";
+			tempString += " (DATE(execution_date) BETWEEN '";
+			tempString += fromDate;
+			tempString += "' AND '";
+			if (toDate.empty())
+			{
+				tempString += GetSystemDate();
+			}
+			else
+			{
+				tempString += toDate;
+			}
+			tempString += "')";
+			conditionVec.push_back(tempString);
+		}
+		if (0 != employeeID)
+		{
+			tempString = "";
+			tempString += " employee_id = ";
+			tempString += boost::lexical_cast<std::string>(employeeID);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != orderRawCount)
+		{
+			tempString = "";
+			tempString += " count = ";
+			tempString += boost::lexical_cast<std::string>(orderRawCount);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != orderRawSum)
+		{
+			tempString = "";
+			tempString += " sum = ";
+			tempString += boost::lexical_cast<std::string>(orderRawSum);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != statusID)
+		{
+			tempString = "";
+			tempString += " status_id = ";
+			tempString += boost::lexical_cast<std::string>(statusID);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != currencyID)
+		{
+			tempString = "";
+			tempString += " currency_id = ";
+			tempString += boost::lexical_cast<std::string>(currencyID);
+			conditionVec.push_back(tempString);
+		}
+		if (conditionVec.size() >= 1)
+		{
+			filter += conditionVec.at(0);
+			for (unsigned int i = 1; i < conditionVec.size(); i++)
+			{
+				filter += " AND ";
+				filter += conditionVec.at(i);
+			}
+		}
+		else
+		{
+			return "";
+		}
+		return filter;
+	}
+
+	std::string OrmasDal::GetFilterForPayment(int paymentID, std::string paymentDate, double paymentValue, std::string paymentTarget,
+		int userID, int currencyID, int statusID, int accountID, int subaccountID, std::string paymentWho)
 	{
 		std::string tempString = "";
 		std::string filter = " where ";
@@ -27525,6 +27917,126 @@ namespace DataLayer{
 			tempString = "";
 			tempString += " account_id = ";
 			tempString += boost::lexical_cast<std::string>(accountID);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != subaccountID)
+		{
+			tempString = "";
+			tempString += " subaccount_id = ";
+			tempString += boost::lexical_cast<std::string>(subaccountID);
+			conditionVec.push_back(tempString);
+		}
+		if (!paymentWho.empty())
+		{
+			tempString = "";
+			tempString += " who = '";
+			tempString += paymentWho;
+			tempString += "'";
+			conditionVec.push_back(tempString);
+		}
+		if (conditionVec.size() >= 1)
+		{
+			filter += conditionVec.at(0);
+			for (unsigned int i = 1; i < conditionVec.size(); i++)
+			{
+				filter += " AND ";
+				filter += conditionVec.at(i);
+			}
+		}
+		else
+		{
+			return "";
+		}
+		return filter;
+	}
+
+	std::string OrmasDal::GetFilterForPaymentForPeriod(int paymentID, std::string paymentDate, double paymentValue, 
+		std::string paymentTarget, int userID, int currencyID, int statusID, int accountID, int subaccountID, std::string paymentWho,
+		std::string fromDate, std::string toDate)
+	{
+		std::string tempString = "";
+		std::string filter = " where ";
+		std::vector<std::string> conditionVec;
+		if (0 != paymentID)
+		{
+			tempString = "";
+			tempString += " payment_id = ";
+			tempString += boost::lexical_cast<std::string>(paymentID);
+			conditionVec.push_back(tempString);
+		}
+		if (!fromDate.empty() && !toDate.empty())
+		{
+			tempString = "";
+			tempString += " (DATE(payment_date) BETWEEN '";
+			tempString += fromDate;
+			tempString += "' AND '";
+			if (toDate.empty())
+			{
+				tempString += GetSystemDate();
+			}
+			else
+			{
+				tempString += toDate;
+			}
+			tempString += "')";
+			conditionVec.push_back(tempString);
+		}
+		if (0 != paymentValue)
+		{
+			tempString = "";
+			tempString += " payment_value = ";
+			tempString += boost::lexical_cast<std::string>(paymentValue);
+			conditionVec.push_back(tempString);
+		}
+		if (!paymentTarget.empty())
+		{
+			tempString = "";
+			tempString += " payment_target = '";
+			tempString += paymentTarget;
+			tempString += "'";
+			conditionVec.push_back(tempString);
+		}
+		if (0 != userID)
+		{
+			tempString = "";
+			tempString += " user_id = ";
+			tempString += boost::lexical_cast<std::string>(userID);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != currencyID)
+		{
+			tempString = "";
+			tempString += " currency_id = ";
+			tempString += boost::lexical_cast<std::string>(currencyID);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != statusID)
+		{
+			tempString = "";
+			tempString += " status_id = ";
+			tempString += boost::lexical_cast<std::string>(statusID);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != accountID)
+		{
+			tempString = "";
+			tempString += " account_id = ";
+			tempString += boost::lexical_cast<std::string>(accountID);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != subaccountID)
+		{
+			tempString = "";
+			tempString += " subaccount_id = ";
+			tempString += boost::lexical_cast<std::string>(subaccountID);
+			conditionVec.push_back(tempString);
+		}
+		if (!paymentWho.empty())
+		{
+			tempString = "";
+			tempString += " who = '";
+			tempString += paymentWho;
+			tempString += "'";
 			conditionVec.push_back(tempString);
 		}
 		if (conditionVec.size() >= 1)
@@ -28802,6 +29314,40 @@ namespace DataLayer{
 		return filter;
 	}
 
+	std::string OrmasDal::GetINFilterForProductID(std::vector<int> productIDList)
+	{
+		std::string filter = " where product_id IN(";
+		std::vector<std::string> conditionVec;
+		if (productIDList.size() > 0)
+		{
+			filter += boost::lexical_cast<std::string>(productIDList.at(0));
+			for (unsigned int i = 1; i < productIDList.size(); i++)
+			{
+				filter += ", ";
+				filter += boost::lexical_cast<std::string>(productIDList.at(i));
+			}
+			filter += ")";
+		}
+		else
+		{
+			return "";
+		}
+		return filter;
+	}
+
+
+	std::string OrmasDal::GetLikeFilterForProductName(std::string searchKey)
+	{
+		std::string filter = "";
+		if (searchKey.size() > 0)
+		{
+			filter = " where LOWER(product_name) LIKE LOWER('";
+			filter += searchKey;
+			filter += "%')";
+		}
+		return filter;
+	}
+
 	std::string OrmasDal::GetFilterForPurveyor(int purveyorID, std::string name, std::string surname, std::string phone,
 		std::string address, std::string purveyorCompanyName, std::string password, std::string email,
 		bool activated, int roleID, int locationID)
@@ -29061,6 +29607,95 @@ namespace DataLayer{
 		return filter;
 	}
 
+	std::string OrmasDal::GetFilterForReceiptProductForPeriod(int receiptProductID, int employeeID, std::string receiptProductDate,
+		std::string receiptProductExecutionDate, int stockEmployeeID, double receiptProductCount, double receiptProductSum,
+		int statusID, int currencyID, std::string fromDate, std::string toDate)
+	{
+		std::string tempString = "";
+		std::string filter = " where ";
+		std::vector<std::string> conditionVec;
+		if (0 != receiptProductID)
+		{
+			tempString = "";
+			tempString += " receipt_product_id = ";
+			tempString += boost::lexical_cast<std::string>(receiptProductID);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != employeeID)
+		{
+			tempString = "";
+			tempString += " user_id = ";
+			tempString += boost::lexical_cast<std::string>(employeeID);
+			conditionVec.push_back(tempString);
+		}
+		if (!fromDate.empty() && !toDate.empty())
+		{
+			tempString = "";
+			tempString += " (DATE(execution_date) BETWEEN '";
+			tempString += fromDate;
+			tempString += "' AND '";
+			if (toDate.empty())
+			{
+				tempString += GetSystemDate();
+			}
+			else
+			{
+				tempString += toDate;
+			}
+			tempString += "')";
+			conditionVec.push_back(tempString);
+		}
+		if (0 != stockEmployeeID)
+		{
+			tempString = "";
+			tempString += " employee_id = ";
+			tempString += boost::lexical_cast<std::string>(stockEmployeeID);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != receiptProductCount)
+		{
+			tempString = "";
+			tempString += " count = ";
+			tempString += boost::lexical_cast<std::string>(receiptProductCount);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != receiptProductSum)
+		{
+			tempString = "";
+			tempString += " sum = ";
+			tempString += boost::lexical_cast<std::string>(receiptProductSum);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != statusID)
+		{
+			tempString = "";
+			tempString += " status_id = ";
+			tempString += boost::lexical_cast<std::string>(statusID);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != currencyID)
+		{
+			tempString = "";
+			tempString += " currency_id = ";
+			tempString += boost::lexical_cast<std::string>(currencyID);
+			conditionVec.push_back(tempString);
+		}
+		if (conditionVec.size() >= 1)
+		{
+			filter += conditionVec.at(0);
+			for (unsigned int i = 1; i < conditionVec.size(); i++)
+			{
+				filter += " AND ";
+				filter += conditionVec.at(i);
+			}
+		}
+		else
+		{
+			return "";
+		}
+		return filter;
+	}
+
 	std::string OrmasDal::GetFilterForStockTransferList(int stockTransferListID, int stockTransferID, int productID, 
 		double stockTransferListCount, double stockTransferListSum, int statusID, int currencyID)
 	{
@@ -29167,6 +29802,95 @@ namespace DataLayer{
 			tempString += " execution_date = '";
 			tempString += stockTransferExecutionDate;
 			tempString += "'";
+			conditionVec.push_back(tempString);
+		}
+		if (0 != stockEmployeeID)
+		{
+			tempString = "";
+			tempString += " employee_id = ";
+			tempString += boost::lexical_cast<std::string>(stockEmployeeID);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != stockTransferCount)
+		{
+			tempString = "";
+			tempString += " count = ";
+			tempString += boost::lexical_cast<std::string>(stockTransferCount);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != stockTransferSum)
+		{
+			tempString = "";
+			tempString += " sum = ";
+			tempString += boost::lexical_cast<std::string>(stockTransferSum);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != statusID)
+		{
+			tempString = "";
+			tempString += " status_id = ";
+			tempString += boost::lexical_cast<std::string>(statusID);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != currencyID)
+		{
+			tempString = "";
+			tempString += " currency_id = ";
+			tempString += boost::lexical_cast<std::string>(currencyID);
+			conditionVec.push_back(tempString);
+		}
+		if (conditionVec.size() >= 1)
+		{
+			filter += conditionVec.at(0);
+			for (unsigned int i = 1; i < conditionVec.size(); i++)
+			{
+				filter += " AND ";
+				filter += conditionVec.at(i);
+			}
+		}
+		else
+		{
+			return "";
+		}
+		return filter;
+	}
+
+	std::string OrmasDal::GetFilterForStockTransferForPeriod(int stockTransferID, int employeeID, std::string stockTransferDate,
+		std::string stockTransferExecutionDate, int stockEmployeeID, double stockTransferCount, double stockTransferSum,
+		int statusID, int currencyID, std::string fromDate, std::string toDate)
+	{
+		std::string tempString = "";
+		std::string filter = " where ";
+		std::vector<std::string> conditionVec;
+		if (0 != stockTransferID)
+		{
+			tempString = "";
+			tempString += " stock_transfer_id = ";
+			tempString += boost::lexical_cast<std::string>(stockTransferID);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != employeeID)
+		{
+			tempString = "";
+			tempString += " user_id = ";
+			tempString += boost::lexical_cast<std::string>(employeeID);
+			conditionVec.push_back(tempString);
+		}
+		if (!fromDate.empty() && !toDate.empty())
+		{
+			tempString = "";
+			tempString += " (DATE(execution_date) BETWEEN '";
+			tempString += fromDate;
+			tempString += "' AND '";
+			if (toDate.empty())
+			{
+				tempString += GetSystemDate();
+			}
+			else
+			{
+				tempString += toDate;
+			}
+			tempString += "')";
 			conditionVec.push_back(tempString);
 		}
 		if (0 != stockEmployeeID)
@@ -30963,6 +31687,27 @@ namespace DataLayer{
 		return filter;
 	}
 
+	std::string OrmasDal::GetINFilterForUserID(std::vector<int> userIDList)
+	{
+		std::string filter = " where user_id IN(";
+		std::vector<std::string> conditionVec;
+		if (userIDList.size() > 0)
+		{
+			filter += boost::lexical_cast<std::string>(userIDList.at(0));
+			for (unsigned int i = 1; i < userIDList.size(); i++)
+			{
+				filter += ", ";
+				filter += boost::lexical_cast<std::string>(userIDList.at(i));
+			}
+			filter += ")";
+		}
+		else
+		{
+			return "";
+		}
+		return filter;
+	}
+
 	std::string OrmasDal::GetFilterForWarehouse(int warehouseID, std::string warehouseName, std::string warehouseAddress, std::string warehousePhone,
 		int warehouseTypeID, int subaccountID)
 	{
@@ -31125,7 +31870,7 @@ namespace DataLayer{
 	}
 
 	std::string OrmasDal::GetFilterForWithdrawal(int withdrawalID, std::string withdrawalDate, double withdrawalValue, int userID,
-		int sabID, std::string withdrawalTarget, int currencyID, int statusID, int accountID)
+		int sabID, std::string withdrawalTarget, int currencyID, int statusID, int accountID, std::string withdrawalWho)
 	{
 		std::string tempString = "";
 		std::string filter = " where ";
@@ -31193,6 +31938,118 @@ namespace DataLayer{
 			tempString = "";
 			tempString += " account_id = ";
 			tempString += boost::lexical_cast<std::string>(accountID);
+			conditionVec.push_back(tempString);
+		}
+		if (!withdrawalWho.empty())
+		{
+			tempString = "";
+			tempString += " who = '";
+			tempString += withdrawalWho;
+			tempString += "'";
+			conditionVec.push_back(tempString);
+		}
+		if (conditionVec.size() >= 1)
+		{
+			filter += conditionVec.at(0);
+			for (unsigned int i = 1; i < conditionVec.size(); i++)
+			{
+				filter += " AND ";
+				filter += conditionVec.at(i);
+			}
+		}
+		else
+		{
+			return "";
+		}
+		return filter;
+	}
+
+	std::string OrmasDal::GetFilterForWithdrawalForPeriod(int withdrawalID, std::string withdrawalDate, double withdrawalValue, int userID,
+		int sabID, std::string withdrawalTarget, int currencyID, int statusID, int accountID, std::string withdrawalWho, std::string fromDate, std::string toDate)
+	{
+		std::string tempString = "";
+		std::string filter = " where ";
+		std::vector<std::string> conditionVec;
+		if (0 != withdrawalID)
+		{
+			tempString = "";
+			tempString += " withdrawal_id = ";
+			tempString += boost::lexical_cast<std::string>(withdrawalID);
+			conditionVec.push_back(tempString);
+		}
+		if (!fromDate.empty() && !toDate.empty())
+		{
+			tempString = "";
+			tempString += " (DATE(withdrawal_date) BETWEEN '";
+			tempString += fromDate;
+			tempString += "' AND '";
+			if (toDate.empty())
+			{
+				tempString += GetSystemDate();
+			}
+			else
+			{
+				tempString += toDate;
+			}
+			tempString += "')";
+			conditionVec.push_back(tempString);
+		}
+		if (0 != withdrawalValue)
+		{
+			tempString = "";
+			tempString += " withdrawal_value = ";
+			tempString += boost::lexical_cast<std::string>(withdrawalValue);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != sabID)
+		{
+			tempString = "";
+			tempString += " subaccount_id = ";
+			tempString += boost::lexical_cast<std::string>(sabID);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != userID)
+		{
+			tempString = "";
+			tempString += " user_id = ";
+			tempString += boost::lexical_cast<std::string>(userID);
+			conditionVec.push_back(tempString);
+		}
+		if (!withdrawalTarget.empty())
+		{
+			tempString = "";
+			tempString += " withdrawal_target = '";
+			tempString += withdrawalDate;
+			tempString += "'";
+			conditionVec.push_back(tempString);
+		}
+		if (0 != currencyID)
+		{
+			tempString = "";
+			tempString += " currency_id = ";
+			tempString += boost::lexical_cast<std::string>(currencyID);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != statusID)
+		{
+			tempString = "";
+			tempString += " status_id = ";
+			tempString += boost::lexical_cast<std::string>(statusID);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != accountID)
+		{
+			tempString = "";
+			tempString += " account_id = ";
+			tempString += boost::lexical_cast<std::string>(accountID);
+			conditionVec.push_back(tempString);
+		}
+		if (!withdrawalWho.empty())
+		{
+			tempString = "";
+			tempString += " who = '";
+			tempString += withdrawalWho;
+			tempString += "'";
 			conditionVec.push_back(tempString);
 		}
 		if (conditionVec.size() >= 1)
@@ -31369,6 +32226,94 @@ namespace DataLayer{
 		return filter;
 	}
 
+	std::string OrmasDal::GetFilterForWriteOffForPeriod(int writeOffID, int userID, std::string writeOffDate, std::string executionDate,
+		int employeeID, double writeOffCount, double writeOffSum, int statusID, int currencyID, std::string fromDate, std::string toDate)
+	{
+		std::string tempString = "";
+		std::string filter = " where ";
+		std::vector<std::string> conditionVec;
+		if (0 != writeOffID)
+		{
+			tempString = "";
+			tempString += " write_off_id = ";
+			tempString += boost::lexical_cast<std::string>(writeOffID);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != userID)
+		{
+			tempString = "";
+			tempString += " user_id = ";
+			tempString += boost::lexical_cast<std::string>(userID);
+			conditionVec.push_back(tempString);
+		}
+		if (!fromDate.empty() && !toDate.empty())
+		{
+			tempString = "";
+			tempString += " (DATE(execution_date) BETWEEN '";
+			tempString += fromDate;
+			tempString += "' AND '";
+			if (toDate.empty())
+			{
+				tempString += GetSystemDate();
+			}
+			else
+			{
+				tempString += toDate;
+			}
+			tempString += "')";
+			conditionVec.push_back(tempString);
+		}
+		if (0 != employeeID)
+		{
+			tempString = "";
+			tempString += " employee_id = ";
+			tempString += boost::lexical_cast<std::string>(employeeID);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != writeOffCount)
+		{
+			tempString = "";
+			tempString += " count = ";
+			tempString += boost::lexical_cast<std::string>(writeOffCount);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != writeOffSum)
+		{
+			tempString = "";
+			tempString += " sum = ";
+			tempString += boost::lexical_cast<std::string>(writeOffSum);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != statusID)
+		{
+			tempString = "";
+			tempString += " status_id = ";
+			tempString += boost::lexical_cast<std::string>(statusID);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != currencyID)
+		{
+			tempString = "";
+			tempString += " currency_id = ";
+			tempString += boost::lexical_cast<std::string>(currencyID);
+			conditionVec.push_back(tempString);
+		}
+		if (conditionVec.size() >= 1)
+		{
+			filter += conditionVec.at(0);
+			for (unsigned int i = 1; i < conditionVec.size(); i++)
+			{
+				filter += " AND ";
+				filter += conditionVec.at(i);
+			}
+		}
+		else
+		{
+			return "";
+		}
+		return filter;
+	}
+
 	std::string OrmasDal::GetFilterForWriteOffRawList(int writeOffRawListID, int writeOffRawID, int productID, 
 		double writeOffRawListCount, double writeOffRawListSum, int statusID, int currencyID)
 	{
@@ -31475,6 +32420,95 @@ namespace DataLayer{
 			tempString += " execution_date = '";
 			tempString += executionDate;
 			tempString += "'";
+			conditionVec.push_back(tempString);
+		}
+		if (0 != stockEmployeeID)
+		{
+			tempString = "";
+			tempString += " employee_id = ";
+			tempString += boost::lexical_cast<std::string>(stockEmployeeID);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != writeOffRawListCount)
+		{
+			tempString = "";
+			tempString += " count = ";
+			tempString += boost::lexical_cast<std::string>(writeOffRawListCount);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != writeOffRawListSum)
+		{
+			tempString = "";
+			tempString += " sum = ";
+			tempString += boost::lexical_cast<std::string>(writeOffRawListSum);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != statusID)
+		{
+			tempString = "";
+			tempString += " status_id = ";
+			tempString += boost::lexical_cast<std::string>(statusID);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != currencyID)
+		{
+			tempString = "";
+			tempString += " currency_id = ";
+			tempString += boost::lexical_cast<std::string>(currencyID);
+			conditionVec.push_back(tempString);
+		}
+		if (conditionVec.size() >= 1)
+		{
+			filter += conditionVec.at(0);
+			for (unsigned int i = 1; i < conditionVec.size(); i++)
+			{
+				filter += " AND ";
+				filter += conditionVec.at(i);
+			}
+		}
+		else
+		{
+			return "";
+		}
+		return filter;
+	}
+
+	std::string OrmasDal::GetFilterForWriteOffRawForPeriod(int writeOffRawID, int employeeID, std::string writeOffRawDate,
+		std::string executionDate, int stockEmployeeID, double writeOffRawListCount, double writeOffRawListSum,
+		int statusID, int currencyID, std::string fromDate, std::string toDate)
+	{
+		std::string tempString = "";
+		std::string filter = " where ";
+		std::vector<std::string> conditionVec;
+		if (0 != writeOffRawID)
+		{
+			tempString = "";
+			tempString += " write_off_raw_id = ";
+			tempString += boost::lexical_cast<std::string>(writeOffRawID);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != employeeID)
+		{
+			tempString = "";
+			tempString += " user_id = ";
+			tempString += boost::lexical_cast<std::string>(employeeID);
+			conditionVec.push_back(tempString);
+		}
+		if (!fromDate.empty() && !toDate.empty())
+		{
+			tempString = "";
+			tempString += " (DATE(execution_date) BETWEEN '";
+			tempString += fromDate;
+			tempString += "' AND '";
+			if (toDate.empty())
+			{
+				tempString += GetSystemDate();
+			}
+			else
+			{
+				tempString += toDate;
+			}
+			tempString += "')";
 			conditionVec.push_back(tempString);
 		}
 		if (0 != stockEmployeeID)

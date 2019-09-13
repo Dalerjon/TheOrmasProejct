@@ -16,6 +16,9 @@ CreateCbxDlg::CreateCbxDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, QWi
 	parentForm = parent;
 	if (true == updateFlag)
 	{
+		DataForm *parentDataForm = (DataForm*)parentForm;
+		itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
+		mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
 		QObject::connect(okBtn, &QPushButton::released, this, &CreateCbxDlg::EditCashbox);
 		
 	}
@@ -181,8 +184,6 @@ void CreateCbxDlg::EditCashbox()
 				{
 					if (!parentDataForm->IsClosed())
 					{
-						QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
-						QModelIndex mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
 						itemModel->item(mIndex.row(), 1)->setText(subaccount->GetNumber().c_str());
 						itemModel->item(mIndex.row(), 2)->setText(cashbox->GetInformation().c_str());
 						itemModel->item(mIndex.row(), 3)->setText(cashbox->GetAddress().c_str());

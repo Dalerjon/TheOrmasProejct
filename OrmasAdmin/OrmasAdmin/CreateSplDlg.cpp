@@ -23,6 +23,9 @@ CreateSplDlg::CreateSplDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, QWi
 	
 	if (true == updateFlag)
 	{
+		DataForm *parentDataForm = (DataForm*)parentForm;
+		itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
+		mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
 		QObject::connect(okBtn, &QPushButton::released, this, &CreateSplDlg::EditSpoilage);
 	}
 	else
@@ -84,8 +87,8 @@ void CreateSplDlg::FillEditElements(QString sDate, int sEmployeeID, double sCoun
 {
 	dateEdit->setDateTime(QDateTime::fromString(sDate, "dd.MM.yyyy hh:mm"));
 	employeeEdit->setText(QString::number(sEmployeeID));
-	prodCountEdit->setText(QString::number(sCount));
-	sumEdit->setText(QString::number(sSum));
+	prodCountEdit->setText(QString::number(sCount, 'f', 3));
+	sumEdit->setText(QString::number(sSum, 'f', 3));
 	statusEdit->setText(QString::number(sStatusID));
 	currencyCmb->setCurrentIndex(currencyCmb->findData(QVariant(sCurrencyID)));
 	BusinessLayer::User user;
@@ -229,8 +232,8 @@ void CreateSplDlg::CreateSpoilage()
 
 					QList<QStandardItem*> spoilageItem;
 					spoilageItem << new QStandardItem(QString::number(spoilage->GetID()))
-						<< new QStandardItem(QString::number(spoilage->GetCount()))
-						<< new QStandardItem(QString::number(spoilage->GetSum()))
+						<< new QStandardItem(QString::number(spoilage->GetCount(), 'f', 3))
+						<< new QStandardItem(QString::number(spoilage->GetSum(),'f',3))
 						<< new QStandardItem(currency->GetShortName().c_str())
 						<< new QStandardItem(status->GetName().c_str());
 
@@ -304,8 +307,6 @@ void CreateSplDlg::EditSpoilage()
 					if (!parentDataForm->IsClosed())
 					{
 						//updating Spoilage data
-						QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
-						QModelIndex mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
 						itemModel->item(mIndex.row(), 1)->setText(spoilage->GetDate().c_str());
 
 						BusinessLayer::Employee *employee = new BusinessLayer::Employee();
@@ -346,8 +347,8 @@ void CreateSplDlg::EditSpoilage()
 							}
 						}
 
-						itemModel->item(mIndex.row(), 2)->setText(QString::number(spoilage->GetCount()));
-						itemModel->item(mIndex.row(), 3)->setText(QString::number(spoilage->GetSum()));
+						itemModel->item(mIndex.row(), 2)->setText(QString::number(spoilage->GetCount(), 'f', 3));
+						itemModel->item(mIndex.row(), 3)->setText(QString::number(spoilage->GetSum(),'f',3));
 						itemModel->item(mIndex.row(), 4)->setText(currency->GetShortName().c_str());
 						itemModel->item(mIndex.row(), 5)->setText(status->GetName().c_str());
 						if (spoilage->GetEmployeeID() > 0)

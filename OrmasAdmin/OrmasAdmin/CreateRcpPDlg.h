@@ -4,6 +4,7 @@
 #include "ui_CreateRcpPDlg.h"
 #include "OrmasBL.h"
 #include "MainForm.h"
+#include <QStandardItemModel>
 
 class CreateRcpPDlg : public QDialog, public Ui::CreateReceiptProduct
 {
@@ -40,5 +41,7 @@ private:
 	QWidget* parentForm;
 	MainForm* mainForm;
 	bool CheckAccess();
+	QStandardItemModel *itemModel;
+	QModelIndex mIndex;
 };
 #endif //CREATERCPPDLG_H

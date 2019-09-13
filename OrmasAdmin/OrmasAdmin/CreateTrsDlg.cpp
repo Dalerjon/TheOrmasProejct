@@ -35,6 +35,9 @@ CreateTrsDlg::CreateTrsDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, QWi
 	 
 	if (true == updateFlag)
 	{
+		DataForm *parentDataForm = (DataForm*)parentForm;
+		itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
+		mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
 		QObject::connect(okBtn, &QPushButton::released, this, &CreateTrsDlg::EditTransport);
 	}
 	else
@@ -110,8 +113,8 @@ void CreateTrsDlg::FillEditElements(int tUserID, QString tDate, QString tExecDat
 		execDateEdit->setDateTime(QDateTime::fromString(tExecDate, "dd.MM.yyyy hh:mm"));
 	}
 	stockEmployeeEdit->setText(QString::number(tEmployeeID));
-	prodCountEdit->setText(QString::number(tCount));
-	sumEdit->setText(QString::number(tSum));
+	prodCountEdit->setText(QString::number(tCount, 'f', 3));
+	sumEdit->setText(QString::number(tSum, 'f', 3));
 	statusEdit->setText(QString::number(tStatusID));
 	currencyCmb->setCurrentIndex(currencyCmb->findData(QVariant(tCurrencyID)));
 	BusinessLayer::User user1;
@@ -367,8 +370,8 @@ void CreateTrsDlg::CreateTransport()
 							<< new QStandardItem("")
 							<< new QStandardItem("");
 					}
-					transportItem << new QStandardItem(QString::number(transport->GetCount()))
-						<< new QStandardItem(QString::number(transport->GetSum()))
+					transportItem << new QStandardItem(QString::number(transport->GetCount(), 'f', 3))
+						<< new QStandardItem(QString::number(transport->GetSum(),'f',3))
 						<< new QStandardItem(currency->GetShortName().c_str())
 						<< new QStandardItem(QString::number(transport->GetEmployeeID()))
 						<< new QStandardItem(QString::number(transport->GetUserID()))
@@ -436,8 +439,7 @@ void CreateTrsDlg::EditTransport()
 					if (!parentDataForm->IsClosed())
 					{
 						//updating Transport data
-						QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
-						QModelIndex mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
+						
 						itemModel->item(mIndex.row(), 1)->setText(transport->GetDate().c_str());
 						itemModel->item(mIndex.row(), 2)->setText(transport->GetExecutionDate().c_str());
 
@@ -528,8 +530,8 @@ void CreateTrsDlg::EditTransport()
 							itemModel->item(mIndex.row(), 12)->setText("");
 						}
 
-						itemModel->item(mIndex.row(), 13)->setText(QString::number(transport->GetCount()));
-						itemModel->item(mIndex.row(), 14)->setText(QString::number(transport->GetSum()));
+						itemModel->item(mIndex.row(), 13)->setText(QString::number(transport->GetCount(), 'f', 3));
+						itemModel->item(mIndex.row(), 14)->setText(QString::number(transport->GetSum(),'f',3));
 						itemModel->item(mIndex.row(), 15)->setText(currency->GetShortName().c_str());
 						itemModel->item(mIndex.row(), 16)->setText(QString::number(transport->GetEmployeeID()));
 						itemModel->item(mIndex.row(), 17)->setText(QString::number(transport->GetUserID()));
@@ -828,10 +830,17 @@ void CreateTrsDlg::StatusWasChenged()
 {
 	errorMessage = "";
 	statusMap = BusinessLayer::Status::GetStatusesAsMap(dialogBL->GetOrmasDal(), errorMessage);
-	if (statusEdit->text().toInt() == statusMap.find("EXECUTED")->second)
+	if (statusEdit->text().toInt() == statusMap.find("EXECUTED")->second
+		|| statusEdit->text().toInt() == statusMap.find("RETURN")->second
+		|| statusEdit->text().toInt() == statusMap.find("ERROR")->second)
 	{
 		execDateWidget->setVisible(true);
 		execDateEdit->setDateTime(QDateTime::currentDateTime());
+	}
+	else
+	{
+		execDateWidget->setVisible(false);
+		execDateEdit->setDateTime(QDateTime::fromString("01.01.2000", "dd.mm.yyyy"));
 	}
 }
 

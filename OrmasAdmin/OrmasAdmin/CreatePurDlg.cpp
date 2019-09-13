@@ -28,6 +28,9 @@ CreatePurDlg::CreatePurDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, QWi
 
 	if (true == updateFlag)
 	{
+		DataForm *parentDataForm = (DataForm*)parentForm;
+		itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
+		mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
 		QObject::connect(okBtn, &QPushButton::released, this, &CreatePurDlg::EditPurveyor);
 	}
 	else
@@ -264,8 +267,7 @@ void CreatePurDlg::EditPurveyor()
 					if (!parentDataForm->IsClosed())
 					{
 						//updating Pur data
-						QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
-						QModelIndex mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
+						
 						itemModel->item(mIndex.row(), 1)->setText(purveyor->GetName().c_str());
 						itemModel->item(mIndex.row(), 2)->setText(purveyor->GetSurname().c_str());
 						itemModel->item(mIndex.row(), 3)->setText(purveyor->GetPhone().c_str());

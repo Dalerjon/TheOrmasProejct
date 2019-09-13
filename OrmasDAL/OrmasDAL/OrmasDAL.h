@@ -308,7 +308,8 @@ namespace DataLayer{
 		bool CreateOrderRawList(int orderRawListID, int orderRawID, int productID, double orderRawListCount, double orderRawSum, int statusID, int currencyID, std::string& errorMessage);
 		bool CreateOrderRaw(int orderRawID, int productID, std::string orderRawDate, std::string orderRawExecutionDate, 
 			int employeeID, double orderRawCount, double orderRawSum, int statusID, int currencyID, std::string& errorMessage);
-		bool CreatePayment(int paymentID, std::string paymentDate, double paymentValue, std::string paymentTarget, int userID, int currencyID, int statusID, int accountID, std::string& errorMessage);
+		bool CreatePayment(int paymentID, std::string paymentDate, double paymentValue, std::string paymentTarget, int userID, int currencyID,
+			int statusID, int accountID, int subaccountID, std::string pWho, std::string& errorMessage);
 		bool CreatePaymentEmployee(int paymentEmployeeID, int paymentID, int employeeID, std::string& errorMessage);
 		bool CreatePayslip(int payslipID, std::string payslipDate, double payslipValue, int statusID, int currencyID, std::string& errorMessage);
 		bool CreatePayslipOrder(int payslipOrderID, int payslipID, int orderID, std::string& errorMessage);
@@ -375,7 +376,7 @@ namespace DataLayer{
 			int warehouseTypeID, int subaccountID, std::string& errorMessage);
 		bool CreateWarehouseType(int warehouseTypeID, std::string wTypeCode, std::string wTypePurpose, std::string wTypeName, std::string& errorMessage);
 		bool CreateWarehouseEmployee(int weID, int weWarehouseID, int weEmployeeID, std::string& errorMessage);
-		bool CreateWithdrawal(int withdrawalID, std::string withdrawalDate, double withdrawalValue, int userID, int sabID, std::string withdrawalTarget, int currencyID, int statusID, int accountID, std::string& errorMessage);
+		bool CreateWithdrawal(int withdrawalID, std::string withdrawalDate, double withdrawalValue, int userID, int sabID, std::string withdrawalTarget, int currencyID, int statusID, int accountID, std::string pWho, std::string& errorMessage);
 		bool CreateWriteOffList(int writeOffListID, int writeOffID, int productID, double writeOffListCount, double writeOffListSum, int statusID, int currencyID, std::string& errorMessage);
 		bool CreateWriteOff(int writeOffID, int userID, std::string writeOffDate, std::string executionDate, int employeeID, double writeOffCount, double writeOffSum, int statusID, int currencyID, std::string& errorMessage);
 		bool CreateWriteOffRawList(int writeOffRawListID, int writeOffRawID, int productID, double writeOffRawListCount, double writeOffRawListSum, int statusID, int currencyID, std::string& errorMessage);
@@ -566,7 +567,8 @@ namespace DataLayer{
 		bool UpdateOrderRawList(int orderRawListID, int orderRawID, int productID, double orderRawListCount, double orderRawSum, int statusID, int currencyID, std::string& errorMessage);
 		bool UpdateOrderRaw(int orderRawID, int productID, std::string orderRawDate, std::string orderRawExecutionDate,
 			int employeeID, double orderRawCount, double orderRawSum, int statusID, int currencyID, std::string& errorMessage);
-		bool UpdatePayment(int paymentID, std::string paymentDate, double paymentValue, std::string paymentTarget, int userID, int currencyID, int statusID, int accountID, std::string& errorMessage);
+		bool UpdatePayment(int paymentID, std::string paymentDate, double paymentValue, std::string paymentTarget, int userID, int currencyID, 
+			int statusID, int accountID, int subaccountID, std::string pWho, std::string& errorMessage);
 		bool UpdatePaymentEmployee(int paymentEmployeeID, int paymentID, int employeeID, std::string& errorMessage);
 		bool UpdatePayslip(int payslipID, std::string payslipDate, double payslipValue, int statusID, int currencyID, std::string& errorMessage);
 		bool UpdatePercentRate(int percentRateID, double percentRateValue, std::string percentRateCondition, int positionID, std::string& errorMessage);
@@ -631,12 +633,15 @@ namespace DataLayer{
 			int warehouseTypeID, int subaccountID, std::string& errorMessage);
 		bool UpdateWarehouseType(int warehouseTypeID, std::string wTypeCode, std::string wTypePurpose, std::string wTypeName, std::string& errorMessage);
 		bool UpdateWarehouseEmployee(int weID, int weWarehouseID, int weEmployeeID, std::string& errorMessage);
-		bool UpdateWithdrawal(int withdrawalID, std::string withdrawalDate, double withdrawalValue, int userID, int sabID, std::string withdrawalTarget, int currencyID, int statusID, int accountID, std::string& errorMessage);
+		bool UpdateWithdrawal(int withdrawalID, std::string withdrawalDate, double withdrawalValue, int userID, int sabID, std::string withdrawalTarget, int currencyID, int statusID, int accountID, std::string pWho, std::string& errorMessage);
 		bool UpdateWriteOffList(int writeOffListID, int writeOffID, int productID, double writeOffListCount, double writeOffListSum, int statusID, int currencyID, std::string& errorMessage);
 		bool UpdateWriteOff(int writeOffID, int userID, std::string writeOffDate, std::string executionDate, int employeeID, double writeOffCount, double writeOffSum, int statusID, int currencyID, std::string& errorMessage);
 		bool UpdateWriteOffRawList(int writeOffRawListID, int writeOffRawID, int productID, double writeOffRawListCount, double writeOffRawListSum, int statusID, int currencyID, std::string& errorMessage);
 		bool UpdateWriteOffRaw(int writeOffRawID, int employeeID, std::string writeOffRawListDate, std::string executionDate, int stockEmployeeID, double writeOffRawListCount, double writeOffRawListSum, int statusID, int currencyID, std::string& errorMessage);
 
+		//Concatenate filters
+		std::string ConcatenateFilters(std::vector<std::string> filterList);
+		
 		//Filter factory
 		std::string GetFilterForAccessItem(int accessItemID, std::string accessItemEng, std::string accessItemRu, std::string accessItemDivision);
 		std::string GetFilterForAccess(int accessID, int roleID, int accessItemID);
@@ -668,18 +673,25 @@ namespace DataLayer{
 			double consumeListSum, int statusID, int currencyID);
 		std::string GetFilterForConsumeProduct(int consumeProductID, int employeeID, std::string consumeProductDate, std::string consumeProductExecutionDate,
 			int stockEmployeeID, double consumeProductCount, double consumeProductSum, int statusID, int currencyID);
+		std::string GetFilterForConsumeProductForPeriod(int consumeProductID, int employeeID, std::string consumeProductDate, std::string consumeProductExecutionDate,
+			int stockEmployeeID, double consumeProductCount, double consumeProductSum, int statusID, int currencyID, std::string fromDate, std::string toDate);
 		std::string GetFilterForConsumeRawList(int consuleRawListID, int consumeRawID, int productID, double consumeRawListCount, double consumeRawListSum,
 			int statusID, int currencyID);
 		std::string GetFilterForConsumeRaw(int consumeRawID, int userID, std::string consumeRawDate, std::string consumeRawExecutionDate,
 			int stockEmployeeID, double consumeRawaCount, double conusmeRawSum, int statusID, int currencyID);
+		std::string GetFilterForConsumeRawForPeriod(int consumeRawID, int userID, std::string consumeRawDate, std::string consumeRawExecutionDate,
+			int stockEmployeeID, double consumeRawaCount, double conusmeRawSum, int statusID, int currencyID, std::string fromDate, std::string toDate);
 		std::string GetFilterForCurrency(int currenycID, int currencyCode, std::string currencyShortName, std::string currencyName, int currencyUnit, bool cMainTrade);
 		std::string GetFilterForCreditor(int creditorID, std::string creditorName, std::string creditorAddress, std::string creditorPhone, int companyID, int userID);
+		std::string GetINFilterForCreditorID(std::vector<int> creditorIDList);
 		std::string GetFilterForDivisionAccount(int divisionAccountID, int disvisionID, int accountID, std::string accountCode);
 		std::string GetFilterForDivisionEmployee(int divisionEmployeeID, int disvisionID, int employeeID, bool isContract);
 		std::string GetFilterForDivision(int divisionID, std::string divisionName, std::string divisionCode);
 		std::string GetFilterForEmployee(int employeeID, std::string name, std::string surname, std::string phone, 
 			std::string address, std::string birthDate, std::string hireDate, std::string password, 
 			std::string email, bool activated, int roleID, int positionID);
+		std::string GetINFilterForEmployeeID(std::vector<int> employeeIDList);
+		std::string GetINFilterForStockEmployeeID(std::vector<int> stockEmployeeIDList);
 		std::string GetFilterForEmployeeProduct(int epID, int employeeID, int productID);
 		std::string GetFilterForEntry(int entryID, std::string entryDate, int debbitingAccountID, double entryValue, int creditingAccountID, std::string description);
 		std::string GetFilterForEntryForPeriod(int entryID, std::string entryDate, int debbitingAccountID, double entryValue, int creditingAccountID, std::string description,
@@ -710,7 +722,12 @@ namespace DataLayer{
 		std::string GetFilterForOrderRawList(int orderRawListID, int orderRawID, int productID, double orderRawListCount, double orderRawSum, int statusID, int currencyID);
 		std::string GetFilterForOrderRaw(int orderRawID, int productID, std::string orderRawDate, std::string orderRawExecutionDate,
 			int employeeID, double orderRawCount, double orderRawSum, int statusID, int currencyID);
-		std::string GetFilterForPayment(int paymentID, std::string paymentDate, double paymentValue, std::string paymentTarget, int userID, int currencyID, int statusID, int accountID);
+		std::string GetFilterForOrderRawForPeriod(int orderRawID, int productID, std::string orderRawDate, std::string orderRawExecutionDate,
+			int employeeID, double orderRawCount, double orderRawSum, int statusID, int currencyID, std::string fromDate, std::string toDate);
+		std::string GetFilterForPayment(int paymentID, std::string paymentDate, double paymentValue, std::string paymentTarget, int userID,
+			int currencyID, int statusID, int accountID, int subaccountID, std::string pWho);
+		std::string GetFilterForPaymentForPeriod(int paymentID, std::string paymentDate, double paymentValue, std::string paymentTarget, int userID,
+			int currencyID, int statusID, int accountID, int subaccountID, std::string pWho, std::string fromDate, std::string toDate);
 		std::string GetFilterForPaymentEmployee(int paymentEmployeeID, int paymentID, int employeeID);
 		std::string GetFilterForPayslip(int payslipID, std::string payslipDate, double payslipValue, int statusID, int currencyID);
 		std::string GetFilterForPayslipOrder(int payslipOrderID, int payslipID, int orderID);
@@ -739,6 +756,8 @@ namespace DataLayer{
 			int statusID, int currencyID, int warehouseID);
 		std::string GetFilterForProduct(int productID, int companyID, std::string productName, double productVolume, int measureID, double productPrice, int productTypeID, int productShelfLife,
 			int currencyID);
+		std::string GetINFilterForProductID(std::vector<int> productIDList);
+		std::string GetLikeFilterForProductName(std::string searchKey);
 		std::string GetFilterForPurveyor(int purveyorID, std::string name, std::string surname, std::string phone,
 			std::string address, std::string purveyorCompanyName, std::string password, std::string email,
 			bool activated, int roleID, int locationID);
@@ -746,8 +765,14 @@ namespace DataLayer{
 		std::string GetFilterForReceiptProduct(int receiptProductID, int employeeID, std::string receiptProductDate,
 			std::string receiptProductExecutionDate, int stockEmployeeID, double receiptProductCount, double receiptProductSum,
 			int statusID, int currencyID);
+		std::string GetFilterForReceiptProductForPeriod(int receiptProductID, int employeeID, std::string receiptProductDate,
+			std::string receiptProductExecutionDate, int stockEmployeeID, double receiptProductCount, double receiptProductSum,
+			int statusID, int currencyID, std::string fromDate, std::string toDate);
 		std::string GetFilterForStockTransferList(int stockTransferListID, int stockTransferID, int productID, double stockTransferListCount, double stockTransferListSum, int statusID, int currencyID);
-		std::string GetFilterForStockTransfer(int stockTransferID, int employeeID, std::string stockTransferDate, std::string stockTransferExecutionDate, int stockEmployeeID, double stockTransferCount, double stockTransferSum, int statusID, int currencyID);
+		std::string GetFilterForStockTransfer(int stockTransferID, int employeeID, std::string stockTransferDate, std::string stockTransferExecutionDate, int stockEmployeeID,
+			double stockTransferCount, double stockTransferSum, int statusID, int currencyID);
+		std::string GetFilterForStockTransferForPeriod(int stockTransferID, int employeeID, std::string stockTransferDate, std::string stockTransferExecutionDate, int stockEmployeeID,
+			double stockTransferCount, double stockTransferSum, int statusID, int currencyID, std::string fromDate, std::string toDate);
 		std::string GetFilterForRefund(int refundID, std::string refuntDate, double refundValue, int userID, int currencyID);
 		std::string GetFilterForRelationType(int relationTypeID, std::string relationTypeName, std::string comment);
 		std::string GetFilterForRelation(int relationID, int user1ID, int user2ID, int relationTypeID);
@@ -782,15 +807,24 @@ namespace DataLayer{
 			int stockEmployeeID, double transportCount, double transportSum, int statusID, int currencyID);
 		std::string GetFilterForUser(int userID, std::string userEmail, std::string userName, std::string userSurname, std::string userPhone, std::string userAddress,
 			int roleID, std::string userPassword, bool userActivated);
+		std::string GetINFilterForUserID(std::vector<int> userIDList);
 		std::string GetFilterForWarehouse(int warehouseID, std::string warehouseName, std::string warehouseAddress, std::string warehousePhone,
 			int warehouseTypeID, int subaccountID);
 		std::string GetFilterForWarehouseType(int warehouseTypeID, std::string wTypeCode, std::string wTypePurpose, std::string wTypeName);
 		std::string GetFilterForWarehouseEmployee(int weID, int weWarehouseID, int weEmployeeID);
-		std::string GetFilterForWithdrawal(int withdrawalID, std::string withdrawalDate, double withdrawalValue, int userID, int sabID, std::string withdrawalTarget, int currencyID, int statusID, int accountID);
+		std::string GetFilterForWithdrawal(int withdrawalID, std::string withdrawalDate, double withdrawalValue, 
+			int userID, int sabID, std::string withdrawalTarget, int currencyID, int statusID, int accountID, std::string pWho);
+		std::string GetFilterForWithdrawalForPeriod(int withdrawalID, std::string withdrawalDate, double withdrawalValue, int userID, int sabID, std::string withdrawalTarget,
+			int currencyID, int statusID, int accountID, std::string pWho, std::string fromDate, std::string toDate);
 		std::string GetFilterForWriteOffList(int writeOffListID, int writeOffID, int productID, double writeOffListCount, double writeOffListSum, int statusID, int currencyID);
 		std::string GetFilterForWriteOff(int writeOffID, int userID, std::string writeOffDate, std::string executionDate, int employeeID, double writeOffCount, double writeOffSum, int statusID, int currencyID);
+		std::string GetFilterForWriteOffForPeriod(int writeOffID, int userID, std::string writeOffDate, std::string executionDate, int employeeID, double writeOffCount,
+			double writeOffSum, int statusID, int currencyID, std::string fromDate, std::string toDate);
 		std::string GetFilterForWriteOffRawList(int writeOffRawListID, int writeOffRawID, int productID, double writeOffRawListCount, double writeOffRawListSum, int statusID, int currencyID);
-		std::string GetFilterForWriteOffRaw(int writeOffRawID, int employeeID, std::string writeOffRawDate, std::string executionDate, int stockEmployeeID, double writeOffRawListCount, double writeOffRawListSum, int statusID, int currencyID);
+		std::string GetFilterForWriteOffRaw(int writeOffRawID, int employeeID, std::string writeOffRawDate, std::string executionDate, int stockEmployeeID, double writeOffRawListCount, double writeOffRawListSum,
+			int statusID, int currencyID);
+		std::string GetFilterForWriteOffRawForPeriod(int writeOffRawID, int employeeID, std::string writeOffRawDate, std::string executionDate, int stockEmployeeID, double writeOffRawListCount, double writeOffRawListSum, 
+			int statusID, int currencyID, std::string fromDate, std::string toDate);
 
 		//counting methods
 		bool HaveChildAccount(std::string rootNumber);

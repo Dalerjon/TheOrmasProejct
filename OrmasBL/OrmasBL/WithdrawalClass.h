@@ -15,10 +15,12 @@ namespace BusinessLayer{
 		int currencyID = 0;
 		int statusID = 0;
 		int accountID = 0;
+		std::string who = "";
 	public:
 		Withdrawal();
-		Withdrawal(int pID, std::string pDate, double pValue, int uID, int sID, std::string wTarget, int cID, int stsID, int aID) :id(pID), 
-			date(pDate), value(pValue), userID(uID), subaccountID(sID), target(wTarget), currencyID(cID), statusID(stsID), accountID(aID){};
+		Withdrawal(int pID, std::string pDate, double pValue, int uID, int sID, std::string wTarget, int cID, int stsID, int aID, std::string wWho) :id(pID), 
+			date(pDate), value(pValue), userID(uID), subaccountID(sID), target(wTarget), currencyID(cID), statusID(stsID), accountID(aID),
+			who(wWho){};
 		Withdrawal(DataLayer::withdrawalsCollection);
 		~Withdrawal(){};
 
@@ -34,6 +36,7 @@ namespace BusinessLayer{
 		int GetCurrencyID();
 		int GetStatusID();
 		int GetAccountID();
+		std::string GetWho();
 
 		//Withdrawal class Mutators
 		void SetID(int);
@@ -45,18 +48,19 @@ namespace BusinessLayer{
 		void SetCurrencyID(int);
 		void SetStatusID(int);
 		void SetAccountID(int);
-
+		void SetWho(std::string);
 		// Create, delete and update Withdrawal
 		bool CreateWithdrawal(DataLayer::OrmasDal &ormasDal, std::string& errorMessage);
 		bool UpdateWithdrawal(DataLayer::OrmasDal &ormasDal, std::string& errorMessage);
 		bool DeleteWithdrawal(DataLayer::OrmasDal &ormasDal, std::string& errorMessage);
 		bool CreateWithdrawal(DataLayer::OrmasDal &ormasDal, std::string wDate, double wValue, int uID, int sID, std::string wTaeget,
-			int cID, int stsID, int aID, std::string& errorMessage);
+			int cID, int stsID, int aID, std::string wWho, std::string& errorMessage);
 		bool UpdateWithdrawal(DataLayer::OrmasDal &ormasDal, std::string wDate, double wValue, int uID, int sID, std::string wTaeget,
-			int cID, int stsID, int aID, std::string& errorMessage);
+			int cID, int stsID, int aID,std::string wWho, std::string& errorMessage);
 
 		//Generate filter string for class
 		std::string GenerateFilter(DataLayer::OrmasDal& ormasDal);
+		std::string GenerateFilterForPeriod(DataLayer::OrmasDal& ormasDal, std::string formDate, std::string toDate);
 		bool GetWithdrawalByID(DataLayer::OrmasDal& ormasDal, int wID, std::string& errorMessage);
 		bool IsEmpty();
 		void Clear();

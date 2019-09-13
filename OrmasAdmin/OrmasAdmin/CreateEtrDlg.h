@@ -3,6 +3,7 @@
 #include "ui_CreateEtrDlg.h"
 #include "OrmasBL.h"
 #include "MainForm.h"
+#include <QStandardItemModel>
 
 class CreateEtrDlg : public QDialog, public Ui::CreateEntry
 {
@@ -35,6 +36,8 @@ private:
 	QIntValidator *vInt = nullptr;
 	QWidget* parentForm;
 	MainForm* mainForm;
+	QStandardItemModel *itemModel;
+	QModelIndex mIndex;
 };
 
 #endif //CREATEETRDLG_H

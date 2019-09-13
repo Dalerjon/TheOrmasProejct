@@ -30,12 +30,12 @@ namespace DataLayer{
 
 	typedef std::tuple<int, int, int> balancesCollection;
 
+	typedef std::tuple<int, std::string, std::string, std::string, double, std::string, int, int> balancesViewCollection;
+
 	typedef std::tuple<int, std::string> borrowersCollection;
 
 	typedef std::tuple<int, std::string, std::string, std::string, std::string, std::string, std::string, std::string,
 		std::string, bool, int> borrowersViewCollection;
-
-	typedef std::tuple<int, std::string, std::string, std::string, double, std::string, int, int> balancesViewCollection;
 
 	typedef std::tuple<int, std::string, std::string, std::string, std::string> branchesCollection;
 
@@ -166,10 +166,10 @@ namespace DataLayer{
 	typedef std::tuple<int, std::string, std::string, std::string, std::string, std::string, std::string, std::string, std::string,
 		std::string, std::string, std::string, std::string, double, double, std::string, int, int, int, int> orderRawsViewCollection;
 
-	typedef std::tuple<int, std::string, double, std::string, int, int, int, int> paymentsCollection;
+	typedef std::tuple<int, std::string, double, std::string, int, int, int, int, int, std::string> paymentsCollection;
 
-	typedef std::tuple<int, std::string, std::string, std::string, std::string, double, std::string, std::string, std::string, std::string, int,
-		int, int, int> paymentsViewCollection;
+	typedef std::tuple<int, std::string, std::string, std::string, std::string, double, std::string, std::string, std::string,
+		std::string, std::string, std::string, int, int, int, int, int> paymentsViewCollection;
 
 	typedef std::tuple<int, int, int> paymentEmployeeCollection;
 
@@ -367,10 +367,10 @@ namespace DataLayer{
 
 	typedef std::tuple<int, std::string, std::string, std::string> warehouseTypeCollection;
 
-	typedef std::tuple<int, std::string, double,int,int, std::string, int, int, int> withdrawalsCollection;
+	typedef std::tuple<int, std::string, double, int, int, std::string, int, int, int, std::string> withdrawalsCollection;
 
-	typedef std::tuple<int, std::string, double, std::string, std::string, std::string, std::string, std::string, std::string, std::string,
-		int, int, int, int, int> withdrawalsViewCollection;
+	typedef std::tuple<int, std::string, double, std::string, std::string, std::string, std::string, std::string, std::string, 
+		std::string, std::string, std::string, int, int, int, int, int> withdrawalsViewCollection;
 
 	typedef std::tuple<int, int, int, double, double, int, int> writeOffListCollection;
 

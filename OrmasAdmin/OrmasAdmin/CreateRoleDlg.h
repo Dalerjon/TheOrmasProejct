@@ -2,6 +2,7 @@
 #define CREATEROLEDLG_H
 #include "ui_CreateRoleDlg.h"
 #include "OrmasBL.h"
+#include <QStandardItemModel>
 
 class CreateRoleDlg :public QDialog, public Ui::CreateRole
 {
@@ -23,5 +24,7 @@ private:
 	void SetRoleParams(QString, QString ,QString, int = 0);
 	void FillEditElements(QString, QString, QString);
 	QWidget* parentForm;
+	QStandardItemModel *itemModel;
+	QModelIndex mIndex;
 };
 #endif //CREATEROLEDLG_H

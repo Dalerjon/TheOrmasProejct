@@ -3,6 +3,7 @@
 #include "ui_CreateStockDlg.h"
 #include "OrmasBL.h"
 #include "MainForm.h"
+#include <QStandardItemModel>
 
 class CreateStockDlg : public QDialog, public Ui::CreateStock
 {
@@ -32,5 +33,7 @@ private:
 	void InitComboBox();
 	QWidget* parentForm;
 	MainForm* mainForm;
+	QStandardItemModel *itemModel;
+	QModelIndex mIndex;
 };
 #endif //CREATESTOCKDLG_H

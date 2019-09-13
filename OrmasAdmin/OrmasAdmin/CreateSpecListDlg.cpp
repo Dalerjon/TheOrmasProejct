@@ -21,6 +21,9 @@ CreateSpecListDlg::CreateSpecListDlg(BusinessLayer::OrmasBL *ormasBL, bool updat
 	specEdit->setValidator(vInt);
 	if (true == updateFlag)
 	{
+		DataForm *parentDataForm = (DataForm*)parentForm;
+		itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
+		mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
 		QObject::connect(addBtn, &QPushButton::released, this, &CreateSpecListDlg::EditProductInList);
 	}
 	else
@@ -92,7 +95,7 @@ void CreateSpecListDlg::FillEditElements(int sID, int pID, double slCount)
 {
 	specEdit->setText(QString::number(sID));
 	productEdit->setText(QString::number(pID));
-	countEdit->setText(QString::number(slCount));
+	countEdit->setText(QString::number(slCount, 'f', 3));
 	BusinessLayer::Product product;
 	if (product.GetProductByID(dialogBL->GetOrmasDal(), pID, errorMessage))
 	{
@@ -174,7 +177,7 @@ void CreateSpecListDlg::AddProductToList()
 						productListItem << new QStandardItem(QString::number(0));
 					}
 					productListItem << new QStandardItem(product->GetName().c_str())
-						<< new QStandardItem(QString::number(specificationList->GetCount()))
+						<< new QStandardItem(QString::number(specificationList->GetCount(), 'f', 3))
 						<< new QStandardItem(measure->GetName().c_str())
 						<< new QStandardItem(QString::number(specificationList->GetProductID()));
 					QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
@@ -238,11 +241,10 @@ void CreateSpecListDlg::EditProductInList()
 							return;
 						}
 
-						QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
-						QModelIndex mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
+						
 						itemModel->item(mIndex.row(), 1)->setText(QString::number(specificationList->GetSpecificationID()));
 						itemModel->item(mIndex.row(), 2)->setText(product->GetName().c_str());
-						itemModel->item(mIndex.row(), 3)->setText(QString::number(specificationList->GetCount()));
+						itemModel->item(mIndex.row(), 3)->setText(QString::number(specificationList->GetCount(), 'f', 3));
 						itemModel->item(mIndex.row(), 4)->setText(measure->GetName().c_str());
 						itemModel->item(mIndex.row(), 5)->setText(QString::number(specificationList->GetProductID()));
 

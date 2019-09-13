@@ -2,6 +2,7 @@
 #define CREATEWrhDLG_H
 #include "ui_CreateWrhDlg.h"
 #include "OrmasBL.h"
+#include <QStandardItemModel>
 
 class CreateWrhDlg : public QDialog, public Ui::CreateWarehouse
 {
@@ -26,6 +27,8 @@ private:
 	void InitComboBox(int);
 	void GenerateSubaccount();
 	QWidget* parentForm;
+	QStandardItemModel *itemModel;
+	QModelIndex mIndex;
 };
 
 #endif //CREATEWrhDLG_H

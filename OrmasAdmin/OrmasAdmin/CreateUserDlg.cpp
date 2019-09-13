@@ -26,6 +26,9 @@ CreateUserDlg::CreateUserDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, Q
 	
 	if (true == updateFlag)
 	{
+		DataForm *parentDataForm = (DataForm*)parentForm;
+		itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
+		mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
 		QObject::connect(okBtn, &QPushButton::released, this, &CreateUserDlg::EditUser);
 	}
 	else
@@ -224,8 +227,7 @@ void CreateUserDlg::EditUser()
 					if (!parentDataForm->IsClosed())
 					{
 						//updating user data
-						QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
-						QModelIndex mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
+						
 						itemModel->item(mIndex.row(), 1)->setText(user->GetEmail().c_str());
 						itemModel->item(mIndex.row(), 2)->setText(user->GetName().c_str());
 						itemModel->item(mIndex.row(), 3)->setText(user->GetSurname().c_str());

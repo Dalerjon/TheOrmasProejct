@@ -4,6 +4,7 @@
 #include "ui_CreateCltDlg.h"
 #include "OrmasBL.h"
 #include "MainForm.h"
+#include <QStandardItemModel>
 
 class CreateCltDlg : public QDialog, public Ui::CreateClient
 {
@@ -30,6 +31,8 @@ private:
 	QIntValidator *vInt = nullptr;
 	QWidget* parentForm;
 	MainForm* mainForm;
+	QStandardItemModel *itemModel;
+	QModelIndex mIndex;
 };
 
 #endif //CREATECLTDLG_H

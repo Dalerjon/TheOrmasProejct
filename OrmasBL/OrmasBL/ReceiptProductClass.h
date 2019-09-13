@@ -59,6 +59,7 @@ namespace BusinessLayer
 
 		//Generate filter string for class
 		std::string GenerateFilter(DataLayer::OrmasDal& ormasDal);
+		std::string GenerateFilterForPeriod(DataLayer::OrmasDal& ormasDal, std::string formDate, std::string toDate);
 		bool GetReceiptProductByID(DataLayer::OrmasDal& ormasDal, int rpID, std::string& errorMessage);
 		bool IsEmpty();
 		void Clear();
@@ -70,7 +71,7 @@ namespace BusinessLayer
 			int cID, std::string& errorMessage);
 		bool IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string& errorMessage);
 		bool ChangesAtStock(DataLayer::OrmasDal& ormasDal, int rpID, int empID, int stockEmpID, std::string& errorMessage);
-		bool ChangesAtStockCancel(DataLayer::OrmasDal& ormasDal, int rpID, int empID, int stockEmpID, std::string& errorMessage);
+		bool ChangesAtStockReverse(DataLayer::OrmasDal& ormasDal, int rpID, int empID, int stockEmpID, std::string& errorMessage);
 		bool ChangesAtStock(DataLayer::OrmasDal& ormasDal, int rpID, int empID, int stockEmpID, std::map<int, double> pProdCountMap, double pSum, std::string& errorMessage);
 		//bool ChangesAtProdStock(DataLayer::OrmasDal& ormasDal, int crID, std::string& errorMessage);
 		//bool ChangesAtProdStock(DataLayer::OrmasDal& ormasDal, int crID, std::map<int, double> pProdCountMap, double pSum, std::string& errorMessage);
@@ -78,6 +79,7 @@ namespace BusinessLayer
 		double GetCurrentCount(DataLayer::OrmasDal& ormasDal, int rpID, std::string& errorMessage);
 		int GetCurrentStatusID(DataLayer::OrmasDal& ormasDal, int oID, std::string& errorMessage);
 		std::map<int, double> GetProductCount(DataLayer::OrmasDal& ormasDal, int cpID, std::string& errorMessage);
+		bool CheckDocumentCorrectness(DataLayer::OrmasDal& ormasDal);
 	};
 }
 #endif //RECEIPTPRODUCTCLASS_H

@@ -3,6 +3,7 @@
 #include "ui_CreateCOADlg.h"
 #include "OrmasBL.h"
 #include "MainForm.h"
+#include <QStandardItemModel>
 
 class CreateCOADlg : public QDialog, public Ui::CreateChartOfAccounts
 {
@@ -28,6 +29,8 @@ private:
 	QIntValidator *vInt = nullptr;
 	QWidget* parentForm;
 	MainForm* mainForm;
+	QStandardItemModel *itemModel;
+	QModelIndex mIndex;
 };
 
 #endif //CREATECOADLG_H

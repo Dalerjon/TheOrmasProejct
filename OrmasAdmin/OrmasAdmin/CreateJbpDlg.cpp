@@ -21,6 +21,9 @@ CreateJbpDlg::CreateJbpDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, QWi
 	volumeEdit->setMaxLength(17);
 	if (true == updateFlag)
 	{
+		DataForm *parentDataForm = (DataForm*)parentForm;
+		itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
+		mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
 		QObject::connect(okBtn, &QPushButton::released, this, &CreateJbpDlg::EditJobprice);
 	}
 	else
@@ -265,8 +268,7 @@ void CreateJbpDlg::EditJobprice()
 							delete position;
 							return;
 						}
-						QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
-						QModelIndex mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
+						
 						itemModel->item(mIndex.row(), 1)->setText(product->GetName().c_str());
 						itemModel->item(mIndex.row(), 2)->setText(QString::number(jobprice->GetValue()));
 						itemModel->item(mIndex.row(), 3)->setText(currency->GetShortName().c_str());

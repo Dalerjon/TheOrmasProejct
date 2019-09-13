@@ -2,6 +2,7 @@
 #define CREATEACSITEMDLG_H
 #include "ui_CreateAcsItemDlg.h"
 #include "OrmasBL.h"
+#include <QStandardItemModel>
 
 class CreateAcsItemDlg : public QDialog, public Ui::CreateAccessItem
 {
@@ -22,6 +23,8 @@ private:
 	void SetAccessItemParams(QString, QString, QString, int = 0);
 	void FillEditElements(QString, QString, QString);
 	QWidget* parentForm;
+	QStandardItemModel *itemModel;
+	QModelIndex mIndex;
 };
 
 #endif //CREATEACSITEMDLG_H

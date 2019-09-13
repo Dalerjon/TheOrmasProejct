@@ -14,6 +14,9 @@ CreateEtrRtDlg::CreateEtrRtDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag,
 	parentForm = parent;
 	if (true == updateFlag)
 	{
+		DataForm *parentDataForm = (DataForm*)parentForm;
+		itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
+		mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
 		QObject::connect(okBtn, &QPushButton::released, this, &CreateEtrRtDlg::EditEntryRouting);
 	}
 	else
@@ -128,8 +131,6 @@ void CreateEtrRtDlg::EditEntryRouting()
 				{
 					if (!parentDataForm->IsClosed())
 					{
-						QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
-						QModelIndex mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
 						itemModel->item(mIndex.row(), 1)->setText(entryRouting->GetOperation().c_str());
 						itemModel->item(mIndex.row(), 2)->setText(QString::number(entryRouting->GetDebitAccountID()));
 						itemModel->item(mIndex.row(), 3)->setText(QString::number(entryRouting->GetCreditAccountID()));

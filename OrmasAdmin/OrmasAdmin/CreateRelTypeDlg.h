@@ -2,6 +2,7 @@
 #define CREATERELTYPEDLG_H
 #include "ui_CreateRelTypeDlg.h"
 #include "OrmasBL.h"
+#include <QStandardItemModel>
 
 class CreateRelTypeDlg : public QDialog, public Ui::CreateRelationType
 {
@@ -23,6 +24,8 @@ private:
 	void SetRelationTypeParams(QString, QString, int = 0);
 	void FillEditElements(QString, QString);
 	QWidget* parentForm;
+	QStandardItemModel *itemModel;
+	QModelIndex mIndex;
 };
 
 #endif //CREATERELTYPEDLG_H

@@ -19,6 +19,9 @@ CreateWdwDlg::CreateWdwDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, QWi
 	saIDEdit->setValidator(vInt);
 	if (true == updateFlag)
 	{
+		DataForm *parentDataForm = (DataForm*)parentForm;
+		itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
+		mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
 		QObject::connect(okBtn, &QPushButton::released, this, &CreateWdwDlg::EditWithdrawal);
 	}
 	else
@@ -110,6 +113,9 @@ void CreateWdwDlg::SetID(int ID, QString childName)
 				subaccount.Clear();
 				if (subaccount.GetSubaccountByID(dialogBL->GetOrmasDal(), balance.GetSubaccountID(), errorMessage))
 				{
+					saIDEdit->setText(QString::number(subaccount.GetID()));
+					saNumberEdit->setReadOnly(true);
+					saNumberEdit->setText(subaccount.GetNumber().c_str());
 					balanceEdit->setText(QString::number(subaccount.GetCurrentBalance()));
 					if (currency.GetCurrencyByID(dialogBL->GetOrmasDal(), subaccount.GetCurrencyID(), errorMessage))
 					{
@@ -160,7 +166,7 @@ void CreateWdwDlg::SetID(int ID, QString childName)
 }
 
 void CreateWdwDlg::SetWithdrawalParams(QString wDate, double wValue, int wUserID, int wSubAccId, QString wTarget, int wCurrencyID, 
-	int wStatusID, int wAccountID, int id)
+	int wStatusID, int wAccountID, QString wWho, int id)
 {
 	withdrawal->SetDate(wDate.toUtf8().constData());
 	withdrawal->SetValue(wValue);
@@ -170,11 +176,12 @@ void CreateWdwDlg::SetWithdrawalParams(QString wDate, double wValue, int wUserID
 	withdrawal->SetCurrencyID(wCurrencyID);
 	withdrawal->SetStatusID(wStatusID);
 	withdrawal->SetAccountID(wAccountID);
+	withdrawal->SetWho(wWho.toUtf8().constData());
 	withdrawal->SetID(id);
 }
 
 void CreateWdwDlg::FillEditElements(QString wDate, double wValue, int wUserID, int wSubAccId, QString wTarget, int wCurrencyID,
-	int wStatusID, int wAccountID)
+	int wStatusID, int wAccountID, QString wWho)
 {
 	accountCmb->setDisabled(true);
 	dateEdit->setDateTime(QDateTime::fromString(wDate, "dd.MM.yyyy hh:mm"));
@@ -182,6 +189,7 @@ void CreateWdwDlg::FillEditElements(QString wDate, double wValue, int wUserID, i
 	userEdit->setText(QString::number(wUserID));
 	saIDEdit->setText(QString::number(wSubAccId));
 	targetEdit->setText(wTarget);
+	whoEdit->setText(wWho);
 	currencyCmb->setCurrentIndex(currencyCmb->findData(QVariant(wCurrencyID)));
 	accIDEdit->setText(QString::number(wAccountID));
 	statusEdit->setText(QString::number(wStatusID));
@@ -216,21 +224,23 @@ bool CreateWdwDlg::FillDlgElements(QTableView* pTable)
 	{
 		SetWithdrawalParams(pTable->model()->data(pTable->model()->index(mIndex.row(), 1)).toString().toUtf8().constData(),
 			pTable->model()->data(pTable->model()->index(mIndex.row(), 2)).toDouble(),
-			pTable->model()->data(pTable->model()->index(mIndex.row(), 10)).toInt(),
 			pTable->model()->data(pTable->model()->index(mIndex.row(), 12)).toInt(),
-			pTable->model()->data(pTable->model()->index(mIndex.row(), 9)).toString().toUtf8().constData(),
-			pTable->model()->data(pTable->model()->index(mIndex.row(), 11)).toInt(),
-			pTable->model()->data(pTable->model()->index(mIndex.row(), 13)).toInt(),
 			pTable->model()->data(pTable->model()->index(mIndex.row(), 14)).toInt(),
+			pTable->model()->data(pTable->model()->index(mIndex.row(), 11)).toString().toUtf8().constData(),
+			pTable->model()->data(pTable->model()->index(mIndex.row(), 13)).toInt(),
+			pTable->model()->data(pTable->model()->index(mIndex.row(), 15)).toInt(),
+			pTable->model()->data(pTable->model()->index(mIndex.row(), 16)).toInt(),
+			pTable->model()->data(pTable->model()->index(mIndex.row(), 10)).toString().toUtf8().constData(),
 			pTable->model()->data(pTable->model()->index(mIndex.row(), 0)).toInt());
 		FillEditElements(pTable->model()->data(pTable->model()->index(mIndex.row(), 1)).toString().toUtf8().constData(),
 			pTable->model()->data(pTable->model()->index(mIndex.row(), 2)).toDouble(),
-			pTable->model()->data(pTable->model()->index(mIndex.row(), 10)).toInt(),
 			pTable->model()->data(pTable->model()->index(mIndex.row(), 12)).toInt(),
-			pTable->model()->data(pTable->model()->index(mIndex.row(), 9)).toString().toUtf8().constData(),
-			pTable->model()->data(pTable->model()->index(mIndex.row(), 11)).toInt(),
+			pTable->model()->data(pTable->model()->index(mIndex.row(), 14)).toInt(),
+			pTable->model()->data(pTable->model()->index(mIndex.row(), 11)).toString().toUtf8().constData(),
 			pTable->model()->data(pTable->model()->index(mIndex.row(), 13)).toInt(),
-			pTable->model()->data(pTable->model()->index(mIndex.row(), 14)).toInt());
+			pTable->model()->data(pTable->model()->index(mIndex.row(), 15)).toInt(),
+			pTable->model()->data(pTable->model()->index(mIndex.row(), 16)).toInt(),
+			pTable->model()->data(pTable->model()->index(mIndex.row(), 10)).toString().toUtf8().constData());
 		return CheckAccess();
 	}
 	else
@@ -243,11 +253,11 @@ void CreateWdwDlg::CreateWithdrawal()
 {
 	errorMessage.clear();
 	if (0.0 != valueEdit->text().toDouble() && !currencyCmb->currentText().isEmpty()
-		&& !dateEdit->text().isEmpty())
+		&& !dateEdit->text().isEmpty() && !whoEdit->text().isEmpty())
 	{
 		DataForm *parentDataForm = (DataForm*) parentForm;
 		SetWithdrawalParams(dateEdit->text(), valueEdit->text().toDouble(), userEdit->text().toInt(), saIDEdit->text().toInt(),
-			targetEdit->text(), currencyCmb->currentData().toInt(), statusEdit->text().toInt(), accIDEdit->text().toInt());
+			targetEdit->text(), currencyCmb->currentData().toInt(), statusEdit->text().toInt(), accIDEdit->text().toInt(), whoEdit->text());
 		dialogBL->StartTransaction(errorMessage);
 		if (dialogBL->CreateWithdrawal(withdrawal, errorMessage))
 		{
@@ -323,12 +333,14 @@ void CreateWdwDlg::CreateWithdrawal()
 					if (userEdit->text().isEmpty() || user.IsEmpty())
 					{
 						withdrawalItem << new QStandardItem("")
+							<< new QStandardItem("")
 							<< new QStandardItem("");
 					}
 					else
 					{
 						withdrawalItem << new QStandardItem(user.GetName().c_str())
-							<< new QStandardItem(user.GetSurname().c_str());
+							<< new QStandardItem(user.GetSurname().c_str())
+							<< new QStandardItem(user.GetPhone().c_str());
 					}
 					withdrawalItem << new QStandardItem(status.GetName().c_str());
 					if (accIDEdit->text().toInt() > 0)
@@ -347,7 +359,8 @@ void CreateWdwDlg::CreateWithdrawal()
 					{
 						withdrawalItem << new QStandardItem("");
 					}
-					withdrawalItem << new QStandardItem(withdrawal->GetTarget().c_str())
+					withdrawalItem << new QStandardItem(withdrawal->GetWho().c_str())
+						<< new QStandardItem(withdrawal->GetTarget().c_str())
 						<< new QStandardItem(QString::number(withdrawal->GetUserID()))
 						<< new QStandardItem(QString::number(withdrawal->GetCurrencyID()))
 						<< new QStandardItem(QString::number(withdrawal->GetSubaccountID()))
@@ -385,14 +398,14 @@ void CreateWdwDlg::EditWithdrawal()
 {
 	errorMessage.clear();
 	if (0.0 != valueEdit->text().toDouble() && !currencyCmb->currentText().isEmpty()
-		&& !dateEdit->text().isEmpty())
+		&& !dateEdit->text().isEmpty() && !whoEdit->text().isEmpty())
 	{
 		if (QString(withdrawal->GetDate().c_str()) != dateEdit->text() || withdrawal->GetStatusID() != statusEdit->text().toInt() 
 			|| withdrawal->GetValue() != valueEdit->text().toDouble() || withdrawal->GetCurrencyID() != currencyCmb->currentData().toInt())
 		{
 			DataForm *parentDataForm = (DataForm*) parentForm;
 			SetWithdrawalParams(dateEdit->text(), valueEdit->text().toDouble(), userEdit->text().toInt(), saIDEdit->text().toInt(), targetEdit->text(), 
-				currencyCmb->currentData().toInt(), statusEdit->text().toInt(), accIDEdit->text().toInt(), withdrawal->GetID());
+				currencyCmb->currentData().toInt(), statusEdit->text().toInt(), accIDEdit->text().toInt(), whoEdit->text(), withdrawal->GetID());
 			dialogBL->StartTransaction(errorMessage);
 			if (dialogBL->UpdateWithdrawal(withdrawal, errorMessage))
 			{
@@ -460,8 +473,6 @@ void CreateWdwDlg::EditWithdrawal()
 							errorMessage.clear();
 							return;
 						}
-						QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
-						QModelIndex mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
 						itemModel->item(mIndex.row(), 1)->setText(withdrawal->GetDate().c_str());
 						itemModel->item(mIndex.row(), 2)->setText(QString::number(withdrawal->GetValue(),'f',3));
 						itemModel->item(mIndex.row(), 3)->setText(currency.GetShortName().c_str());
@@ -469,35 +480,38 @@ void CreateWdwDlg::EditWithdrawal()
 						{
 							itemModel->item(mIndex.row(), 4)->setText("");
 							itemModel->item(mIndex.row(), 5)->setText("");
+							itemModel->item(mIndex.row(), 6)->setText("");
 						}
 						else
 						{
 							itemModel->item(mIndex.row(), 4)->setText(user.GetName().c_str());
 							itemModel->item(mIndex.row(), 5)->setText(user.GetSurname().c_str());
+							itemModel->item(mIndex.row(), 6)->setText(user.GetPhone().c_str());
 						}
-						itemModel->item(mIndex.row(), 6)->setText(status.GetName().c_str());
+						itemModel->item(mIndex.row(), 7)->setText(status.GetName().c_str());
 						if (accIDEdit->text().toInt()>0)
 						{
-							itemModel->item(mIndex.row(), 7)->setText(account.GetNumber().c_str());
-						}
-						else
-						{
-							itemModel->item(mIndex.row(), 7)->setText("");
-						}
-						if (saIDEdit->text().toInt()>0)
-						{
-							itemModel->item(mIndex.row(), 8)->setText(subacc.GetNumber().c_str());
+							itemModel->item(mIndex.row(), 8)->setText(account.GetNumber().c_str());
 						}
 						else
 						{
 							itemModel->item(mIndex.row(), 8)->setText("");
 						}
-						itemModel->item(mIndex.row(), 9)->setText(withdrawal->GetTarget().c_str());
-						itemModel->item(mIndex.row(), 10)->setText(QString::number(withdrawal->GetUserID()));
-						itemModel->item(mIndex.row(), 11)->setText(QString::number(withdrawal->GetCurrencyID()));
-						itemModel->item(mIndex.row(), 12)->setText(QString::number(withdrawal->GetSubaccountID()));
-						itemModel->item(mIndex.row(), 13)->setText(QString::number(withdrawal->GetStatusID()));
-						itemModel->item(mIndex.row(), 14)->setText(QString::number(withdrawal->GetAccountID()));
+						if (saIDEdit->text().toInt()>0)
+						{
+							itemModel->item(mIndex.row(), 9)->setText(subacc.GetNumber().c_str());
+						}
+						else
+						{
+							itemModel->item(mIndex.row(), 9)->setText("");
+						}
+						itemModel->item(mIndex.row(), 10)->setText(withdrawal->GetWho().c_str());
+						itemModel->item(mIndex.row(), 11)->setText(withdrawal->GetTarget().c_str());
+						itemModel->item(mIndex.row(), 12)->setText(QString::number(withdrawal->GetUserID()));
+						itemModel->item(mIndex.row(), 13)->setText(QString::number(withdrawal->GetCurrencyID()));
+						itemModel->item(mIndex.row(), 14)->setText(QString::number(withdrawal->GetSubaccountID()));
+						itemModel->item(mIndex.row(), 15)->setText(QString::number(withdrawal->GetStatusID()));
+						itemModel->item(mIndex.row(), 16)->setText(QString::number(withdrawal->GetAccountID()));
 						emit itemModel->dataChanged(mIndex, mIndex);
 					}
 				}

@@ -280,4 +280,22 @@ namespace BusinessLayer{
 		}
 		return warehouseIDVector;
 	}
+
+	std::vector<int> WarehouseEmployeeRelation::GetEmployeeIDListByWarehouseID(DataLayer::OrmasDal& ormasDal, int wID)
+	{
+		std::vector<int> employeeIDVector;
+		WarehouseEmployeeRelation ceRelation;
+		ceRelation.SetEmployeeID(0);
+		ceRelation.SetWarehouseID(wID);
+		std::string filter = ceRelation.GenerateFilter(ormasDal);
+		std::vector<DataLayer::warehouseEmployeeViewCollection> warehouseEmployeeVector = ormasDal.GetWarehouseEmployee(errorMessage, filter);
+		if (0 < warehouseEmployeeVector.size())
+		{
+			for each (auto weItem in warehouseEmployeeVector)
+			{
+				employeeIDVector.push_back(std::get<8>(weItem));
+			}
+		}
+		return employeeIDVector;
+	}
 }

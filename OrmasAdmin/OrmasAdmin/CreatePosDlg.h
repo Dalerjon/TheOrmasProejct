@@ -2,6 +2,7 @@
 #define CREATEPOSDLG_H
 #include "ui_CreatePosDlg.h"
 #include "OrmasBL.h"
+#include <QStandardItemModel>
 
 class CreatePosDlg : public QDialog, public Ui::CreatePosition
 {
@@ -22,7 +23,8 @@ private:
 	void SetPositionParams(QString, int = 0);
 	void FillEditElements(QString);
 	QWidget* parentForm;
-
+	QStandardItemModel *itemModel;
+	QModelIndex mIndex;
 };
 
 #endif //CREATEPOSDLG_H

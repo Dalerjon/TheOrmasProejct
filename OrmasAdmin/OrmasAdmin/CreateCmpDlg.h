@@ -2,6 +2,7 @@
 #define CREATECMPDLG_H
 #include "ui_CreateCmpDlg.h"
 #include "OrmasBL.h"
+#include <QStandardItemModel>
 
 class CreateCmpDlg : public QDialog, public Ui::CreateCompany
 {
@@ -23,6 +24,8 @@ private:
 	void SetCompanyParams(QString, QString, QString, QString, int = 0);
 	void FillEditElements(QString, QString, QString, QString);
 	QWidget* parentForm;
+	QStandardItemModel *itemModel;
+	QModelIndex mIndex;
 };
 
 #endif //CREATECMPDLG_H

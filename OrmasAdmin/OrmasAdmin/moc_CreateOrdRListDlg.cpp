@@ -19,8 +19,8 @@
 
 QT_BEGIN_MOC_NAMESPACE
 struct qt_meta_stringdata_CreateOrdRListDlg_t {
-    QByteArrayData data[15];
-    char stringdata0[171];
+    QByteArrayData data[16];
+    char stringdata0[186];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
@@ -41,16 +41,18 @@ QT_MOC_LITERAL(8, 100, 11), // "OpenProdDlg"
 QT_MOC_LITERAL(9, 112, 10), // "OpenStsDlg"
 QT_MOC_LITERAL(10, 123, 15), // "TextEditChanged"
 QT_MOC_LITERAL(11, 139, 12), // "InspectPrice"
-QT_MOC_LITERAL(12, 152, 5), // "SetID"
-QT_MOC_LITERAL(13, 158, 2), // "ID"
-QT_MOC_LITERAL(14, 161, 9) // "childName"
+QT_MOC_LITERAL(12, 152, 14), // "SetProductData"
+QT_MOC_LITERAL(13, 167, 5), // "SetID"
+QT_MOC_LITERAL(14, 173, 2), // "ID"
+QT_MOC_LITERAL(15, 176, 9) // "childName"
 
     },
     "CreateOrdRListDlg\0DataIsChanged\0\0"
     "AddProductToList\0EditProductInList\0"
     "DeleteProduct\0Close\0OpenOrdRDlg\0"
     "OpenProdDlg\0OpenStsDlg\0TextEditChanged\0"
-    "InspectPrice\0SetID\0ID\0childName"
+    "InspectPrice\0SetProductData\0SetID\0ID\0"
+    "childName"
 };
 #undef QT_MOC_LITERAL
 
@@ -60,7 +62,7 @@ static const uint qt_meta_data_CreateOrdRListDlg[] = {
        7,       // revision
        0,       // classname
        0,    0, // classinfo
-      11,   14, // methods
+      12,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -68,19 +70,20 @@ static const uint qt_meta_data_CreateOrdRListDlg[] = {
        1,       // signalCount
 
  // signals: name, argc, parameters, tag, flags
-       1,    0,   69,    2, 0x06 /* Public */,
+       1,    0,   74,    2, 0x06 /* Public */,
 
  // slots: name, argc, parameters, tag, flags
-       3,    0,   70,    2, 0x08 /* Private */,
-       4,    0,   71,    2, 0x08 /* Private */,
-       5,    0,   72,    2, 0x08 /* Private */,
-       6,    0,   73,    2, 0x08 /* Private */,
-       7,    0,   74,    2, 0x08 /* Private */,
-       8,    0,   75,    2, 0x08 /* Private */,
-       9,    0,   76,    2, 0x08 /* Private */,
-      10,    0,   77,    2, 0x08 /* Private */,
-      11,    0,   78,    2, 0x08 /* Private */,
-      12,    2,   79,    2, 0x0a /* Public */,
+       3,    0,   75,    2, 0x08 /* Private */,
+       4,    0,   76,    2, 0x08 /* Private */,
+       5,    0,   77,    2, 0x08 /* Private */,
+       6,    0,   78,    2, 0x08 /* Private */,
+       7,    0,   79,    2, 0x08 /* Private */,
+       8,    0,   80,    2, 0x08 /* Private */,
+       9,    0,   81,    2, 0x08 /* Private */,
+      10,    0,   82,    2, 0x08 /* Private */,
+      11,    0,   83,    2, 0x08 /* Private */,
+      12,    1,   84,    2, 0x08 /* Private */,
+      13,    2,   87,    2, 0x0a /* Public */,
 
  // signals: parameters
     QMetaType::Void,
@@ -95,7 +98,8 @@ static const uint qt_meta_data_CreateOrdRListDlg[] = {
     QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void,
-    QMetaType::Void, QMetaType::Int, QMetaType::QString,   13,   14,
+    QMetaType::Void, QMetaType::Int,    2,
+    QMetaType::Void, QMetaType::Int, QMetaType::QString,   14,   15,
 
        0        // eod
 };
@@ -116,7 +120,8 @@ void CreateOrdRListDlg::qt_static_metacall(QObject *_o, QMetaObject::Call _c, in
         case 7: _t->OpenStsDlg(); break;
         case 8: _t->TextEditChanged(); break;
         case 9: _t->InspectPrice(); break;
-        case 10: _t->SetID((*reinterpret_cast< int(*)>(_a[1])),(*reinterpret_cast< QString(*)>(_a[2]))); break;
+        case 10: _t->SetProductData((*reinterpret_cast< int(*)>(_a[1]))); break;
+        case 11: _t->SetID((*reinterpret_cast< int(*)>(_a[1])),(*reinterpret_cast< QString(*)>(_a[2]))); break;
         default: ;
         }
     } else if (_c == QMetaObject::IndexOfMethod) {
@@ -159,13 +164,13 @@ int CreateOrdRListDlg::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 11)
+        if (_id < 12)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 11;
+        _id -= 12;
     } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 11)
+        if (_id < 12)
             *reinterpret_cast<int*>(_a[0]) = -1;
-        _id -= 11;
+        _id -= 12;
     }
     return _id;
 }

@@ -4,6 +4,7 @@
 #include "ui_CreateBlcDlg.h"
 #include "OrmasBL.h"
 #include "MainForm.h"
+#include <QStandardItemModel>
 
 class CreateBlcDlg : public QDialog, public Ui::CreateBalance
 {
@@ -30,6 +31,8 @@ private:
 	int CreateSubaccount();
 	QWidget* parentForm;
 	MainForm* mainForm;
+	QStandardItemModel *itemModel;
+	QModelIndex mIndex;
 };
 
 #endif //CREATEBLCDLG_H

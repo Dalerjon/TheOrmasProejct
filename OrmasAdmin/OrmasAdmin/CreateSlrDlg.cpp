@@ -21,6 +21,9 @@ CreateSlrDlg::CreateSlrDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, QWi
 	valueEdit->setMaxLength(17);
 	if (true == updateFlag)
 	{
+		DataForm *parentDataForm = (DataForm*)parentForm;
+		itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
+		mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
 		QObject::connect(okBtn, &QPushButton::released, this, &CreateSlrDlg::EditSalary);
 	}
 	else
@@ -251,8 +254,7 @@ void CreateSlrDlg::EditSalary()
 							return;
 						}
 
-						QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
-						QModelIndex mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
+						
 						itemModel->item(mIndex.row(), 1)->setText(QString::number(salary->GetEmployeeID()));
 						itemModel->item(mIndex.row(), 2)->setText(employee->GetName().c_str());
 						itemModel->item(mIndex.row(), 3)->setText(employee->GetSurname().c_str());

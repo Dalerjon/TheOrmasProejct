@@ -25,6 +25,9 @@ CreateProdConRListDlg::CreateProdConRListDlg(BusinessLayer::OrmasBL *ormasBL, bo
 	sumEdit->setMaxLength(17);
 	if (true == updateFlag)
 	{
+		DataForm *parentDataForm = (DataForm*)parentForm;
+		itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
+		mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
 		QObject::connect(addBtn, &QPushButton::released, this, &CreateProdConRListDlg::EditProductInList);
 	}
 	else
@@ -52,6 +55,23 @@ CreateProdConRListDlg::~CreateProdConRListDlg()
 	delete vDouble;
 	delete vInt;
 }
+
+void CreateProdConRListDlg::SetProductData(int productID)
+{
+	productEdit->setText(QString::number(productID));
+	BusinessLayer::Product product;
+	if (product.GetProductByID(dialogBL->GetOrmasDal(), productID, errorMessage))
+	{
+		prodNamePh->setText(product.GetName().c_str());
+		volumePh->setText(QString::number(product.GetVolume()));
+		BusinessLayer::Measure measure;
+		if (measure.GetMeasureByID(dialogBL->GetOrmasDal(), product.GetMeasureID(), errorMessage))
+		{
+			measurePh->setText(measure.GetName().c_str());
+		}
+	}
+}
+
 
 void CreateProdConRListDlg::SetID(int ID, QString childName)
 {
@@ -113,8 +133,8 @@ void CreateProdConRListDlg::FillEditElements(int cConsumeRawID, int cProductID, 
 {
 	consumeRawEdit->setText(QString::number(cConsumeRawID));
 	productEdit->setText(QString::number(cProductID));
-	countEdit->setText(QString::number(cCount));
-	sumEdit->setText(QString::number(cSum));
+	countEdit->setText(QString::number(cCount, 'f', 3));
+	sumEdit->setText(QString::number(cSum, 'f', 3));
 	statusEdit->setText(QString::number(cStatusID));
 	currencyCmb->setCurrentIndex(currencyCmb->findData(QVariant(cCurrencyID)));
 	BusinessLayer::Product product;
@@ -239,12 +259,12 @@ void CreateProdConRListDlg::AddProductToList()
 						productListItem << new QStandardItem(QString::number(0));
 					}
 					productListItem << new QStandardItem(product->GetName().c_str())
-						<< new QStandardItem(QString::number(pConsumeRawList->GetSum() / pConsumeRawList->GetCount()))
+						<< new QStandardItem(QString::number(pConsumeRawList->GetSum() / pConsumeRawList->GetCount(), 'f', 3))
 						<< new QStandardItem(currency->GetShortName().c_str())
 						<< new QStandardItem(QString::number(product->GetVolume()))
 						<< new QStandardItem(measure->GetName().c_str())
-						<< new QStandardItem(QString::number(pConsumeRawList->GetCount()))
-						<< new QStandardItem(QString::number(pConsumeRawList->GetSum()))
+						<< new QStandardItem(QString::number(pConsumeRawList->GetCount(), 'f', 3))
+						<< new QStandardItem(QString::number(pConsumeRawList->GetSum(),'f',3))
 						<< new QStandardItem(sumCurrency->GetShortName().c_str())
 						<< new QStandardItem(statusVector.at(0).GetName().c_str())
 						<< new QStandardItem(QString::number(pConsumeRawList->GetProductID()))
@@ -331,16 +351,15 @@ void CreateProdConRListDlg::EditProductInList()
 							return;
 						}
 
-						QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
-						QModelIndex mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
+						
 						itemModel->item(mIndex.row(), 1)->setText(QString::number(pConsumeRawList->GetProductionConsumeRawID()));
 						itemModel->item(mIndex.row(), 2)->setText(product->GetName().c_str());
-						itemModel->item(mIndex.row(), 3)->setText(QString::number(pConsumeRawList->GetSum() / pConsumeRawList->GetCount()));
+						itemModel->item(mIndex.row(), 3)->setText(QString::number(pConsumeRawList->GetSum() / pConsumeRawList->GetCount(), 'f', 3));
 						itemModel->item(mIndex.row(), 4)->setText(currency->GetShortName().c_str());
 						itemModel->item(mIndex.row(), 5)->setText(QString::number(product->GetVolume()));
 						itemModel->item(mIndex.row(), 6)->setText(measure->GetName().c_str());
-						itemModel->item(mIndex.row(), 7)->setText(QString::number(pConsumeRawList->GetCount()));
-						itemModel->item(mIndex.row(), 8)->setText(QString::number(pConsumeRawList->GetSum()));
+						itemModel->item(mIndex.row(), 7)->setText(QString::number(pConsumeRawList->GetCount(), 'f', 3));
+						itemModel->item(mIndex.row(), 8)->setText(QString::number(pConsumeRawList->GetSum(),'f',3));
 						itemModel->item(mIndex.row(), 9)->setText(sumCurrency->GetShortName().c_str());
 						itemModel->item(mIndex.row(), 10)->setText(status->GetName().c_str());
 						itemModel->item(mIndex.row(), 11)->setText(QString::number(pConsumeRawList->GetProductID()));
@@ -471,6 +490,22 @@ void CreateProdConRListDlg::OpenProdDlg()
 		errorMessage = "";
 		return;
 	}
+
+	BusinessLayer::WarehouseEmployeeRelation weRelation;
+	weRelation.GetWarehouseEmployeeByEmployeeID(dialogBL->GetOrmasDal(), stockEmployeeID, errorMessage);
+	std::vector<int> prodIDList;
+	BusinessLayer::Stock stock;
+	prodIDList = stock.GetAllProductIDByWarehouseID(dialogBL->GetOrmasDal(), weRelation.GetWarehouseID(), errorMessage);
+	std::string filterIN = "";
+	if (prodIDList.size() > 0)
+	{
+		std::vector<std::string> filterList;
+		filterIN = product->GenerateINFilter(dialogBL->GetOrmasDal(), prodIDList);
+		filterList.push_back(productFilter);
+		filterList.push_back(filterIN);
+		productFilter = dialogBL->ConcatenateFilters(filterList);
+	}
+
 
 	dForm->FillTable<BusinessLayer::ProductView>(errorMessage, productFilter);
 	if (errorMessage.empty())

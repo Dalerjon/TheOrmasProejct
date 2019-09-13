@@ -3,6 +3,7 @@
 #include "ui_CreateWdwDlg.h"
 #include "OrmasBL.h"
 #include "MainForm.h"
+#include <QStandardItemModel>
 
 class CreateWdwDlg : public QDialog, public Ui::CreateWithdrawal
 {
@@ -32,8 +33,8 @@ public:
 	void SetID(int ID, QString childName);
 private:
 	BusinessLayer::Withdrawal *withdrawal = new BusinessLayer::Withdrawal();
-	void SetWithdrawalParams(QString, double, int, int, QString, int, int, int, int = 0);
-	void FillEditElements(QString, double, int, int, QString, int, int, int);
+	void SetWithdrawalParams(QString, double, int, int, QString, int, int, int, QString, int = 0);
+	void FillEditElements(QString, double, int, int, QString, int, int, int, QString);
 	QDoubleValidator *vDouble = nullptr;
 	QIntValidator *vInt = nullptr;
 	void InitComboBox();
@@ -41,6 +42,8 @@ private:
 	QWidget* parentForm;
 	MainForm* mainForm;
 	bool CheckAccess();
+	QStandardItemModel *itemModel;
+	QModelIndex mIndex;
 };
 
 #endif //CREATEWDWDLG_H

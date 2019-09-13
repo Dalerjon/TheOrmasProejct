@@ -5,7 +5,33 @@ require_once 'logsql.php';
 $productPrice = Array();
 	$product_type_result = pg_query("SELECT product_type_id FROM \"OrmasSchema\".product_types_view where product_type_code = 'PRODUCT'");
     $product_type_row = pg_fetch_array($product_type_result);
-	$product_result = pg_query("SELECT * FROM \"OrmasSchema\".products_view where product_type_id = ".$product_type_row[0]);
+	$product_employee_result = pg_query("SELECT product_id FROM \"OrmasSchema\".employee_product_view where employee_id =".$_SESSION['id']);
+    $product_employee_row = pg_fetch_all($product_employee_result);
+	$product_id_list ="";
+	if(!empty($product_employee_row[0]))
+	{
+		$row_count = pg_num_rows($product_employee_result);
+		for($i=0;$i<$row_count;$i++)
+		{
+			if($i == 0)
+			{
+				$product_id_list .= " ".$product_employee_row[$i]['product_id']." ";
+			}
+			else
+			{
+				$product_id_list .= ", ".$product_employee_row[$i]['product_id']." ";
+			}
+		}
+	}
+	if(!empty($product_id_list))
+	{
+		$product_result = pg_query("SELECT * FROM \"OrmasSchema\".products_view where product_type_id = ".$product_type_row[0]." 
+		and product_id IN(".$product_id_list.")");
+	}
+	else
+	{
+		$product_result = pg_query("SELECT * FROM \"OrmasSchema\".products_view where product_type_id = ".$product_type_row[0]);
+	}
 	$product_row = pg_fetch_all($product_result);
 	$product_list ="";
 	if(!empty($product_row[0]))

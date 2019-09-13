@@ -141,6 +141,15 @@ namespace BusinessLayer{
 		return "";
 	}
 
+	std::string Creditor::GenerateINFilter(DataLayer::OrmasDal& ormasDal, std::vector<int> creditorIDList)
+	{
+		if (creditorIDList.size()>0)
+		{
+			return ormasDal.GetINFilterForCreditorID(creditorIDList);
+		}
+		return "";
+	}
+
 	bool Creditor::GetCreditorByID(DataLayer::OrmasDal& ormasDal, int cID, std::string& errorMessage)
 	{
 		if (cID <= 0)

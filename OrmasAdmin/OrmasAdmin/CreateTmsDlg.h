@@ -3,6 +3,7 @@
 #include "ui_CreateTmsDlg.h"
 #include "OrmasBL.h"
 #include "MainForm.h"
+#include <QStandardItemModel>
 
 class CreateTmsDlg : public QDialog, public Ui::CreateTimesheet
 {
@@ -30,6 +31,8 @@ private:
 	QIntValidator *vInt = nullptr;
 	QWidget* parentForm;
 	MainForm* mainForm;
+	QStandardItemModel *itemModel;
+	QModelIndex mIndex;
 };
 
 #endif //CREATETMSDLG_H

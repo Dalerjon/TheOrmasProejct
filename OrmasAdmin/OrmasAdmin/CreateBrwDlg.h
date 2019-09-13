@@ -3,6 +3,7 @@
 #include "ui_CreateBrwDlg.h"
 #include "OrmasBL.h"
 #include "MainForm.h"
+#include <QStandardItemModel>
 
 class CreateBrwDlg : public QDialog, public Ui::CreateBorrower
 {
@@ -27,6 +28,8 @@ private:
 	void FillEditElements(QString, int);
 	QWidget* parentForm;
 	MainForm* mainForm;
+	QStandardItemModel *itemModel;
+	QModelIndex mIndex;
 };
 
 #endif //CREATEBrwDLG_H

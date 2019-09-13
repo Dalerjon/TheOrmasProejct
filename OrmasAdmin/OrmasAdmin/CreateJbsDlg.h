@@ -3,6 +3,7 @@
 #include "ui_CreateJbsDlg.h"
 #include "OrmasBL.h"
 #include "MainForm.h"
+#include <QStandardItemModel>
 
 class CreateJbsDlg : public QDialog, public Ui::CreateJobsheet
 {
@@ -31,6 +32,8 @@ private:
 	QIntValidator *vInt = nullptr;
 	QWidget* parentForm;
 	MainForm* mainForm;
+	QStandardItemModel *itemModel;
+	QModelIndex mIndex;
 };
 
 #endif //CREATEJBSDLG_H

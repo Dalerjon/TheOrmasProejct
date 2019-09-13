@@ -26,6 +26,9 @@ CreateEmpDlg::CreateEmpDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, QWi
 	roleEdit->setValidator(vInt);
 	if (true == updateFlag)
 	{
+		DataForm *parentDataForm = (DataForm*)parentForm;
+		itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
+		mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
 		QObject::connect(okBtn, &QPushButton::released, this, &CreateEmpDlg::EditEmployee);
 	}
 	else
@@ -388,8 +391,7 @@ void CreateEmpDlg::EditEmployee()
 					if (!parentDataForm->IsClosed())
 					{
 						//updating Emp data
-						QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
-						QModelIndex mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
+						
 						itemModel->item(mIndex.row(), 1)->setText(employee->GetName().c_str());
 						itemModel->item(mIndex.row(), 2)->setText(employee->GetSurname().c_str());
 

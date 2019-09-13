@@ -267,5 +267,19 @@ namespace BusinessLayer{
 		errorMessage = "Warehouse Type with this parameters are already exist! Please avoid the duplication!";
 		return true;
 	}
+
+	std::map<std::string, int> WarehouseType::GetWarehouseTypesAsMap(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
+	{
+		std::map<std::string, int> warehouseTypeMap;
+		std::vector<DataLayer::warehouseTypeCollection> warehouseTypeVector = ormasDal.GetWarehouseType(errorMessage);
+		if (warehouseTypeVector.size() > 0)
+		{
+			for each (auto item in warehouseTypeVector)
+			{
+				warehouseTypeMap.insert(std::make_pair(std::get<1>(item), std::get<0>(item)));
+			}
+		}
+		return warehouseTypeMap;
+	}
 }
 

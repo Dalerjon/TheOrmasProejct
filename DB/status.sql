@@ -64,3 +64,6 @@ INSERT INTO "OrmasSchema".status(
 INSERT INTO "OrmasSchema".status(
             status_id, status_code, status_name, comment)
     VALUES ((SELECT nextval('"OrmasSchema".id_seq')), '0021', 'TO PAY', 'To pay');
+INSERT INTO "OrmasSchema".status(
+            status_id, status_code, status_name, comment)
+    VALUES ((SELECT nextval('"OrmasSchema".id_seq')), '0022', 'RETURN', 'To pay');

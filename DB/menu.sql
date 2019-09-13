@@ -270,6 +270,21 @@ INSERT INTO "OrmasSchema".access_items(
 INSERT INTO "OrmasSchema".access_items(
             access_item_id, access_item_eng, access_item_ru, access_division)
     VALUES ((SELECT nextval('"OrmasSchema".id_seq')), 'actionCompanyBalance', 'actionCompanyBalance', 'MENUITEM');
+INSERT INTO "OrmasSchema".access_items(
+            access_item_id, access_item_eng, access_item_ru, access_division)
+    VALUES ((SELECT nextval('"OrmasSchema".id_seq')), 'actionSpecificationReport', 'actionSpecificationReport', 'MENUITEM');
+INSERT INTO "OrmasSchema".access_items(
+            access_item_id, access_item_eng, access_item_ru, access_division)
+    VALUES ((SELECT nextval('"OrmasSchema".id_seq')), 'actionProfitability', 'actionProfitability', 'MENUITEM');
+INSERT INTO "OrmasSchema".access_items(
+            access_item_id, access_item_eng, access_item_ru, access_division)
+    VALUES ((SELECT nextval('"OrmasSchema".id_seq')), 'actionSalesReport', 'actionSalesReport', 'MENUITEM');
+INSERT INTO "OrmasSchema".access_items(
+            access_item_id, access_item_eng, access_item_ru, access_division)
+    VALUES ((SELECT nextval('"OrmasSchema".id_seq')), 'actionAccountCard', 'actionAccountCard', 'MENUITEM');
+INSERT INTO "OrmasSchema".access_items(
+            access_item_id, access_item_eng, access_item_ru, access_division)
+    VALUES ((SELECT nextval('"OrmasSchema".id_seq')), 'actionWarehouseTurnover', 'actionWarehouseTurnover', 'MENUITEM');
 -------------------------------------------------------------------------------------------------------------	
 INSERT INTO "OrmasSchema".access_items(
             access_item_id, access_item_eng, access_item_ru, access_division)

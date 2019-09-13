@@ -3,6 +3,7 @@
 #include "ui_CreatePrdBrnDlg.h"
 #include "OrmasBL.h"
 #include "MainForm.h"
+#include <QStandardItemModel>
 
 class CreatePrdBrnDlg : public QDialog, public Ui::CreateProductBranch
 {
@@ -29,6 +30,8 @@ private:
 	QIntValidator *vInt = nullptr;
 	QWidget* parentForm;
 	MainForm* mainForm;
+	QStandardItemModel *itemModel;
+	QModelIndex mIndex;
 };
 
 #endif //CREATEPrdBrnDLG_H

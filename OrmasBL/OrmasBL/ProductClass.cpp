@@ -247,6 +247,24 @@ namespace BusinessLayer
 		return "";
 	}
 
+	std::string Product::GenerateINFilter(DataLayer::OrmasDal& ormasDal, std::vector<int> prodIDList)
+	{
+		if (prodIDList.size()>0)
+		{
+			return ormasDal.GetINFilterForProductID(prodIDList);
+		}
+		return "";
+	}
+
+	std::string Product::GenerateLikeFilter(DataLayer::OrmasDal& ormasDal, std::string searchKey)
+	{
+		if (!searchKey.empty())
+		{
+			return ormasDal.GetLikeFilterForProductName(searchKey);
+		}
+		return "";
+	}
+
 	bool Product::GetProductByID(DataLayer::OrmasDal& ormasDal, int pID, std::string& errorMessage)
 	{
 		if (pID <= 0)

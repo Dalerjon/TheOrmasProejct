@@ -18,6 +18,9 @@ CreateAccTpDlg::CreateAccTpDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag,
 	nameEdit->setMaxLength(50);
 	if (true == updateFlag)
 	{
+		DataForm *parentDataForm = (DataForm*)parentForm;
+		itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
+		mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
 		QObject::connect(okBtn, &QPushButton::released, this, &CreateAccTpDlg::EditAccountType);
 	}
 	else
@@ -128,8 +131,6 @@ void CreateAccTpDlg::EditAccountType()
 				{
 					if (!parentDataForm->IsClosed())
 					{
-						QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
-						QModelIndex mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
 						itemModel->item(mIndex.row(), 1)->setText(accountType->GetName().c_str());
 						itemModel->item(mIndex.row(), 2)->setText(QString::number(numberEdit->text().toInt()));
 						itemModel->item(mIndex.row(), 3)->setText(commentEdit->text());

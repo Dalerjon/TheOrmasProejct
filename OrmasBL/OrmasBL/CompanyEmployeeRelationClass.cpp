@@ -174,6 +174,20 @@ namespace BusinessLayer{
 		return 0;
 	}
 
+	int CompanyEmployeeRelation::GetBranchByEmployeeID(DataLayer::OrmasDal& ormasDal, int eID, std::string& errorMessage)
+	{
+		CompanyEmployeeRelation ceRelation;
+		ceRelation.SetEmployeeID(eID);
+		ceRelation.SetCompanyID(0);
+		std::string filter = ceRelation.GenerateFilter(ormasDal);
+		std::vector<DataLayer::companyEmployeeViewCollection> companyEmployeeVector = ormasDal.GetCompanyEmployee(errorMessage, filter);
+		if (0 != companyEmployeeVector.size())
+		{
+			return std::get<8>(companyEmployeeVector.at(0));
+		}
+		return 0;
+	}
+
 	int CompanyEmployeeRelation::GetEmployeeByCompanyID(DataLayer::OrmasDal& ormasDal, int cID, std::string& errorMessage)
 	{
 		CompanyEmployeeRelation ceRelation;

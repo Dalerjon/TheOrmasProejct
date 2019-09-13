@@ -3,6 +3,7 @@
 #include "ui_CreateCERDlg.h"
 #include "OrmasBL.h"
 #include "MainForm.h"
+#include <QStandardItemModel>
 
 class CreateCERDlg : public QDialog, public Ui::CreateCompanyEmployee
 {
@@ -29,6 +30,8 @@ private:
 	void InitComboBox();
 	QWidget* parentForm;
 	MainForm* mainForm;
+	QStandardItemModel *itemModel;
+	QModelIndex mIndex;
 };
 
 #endif //CREATECERDLG_H

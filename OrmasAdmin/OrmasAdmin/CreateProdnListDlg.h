@@ -3,6 +3,7 @@
 #include "ui_CreatePrdnListDlg.h"
 #include "OrmasBL.h"
 #include "MainForm.h"
+#include <QStandardItemModel>
 
 class CreateProdnListDlg : public QDialog, public Ui::CreatePrdnList
 {
@@ -36,5 +37,8 @@ private:
 	void InitComboBox();
 	QWidget* parentForm;
 	MainForm* mainForm;
+	int employeeID = 0;
+	QStandardItemModel *itemModel;
+	QModelIndex mIndex;
 };
 #endif //CREATEPRDNLITDLG_H

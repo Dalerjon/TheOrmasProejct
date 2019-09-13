@@ -16,6 +16,9 @@ CreateDivDlg::CreateDivDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, QWi
 	parentForm = parent;
 	if (true == updateFlag)
 	{
+		DataForm *parentDataForm = (DataForm*)parentForm;
+		itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
+		mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
 		QObject::connect(okBtn, &QPushButton::released, this, &CreateDivDlg::EditDivision);
 	}
 	else
@@ -116,8 +119,6 @@ void CreateDivDlg::EditDivision()
 				{
 					if (!parentDataForm->IsClosed())
 					{
-						QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
-						QModelIndex mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
 						itemModel->item(mIndex.row(), 1)->setText(division->GetName().c_str());
 						itemModel->item(mIndex.row(), 2)->setText(division->GetCode().c_str());
 						emit itemModel->dataChanged(mIndex, mIndex);

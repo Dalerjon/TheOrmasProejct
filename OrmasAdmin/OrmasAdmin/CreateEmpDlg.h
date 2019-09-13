@@ -4,6 +4,7 @@
 #include "ui_CreateEmpDlg.h"
 #include "OrmasBL.h"
 #include "MainForm.h"
+#include <QStandardItemModel>
 
 class CreateEmpDlg : public QDialog, public Ui::CreateEmployee
 {
@@ -34,6 +35,8 @@ private:
 	QWidget* parentForm;
 	MainForm* mainForm;
 	void InitComboBox();
+	QStandardItemModel *itemModel;
+	QModelIndex mIndex;
 };
 
 #endif //CREATEEMPDLG_H

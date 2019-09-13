@@ -22,6 +22,7 @@ public:
 	void OpenConRDlg();
 	void OpenProdDlg();
 	void OpenStsDlg();
+	void SetProductData(int);
 	void TextEditChanged();
 	public slots:
 	void SetID(int ID, QString childName);
@@ -36,5 +37,6 @@ private:
 	void InitComboBox();
 	QWidget* parentForm;
 	MainForm* mainForm;
+	
 };
 #endif //CREATEORDLITDLG_H

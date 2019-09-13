@@ -3,6 +3,7 @@
 #include "ui_CreateUserDlg.h"
 #include "OrmasBL.h"
 #include "MainForm.h"
+#include <QStandardItemModel>
 
 class CreateUserDlg : public QDialog, public Ui::CreateUser
 {
@@ -28,6 +29,8 @@ private:
 	QIntValidator *vInt = nullptr;
 	QWidget* parentForm;
 	MainForm* mainForm;
+	QStandardItemModel *itemModel;
+	QModelIndex mIndex;
 };
 
 #endif //CREATEUSERDLG_H

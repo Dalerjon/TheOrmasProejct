@@ -340,6 +340,9 @@ namespace BusinessLayer
 		cPList.SetConsumeProductID(cpID);
 		std::string filter = cPList.GenerateFilter(ormasDal);
 		std::vector<DataLayer::consumeProductListViewCollection> productListVector = ormasDal.GetConsumeProductList(errorMessage, filter);
+		double totalOldCount = 0;
+		double totalNewCount = 0;
+		double totalChangingCount = 0;
 		if (productListVector.size() > 0)
 		{
 			for each (auto item in productListVector)
@@ -358,6 +361,8 @@ namespace BusinessLayer
 			TransportList tList;
 			Status status;
 			NetCost nCost;
+			double oldCount = 0;
+			double oldSum = 0;
 			//ormasDal.StartTransaction(errorMessage);
 			for each (auto item in cPListVec)
 			{
@@ -367,6 +372,10 @@ namespace BusinessLayer
 				nCost.Clear();
 				if (!tList.GetTransportListByTransportAndProductID(ormasDal, transport.GetID(), item.GetProductID(), errorMessage))
 				{
+					oldCount = tList.GetCount();
+					oldSum = tList.GetSum();
+					totalOldCount += tList.GetCount();
+					totalChangingCount += item.GetCount();
 					errorMessage.clear();
 					if (!status.GetStatusByName(ormasDal, "TRANSPORTING", errorMessage))
 					{
@@ -391,9 +400,14 @@ namespace BusinessLayer
 						//ormasDal.CancelTransaction(errorMessage);
 						return false;
 					}
+					totalNewCount += tList.GetCount();
 				}
 				else
 				{
+					oldCount = tList.GetCount();
+					oldSum = tList.GetSum();
+					totalOldCount += tList.GetCount();
+					totalChangingCount += item.GetCount();
 					if (!product.GetProductByID(ormasDal, item.GetProductID(), errorMessage))
 						return false;
 					if (!nCost.GetNetCostByProductID(ormasDal, product.GetID(), errorMessage))
@@ -407,6 +421,11 @@ namespace BusinessLayer
 						//ormasDal.CancelTransaction(errorMessage);
 						return false;
 					}
+					if (std::round((oldCount + item.GetCount()) * 1000) / 1000 != std::round(tList.GetCount() * 1000) / 1000)
+						return false;
+					if (std::round((oldSum + item.GetCount()*nCost.GetValue()) * 1000) / 1000 != std::round(tList.GetSum() * 1000) / 1000)
+						return false;
+					totalNewCount += tList.GetCount();
 				}
 			}
 		}
@@ -416,10 +435,16 @@ namespace BusinessLayer
 			//ormasDal.CancelTransaction(errorMessage);
 			return false;
 		}
+		if (std::round((totalOldCount + totalChangingCount) * 1000) / 1000 != std::round(totalNewCount * 1000) / 1000)
+		{
+			errorMessage = "Document is wrong! Sum and count does not the same in list and document.";
+			//ormasDal.CancelTransaction(errorMessage);
+			return false;
+		}
 		return true;
 	}
 
-	bool Transport::ChangingByReceiptProductCancel(DataLayer::OrmasDal& ormasDal, int cpID, std::string& errorMessage)
+	bool Transport::ChangingByReceiptProductReverse(DataLayer::OrmasDal& ormasDal, int cpID, std::string& errorMessage)
 	{
 		ConsumeProduct consumeProduct;
 		if (!consumeProduct.GetConsumeProductByID(ormasDal, cpID, errorMessage))
@@ -455,12 +480,17 @@ namespace BusinessLayer
 			errorMessage = "ERROR! Consume product list is empty!";
 			return false;
 		}
+		double totalOldCount = 0;
+		double totalNewCount = 0;
+		double totalChangingCount = 0;
 		if (cPListVec.size() > 0)
 		{
 			Product product;
 			TransportList tList;
 			Status status;
 			NetCost nCost;
+			double oldCount = 0;
+			double oldSum = 0;
 			//ormasDal.StartTransaction(errorMessage);
 			for each (auto item in cPListVec)
 			{
@@ -495,6 +525,10 @@ namespace BusinessLayer
 					}
 					else
 					{
+						oldCount = tList.GetCount();
+						oldSum = tList.GetSum();
+						totalOldCount += tList.GetCount();
+						totalChangingCount += item.GetCount();
 						if (!product.GetProductByID(ormasDal, item.GetProductID(), errorMessage))
 							return false;
 						if (!nCost.GetNetCostByProductID(ormasDal, product.GetID(), errorMessage))
@@ -515,6 +549,11 @@ namespace BusinessLayer
 							//ormasDal.CancelTransaction(errorMessage);
 							return false;
 						}
+						if (std::round((oldCount - item.GetCount()) * 1000) / 1000 != std::round(tList.GetCount() * 1000) / 1000)
+							return false;
+						if (std::round((oldSum - item.GetCount()*nCost.GetValue()) * 1000) / 1000 != std::round(tList.GetSum() * 1000) / 1000)
+							return false;
+						totalNewCount += tList.GetCount();
 					}
 				}
 			}
@@ -522,6 +561,12 @@ namespace BusinessLayer
 		else
 		{
 			errorMessage = "ERROR! Transport list is empty!";
+			//ormasDal.CancelTransaction(errorMessage);
+			return false;
+		}
+		if (std::round((totalOldCount - totalChangingCount) * 1000) / 1000 != std::round(totalNewCount * 1000) / 1000)
+		{
+			errorMessage = "Document is wrong! Sum and count does not the same in list and document.";
 			//ormasDal.CancelTransaction(errorMessage);
 			return false;
 		}
@@ -564,12 +609,17 @@ namespace BusinessLayer
 			errorMessage = "ERROR! Consume product list is empty!";
 			return false;
 		}
+		double totalOldCount = 0;
+		double totalNewCount = 0;
+		double totalChangingCount = 0;
 		if (cPListVec.size() > 0)
 		{
 			Product product;
 			TransportList tList;
 			Status status;
 			NetCost nCost;
+			double oldCount = 0;
+			double oldSum = 0;
 			//ormasDal.StartTransaction(errorMessage);
 			for each (auto item in cPListVec)
 			{
@@ -579,6 +629,10 @@ namespace BusinessLayer
 				nCost.Clear();
 				if (!tList.GetTransportListByTransportAndProductID(ormasDal, transport.GetID(), item.GetProductID(), errorMessage))
 				{
+					oldCount = tList.GetCount();
+					oldSum = tList.GetSum();
+					totalOldCount += tList.GetCount();
+					totalChangingCount += item.GetCount();
 					errorMessage.clear();
 					if (!status.GetStatusByName(ormasDal, "IN STOCK", errorMessage))
 					{
@@ -603,9 +657,14 @@ namespace BusinessLayer
 						//ormasDal.CancelTransaction(errorMessage);
 						return false;
 					}
+					totalNewCount += tList.GetCount();
 				}
 				else
 				{
+					oldCount = tList.GetCount();
+					oldSum = tList.GetSum();
+					totalOldCount += tList.GetCount();
+					totalChangingCount += item.GetCount();
 					if (!product.GetProductByID(ormasDal, item.GetProductID(), errorMessage))
 						return false;
 					if (!nCost.GetNetCostByProductID(ormasDal, product.GetID(), errorMessage))
@@ -619,12 +678,23 @@ namespace BusinessLayer
 						//ormasDal.CancelTransaction(errorMessage);
 						return false;
 					}
+					if (std::round((oldCount + item.GetCount()) * 1000) / 1000 != std::round(tList.GetCount() * 1000) / 1000)
+						return false;
+					if (std::round((oldSum + item.GetCount()*nCost.GetValue()) * 1000) / 1000 != std::round(tList.GetSum() * 1000) / 1000)
+						return false;
+					totalNewCount += tList.GetCount();
 				}
 			}
 		}
 		else
 		{
 			errorMessage = "ERROR! Transport list is empty!";
+			//ormasDal.CancelTransaction(errorMessage);
+			return false;
+		}
+		if (std::round((totalOldCount + totalChangingCount) * 1000) / 1000 != std::round(totalNewCount * 1000) / 1000)
+		{
+			errorMessage = "Document is wrong! Sum and count does not the same in list and document.";
 			//ormasDal.CancelTransaction(errorMessage);
 			return false;
 		}
@@ -663,12 +733,17 @@ namespace BusinessLayer
 			errorMessage = "ERROR! Order list is empty!";
 			return false;
 		}
+		double totalOldCount = 0;
+		double totalNewCount = 0;
+		double totalChangingCount = 0;
 		if (oListVec.size() > 0)
 		{
 			Product product;
 			TransportList tList;
 			Status status;
 			NetCost nCost;
+			double oldCount = 0;
+			double oldSum = 0;
 			//ormasDal.StartTransaction(errorMessage);
 			for each (auto item in oListVec)
 			{
@@ -703,6 +778,10 @@ namespace BusinessLayer
 					}
 					else
 					{
+						oldCount = tList.GetCount();
+						oldSum = tList.GetSum();
+						totalOldCount += tList.GetCount();
+						totalChangingCount += item.GetCount();
 						if (!product.GetProductByID(ormasDal, item.GetProductID(), errorMessage))
 							return false;
 						if (!nCost.GetNetCostByProductID(ormasDal, product.GetID(), errorMessage))
@@ -723,6 +802,11 @@ namespace BusinessLayer
 							//ormasDal.CancelTransaction(errorMessage);
 							return false;
 						}
+						if (std::round((oldCount - item.GetCount()) * 1000) / 1000 != std::round(tList.GetCount() * 1000) / 1000)
+							return false;
+						if (std::round((oldSum - item.GetCount()*nCost.GetValue()) * 1000) / 1000 != std::round(tList.GetSum() * 1000) / 1000)
+							return false;
+						totalNewCount += tList.GetCount();
 					}
 				}
 			}
@@ -730,6 +814,13 @@ namespace BusinessLayer
 		else
 		{
 			errorMessage = "ERROR! Transport list is empty!";
+			//ormasDal.CancelTransaction(errorMessage);
+			return false;
+		}
+		
+		if (std::round((totalOldCount - totalChangingCount) * 1000) / 1000 != std::round(totalNewCount * 1000) / 1000)
+		{
+			errorMessage = "Document is wrong! Sum and count does not the same in list and document.";
 			//ormasDal.CancelTransaction(errorMessage);
 			return false;
 		}
@@ -750,7 +841,7 @@ namespace BusinessLayer
 		return true;
 	}
 
-	bool Transport::ChangingByConsumeProductCancel(DataLayer::OrmasDal& ormasDal, int oID, std::string& errorMessage)
+	bool Transport::ChangingByConsumeProductReverse(DataLayer::OrmasDal& ormasDal, int oID, std::string& errorMessage)
 	{
 		Order order;
 		if (!order.GetOrderByID(ormasDal, oID, errorMessage))
@@ -782,12 +873,17 @@ namespace BusinessLayer
 			errorMessage = "ERROR! Order list is empty!";
 			return false;
 		}
+		double totalOldCount = 0;
+		double totalNewCount = 0;
+		double totalChangingCount = 0;
 		if (oListVec.size() > 0)
 		{
 			Product product;
 			TransportList tList;
 			Status status;
 			NetCost nCost;
+			double oldCount = 0;
+			double oldSum = 0;
 			//ormasDal.StartTransaction(errorMessage);
 			for each (auto item in oListVec)
 			{
@@ -797,6 +893,10 @@ namespace BusinessLayer
 				nCost.Clear();
 				if (!tList.GetTransportListByTransportAndProductID(ormasDal, transport.GetID(), item.GetProductID(), errorMessage))
 				{
+					oldCount = tList.GetCount();
+					oldSum = tList.GetSum();
+					totalOldCount += tList.GetCount();
+					totalChangingCount += item.GetCount();
 					errorMessage.clear();
 					if (!status.GetStatusByName(ormasDal, "TRANSPORTING", errorMessage))
 					{
@@ -821,9 +921,14 @@ namespace BusinessLayer
 						//ormasDal.CancelTransaction(errorMessage);
 						return false;
 					}
+					totalNewCount += tList.GetCount();
 				}
 				else
 				{
+					oldCount = tList.GetCount();
+					oldSum = tList.GetSum();
+					totalOldCount += tList.GetCount();
+					totalChangingCount += item.GetCount();
 					if (!product.GetProductByID(ormasDal, item.GetProductID(), errorMessage))
 						return false;
 					if (!nCost.GetNetCostByProductID(ormasDal, product.GetID(), errorMessage))
@@ -837,12 +942,23 @@ namespace BusinessLayer
 						//ormasDal.CancelTransaction(errorMessage);
 						return false;
 					}
+					if (std::round((oldCount + item.GetCount()) * 1000) / 1000 != std::round(tList.GetCount() * 1000) / 1000)
+						return false;
+					if (std::round((oldSum + item.GetCount()*nCost.GetValue()) * 1000) / 1000 != std::round(tList.GetSum() * 1000) / 1000)
+						return false;
+					totalNewCount += tList.GetCount();
 				}
 			}
 		}
 		else
 		{
 			errorMessage = "ERROR! Transport list is empty!";
+			//ormasDal.CancelTransaction(errorMessage);
+			return false;
+		}
+		if (std::round((totalOldCount + totalChangingCount) * 1000) / 1000 != std::round(totalNewCount * 1000) / 1000)
+		{
+			errorMessage = "Document is wrong! Sum and count does not the same in list and document.";
 			//ormasDal.CancelTransaction(errorMessage);
 			return false;
 		}
@@ -862,6 +978,7 @@ namespace BusinessLayer
 		}
 		return true;
 	}
+
 
 	bool Transport::ChangingByConsumeProduct(DataLayer::OrmasDal& ormasDal, int oID, std::map<int, double> pProdCountMap, double pSum, std::string& errorMessage)
 	{
@@ -895,12 +1012,17 @@ namespace BusinessLayer
 			errorMessage = "ERROR! Order list is empty!";
 			return false;
 		}
+		double totalOldCount = 0;
+		double totalNewCount = 0;
+		double totalChangingCount = 0;
 		if (oListVec.size() > 0)
 		{
 			Product product;
 			TransportList tList;
 			Status status;
 			NetCost nCost;
+			double oldCount = 0;
+			double oldSum = 0;
 			//ormasDal.StartTransaction(errorMessage);
 			for each (auto item in oListVec)
 			{
@@ -935,6 +1057,10 @@ namespace BusinessLayer
 					}
 					else
 					{
+						oldCount = tList.GetCount();
+						oldSum = tList.GetSum();
+						totalOldCount += tList.GetCount();
+						totalChangingCount += item.GetCount();
 						if (!product.GetProductByID(ormasDal, item.GetProductID(), errorMessage))
 							return false;
 						if (!nCost.GetNetCostByProductID(ormasDal, product.GetID(), errorMessage))
@@ -955,6 +1081,11 @@ namespace BusinessLayer
 							//ormasDal.CancelTransaction(errorMessage);
 							return false;
 						}
+						if (std::round((oldCount - item.GetCount()) * 1000) / 1000 != std::round(tList.GetCount() * 1000) / 1000)
+							return false;
+						if (std::round((oldSum - item.GetCount()*nCost.GetValue()) * 1000) / 1000 != std::round(tList.GetSum() * 1000) / 1000)
+							return false;
+						totalNewCount += tList.GetCount();
 					}
 				}
 			}
@@ -962,6 +1093,12 @@ namespace BusinessLayer
 		else
 		{
 			errorMessage = "ERROR! Transport list is empty!";
+			//ormasDal.CancelTransaction(errorMessage);
+			return false;
+		}
+		if (std::round((totalOldCount - totalChangingCount) * 1000) / 1000 != std::round(totalNewCount * 1000) / 1000)
+		{
+			errorMessage = "Document is wrong! Sum and count does not the same in list and document.";
 			//ormasDal.CancelTransaction(errorMessage);
 			return false;
 		}

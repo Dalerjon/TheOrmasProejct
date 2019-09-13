@@ -22,6 +22,9 @@ CreateSpecDlg::CreateSpecDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, Q
 	
 	if (true == updateFlag)
 	{
+		DataForm *parentDataForm = (DataForm*)parentForm;
+		itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
+		mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
 		QObject::connect(okBtn, &QPushButton::released, this, &CreateSpecDlg::EditSpecification);
 	}
 	else
@@ -63,7 +66,7 @@ void CreateSpecDlg::SetSpecificationParams(int pID, double sSum, int cID, int eI
 void CreateSpecDlg::FillEditElements(int pID, double sSum, int cID, int eID, QString sDate)
 {
 	productEdit->setText(QString::number(pID));
-	sumEdit->setText(QString::number(sSum));
+	sumEdit->setText(QString::number(sSum, 'f', 3));
 	employeeEdit->setText(QString::number(eID));
 	dateEdit->setDateTime(QDateTime::fromString(sDate, "dd.MM.yyyy hh:mm"));
 	currencyCmb->setCurrentIndex(currencyCmb->findData(QVariant(cID)));
@@ -205,7 +208,7 @@ void CreateSpecDlg::CreateSpecification()
 					specificationItem << new QStandardItem(QString::number(specification->GetID()))
 						<< new QStandardItem(specification->GetDate().c_str())
 						<< new QStandardItem(product->GetName().c_str())
-						<< new QStandardItem(QString::number(specification->GetSum()))
+						<< new QStandardItem(QString::number(specification->GetSum(),'f',3))
 						<< new QStandardItem(currency->GetShortName().c_str())
 						<< new QStandardItem(employee->GetName().c_str())
 						<< new QStandardItem(employee->GetSurname().c_str())
@@ -296,11 +299,10 @@ void CreateSpecDlg::EditSpecification()
 							return;
 						}
 
-						QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
-						QModelIndex mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
+					
 						itemModel->item(mIndex.row(), 1)->setText(specification->GetDate().c_str());
 						itemModel->item(mIndex.row(), 2)->setText(product->GetName().c_str());
-						itemModel->item(mIndex.row(), 3)->setText(QString::number(specification->GetSum()));
+						itemModel->item(mIndex.row(), 3)->setText(QString::number(specification->GetSum(),'f',3));
 						itemModel->item(mIndex.row(), 4)->setText(currency->GetShortName().c_str());
 						itemModel->item(mIndex.row(), 5)->setText(employee->GetName().c_str());
 						itemModel->item(mIndex.row(), 6)->setText(employee->GetSurname().c_str());

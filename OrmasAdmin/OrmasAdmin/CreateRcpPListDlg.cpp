@@ -24,6 +24,9 @@ CreateRcpPListDlg::CreateRcpPListDlg(BusinessLayer::OrmasBL *ormasBL, bool updat
 	sumEdit->setMaxLength(17);
 	if (true == updateFlag)
 	{
+		DataForm *parentDataForm = (DataForm*)parentForm;
+		itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
+		mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
 		QObject::connect(addBtn, &QPushButton::released, this, &CreateRcpPListDlg::EditProductInList);
 	}
 	else
@@ -112,8 +115,8 @@ void CreateRcpPListDlg::FillEditElements(int rReceiptProductID, int rProductID, 
 {
 	receiptProductEdit->setText(QString::number(rReceiptProductID));
 	productEdit->setText(QString::number(rProductID));
-	countEdit->setText(QString::number(rCount));
-	sumEdit->setText(QString::number(rSum));
+	countEdit->setText(QString::number(rCount, 'f', 3));
+	sumEdit->setText(QString::number(rSum, 'f', 3));
 	statusEdit->setText(QString::number(rStatusID));
 	currencyCmb->setCurrentIndex(currencyCmb->findData(QVariant(rCurrencyID)));
 	BusinessLayer::Product product;
@@ -240,8 +243,8 @@ void CreateRcpPListDlg::AddProductToList()
 						<< new QStandardItem(currency->GetShortName().c_str())
 						<< new QStandardItem(QString::number(product->GetVolume()))
 						<< new QStandardItem(measure->GetName().c_str())
-						<< new QStandardItem(QString::number(receiptProductList->GetCount()))
-						<< new QStandardItem(QString::number(receiptProductList->GetSum()))
+						<< new QStandardItem(QString::number(receiptProductList->GetCount(), 'f', 3))
+						<< new QStandardItem(QString::number(receiptProductList->GetSum(),'f',3))
 						<< new QStandardItem(sumCurrency->GetShortName().c_str())
 						<< new QStandardItem(statusVector.at(0).GetName().c_str())
 						<< new QStandardItem(QString::number(receiptProductList->GetProductID()))
@@ -339,16 +342,15 @@ void CreateRcpPListDlg::EditProductInList()
 							return;
 						}
 
-						QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
-						QModelIndex mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
+						
 						itemModel->item(mIndex.row(), 1)->setText(QString::number(receiptProductList->GetReceiptProductID()));
 						itemModel->item(mIndex.row(), 2)->setText(product->GetName().c_str());
 						itemModel->item(mIndex.row(), 3)->setText(QString::number(product->GetPrice()));
 						itemModel->item(mIndex.row(), 4)->setText(currency->GetShortName().c_str());
 						itemModel->item(mIndex.row(), 5)->setText(QString::number(product->GetVolume()));
 						itemModel->item(mIndex.row(), 6)->setText(measure->GetName().c_str());
-						itemModel->item(mIndex.row(), 7)->setText(QString::number(receiptProductList->GetCount()));
-						itemModel->item(mIndex.row(), 8)->setText(QString::number(receiptProductList->GetSum()));
+						itemModel->item(mIndex.row(), 7)->setText(QString::number(receiptProductList->GetCount(), 'f', 3));
+						itemModel->item(mIndex.row(), 8)->setText(QString::number(receiptProductList->GetSum(),'f',3));
 						itemModel->item(mIndex.row(), 9)->setText(sumCurrency->GetShortName().c_str());
 						itemModel->item(mIndex.row(), 10)->setText(status->GetName().c_str());
 						itemModel->item(mIndex.row(), 11)->setText(QString::number(receiptProductList->GetProductID()));

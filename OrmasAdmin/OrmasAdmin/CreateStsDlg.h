@@ -2,6 +2,7 @@
 #define CREATESTSDLG_H
 #include "ui_CreateStsDlg.h"
 #include "OrmasBL.h"
+#include <QStandardItemModel>
 
 class CreateStsDlg :public QDialog, public Ui::CreateStatus
 {
@@ -23,5 +24,7 @@ private:
 	void SetStatusParams(QString, QString, QString, int = 0);
 	void FillEditElements(QString, QString, QString);
 	QWidget* parentForm;
+	QStandardItemModel *itemModel;
+	QModelIndex mIndex;
 };
 #endif //CREATESTSDLG_H

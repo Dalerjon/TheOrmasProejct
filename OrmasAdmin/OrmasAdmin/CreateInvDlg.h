@@ -4,6 +4,7 @@
 #include "ui_CreateInvDlg.h"
 #include "OrmasBL.h"
 #include "MainForm.h"
+#include <QStandardItemModel>
 
 class CreateInvDlg : public QDialog, public Ui::CreateInventorization
 {
@@ -40,5 +41,7 @@ private:
 	QWidget* parentForm;
 	MainForm* mainForm;
 	bool CheckAccess();
+	QStandardItemModel *itemModel;
+	QModelIndex mIndex;
 };
 #endif //CREATEINVDLG_H

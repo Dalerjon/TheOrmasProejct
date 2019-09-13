@@ -3,6 +3,7 @@
 #include "ui_CreateJbpDlg.h"
 #include "OrmasBL.h"
 #include "MainForm.h"
+#include <QStandardItemModel>
 
 class CreateJbpDlg : public QDialog, public Ui::CreateJobprice
 {
@@ -32,6 +33,8 @@ private:
 	void InitComboBox();
 	QWidget* parentForm;
 	MainForm* mainForm;
+	QStandardItemModel *itemModel;
+	QModelIndex mIndex;
 };
 
 #endif //CREATEJBPDLG_H

@@ -59,6 +59,8 @@ namespace BusinessLayer
 
 		//Generate filter string for class
 		std::string GenerateFilter(DataLayer::OrmasDal& ormasDal);
+		std::string GenerateINFilterForStockEmployee(DataLayer::OrmasDal& ormasDal, std::vector<int> sEmpIDList);
+		std::string GenerateFilterForPeriod(DataLayer::OrmasDal& ormasDal, std::string formDate, std::string toDate);
 		bool GetConsumeProductByID(DataLayer::OrmasDal& ormasDal, int cpID, std::string& errorMessage);
 		bool IsEmpty();
 		void Clear();
@@ -70,15 +72,16 @@ namespace BusinessLayer
 			int cID, std::string& errorMessage);
 		bool IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string& errorMessage);
 		bool ChangesAtStock(DataLayer::OrmasDal& ormasDal, int cpID, int stockEmpID, std::string& errorMessage);
-		bool ChangesAtStockCancel(DataLayer::OrmasDal& ormasDal, int cpID, int stockEmpID, std::string& errorMessage);
+		bool ChangesAtStockReverse(DataLayer::OrmasDal& ormasDal, int cpID, int stockEmpID, std::string& errorMessage);
 		bool ChangesAtStock(DataLayer::OrmasDal& ormasDal, int cpID, int stockEmpID, std::map<int, double> pProdCountMap, double pSum, std::string& errorMessage);
 		bool ChangesAtTransport(DataLayer::OrmasDal& ormasDal, int cpID, std::string& errorMessage);
 		bool ChangesAtTransport(DataLayer::OrmasDal& ormasDal, int cpID, std::map<int, double> pProdCountMap, double pSum, std::string& errorMessage);
-		bool ChangesAtTransportCancel(DataLayer::OrmasDal& ormasDal, int cpID, std::string& errorMessage);
+		bool ChangesAtTransportReverse(DataLayer::OrmasDal& ormasDal, int cpID, std::string& errorMessage);
 		double GetCurrentSum(DataLayer::OrmasDal& ormasDal, int cpID, std::string& errorMessage);
 		double GetCurrentCount(DataLayer::OrmasDal& ormasDal, int cpID, std::string& errorMessage);
 		int GetCurrentStatusID(DataLayer::OrmasDal& ormasDal, int oID, std::string& errorMessage);
 		std::map<int, double> GetProductCount(DataLayer::OrmasDal& ormasDal, int cpID, std::string& errorMessage);
+		bool CheckDocumentCorrectness(DataLayer::OrmasDal& ormasDal);
 	};
 }
 #endif //CONSUMEPRODUCTCLASS_H

@@ -59,6 +59,11 @@ namespace BusinessLayer{
 		return ormasDal.CancelTransaction(errorMessage);
 	}
 
+	std::string OrmasBL::ConcatenateFilters(std::vector<std::string> filterList)
+	{
+		return ormasDal.ConcatenateFilters(filterList);
+	}
+
 	template<>
 	std::vector<AccessView> OrmasBL::GetAllDataForClass<AccessView>(std::string& errorMessage, std::string filter)
 	{
@@ -4897,7 +4902,7 @@ namespace BusinessLayer{
 		payment->loggedUserID = loggedUser->GetID();
 		try
 		{
-			if (0.0 != payment->GetValue() && 0 != payment->GetCurrencyID() && !payment->GetDate().empty()
+			if (0.0 != payment->GetValue() && 0 != payment->GetCurrencyID() && !payment->GetDate().empty() && !payment->GetWho().empty()
 				&& 0 != payment->GetStatusID())
 			{
 				return payment->CreatePayment(ormasDal, errorMessage);
@@ -4919,7 +4924,7 @@ namespace BusinessLayer{
 		payment->loggedUserID = loggedUser->GetID();
 		try
 		{
-			if (0.0 != payment->GetValue() && 0 != payment->GetCurrencyID() && !payment->GetDate().empty()
+			if (0.0 != payment->GetValue() && 0 != payment->GetCurrencyID() && !payment->GetDate().empty() && !payment->GetWho().empty()
 				&& 0 != payment->GetStatusID())
 			{
 				return payment->UpdatePayment(ormasDal, errorMessage);
@@ -8098,7 +8103,7 @@ namespace BusinessLayer{
 		withdrawal->loggedUserID = loggedUser->GetID();
 		try
 		{
-			if (0.0 != withdrawal->GetValue() && 0 != withdrawal->GetCurrencyID() && !withdrawal->GetDate().empty())
+			if (0.0 != withdrawal->GetValue() && 0 != withdrawal->GetCurrencyID() && !withdrawal->GetDate().empty() && !withdrawal->GetWho().empty())
 			{
 				return withdrawal->CreateWithdrawal(ormasDal, errorMessage);
 			}
@@ -8119,7 +8124,7 @@ namespace BusinessLayer{
 		withdrawal->loggedUserID = loggedUser->GetID();
 		try
 		{
-			if (0.0 != withdrawal->GetValue() && 0 != withdrawal->GetCurrencyID() && !withdrawal->GetDate().empty())
+			if (0.0 != withdrawal->GetValue() && 0 != withdrawal->GetCurrencyID() && !withdrawal->GetDate().empty() && !withdrawal->GetWho().empty())
 			{
 				return withdrawal->UpdateWithdrawal(ormasDal, errorMessage);
 			}
@@ -8521,6 +8526,10 @@ namespace BusinessLayer{
 		{
 			return false;
 		}
+		if (!SaveStockState("", tillDate))
+		{
+			return false;
+		}
 		return true;
 	}
 
@@ -8628,6 +8637,36 @@ namespace BusinessLayer{
 				if (!saccHis.CreateSubaccountHistory(ormasDal, errorMessage))
 					return false;
 			}
+		}
+		return true;
+	}
+
+	bool OrmasBL::SaveStockState(std::string fromDate, std::string tillDate)
+	{
+		std::string errorMessage = "";
+		//save state of accounts
+		std::vector<StockView> vecForStock;
+		std::vector<DataLayer::stockViewCollection> stockCollection;
+		stockCollection = ormasDal.GetStock(errorMessage);
+		if (!stockCollection.empty()){
+			for (auto data : stockCollection)
+			{
+				vecForStock.push_back(StockView(data));
+			}
+		}
+		StockHistory stockHis;
+		for each (auto item in vecForStock)
+		{
+			stockHis.Clear();
+			stockHis.SetID(ormasDal.GenerateID());
+			stockHis.SetProductID(item.GetProductID());
+			stockHis.SetCount(item.GetCount());
+			stockHis.SetSum(item.GetSum());
+			stockHis.SetCurrencyID(item.GetCurrencyID());
+			stockHis.SetWarehouseID(item.GetWarehouseID());
+			stockHis.SetHistoryDate(tillDate);
+			if (!stockHis.CreateStockHistory(ormasDal, errorMessage))
+				return false;
 		}
 		return true;
 	}
@@ -8982,7 +9021,7 @@ namespace BusinessLayer{
 				vecForSpec.push_back(SpecificationView(data));
 			}
 		}
-		std::map<double, int> mapNetCost;
+		std::multimap<double, int> mapNetCost;
 		for(unsigned int i = 0; i < vecForSpec.size(); i++)
 		{
 			mapNetCost.insert(std::make_pair(vecForSpec[i].GetSum(), vecForSpec[i].GetProductID()));

@@ -3,6 +3,7 @@
 #include "ui_CreateTrsListDlg.h"
 #include "OrmasBL.h"
 #include "MainForm.h"
+#include <QStandardItemModel>
 
 class CreateTrsListDlg : public QDialog, public Ui::CreateTrsList
 {
@@ -36,5 +37,7 @@ private:
 	void InitComboBox();
 	QWidget* parentForm;
 	MainForm* mainForm;
+	QStandardItemModel *itemModel;
+	QModelIndex mIndex;
 };
 #endif //CREATETRSLISTDLG_H

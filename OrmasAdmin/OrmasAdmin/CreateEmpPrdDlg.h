@@ -3,6 +3,7 @@
 #include "ui_CreateEmpPrdDlg.h"
 #include "OrmasBL.h"
 #include "MainForm.h"
+#include <QStandardItemModel>
 
 class CreateEmpPrdDlg : public QDialog, public Ui::CreateEmployeeProduct
 {
@@ -29,6 +30,8 @@ private:
 	QIntValidator *vInt = nullptr;
 	QWidget* parentForm;
 	MainForm* mainForm;
+	QStandardItemModel *itemModel;
+	QModelIndex mIndex;
 };
 
 #endif //CREATEEMPPRDDLG_H

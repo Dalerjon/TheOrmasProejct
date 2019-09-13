@@ -4,6 +4,7 @@
 #include "ui_CreateTrsDlg.h"
 #include "OrmasBL.h"
 #include "MainForm.h"
+#include <QStandardItemModel>
 
 class CreateTrsDlg : public QDialog, public Ui::CreateTransport
 {
@@ -39,5 +40,7 @@ private:
 	void InitComboBox();
 	QWidget* parentForm;
 	MainForm* mainForm;
+	QStandardItemModel *itemModel;
+	QModelIndex mIndex;
 };
 #endif //CreateTrsDLG_H

@@ -19,8 +19,8 @@
 
 QT_BEGIN_MOC_NAMESPACE
 struct qt_meta_stringdata_CreatePmtDlg_t {
-    QByteArrayData data[17];
-    char stringdata0[186];
+    QByteArrayData data[20];
+    char stringdata0[226];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
@@ -35,24 +35,28 @@ QT_MOC_LITERAL(2, 27, 0), // ""
 QT_MOC_LITERAL(3, 28, 11), // "EditPayment"
 QT_MOC_LITERAL(4, 40, 13), // "DeletePayment"
 QT_MOC_LITERAL(5, 54, 15), // "TextEditChanged"
-QT_MOC_LITERAL(6, 70, 14), // "AccTextChanged"
-QT_MOC_LITERAL(7, 85, 5), // "Close"
-QT_MOC_LITERAL(8, 91, 11), // "OpenUserDlg"
-QT_MOC_LITERAL(9, 103, 10), // "OpenAccDlg"
-QT_MOC_LITERAL(10, 114, 13), // "OpenStatusDlg"
-QT_MOC_LITERAL(11, 128, 16), // "AccountIsChenged"
-QT_MOC_LITERAL(12, 145, 9), // "SortTable"
-QT_MOC_LITERAL(13, 155, 11), // "QTableView*"
-QT_MOC_LITERAL(14, 167, 5), // "SetID"
-QT_MOC_LITERAL(15, 173, 2), // "ID"
-QT_MOC_LITERAL(16, 176, 9) // "childName"
+QT_MOC_LITERAL(6, 70, 13), // "SATextChanged"
+QT_MOC_LITERAL(7, 84, 14), // "AccTextChanged"
+QT_MOC_LITERAL(8, 99, 13), // "UserIsChanged"
+QT_MOC_LITERAL(9, 113, 5), // "Close"
+QT_MOC_LITERAL(10, 119, 11), // "OpenUserDlg"
+QT_MOC_LITERAL(11, 131, 10), // "OpenAccDlg"
+QT_MOC_LITERAL(12, 142, 11), // "OpenSAccDlg"
+QT_MOC_LITERAL(13, 154, 13), // "OpenStatusDlg"
+QT_MOC_LITERAL(14, 168, 16), // "AccountIsChenged"
+QT_MOC_LITERAL(15, 185, 9), // "SortTable"
+QT_MOC_LITERAL(16, 195, 11), // "QTableView*"
+QT_MOC_LITERAL(17, 207, 5), // "SetID"
+QT_MOC_LITERAL(18, 213, 2), // "ID"
+QT_MOC_LITERAL(19, 216, 9) // "childName"
 
     },
     "CreatePmtDlg\0CreatePayment\0\0EditPayment\0"
     "DeletePayment\0TextEditChanged\0"
-    "AccTextChanged\0Close\0OpenUserDlg\0"
-    "OpenAccDlg\0OpenStatusDlg\0AccountIsChenged\0"
-    "SortTable\0QTableView*\0SetID\0ID\0childName"
+    "SATextChanged\0AccTextChanged\0UserIsChanged\0"
+    "Close\0OpenUserDlg\0OpenAccDlg\0OpenSAccDlg\0"
+    "OpenStatusDlg\0AccountIsChenged\0SortTable\0"
+    "QTableView*\0SetID\0ID\0childName"
 };
 #undef QT_MOC_LITERAL
 
@@ -62,7 +66,7 @@ static const uint qt_meta_data_CreatePmtDlg[] = {
        7,       // revision
        0,       // classname
        0,    0, // classinfo
-      12,   14, // methods
+      15,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -70,18 +74,21 @@ static const uint qt_meta_data_CreatePmtDlg[] = {
        0,       // signalCount
 
  // slots: name, argc, parameters, tag, flags
-       1,    0,   74,    2, 0x08 /* Private */,
-       3,    0,   75,    2, 0x08 /* Private */,
-       4,    0,   76,    2, 0x08 /* Private */,
-       5,    0,   77,    2, 0x08 /* Private */,
-       6,    0,   78,    2, 0x08 /* Private */,
-       7,    0,   79,    2, 0x08 /* Private */,
-       8,    0,   80,    2, 0x08 /* Private */,
-       9,    0,   81,    2, 0x08 /* Private */,
-      10,    0,   82,    2, 0x08 /* Private */,
-      11,    0,   83,    2, 0x08 /* Private */,
-      12,    1,   84,    2, 0x08 /* Private */,
-      14,    2,   87,    2, 0x0a /* Public */,
+       1,    0,   89,    2, 0x08 /* Private */,
+       3,    0,   90,    2, 0x08 /* Private */,
+       4,    0,   91,    2, 0x08 /* Private */,
+       5,    0,   92,    2, 0x08 /* Private */,
+       6,    0,   93,    2, 0x08 /* Private */,
+       7,    0,   94,    2, 0x08 /* Private */,
+       8,    0,   95,    2, 0x08 /* Private */,
+       9,    0,   96,    2, 0x08 /* Private */,
+      10,    0,   97,    2, 0x08 /* Private */,
+      11,    0,   98,    2, 0x08 /* Private */,
+      12,    0,   99,    2, 0x08 /* Private */,
+      13,    0,  100,    2, 0x08 /* Private */,
+      14,    0,  101,    2, 0x08 /* Private */,
+      15,    1,  102,    2, 0x08 /* Private */,
+      17,    2,  105,    2, 0x0a /* Public */,
 
  // slots: parameters
     QMetaType::Void,
@@ -94,8 +101,11 @@ static const uint qt_meta_data_CreatePmtDlg[] = {
     QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void,
-    QMetaType::Void, 0x80000000 | 13,    2,
-    QMetaType::Void, QMetaType::Int, QMetaType::QString,   15,   16,
+    QMetaType::Void,
+    QMetaType::Void,
+    QMetaType::Void,
+    QMetaType::Void, 0x80000000 | 16,    2,
+    QMetaType::Void, QMetaType::Int, QMetaType::QString,   18,   19,
 
        0        // eod
 };
@@ -110,14 +120,17 @@ void CreatePmtDlg::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id
         case 1: _t->EditPayment(); break;
         case 2: _t->DeletePayment(); break;
         case 3: _t->TextEditChanged(); break;
-        case 4: _t->AccTextChanged(); break;
-        case 5: _t->Close(); break;
-        case 6: _t->OpenUserDlg(); break;
-        case 7: _t->OpenAccDlg(); break;
-        case 8: _t->OpenStatusDlg(); break;
-        case 9: _t->AccountIsChenged(); break;
-        case 10: _t->SortTable((*reinterpret_cast< QTableView*(*)>(_a[1]))); break;
-        case 11: _t->SetID((*reinterpret_cast< int(*)>(_a[1])),(*reinterpret_cast< QString(*)>(_a[2]))); break;
+        case 4: _t->SATextChanged(); break;
+        case 5: _t->AccTextChanged(); break;
+        case 6: _t->UserIsChanged(); break;
+        case 7: _t->Close(); break;
+        case 8: _t->OpenUserDlg(); break;
+        case 9: _t->OpenAccDlg(); break;
+        case 10: _t->OpenSAccDlg(); break;
+        case 11: _t->OpenStatusDlg(); break;
+        case 12: _t->AccountIsChenged(); break;
+        case 13: _t->SortTable((*reinterpret_cast< QTableView*(*)>(_a[1]))); break;
+        case 14: _t->SetID((*reinterpret_cast< int(*)>(_a[1])),(*reinterpret_cast< QString(*)>(_a[2]))); break;
         default: ;
         }
     }
@@ -150,13 +163,13 @@ int CreatePmtDlg::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 12)
+        if (_id < 15)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 12;
+        _id -= 15;
     } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 12)
+        if (_id < 15)
             *reinterpret_cast<int*>(_a[0]) = -1;
-        _id -= 12;
+        _id -= 15;
     }
     return _id;
 }

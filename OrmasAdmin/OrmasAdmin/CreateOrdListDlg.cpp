@@ -13,6 +13,7 @@ CreateOrdListDlg::CreateOrdListDlg(BusinessLayer::OrmasBL *ormasBL, bool updateF
 	DataForm *dataFormParent = (DataForm *)this->parentForm;
 	mainForm = (MainForm *)dataFormParent->GetParent();
 	orderID = ((DataForm*)parent)->orderID;
+	employeeID = ((DataForm*)parent)->employeeID;
 	vDouble = new QDoubleValidator(0.00, 1000000000.00, 3, this);
 	vInt = new QIntValidator(0, 1000000000, this);
 	productEdit->setValidator(vInt);
@@ -113,7 +114,7 @@ void CreateOrdListDlg::FillEditElements(int pOrderID, int pProductID, double pCo
 {
 	orderEdit->setText(QString::number(pOrderID));
 	productEdit->setText(QString::number(pProductID));
-	countEdit->setText(QString::number(pCount));
+	countEdit->setText(QString::number(pCount, 'f', 3));
 	sumEdit->setText(QString::number(pSum,'f',3));
 	statusEdit->setText(QString::number(pStatusID));
 	currencyCmb->setCurrentIndex(currencyCmb->findData(QVariant(pCurrencyID)));
@@ -243,7 +244,7 @@ void CreateOrdListDlg::AddProductToList()
 						<< new QStandardItem(currency->GetShortName().c_str())
 						<< new QStandardItem(QString::number(product->GetVolume()))
 						<< new QStandardItem(measure->GetName().c_str())
-						<< new QStandardItem(QString::number(orderList->GetCount()))
+						<< new QStandardItem(QString::number(orderList->GetCount(), 'f', 3))
 						<< new QStandardItem(QString::number(orderList->GetSum(),'f',3))
 						<< new QStandardItem(sumCurrency->GetShortName().c_str())
 						<< new QStandardItem(statusVector.at(0).GetName().c_str())
@@ -337,7 +338,7 @@ void CreateOrdListDlg::EditProductInList()
 						itemModel->item(mIndex.row(), 4)->setText(currency->GetShortName().c_str());
 						itemModel->item(mIndex.row(), 5)->setText(QString::number(product->GetVolume()));
 						itemModel->item(mIndex.row(), 6)->setText(measure->GetName().c_str());
-						itemModel->item(mIndex.row(), 7)->setText(QString::number(orderList->GetCount()));
+						itemModel->item(mIndex.row(), 7)->setText(QString::number(orderList->GetCount(), 'f', 3));
 						itemModel->item(mIndex.row(), 8)->setText(QString::number(orderList->GetSum(),'f',3));
 						itemModel->item(mIndex.row(), 9)->setText(sumCurrency->GetShortName().c_str());
 						itemModel->item(mIndex.row(), 10)->setText(status->GetName().c_str());
@@ -468,6 +469,19 @@ void CreateOrdListDlg::OpenProdDlg()
 			QString(tr("Ok")));
 		errorMessage = "";
 		return;
+	}
+
+	BusinessLayer::EmployeeProductRelation epRelation;
+	std::vector<int> prodIDList;
+	prodIDList = epRelation.GetAllProductByEmployeeID(dialogBL->GetOrmasDal(), employeeID, errorMessage);
+	std::string filterIN ="";
+	if (prodIDList.size() > 0)
+	{
+		std::vector<std::string> filterList;
+		filterIN = product->GenerateINFilter(dialogBL->GetOrmasDal(), prodIDList);
+		filterList.push_back(productFilter);
+		filterList.push_back(filterIN);
+		productFilter = dialogBL->ConcatenateFilters(filterList);
 	}
 
 	dForm->FillTable<BusinessLayer::ProductView>(errorMessage, productFilter);

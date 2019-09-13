@@ -2,6 +2,7 @@
 #define WAREHOUSETYPECLASS_H
 
 #include "OrmasDAL.h"
+#include <map>
 
 namespace BusinessLayer{
 	class WarehouseType
@@ -44,6 +45,7 @@ namespace BusinessLayer{
 		int GetWarehouseTypeID(DataLayer::OrmasDal& ormasDal, std::string& errorMessage);
 		bool IsEmpty();
 		void Clear();
+		static std::map<std::string, int> GetWarehouseTypesAsMap(DataLayer::OrmasDal& ormasDal, std::string& errorMessage);
 	private:
 		void TrimStrings(std::string&, std::string&, std::string&);
 		bool IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string cName, std::string& errorMessage);

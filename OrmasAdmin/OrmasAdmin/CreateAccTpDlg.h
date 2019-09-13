@@ -2,6 +2,7 @@
 #define CREATEACCTPDLG_H
 #include "ui_CreateAccTpDlg.h"
 #include "OrmasBL.h"
+#include <QStandardItemModel>
 
 class CreateAccTpDlg : public QDialog, public Ui::CreateAccountType
 {
@@ -23,6 +24,8 @@ private:
 	void FillEditElements(QString, int, QString);
 	QIntValidator *vInt = nullptr;
 	QWidget* parentForm;
+	QStandardItemModel *itemModel;
+	QModelIndex mIndex;
 };
 
 #endif //CREATEACCTPDLG_H

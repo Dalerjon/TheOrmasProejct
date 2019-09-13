@@ -3,6 +3,7 @@
 #include "ui_CreateSpecListDlg.h"
 #include "OrmasBL.h"
 #include "MainForm.h"
+#include <QStandardItemModel>
 
 class CreateSpecListDlg : public QDialog, public Ui::CreateSpecList
 {
@@ -34,5 +35,7 @@ private:
 	QIntValidator *vInt = nullptr;
 	QWidget* parentForm;
 	MainForm* mainForm;
+	QStandardItemModel *itemModel;
+	QModelIndex mIndex;
 };
 #endif //CREATESPECLISTDLG_H

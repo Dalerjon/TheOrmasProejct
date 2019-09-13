@@ -3,6 +3,7 @@
 #include "ui_CreateWOffRListDlg.h"
 #include "OrmasBL.h"
 #include "MainForm.h"
+#include <QStandardItemModel>
 
 class CreateWOffRListDlg : public QDialog, public Ui::CreateWOffRList
 {
@@ -36,5 +37,7 @@ private:
 	void InitComboBox();
 	QWidget* parentForm;
 	MainForm* mainForm;
+	QStandardItemModel *itemModel;
+	QModelIndex mIndex;
 };
 #endif //CREATEWOFFRLISTDLG_H

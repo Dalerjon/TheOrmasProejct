@@ -11,6 +11,7 @@ namespace BusinessLayer{
 		std::string userPhone = "";
 		std::string currencyName = "";
 		std::string accountNumber = "";
+		std::string subaccountNumber = "";
 		std::string statusName = "";
 	public:
 		PaymentView(DataLayer::paymentsViewCollection);
@@ -24,6 +25,7 @@ namespace BusinessLayer{
 		std::string GetUserPhone();
 		std::string GetAccountNumber();
 		std::string GetStatusName();
+		std::string GetSubaccountNumber();
 	};
 }
 

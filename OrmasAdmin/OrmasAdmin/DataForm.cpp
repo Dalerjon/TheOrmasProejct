@@ -1198,95 +1198,95 @@ void DataForm::OnRowsNumberChanged()
 		
 		if (parentDialog->objectName() == "CreateConsumeProduct")
 		{
-			((CreateConPDlg*)parentDialog)->prodCountEdit->setText(QString::number(count));
+			((CreateConPDlg*)parentDialog)->prodCountEdit->setText(QString::number(count, 'f', 3));
 			((CreateConPDlg*)parentDialog)->sumEdit->setText(QString::number(sum,'f',3));
-			((CreateConPDlg*)parentDialog)->priceSumLb->setText(QString::number(priceSum));
+			((CreateConPDlg*)parentDialog)->priceSumLb->setText(QString::number(priceSum, 'f', 3));
 			((CreateConPDlg*)parentDialog)->currencyCmb->setCurrentIndex(((CreateConPDlg*)parentDialog)->currencyCmb->findData(QVariant(currencyID)));
 		}
 		else if (parentDialog->objectName() == "CreateConsumeRaw")
 		{
-			((CreateConRDlg*)parentDialog)->prodCountEdit->setText(QString::number(count));
+			((CreateConRDlg*)parentDialog)->prodCountEdit->setText(QString::number(count, 'f', 3));
 			((CreateConRDlg*)parentDialog)->sumEdit->setText(QString::number(sum, 'f', 3));
 			((CreateConRDlg*)parentDialog)->currencyCmb->setCurrentIndex(((CreateConRDlg*)parentDialog)->currencyCmb->findData(QVariant(currencyID)));
 		}
 		else if (parentDialog->objectName() == "CreateInventorization")
 		{
-			((CreateInvDlg*)parentDialog)->prodCountEdit->setText(QString::number(count));
+			((CreateInvDlg*)parentDialog)->prodCountEdit->setText(QString::number(count, 'f', 3));
 			((CreateInvDlg*)parentDialog)->sumEdit->setText(QString::number(sum, 'f', 3));
 			((CreateInvDlg*)parentDialog)->currencyCmb->setCurrentIndex(((CreateInvDlg*)parentDialog)->currencyCmb->findData(QVariant(currencyID)));
 		}
 		else if (parentDialog->objectName() == "CreateOrder")
 		{
-			((CreateOrdDlg*)parentDialog)->prodCountEdit->setText(QString::number(count));
+			((CreateOrdDlg*)parentDialog)->prodCountEdit->setText(QString::number(count, 'f', 3));
 			((CreateOrdDlg*)parentDialog)->sumEdit->setText(QString::number(sum, 'f', 3));
 			((CreateOrdDlg*)parentDialog)->currencyCmb->setCurrentIndex(((CreateOrdDlg*)parentDialog)->currencyCmb->findData(QVariant(currencyID)));
 		}
 		else if (parentDialog->objectName() == "CreateOrderRaw")
 		{
-			((CreateOrdRDlg*)parentDialog)->prodCountEdit->setText(QString::number(count));
+			((CreateOrdRDlg*)parentDialog)->prodCountEdit->setText(QString::number(count, 'f', 3));
 			((CreateOrdRDlg*)parentDialog)->sumEdit->setText(QString::number(sum, 'f', 3));
 			((CreateOrdRDlg*)parentDialog)->currencyCmb->setCurrentIndex(((CreateOrdRDlg*)parentDialog)->currencyCmb->findData(QVariant(currencyID)));
 		}
 		else if (parentDialog->objectName() == "CreateReceiptProduct")
 		{
-			((CreateRcpPDlg*)parentDialog)->prodCountEdit->setText(QString::number(count));
+			((CreateRcpPDlg*)parentDialog)->prodCountEdit->setText(QString::number(count, 'f', 3));
 			((CreateRcpPDlg*)parentDialog)->sumEdit->setText(QString::number(sum, 'f', 3));
-			((CreateConPDlg*)parentDialog)->priceSumLb->setText(QString::number(priceSum));
+			((CreateConPDlg*)parentDialog)->priceSumLb->setText(QString::number(priceSum, 'f', 3));
 			((CreateRcpPDlg*)parentDialog)->currencyCmb->setCurrentIndex(((CreateRcpPDlg*)parentDialog)->currencyCmb->findData(QVariant(currencyID)));
 		}
 		else if (parentDialog->objectName() == "CreateStockTransfer")
 		{
-			((CreateStockTrDlg*)parentDialog)->prodCountEdit->setText(QString::number(count));
+			((CreateStockTrDlg*)parentDialog)->prodCountEdit->setText(QString::number(count, 'f', 3));
 			((CreateStockTrDlg*)parentDialog)->sumEdit->setText(QString::number(sum, 'f', 3));
-			((CreateStockTrDlg*)parentDialog)->priceSumLb->setText(QString::number(priceSum));
+			((CreateStockTrDlg*)parentDialog)->priceSumLb->setText(QString::number(priceSum, 'f', 3));
 			((CreateStockTrDlg*)parentDialog)->currencyCmb->setCurrentIndex(((CreateStockTrDlg*)parentDialog)->currencyCmb->findData(QVariant(currencyID)));
 		}
 		else if (parentDialog->objectName() == "CreateProductionConsumeRaw")
 		{
-			((CreateProdConRDlg*)parentDialog)->prodCountEdit->setText(QString::number(count));
+			((CreateProdConRDlg*)parentDialog)->prodCountEdit->setText(QString::number(count, 'f', 3));
 			((CreateProdConRDlg*)parentDialog)->sumEdit->setText(QString::number(sum, 'f', 3));
 			((CreateProdConRDlg*)parentDialog)->currencyCmb->setCurrentIndex(((CreateProdConRDlg*)parentDialog)->currencyCmb->findData(QVariant(currencyID)));
 		}
 		else if (parentDialog->objectName() == "CreateProductionPlan")
 		{
-			((CreatePPlanDlg*)parentDialog)->prodCountEdit->setText(QString::number(count));
+			((CreatePPlanDlg*)parentDialog)->prodCountEdit->setText(QString::number(count, 'f', 3));
 			((CreatePPlanDlg*)parentDialog)->sumEdit->setText(QString::number(sum, 'f', 3));
 			((CreatePPlanDlg*)parentDialog)->currencyCmb->setCurrentIndex(((CreatePPlanDlg*)parentDialog)->currencyCmb->findData(QVariant(currencyID)));
 		}
 		else if (parentDialog->objectName() == "CreateTransport")
 		{
-			((CreateTrsDlg*)parentDialog)->prodCountEdit->setText(QString::number(count));
+			((CreateTrsDlg*)parentDialog)->prodCountEdit->setText(QString::number(count, 'f', 3));
 			((CreateTrsDlg*)parentDialog)->sumEdit->setText(QString::number(sum, 'f', 3));
 			((CreateTrsDlg*)parentDialog)->currencyCmb->setCurrentIndex(((CreateTrsDlg*)parentDialog)->currencyCmb->findData(QVariant(currencyID)));
 		}
 		else if (parentDialog->objectName() == "CreateReturn")
 		{
-			((CreateRtrnDlg*)parentDialog)->prodCountEdit->setText(QString::number(count));
+			((CreateRtrnDlg*)parentDialog)->prodCountEdit->setText(QString::number(count, 'f', 3));
 			((CreateRtrnDlg*)parentDialog)->sumEdit->setText(QString::number(sum, 'f', 3));
 			((CreateRtrnDlg*)parentDialog)->currencyCmb->setCurrentIndex(((CreateRtrnDlg*)parentDialog)->currencyCmb->findData(QVariant(currencyID)));
 		}
 		else if (parentDialog->objectName() == "CreateSpecification")
 		{
-			((CreateSpecDlg*)parentDialog)->prodCountPh->setText(QString::number(count));
+			((CreateSpecDlg*)parentDialog)->prodCountPh->setText(QString::number(count, 'f', 3));
 			((CreateSpecDlg*)parentDialog)->sumEdit->setText(QString::number(sum, 'f', 3));
 			((CreateSpecDlg*)parentDialog)->currencyCmb->setCurrentIndex(((CreateSpecDlg*)parentDialog)->currencyCmb->findData(QVariant(currencyID)));
 		}
 		else if (parentDialog->objectName() == "CreateSpoilage")
 		{
-			((CreateSplDlg*)parentDialog)->prodCountEdit->setText(QString::number(count));
+			((CreateSplDlg*)parentDialog)->prodCountEdit->setText(QString::number(count, 'f', 3));
 			((CreateSplDlg*)parentDialog)->sumEdit->setText(QString::number(sum, 'f', 3));
 			((CreateSplDlg*)parentDialog)->currencyCmb->setCurrentIndex(((CreateSplDlg*)parentDialog)->currencyCmb->findData(QVariant(currencyID)));
 		}
 		else if (parentDialog->objectName() == "CreateWriteOff")
 		{
-			((CreateWOffDlg*)parentDialog)->prodCountEdit->setText(QString::number(count));
+			((CreateWOffDlg*)parentDialog)->prodCountEdit->setText(QString::number(count, 'f', 3));
 			((CreateWOffDlg*)parentDialog)->sumEdit->setText(QString::number(sum, 'f', 3));
-			((CreateWOffDlg*)parentDialog)->priceSumLb->setText(QString::number(priceSum));
+			((CreateWOffDlg*)parentDialog)->priceSumLb->setText(QString::number(priceSum, 'f', 3));
 			((CreateWOffDlg*)parentDialog)->currencyCmb->setCurrentIndex(((CreateWOffDlg*)parentDialog)->currencyCmb->findData(QVariant(currencyID)));
 		}
 		else if (parentDialog->objectName() == "CreateWriteOffR")
 		{
-			((CreateWOffRDlg*)parentDialog)->prodCountEdit->setText(QString::number(count));
+			((CreateWOffRDlg*)parentDialog)->prodCountEdit->setText(QString::number(count, 'f', 3));
 			((CreateWOffRDlg*)parentDialog)->sumEdit->setText(QString::number(sum, 'f', 3));
 			((CreateWOffRDlg*)parentDialog)->currencyCmb->setCurrentIndex(((CreateWOffRDlg*)parentDialog)->currencyCmb->findData(QVariant(currencyID)));
 		}
@@ -1301,7 +1301,7 @@ void DataForm::OnRowsNumberChanged()
 				count = count + tableView->model()->data(tableView->model()->index(i, 7)).toDouble();
 			}
 		}
-		((CreateProdnDlg*)parentDialog)->prodCountEdit->setText(QString::number(count));
+		((CreateProdnDlg*)parentDialog)->prodCountEdit->setText(QString::number(count, 'f', 3));
 	}
 }
 
@@ -4523,7 +4523,7 @@ void DataForm::ViewPmtDlg()
 	BusinessLayer::Company company;
 	BusinessLayer::CompanyEmployeeRelation ceRel;
 
-	if (!role.GetRoleIDByName(dataFormBL->GetOrmasDal(), "CHIEF ACCOUNTANT", errorMessage))
+	if (0 == role.GetRoleIDByName(dataFormBL->GetOrmasDal(), "CHIEF ACCOUNTANT", errorMessage))
 	{
 		QMessageBox::information(NULL, QString(tr("Warning")),
 			QString(tr("Connot find 'CHIEF ACCOUNTANT' role!")),
@@ -4548,7 +4548,7 @@ void DataForm::ViewPmtDlg()
 	}
 
 	role.Clear();
-	if (!role.GetRoleIDByName(dataFormBL->GetOrmasDal(), "CASHIER", errorMessage))
+	if (0 == role.GetRoleIDByName(dataFormBL->GetOrmasDal(), "CASHIER", errorMessage))
 	{
 		QMessageBox::information(NULL, QString(tr("Warning")),
 			QString(tr("Connot find 'CASHIER' role!")),
@@ -4662,9 +4662,28 @@ void DataForm::ViewPmtDlg()
 			return;
 		}
 	}
+	else if (payment.GetAccountID()>0)
+	{
+		account.Clear();
+		if (!account.GetAccountByID(dataFormBL->GetOrmasDal(), payment.GetAccountID(), errorMessage))
+		{
+			QMessageBox::information(NULL, QString(tr("Info")),
+				QString(tr(errorMessage.c_str())),
+				QString(tr("Ok")));
+			return;
+		}
+	}
 	else
 	{
-		if (!account.GetAccountByID(dataFormBL->GetOrmasDal(), payment.GetAccountID(), errorMessage))
+		subAcc.Clear();
+		if (!subAcc.GetSubaccountByID(dataFormBL->GetOrmasDal(), payment.GetSubaccountID(), errorMessage))
+		{
+			QMessageBox::information(NULL, QString(tr("Info")),
+				QString(tr(errorMessage.c_str())),
+				QString(tr("Ok")));
+			return;
+		}
+		if (!account.GetAccountByID(dataFormBL->GetOrmasDal(), subAcc.GetParentAccountID(), errorMessage))
 		{
 			QMessageBox::information(NULL, QString(tr("Info")),
 				QString(tr(errorMessage.c_str())),
@@ -4687,17 +4706,11 @@ void DataForm::ViewPmtDlg()
 		reportText.replace(QString("CredAccNumPh"), QString(account.GetNumber().c_str()), Qt::CaseInsensitive);
 	}
 	reportText.replace(QString("SumPh"), QString::number(payment.GetValue()), Qt::CaseInsensitive);
-	if (payment.GetUserID() > 0)
-	{
-		reportText.replace(QString("FromWhoPh"), QString(user.GetSurname().c_str()) + " " + QString(user.GetName().c_str()), Qt::CaseInsensitive);
-	}
-	else
-	{
-		reportText.replace(QString("FromWhoPh"), "", Qt::CaseInsensitive);
-	}
+	reportText.replace(QString("FromWhoPh"), QString(payment.GetWho().c_str()), Qt::CaseInsensitive);
+	reportText.replace(QString("TargetPh"), QString(payment.GetTarget().c_str()), Qt::CaseInsensitive);
 	reportText.replace(QString("AccounantNamePh"), QString(accountant.GetSurname().c_str()) + " " + QString(accountant.GetName().c_str()), Qt::CaseInsensitive);
 	reportText.replace(QString("CachierNamePh"), QString(cashier.GetSurname().c_str()) + " " + QString(cashier.GetName().c_str()), Qt::CaseInsensitive);
-	reportText.replace(QString("CurrencyPh"), QString(currency.GetShortName().c_str()), Qt::CaseInsensitive);
+	reportText.replace(QString("CurrPh"), QString(currency.GetShortName().c_str()), Qt::CaseInsensitive);
 
 	docForm->webEngineView->setHtml(reportText);
 	docForm->SetContent(reportText);
@@ -8495,7 +8508,7 @@ void DataForm::ViewWdwDlg()
 	BusinessLayer::Company company;
 	BusinessLayer::CompanyEmployeeRelation ceRel;
 
-	if (!role.GetRoleIDByName(dataFormBL->GetOrmasDal(), "CHIEF ACCOUNTANT", errorMessage))
+	if (0 == role.GetRoleIDByName(dataFormBL->GetOrmasDal(), "CHIEF ACCOUNTANT", errorMessage))
 	{
 		QMessageBox::information(NULL, QString(tr("Warning")),
 			QString(tr("Connot find 'CHIEF ACCOUNTANT' role!")),
@@ -8520,7 +8533,7 @@ void DataForm::ViewWdwDlg()
 	}
 
 	role.Clear();
-	if (!role.GetRoleIDByName(dataFormBL->GetOrmasDal(), "CASHIER", errorMessage))
+	if (0 == role.GetRoleIDByName(dataFormBL->GetOrmasDal(), "CASHIER", errorMessage))
 	{
 		QMessageBox::information(NULL, QString(tr("Warning")),
 			QString(tr("Connot find 'CASHIER' role!")),
@@ -8545,7 +8558,7 @@ void DataForm::ViewWdwDlg()
 	}
 
 	role.Clear();
-	if (!role.GetRoleIDByName(dataFormBL->GetOrmasDal(), "OWNER", errorMessage))
+	if (0 == role.GetRoleIDByName(dataFormBL->GetOrmasDal(), "DIRECTOR", errorMessage))
 	{
 		QMessageBox::information(NULL, QString(tr("Warning")),
 			QString(tr("Connot find 'OWNER' role!")),
@@ -8578,15 +8591,7 @@ void DataForm::ViewWdwDlg()
 			QString(tr("Ok")));
 		return;
 	}
-
-	if (!user.GetUserByID(dataFormBL->GetOrmasDal(), withdrawal.GetUserID(), errorMessage))
-	{
-		QMessageBox::information(NULL, QString(tr("Warning")),
-			QString(tr("Connot show information for this row!")),
-			QString(tr("Ok")));
-		return;
-	}
-
+	
 	DocForm *docForm = new DocForm(dataFormBL, this);
 	docForm->setAttribute(Qt::WA_DeleteOnClose);
 	docForm->setWindowTitle(tr("Consumption chash order"));
@@ -8666,9 +8671,28 @@ void DataForm::ViewWdwDlg()
 			return;
 		}
 	}
+	else if (withdrawal.GetAccountID()>0)
+	{
+		account.Clear();
+		if (!account.GetAccountByID(dataFormBL->GetOrmasDal(), withdrawal.GetAccountID(), errorMessage))
+		{
+			QMessageBox::information(NULL, QString(tr("Info")),
+				QString(tr(errorMessage.c_str())),
+				QString(tr("Ok")));
+			return;
+		}
+	}
 	else
 	{
-		if (!account.GetAccountByID(dataFormBL->GetOrmasDal(), withdrawal.GetAccountID(), errorMessage))
+		subAcc.Clear();
+		if (!subAcc.GetSubaccountByID(dataFormBL->GetOrmasDal(), withdrawal.GetSubaccountID(), errorMessage))
+		{
+			QMessageBox::information(NULL, QString(tr("Info")),
+				QString(tr(errorMessage.c_str())),
+				QString(tr("Ok")));
+			return;
+		}
+		if (!account.GetAccountByID(dataFormBL->GetOrmasDal(), subAcc.GetParentAccountID(), errorMessage))
 		{
 			QMessageBox::information(NULL, QString(tr("Info")),
 				QString(tr(errorMessage.c_str())),
@@ -8692,18 +8716,11 @@ void DataForm::ViewWdwDlg()
 	
 	reportText.replace(QString("CredAccNumPh"), QString(acc.GetNumber().c_str()), Qt::CaseInsensitive);
 	reportText.replace(QString("SumPh"), QString::number(withdrawal.GetValue()), Qt::CaseInsensitive);
-	if (withdrawal.GetUserID() > 0)
-	{
-		reportText.replace(QString("ToWhoPh"), QString(user.GetSurname().c_str()) + " " + QString(user.GetName().c_str()), Qt::CaseInsensitive);
-	}
-	else
-	{
-		reportText.replace(QString("ToWhoPh"), "", Qt::CaseInsensitive);
-	}
-	reportText.replace(QString("ToWhoPh"), QString(user.GetSurname().c_str()) + " " + QString(user.GetName().c_str()), Qt::CaseInsensitive);
+	reportText.replace(QString("ToWhoPh"), QString(withdrawal.GetWho().c_str()), Qt::CaseInsensitive);
+	reportText.replace(QString("TargetPh"), QString(withdrawal.GetTarget().c_str()), Qt::CaseInsensitive);
 	reportText.replace(QString("OwnerNamePh"), QString(owner.GetSurname().c_str()) + " " + QString(owner.GetName().c_str()), Qt::CaseInsensitive);
 	reportText.replace(QString("AccounantNamePh"), QString(accountant.GetSurname().c_str()) + " " + QString(accountant.GetName().c_str()), Qt::CaseInsensitive);
-	reportText.replace(QString("CachierNamePh"), QString(cashier.GetSurname().c_str()) + " " + QString(cashier.GetName().c_str()), Qt::CaseInsensitive);
+	reportText.replace(QString("CashierPh"), QString(cashier.GetSurname().c_str()) + " " + QString(cashier.GetName().c_str()), Qt::CaseInsensitive);
 	reportText.replace(QString("CurrencyPh"), QString(currency.GetShortName().c_str()), Qt::CaseInsensitive);
 
 	docForm->webEngineView->setHtml(reportText);
@@ -9055,7 +9072,7 @@ void DataForm::ViewWOffRDlg()
 	BusinessLayer::Company company;
 	BusinessLayer::CompanyEmployeeRelation ceRel;
 	int companyID = 0;
-	companyID = ceRel.GetCompanyByEmployeeID(dataFormBL->GetOrmasDal(), wOffRaw.GetEmployeeID(), errorMessage);
+	companyID = ceRel.GetCompanyByEmployeeID(dataFormBL->GetOrmasDal(), wOffRaw.GetStockEmployeeID(), errorMessage);
 	if (!company.GetCompanyByID(dataFormBL->GetOrmasDal(), companyID, errorMessage) || 0 == companyID)
 	{
 		QMessageBox::information(NULL, QString(tr("Warning")),
@@ -9063,7 +9080,7 @@ void DataForm::ViewWOffRDlg()
 			QString(tr("Ok")));
 		return;
 	}
-	if (!employee.GetEmployeeByID(dataFormBL->GetOrmasDal(), wOffRaw.GetEmployeeID(), errorMessage))
+	if (!employee.GetEmployeeByID(dataFormBL->GetOrmasDal(), wOffRaw.GetStockEmployeeID(), errorMessage))
 	{
 		QMessageBox::information(NULL, QString(tr("Warning")),
 			QString(tr("Connot show information for this row!")),
@@ -9119,13 +9136,6 @@ void DataForm::ViewWOffRDlg()
 		currency.Clear();
 		netCost.Clear();
 		if (!product.GetProductByID(dataFormBL->GetOrmasDal(), item.GetProductID(), errorMessage))
-		{
-			QMessageBox::information(NULL, QString(tr("Info")),
-				QString(tr("Product is wrong!")),
-				QString(tr("Ok")));
-			return;
-		}
-		if (!netCost.GetNetCostByProductID(dataFormBL->GetOrmasDal(), item.GetProductID(), errorMessage))
 		{
 			QMessageBox::information(NULL, QString(tr("Info")),
 				QString(tr("Product is wrong!")),
@@ -9619,8 +9629,8 @@ QStringList DataForm::GetTableHeader<BusinessLayer::PaymentView>()
 	QStringList header;
 	header << QObject::tr("ID") << QObject::tr("Date") << QObject::tr("User name") << QObject::tr("User surname") 
 		<< QObject::tr("User Phone") << QObject::tr("Value") << QObject::tr("Currency name") << QObject::tr("Target")
-		<< QObject::tr("Account number") << QObject::tr("Status name") << QObject::tr("User ID")
-		<< QObject::tr("Currency ID") << QObject::tr("Status ID") << QObject::tr("Account ID");
+		<< QObject::tr("Account number") << QObject::tr("Subccount number") << QObject::tr("From who") << QObject::tr("Status name") 
+		<< QObject::tr("User ID") << QObject::tr("Currency ID") << QObject::tr("Status ID") << QObject::tr("Account ID") << QObject::tr("Subaccount ID");
 	return header;
 }
 
@@ -10049,8 +10059,8 @@ QStringList DataForm::GetTableHeader<BusinessLayer::WithdrawalView>()
 {
 	QStringList header;
 	header << QObject::tr("ID") << QObject::tr("Date") << QObject::tr("Value") << QObject::tr("Currency name") 
-		<< QObject::tr("User name") << QObject::tr("User surname") << QObject::tr("Status name") << QObject::tr("Account number")
-		<< QObject::tr("Subaccount number") << QObject::tr("Target") << QObject::tr("User ID") << QObject::tr("Currency ID") 
+		<< QObject::tr("User name") << QObject::tr("User surname") << QObject::tr("User phone") << QObject::tr("Status name") << QObject::tr("Account number")
+		<< QObject::tr("Subaccount number") << QObject::tr("To who") << QObject::tr("Target") << QObject::tr("User ID") << QObject::tr("Currency ID")
 		<< QObject::tr("Subaccount ID") << QObject::tr("Status ID") << QObject::tr("Account ID");
 	return header;
 }
@@ -10748,11 +10758,14 @@ QList<QStandardItem*> DataForm::GetDataFromClass<BusinessLayer::PaymentView>(Bus
 		<< new QStandardItem(data.GetCurrencyName().c_str())
 		<< new QStandardItem(data.GetTarget().c_str())
 		<< new QStandardItem(data.GetAccountNumber().c_str())
+		<< new QStandardItem(data.GetSubaccountNumber().c_str())
+		<< new QStandardItem(data.GetWho().c_str())
 		<< new QStandardItem(data.GetStatusName().c_str())
 		<< new QStandardItem(QString::number(data.GetUserID()))
 		<< new QStandardItem(QString::number(data.GetCurrencyID()))
 		<< new QStandardItem(QString::number(data.GetStatusID()))
-		<< new QStandardItem(QString::number(data.GetAccountID()));
+		<< new QStandardItem(QString::number(data.GetAccountID()))
+		<< new QStandardItem(QString::number(data.GetSubaccountID()));
 	return items;
 }
 
@@ -11505,9 +11518,11 @@ QList<QStandardItem*> DataForm::GetDataFromClass<BusinessLayer::WithdrawalView>(
 		<< new QStandardItem(data.GetCurrencyName().c_str())
 		<< new QStandardItem(data.GetUsername().c_str())
 		<< new QStandardItem(data.GetUserSurname().c_str())
+		<< new QStandardItem(data.GetUserPhone().c_str())
 		<< new QStandardItem(data.GetStatusName().c_str())
 		<< new QStandardItem(data.GetAccountNumber().c_str())
 		<< new QStandardItem(data.GetSubaccountNumber().c_str())
+		<< new QStandardItem(data.GetWho().c_str())
 		<< new QStandardItem(data.GetTarget().c_str())
 		<< new QStandardItem(QString::number(data.GetUserID()))
 		<< new QStandardItem(QString::number(data.GetCurrencyID()))
@@ -15092,6 +15107,11 @@ void DataForm::QtConnect<BusinessLayer::SubaccountView>()
 	{
 		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
 		connect(this, SIGNAL(SendID(int, QString)), ((CreateWdwDlg*)parentDialog), SLOT(SetID(int, QString)));
+	}
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreatePayment")
+	{
+		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreatePmtDlg*)parentDialog), SLOT(SetID(int, QString)));
 	}
 }
 

@@ -18,6 +18,9 @@ CreateTmsDlg::CreateTmsDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, QWi
 	workedTimeEdit->setMaxLength(4);
 	if (true == updateFlag)
 	{
+		DataForm *parentDataForm = (DataForm*)parentForm;
+		itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
+		mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
 		QObject::connect(okBtn, &QPushButton::released, this, &CreateTmsDlg::EditTimesheet);
 	}
 	else
@@ -233,8 +236,7 @@ void CreateTmsDlg::EditTimesheet()
 							return;
 						}
 
-						QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
-						QModelIndex mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
+						
 						itemModel->item(mIndex.row(), 1)->setText(employee->GetName().c_str());
 						itemModel->item(mIndex.row(), 2)->setText(employee->GetSurname().c_str());
 						itemModel->item(mIndex.row(), 3)->setText(employee->GetPhone().c_str());

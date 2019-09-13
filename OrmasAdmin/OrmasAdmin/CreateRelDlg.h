@@ -3,6 +3,7 @@
 #include "ui_CreateRelDlg.h"
 #include "OrmasBL.h"
 #include "MainForm.h"
+#include <QStandardItemModel>
 
 class CreateRelDlg : public QDialog, public Ui::CreateRelation
 {
@@ -30,6 +31,8 @@ private:
 	void InitComboBox();
 	QWidget* parentForm;
 	MainForm* mainForm;
+	QStandardItemModel *itemModel;
+	QModelIndex mIndex;
 };
 
 #endif //CREATERELDLG_H

@@ -24,6 +24,9 @@ CreateSplListDlg::CreateSplListDlg(BusinessLayer::OrmasBL *ormasBL, bool updateF
 	sumEdit->setMaxLength(17);
 	if (true == updateFlag)
 	{
+		DataForm *parentDataForm = (DataForm*)parentForm;
+		itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
+		mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
 		QObject::connect(addBtn, &QPushButton::released, this, &CreateSplListDlg::EditProductInList);
 	}
 	else
@@ -113,8 +116,8 @@ void CreateSplListDlg::FillEditElements(int sSpoilageID, int sProductID, double 
 {
 	spoilageEdit->setText(QString::number(sSpoilageID));
 	productEdit->setText(QString::number(sProductID));
-	countEdit->setText(QString::number(sCount));
-	sumEdit->setText(QString::number(sSum));
+	countEdit->setText(QString::number(sCount, 'f', 3));
+	sumEdit->setText(QString::number(sSum, 'f', 3));
 	statusEdit->setText(QString::number(sStatusID));
 	currencyCmb->setCurrentIndex(currencyCmb->findData(QVariant(sCurrencyID)));
 	BusinessLayer::Product product;
@@ -239,8 +242,8 @@ void CreateSplListDlg::AddProductToList()
 						<< new QStandardItem(currency->GetShortName().c_str())
 						<< new QStandardItem(QString::number(product->GetVolume()))
 						<< new QStandardItem(measure->GetName().c_str())
-						<< new QStandardItem(QString::number(spoilageList->GetCount()))
-						<< new QStandardItem(QString::number(spoilageList->GetSum()))
+						<< new QStandardItem(QString::number(spoilageList->GetCount(), 'f', 3))
+						<< new QStandardItem(QString::number(spoilageList->GetSum(),'f',3))
 						<< new QStandardItem(sumCurrency->GetShortName().c_str())
 						<< new QStandardItem(statusVector.at(0).GetName().c_str())
 						<< new QStandardItem(QString::number(spoilageList->GetProductID()))
@@ -325,16 +328,15 @@ void CreateSplListDlg::EditProductInList()
 							return;
 						}
 
-						QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
-						QModelIndex mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
+						
 						itemModel->item(mIndex.row(), 1)->setText(QString::number(spoilageList->GetSpoilageID()));
 						itemModel->item(mIndex.row(), 2)->setText(product->GetName().c_str());
 						itemModel->item(mIndex.row(), 3)->setText(QString::number(product->GetPrice()));
 						itemModel->item(mIndex.row(), 4)->setText(currency->GetShortName().c_str());
 						itemModel->item(mIndex.row(), 5)->setText(QString::number(product->GetVolume()));
 						itemModel->item(mIndex.row(), 6)->setText(measure->GetName().c_str());
-						itemModel->item(mIndex.row(), 7)->setText(QString::number(spoilageList->GetCount()));
-						itemModel->item(mIndex.row(), 8)->setText(QString::number(spoilageList->GetSum()));
+						itemModel->item(mIndex.row(), 7)->setText(QString::number(spoilageList->GetCount(), 'f', 3));
+						itemModel->item(mIndex.row(), 8)->setText(QString::number(spoilageList->GetSum(),'f',3));
 						itemModel->item(mIndex.row(), 9)->setText(sumCurrency->GetShortName().c_str());
 						itemModel->item(mIndex.row(), 10)->setText(status->GetName().c_str());
 						itemModel->item(mIndex.row(), 11)->setText(QString::number(spoilageList->GetProductID()));

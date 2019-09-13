@@ -2,6 +2,7 @@
 #define CREATESTRULESDLG_H
 #include "ui_CreateStsRuleDlg.h"
 #include "OrmasBL.h"
+#include <QStandardItemModel>
 
 class CreateStsRuleDlg :public QDialog, public Ui::CreateStatusRule
 {
@@ -26,5 +27,7 @@ private:
 	void FillEditElements(QString, int);
 	QIntValidator *vInt = nullptr;
 	QWidget* parentForm;
+	QStandardItemModel *itemModel;
+	QModelIndex mIndex;
 };
 #endif //CREATESTRULESDLG_H

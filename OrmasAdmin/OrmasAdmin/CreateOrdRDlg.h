@@ -4,6 +4,7 @@
 #include "ui_CreateOrdRDlg.h"
 #include "OrmasBL.h"
 #include "MainForm.h"
+#include <QStandardItemModel>
 
 class CreateOrdRDlg : public QDialog, public Ui::CreateOrderRaw
 {
@@ -40,5 +41,7 @@ private:
 	QWidget* parentForm;
 	MainForm* mainForm;
 	bool CheckAccess();
+	QStandardItemModel *itemModel;
+	QModelIndex mIndex;
 };
 #endif //CREATEORDRDLG_H

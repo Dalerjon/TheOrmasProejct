@@ -37,6 +37,9 @@ CreateWOffDlg::CreateWOffDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, Q
 	
 	if (true == updateFlag)
 	{
+		DataForm *parentDataForm = (DataForm*)parentForm;
+		itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
+		mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
 		QObject::connect(okBtn, &QPushButton::released, this, &CreateWOffDlg::EditWriteOff);
 	}
 	else
@@ -116,8 +119,8 @@ void CreateWOffDlg::FillEditElements(int wClientID, QString wDate, QString wExec
 		execDateEdit->setDateTime(QDateTime::fromString(wExecDate, "dd.MM.yyyy hh:mm"));
 	}
 	employeeEdit->setText(QString::number(wEmployeeID));
-	prodCountEdit->setText(QString::number(wCount));
-	sumEdit->setText(QString::number(wSum));
+	prodCountEdit->setText(QString::number(wCount, 'f', 3));
+	sumEdit->setText(QString::number(wSum, 'f', 3));
 	statusEdit->setText(QString::number(wStatusID));
 	currencyCmb->setCurrentIndex(currencyCmb->findData(QVariant(wCurrencyID)));
 	BusinessLayer::User employee;
@@ -316,8 +319,8 @@ void CreateWOffDlg::CreateWriteOff()
 							<< new QStandardItem("");
 					}
 
-					writeOffItem << new QStandardItem(QString::number(writeOff->GetCount()))
-						<< new QStandardItem(QString::number(writeOff->GetSum()))
+					writeOffItem << new QStandardItem(QString::number(writeOff->GetCount(), 'f', 3))
+						<< new QStandardItem(QString::number(writeOff->GetSum(),'f',3))
 						<< new QStandardItem(currency->GetShortName().c_str())
 						<< new QStandardItem(QString::number(writeOff->GetEmployeeID()))
 						<< new QStandardItem(QString::number(writeOff->GetClientID()))
@@ -383,8 +386,7 @@ void CreateWOffDlg::EditWriteOff()
 					if (!parentDataForm->IsClosed())
 					{
 						//updating WriteOff data
-						QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
-						QModelIndex mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
+					
 						itemModel->item(mIndex.row(), 1)->setText(writeOff->GetDate().c_str());
 						itemModel->item(mIndex.row(), 2)->setText(writeOff->GetDate().c_str());
 
@@ -467,8 +469,8 @@ void CreateWOffDlg::EditWriteOff()
 							itemModel->item(mIndex.row(), 12)->setText("");
 						}
 
-						itemModel->item(mIndex.row(), 13)->setText(QString::number(writeOff->GetCount()));
-						itemModel->item(mIndex.row(), 14)->setText(QString::number(writeOff->GetSum()));
+						itemModel->item(mIndex.row(), 13)->setText(QString::number(writeOff->GetCount(), 'f', 3));
+						itemModel->item(mIndex.row(), 14)->setText(QString::number(writeOff->GetSum(),'f',3));
 						itemModel->item(mIndex.row(), 15)->setText(currency->GetShortName().c_str());
 						itemModel->item(mIndex.row(), 16)->setText(QString::number(writeOff->GetEmployeeID()));
 						itemModel->item(mIndex.row(), 17)->setText(QString::number(writeOff->GetClientID()));
@@ -817,7 +819,9 @@ void CreateWOffDlg::StatusWasChenged()
 {
 	errorMessage = "";
 	statusMap = BusinessLayer::Status::GetStatusesAsMap(dialogBL->GetOrmasDal(), errorMessage);
-	if (statusEdit->text().toInt() == statusMap.find("EXECUTED")->second)
+	if (statusEdit->text().toInt() == statusMap.find("EXECUTED")->second
+		|| statusEdit->text().toInt() == statusMap.find("RETURN")->second
+		|| statusEdit->text().toInt() == statusMap.find("ERROR")->second)
 	{
 		execDateWidget->setVisible(true);
 		execDateEdit->setDateTime(QDateTime::currentDateTime());
@@ -857,6 +861,25 @@ bool CreateWOffDlg::CheckAccess()
 		{
 			QMessageBox::information(NULL, QString(tr("Warning")),
 				QString(tr("This document have an \"EXECUTED\" status. The document with \"EXECUTED\" status cannot be changed!")),
+				QString(tr("Ok")));
+			errorMessage.clear();
+			delete status;
+			return false;
+		}
+	}
+
+	if (0 == status->GetName().compare("RETURN"))
+	{
+		if (mainForm->GetLoggedUser()->GetRoleID() == rolesMap.find("SUPERUSER")->second ||
+			mainForm->GetLoggedUser()->GetRoleID() == rolesMap.find("CHIEF ACCOUNTANT")->second ||
+			mainForm->GetLoggedUser()->GetRoleID() == rolesMap.find("ACCOUNTANT")->second)
+		{
+			return true;
+		}
+		else
+		{
+			QMessageBox::information(NULL, QString(tr("Warning")),
+				QString(tr("This document have an \"RETURN\" status. The document with \"EXECUTED\" status cannot be changed!")),
 				QString(tr("Ok")));
 			errorMessage.clear();
 			delete status;

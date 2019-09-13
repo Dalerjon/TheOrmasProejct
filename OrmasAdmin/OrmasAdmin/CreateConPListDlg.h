@@ -14,6 +14,7 @@ public:
 	bool FillDlgElements(QTableView*);
 	std::string errorMessage;
 	int consumeProductID = 0;
+	int employeeID = 0;
 	private slots:
 	void AddProductToList();
 	void EditProductInList();
@@ -36,5 +37,6 @@ private:
 	void InitComboBox();
 	QWidget* parentForm;
 	MainForm* mainForm;
+	
 };
 #endif //CREATEORDLITDLG_H

@@ -4,6 +4,7 @@
 #include "ui_CreateConRDlg.h"
 #include "OrmasBL.h"
 #include "MainForm.h"
+#include <QStandardItemModel>
 
 class CreateConRDlg : public QDialog, public Ui::CreateConsumeRaw
 {
@@ -40,5 +41,7 @@ private:
 	QWidget* parentForm;
 	MainForm* mainForm;
 	bool CheckAccess();
+	QStandardItemModel *itemModel;
+	QModelIndex mIndex;
 };
 #endif //CREATECONRDLG_H

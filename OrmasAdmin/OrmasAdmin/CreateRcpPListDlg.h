@@ -3,6 +3,7 @@
 #include "ui_CreateRcpPListDlg.h"
 #include "OrmasBL.h"
 #include "MainForm.h"
+#include <QStandardItemModel>
 
 class CreateRcpPListDlg : public QDialog, public Ui::CreateRcpPList
 {
@@ -36,5 +37,7 @@ private:
 	void InitComboBox();
 	QWidget* parentForm;
 	MainForm* mainForm;
+	QStandardItemModel *itemModel;
+	QModelIndex mIndex;
 };
 #endif //CREATEORDLITDLG_H

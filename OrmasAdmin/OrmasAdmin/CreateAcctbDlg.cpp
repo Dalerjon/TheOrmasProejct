@@ -13,6 +13,9 @@ CreateAcctbDlg::CreateAcctbDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag,
 	mainForm = (MainForm *)dataFormParent->GetParent();
 	if (true == updateFlag)
 	{
+		DataForm *parentDataForm = (DataForm*)parentForm;
+		itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
+		mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
 		QObject::connect(okBtn, &QPushButton::released, this, &CreateAcctbDlg::EditAccountable);
 	}
 	else
@@ -204,8 +207,6 @@ void CreateAcctbDlg::EditAccountable()
 				{
 					if (!parentDataForm->IsClosed())
 					{
-						QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
-						QModelIndex mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
 						itemModel->item(mIndex.row(), 1)->setText(employee.GetName().c_str());
 						itemModel->item(mIndex.row(), 2)->setText(employee.GetSurname().c_str());
 						itemModel->item(mIndex.row(), 3)->setText(accountable->GetInformation().c_str());

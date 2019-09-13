@@ -5,7 +5,33 @@ require_once 'logsql.php';
 $productPrice = Array();
 	$product_type_result = pg_query("SELECT product_type_id FROM \"OrmasSchema\".product_types_view where product_type_code = 'PRODUCT'");
     $product_type_row = pg_fetch_array($product_type_result);
-	$product_result = pg_query("SELECT * FROM \"OrmasSchema\".products_view where product_type_id = ".$product_type_row[0]);
+	$product_employee_result = pg_query("SELECT product_id FROM \"OrmasSchema\".employee_product_view where employee_id =".$_SESSION['id']);
+    $product_employee_row = pg_fetch_all($product_employee_result);
+	$product_id_list ="";
+	if(!empty($product_employee_row[0]))
+	{
+		$row_count = pg_num_rows($product_employee_result);
+		for($i=0;$i<$row_count;$i++)
+		{
+			if($i == 0)
+			{
+				$product_id_list .= " ".$product_employee_row[$i]['product_id']." ";
+			}
+			else
+			{
+				$product_id_list .= ", ".$product_employee_row[$i]['product_id']." ";
+			}
+		}
+	}
+	if(!empty($product_id_list))
+	{
+		$product_result = pg_query("SELECT * FROM \"OrmasSchema\".products_view where product_type_id = ".$product_type_row[0]." 
+		and product_id IN(".$product_id_list.")");
+	}
+	else
+	{
+		$product_result = pg_query("SELECT * FROM \"OrmasSchema\".products_view where product_type_id = ".$product_type_row[0]);
+	}
 	$product_row = pg_fetch_all($product_result);
 	$product_list ="";
 	if(!empty($product_row[0]))
@@ -106,13 +132,13 @@ $query_client = "SELECT user_id_2 FROM \"OrmasSchema\".relations_view WHERE user
 $result_clinet = pg_query($query_client);
 $client_options = "";
 while ($row_user = pg_fetch_array($result_clinet)) {
+
 	$query = "SELECT user_id, user_name, user_surname, user_phone, city_name, user_address, firm	 FROM \"OrmasSchema\".clients_view WHERE user_id=".$row_user[0];			
 	$result = pg_query($query);
 	while ($row = pg_fetch_array($result)) {
 		$client_options .= "<option value='".$row[0]."'>".$row[1].", ".$row[2].", ".$row[3].", ".$row[6]."</option>";
 	}
 }
-
 $form_string= "
 <script>
   $(document).ready(function() { 

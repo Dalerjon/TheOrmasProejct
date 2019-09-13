@@ -218,6 +218,23 @@ namespace BusinessLayer{
 		return "";
 	}
 
+	std::string Employee::GenerateINFilterForEmployee(DataLayer::OrmasDal& ormasDal, std::vector<int> empIDList)
+	{
+		if (empIDList.size()>0)
+		{
+			return ormasDal.GetINFilterForEmployeeID(empIDList);
+		}
+		return "";
+	}
+	std::string Employee::GenerateINFilterForStockEmployee(DataLayer::OrmasDal& ormasDal, std::vector<int> empIDList)
+	{
+		if (empIDList.size()>0)
+		{
+			return ormasDal.GetINFilterForStockEmployeeID(empIDList);
+		}
+		return "";
+	}
+
 	bool Employee::GetEmployeeByID(DataLayer::OrmasDal& ormasDal, int uID, std::string& errorMessage)
 	{
 		if (uID <= 0)

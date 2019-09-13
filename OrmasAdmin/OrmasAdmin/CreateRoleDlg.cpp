@@ -13,6 +13,9 @@ CreateRoleDlg::CreateRoleDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, Q
 	dialogBL = ormasBL;
 	if (true == updateFlag)
 	{
+		DataForm *parentDataForm = (DataForm*)parentForm;
+		itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
+		mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
 		QObject::connect(okBtn, &QPushButton::released, this, &CreateRoleDlg::EditRole);
 	}
 	else
@@ -119,8 +122,7 @@ void CreateRoleDlg::EditRole()
 				{
 					if (!parentDataForm->IsClosed())
 					{
-						QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
-						QModelIndex mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
+						
 						itemModel->item(mIndex.row(), 1)->setText(role->GetCode().c_str());
 						itemModel->item(mIndex.row(), 2)->setText(role->GetName().c_str());
 						itemModel->item(mIndex.row(), 3)->setText(role->GetComment().c_str());

@@ -14,6 +14,9 @@ CreateStsRuleDlg::CreateStsRuleDlg(BusinessLayer::OrmasBL *ormasBL, bool updateF
 	parentForm = parent;
 	if (true == updateFlag)
 	{
+		DataForm *parentDataForm = (DataForm*)parentForm;
+		itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
+		mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
 		QObject::connect(okBtn, &QPushButton::released, this, &CreateStsRuleDlg::EditStatusRule);
 	}
 	else
@@ -142,8 +145,7 @@ void CreateStsRuleDlg::EditStatusRule()
 							delete status;
 							return;
 						}
-						QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
-						QModelIndex mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
+						
 						itemModel->item(mIndex.row(), 1)->setText(statusRule->GetOperation().c_str());
 						itemModel->item(mIndex.row(), 2)->setText(status->GetName().c_str());
 						itemModel->item(mIndex.row(), 3)->setText(QString::number(statusRule->GetStatusID()));

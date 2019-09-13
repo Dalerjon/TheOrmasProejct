@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>687</width>
-    <height>290</height>
+    <height>345</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -32,7 +32,10 @@
    <property name="bottomMargin">
     <number>11</number>
    </property>
-   <item row="13" column="0" colspan="6">
+   <item row="10" column="1" colspan="5">
+    <widget class="QLineEdit" name="targetEdit"/>
+   </item>
+   <item row="14" column="0" colspan="6">
     <widget class="QWidget" name="statusWidget" native="true">
      <layout class="QHBoxLayout" name="horizontalLayout_3">
       <property name="spacing">
@@ -115,7 +118,7 @@
      </property>
     </widget>
    </item>
-   <item row="9" column="0">
+   <item row="10" column="0">
     <widget class="QLabel" name="targetLB">
      <property name="text">
       <string>Target:</string>
@@ -151,11 +154,18 @@
      </property>
     </widget>
    </item>
-   <item row="9" column="1" colspan="5">
-    <widget class="QLineEdit" name="targetEdit"/>
-   </item>
    <item row="1" column="1" colspan="5">
     <widget class="QComboBox" name="accountCmb"/>
+   </item>
+   <item row="0" column="1" colspan="5">
+    <widget class="QLineEdit" name="whoEdit"/>
+   </item>
+   <item row="0" column="0">
+    <widget class="QLabel" name="whoLB">
+     <property name="text">
+      <string>From who:</string>
+     </property>
+    </widget>
    </item>
    <item row="7" column="4">
     <widget class="QLabel" name="phoneLb">
@@ -164,7 +174,7 @@
      </property>
     </widget>
    </item>
-   <item row="8" column="5">
+   <item row="9" column="5">
     <widget class="QLineEdit" name="accNumberEdit">
      <property name="minimumSize">
       <size>
@@ -183,24 +193,24 @@
      </property>
     </widget>
    </item>
-   <item row="11" column="0">
+   <item row="12" column="0">
     <widget class="QLabel" name="valieLb">
      <property name="text">
       <string>Sum:</string>
      </property>
     </widget>
    </item>
-   <item row="10" column="2" colspan="2">
+   <item row="11" column="2" colspan="2">
     <widget class="QDateTimeEdit" name="dateEdit"/>
    </item>
-   <item row="11" column="2" colspan="2">
+   <item row="12" column="2" colspan="2">
     <widget class="QLineEdit" name="valueEdit">
      <property name="toolTip">
       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;For example: 300 (depending on currency, in that case 300 USD)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
     </widget>
    </item>
-   <item row="12" column="0" colspan="2">
+   <item row="13" column="0" colspan="2">
     <widget class="QLabel" name="currencyLb">
      <property name="text">
       <string>Select currency:</string>
@@ -220,10 +230,10 @@
      </property>
     </widget>
    </item>
-   <item row="12" column="2" colspan="2">
+   <item row="13" column="2" colspan="2">
     <widget class="QComboBox" name="currencyCmb"/>
    </item>
-   <item row="8" column="1">
+   <item row="9" column="1">
     <widget class="QLineEdit" name="accIDEdit">
      <property name="maximumSize">
       <size>
@@ -236,14 +246,14 @@
      </property>
     </widget>
    </item>
-   <item row="8" column="3">
+   <item row="9" column="3">
     <widget class="QLabel" name="daLb_2">
      <property name="text">
       <string>Enter account number:</string>
      </property>
     </widget>
    </item>
-   <item row="14" column="0" colspan="6">
+   <item row="15" column="0" colspan="6">
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
       <spacer name="horizontalSpacer">
@@ -293,7 +303,7 @@
      </property>
     </widget>
    </item>
-   <item row="10" column="0">
+   <item row="11" column="0">
     <widget class="QLabel" name="dateLb">
      <property name="text">
       <string>Date:</string>
@@ -366,10 +376,56 @@
      </property>
     </widget>
    </item>
-   <item row="8" column="0">
+   <item row="9" column="0">
     <widget class="QPushButton" name="accBtn">
      <property name="text">
       <string>Select account</string>
+     </property>
+    </widget>
+   </item>
+   <item row="8" column="0">
+    <widget class="QPushButton" name="subAccBtn">
+     <property name="text">
+      <string>Select subaccount</string>
+     </property>
+    </widget>
+   </item>
+   <item row="8" column="1">
+    <widget class="QLineEdit" name="saIDEdit">
+     <property name="maximumSize">
+      <size>
+       <width>120</width>
+       <height>16777215</height>
+      </size>
+     </property>
+     <property name="readOnly">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="8" column="3">
+    <widget class="QLabel" name="daLb">
+     <property name="text">
+      <string>Enter subaccount number:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="8" column="5">
+    <widget class="QLineEdit" name="saNumberEdit">
+     <property name="minimumSize">
+      <size>
+       <width>150</width>
+       <height>0</height>
+      </size>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>150</width>
+       <height>16777215</height>
+      </size>
+     </property>
+     <property name="text">
+      <string/>
      </property>
     </widget>
    </item>

@@ -15,6 +15,9 @@ CreateRelTypeDlg::CreateRelTypeDlg(BusinessLayer::OrmasBL *ormasBL, bool updateF
 	nameEdit->setMaxLength(30);
 	if (true == updateFlag)
 	{
+		DataForm *parentDataForm = (DataForm*)parentForm;
+		itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
+		mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
 		QObject::connect(okBtn, &QPushButton::released, this, &CreateRelTypeDlg::EditRelationType);
 	}
 	else
@@ -114,8 +117,7 @@ void CreateRelTypeDlg::EditRelationType()
 				{
 					if (!parentDataForm->IsClosed())
 					{
-						QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
-						QModelIndex mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
+						
 						itemModel->item(mIndex.row(), 1)->setText(relationType->GetName().c_str());
 						itemModel->item(mIndex.row(), 2)->setText(relationType->GetComment().c_str());
 						emit itemModel->dataChanged(mIndex, mIndex);

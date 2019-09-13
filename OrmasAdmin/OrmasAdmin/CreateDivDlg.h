@@ -2,6 +2,7 @@
 #define CREATEDIVDLG_H
 #include "ui_CreateDivDlg.h"
 #include "OrmasBL.h"
+#include <QStandardItemModel>
 
 class CreateDivDlg : public QDialog, public Ui::CreateDivision
 {
@@ -22,6 +23,8 @@ private:
 	void SetDivisionParams(QString, QString, int = 0);
 	void FillEditElements(QString, QString);
 	QWidget* parentForm;
+	QStandardItemModel *itemModel;
+	QModelIndex mIndex;
 };
 
 #endif //CREATEDIVDLG_H

@@ -25,6 +25,9 @@ CreateProdnDlg::CreateProdnDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag,
 	nextDay += std::to_string(day);
 	if (true == updateFlag)
 	{
+		DataForm *parentDataForm = (DataForm*)parentForm;
+		itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
+		mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
 		QObject::connect(okBtn, &QPushButton::released, this, &CreateProdnDlg::EditProduction);
 	}
 	else
@@ -156,8 +159,7 @@ void CreateProdnDlg::EditProduction()
 					if (!parentDataForm->IsClosed())
 					{
 						//updating production data
-						QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
-						QModelIndex mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
+						
 						itemModel->item(mIndex.row(), 1)->setText(production->GetProductionDate().c_str());
 						itemModel->item(mIndex.row(), 2)->setText(production->GetExpiryDate().c_str());
 						itemModel->item(mIndex.row(), 3)->setText(production->GetSessionStart().c_str());

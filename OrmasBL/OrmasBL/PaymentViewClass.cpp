@@ -13,11 +13,14 @@ namespace BusinessLayer{
 		currencyName = std::get<6>(pCollection);
 		target = std::get<7>(pCollection);
 		accountNumber = std::get<8>(pCollection);
-		statusName = std::get<9>(pCollection);
-		userID = std::get<10>(pCollection);
-		currencyID = std::get<11>(pCollection);
-		statusID = std::get<12>(pCollection);
-		accountID = std::get<13>(pCollection);
+		subaccountNumber = std::get<9>(pCollection);
+		who = std::get<10>(pCollection);
+		statusName = std::get<11>(pCollection);
+		userID = std::get<12>(pCollection);
+		currencyID = std::get<13>(pCollection);
+		statusID = std::get<14>(pCollection);
+		accountID = std::get<15>(pCollection);
+		subaccountID = std::get<16>(pCollection);
 	}
 
 	std::string PaymentView::GetUsername()
@@ -43,5 +46,9 @@ namespace BusinessLayer{
 	std::string PaymentView::GetStatusName()
 	{
 		return statusName;
+	}
+	std::string PaymentView::GetSubaccountNumber()
+	{
+		return subaccountNumber;
 	}
 }

@@ -75,7 +75,7 @@ void CashBookListDlg::Generate()
 		BusinessLayer::Subaccount subAcc;
 		BusinessLayer::Balance balance;
 
-		if (!role.GetRoleIDByName(dialogBL->GetOrmasDal(), "CHIEF ACCOUNTANT", errorMessage))
+		if (0 == role.GetRoleIDByName(dialogBL->GetOrmasDal(), "CHIEF ACCOUNTANT", errorMessage))
 		{
 			QMessageBox::information(NULL, QString(tr("Warning")),
 				QString(tr("Connot find 'CHIEF ACCOUNTANT' role!")),
@@ -100,7 +100,7 @@ void CashBookListDlg::Generate()
 		}
 
 		role.Clear();
-		if (!role.GetRoleIDByName(dialogBL->GetOrmasDal(), "CASHIER", errorMessage))
+		if (0 == role.GetRoleIDByName(dialogBL->GetOrmasDal(), "CASHIER", errorMessage))
 		{
 			QMessageBox::information(NULL, QString(tr("Warning")),
 				QString(tr("Connot find 'CASHIER' role!")),

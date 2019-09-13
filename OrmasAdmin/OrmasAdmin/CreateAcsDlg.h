@@ -3,6 +3,7 @@
 #include "ui_CreateAcsDlg.h"
 #include "OrmasBL.h"
 #include "MainForm.h"
+#include <QStandardItemModel>
 
 class CreateAcsDlg : public QDialog, public Ui::CreateAccess
 {
@@ -29,6 +30,8 @@ private:
 	QIntValidator *vInt = nullptr;
 	QWidget* parentForm;
 	MainForm* mainForm;
+	QStandardItemModel *itemModel;
+	QModelIndex mIndex;
 };
 
 #endif //CREATEACSDLG_H

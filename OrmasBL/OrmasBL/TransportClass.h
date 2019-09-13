@@ -64,10 +64,10 @@ namespace BusinessLayer
 		bool IsEmpty();
 		void Clear();
 		bool ChangingByConsumeProduct(DataLayer::OrmasDal& ormasDal, int oID, std::string& errorMessage);
-		bool ChangingByConsumeProductCancel(DataLayer::OrmasDal& ormasDal, int oID, std::string& errorMessage);
+		bool ChangingByConsumeProductReverse(DataLayer::OrmasDal& ormasDal, int oID, std::string& errorMessage);
 		bool ChangingByConsumeProduct(DataLayer::OrmasDal& ormasDal, int oID, std::map<int, double> pProdCountMap, double pSum, std::string& errorMessage);
 		bool ChangingByReceiptProduct(DataLayer::OrmasDal& ormasDal, int cpID, std::string& errorMessage);
-		bool ChangingByReceiptProductCancel(DataLayer::OrmasDal& ormasDal, int oID, std::string& errorMessage);
+		bool ChangingByReceiptProductReverse(DataLayer::OrmasDal& ormasDal, int cpID, std::string& errorMessage);
 		bool ChangingByReceiptProduct(DataLayer::OrmasDal& ormasDal, int cpID, std::map<int, double> pProdCountMap, double pSum, std::string& errorMessage);
 	private:
 		bool IsDuplicate(DataLayer::OrmasDal& ormasDal, int eID, std::string& errorMessage);

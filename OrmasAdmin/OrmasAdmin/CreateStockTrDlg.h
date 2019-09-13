@@ -4,6 +4,8 @@
 #include "ui_CreateStockTrDlg.h"
 #include "OrmasBL.h"
 #include "MainForm.h"
+#include <QStandardItemModel>
+
 
 class CreateStockTrDlg : public QDialog, public Ui::CreateStockTransfer
 {
@@ -40,5 +42,7 @@ private:
 	QWidget* parentForm;
 	MainForm* mainForm;
 	bool CheckAccess();
+	QStandardItemModel *itemModel;
+	QModelIndex mIndex;
 };
 #endif //CREATEStockTrDLG_H

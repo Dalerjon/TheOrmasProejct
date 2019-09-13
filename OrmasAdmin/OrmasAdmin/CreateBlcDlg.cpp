@@ -16,6 +16,9 @@ CreateBlcDlg::CreateBlcDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, QWi
 	userEdit->setValidator(vInt);
 	if (true == updateFlag)
 	{
+		DataForm *parentDataForm = (DataForm*)parentForm;
+		itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
+		mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
 		QObject::connect(okBtn, &QPushButton::released, this, &CreateBlcDlg::EditBalance);
 	}
 	else
@@ -225,8 +228,6 @@ void CreateBlcDlg::EditBalance()
 							return;
 						}
 
-						QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
-						QModelIndex mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
 						if (0 != balance->GetUserID())
 						{
 							itemModel->item(mIndex.row(), 1)->setText(user->GetName().c_str());

@@ -14,6 +14,9 @@ CreateSlrTypeDlg::CreateSlrTypeDlg(BusinessLayer::OrmasBL *ormasBL, bool updateF
 	dialogBL = ormasBL;
 	if (true == updateFlag)
 	{
+		DataForm *parentDataForm = (DataForm*)parentForm;
+		itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
+		mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
 		QObject::connect(okBtn, &QPushButton::released, this, &CreateSlrTypeDlg::EditSalaryType);
 	}
 	else
@@ -112,8 +115,7 @@ void CreateSlrTypeDlg::EditSalaryType()
 				{
 					if (!parentDataForm->IsClosed())
 					{
-						QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
-						QModelIndex mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
+						
 						itemModel->item(mIndex.row(), 1)->setText(salaryType->GetCode().c_str());
 						itemModel->item(mIndex.row(), 2)->setText(salaryType->GetName().c_str());
 						emit itemModel->dataChanged(mIndex, mIndex);

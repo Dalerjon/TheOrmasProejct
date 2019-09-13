@@ -20,6 +20,9 @@ CreateEtrDlg::CreateEtrDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, QWi
 	valueEdit->setMaxLength(17);
 	if (true == updateFlag)
 	{
+		DataForm *parentDataForm = (DataForm*)parentForm;
+		itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
+		mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
 		QObject::connect(okBtn, &QPushButton::released, this, &CreateEtrDlg::EditEntry);
 	}
 	else
@@ -320,8 +323,7 @@ void CreateEtrDlg::EditEntry()
 							return;
 						}
 
-						QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
-						QModelIndex mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
+						
 						itemModel->item(mIndex.row(), 1)->setText(entry->GetDate().c_str());
 						if (!dAccount->GetNumber().empty())
 						{

@@ -4,6 +4,7 @@
 #include "ui_CreateOrdDlg.h"
 #include "OrmasBL.h"
 #include "MainForm.h"
+#include <QStandardItemModel>
 
 class CreateOrdDlg : public QDialog, public Ui::CreateOrder
 {
@@ -14,6 +15,7 @@ public:
 	BusinessLayer::OrmasBL *dialogBL;
 	bool FillDlgElements(QTableView*);
 	std::string errorMessage;
+	std::vector<int> productIDlist;
 	private slots:
 	void CreateOrder();
 	void EditOrder();
@@ -40,5 +42,7 @@ private:
 	QWidget* parentForm;
 	MainForm* mainForm;
 	bool CheckAccess();
+	QStandardItemModel *itemModel;
+	QModelIndex mIndex;
 };
 #endif //CREATEORDDLG_H

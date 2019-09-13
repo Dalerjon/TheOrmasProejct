@@ -4,6 +4,7 @@
 #include "ui_CreatePPlanDlg.h"
 #include "OrmasBL.h"
 #include "MainForm.h"
+#include <QStandardItemModel>
 
 class CreatePPlanDlg : public QDialog, public Ui::CreateProductionPlan
 {
@@ -37,5 +38,7 @@ private:
 	void InitComboBox();
 	QWidget* parentForm;
 	MainForm* mainForm;
+	QStandardItemModel *itemModel;
+	QModelIndex mIndex;
 };
 #endif //CREATEPPlan

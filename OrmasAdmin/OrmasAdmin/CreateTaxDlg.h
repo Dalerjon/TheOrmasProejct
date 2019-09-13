@@ -2,6 +2,7 @@
 #define CREATETAXDLG_H
 #include "ui_CreateTaxDlg.h"
 #include "OrmasBL.h"
+#include <QStandardItemModel>
 
 class CreateTaxDlg : public QDialog, public Ui::CreateTax
 {
@@ -24,6 +25,8 @@ private:
 	QDoubleValidator *vDouble = nullptr;
 	QIntValidator *vInt = nullptr;
 	QWidget* parentForm;
+	QStandardItemModel *itemModel;
+	QModelIndex mIndex;
 };
 
 #endif //CREATETAXDLG_H

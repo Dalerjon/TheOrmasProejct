@@ -163,13 +163,17 @@ namespace BusinessLayer
 	int Role::GetRoleIDByName(DataLayer::OrmasDal& ormasDal, std::string rName, std::string& errorMessage)
 	{
 		if (rName.empty())
-			return false;
+			return 0;
 		name = rName;
 		std::string filter = GenerateFilter(ormasDal);
 		std::vector<DataLayer::rolesCollection> roleVector = ormasDal.GetRoles(errorMessage, filter);
 		if (0 != roleVector.size())
 		{
-			return std::get<0>(roleVector.at(0));
+			id = std::get<0>(roleVector.at(0));
+			code = std::get<1>(roleVector.at(0));
+			name = std::get<2>(roleVector.at(0));
+			comment = std::get<3>(roleVector.at(0));
+			return id;
 		}
 		else
 		{

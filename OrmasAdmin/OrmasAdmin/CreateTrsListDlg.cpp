@@ -24,6 +24,9 @@ CreateTrsListDlg::CreateTrsListDlg(BusinessLayer::OrmasBL *ormasBL, bool updateF
 	sumEdit->setMaxLength(17);
 	if (true == updateFlag)
 	{
+		DataForm *parentDataForm = (DataForm*)parentForm;
+		itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
+		mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
 		QObject::connect(addBtn, &QPushButton::released, this, &CreateTrsListDlg::EditProductInList);
 	}
 	else
@@ -112,8 +115,8 @@ void CreateTrsListDlg::FillEditElements(int tTransportID, int tProductID, double
 {
 	transportEdit->setText(QString::number(tTransportID));
 	productEdit->setText(QString::number(tProductID));
-	countEdit->setText(QString::number(tCount));
-	sumEdit->setText(QString::number(tSum));
+	countEdit->setText(QString::number(tCount, 'f', 3));
+	sumEdit->setText(QString::number(tSum, 'f', 3));
 	statusEdit->setText(QString::number(tStatusID));
 	currencyCmb->setCurrentIndex(currencyCmb->findData(QVariant(tCurrencyID)));
 	BusinessLayer::Product product;
@@ -237,8 +240,8 @@ void CreateTrsListDlg::AddProductToList()
 						<< new QStandardItem(currency->GetShortName().c_str())
 						<< new QStandardItem(QString::number(product->GetVolume()))
 						<< new QStandardItem(measure->GetName().c_str())
-						<< new QStandardItem(QString::number(transportList->GetCount()))
-						<< new QStandardItem(QString::number(transportList->GetSum()))
+						<< new QStandardItem(QString::number(transportList->GetCount(), 'f', 3))
+						<< new QStandardItem(QString::number(transportList->GetSum(),'f',3))
 						<< new QStandardItem(sumCurrency->GetShortName().c_str())
 						<< new QStandardItem(statusVector.at(0).GetName().c_str())
 						<< new QStandardItem(QString::number(transportList->GetProductID()))
@@ -323,16 +326,15 @@ void CreateTrsListDlg::EditProductInList()
 							return;
 						}
 
-						QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
-						QModelIndex mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
+						
 						itemModel->item(mIndex.row(), 1)->setText(QString::number(transportList->GetTransportID()));
 						itemModel->item(mIndex.row(), 2)->setText(product->GetName().c_str());
 						itemModel->item(mIndex.row(), 3)->setText(QString::number(product->GetPrice()));
 						itemModel->item(mIndex.row(), 4)->setText(currency->GetShortName().c_str());
 						itemModel->item(mIndex.row(), 5)->setText(QString::number(product->GetVolume()));
 						itemModel->item(mIndex.row(), 6)->setText(measure->GetName().c_str());
-						itemModel->item(mIndex.row(), 7)->setText(QString::number(transportList->GetCount()));
-						itemModel->item(mIndex.row(), 8)->setText(QString::number(transportList->GetSum()));
+						itemModel->item(mIndex.row(), 7)->setText(QString::number(transportList->GetCount(), 'f', 3));
+						itemModel->item(mIndex.row(), 8)->setText(QString::number(transportList->GetSum(),'f',3));
 						itemModel->item(mIndex.row(), 9)->setText(sumCurrency->GetShortName().c_str());
 						itemModel->item(mIndex.row(), 10)->setText(status->GetName().c_str());
 						itemModel->item(mIndex.row(), 11)->setText(QString::number(transportList->GetProductID()));

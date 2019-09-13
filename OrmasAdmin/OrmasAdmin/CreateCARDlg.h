@@ -3,6 +3,7 @@
 #include "ui_CreateCARDlg.h"
 #include "OrmasBL.h"
 #include "MainForm.h"
+#include <QStandardItemModel>
 
 class CreateCARDlg : public QDialog, public Ui::CreateCompanyAccount
 {
@@ -29,6 +30,8 @@ private:
 	void InitComboBox();
 	QWidget* parentForm;
 	MainForm* mainForm;
+	QStandardItemModel *itemModel;
+	QModelIndex mIndex;
 };
 
 #endif //CREATECARDLG_H

@@ -636,6 +636,12 @@
 				}
 			}
 		}
+		
+	}
+	// role seperated section
+	if($_SESSION['role_id_stock_inspector'] == $_SESSION['role_id'])
+	{
+		
 	}
 ?>
 <div id="main-content">
@@ -648,6 +654,10 @@
 			if($_SESSION['role_id'] == $_SESSION['role_id_expeditor'])
 			{
 				require_once ('expeditor.php');
+			}
+			if($_SESSION['role_id'] == $_SESSION['role_id_stock_inspector'])
+			{
+				require_once ('stock.php');
 			}
 		?>
 		</div>

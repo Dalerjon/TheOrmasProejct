@@ -2,6 +2,7 @@
 #define CREATECbxDLG_H
 #include "ui_CreateCbxDlg.h"
 #include "OrmasBL.h"
+#include <QStandardItemModel>
 
 class CreateCbxDlg : public QDialog, public Ui::CreateCashbox
 {
@@ -26,6 +27,8 @@ private:
 	void InitComboBox(int);
 	void GenerateSubaccount();
 	QWidget* parentForm;
+	QStandardItemModel *itemModel;
+	QModelIndex mIndex;
 };
 
 #endif //CREATECbxDLG_H

@@ -23,6 +23,9 @@ CreatePPlanDlg::CreatePPlanDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag,
 	
 	if (true == updateFlag)
 	{
+		DataForm *parentDataForm = (DataForm*)parentForm;
+		itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
+		mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
 		QObject::connect(okBtn, &QPushButton::released, this, &CreatePPlanDlg::EditProductionPlan);
 	}
 	else
@@ -84,8 +87,8 @@ void CreatePPlanDlg::FillEditElements(QString pDate, int pEmployeeID, double pCo
 {
 	dateEdit->setDateTime(QDateTime::fromString(pDate, "dd.MM.yyyy hh:mm"));
 	employeeEdit->setText(QString::number(pEmployeeID));
-	prodCountEdit->setText(QString::number(pCount));
-	sumEdit->setText(QString::number(pSum));
+	prodCountEdit->setText(QString::number(pCount, 'f', 3));
+	sumEdit->setText(QString::number(pSum, 'f', 3));
 	statusEdit->setText(QString::number(pStatusID));
 	currencyCmb->setCurrentIndex(currencyCmb->findData(QVariant(pCurrencyID)));
 	BusinessLayer::User user;
@@ -230,8 +233,8 @@ void CreatePPlanDlg::CreateProductionPlan()
 					QList<QStandardItem*> productionPlanItem;
 					productionPlanItem << new QStandardItem(QString::number(productionPlan->GetID()))
 						<< new QStandardItem(productionPlan->GetDate().c_str())
-						<< new QStandardItem(QString::number(productionPlan->GetCount()))
-						<< new QStandardItem(QString::number(productionPlan->GetSum()))
+						<< new QStandardItem(QString::number(productionPlan->GetCount(), 'f', 3))
+						<< new QStandardItem(QString::number(productionPlan->GetSum(),'f',3))
 						<< new QStandardItem(currency->GetShortName().c_str())
 						<< new QStandardItem(status->GetName().c_str());
 
@@ -305,8 +308,7 @@ void CreatePPlanDlg::EditProductionPlan()
 					if (!parentDataForm->IsClosed())
 					{
 						//updating ProductionPlan data
-						QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
-						QModelIndex mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
+						
 						itemModel->item(mIndex.row(), 1)->setText(productionPlan->GetDate().c_str());
 
 						BusinessLayer::Employee *employee = new BusinessLayer::Employee();
@@ -347,8 +349,8 @@ void CreatePPlanDlg::EditProductionPlan()
 							}
 						}
 
-						itemModel->item(mIndex.row(), 2)->setText(QString::number(productionPlan->GetCount()));
-						itemModel->item(mIndex.row(), 3)->setText(QString::number(productionPlan->GetSum()));
+						itemModel->item(mIndex.row(), 2)->setText(QString::number(productionPlan->GetCount(), 'f', 3));
+						itemModel->item(mIndex.row(), 3)->setText(QString::number(productionPlan->GetSum(),'f',3));
 						itemModel->item(mIndex.row(), 4)->setText(currency->GetShortName().c_str());
 						itemModel->item(mIndex.row(), 5)->setText(status->GetName().c_str());
 						if (productionPlan->GetEmployeeID() > 0)

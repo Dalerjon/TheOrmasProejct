@@ -2,6 +2,7 @@
 #define CREATEETRRTDLG_H
 #include "ui_CreateEtrRtDlg.h"
 #include "OrmasBL.h"
+#include <QStandardItemModel>
 
 class CreateEtrRtDlg : public QDialog, public Ui::CreateEntryRouting
 {
@@ -23,6 +24,8 @@ private:
 	void FillEditElements(QString, int, int);
 	void InitComboBox();
 	QWidget* parentForm;
+	QStandardItemModel *itemModel;
+	QModelIndex mIndex;
 };
 
 #endif //CREATEETRRTDLG_H

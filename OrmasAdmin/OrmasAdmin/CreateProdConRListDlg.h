@@ -3,6 +3,7 @@
 #include "ui_CreateProdConRListDlg.h"
 #include "OrmasBL.h"
 #include "MainForm.h"
+#include <QStandardItemModel>
 
 class CreateProdConRListDlg : public QDialog, public Ui::CreateProdConRList
 {
@@ -23,6 +24,7 @@ public:
 	void OpenConRDlg();
 	void OpenProdDlg();
 	void OpenStsDlg();
+	void SetProductData(int);
 	void TextEditChanged();
 	public slots:
 	void SetID(int ID, QString childName);
@@ -37,5 +39,7 @@ private:
 	void InitComboBox();
 	QWidget* parentForm;
 	MainForm* mainForm;
+	QStandardItemModel *itemModel;
+	QModelIndex mIndex;
 };
 #endif //CREATEORDLITDLG_H

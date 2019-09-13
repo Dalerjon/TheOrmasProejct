@@ -3,6 +3,7 @@
 #include "ui_CreateSAccDlg.h"
 #include "OrmasBL.h"
 #include "MainForm.h"
+#include <QStandardItemModel>
 
 class CreateSAccDlg : public QDialog, public Ui::CreateSubaccount
 {
@@ -35,6 +36,8 @@ private:
 	QWidget* parentForm;
 	MainForm* mainForm;
 	int parentAccID = 0;
+	QStandardItemModel *itemModel;
+	QModelIndex mIndex;
 };
 
 #endif //CREATESACCDLG_H

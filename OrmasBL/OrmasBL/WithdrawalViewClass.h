@@ -8,6 +8,7 @@ namespace BusinessLayer{
 	{
 		std::string userName = "";
 		std::string userSurname = "";
+		std::string userPhone = "";
 		std::string subaccountNumber = "";
 		std::string currencyName = "";
 		std::string statusName = "";
@@ -20,10 +21,11 @@ namespace BusinessLayer{
 		// WithdrawalView class Accessors
 		std::string GetUsername();
 		std::string GetUserSurname();
-		std::string GetSubaccountNumber();
+		std::string GetUserPhone();
 		std::string GetCurrencyName();
 		std::string GetStatusName();
 		std::string GetAccountNumber();
+		std::string GetSubaccountNumber();
 	};
 }
 

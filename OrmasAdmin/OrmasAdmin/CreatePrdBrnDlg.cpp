@@ -17,6 +17,9 @@ CreatePrdBrnDlg::CreatePrdBrnDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFla
 	productEdit->setValidator(vInt);
 	if (true == updateFlag)
 	{
+		DataForm *parentDataForm = (DataForm*)parentForm;
+		itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
+		mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
 		QObject::connect(okBtn, &QPushButton::released, this, &CreatePrdBrnDlg::EditProductBranch);
 	}
 	else
@@ -215,8 +218,7 @@ void CreatePrdBrnDlg::EditProductBranch()
 							return;
 						}
 
-						QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
-						QModelIndex mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
+						
 						itemModel->item(mIndex.row(), 1)->setText(branch->GetName().c_str());
 						itemModel->item(mIndex.row(), 2)->setText(branch->GetAddress().c_str());
 						itemModel->item(mIndex.row(), 3)->setText(product->GetName().c_str());
@@ -261,6 +263,7 @@ void CreatePrdBrnDlg::Close()
 
 void CreatePrdBrnDlg::OpenBrnDlg()
 {
+	errorMessage.clear();
 	this->hide();
 	this->setModal(false);
 	this->show();
@@ -317,39 +320,7 @@ void CreatePrdBrnDlg::OpenProdDlg()
 	dForm->hide();
 	dForm->setWindowModality(Qt::WindowModal);
 
-	BusinessLayer::ProductType *pType = new BusinessLayer::ProductType();
-	pType->SetCode("PRODUCT");
-	std::string pTypeFilter = dialogBL->GenerateFilter<BusinessLayer::ProductType>(pType);
-	std::vector<BusinessLayer::ProductType> pTypeVector = dialogBL->GetAllDataForClass<BusinessLayer::ProductType>(errorMessage, pTypeFilter);
-	if (pTypeVector.size() == 0)
-	{
-		delete pType;
-		QString message = tr("Sorry could not find product type with \"Product\" code!");
-		mainForm->statusBar()->showMessage(message);
-		QMessageBox::information(NULL, QString(tr("Warning")),
-			QString(message),
-			QString(tr("Ok")));
-		errorMessage = "";
-		return;
-	}
-
-	BusinessLayer::Product *product = new BusinessLayer::Product();
-	product->SetProductTypeID(pTypeVector.at(0).GetID());
-	std::string productFilter = dialogBL->GenerateFilter<BusinessLayer::Product>(product);
-	std::vector<BusinessLayer::ProductView> productVector = dialogBL->GetAllDataForClass<BusinessLayer::ProductView>(errorMessage, productFilter);
-	if (productVector.size() == 0)
-	{
-		delete product;
-		QString message = tr("Sorry could not find product with \"product\" code!");
-		mainForm->statusBar()->showMessage(message);
-		QMessageBox::information(NULL, QString(tr("Warning")),
-			QString(message),
-			QString(tr("Ok")));
-		errorMessage = "";
-		return;
-	}
-
-	dForm->FillTable<BusinessLayer::ProductView>(errorMessage, productFilter);
+	dForm->FillTable<BusinessLayer::ProductView>(errorMessage);
 	if (errorMessage.empty())
 	{
 		dForm->parentDialog = this;

@@ -2,6 +2,7 @@
 #define CREATEPRDTPDLG_H
 #include "ui_CreatePrdTpDlg.h"
 #include "OrmasBL.h"
+#include <QStandardItemModel>
 
 class CreatePrdTpDlg :public QDialog, public Ui::CreateProductType
 {
@@ -22,5 +23,7 @@ private:
 	void SetProdTypeParams(QString, QString, QString, int = 0);
 	void FillEditElements(QString, QString, QString);
 	QWidget* parentForm;
+	QStandardItemModel *itemModel;
+	QModelIndex mIndex;
 };
 #endif //CREATEPRDTPDLG_H

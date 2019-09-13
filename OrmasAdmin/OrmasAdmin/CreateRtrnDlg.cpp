@@ -23,6 +23,9 @@ CreateRtrnDlg::CreateRtrnDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, Q
 	sumEdit->setMaxLength(17);
 	if (true == updateFlag)
 	{
+		DataForm *parentDataForm = (DataForm*)parentForm;
+		itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
+		mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
 		QObject::connect(okBtn, &QPushButton::released, this, &CreateRtrnDlg::EditReturn);
 	}
 	else
@@ -98,8 +101,8 @@ void CreateRtrnDlg::FillEditElements(int rClientID, QString rDate, QString rExec
 		execDateEdit->setDateTime(QDateTime::fromString(rExecDate, "dd.MM.yyyy hh:mm"));
 	}
 	employeeEdit->setText(QString::number(rEmployeeID));
-	prodCountEdit->setText(QString::number(rCount));
-	sumEdit->setText(QString::number(rSum));
+	prodCountEdit->setText(QString::number(rCount, 'f', 3));
+	sumEdit->setText(QString::number(rSum, 'f', 3));
 	statusEdit->setText(QString::number(rStatusID));
 	currencyCmb->setCurrentIndex(currencyCmb->findData(QVariant(rCurrencyID)));
 	BusinessLayer::User user1;
@@ -308,8 +311,8 @@ void CreateRtrnDlg::CreateReturn()
 							<< new QStandardItem("");
 					}
 
-					returnItem << new QStandardItem(QString::number(ret->GetCount()))
-						<< new QStandardItem(QString::number(ret->GetSum()))
+					returnItem << new QStandardItem(QString::number(ret->GetCount(), 'f', 3))
+						<< new QStandardItem(QString::number(ret->GetSum(),'f',3))
 						<< new QStandardItem(currency->GetShortName().c_str())
 						<< new QStandardItem(QString::number(ret->GetEmployeeID()))
 						<< new QStandardItem(QString::number(ret->GetClientID()))
@@ -378,8 +381,6 @@ void CreateRtrnDlg::EditReturn()
 					if (!parentDataForm->IsClosed())
 					{
 						//updating ret data
-						QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
-						QModelIndex mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
 						itemModel->item(mIndex.row(), 1)->setText(ret->GetDate().c_str());
 						itemModel->item(mIndex.row(), 2)->setText(ret->GetExecutionDate().c_str());
 
@@ -436,8 +437,8 @@ void CreateRtrnDlg::EditReturn()
 							itemModel->item(mIndex.row(), 11)->setText("");
 							itemModel->item(mIndex.row(), 12)->setText("");
 						}
-						itemModel->item(mIndex.row(), 13)->setText(QString::number(ret->GetCount()));
-						itemModel->item(mIndex.row(), 14)->setText(QString::number(ret->GetSum()));
+						itemModel->item(mIndex.row(), 13)->setText(QString::number(ret->GetCount(), 'f', 3));
+						itemModel->item(mIndex.row(), 14)->setText(QString::number(ret->GetSum(),'f',3));
 						itemModel->item(mIndex.row(), 15)->setText(currency->GetShortName().c_str());
 						itemModel->item(mIndex.row(), 16)->setText(QString::number(ret->GetEmployeeID()));
 						itemModel->item(mIndex.row(), 17)->setText(QString::number(ret->GetClientID()));
@@ -750,7 +751,9 @@ void CreateRtrnDlg::StatusWasChenged()
 {
 	errorMessage = "";
 	statusMap = BusinessLayer::Status::GetStatusesAsMap(dialogBL->GetOrmasDal(), errorMessage);
-	if (statusEdit->text().toInt() == statusMap.find("EXECUTED")->second)
+	if (statusEdit->text().toInt() == statusMap.find("EXECUTED")->second
+		|| statusEdit->text().toInt() == statusMap.find("RETURN")->second
+		|| statusEdit->text().toInt() == statusMap.find("ERROR")->second)
 	{
 		execDateWidget->setVisible(true);
 		execDateEdit->setDateTime(QDateTime::currentDateTime());
@@ -837,6 +840,25 @@ bool CreateRtrnDlg::CheckAccess()
 		{
 			QMessageBox::information(NULL, QString(tr("Warning")),
 				QString(tr("This document have an \"EXECUTED\" status. The document with \"EXECUTED\" status cannot be changed!")),
+				QString(tr("Ok")));
+			errorMessage.clear();
+			delete status;
+			return false;
+		}
+	}
+
+	if (0 == status->GetName().compare("RETURN"))
+	{
+		if (mainForm->GetLoggedUser()->GetRoleID() == rolesMap.find("SUPERUSER")->second ||
+			mainForm->GetLoggedUser()->GetRoleID() == rolesMap.find("CHIEF ACCOUNTANT")->second ||
+			mainForm->GetLoggedUser()->GetRoleID() == rolesMap.find("ACCOUNTANT")->second)
+		{
+			return true;
+		}
+		else
+		{
+			QMessageBox::information(NULL, QString(tr("Warning")),
+				QString(tr("This document have an \"RETURN\" status. The document with \"EXECUTED\" status cannot be changed!")),
 				QString(tr("Ok")));
 			errorMessage.clear();
 			delete status;

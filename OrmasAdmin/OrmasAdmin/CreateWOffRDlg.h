@@ -4,6 +4,7 @@
 #include "ui_CreateWOffRDlg.h"
 #include "OrmasBL.h"
 #include "MainForm.h"
+#include <QStandardItemModel>
 
 class CreateWOffRDlg : public QDialog, public Ui::CreateWriteOffR
 {
@@ -40,5 +41,7 @@ private:
 	QWidget* parentForm;
 	MainForm* mainForm;
 	bool CheckAccess();
+	QStandardItemModel *itemModel;
+	QModelIndex mIndex;
 };
 #endif //CREATEWOFFRDLG_H

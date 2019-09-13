@@ -3,6 +3,7 @@
 #include "ui_CreateAcctbDlg.h"
 #include "OrmasBL.h"
 #include "MainForm.h"
+#include <QStandardItemModel>
 
 class CreateAcctbDlg : public QDialog, public Ui::CreateAccountable
 {
@@ -27,6 +28,8 @@ private:
 	void FillEditElements(QString, int);
 	QWidget* parentForm;
 	MainForm* mainForm;
+	QStandardItemModel *itemModel;
+	QModelIndex mIndex;
 };
 
 #endif //CREATEAcctbDLG_H

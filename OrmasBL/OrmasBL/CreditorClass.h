@@ -46,6 +46,7 @@ namespace BusinessLayer{
 
 		//Generate filter string for class
 		std::string GenerateFilter(DataLayer::OrmasDal& ormasDal);
+		std::string GenerateINFilter(DataLayer::OrmasDal& ormasDal, std::vector<int> creditorIDList);
 		bool GetCreditorByID(DataLayer::OrmasDal& ormasDal, int aID, std::string& errorMessage);
 		bool IsEmpty();
 		void Clear();

@@ -10,15 +10,17 @@ namespace BusinessLayer{
 		currencyName = std::get<3>(wCollection);
 		userName = std::get<4>(wCollection);
 		userSurname = std::get<5>(wCollection);
-		statusName = std::get<6>(wCollection);
-		accountNumber = std::get<7>(wCollection);
-		subaccountNumber = std::get<8>(wCollection);
-		target = std::get<9>(wCollection);
-		userID = std::get<10>(wCollection);
-		currencyID = std::get<11>(wCollection);
-		subaccountID = std::get<12>(wCollection);
-		statusID = std::get<13>(wCollection);
-		accountID = std::get<14>(wCollection);
+		userPhone = std::get<6>(wCollection);
+		statusName = std::get<7>(wCollection);
+		accountNumber = std::get<8>(wCollection);
+		subaccountNumber = std::get<9>(wCollection);
+		who = std::get<10>(wCollection);
+		target = std::get<11>(wCollection);
+		userID = std::get<12>(wCollection);
+		currencyID = std::get<13>(wCollection);
+		subaccountID = std::get<14>(wCollection);
+		statusID = std::get<15>(wCollection);
+		accountID = std::get<16>(wCollection);
 	}
 
 	std::string WithdrawalView::GetUsername()
@@ -28,6 +30,10 @@ namespace BusinessLayer{
 	std::string WithdrawalView::GetUserSurname()
 	{
 		return userSurname;
+	}
+	std::string WithdrawalView::GetUserPhone()
+	{
+		return userPhone;
 	}
 	std::string WithdrawalView::GetSubaccountNumber()
 	{

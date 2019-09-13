@@ -25,6 +25,7 @@ public:
 	void OpenStsDlg();
 	void TextEditChanged();
 	void InspectPrice();
+	void SetProductData(int);
 	public slots:
 	void SetID(int ID, QString childName);
 signals:

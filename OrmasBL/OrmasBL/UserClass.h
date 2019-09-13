@@ -69,6 +69,7 @@ namespace BusinessLayer
 
 		//Generate filter string for class
 		std::string GenerateFilter(DataLayer::OrmasDal& ormasDal);
+		std::string GenerateINFilter(DataLayer::OrmasDal& ormasDal, std::vector<int> userIDList);
 		bool GetUserByID(DataLayer::OrmasDal& ormasDal, int uID, std::string& errorMessage);
 		bool GetUserByCredentials(DataLayer::OrmasDal& ormasDal, std::string uPhoneOrEmail, std::string uPassword);
 		bool IsEmpty();

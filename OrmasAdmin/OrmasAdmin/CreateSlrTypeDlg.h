@@ -2,6 +2,7 @@
 #define CREATESLRTYPEDLG_H
 #include "ui_CreateSlrTypeDlg.h"
 #include "OrmasBL.h"
+#include <QStandardItemModel>
 
 class CreateSlrTypeDlg : public QDialog, public Ui::CreateSalaryType
 {
@@ -22,6 +23,8 @@ private:
 	void SetSalaryTypeParams(QString, QString, int = 0);
 	void FillEditElements(QString, QString);
 	QWidget* parentForm;
+	QStandardItemModel *itemModel;
+	QModelIndex mIndex;
 };
 
 #endif //CREATESLRDLG_H

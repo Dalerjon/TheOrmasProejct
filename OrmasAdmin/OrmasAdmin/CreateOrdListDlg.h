@@ -36,5 +36,6 @@ private:
 	void InitComboBox();
 	QWidget* parentForm;
 	MainForm* mainForm;
+	unsigned int employeeID = 0;
 };
 #endif //CREATEORDLITDLG_H

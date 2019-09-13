@@ -2,6 +2,7 @@
 #define CREATELCNDLG_H
 #include "ui_CreateLcnDlg.h"
 #include "OrmasBL.h"
+#include <QStandardItemModel>
 
 class CreateLcnDlg :public QDialog, public Ui::CreateLocation
 {
@@ -22,5 +23,7 @@ private:
 	void SetLocationParams(QString, QString, QString, QString, int = 0);
 	void FillEditElements(QString, QString, QString, QString);
 	QWidget* parentForm;
+	QStandardItemModel *itemModel;
+	QModelIndex mIndex;
 };
 #endif //CREATELCNDLG_H

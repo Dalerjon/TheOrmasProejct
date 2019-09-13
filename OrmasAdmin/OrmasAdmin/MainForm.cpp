@@ -13,6 +13,7 @@
 #include "GenerateProfRepDlg.h"
 #include "GenerateSalesRepDlg.h"
 #include "GenerateSpecRepDlg.h"
+#include "GenerateWTBSDlg.h"
 #include "CashInfoDlg.h"
 #include "CashBookListDlg.h"
 #include "WarehouseEmployeeRelationClass.h"
@@ -208,6 +209,7 @@ void MainForm::SetAllMenuInvisible()
 	actionProfitability->setVisible(false);
 	actionSalesReport->setVisible(false);
 	actionAccountCard->setVisible(false);
+	actionWarehouseTurnover->setVisible(false);
 
 	//actions in menu reference
 	actionCompany->setVisible(false);
@@ -344,6 +346,7 @@ void MainForm::SetAllMenuVisible()
 	actionProfitability->setVisible(true);
 	actionSalesReport->setVisible(true);
 	actionAccountCard->setVisible(true);
+	actionWarehouseTurnover->setVisible(true);
 
 	//actions in menu reference
 	actionCompany->setVisible(true);
@@ -501,6 +504,7 @@ void MainForm::CreateConnections()
 	QObject::connect(actionProfitability, &QAction::triggered, this, &MainForm::ProfitabilityReportForm);
 	QObject::connect(actionSalesReport, &QAction::triggered, this, &MainForm::SalesReportForm);
 	QObject::connect(actionAccountCard, &QAction::triggered, this, &MainForm::AccountCardForm);
+	QObject::connect(actionWarehouseTurnover, &QAction::triggered, this, &MainForm::WarehouseTurnoverForm);
 	
 	QObject::connect(actionCompany, &QAction::triggered, this, &MainForm::OpenCompanyForm);
 	QObject::connect(actionCurrency, &QAction::triggered, this, &MainForm::OpenCurrencyForm);
@@ -4156,6 +4160,17 @@ void MainForm::AccountCardForm()
 	generateAccRepDlg->show();
 }
 
+void MainForm::WarehouseTurnoverForm()
+{
+	GenerateWTBS *generateWTBSDlg = new GenerateWTBS(oBL, this);
+	generateWTBSDlg->setAttribute(Qt::WA_DeleteOnClose);
+	generateWTBSDlg->setWindowTitle(tr("Generate warehouse turnover balance sheet report"));
+	QMdiSubWindow *generateWTBSWindow = new QMdiSubWindow;
+	generateWTBSWindow->setWidget(generateWTBSDlg);
+	generateWTBSWindow->setAttribute(Qt::WA_DeleteOnClose);
+	mdiArea->addSubWindow(generateWTBSWindow);
+	generateWTBSDlg->show();
+}
 
 
 void MainForm::OpenCompanyForm()

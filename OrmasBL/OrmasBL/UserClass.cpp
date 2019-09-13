@@ -224,12 +224,22 @@ namespace BusinessLayer
 		}
 		return false;
 	}
+	
 	std::string User::GenerateFilter(DataLayer::OrmasDal& ormasDal)
 	{
 		if (0 != id || !email.empty() || !name.empty() || !surname.empty() || !address.empty() || !phone.empty() || !password.empty() 
 			|| 0 != roleID)
 		{
 			return ormasDal.GetFilterForUser(id, email, name, surname, phone, address, roleID, password, activated);
+		}
+		return "";
+	}
+
+	std::string User::GenerateINFilter(DataLayer::OrmasDal& ormasDal, std::vector<int> userIDList)
+	{
+		if (userIDList.size()>0)
+		{
+			return ormasDal.GetINFilterForUserID(userIDList);
 		}
 		return "";
 	}

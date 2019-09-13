@@ -127,6 +127,7 @@ public:
     QAction *actionShareholders;
     QAction *actionEmployeeProducts;
     QAction *actionBranchProducts;
+    QAction *actionWarehouseTurnover;
     QWidget *centrWidget;
     QGridLayout *gridLayout;
     QMdiArea *mdiArea;
@@ -350,6 +351,8 @@ public:
         actionEmployeeProducts->setObjectName(QStringLiteral("actionEmployeeProducts"));
         actionBranchProducts = new QAction(MainWindow);
         actionBranchProducts->setObjectName(QStringLiteral("actionBranchProducts"));
+        actionWarehouseTurnover = new QAction(MainWindow);
+        actionWarehouseTurnover->setObjectName(QStringLiteral("actionWarehouseTurnover"));
         centrWidget = new QWidget(MainWindow);
         centrWidget->setObjectName(QStringLiteral("centrWidget"));
         gridLayout = new QGridLayout(centrWidget);
@@ -508,6 +511,7 @@ public:
         menuReports->addAction(actionProfitability);
         menuReports->addAction(actionSalesReport);
         menuReports->addAction(actionAccountCard);
+        menuReports->addAction(actionWarehouseTurnover);
 
         retranslateUi(MainWindow);
 
@@ -616,6 +620,7 @@ public:
         actionShareholders->setText(QApplication::translate("MainWindow", "Shareholders", 0));
         actionEmployeeProducts->setText(QApplication::translate("MainWindow", "Employeee products", 0));
         actionBranchProducts->setText(QApplication::translate("MainWindow", "Branch products", 0));
+        actionWarehouseTurnover->setText(QApplication::translate("MainWindow", "Warehouse turnover", 0));
         menuUsers->setTitle(QApplication::translate("MainWindow", "Users", 0));
         menuProducts->setTitle(QApplication::translate("MainWindow", "Products", 0));
         menuOrders->setTitle(QApplication::translate("MainWindow", "Orders", 0));

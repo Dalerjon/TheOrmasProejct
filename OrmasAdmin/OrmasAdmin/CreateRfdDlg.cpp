@@ -18,6 +18,9 @@ CreateRfdDlg::CreateRfdDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, QWi
 	valueEdit->setMaxLength(17);
 	if (true == updateFlag)
 	{
+		DataForm *parentDataForm = (DataForm*)parentForm;
+		itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
+		mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
 		QObject::connect(okBtn, &QPushButton::released, this, &CreateRfdDlg::EditRefund);
 	}
 	else
@@ -202,8 +205,7 @@ void CreateRfdDlg::EditRefund()
 							delete currency;
 							return;
 						}
-						QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
-						QModelIndex mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
+					
 						itemModel->item(mIndex.row(), 1)->setText(refund->GetDate().c_str());
 						itemModel->item(mIndex.row(), 2)->setText(QString::number(refund->GetValue()));
 						itemModel->item(mIndex.row(), 3)->setText(currency->GetShortName().c_str());

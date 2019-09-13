@@ -4,6 +4,7 @@
 #include "ui_CreatePurDlg.h"
 #include "OrmasBL.h"
 #include "MainForm.h"
+#include <QStandardItemModel>
 
 class CreatePurDlg : public QDialog, public Ui::CreatePurveyor
 {
@@ -30,6 +31,8 @@ private:
 	QIntValidator *vInt = nullptr;
 	QWidget* parentForm;
 	MainForm* mainForm;
+	QStandardItemModel *itemModel;
+	QModelIndex mIndex;
 };
 
 #endif //CREATEPurDLG_H

@@ -16,6 +16,9 @@ CreateCASHERDlg::CreateCASHERDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFla
 	employeeEdit->setValidator(vInt);
 	if (true == updateFlag)
 	{
+		DataForm *parentDataForm = (DataForm*)parentForm;
+		itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
+		mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
 		QObject::connect(okBtn, &QPushButton::released, this, &CreateCASHERDlg::EditCashboxEmployee);
 	}
 	else
@@ -267,8 +270,7 @@ void CreateCASHERDlg::EditCashboxEmployee()
 							delete role;
 							return;
 						}
-						QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
-						QModelIndex mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
+						
 						itemModel->item(mIndex.row(), 1)->setText(subacc->GetNumber().c_str());
 						itemModel->item(mIndex.row(), 1)->setText(cashbox->GetAddress().c_str());
 						itemModel->item(mIndex.row(), 2)->setText(employee->GetName().c_str());

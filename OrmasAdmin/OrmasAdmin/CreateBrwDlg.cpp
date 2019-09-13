@@ -13,6 +13,9 @@ CreateBrwDlg::CreateBrwDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, QWi
 	mainForm = (MainForm *)dataFormParent->GetParent();
 	if (true == updateFlag)
 	{
+		DataForm *parentDataForm = (DataForm*)parentForm;
+		itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
+		mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
 		QObject::connect(okBtn, &QPushButton::released, this, &CreateBrwDlg::EditBorrower);
 	}
 	else
@@ -209,8 +212,6 @@ void CreateBrwDlg::EditBorrower()
 				{
 					if (!parentDataForm->IsClosed())
 					{
-						QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
-						QModelIndex mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
 						itemModel->item(mIndex.row(), 1)->setText(employee.GetName().c_str());
 						itemModel->item(mIndex.row(), 2)->setText(employee.GetSurname().c_str());
 						itemModel->item(mIndex.row(), 3)->setText(borrower->GetComment().c_str());

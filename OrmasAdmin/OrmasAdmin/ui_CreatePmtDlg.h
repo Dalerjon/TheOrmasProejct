@@ -32,6 +32,7 @@ class Ui_CreatePayment
 {
 public:
     QGridLayout *gridLayout;
+    QLineEdit *targetEdit;
     QWidget *statusWidget;
     QHBoxLayout *horizontalLayout_3;
     QPushButton *statusBtn;
@@ -42,8 +43,9 @@ public:
     QLabel *targetLB;
     QLabel *surnameLb;
     QLineEdit *userEdit;
-    QLineEdit *targetEdit;
     QComboBox *accountCmb;
+    QLineEdit *whoEdit;
+    QLabel *whoLB;
     QLabel *phoneLb;
     QLineEdit *accNumberEdit;
     QLabel *valieLb;
@@ -64,17 +66,26 @@ public:
     QLabel *namePh;
     QLabel *phonePh;
     QPushButton *accBtn;
+    QPushButton *subAccBtn;
+    QLineEdit *saIDEdit;
+    QLabel *daLb;
+    QLineEdit *saNumberEdit;
 
     void setupUi(QDialog *CreatePayment)
     {
         if (CreatePayment->objectName().isEmpty())
             CreatePayment->setObjectName(QStringLiteral("CreatePayment"));
-        CreatePayment->resize(687, 290);
+        CreatePayment->resize(687, 345);
         CreatePayment->setLocale(QLocale(QLocale::English, QLocale::UnitedStates));
         CreatePayment->setModal(false);
         gridLayout = new QGridLayout(CreatePayment);
         gridLayout->setObjectName(QStringLiteral("gridLayout"));
         gridLayout->setContentsMargins(11, 11, 11, 11);
+        targetEdit = new QLineEdit(CreatePayment);
+        targetEdit->setObjectName(QStringLiteral("targetEdit"));
+
+        gridLayout->addWidget(targetEdit, 10, 1, 1, 5);
+
         statusWidget = new QWidget(CreatePayment);
         statusWidget->setObjectName(QStringLiteral("statusWidget"));
         horizontalLayout_3 = new QHBoxLayout(statusWidget);
@@ -117,7 +128,7 @@ public:
         horizontalLayout_3->addWidget(statusPh);
 
 
-        gridLayout->addWidget(statusWidget, 13, 0, 1, 6);
+        gridLayout->addWidget(statusWidget, 14, 0, 1, 6);
 
         accountNameLb = new QLabel(CreatePayment);
         accountNameLb->setObjectName(QStringLiteral("accountNameLb"));
@@ -127,7 +138,7 @@ public:
         targetLB = new QLabel(CreatePayment);
         targetLB->setObjectName(QStringLiteral("targetLB"));
 
-        gridLayout->addWidget(targetLB, 9, 0, 1, 1);
+        gridLayout->addWidget(targetLB, 10, 0, 1, 1);
 
         surnameLb = new QLabel(CreatePayment);
         surnameLb->setObjectName(QStringLiteral("surnameLb"));
@@ -142,15 +153,20 @@ public:
 
         gridLayout->addWidget(userEdit, 6, 2, 1, 2);
 
-        targetEdit = new QLineEdit(CreatePayment);
-        targetEdit->setObjectName(QStringLiteral("targetEdit"));
-
-        gridLayout->addWidget(targetEdit, 9, 1, 1, 5);
-
         accountCmb = new QComboBox(CreatePayment);
         accountCmb->setObjectName(QStringLiteral("accountCmb"));
 
         gridLayout->addWidget(accountCmb, 1, 1, 1, 5);
+
+        whoEdit = new QLineEdit(CreatePayment);
+        whoEdit->setObjectName(QStringLiteral("whoEdit"));
+
+        gridLayout->addWidget(whoEdit, 0, 1, 1, 5);
+
+        whoLB = new QLabel(CreatePayment);
+        whoLB->setObjectName(QStringLiteral("whoLB"));
+
+        gridLayout->addWidget(whoLB, 0, 0, 1, 1);
 
         phoneLb = new QLabel(CreatePayment);
         phoneLb->setObjectName(QStringLiteral("phoneLb"));
@@ -162,27 +178,27 @@ public:
         accNumberEdit->setMinimumSize(QSize(150, 0));
         accNumberEdit->setMaximumSize(QSize(150, 16777215));
 
-        gridLayout->addWidget(accNumberEdit, 8, 5, 1, 1);
+        gridLayout->addWidget(accNumberEdit, 9, 5, 1, 1);
 
         valieLb = new QLabel(CreatePayment);
         valieLb->setObjectName(QStringLiteral("valieLb"));
 
-        gridLayout->addWidget(valieLb, 11, 0, 1, 1);
+        gridLayout->addWidget(valieLb, 12, 0, 1, 1);
 
         dateEdit = new QDateTimeEdit(CreatePayment);
         dateEdit->setObjectName(QStringLiteral("dateEdit"));
 
-        gridLayout->addWidget(dateEdit, 10, 2, 1, 2);
+        gridLayout->addWidget(dateEdit, 11, 2, 1, 2);
 
         valueEdit = new QLineEdit(CreatePayment);
         valueEdit->setObjectName(QStringLiteral("valueEdit"));
 
-        gridLayout->addWidget(valueEdit, 11, 2, 1, 2);
+        gridLayout->addWidget(valueEdit, 12, 2, 1, 2);
 
         currencyLb = new QLabel(CreatePayment);
         currencyLb->setObjectName(QStringLiteral("currencyLb"));
 
-        gridLayout->addWidget(currencyLb, 12, 0, 1, 2);
+        gridLayout->addWidget(currencyLb, 13, 0, 1, 2);
 
         userBtn = new QPushButton(CreatePayment);
         userBtn->setObjectName(QStringLiteral("userBtn"));
@@ -193,19 +209,19 @@ public:
         currencyCmb = new QComboBox(CreatePayment);
         currencyCmb->setObjectName(QStringLiteral("currencyCmb"));
 
-        gridLayout->addWidget(currencyCmb, 12, 2, 1, 2);
+        gridLayout->addWidget(currencyCmb, 13, 2, 1, 2);
 
         accIDEdit = new QLineEdit(CreatePayment);
         accIDEdit->setObjectName(QStringLiteral("accIDEdit"));
         accIDEdit->setMaximumSize(QSize(120, 16777215));
         accIDEdit->setReadOnly(true);
 
-        gridLayout->addWidget(accIDEdit, 8, 1, 1, 1);
+        gridLayout->addWidget(accIDEdit, 9, 1, 1, 1);
 
         daLb_2 = new QLabel(CreatePayment);
         daLb_2->setObjectName(QStringLiteral("daLb_2"));
 
-        gridLayout->addWidget(daLb_2, 8, 3, 1, 1);
+        gridLayout->addWidget(daLb_2, 9, 3, 1, 1);
 
         horizontalLayout = new QHBoxLayout();
         horizontalLayout->setObjectName(QStringLiteral("horizontalLayout"));
@@ -224,7 +240,7 @@ public:
         horizontalLayout->addWidget(cancelBtn);
 
 
-        gridLayout->addLayout(horizontalLayout, 14, 0, 1, 6);
+        gridLayout->addLayout(horizontalLayout, 15, 0, 1, 6);
 
         nameLb = new QLabel(CreatePayment);
         nameLb->setObjectName(QStringLiteral("nameLb"));
@@ -236,7 +252,7 @@ public:
         dateLb = new QLabel(CreatePayment);
         dateLb->setObjectName(QStringLiteral("dateLb"));
 
-        gridLayout->addWidget(dateLb, 10, 0, 1, 1);
+        gridLayout->addWidget(dateLb, 11, 0, 1, 1);
 
         surnamePh = new QLabel(CreatePayment);
         surnamePh->setObjectName(QStringLiteral("surnamePh"));
@@ -262,7 +278,31 @@ public:
         accBtn = new QPushButton(CreatePayment);
         accBtn->setObjectName(QStringLiteral("accBtn"));
 
-        gridLayout->addWidget(accBtn, 8, 0, 1, 1);
+        gridLayout->addWidget(accBtn, 9, 0, 1, 1);
+
+        subAccBtn = new QPushButton(CreatePayment);
+        subAccBtn->setObjectName(QStringLiteral("subAccBtn"));
+
+        gridLayout->addWidget(subAccBtn, 8, 0, 1, 1);
+
+        saIDEdit = new QLineEdit(CreatePayment);
+        saIDEdit->setObjectName(QStringLiteral("saIDEdit"));
+        saIDEdit->setMaximumSize(QSize(120, 16777215));
+        saIDEdit->setReadOnly(true);
+
+        gridLayout->addWidget(saIDEdit, 8, 1, 1, 1);
+
+        daLb = new QLabel(CreatePayment);
+        daLb->setObjectName(QStringLiteral("daLb"));
+
+        gridLayout->addWidget(daLb, 8, 3, 1, 1);
+
+        saNumberEdit = new QLineEdit(CreatePayment);
+        saNumberEdit->setObjectName(QStringLiteral("saNumberEdit"));
+        saNumberEdit->setMinimumSize(QSize(150, 0));
+        saNumberEdit->setMaximumSize(QSize(150, 16777215));
+
+        gridLayout->addWidget(saNumberEdit, 8, 5, 1, 1);
 
         QWidget::setTabOrder(userBtn, statusBtn);
         QWidget::setTabOrder(statusBtn, okBtn);
@@ -287,6 +327,7 @@ public:
 #ifndef QT_NO_TOOLTIP
         userEdit->setToolTip(QApplication::translate("CreatePayment", "Must not be empty", 0));
 #endif // QT_NO_TOOLTIP
+        whoLB->setText(QApplication::translate("CreatePayment", "From who:", 0));
         phoneLb->setText(QApplication::translate("CreatePayment", "Phone:", 0));
         accNumberEdit->setText(QString());
         valieLb->setText(QApplication::translate("CreatePayment", "Sum:", 0));
@@ -304,6 +345,9 @@ public:
         namePh->setText(QString());
         phonePh->setText(QString());
         accBtn->setText(QApplication::translate("CreatePayment", "Select account", 0));
+        subAccBtn->setText(QApplication::translate("CreatePayment", "Select subaccount", 0));
+        daLb->setText(QApplication::translate("CreatePayment", "Enter subaccount number:", 0));
+        saNumberEdit->setText(QString());
     } // retranslateUi
 
 };

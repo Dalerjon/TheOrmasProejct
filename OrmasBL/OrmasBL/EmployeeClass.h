@@ -51,6 +51,8 @@ namespace BusinessLayer{
 
 		//Generate filter string for class
 		std::string GenerateFilter(DataLayer::OrmasDal& ormasDal);
+		std::string GenerateINFilterForEmployee(DataLayer::OrmasDal& ormasDal, std::vector<int> empIDList);
+		std::string GenerateINFilterForStockEmployee(DataLayer::OrmasDal& ormasDal, std::vector<int> empIDList);
 		bool GetEmployeeByID(DataLayer::OrmasDal& ormasDal, int uID, std::string& errorMessage);
 		bool GetEmployeeByCredentials(DataLayer::OrmasDal& ormasDal, std::string uPhone, std::string uEmail, std::string uPassword);
 		bool IsEmpty();

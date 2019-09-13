@@ -3,6 +3,7 @@
 #include "ui_CreateAccDlg.h"
 #include "OrmasBL.h"
 #include "MainForm.h"
+#include <QStandardItemModel>
 
 class CreateAccDlg : public QDialog, public Ui::CreateAccount
 {
@@ -30,6 +31,8 @@ private:
 	QIntValidator *vInt = nullptr;
 	QWidget* parentForm;
 	MainForm* mainForm;
+	QStandardItemModel *itemModel;
+	QModelIndex mIndex;
 };
 
 #endif //CREATEACCDLG_H

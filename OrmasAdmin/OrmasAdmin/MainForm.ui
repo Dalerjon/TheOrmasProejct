@@ -216,6 +216,7 @@
     <addaction name="actionProfitability"/>
     <addaction name="actionSalesReport"/>
     <addaction name="actionAccountCard"/>
+    <addaction name="actionWarehouseTurnover"/>
    </widget>
    <addaction name="menuUsers"/>
    <addaction name="menuProducts"/>
@@ -724,6 +725,11 @@
   <action name="actionBranchProducts">
    <property name="text">
     <string>Branch products</string>
+   </property>
+  </action>
+  <action name="actionWarehouseTurnover">
+   <property name="text">
+    <string>Warehouse turnover</string>
    </property>
   </action>
  </widget>

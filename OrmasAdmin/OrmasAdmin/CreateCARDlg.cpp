@@ -16,6 +16,9 @@ CreateCARDlg::CreateCARDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, QWi
 	accountEdit->setValidator(vInt);
 	if (true == updateFlag)
 	{
+		DataForm *parentDataForm = (DataForm*)parentForm;
+		itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
+		mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
 		QObject::connect(okBtn, &QPushButton::released, this, &CreateCARDlg::EditCompanyAccount);
 	}
 	else
@@ -196,8 +199,6 @@ void CreateCARDlg::EditCompanyAccount()
 							return;
 						}
 
-						QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
-						QModelIndex mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
 						itemModel->item(mIndex.row(), 1)->setText(company->GetName().c_str());
 						itemModel->item(mIndex.row(), 2)->setText(account->GetNumber().c_str());
 						itemModel->item(mIndex.row(), 3)->setText(QString::number(companyAccount->GetCompanyID()));

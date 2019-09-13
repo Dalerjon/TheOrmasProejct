@@ -3,6 +3,7 @@
 #include "ui_CreateCASHERDlg.h"
 #include "OrmasBL.h"
 #include "MainForm.h"
+#include <QStandardItemModel>
 
 class CreateCASHERDlg : public QDialog, public Ui::CreateCashboxEmployee
 {
@@ -29,6 +30,8 @@ private:
 	void InitComboBox();
 	QWidget* parentForm;
 	MainForm* mainForm;
+	QStandardItemModel *itemModel;
+	QModelIndex mIndex;
 };
 
 #endif //CREATECASHERDLG_H

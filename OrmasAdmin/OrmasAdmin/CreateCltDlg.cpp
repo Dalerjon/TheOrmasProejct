@@ -29,6 +29,9 @@ CreateCltDlg::CreateCltDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, QWi
 
 	if (true == updateFlag)
 	{
+		DataForm *parentDataForm = (DataForm*)parentForm;
+		itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
+		mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
 		QObject::connect(okBtn, &QPushButton::released, this, &CreateCltDlg::EditClient);
 	}
 	else
@@ -272,8 +275,7 @@ void CreateCltDlg::EditClient()
 					if (!parentDataForm->IsClosed())
 					{
 						//updating Clt data
-						QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
-						QModelIndex mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
+						
 						itemModel->item(mIndex.row(), 1)->setText(client->GetName().c_str());
 						itemModel->item(mIndex.row(), 2)->setText(client->GetSurname().c_str());
 						itemModel->item(mIndex.row(), 3)->setText(client->GetPhone().c_str());

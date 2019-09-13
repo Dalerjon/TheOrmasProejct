@@ -5,7 +5,7 @@
 -- Dumped from database version 9.5.4
 -- Dumped by pg_dump version 9.5.4
 
--- Started on 2019-07-16 12:15:37
+-- Started on 2019-09-13 20:24:01
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -16,17 +16,19 @@ SET client_min_messages = warning;
 SET row_security = off;
 
 --
--- TOC entry 7 (class 2615 OID 36099)
--- Name: OrmasSchema; Type: SCHEMA; Schema: -; Owner: -
+-- TOC entry 7 (class 2615 OID 708232)
+-- Name: OrmasSchema; Type: SCHEMA; Schema: -; Owner: postgres
 --
 
 CREATE SCHEMA "OrmasSchema";
 
 
+ALTER SCHEMA "OrmasSchema" OWNER TO postgres;
+
 --
 -- TOC entry 3251 (class 0 OID 0)
 -- Dependencies: 7
--- Name: SCHEMA "OrmasSchema"; Type: COMMENT; Schema: -; Owner: -
+-- Name: SCHEMA "OrmasSchema"; Type: COMMENT; Schema: -; Owner: postgres
 --
 
 COMMENT ON SCHEMA "OrmasSchema" IS 'Ormas application schema';
@@ -34,7 +36,7 @@ COMMENT ON SCHEMA "OrmasSchema" IS 'Ormas application schema';
 
 --
 -- TOC entry 1 (class 3079 OID 12355)
--- Name: plpgsql; Type: EXTENSION; Schema: -; Owner: -
+-- Name: plpgsql; Type: EXTENSION; Schema: -; Owner: 
 --
 
 CREATE EXTENSION IF NOT EXISTS plpgsql WITH SCHEMA pg_catalog;
@@ -43,7 +45,7 @@ CREATE EXTENSION IF NOT EXISTS plpgsql WITH SCHEMA pg_catalog;
 --
 -- TOC entry 3255 (class 0 OID 0)
 -- Dependencies: 1
--- Name: EXTENSION plpgsql; Type: COMMENT; Schema: -; Owner: -
+-- Name: EXTENSION plpgsql; Type: COMMENT; Schema: -; Owner: 
 --
 
 COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
@@ -52,8 +54,8 @@ COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
 SET search_path = "OrmasSchema", pg_catalog;
 
 --
--- TOC entry 392 (class 1255 OID 36100)
--- Name: getcurrentdate(); Type: FUNCTION; Schema: OrmasSchema; Owner: -
+-- TOC entry 392 (class 1255 OID 708233)
+-- Name: getcurrentdate(); Type: FUNCTION; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE FUNCTION getcurrentdate() RETURNS text
@@ -68,9 +70,11 @@ END;
 $$;
 
 
+ALTER FUNCTION "OrmasSchema".getcurrentdate() OWNER TO postgres;
+
 --
--- TOC entry 182 (class 1259 OID 36101)
--- Name: acc_seq; Type: SEQUENCE; Schema: OrmasSchema; Owner: -
+-- TOC entry 182 (class 1259 OID 708234)
+-- Name: acc_seq; Type: SEQUENCE; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE SEQUENCE acc_seq
@@ -81,13 +85,15 @@ CREATE SEQUENCE acc_seq
     CACHE 1;
 
 
+ALTER TABLE acc_seq OWNER TO postgres;
+
 SET default_tablespace = '';
 
 SET default_with_oids = false;
 
 --
--- TOC entry 183 (class 1259 OID 36103)
--- Name: access_items; Type: TABLE; Schema: OrmasSchema; Owner: -
+-- TOC entry 183 (class 1259 OID 708236)
+-- Name: access_items; Type: TABLE; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE TABLE access_items (
@@ -98,9 +104,11 @@ CREATE TABLE access_items (
 );
 
 
+ALTER TABLE access_items OWNER TO postgres;
+
 --
--- TOC entry 184 (class 1259 OID 36106)
--- Name: access_items_view; Type: VIEW; Schema: OrmasSchema; Owner: -
+-- TOC entry 184 (class 1259 OID 708239)
+-- Name: access_items_view; Type: VIEW; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE VIEW access_items_view AS
@@ -111,9 +119,11 @@ CREATE VIEW access_items_view AS
    FROM access_items;
 
 
+ALTER TABLE access_items_view OWNER TO postgres;
+
 --
--- TOC entry 185 (class 1259 OID 36110)
--- Name: accesses; Type: TABLE; Schema: OrmasSchema; Owner: -
+-- TOC entry 185 (class 1259 OID 708243)
+-- Name: accesses; Type: TABLE; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE TABLE accesses (
@@ -123,9 +133,11 @@ CREATE TABLE accesses (
 );
 
 
+ALTER TABLE accesses OWNER TO postgres;
+
 --
--- TOC entry 186 (class 1259 OID 36113)
--- Name: roles; Type: TABLE; Schema: OrmasSchema; Owner: -
+-- TOC entry 186 (class 1259 OID 708246)
+-- Name: roles; Type: TABLE; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE TABLE roles (
@@ -136,9 +148,11 @@ CREATE TABLE roles (
 );
 
 
+ALTER TABLE roles OWNER TO postgres;
+
 --
--- TOC entry 187 (class 1259 OID 36116)
--- Name: accesses_view; Type: VIEW; Schema: OrmasSchema; Owner: -
+-- TOC entry 187 (class 1259 OID 708249)
+-- Name: accesses_view; Type: VIEW; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE VIEW accesses_view AS
@@ -154,9 +168,11 @@ CREATE VIEW accesses_view AS
      JOIN access_items a ON ((a.access_item_id = accesses.access_item_id)));
 
 
+ALTER TABLE accesses_view OWNER TO postgres;
+
 --
--- TOC entry 188 (class 1259 OID 36120)
--- Name: account_history; Type: TABLE; Schema: OrmasSchema; Owner: -
+-- TOC entry 188 (class 1259 OID 708253)
+-- Name: account_history; Type: TABLE; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE TABLE account_history (
@@ -170,9 +186,11 @@ CREATE TABLE account_history (
 );
 
 
+ALTER TABLE account_history OWNER TO postgres;
+
 --
--- TOC entry 189 (class 1259 OID 36123)
--- Name: account_history_view; Type: VIEW; Schema: OrmasSchema; Owner: -
+-- TOC entry 189 (class 1259 OID 708256)
+-- Name: account_history_view; Type: VIEW; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE VIEW account_history_view AS
@@ -186,9 +204,11 @@ CREATE VIEW account_history_view AS
    FROM account_history;
 
 
+ALTER TABLE account_history_view OWNER TO postgres;
+
 --
--- TOC entry 190 (class 1259 OID 36127)
--- Name: account_type; Type: TABLE; Schema: OrmasSchema; Owner: -
+-- TOC entry 190 (class 1259 OID 708260)
+-- Name: account_type; Type: TABLE; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE TABLE account_type (
@@ -199,9 +219,11 @@ CREATE TABLE account_type (
 );
 
 
+ALTER TABLE account_type OWNER TO postgres;
+
 --
--- TOC entry 191 (class 1259 OID 36130)
--- Name: account_type_view; Type: VIEW; Schema: OrmasSchema; Owner: -
+-- TOC entry 191 (class 1259 OID 708263)
+-- Name: account_type_view; Type: VIEW; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE VIEW account_type_view AS
@@ -212,9 +234,11 @@ CREATE VIEW account_type_view AS
    FROM account_type;
 
 
+ALTER TABLE account_type_view OWNER TO postgres;
+
 --
--- TOC entry 192 (class 1259 OID 36134)
--- Name: accountable; Type: TABLE; Schema: OrmasSchema; Owner: -
+-- TOC entry 192 (class 1259 OID 708267)
+-- Name: accountable; Type: TABLE; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE TABLE accountable (
@@ -223,9 +247,11 @@ CREATE TABLE accountable (
 );
 
 
+ALTER TABLE accountable OWNER TO postgres;
+
 --
--- TOC entry 193 (class 1259 OID 36137)
--- Name: accountable_transaction; Type: TABLE; Schema: OrmasSchema; Owner: -
+-- TOC entry 193 (class 1259 OID 708270)
+-- Name: accountable_transaction; Type: TABLE; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE TABLE accountable_transaction (
@@ -237,9 +263,11 @@ CREATE TABLE accountable_transaction (
 );
 
 
+ALTER TABLE accountable_transaction OWNER TO postgres;
+
 --
--- TOC entry 194 (class 1259 OID 36140)
--- Name: accountable_transaction_view; Type: VIEW; Schema: OrmasSchema; Owner: -
+-- TOC entry 194 (class 1259 OID 708273)
+-- Name: accountable_transaction_view; Type: VIEW; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE VIEW accountable_transaction_view AS
@@ -251,9 +279,11 @@ CREATE VIEW accountable_transaction_view AS
    FROM accountable_transaction;
 
 
+ALTER TABLE accountable_transaction_view OWNER TO postgres;
+
 --
--- TOC entry 195 (class 1259 OID 36144)
--- Name: users; Type: TABLE; Schema: OrmasSchema; Owner: -
+-- TOC entry 195 (class 1259 OID 708277)
+-- Name: users; Type: TABLE; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE TABLE users (
@@ -269,9 +299,11 @@ CREATE TABLE users (
 );
 
 
+ALTER TABLE users OWNER TO postgres;
+
 --
--- TOC entry 196 (class 1259 OID 36147)
--- Name: accountable_veiw; Type: VIEW; Schema: OrmasSchema; Owner: -
+-- TOC entry 196 (class 1259 OID 708280)
+-- Name: accountable_veiw; Type: VIEW; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE VIEW accountable_veiw AS
@@ -288,9 +320,11 @@ CREATE VIEW accountable_veiw AS
      JOIN users ON ((users.user_id = accountable.employee_id)));
 
 
+ALTER TABLE accountable_veiw OWNER TO postgres;
+
 --
--- TOC entry 197 (class 1259 OID 36151)
--- Name: accounts; Type: TABLE; Schema: OrmasSchema; Owner: -
+-- TOC entry 197 (class 1259 OID 708284)
+-- Name: accounts; Type: TABLE; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE TABLE accounts (
@@ -301,9 +335,11 @@ CREATE TABLE accounts (
 );
 
 
+ALTER TABLE accounts OWNER TO postgres;
+
 --
--- TOC entry 198 (class 1259 OID 36154)
--- Name: accounts_view; Type: VIEW; Schema: OrmasSchema; Owner: -
+-- TOC entry 198 (class 1259 OID 708287)
+-- Name: accounts_view; Type: VIEW; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE VIEW accounts_view AS
@@ -314,9 +350,11 @@ CREATE VIEW accounts_view AS
    FROM accounts;
 
 
+ALTER TABLE accounts_view OWNER TO postgres;
+
 --
--- TOC entry 199 (class 1259 OID 36158)
--- Name: balance_payment; Type: TABLE; Schema: OrmasSchema; Owner: -
+-- TOC entry 199 (class 1259 OID 708291)
+-- Name: balance_payment; Type: TABLE; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE TABLE balance_payment (
@@ -326,9 +364,11 @@ CREATE TABLE balance_payment (
 );
 
 
+ALTER TABLE balance_payment OWNER TO postgres;
+
 --
--- TOC entry 200 (class 1259 OID 36161)
--- Name: balance_payment_view; Type: VIEW; Schema: OrmasSchema; Owner: -
+-- TOC entry 200 (class 1259 OID 708294)
+-- Name: balance_payment_view; Type: VIEW; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE VIEW balance_payment_view AS
@@ -338,9 +378,11 @@ CREATE VIEW balance_payment_view AS
    FROM balance_payment;
 
 
+ALTER TABLE balance_payment_view OWNER TO postgres;
+
 --
--- TOC entry 201 (class 1259 OID 36165)
--- Name: balance_payslip; Type: TABLE; Schema: OrmasSchema; Owner: -
+-- TOC entry 201 (class 1259 OID 708298)
+-- Name: balance_payslip; Type: TABLE; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE TABLE balance_payslip (
@@ -350,9 +392,11 @@ CREATE TABLE balance_payslip (
 );
 
 
+ALTER TABLE balance_payslip OWNER TO postgres;
+
 --
--- TOC entry 202 (class 1259 OID 36168)
--- Name: balance_payslip_view; Type: VIEW; Schema: OrmasSchema; Owner: -
+-- TOC entry 202 (class 1259 OID 708301)
+-- Name: balance_payslip_view; Type: VIEW; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE VIEW balance_payslip_view AS
@@ -362,9 +406,11 @@ CREATE VIEW balance_payslip_view AS
    FROM balance_payslip;
 
 
+ALTER TABLE balance_payslip_view OWNER TO postgres;
+
 --
--- TOC entry 203 (class 1259 OID 36172)
--- Name: balance_refund; Type: TABLE; Schema: OrmasSchema; Owner: -
+-- TOC entry 203 (class 1259 OID 708305)
+-- Name: balance_refund; Type: TABLE; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE TABLE balance_refund (
@@ -374,9 +420,11 @@ CREATE TABLE balance_refund (
 );
 
 
+ALTER TABLE balance_refund OWNER TO postgres;
+
 --
--- TOC entry 204 (class 1259 OID 36175)
--- Name: balance_refund_view; Type: VIEW; Schema: OrmasSchema; Owner: -
+-- TOC entry 204 (class 1259 OID 708308)
+-- Name: balance_refund_view; Type: VIEW; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE VIEW balance_refund_view AS
@@ -386,9 +434,11 @@ CREATE VIEW balance_refund_view AS
    FROM balance_refund;
 
 
+ALTER TABLE balance_refund_view OWNER TO postgres;
+
 --
--- TOC entry 205 (class 1259 OID 36179)
--- Name: balance_withdrawal; Type: TABLE; Schema: OrmasSchema; Owner: -
+-- TOC entry 205 (class 1259 OID 708312)
+-- Name: balance_withdrawal; Type: TABLE; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE TABLE balance_withdrawal (
@@ -398,9 +448,11 @@ CREATE TABLE balance_withdrawal (
 );
 
 
+ALTER TABLE balance_withdrawal OWNER TO postgres;
+
 --
--- TOC entry 206 (class 1259 OID 36182)
--- Name: balance_withdrawal_view; Type: VIEW; Schema: OrmasSchema; Owner: -
+-- TOC entry 206 (class 1259 OID 708315)
+-- Name: balance_withdrawal_view; Type: VIEW; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE VIEW balance_withdrawal_view AS
@@ -410,9 +462,11 @@ CREATE VIEW balance_withdrawal_view AS
    FROM balance_withdrawal;
 
 
+ALTER TABLE balance_withdrawal_view OWNER TO postgres;
+
 --
--- TOC entry 207 (class 1259 OID 36186)
--- Name: balances; Type: TABLE; Schema: OrmasSchema; Owner: -
+-- TOC entry 207 (class 1259 OID 708319)
+-- Name: balances; Type: TABLE; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE TABLE balances (
@@ -422,9 +476,11 @@ CREATE TABLE balances (
 );
 
 
+ALTER TABLE balances OWNER TO postgres;
+
 --
--- TOC entry 208 (class 1259 OID 36189)
--- Name: currencies; Type: TABLE; Schema: OrmasSchema; Owner: -
+-- TOC entry 208 (class 1259 OID 708322)
+-- Name: currencies; Type: TABLE; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE TABLE currencies (
@@ -437,9 +493,11 @@ CREATE TABLE currencies (
 );
 
 
+ALTER TABLE currencies OWNER TO postgres;
+
 --
--- TOC entry 209 (class 1259 OID 36192)
--- Name: subaccounts; Type: TABLE; Schema: OrmasSchema; Owner: -
+-- TOC entry 209 (class 1259 OID 708325)
+-- Name: subaccounts; Type: TABLE; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE TABLE subaccounts (
@@ -456,9 +514,11 @@ CREATE TABLE subaccounts (
 );
 
 
+ALTER TABLE subaccounts OWNER TO postgres;
+
 --
--- TOC entry 389 (class 1259 OID 37143)
--- Name: balances_view; Type: VIEW; Schema: OrmasSchema; Owner: -
+-- TOC entry 210 (class 1259 OID 708328)
+-- Name: balances_view; Type: VIEW; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE VIEW balances_view AS
@@ -477,9 +537,11 @@ CREATE VIEW balances_view AS
      JOIN subaccounts s ON ((s.subaccount_id = balances.subaccount_id)));
 
 
+ALTER TABLE balances_view OWNER TO postgres;
+
 --
--- TOC entry 210 (class 1259 OID 36200)
--- Name: borrowers; Type: TABLE; Schema: OrmasSchema; Owner: -
+-- TOC entry 211 (class 1259 OID 708333)
+-- Name: borrowers; Type: TABLE; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE TABLE borrowers (
@@ -488,9 +550,11 @@ CREATE TABLE borrowers (
 );
 
 
+ALTER TABLE borrowers OWNER TO postgres;
+
 --
--- TOC entry 211 (class 1259 OID 36203)
--- Name: borrowers_view; Type: VIEW; Schema: OrmasSchema; Owner: -
+-- TOC entry 212 (class 1259 OID 708336)
+-- Name: borrowers_view; Type: VIEW; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE VIEW borrowers_view AS
@@ -511,9 +575,11 @@ CREATE VIEW borrowers_view AS
      JOIN users ON ((users.user_id = borrowers.user_id)));
 
 
+ALTER TABLE borrowers_view OWNER TO postgres;
+
 --
--- TOC entry 212 (class 1259 OID 36208)
--- Name: branches; Type: TABLE; Schema: OrmasSchema; Owner: -
+-- TOC entry 213 (class 1259 OID 708341)
+-- Name: branches; Type: TABLE; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE TABLE branches (
@@ -525,9 +591,11 @@ CREATE TABLE branches (
 );
 
 
+ALTER TABLE branches OWNER TO postgres;
+
 --
--- TOC entry 213 (class 1259 OID 36211)
--- Name: branches_view; Type: VIEW; Schema: OrmasSchema; Owner: -
+-- TOC entry 214 (class 1259 OID 708344)
+-- Name: branches_view; Type: VIEW; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE VIEW branches_view AS
@@ -539,9 +607,11 @@ CREATE VIEW branches_view AS
    FROM branches;
 
 
+ALTER TABLE branches_view OWNER TO postgres;
+
 --
--- TOC entry 214 (class 1259 OID 36215)
--- Name: cashbox; Type: TABLE; Schema: OrmasSchema; Owner: -
+-- TOC entry 215 (class 1259 OID 708348)
+-- Name: cashbox; Type: TABLE; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE TABLE cashbox (
@@ -552,9 +622,11 @@ CREATE TABLE cashbox (
 );
 
 
+ALTER TABLE cashbox OWNER TO postgres;
+
 --
--- TOC entry 215 (class 1259 OID 36218)
--- Name: cashbox_employee; Type: TABLE; Schema: OrmasSchema; Owner: -
+-- TOC entry 216 (class 1259 OID 708351)
+-- Name: cashbox_employee; Type: TABLE; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE TABLE cashbox_employee (
@@ -564,9 +636,11 @@ CREATE TABLE cashbox_employee (
 );
 
 
+ALTER TABLE cashbox_employee OWNER TO postgres;
+
 --
--- TOC entry 216 (class 1259 OID 36221)
--- Name: cashbox_employee_view; Type: VIEW; Schema: OrmasSchema; Owner: -
+-- TOC entry 217 (class 1259 OID 708354)
+-- Name: cashbox_employee_view; Type: VIEW; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE VIEW cashbox_employee_view AS
@@ -588,9 +662,11 @@ CREATE VIEW cashbox_employee_view AS
      JOIN users u ON ((u.user_id = cashbox_employee.employee_id)));
 
 
+ALTER TABLE cashbox_employee_view OWNER TO postgres;
+
 --
--- TOC entry 217 (class 1259 OID 36226)
--- Name: cashbox_view; Type: VIEW; Schema: OrmasSchema; Owner: -
+-- TOC entry 218 (class 1259 OID 708359)
+-- Name: cashbox_view; Type: VIEW; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE VIEW cashbox_view AS
@@ -603,9 +679,11 @@ CREATE VIEW cashbox_view AS
      JOIN subaccounts s ON ((s.subaccount_id = cashbox.subaccount_id)));
 
 
+ALTER TABLE cashbox_view OWNER TO postgres;
+
 --
--- TOC entry 218 (class 1259 OID 36230)
--- Name: chart_of_accounts; Type: TABLE; Schema: OrmasSchema; Owner: -
+-- TOC entry 219 (class 1259 OID 708363)
+-- Name: chart_of_accounts; Type: TABLE; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE TABLE chart_of_accounts (
@@ -616,9 +694,11 @@ CREATE TABLE chart_of_accounts (
 );
 
 
+ALTER TABLE chart_of_accounts OWNER TO postgres;
+
 --
--- TOC entry 219 (class 1259 OID 36233)
--- Name: chart_of_accounts_view; Type: VIEW; Schema: OrmasSchema; Owner: -
+-- TOC entry 220 (class 1259 OID 708366)
+-- Name: chart_of_accounts_view; Type: VIEW; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE VIEW chart_of_accounts_view AS
@@ -631,9 +711,11 @@ CREATE VIEW chart_of_accounts_view AS
      JOIN account_type at ON ((at.account_type_id = chart_of_accounts.account_type_id)));
 
 
+ALTER TABLE chart_of_accounts_view OWNER TO postgres;
+
 --
--- TOC entry 220 (class 1259 OID 36237)
--- Name: clients; Type: TABLE; Schema: OrmasSchema; Owner: -
+-- TOC entry 221 (class 1259 OID 708370)
+-- Name: clients; Type: TABLE; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE TABLE clients (
@@ -644,9 +726,11 @@ CREATE TABLE clients (
 );
 
 
+ALTER TABLE clients OWNER TO postgres;
+
 --
--- TOC entry 221 (class 1259 OID 36240)
--- Name: locations; Type: TABLE; Schema: OrmasSchema; Owner: -
+-- TOC entry 222 (class 1259 OID 708373)
+-- Name: locations; Type: TABLE; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE TABLE locations (
@@ -658,9 +742,11 @@ CREATE TABLE locations (
 );
 
 
+ALTER TABLE locations OWNER TO postgres;
+
 --
--- TOC entry 222 (class 1259 OID 36243)
--- Name: clients_view; Type: VIEW; Schema: OrmasSchema; Owner: -
+-- TOC entry 223 (class 1259 OID 708376)
+-- Name: clients_view; Type: VIEW; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE VIEW clients_view AS
@@ -692,9 +778,11 @@ CREATE VIEW clients_view AS
      JOIN users ON ((users.user_id = clients.user_id)));
 
 
+ALTER TABLE clients_view OWNER TO postgres;
+
 --
--- TOC entry 223 (class 1259 OID 36248)
--- Name: companies; Type: TABLE; Schema: OrmasSchema; Owner: -
+-- TOC entry 224 (class 1259 OID 708381)
+-- Name: companies; Type: TABLE; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE TABLE companies (
@@ -706,9 +794,11 @@ CREATE TABLE companies (
 );
 
 
+ALTER TABLE companies OWNER TO postgres;
+
 --
--- TOC entry 224 (class 1259 OID 36251)
--- Name: companies_view; Type: VIEW; Schema: OrmasSchema; Owner: -
+-- TOC entry 225 (class 1259 OID 708384)
+-- Name: companies_view; Type: VIEW; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE VIEW companies_view AS
@@ -720,9 +810,11 @@ CREATE VIEW companies_view AS
    FROM companies;
 
 
+ALTER TABLE companies_view OWNER TO postgres;
+
 --
--- TOC entry 225 (class 1259 OID 36255)
--- Name: company_account; Type: TABLE; Schema: OrmasSchema; Owner: -
+-- TOC entry 226 (class 1259 OID 708388)
+-- Name: company_account; Type: TABLE; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE TABLE company_account (
@@ -732,9 +824,11 @@ CREATE TABLE company_account (
 );
 
 
+ALTER TABLE company_account OWNER TO postgres;
+
 --
--- TOC entry 226 (class 1259 OID 36258)
--- Name: company_account_view; Type: VIEW; Schema: OrmasSchema; Owner: -
+-- TOC entry 227 (class 1259 OID 708391)
+-- Name: company_account_view; Type: VIEW; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE VIEW company_account_view AS
@@ -748,9 +842,11 @@ CREATE VIEW company_account_view AS
      JOIN accounts a ON ((a.account_id = company_account.account_id)));
 
 
+ALTER TABLE company_account_view OWNER TO postgres;
+
 --
--- TOC entry 227 (class 1259 OID 36262)
--- Name: company_employee; Type: TABLE; Schema: OrmasSchema; Owner: -
+-- TOC entry 228 (class 1259 OID 708395)
+-- Name: company_employee; Type: TABLE; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE TABLE company_employee (
@@ -761,9 +857,11 @@ CREATE TABLE company_employee (
 );
 
 
+ALTER TABLE company_employee OWNER TO postgres;
+
 --
--- TOC entry 228 (class 1259 OID 36265)
--- Name: company_employee_view; Type: VIEW; Schema: OrmasSchema; Owner: -
+-- TOC entry 229 (class 1259 OID 708398)
+-- Name: company_employee_view; Type: VIEW; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE VIEW company_employee_view AS
@@ -782,9 +880,11 @@ CREATE VIEW company_employee_view AS
      JOIN branches b ON ((b.branch_id = company_employee.branch_id)));
 
 
+ALTER TABLE company_employee_view OWNER TO postgres;
+
 --
--- TOC entry 229 (class 1259 OID 36270)
--- Name: consume_product_list; Type: TABLE; Schema: OrmasSchema; Owner: -
+-- TOC entry 230 (class 1259 OID 708403)
+-- Name: consume_product_list; Type: TABLE; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE TABLE consume_product_list (
@@ -798,9 +898,11 @@ CREATE TABLE consume_product_list (
 );
 
 
+ALTER TABLE consume_product_list OWNER TO postgres;
+
 --
--- TOC entry 230 (class 1259 OID 36273)
--- Name: measures; Type: TABLE; Schema: OrmasSchema; Owner: -
+-- TOC entry 231 (class 1259 OID 708406)
+-- Name: measures; Type: TABLE; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE TABLE measures (
@@ -811,9 +913,11 @@ CREATE TABLE measures (
 );
 
 
+ALTER TABLE measures OWNER TO postgres;
+
 --
--- TOC entry 231 (class 1259 OID 36276)
--- Name: products; Type: TABLE; Schema: OrmasSchema; Owner: -
+-- TOC entry 232 (class 1259 OID 708409)
+-- Name: products; Type: TABLE; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE TABLE products (
@@ -829,9 +933,11 @@ CREATE TABLE products (
 );
 
 
+ALTER TABLE products OWNER TO postgres;
+
 --
--- TOC entry 232 (class 1259 OID 36279)
--- Name: status; Type: TABLE; Schema: OrmasSchema; Owner: -
+-- TOC entry 233 (class 1259 OID 708412)
+-- Name: status; Type: TABLE; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE TABLE status (
@@ -842,10 +948,12 @@ CREATE TABLE status (
 );
 
 
+ALTER TABLE status OWNER TO postgres;
+
 --
 -- TOC entry 3256 (class 0 OID 0)
--- Dependencies: 232
--- Name: COLUMN status.status_id; Type: COMMENT; Schema: OrmasSchema; Owner: -
+-- Dependencies: 233
+-- Name: COLUMN status.status_id; Type: COMMENT; Schema: OrmasSchema; Owner: postgres
 --
 
 COMMENT ON COLUMN status.status_id IS '
@@ -853,8 +961,8 @@ COMMENT ON COLUMN status.status_id IS '
 
 
 --
--- TOC entry 233 (class 1259 OID 36282)
--- Name: consume_product_list_view; Type: VIEW; Schema: OrmasSchema; Owner: -
+-- TOC entry 234 (class 1259 OID 708415)
+-- Name: consume_product_list_view; Type: VIEW; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE VIEW consume_product_list_view AS
@@ -883,9 +991,11 @@ CREATE VIEW consume_product_list_view AS
      JOIN status s ON ((s.status_id = consume_product_list.status_id)));
 
 
+ALTER TABLE consume_product_list_view OWNER TO postgres;
+
 --
--- TOC entry 234 (class 1259 OID 36287)
--- Name: consume_products; Type: TABLE; Schema: OrmasSchema; Owner: -
+-- TOC entry 235 (class 1259 OID 708420)
+-- Name: consume_products; Type: TABLE; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE TABLE consume_products (
@@ -901,9 +1011,11 @@ CREATE TABLE consume_products (
 );
 
 
+ALTER TABLE consume_products OWNER TO postgres;
+
 --
--- TOC entry 235 (class 1259 OID 36290)
--- Name: employees; Type: TABLE; Schema: OrmasSchema; Owner: -
+-- TOC entry 236 (class 1259 OID 708423)
+-- Name: employees; Type: TABLE; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE TABLE employees (
@@ -914,9 +1026,11 @@ CREATE TABLE employees (
 );
 
 
+ALTER TABLE employees OWNER TO postgres;
+
 --
--- TOC entry 236 (class 1259 OID 36293)
--- Name: positions; Type: TABLE; Schema: OrmasSchema; Owner: -
+-- TOC entry 237 (class 1259 OID 708426)
+-- Name: positions; Type: TABLE; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE TABLE positions (
@@ -925,9 +1039,11 @@ CREATE TABLE positions (
 );
 
 
+ALTER TABLE positions OWNER TO postgres;
+
 --
--- TOC entry 237 (class 1259 OID 36296)
--- Name: consume_products_view; Type: VIEW; Schema: OrmasSchema; Owner: -
+-- TOC entry 238 (class 1259 OID 708429)
+-- Name: consume_products_view; Type: VIEW; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE VIEW consume_products_view AS
@@ -966,9 +1082,11 @@ CREATE VIEW consume_products_view AS
      LEFT JOIN currencies c ON ((c.currency_id = consume_products.currency_id)));
 
 
+ALTER TABLE consume_products_view OWNER TO postgres;
+
 --
--- TOC entry 238 (class 1259 OID 36301)
--- Name: consume_raw_list; Type: TABLE; Schema: OrmasSchema; Owner: -
+-- TOC entry 239 (class 1259 OID 708434)
+-- Name: consume_raw_list; Type: TABLE; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE TABLE consume_raw_list (
@@ -982,9 +1100,11 @@ CREATE TABLE consume_raw_list (
 );
 
 
+ALTER TABLE consume_raw_list OWNER TO postgres;
+
 --
--- TOC entry 239 (class 1259 OID 36304)
--- Name: consume_raw_list_view; Type: VIEW; Schema: OrmasSchema; Owner: -
+-- TOC entry 240 (class 1259 OID 708437)
+-- Name: consume_raw_list_view; Type: VIEW; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE VIEW consume_raw_list_view AS
@@ -1013,9 +1133,11 @@ CREATE VIEW consume_raw_list_view AS
      JOIN status s ON ((s.status_id = consume_raw_list.status_id)));
 
 
+ALTER TABLE consume_raw_list_view OWNER TO postgres;
+
 --
--- TOC entry 240 (class 1259 OID 36309)
--- Name: consume_raws; Type: TABLE; Schema: OrmasSchema; Owner: -
+-- TOC entry 241 (class 1259 OID 708442)
+-- Name: consume_raws; Type: TABLE; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE TABLE consume_raws (
@@ -1031,9 +1153,11 @@ CREATE TABLE consume_raws (
 );
 
 
+ALTER TABLE consume_raws OWNER TO postgres;
+
 --
--- TOC entry 241 (class 1259 OID 36312)
--- Name: consume_raws_view; Type: VIEW; Schema: OrmasSchema; Owner: -
+-- TOC entry 242 (class 1259 OID 708445)
+-- Name: consume_raws_view; Type: VIEW; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE VIEW consume_raws_view AS
@@ -1072,9 +1196,11 @@ CREATE VIEW consume_raws_view AS
      LEFT JOIN currencies c ON ((c.currency_id = consume_raws.currency_id)));
 
 
+ALTER TABLE consume_raws_view OWNER TO postgres;
+
 --
--- TOC entry 242 (class 1259 OID 36317)
--- Name: creditors; Type: TABLE; Schema: OrmasSchema; Owner: -
+-- TOC entry 243 (class 1259 OID 708450)
+-- Name: creditors; Type: TABLE; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE TABLE creditors (
@@ -1087,9 +1213,11 @@ CREATE TABLE creditors (
 );
 
 
+ALTER TABLE creditors OWNER TO postgres;
+
 --
--- TOC entry 243 (class 1259 OID 36320)
--- Name: creditors_view; Type: VIEW; Schema: OrmasSchema; Owner: -
+-- TOC entry 244 (class 1259 OID 708453)
+-- Name: creditors_view; Type: VIEW; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE VIEW creditors_view AS
@@ -1102,9 +1230,11 @@ CREATE VIEW creditors_view AS
    FROM creditors;
 
 
+ALTER TABLE creditors_view OWNER TO postgres;
+
 --
--- TOC entry 244 (class 1259 OID 36324)
--- Name: currencies_view; Type: VIEW; Schema: OrmasSchema; Owner: -
+-- TOC entry 245 (class 1259 OID 708457)
+-- Name: currencies_view; Type: VIEW; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE VIEW currencies_view AS
@@ -1117,9 +1247,11 @@ CREATE VIEW currencies_view AS
    FROM currencies;
 
 
+ALTER TABLE currencies_view OWNER TO postgres;
+
 --
--- TOC entry 245 (class 1259 OID 36328)
--- Name: division_account; Type: TABLE; Schema: OrmasSchema; Owner: -
+-- TOC entry 246 (class 1259 OID 708461)
+-- Name: division_account; Type: TABLE; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE TABLE division_account (
@@ -1130,9 +1262,11 @@ CREATE TABLE division_account (
 );
 
 
+ALTER TABLE division_account OWNER TO postgres;
+
 --
--- TOC entry 246 (class 1259 OID 36331)
--- Name: divisions; Type: TABLE; Schema: OrmasSchema; Owner: -
+-- TOC entry 247 (class 1259 OID 708464)
+-- Name: divisions; Type: TABLE; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE TABLE divisions (
@@ -1142,9 +1276,11 @@ CREATE TABLE divisions (
 );
 
 
+ALTER TABLE divisions OWNER TO postgres;
+
 --
--- TOC entry 247 (class 1259 OID 36334)
--- Name: division_account_view; Type: VIEW; Schema: OrmasSchema; Owner: -
+-- TOC entry 248 (class 1259 OID 708467)
+-- Name: division_account_view; Type: VIEW; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE VIEW division_account_view AS
@@ -1162,9 +1298,11 @@ CREATE VIEW division_account_view AS
      JOIN accounts a ON ((a.account_id = division_account.account_id)));
 
 
+ALTER TABLE division_account_view OWNER TO postgres;
+
 --
--- TOC entry 248 (class 1259 OID 36339)
--- Name: division_employee; Type: TABLE; Schema: OrmasSchema; Owner: -
+-- TOC entry 249 (class 1259 OID 708472)
+-- Name: division_employee; Type: TABLE; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE TABLE division_employee (
@@ -1175,9 +1313,11 @@ CREATE TABLE division_employee (
 );
 
 
+ALTER TABLE division_employee OWNER TO postgres;
+
 --
--- TOC entry 249 (class 1259 OID 36343)
--- Name: division_employee_view; Type: VIEW; Schema: OrmasSchema; Owner: -
+-- TOC entry 250 (class 1259 OID 708476)
+-- Name: division_employee_view; Type: VIEW; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE VIEW division_employee_view AS
@@ -1188,9 +1328,11 @@ CREATE VIEW division_employee_view AS
    FROM division_employee;
 
 
+ALTER TABLE division_employee_view OWNER TO postgres;
+
 --
--- TOC entry 250 (class 1259 OID 36347)
--- Name: divisions_view; Type: VIEW; Schema: OrmasSchema; Owner: -
+-- TOC entry 251 (class 1259 OID 708480)
+-- Name: divisions_view; Type: VIEW; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE VIEW divisions_view AS
@@ -1200,9 +1342,11 @@ CREATE VIEW divisions_view AS
    FROM divisions;
 
 
+ALTER TABLE divisions_view OWNER TO postgres;
+
 --
--- TOC entry 251 (class 1259 OID 36351)
--- Name: employee_product; Type: TABLE; Schema: OrmasSchema; Owner: -
+-- TOC entry 252 (class 1259 OID 708484)
+-- Name: employee_product; Type: TABLE; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE TABLE employee_product (
@@ -1212,9 +1356,11 @@ CREATE TABLE employee_product (
 );
 
 
+ALTER TABLE employee_product OWNER TO postgres;
+
 --
--- TOC entry 252 (class 1259 OID 36354)
--- Name: employee_product_view; Type: VIEW; Schema: OrmasSchema; Owner: -
+-- TOC entry 253 (class 1259 OID 708487)
+-- Name: employee_product_view; Type: VIEW; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE VIEW employee_product_view AS
@@ -1231,9 +1377,11 @@ CREATE VIEW employee_product_view AS
      JOIN products p ON ((p.product_id = employee_product.product_id)));
 
 
+ALTER TABLE employee_product_view OWNER TO postgres;
+
 --
--- TOC entry 253 (class 1259 OID 36359)
--- Name: employees_view; Type: VIEW; Schema: OrmasSchema; Owner: -
+-- TOC entry 254 (class 1259 OID 708492)
+-- Name: employees_view; Type: VIEW; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE VIEW employees_view AS
@@ -1263,9 +1411,11 @@ CREATE VIEW employees_view AS
      JOIN division_employee de ON ((de.employee_id = employees.user_id)));
 
 
+ALTER TABLE employees_view OWNER TO postgres;
+
 --
--- TOC entry 254 (class 1259 OID 36364)
--- Name: entries; Type: TABLE; Schema: OrmasSchema; Owner: -
+-- TOC entry 255 (class 1259 OID 708497)
+-- Name: entries; Type: TABLE; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE TABLE entries (
@@ -1278,9 +1428,11 @@ CREATE TABLE entries (
 );
 
 
+ALTER TABLE entries OWNER TO postgres;
+
 --
--- TOC entry 255 (class 1259 OID 36367)
--- Name: entries_view; Type: VIEW; Schema: OrmasSchema; Owner: -
+-- TOC entry 256 (class 1259 OID 708500)
+-- Name: entries_view; Type: VIEW; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE VIEW entries_view AS
@@ -1297,9 +1449,11 @@ CREATE VIEW entries_view AS
      JOIN accounts ca ON ((ca.account_id = entries.crediting_account_id)));
 
 
+ALTER TABLE entries_view OWNER TO postgres;
+
 --
--- TOC entry 256 (class 1259 OID 36371)
--- Name: entry_operation; Type: TABLE; Schema: OrmasSchema; Owner: -
+-- TOC entry 257 (class 1259 OID 708504)
+-- Name: entry_operation; Type: TABLE; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE TABLE entry_operation (
@@ -1309,9 +1463,11 @@ CREATE TABLE entry_operation (
 );
 
 
+ALTER TABLE entry_operation OWNER TO postgres;
+
 --
--- TOC entry 257 (class 1259 OID 36374)
--- Name: entry_operation_view; Type: VIEW; Schema: OrmasSchema; Owner: -
+-- TOC entry 258 (class 1259 OID 708507)
+-- Name: entry_operation_view; Type: VIEW; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE VIEW entry_operation_view AS
@@ -1321,9 +1477,11 @@ CREATE VIEW entry_operation_view AS
    FROM entry_operation;
 
 
+ALTER TABLE entry_operation_view OWNER TO postgres;
+
 --
--- TOC entry 258 (class 1259 OID 36378)
--- Name: entry_routing; Type: TABLE; Schema: OrmasSchema; Owner: -
+-- TOC entry 259 (class 1259 OID 708511)
+-- Name: entry_routing; Type: TABLE; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE TABLE entry_routing (
@@ -1334,9 +1492,11 @@ CREATE TABLE entry_routing (
 );
 
 
+ALTER TABLE entry_routing OWNER TO postgres;
+
 --
--- TOC entry 259 (class 1259 OID 36381)
--- Name: entry_routing_view; Type: VIEW; Schema: OrmasSchema; Owner: -
+-- TOC entry 260 (class 1259 OID 708514)
+-- Name: entry_routing_view; Type: VIEW; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE VIEW entry_routing_view AS
@@ -1347,9 +1507,11 @@ CREATE VIEW entry_routing_view AS
    FROM entry_routing;
 
 
+ALTER TABLE entry_routing_view OWNER TO postgres;
+
 --
--- TOC entry 260 (class 1259 OID 36385)
--- Name: entry_subaccount; Type: TABLE; Schema: OrmasSchema; Owner: -
+-- TOC entry 261 (class 1259 OID 708518)
+-- Name: entry_subaccount; Type: TABLE; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE TABLE entry_subaccount (
@@ -1359,9 +1521,11 @@ CREATE TABLE entry_subaccount (
 );
 
 
+ALTER TABLE entry_subaccount OWNER TO postgres;
+
 --
--- TOC entry 261 (class 1259 OID 36388)
--- Name: entry_subaccount_view; Type: VIEW; Schema: OrmasSchema; Owner: -
+-- TOC entry 262 (class 1259 OID 708521)
+-- Name: entry_subaccount_view; Type: VIEW; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE VIEW entry_subaccount_view AS
@@ -1371,9 +1535,11 @@ CREATE VIEW entry_subaccount_view AS
    FROM entry_subaccount;
 
 
+ALTER TABLE entry_subaccount_view OWNER TO postgres;
+
 --
--- TOC entry 262 (class 1259 OID 36392)
--- Name: financial_report; Type: TABLE; Schema: OrmasSchema; Owner: -
+-- TOC entry 263 (class 1259 OID 708525)
+-- Name: financial_report; Type: TABLE; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE TABLE financial_report (
@@ -1398,9 +1564,11 @@ CREATE TABLE financial_report (
 );
 
 
+ALTER TABLE financial_report OWNER TO postgres;
+
 --
--- TOC entry 263 (class 1259 OID 36395)
--- Name: financial_report_view; Type: VIEW; Schema: OrmasSchema; Owner: -
+-- TOC entry 264 (class 1259 OID 708528)
+-- Name: financial_report_view; Type: VIEW; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE VIEW financial_report_view AS
@@ -1425,9 +1593,11 @@ CREATE VIEW financial_report_view AS
    FROM financial_report;
 
 
+ALTER TABLE financial_report_view OWNER TO postgres;
+
 --
--- TOC entry 264 (class 1259 OID 36399)
--- Name: id_seq; Type: SEQUENCE; Schema: OrmasSchema; Owner: -
+-- TOC entry 265 (class 1259 OID 708532)
+-- Name: id_seq; Type: SEQUENCE; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE SEQUENCE id_seq
@@ -1438,9 +1608,11 @@ CREATE SEQUENCE id_seq
     CACHE 1;
 
 
+ALTER TABLE id_seq OWNER TO postgres;
+
 --
--- TOC entry 265 (class 1259 OID 36401)
--- Name: inventorization_list; Type: TABLE; Schema: OrmasSchema; Owner: -
+-- TOC entry 266 (class 1259 OID 708534)
+-- Name: inventorization_list; Type: TABLE; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE TABLE inventorization_list (
@@ -1454,9 +1626,11 @@ CREATE TABLE inventorization_list (
 );
 
 
+ALTER TABLE inventorization_list OWNER TO postgres;
+
 --
--- TOC entry 266 (class 1259 OID 36404)
--- Name: inventorization_list_view; Type: VIEW; Schema: OrmasSchema; Owner: -
+-- TOC entry 267 (class 1259 OID 708537)
+-- Name: inventorization_list_view; Type: VIEW; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE VIEW inventorization_list_view AS
@@ -1485,9 +1659,11 @@ CREATE VIEW inventorization_list_view AS
      JOIN status s ON ((s.status_id = inventorization_list.status_id)));
 
 
+ALTER TABLE inventorization_list_view OWNER TO postgres;
+
 --
--- TOC entry 267 (class 1259 OID 36409)
--- Name: inventorizations; Type: TABLE; Schema: OrmasSchema; Owner: -
+-- TOC entry 268 (class 1259 OID 708542)
+-- Name: inventorizations; Type: TABLE; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE TABLE inventorizations (
@@ -1503,9 +1679,11 @@ CREATE TABLE inventorizations (
 );
 
 
+ALTER TABLE inventorizations OWNER TO postgres;
+
 --
--- TOC entry 268 (class 1259 OID 36412)
--- Name: inventorizations_view; Type: VIEW; Schema: OrmasSchema; Owner: -
+-- TOC entry 269 (class 1259 OID 708545)
+-- Name: inventorizations_view; Type: VIEW; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE VIEW inventorizations_view AS
@@ -1544,9 +1722,11 @@ CREATE VIEW inventorizations_view AS
      LEFT JOIN currencies c ON ((c.currency_id = inventorizations.currency_id)));
 
 
+ALTER TABLE inventorizations_view OWNER TO postgres;
+
 --
--- TOC entry 269 (class 1259 OID 36417)
--- Name: jobprice; Type: TABLE; Schema: OrmasSchema; Owner: -
+-- TOC entry 270 (class 1259 OID 708550)
+-- Name: jobprice; Type: TABLE; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE TABLE jobprice (
@@ -1560,9 +1740,11 @@ CREATE TABLE jobprice (
 );
 
 
+ALTER TABLE jobprice OWNER TO postgres;
+
 --
--- TOC entry 270 (class 1259 OID 36420)
--- Name: jobprice_view; Type: VIEW; Schema: OrmasSchema; Owner: -
+-- TOC entry 271 (class 1259 OID 708553)
+-- Name: jobprice_view; Type: VIEW; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE VIEW jobprice_view AS
@@ -1584,9 +1766,11 @@ CREATE VIEW jobprice_view AS
      JOIN positions pos ON ((pos.position_id = jobprice.position_id)));
 
 
+ALTER TABLE jobprice_view OWNER TO postgres;
+
 --
--- TOC entry 271 (class 1259 OID 36425)
--- Name: jobsheet; Type: TABLE; Schema: OrmasSchema; Owner: -
+-- TOC entry 272 (class 1259 OID 708558)
+-- Name: jobsheet; Type: TABLE; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE TABLE jobsheet (
@@ -1598,9 +1782,11 @@ CREATE TABLE jobsheet (
 );
 
 
+ALTER TABLE jobsheet OWNER TO postgres;
+
 --
--- TOC entry 272 (class 1259 OID 36428)
--- Name: jobsheet_view; Type: VIEW; Schema: OrmasSchema; Owner: -
+-- TOC entry 273 (class 1259 OID 708561)
+-- Name: jobsheet_view; Type: VIEW; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE VIEW jobsheet_view AS
@@ -1621,9 +1807,11 @@ CREATE VIEW jobsheet_view AS
      JOIN users e ON ((e.user_id = jobsheet.employee_id)));
 
 
+ALTER TABLE jobsheet_view OWNER TO postgres;
+
 --
--- TOC entry 273 (class 1259 OID 36433)
--- Name: locations_view; Type: VIEW; Schema: OrmasSchema; Owner: -
+-- TOC entry 274 (class 1259 OID 708566)
+-- Name: locations_view; Type: VIEW; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE VIEW locations_view AS
@@ -1635,9 +1823,11 @@ CREATE VIEW locations_view AS
    FROM locations;
 
 
+ALTER TABLE locations_view OWNER TO postgres;
+
 --
--- TOC entry 274 (class 1259 OID 36437)
--- Name: measures_view; Type: VIEW; Schema: OrmasSchema; Owner: -
+-- TOC entry 275 (class 1259 OID 708570)
+-- Name: measures_view; Type: VIEW; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE VIEW measures_view AS
@@ -1648,9 +1838,11 @@ CREATE VIEW measures_view AS
    FROM measures;
 
 
+ALTER TABLE measures_view OWNER TO postgres;
+
 --
--- TOC entry 275 (class 1259 OID 36441)
--- Name: net_cost; Type: TABLE; Schema: OrmasSchema; Owner: -
+-- TOC entry 276 (class 1259 OID 708574)
+-- Name: net_cost; Type: TABLE; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE TABLE net_cost (
@@ -1663,9 +1855,11 @@ CREATE TABLE net_cost (
 );
 
 
+ALTER TABLE net_cost OWNER TO postgres;
+
 --
--- TOC entry 276 (class 1259 OID 36444)
--- Name: net_cost_view; Type: VIEW; Schema: OrmasSchema; Owner: -
+-- TOC entry 277 (class 1259 OID 708577)
+-- Name: net_cost_view; Type: VIEW; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE VIEW net_cost_view AS
@@ -1686,9 +1880,11 @@ CREATE VIEW net_cost_view AS
      JOIN currencies c ON ((c.currency_id = net_cost.currency_id)));
 
 
+ALTER TABLE net_cost_view OWNER TO postgres;
+
 --
--- TOC entry 277 (class 1259 OID 36449)
--- Name: order_list; Type: TABLE; Schema: OrmasSchema; Owner: -
+-- TOC entry 278 (class 1259 OID 708582)
+-- Name: order_list; Type: TABLE; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE TABLE order_list (
@@ -1702,9 +1898,11 @@ CREATE TABLE order_list (
 );
 
 
+ALTER TABLE order_list OWNER TO postgres;
+
 --
--- TOC entry 278 (class 1259 OID 36452)
--- Name: order_list_view; Type: VIEW; Schema: OrmasSchema; Owner: -
+-- TOC entry 279 (class 1259 OID 708585)
+-- Name: order_list_view; Type: VIEW; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE VIEW order_list_view AS
@@ -1733,9 +1931,11 @@ CREATE VIEW order_list_view AS
      JOIN status s ON ((s.status_id = order_list.status_id)));
 
 
+ALTER TABLE order_list_view OWNER TO postgres;
+
 --
--- TOC entry 279 (class 1259 OID 36457)
--- Name: order_raw_list; Type: TABLE; Schema: OrmasSchema; Owner: -
+-- TOC entry 280 (class 1259 OID 708590)
+-- Name: order_raw_list; Type: TABLE; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE TABLE order_raw_list (
@@ -1749,9 +1949,11 @@ CREATE TABLE order_raw_list (
 );
 
 
+ALTER TABLE order_raw_list OWNER TO postgres;
+
 --
--- TOC entry 280 (class 1259 OID 36460)
--- Name: order_raw_list_view; Type: VIEW; Schema: OrmasSchema; Owner: -
+-- TOC entry 281 (class 1259 OID 708593)
+-- Name: order_raw_list_view; Type: VIEW; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE VIEW order_raw_list_view AS
@@ -1780,9 +1982,11 @@ CREATE VIEW order_raw_list_view AS
      JOIN status s ON ((s.status_id = order_raw_list.status_id)));
 
 
+ALTER TABLE order_raw_list_view OWNER TO postgres;
+
 --
--- TOC entry 281 (class 1259 OID 36465)
--- Name: order_raws; Type: TABLE; Schema: OrmasSchema; Owner: -
+-- TOC entry 282 (class 1259 OID 708598)
+-- Name: order_raws; Type: TABLE; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE TABLE order_raws (
@@ -1798,9 +2002,11 @@ CREATE TABLE order_raws (
 );
 
 
+ALTER TABLE order_raws OWNER TO postgres;
+
 --
--- TOC entry 282 (class 1259 OID 36468)
--- Name: purveyors; Type: TABLE; Schema: OrmasSchema; Owner: -
+-- TOC entry 283 (class 1259 OID 708601)
+-- Name: purveyors; Type: TABLE; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE TABLE purveyors (
@@ -1810,9 +2016,11 @@ CREATE TABLE purveyors (
 );
 
 
+ALTER TABLE purveyors OWNER TO postgres;
+
 --
--- TOC entry 283 (class 1259 OID 36471)
--- Name: order_raws_view; Type: VIEW; Schema: OrmasSchema; Owner: -
+-- TOC entry 284 (class 1259 OID 708604)
+-- Name: order_raws_view; Type: VIEW; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE VIEW order_raws_view AS
@@ -1849,9 +2057,11 @@ CREATE VIEW order_raws_view AS
      LEFT JOIN currencies c ON ((c.currency_id = order_raws.currency_id)));
 
 
+ALTER TABLE order_raws_view OWNER TO postgres;
+
 --
--- TOC entry 284 (class 1259 OID 36476)
--- Name: orders; Type: TABLE; Schema: OrmasSchema; Owner: -
+-- TOC entry 285 (class 1259 OID 708609)
+-- Name: orders; Type: TABLE; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE TABLE orders (
@@ -1867,9 +2077,11 @@ CREATE TABLE orders (
 );
 
 
+ALTER TABLE orders OWNER TO postgres;
+
 --
--- TOC entry 285 (class 1259 OID 36479)
--- Name: orders_view; Type: VIEW; Schema: OrmasSchema; Owner: -
+-- TOC entry 286 (class 1259 OID 708612)
+-- Name: orders_view; Type: VIEW; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE VIEW orders_view AS
@@ -1902,9 +2114,11 @@ CREATE VIEW orders_view AS
      LEFT JOIN currencies c ON ((c.currency_id = orders.currency_id)));
 
 
+ALTER TABLE orders_view OWNER TO postgres;
+
 --
--- TOC entry 286 (class 1259 OID 36484)
--- Name: payment_employee; Type: TABLE; Schema: OrmasSchema; Owner: -
+-- TOC entry 287 (class 1259 OID 708617)
+-- Name: payment_employee; Type: TABLE; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE TABLE payment_employee (
@@ -1914,9 +2128,11 @@ CREATE TABLE payment_employee (
 );
 
 
+ALTER TABLE payment_employee OWNER TO postgres;
+
 --
--- TOC entry 287 (class 1259 OID 36487)
--- Name: payment_employee_view; Type: VIEW; Schema: OrmasSchema; Owner: -
+-- TOC entry 288 (class 1259 OID 708620)
+-- Name: payment_employee_view; Type: VIEW; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE VIEW payment_employee_view AS
@@ -1926,9 +2142,11 @@ CREATE VIEW payment_employee_view AS
    FROM payment_employee;
 
 
+ALTER TABLE payment_employee_view OWNER TO postgres;
+
 --
--- TOC entry 288 (class 1259 OID 36491)
--- Name: payments; Type: TABLE; Schema: OrmasSchema; Owner: -
+-- TOC entry 289 (class 1259 OID 708624)
+-- Name: payments; Type: TABLE; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE TABLE payments (
@@ -1939,13 +2157,17 @@ CREATE TABLE payments (
     user_id integer,
     currency_id integer NOT NULL,
     status_id integer NOT NULL,
-    account_id integer
+    account_id integer,
+    subaccount_id integer,
+    who character varying(100)
 );
 
 
+ALTER TABLE payments OWNER TO postgres;
+
 --
--- TOC entry 289 (class 1259 OID 36494)
--- Name: payments_view; Type: VIEW; Schema: OrmasSchema; Owner: -
+-- TOC entry 290 (class 1259 OID 708627)
+-- Name: payments_view; Type: VIEW; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE VIEW payments_view AS
@@ -1958,21 +2180,27 @@ CREATE VIEW payments_view AS
     c.currency_short_name AS currency_name,
     payments.payment_target,
     a.account_number,
+    sa.subaccount_number,
+    payments.who,
     s.status_name,
     payments.user_id,
     payments.currency_id,
     payments.status_id,
-    payments.account_id
-   FROM ((((payments
+    payments.account_id,
+    payments.subaccount_id
+   FROM (((((payments
      LEFT JOIN currencies c ON ((c.currency_id = payments.currency_id)))
      LEFT JOIN status s ON ((s.status_id = payments.status_id)))
      LEFT JOIN accounts a ON ((a.account_id = payments.account_id)))
+     LEFT JOIN subaccounts sa ON ((sa.subaccount_id = payments.subaccount_id)))
      LEFT JOIN users u ON ((u.user_id = payments.user_id)));
 
 
+ALTER TABLE payments_view OWNER TO postgres;
+
 --
--- TOC entry 290 (class 1259 OID 36499)
--- Name: payslip_order; Type: TABLE; Schema: OrmasSchema; Owner: -
+-- TOC entry 291 (class 1259 OID 708632)
+-- Name: payslip_order; Type: TABLE; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE TABLE payslip_order (
@@ -1982,9 +2210,11 @@ CREATE TABLE payslip_order (
 );
 
 
+ALTER TABLE payslip_order OWNER TO postgres;
+
 --
--- TOC entry 291 (class 1259 OID 36502)
--- Name: payslip_order_view; Type: VIEW; Schema: OrmasSchema; Owner: -
+-- TOC entry 292 (class 1259 OID 708635)
+-- Name: payslip_order_view; Type: VIEW; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE VIEW payslip_order_view AS
@@ -1994,9 +2224,11 @@ CREATE VIEW payslip_order_view AS
    FROM payslip_order;
 
 
+ALTER TABLE payslip_order_view OWNER TO postgres;
+
 --
--- TOC entry 292 (class 1259 OID 36506)
--- Name: payslips; Type: TABLE; Schema: OrmasSchema; Owner: -
+-- TOC entry 293 (class 1259 OID 708639)
+-- Name: payslips; Type: TABLE; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE TABLE payslips (
@@ -2008,9 +2240,11 @@ CREATE TABLE payslips (
 );
 
 
+ALTER TABLE payslips OWNER TO postgres;
+
 --
--- TOC entry 293 (class 1259 OID 36509)
--- Name: payslips_view; Type: VIEW; Schema: OrmasSchema; Owner: -
+-- TOC entry 294 (class 1259 OID 708642)
+-- Name: payslips_view; Type: VIEW; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE VIEW payslips_view AS
@@ -2024,9 +2258,11 @@ CREATE VIEW payslips_view AS
      JOIN currencies c ON ((c.currency_id = payslips.currency_id)));
 
 
+ALTER TABLE payslips_view OWNER TO postgres;
+
 --
--- TOC entry 294 (class 1259 OID 36513)
--- Name: percent_rate; Type: TABLE; Schema: OrmasSchema; Owner: -
+-- TOC entry 295 (class 1259 OID 708646)
+-- Name: percent_rate; Type: TABLE; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE TABLE percent_rate (
@@ -2037,9 +2273,11 @@ CREATE TABLE percent_rate (
 );
 
 
+ALTER TABLE percent_rate OWNER TO postgres;
+
 --
--- TOC entry 295 (class 1259 OID 36516)
--- Name: percent_rate_view; Type: VIEW; Schema: OrmasSchema; Owner: -
+-- TOC entry 296 (class 1259 OID 708649)
+-- Name: percent_rate_view; Type: VIEW; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE VIEW percent_rate_view AS
@@ -2051,9 +2289,11 @@ CREATE VIEW percent_rate_view AS
      JOIN positions p ON ((p.position_id = percent_rate.position_id)));
 
 
+ALTER TABLE percent_rate_view OWNER TO postgres;
+
 --
--- TOC entry 296 (class 1259 OID 36520)
--- Name: photos; Type: TABLE; Schema: OrmasSchema; Owner: -
+-- TOC entry 297 (class 1259 OID 708653)
+-- Name: photos; Type: TABLE; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE TABLE photos (
@@ -2064,9 +2304,11 @@ CREATE TABLE photos (
 );
 
 
+ALTER TABLE photos OWNER TO postgres;
+
 --
--- TOC entry 297 (class 1259 OID 36523)
--- Name: photos_view; Type: VIEW; Schema: OrmasSchema; Owner: -
+-- TOC entry 298 (class 1259 OID 708656)
+-- Name: photos_view; Type: VIEW; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE VIEW photos_view AS
@@ -2077,9 +2319,11 @@ CREATE VIEW photos_view AS
    FROM photos;
 
 
+ALTER TABLE photos_view OWNER TO postgres;
+
 --
--- TOC entry 298 (class 1259 OID 36527)
--- Name: positions_view; Type: VIEW; Schema: OrmasSchema; Owner: -
+-- TOC entry 299 (class 1259 OID 708660)
+-- Name: positions_view; Type: VIEW; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE VIEW positions_view AS
@@ -2088,9 +2332,11 @@ CREATE VIEW positions_view AS
    FROM positions;
 
 
+ALTER TABLE positions_view OWNER TO postgres;
+
 --
--- TOC entry 299 (class 1259 OID 36531)
--- Name: prices; Type: TABLE; Schema: OrmasSchema; Owner: -
+-- TOC entry 300 (class 1259 OID 708664)
+-- Name: prices; Type: TABLE; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE TABLE prices (
@@ -2103,9 +2349,11 @@ CREATE TABLE prices (
 );
 
 
+ALTER TABLE prices OWNER TO postgres;
+
 --
--- TOC entry 300 (class 1259 OID 36534)
--- Name: prices_view; Type: VIEW; Schema: OrmasSchema; Owner: -
+-- TOC entry 301 (class 1259 OID 708667)
+-- Name: prices_view; Type: VIEW; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE VIEW prices_view AS
@@ -2126,9 +2374,11 @@ CREATE VIEW prices_view AS
      JOIN currencies c ON ((c.currency_id = prices.currency_id)));
 
 
+ALTER TABLE prices_view OWNER TO postgres;
+
 --
--- TOC entry 301 (class 1259 OID 36539)
--- Name: product_branch; Type: TABLE; Schema: OrmasSchema; Owner: -
+-- TOC entry 302 (class 1259 OID 708672)
+-- Name: product_branch; Type: TABLE; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE TABLE product_branch (
@@ -2138,9 +2388,11 @@ CREATE TABLE product_branch (
 );
 
 
+ALTER TABLE product_branch OWNER TO postgres;
+
 --
--- TOC entry 302 (class 1259 OID 36542)
--- Name: product_branch_view; Type: VIEW; Schema: OrmasSchema; Owner: -
+-- TOC entry 303 (class 1259 OID 708675)
+-- Name: product_branch_view; Type: VIEW; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE VIEW product_branch_view AS
@@ -2156,9 +2408,11 @@ CREATE VIEW product_branch_view AS
      JOIN branches b ON ((b.branch_id = product_branch.branch_id)));
 
 
+ALTER TABLE product_branch_view OWNER TO postgres;
+
 --
--- TOC entry 303 (class 1259 OID 36546)
--- Name: product_type; Type: TABLE; Schema: OrmasSchema; Owner: -
+-- TOC entry 304 (class 1259 OID 708679)
+-- Name: product_type; Type: TABLE; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE TABLE product_type (
@@ -2169,9 +2423,11 @@ CREATE TABLE product_type (
 );
 
 
+ALTER TABLE product_type OWNER TO postgres;
+
 --
--- TOC entry 304 (class 1259 OID 36549)
--- Name: product_types_view; Type: VIEW; Schema: OrmasSchema; Owner: -
+-- TOC entry 305 (class 1259 OID 708682)
+-- Name: product_types_view; Type: VIEW; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE VIEW product_types_view AS
@@ -2182,9 +2438,11 @@ CREATE VIEW product_types_view AS
    FROM product_type;
 
 
+ALTER TABLE product_types_view OWNER TO postgres;
+
 --
--- TOC entry 305 (class 1259 OID 36553)
--- Name: production; Type: TABLE; Schema: OrmasSchema; Owner: -
+-- TOC entry 306 (class 1259 OID 708686)
+-- Name: production; Type: TABLE; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE TABLE production (
@@ -2196,9 +2454,11 @@ CREATE TABLE production (
 );
 
 
+ALTER TABLE production OWNER TO postgres;
+
 --
--- TOC entry 306 (class 1259 OID 36556)
--- Name: production_consume_raw_list; Type: TABLE; Schema: OrmasSchema; Owner: -
+-- TOC entry 307 (class 1259 OID 708689)
+-- Name: production_consume_raw_list; Type: TABLE; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE TABLE production_consume_raw_list (
@@ -2212,9 +2472,11 @@ CREATE TABLE production_consume_raw_list (
 );
 
 
+ALTER TABLE production_consume_raw_list OWNER TO postgres;
+
 --
--- TOC entry 307 (class 1259 OID 36559)
--- Name: production_consume_raw_list_view; Type: VIEW; Schema: OrmasSchema; Owner: -
+-- TOC entry 308 (class 1259 OID 708692)
+-- Name: production_consume_raw_list_view; Type: VIEW; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE VIEW production_consume_raw_list_view AS
@@ -2243,9 +2505,11 @@ CREATE VIEW production_consume_raw_list_view AS
      JOIN status s ON ((s.status_id = production_consume_raw_list.status_id)));
 
 
+ALTER TABLE production_consume_raw_list_view OWNER TO postgres;
+
 --
--- TOC entry 308 (class 1259 OID 36564)
--- Name: production_consume_raws; Type: TABLE; Schema: OrmasSchema; Owner: -
+-- TOC entry 309 (class 1259 OID 708697)
+-- Name: production_consume_raws; Type: TABLE; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE TABLE production_consume_raws (
@@ -2261,9 +2525,11 @@ CREATE TABLE production_consume_raws (
 );
 
 
+ALTER TABLE production_consume_raws OWNER TO postgres;
+
 --
--- TOC entry 309 (class 1259 OID 36567)
--- Name: production_consume_raws_view; Type: VIEW; Schema: OrmasSchema; Owner: -
+-- TOC entry 310 (class 1259 OID 708700)
+-- Name: production_consume_raws_view; Type: VIEW; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE VIEW production_consume_raws_view AS
@@ -2302,9 +2568,11 @@ CREATE VIEW production_consume_raws_view AS
      LEFT JOIN currencies c ON ((c.currency_id = production_consume_raws.currency_id)));
 
 
+ALTER TABLE production_consume_raws_view OWNER TO postgres;
+
 --
--- TOC entry 310 (class 1259 OID 36572)
--- Name: production_list; Type: TABLE; Schema: OrmasSchema; Owner: -
+-- TOC entry 311 (class 1259 OID 708705)
+-- Name: production_list; Type: TABLE; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE TABLE production_list (
@@ -2318,9 +2586,11 @@ CREATE TABLE production_list (
 );
 
 
+ALTER TABLE production_list OWNER TO postgres;
+
 --
--- TOC entry 311 (class 1259 OID 36575)
--- Name: production_list_view; Type: VIEW; Schema: OrmasSchema; Owner: -
+-- TOC entry 312 (class 1259 OID 708708)
+-- Name: production_list_view; Type: VIEW; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE VIEW production_list_view AS
@@ -2349,9 +2619,11 @@ CREATE VIEW production_list_view AS
      JOIN status s ON ((s.status_id = production_list.status_id)));
 
 
+ALTER TABLE production_list_view OWNER TO postgres;
+
 --
--- TOC entry 312 (class 1259 OID 36580)
--- Name: production_plan; Type: TABLE; Schema: OrmasSchema; Owner: -
+-- TOC entry 313 (class 1259 OID 708713)
+-- Name: production_plan; Type: TABLE; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE TABLE production_plan (
@@ -2365,9 +2637,11 @@ CREATE TABLE production_plan (
 );
 
 
+ALTER TABLE production_plan OWNER TO postgres;
+
 --
--- TOC entry 313 (class 1259 OID 36583)
--- Name: production_plan_list; Type: TABLE; Schema: OrmasSchema; Owner: -
+-- TOC entry 314 (class 1259 OID 708716)
+-- Name: production_plan_list; Type: TABLE; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE TABLE production_plan_list (
@@ -2381,9 +2655,11 @@ CREATE TABLE production_plan_list (
 );
 
 
+ALTER TABLE production_plan_list OWNER TO postgres;
+
 --
--- TOC entry 314 (class 1259 OID 36586)
--- Name: production_plan_list_view; Type: VIEW; Schema: OrmasSchema; Owner: -
+-- TOC entry 315 (class 1259 OID 708719)
+-- Name: production_plan_list_view; Type: VIEW; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE VIEW production_plan_list_view AS
@@ -2412,9 +2688,11 @@ CREATE VIEW production_plan_list_view AS
      JOIN status s ON ((s.status_id = production_plan_list.status_id)));
 
 
+ALTER TABLE production_plan_list_view OWNER TO postgres;
+
 --
--- TOC entry 315 (class 1259 OID 36591)
--- Name: production_plan_view; Type: VIEW; Schema: OrmasSchema; Owner: -
+-- TOC entry 316 (class 1259 OID 708724)
+-- Name: production_plan_view; Type: VIEW; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE VIEW production_plan_view AS
@@ -2439,9 +2717,11 @@ CREATE VIEW production_plan_view AS
      JOIN status s ON ((s.status_id = production_plan.status_id)));
 
 
+ALTER TABLE production_plan_view OWNER TO postgres;
+
 --
--- TOC entry 316 (class 1259 OID 36596)
--- Name: production_stock; Type: TABLE; Schema: OrmasSchema; Owner: -
+-- TOC entry 317 (class 1259 OID 708729)
+-- Name: production_stock; Type: TABLE; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE TABLE production_stock (
@@ -2455,9 +2735,11 @@ CREATE TABLE production_stock (
 );
 
 
+ALTER TABLE production_stock OWNER TO postgres;
+
 --
--- TOC entry 317 (class 1259 OID 36599)
--- Name: warehouse; Type: TABLE; Schema: OrmasSchema; Owner: -
+-- TOC entry 318 (class 1259 OID 708732)
+-- Name: warehouse; Type: TABLE; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE TABLE warehouse (
@@ -2470,9 +2752,11 @@ CREATE TABLE warehouse (
 );
 
 
+ALTER TABLE warehouse OWNER TO postgres;
+
 --
--- TOC entry 318 (class 1259 OID 36602)
--- Name: production_stock_view; Type: VIEW; Schema: OrmasSchema; Owner: -
+-- TOC entry 319 (class 1259 OID 708735)
+-- Name: production_stock_view; Type: VIEW; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE VIEW production_stock_view AS
@@ -2506,9 +2790,11 @@ CREATE VIEW production_stock_view AS
      JOIN warehouse w ON ((w.warehouse_id = production_stock.warehouse_id)));
 
 
+ALTER TABLE production_stock_view OWNER TO postgres;
+
 --
--- TOC entry 319 (class 1259 OID 36607)
--- Name: production_view; Type: VIEW; Schema: OrmasSchema; Owner: -
+-- TOC entry 320 (class 1259 OID 708740)
+-- Name: production_view; Type: VIEW; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE VIEW production_view AS
@@ -2520,9 +2806,11 @@ CREATE VIEW production_view AS
    FROM production;
 
 
+ALTER TABLE production_view OWNER TO postgres;
+
 --
--- TOC entry 320 (class 1259 OID 36611)
--- Name: products_view; Type: VIEW; Schema: OrmasSchema; Owner: -
+-- TOC entry 321 (class 1259 OID 708744)
+-- Name: products_view; Type: VIEW; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE VIEW products_view AS
@@ -2547,9 +2835,11 @@ CREATE VIEW products_view AS
   ORDER BY products.product_name;
 
 
+ALTER TABLE products_view OWNER TO postgres;
+
 --
--- TOC entry 321 (class 1259 OID 36616)
--- Name: purveyors_view; Type: VIEW; Schema: OrmasSchema; Owner: -
+-- TOC entry 322 (class 1259 OID 708749)
+-- Name: purveyors_view; Type: VIEW; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE VIEW purveyors_view AS
@@ -2580,9 +2870,11 @@ CREATE VIEW purveyors_view AS
      JOIN users ON ((users.user_id = purveyors.user_id)));
 
 
+ALTER TABLE purveyors_view OWNER TO postgres;
+
 --
--- TOC entry 322 (class 1259 OID 36621)
--- Name: receipt_product_list; Type: TABLE; Schema: OrmasSchema; Owner: -
+-- TOC entry 323 (class 1259 OID 708754)
+-- Name: receipt_product_list; Type: TABLE; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE TABLE receipt_product_list (
@@ -2596,9 +2888,11 @@ CREATE TABLE receipt_product_list (
 );
 
 
+ALTER TABLE receipt_product_list OWNER TO postgres;
+
 --
--- TOC entry 323 (class 1259 OID 36624)
--- Name: receipt_product_list_view; Type: VIEW; Schema: OrmasSchema; Owner: -
+-- TOC entry 324 (class 1259 OID 708757)
+-- Name: receipt_product_list_view; Type: VIEW; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE VIEW receipt_product_list_view AS
@@ -2627,9 +2921,11 @@ CREATE VIEW receipt_product_list_view AS
      JOIN status s ON ((s.status_id = receipt_product_list.status_id)));
 
 
+ALTER TABLE receipt_product_list_view OWNER TO postgres;
+
 --
--- TOC entry 324 (class 1259 OID 36629)
--- Name: receipt_products; Type: TABLE; Schema: OrmasSchema; Owner: -
+-- TOC entry 325 (class 1259 OID 708762)
+-- Name: receipt_products; Type: TABLE; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE TABLE receipt_products (
@@ -2645,9 +2941,11 @@ CREATE TABLE receipt_products (
 );
 
 
+ALTER TABLE receipt_products OWNER TO postgres;
+
 --
--- TOC entry 325 (class 1259 OID 36632)
--- Name: receipt_products_view; Type: VIEW; Schema: OrmasSchema; Owner: -
+-- TOC entry 326 (class 1259 OID 708765)
+-- Name: receipt_products_view; Type: VIEW; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE VIEW receipt_products_view AS
@@ -2686,9 +2984,11 @@ CREATE VIEW receipt_products_view AS
      LEFT JOIN currencies c ON ((c.currency_id = receipt_products.currency_id)));
 
 
+ALTER TABLE receipt_products_view OWNER TO postgres;
+
 --
--- TOC entry 326 (class 1259 OID 36637)
--- Name: refunds; Type: TABLE; Schema: OrmasSchema; Owner: -
+-- TOC entry 327 (class 1259 OID 708770)
+-- Name: refunds; Type: TABLE; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE TABLE refunds (
@@ -2700,9 +3000,11 @@ CREATE TABLE refunds (
 );
 
 
+ALTER TABLE refunds OWNER TO postgres;
+
 --
--- TOC entry 327 (class 1259 OID 36640)
--- Name: refunds_view; Type: VIEW; Schema: OrmasSchema; Owner: -
+-- TOC entry 328 (class 1259 OID 708773)
+-- Name: refunds_view; Type: VIEW; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE VIEW refunds_view AS
@@ -2716,9 +3018,11 @@ CREATE VIEW refunds_view AS
      JOIN currencies c ON ((c.currency_id = refunds.currency_id)));
 
 
+ALTER TABLE refunds_view OWNER TO postgres;
+
 --
--- TOC entry 328 (class 1259 OID 36644)
--- Name: relation_type; Type: TABLE; Schema: OrmasSchema; Owner: -
+-- TOC entry 329 (class 1259 OID 708777)
+-- Name: relation_type; Type: TABLE; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE TABLE relation_type (
@@ -2728,9 +3032,11 @@ CREATE TABLE relation_type (
 );
 
 
+ALTER TABLE relation_type OWNER TO postgres;
+
 --
--- TOC entry 329 (class 1259 OID 36647)
--- Name: relation_type_view; Type: VIEW; Schema: OrmasSchema; Owner: -
+-- TOC entry 330 (class 1259 OID 708780)
+-- Name: relation_type_view; Type: VIEW; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE VIEW relation_type_view AS
@@ -2740,9 +3046,11 @@ CREATE VIEW relation_type_view AS
    FROM relation_type;
 
 
+ALTER TABLE relation_type_view OWNER TO postgres;
+
 --
--- TOC entry 330 (class 1259 OID 36651)
--- Name: relations; Type: TABLE; Schema: OrmasSchema; Owner: -
+-- TOC entry 331 (class 1259 OID 708784)
+-- Name: relations; Type: TABLE; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE TABLE relations (
@@ -2753,9 +3061,11 @@ CREATE TABLE relations (
 );
 
 
+ALTER TABLE relations OWNER TO postgres;
+
 --
--- TOC entry 331 (class 1259 OID 36654)
--- Name: relations_view; Type: VIEW; Schema: OrmasSchema; Owner: -
+-- TOC entry 332 (class 1259 OID 708787)
+-- Name: relations_view; Type: VIEW; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE VIEW relations_view AS
@@ -2776,9 +3086,11 @@ CREATE VIEW relations_view AS
      JOIN relation_type rt ON ((rt.relation_type_id = relations.relation_type_id)));
 
 
+ALTER TABLE relations_view OWNER TO postgres;
+
 --
--- TOC entry 332 (class 1259 OID 36659)
--- Name: return_list; Type: TABLE; Schema: OrmasSchema; Owner: -
+-- TOC entry 333 (class 1259 OID 708792)
+-- Name: return_list; Type: TABLE; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE TABLE return_list (
@@ -2792,9 +3104,11 @@ CREATE TABLE return_list (
 );
 
 
+ALTER TABLE return_list OWNER TO postgres;
+
 --
--- TOC entry 333 (class 1259 OID 36662)
--- Name: return_list_view; Type: VIEW; Schema: OrmasSchema; Owner: -
+-- TOC entry 334 (class 1259 OID 708795)
+-- Name: return_list_view; Type: VIEW; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE VIEW return_list_view AS
@@ -2823,9 +3137,11 @@ CREATE VIEW return_list_view AS
      JOIN status s ON ((s.status_id = return_list.status_id)));
 
 
+ALTER TABLE return_list_view OWNER TO postgres;
+
 --
--- TOC entry 334 (class 1259 OID 36667)
--- Name: returns; Type: TABLE; Schema: OrmasSchema; Owner: -
+-- TOC entry 335 (class 1259 OID 708800)
+-- Name: returns; Type: TABLE; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE TABLE returns (
@@ -2841,9 +3157,11 @@ CREATE TABLE returns (
 );
 
 
+ALTER TABLE returns OWNER TO postgres;
+
 --
--- TOC entry 335 (class 1259 OID 36670)
--- Name: returns_view; Type: VIEW; Schema: OrmasSchema; Owner: -
+-- TOC entry 336 (class 1259 OID 708803)
+-- Name: returns_view; Type: VIEW; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE VIEW returns_view AS
@@ -2876,9 +3194,11 @@ CREATE VIEW returns_view AS
      LEFT JOIN currencies c ON ((c.currency_id = returns.currency_id)));
 
 
+ALTER TABLE returns_view OWNER TO postgres;
+
 --
--- TOC entry 336 (class 1259 OID 36675)
--- Name: roles_view; Type: VIEW; Schema: OrmasSchema; Owner: -
+-- TOC entry 337 (class 1259 OID 708808)
+-- Name: roles_view; Type: VIEW; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE VIEW roles_view AS
@@ -2889,9 +3209,11 @@ CREATE VIEW roles_view AS
    FROM roles;
 
 
+ALTER TABLE roles_view OWNER TO postgres;
+
 --
--- TOC entry 337 (class 1259 OID 36679)
--- Name: salaries; Type: TABLE; Schema: OrmasSchema; Owner: -
+-- TOC entry 338 (class 1259 OID 708812)
+-- Name: salaries; Type: TABLE; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE TABLE salaries (
@@ -2905,9 +3227,11 @@ CREATE TABLE salaries (
 );
 
 
+ALTER TABLE salaries OWNER TO postgres;
+
 --
--- TOC entry 338 (class 1259 OID 36682)
--- Name: salary_type; Type: TABLE; Schema: OrmasSchema; Owner: -
+-- TOC entry 339 (class 1259 OID 708815)
+-- Name: salary_type; Type: TABLE; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE TABLE salary_type (
@@ -2917,9 +3241,11 @@ CREATE TABLE salary_type (
 );
 
 
+ALTER TABLE salary_type OWNER TO postgres;
+
 --
--- TOC entry 339 (class 1259 OID 36685)
--- Name: salaries_view; Type: VIEW; Schema: OrmasSchema; Owner: -
+-- TOC entry 340 (class 1259 OID 708818)
+-- Name: salaries_view; Type: VIEW; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE VIEW salaries_view AS
@@ -2941,9 +3267,11 @@ CREATE VIEW salaries_view AS
      JOIN salary_type s ON ((s.salary_type_id = salaries.salary_type_id)));
 
 
+ALTER TABLE salaries_view OWNER TO postgres;
+
 --
--- TOC entry 340 (class 1259 OID 36690)
--- Name: salary_type_view; Type: VIEW; Schema: OrmasSchema; Owner: -
+-- TOC entry 341 (class 1259 OID 708823)
+-- Name: salary_type_view; Type: VIEW; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE VIEW salary_type_view AS
@@ -2953,9 +3281,11 @@ CREATE VIEW salary_type_view AS
    FROM salary_type;
 
 
+ALTER TABLE salary_type_view OWNER TO postgres;
+
 --
--- TOC entry 341 (class 1259 OID 36694)
--- Name: shareholders; Type: TABLE; Schema: OrmasSchema; Owner: -
+-- TOC entry 342 (class 1259 OID 708827)
+-- Name: shareholders; Type: TABLE; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE TABLE shareholders (
@@ -2965,9 +3295,11 @@ CREATE TABLE shareholders (
 );
 
 
+ALTER TABLE shareholders OWNER TO postgres;
+
 --
--- TOC entry 342 (class 1259 OID 36697)
--- Name: shareholders_view; Type: VIEW; Schema: OrmasSchema; Owner: -
+-- TOC entry 343 (class 1259 OID 708830)
+-- Name: shareholders_view; Type: VIEW; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE VIEW shareholders_view AS
@@ -2982,9 +3314,11 @@ CREATE VIEW shareholders_view AS
      JOIN users ON ((users.user_id = shareholders.user_id)));
 
 
+ALTER TABLE shareholders_view OWNER TO postgres;
+
 --
--- TOC entry 343 (class 1259 OID 36701)
--- Name: specification_list; Type: TABLE; Schema: OrmasSchema; Owner: -
+-- TOC entry 344 (class 1259 OID 708834)
+-- Name: specification_list; Type: TABLE; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE TABLE specification_list (
@@ -2995,9 +3329,11 @@ CREATE TABLE specification_list (
 );
 
 
+ALTER TABLE specification_list OWNER TO postgres;
+
 --
--- TOC entry 344 (class 1259 OID 36704)
--- Name: specification_list_view; Type: VIEW; Schema: OrmasSchema; Owner: -
+-- TOC entry 345 (class 1259 OID 708837)
+-- Name: specification_list_view; Type: VIEW; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE VIEW specification_list_view AS
@@ -3013,9 +3349,11 @@ CREATE VIEW specification_list_view AS
      JOIN products p ON ((p.product_id = specification_list.product_id)));
 
 
+ALTER TABLE specification_list_view OWNER TO postgres;
+
 --
--- TOC entry 345 (class 1259 OID 36708)
--- Name: specifications; Type: TABLE; Schema: OrmasSchema; Owner: -
+-- TOC entry 346 (class 1259 OID 708841)
+-- Name: specifications; Type: TABLE; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE TABLE specifications (
@@ -3028,9 +3366,11 @@ CREATE TABLE specifications (
 );
 
 
+ALTER TABLE specifications OWNER TO postgres;
+
 --
--- TOC entry 346 (class 1259 OID 36711)
--- Name: specifications_view; Type: VIEW; Schema: OrmasSchema; Owner: -
+-- TOC entry 347 (class 1259 OID 708844)
+-- Name: specifications_view; Type: VIEW; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE VIEW specifications_view AS
@@ -3056,9 +3396,11 @@ CREATE VIEW specifications_view AS
      LEFT JOIN currencies c ON ((c.currency_id = specifications.currency_id)));
 
 
+ALTER TABLE specifications_view OWNER TO postgres;
+
 --
--- TOC entry 347 (class 1259 OID 36716)
--- Name: spoilage; Type: TABLE; Schema: OrmasSchema; Owner: -
+-- TOC entry 348 (class 1259 OID 708849)
+-- Name: spoilage; Type: TABLE; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE TABLE spoilage (
@@ -3072,9 +3414,11 @@ CREATE TABLE spoilage (
 );
 
 
+ALTER TABLE spoilage OWNER TO postgres;
+
 --
--- TOC entry 348 (class 1259 OID 36719)
--- Name: spoilage_list; Type: TABLE; Schema: OrmasSchema; Owner: -
+-- TOC entry 349 (class 1259 OID 708852)
+-- Name: spoilage_list; Type: TABLE; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE TABLE spoilage_list (
@@ -3088,9 +3432,11 @@ CREATE TABLE spoilage_list (
 );
 
 
+ALTER TABLE spoilage_list OWNER TO postgres;
+
 --
--- TOC entry 349 (class 1259 OID 36722)
--- Name: spoilage_list_view; Type: VIEW; Schema: OrmasSchema; Owner: -
+-- TOC entry 350 (class 1259 OID 708855)
+-- Name: spoilage_list_view; Type: VIEW; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE VIEW spoilage_list_view AS
@@ -3119,9 +3465,11 @@ CREATE VIEW spoilage_list_view AS
      JOIN status s ON ((s.status_id = spoilage_list.status_id)));
 
 
+ALTER TABLE spoilage_list_view OWNER TO postgres;
+
 --
--- TOC entry 350 (class 1259 OID 36727)
--- Name: spoilage_view; Type: VIEW; Schema: OrmasSchema; Owner: -
+-- TOC entry 351 (class 1259 OID 708860)
+-- Name: spoilage_view; Type: VIEW; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE VIEW spoilage_view AS
@@ -3146,9 +3494,11 @@ CREATE VIEW spoilage_view AS
      LEFT JOIN status s ON ((s.status_id = spoilage.status_id)));
 
 
+ALTER TABLE spoilage_view OWNER TO postgres;
+
 --
--- TOC entry 351 (class 1259 OID 36732)
--- Name: state; Type: TABLE; Schema: OrmasSchema; Owner: -
+-- TOC entry 352 (class 1259 OID 708865)
+-- Name: state; Type: TABLE; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE TABLE state (
@@ -3159,9 +3509,11 @@ CREATE TABLE state (
 );
 
 
+ALTER TABLE state OWNER TO postgres;
+
 --
--- TOC entry 352 (class 1259 OID 36735)
--- Name: state_view; Type: VIEW; Schema: OrmasSchema; Owner: -
+-- TOC entry 353 (class 1259 OID 708868)
+-- Name: state_view; Type: VIEW; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE VIEW state_view AS
@@ -3172,9 +3524,11 @@ CREATE VIEW state_view AS
    FROM state;
 
 
+ALTER TABLE state_view OWNER TO postgres;
+
 --
--- TOC entry 353 (class 1259 OID 36739)
--- Name: status_rule; Type: TABLE; Schema: OrmasSchema; Owner: -
+-- TOC entry 354 (class 1259 OID 708872)
+-- Name: status_rule; Type: TABLE; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE TABLE status_rule (
@@ -3184,9 +3538,11 @@ CREATE TABLE status_rule (
 );
 
 
+ALTER TABLE status_rule OWNER TO postgres;
+
 --
--- TOC entry 354 (class 1259 OID 36742)
--- Name: status_rule_view; Type: VIEW; Schema: OrmasSchema; Owner: -
+-- TOC entry 355 (class 1259 OID 708875)
+-- Name: status_rule_view; Type: VIEW; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE VIEW status_rule_view AS
@@ -3198,9 +3554,11 @@ CREATE VIEW status_rule_view AS
      JOIN status s ON ((s.status_id = status_rule.status_id)));
 
 
+ALTER TABLE status_rule_view OWNER TO postgres;
+
 --
--- TOC entry 355 (class 1259 OID 36746)
--- Name: status_view; Type: VIEW; Schema: OrmasSchema; Owner: -
+-- TOC entry 356 (class 1259 OID 708879)
+-- Name: status_view; Type: VIEW; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE VIEW status_view AS
@@ -3211,9 +3569,11 @@ CREATE VIEW status_view AS
    FROM status;
 
 
+ALTER TABLE status_view OWNER TO postgres;
+
 --
--- TOC entry 356 (class 1259 OID 36750)
--- Name: stock; Type: TABLE; Schema: OrmasSchema; Owner: -
+-- TOC entry 357 (class 1259 OID 708883)
+-- Name: stock; Type: TABLE; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE TABLE stock (
@@ -3227,9 +3587,11 @@ CREATE TABLE stock (
 );
 
 
+ALTER TABLE stock OWNER TO postgres;
+
 --
--- TOC entry 357 (class 1259 OID 36753)
--- Name: stock_history; Type: TABLE; Schema: OrmasSchema; Owner: -
+-- TOC entry 358 (class 1259 OID 708886)
+-- Name: stock_history; Type: TABLE; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE TABLE stock_history (
@@ -3244,9 +3606,11 @@ CREATE TABLE stock_history (
 );
 
 
+ALTER TABLE stock_history OWNER TO postgres;
+
 --
--- TOC entry 358 (class 1259 OID 36756)
--- Name: stock_history_view; Type: VIEW; Schema: OrmasSchema; Owner: -
+-- TOC entry 359 (class 1259 OID 708889)
+-- Name: stock_history_view; Type: VIEW; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE VIEW stock_history_view AS
@@ -3276,14 +3640,16 @@ CREATE VIEW stock_history_view AS
     stock_history.warehouse_id,
     stock_history.history_date
    FROM (((stock_history
-     JOIN products p ON ((p.product_id = stock_history.product_id)))
-     JOIN status s ON ((s.status_id = stock_history.status_id)))
-     JOIN warehouse w ON ((w.warehouse_id = stock_history.warehouse_id)));
+     LEFT JOIN products p ON ((p.product_id = stock_history.product_id)))
+     LEFT JOIN status s ON ((s.status_id = stock_history.status_id)))
+     LEFT JOIN warehouse w ON ((w.warehouse_id = stock_history.warehouse_id)));
 
+
+ALTER TABLE stock_history_view OWNER TO postgres;
 
 --
--- TOC entry 359 (class 1259 OID 36761)
--- Name: stock_transfer_list; Type: TABLE; Schema: OrmasSchema; Owner: -
+-- TOC entry 360 (class 1259 OID 708894)
+-- Name: stock_transfer_list; Type: TABLE; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE TABLE stock_transfer_list (
@@ -3297,9 +3663,11 @@ CREATE TABLE stock_transfer_list (
 );
 
 
+ALTER TABLE stock_transfer_list OWNER TO postgres;
+
 --
--- TOC entry 360 (class 1259 OID 36764)
--- Name: stock_transfer_list_view; Type: VIEW; Schema: OrmasSchema; Owner: -
+-- TOC entry 361 (class 1259 OID 708897)
+-- Name: stock_transfer_list_view; Type: VIEW; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE VIEW stock_transfer_list_view AS
@@ -3328,9 +3696,11 @@ CREATE VIEW stock_transfer_list_view AS
      JOIN status s ON ((s.status_id = stock_transfer_list.status_id)));
 
 
+ALTER TABLE stock_transfer_list_view OWNER TO postgres;
+
 --
--- TOC entry 361 (class 1259 OID 36769)
--- Name: stock_transfers; Type: TABLE; Schema: OrmasSchema; Owner: -
+-- TOC entry 362 (class 1259 OID 708902)
+-- Name: stock_transfers; Type: TABLE; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE TABLE stock_transfers (
@@ -3346,9 +3716,11 @@ CREATE TABLE stock_transfers (
 );
 
 
+ALTER TABLE stock_transfers OWNER TO postgres;
+
 --
--- TOC entry 362 (class 1259 OID 36772)
--- Name: stock_transfers_view; Type: VIEW; Schema: OrmasSchema; Owner: -
+-- TOC entry 363 (class 1259 OID 708905)
+-- Name: stock_transfers_view; Type: VIEW; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE VIEW stock_transfers_view AS
@@ -3387,9 +3759,11 @@ CREATE VIEW stock_transfers_view AS
      LEFT JOIN currencies c ON ((c.currency_id = stock_transfers.currency_id)));
 
 
+ALTER TABLE stock_transfers_view OWNER TO postgres;
+
 --
--- TOC entry 363 (class 1259 OID 36777)
--- Name: stock_view; Type: VIEW; Schema: OrmasSchema; Owner: -
+-- TOC entry 364 (class 1259 OID 708910)
+-- Name: stock_view; Type: VIEW; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE VIEW stock_view AS
@@ -3424,9 +3798,11 @@ CREATE VIEW stock_view AS
   ORDER BY p.product_name;
 
 
+ALTER TABLE stock_view OWNER TO postgres;
+
 --
--- TOC entry 364 (class 1259 OID 36782)
--- Name: subaccount_history; Type: TABLE; Schema: OrmasSchema; Owner: -
+-- TOC entry 365 (class 1259 OID 708915)
+-- Name: subaccount_history; Type: TABLE; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE TABLE subaccount_history (
@@ -3439,9 +3815,11 @@ CREATE TABLE subaccount_history (
 );
 
 
+ALTER TABLE subaccount_history OWNER TO postgres;
+
 --
--- TOC entry 365 (class 1259 OID 36785)
--- Name: subaccount_history_view; Type: VIEW; Schema: OrmasSchema; Owner: -
+-- TOC entry 366 (class 1259 OID 708918)
+-- Name: subaccount_history_view; Type: VIEW; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE VIEW subaccount_history_view AS
@@ -3454,9 +3832,11 @@ CREATE VIEW subaccount_history_view AS
    FROM subaccount_history;
 
 
+ALTER TABLE subaccount_history_view OWNER TO postgres;
+
 --
--- TOC entry 366 (class 1259 OID 36789)
--- Name: subaccounts_view; Type: VIEW; Schema: OrmasSchema; Owner: -
+-- TOC entry 367 (class 1259 OID 708922)
+-- Name: subaccounts_view; Type: VIEW; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE VIEW subaccounts_view AS
@@ -3479,9 +3859,11 @@ CREATE VIEW subaccounts_view AS
      JOIN status s ON ((s.status_id = subaccounts.status_id)));
 
 
+ALTER TABLE subaccounts_view OWNER TO postgres;
+
 --
--- TOC entry 367 (class 1259 OID 36794)
--- Name: taxes; Type: TABLE; Schema: OrmasSchema; Owner: -
+-- TOC entry 368 (class 1259 OID 708927)
+-- Name: taxes; Type: TABLE; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE TABLE taxes (
@@ -3494,9 +3876,11 @@ CREATE TABLE taxes (
 );
 
 
+ALTER TABLE taxes OWNER TO postgres;
+
 --
--- TOC entry 368 (class 1259 OID 36797)
--- Name: taxes_view; Type: VIEW; Schema: OrmasSchema; Owner: -
+-- TOC entry 369 (class 1259 OID 708930)
+-- Name: taxes_view; Type: VIEW; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE VIEW taxes_view AS
@@ -3509,9 +3893,11 @@ CREATE VIEW taxes_view AS
    FROM taxes;
 
 
+ALTER TABLE taxes_view OWNER TO postgres;
+
 --
--- TOC entry 369 (class 1259 OID 36801)
--- Name: timesheet; Type: TABLE; Schema: OrmasSchema; Owner: -
+-- TOC entry 370 (class 1259 OID 708934)
+-- Name: timesheet; Type: TABLE; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE TABLE timesheet (
@@ -3522,9 +3908,11 @@ CREATE TABLE timesheet (
 );
 
 
+ALTER TABLE timesheet OWNER TO postgres;
+
 --
--- TOC entry 370 (class 1259 OID 36804)
--- Name: timesheet_view; Type: VIEW; Schema: OrmasSchema; Owner: -
+-- TOC entry 371 (class 1259 OID 708937)
+-- Name: timesheet_view; Type: VIEW; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE VIEW timesheet_view AS
@@ -3539,9 +3927,11 @@ CREATE VIEW timesheet_view AS
      JOIN salaries_view s ON ((s.salary_id = timesheet.salary_id)));
 
 
+ALTER TABLE timesheet_view OWNER TO postgres;
+
 --
--- TOC entry 371 (class 1259 OID 36808)
--- Name: transport_list; Type: TABLE; Schema: OrmasSchema; Owner: -
+-- TOC entry 372 (class 1259 OID 708941)
+-- Name: transport_list; Type: TABLE; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE TABLE transport_list (
@@ -3555,9 +3945,11 @@ CREATE TABLE transport_list (
 );
 
 
+ALTER TABLE transport_list OWNER TO postgres;
+
 --
--- TOC entry 372 (class 1259 OID 36811)
--- Name: transport_list_view; Type: VIEW; Schema: OrmasSchema; Owner: -
+-- TOC entry 373 (class 1259 OID 708944)
+-- Name: transport_list_view; Type: VIEW; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE VIEW transport_list_view AS
@@ -3586,9 +3978,11 @@ CREATE VIEW transport_list_view AS
      JOIN status s ON ((s.status_id = transport_list.status_id)));
 
 
+ALTER TABLE transport_list_view OWNER TO postgres;
+
 --
--- TOC entry 373 (class 1259 OID 36816)
--- Name: transports; Type: TABLE; Schema: OrmasSchema; Owner: -
+-- TOC entry 374 (class 1259 OID 708949)
+-- Name: transports; Type: TABLE; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE TABLE transports (
@@ -3604,9 +3998,11 @@ CREATE TABLE transports (
 );
 
 
+ALTER TABLE transports OWNER TO postgres;
+
 --
--- TOC entry 374 (class 1259 OID 36819)
--- Name: transports_view; Type: VIEW; Schema: OrmasSchema; Owner: -
+-- TOC entry 375 (class 1259 OID 708952)
+-- Name: transports_view; Type: VIEW; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE VIEW transports_view AS
@@ -3645,9 +4041,11 @@ CREATE VIEW transports_view AS
      LEFT JOIN currencies c ON ((c.currency_id = transports.currency_id)));
 
 
+ALTER TABLE transports_view OWNER TO postgres;
+
 --
--- TOC entry 375 (class 1259 OID 36824)
--- Name: users_view; Type: VIEW; Schema: OrmasSchema; Owner: -
+-- TOC entry 376 (class 1259 OID 708957)
+-- Name: users_view; Type: VIEW; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE VIEW users_view AS
@@ -3665,9 +4063,11 @@ CREATE VIEW users_view AS
      JOIN roles r ON ((r.role_id = users.role_id)));
 
 
+ALTER TABLE users_view OWNER TO postgres;
+
 --
--- TOC entry 376 (class 1259 OID 36828)
--- Name: warehouse_employee; Type: TABLE; Schema: OrmasSchema; Owner: -
+-- TOC entry 377 (class 1259 OID 708961)
+-- Name: warehouse_employee; Type: TABLE; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE TABLE warehouse_employee (
@@ -3677,9 +4077,11 @@ CREATE TABLE warehouse_employee (
 );
 
 
+ALTER TABLE warehouse_employee OWNER TO postgres;
+
 --
--- TOC entry 377 (class 1259 OID 36831)
--- Name: warehouse_employee_view; Type: VIEW; Schema: OrmasSchema; Owner: -
+-- TOC entry 378 (class 1259 OID 708964)
+-- Name: warehouse_employee_view; Type: VIEW; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE VIEW warehouse_employee_view AS
@@ -3701,9 +4103,11 @@ CREATE VIEW warehouse_employee_view AS
      JOIN users u ON ((u.user_id = warehouse_employee.employee_id)));
 
 
+ALTER TABLE warehouse_employee_view OWNER TO postgres;
+
 --
--- TOC entry 378 (class 1259 OID 36836)
--- Name: warehouse_type; Type: TABLE; Schema: OrmasSchema; Owner: -
+-- TOC entry 379 (class 1259 OID 708969)
+-- Name: warehouse_type; Type: TABLE; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE TABLE warehouse_type (
@@ -3714,9 +4118,11 @@ CREATE TABLE warehouse_type (
 );
 
 
+ALTER TABLE warehouse_type OWNER TO postgres;
+
 --
--- TOC entry 379 (class 1259 OID 36839)
--- Name: warehouse_type_view; Type: VIEW; Schema: OrmasSchema; Owner: -
+-- TOC entry 380 (class 1259 OID 708972)
+-- Name: warehouse_type_view; Type: VIEW; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE VIEW warehouse_type_view AS
@@ -3727,9 +4133,11 @@ CREATE VIEW warehouse_type_view AS
    FROM warehouse_type;
 
 
+ALTER TABLE warehouse_type_view OWNER TO postgres;
+
 --
--- TOC entry 380 (class 1259 OID 36843)
--- Name: warehouse_view; Type: VIEW; Schema: OrmasSchema; Owner: -
+-- TOC entry 381 (class 1259 OID 708976)
+-- Name: warehouse_view; Type: VIEW; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE VIEW warehouse_view AS
@@ -3746,9 +4154,11 @@ CREATE VIEW warehouse_view AS
      JOIN subaccounts s ON ((s.subaccount_id = warehouse.subaccount_id)));
 
 
+ALTER TABLE warehouse_view OWNER TO postgres;
+
 --
--- TOC entry 381 (class 1259 OID 36848)
--- Name: withdrawals; Type: TABLE; Schema: OrmasSchema; Owner: -
+-- TOC entry 382 (class 1259 OID 708981)
+-- Name: withdrawals; Type: TABLE; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE TABLE withdrawals (
@@ -3760,13 +4170,16 @@ CREATE TABLE withdrawals (
     withdrawal_target character varying(60),
     currency_id integer,
     status_id integer,
-    account_id integer
+    account_id integer,
+    who character varying(100)
 );
 
 
+ALTER TABLE withdrawals OWNER TO postgres;
+
 --
--- TOC entry 382 (class 1259 OID 36851)
--- Name: withdrawals_view; Type: VIEW; Schema: OrmasSchema; Owner: -
+-- TOC entry 383 (class 1259 OID 708984)
+-- Name: withdrawals_view; Type: VIEW; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE VIEW withdrawals_view AS
@@ -3776,9 +4189,11 @@ CREATE VIEW withdrawals_view AS
     c.currency_short_name AS currency_name,
     u.user_name,
     u.user_surname,
+    u.user_phone,
     st.status_name,
     a.account_number,
     s.subaccount_number,
+    withdrawals.who,
     withdrawals.withdrawal_target,
     withdrawals.user_id,
     withdrawals.currency_id,
@@ -3793,9 +4208,11 @@ CREATE VIEW withdrawals_view AS
      LEFT JOIN accounts a ON ((a.account_id = withdrawals.account_id)));
 
 
+ALTER TABLE withdrawals_view OWNER TO postgres;
+
 --
--- TOC entry 383 (class 1259 OID 36856)
--- Name: write_off_list; Type: TABLE; Schema: OrmasSchema; Owner: -
+-- TOC entry 384 (class 1259 OID 708989)
+-- Name: write_off_list; Type: TABLE; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE TABLE write_off_list (
@@ -3809,9 +4226,11 @@ CREATE TABLE write_off_list (
 );
 
 
+ALTER TABLE write_off_list OWNER TO postgres;
+
 --
--- TOC entry 384 (class 1259 OID 36859)
--- Name: write_off_list_view; Type: VIEW; Schema: OrmasSchema; Owner: -
+-- TOC entry 385 (class 1259 OID 708992)
+-- Name: write_off_list_view; Type: VIEW; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE VIEW write_off_list_view AS
@@ -3840,9 +4259,11 @@ CREATE VIEW write_off_list_view AS
      JOIN status s ON ((s.status_id = write_off_list.status_id)));
 
 
+ALTER TABLE write_off_list_view OWNER TO postgres;
+
 --
--- TOC entry 385 (class 1259 OID 36864)
--- Name: write_off_raw_list; Type: TABLE; Schema: OrmasSchema; Owner: -
+-- TOC entry 386 (class 1259 OID 708997)
+-- Name: write_off_raw_list; Type: TABLE; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE TABLE write_off_raw_list (
@@ -3856,9 +4277,11 @@ CREATE TABLE write_off_raw_list (
 );
 
 
+ALTER TABLE write_off_raw_list OWNER TO postgres;
+
 --
--- TOC entry 386 (class 1259 OID 36867)
--- Name: write_off_raw_list_view; Type: VIEW; Schema: OrmasSchema; Owner: -
+-- TOC entry 387 (class 1259 OID 709000)
+-- Name: write_off_raw_list_view; Type: VIEW; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE VIEW write_off_raw_list_view AS
@@ -3887,9 +4310,11 @@ CREATE VIEW write_off_raw_list_view AS
      JOIN status s ON ((s.status_id = write_off_raw_list.status_id)));
 
 
+ALTER TABLE write_off_raw_list_view OWNER TO postgres;
+
 --
--- TOC entry 387 (class 1259 OID 36872)
--- Name: write_off_raws; Type: TABLE; Schema: OrmasSchema; Owner: -
+-- TOC entry 388 (class 1259 OID 709005)
+-- Name: write_off_raws; Type: TABLE; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE TABLE write_off_raws (
@@ -3905,9 +4330,11 @@ CREATE TABLE write_off_raws (
 );
 
 
+ALTER TABLE write_off_raws OWNER TO postgres;
+
 --
--- TOC entry 391 (class 1259 OID 37163)
--- Name: write_off_raws_view; Type: VIEW; Schema: OrmasSchema; Owner: -
+-- TOC entry 389 (class 1259 OID 709008)
+-- Name: write_off_raws_view; Type: VIEW; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE VIEW write_off_raws_view AS
@@ -3946,9 +4373,11 @@ CREATE VIEW write_off_raws_view AS
      LEFT JOIN currencies c ON ((c.currency_id = write_off_raws.currency_id)));
 
 
+ALTER TABLE write_off_raws_view OWNER TO postgres;
+
 --
--- TOC entry 388 (class 1259 OID 36880)
--- Name: write_offs; Type: TABLE; Schema: OrmasSchema; Owner: -
+-- TOC entry 390 (class 1259 OID 709013)
+-- Name: write_offs; Type: TABLE; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE TABLE write_offs (
@@ -3964,9 +4393,11 @@ CREATE TABLE write_offs (
 );
 
 
+ALTER TABLE write_offs OWNER TO postgres;
+
 --
--- TOC entry 390 (class 1259 OID 37158)
--- Name: write_offs_view; Type: VIEW; Schema: OrmasSchema; Owner: -
+-- TOC entry 391 (class 1259 OID 709016)
+-- Name: write_offs_view; Type: VIEW; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE VIEW write_offs_view AS
@@ -3999,9 +4430,11 @@ CREATE VIEW write_offs_view AS
      LEFT JOIN currencies c ON ((c.currency_id = write_offs.currency_id)));
 
 
+ALTER TABLE write_offs_view OWNER TO postgres;
+
 --
--- TOC entry 2817 (class 2606 OID 36889)
--- Name: access_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: -
+-- TOC entry 2817 (class 2606 OID 709022)
+-- Name: access_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: postgres
 --
 
 ALTER TABLE ONLY accesses
@@ -4009,8 +4442,8 @@ ALTER TABLE ONLY accesses
 
 
 --
--- TOC entry 2821 (class 2606 OID 36891)
--- Name: account_history_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: -
+-- TOC entry 2821 (class 2606 OID 709024)
+-- Name: account_history_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: postgres
 --
 
 ALTER TABLE ONLY account_history
@@ -4018,8 +4451,8 @@ ALTER TABLE ONLY account_history
 
 
 --
--- TOC entry 2831 (class 2606 OID 36893)
--- Name: account_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: -
+-- TOC entry 2831 (class 2606 OID 709026)
+-- Name: account_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: postgres
 --
 
 ALTER TABLE ONLY accounts
@@ -4027,8 +4460,8 @@ ALTER TABLE ONLY accounts
 
 
 --
--- TOC entry 2823 (class 2606 OID 36895)
--- Name: account_type_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: -
+-- TOC entry 2823 (class 2606 OID 709028)
+-- Name: account_type_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: postgres
 --
 
 ALTER TABLE ONLY account_type
@@ -4036,8 +4469,8 @@ ALTER TABLE ONLY account_type
 
 
 --
--- TOC entry 2825 (class 2606 OID 36897)
--- Name: accountable_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: -
+-- TOC entry 2825 (class 2606 OID 709030)
+-- Name: accountable_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: postgres
 --
 
 ALTER TABLE ONLY accountable
@@ -4045,8 +4478,8 @@ ALTER TABLE ONLY accountable
 
 
 --
--- TOC entry 2827 (class 2606 OID 36899)
--- Name: accountable_trancation_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: -
+-- TOC entry 2827 (class 2606 OID 709032)
+-- Name: accountable_trancation_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: postgres
 --
 
 ALTER TABLE ONLY accountable_transaction
@@ -4054,8 +4487,8 @@ ALTER TABLE ONLY accountable_transaction
 
 
 --
--- TOC entry 2833 (class 2606 OID 36901)
--- Name: balance_payment_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: -
+-- TOC entry 2833 (class 2606 OID 709034)
+-- Name: balance_payment_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: postgres
 --
 
 ALTER TABLE ONLY balance_payment
@@ -4063,8 +4496,8 @@ ALTER TABLE ONLY balance_payment
 
 
 --
--- TOC entry 2835 (class 2606 OID 36903)
--- Name: balance_payslip_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: -
+-- TOC entry 2835 (class 2606 OID 709036)
+-- Name: balance_payslip_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: postgres
 --
 
 ALTER TABLE ONLY balance_payslip
@@ -4072,8 +4505,8 @@ ALTER TABLE ONLY balance_payslip
 
 
 --
--- TOC entry 2841 (class 2606 OID 36905)
--- Name: balance_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: -
+-- TOC entry 2841 (class 2606 OID 709038)
+-- Name: balance_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: postgres
 --
 
 ALTER TABLE ONLY balances
@@ -4081,8 +4514,8 @@ ALTER TABLE ONLY balances
 
 
 --
--- TOC entry 2837 (class 2606 OID 36907)
--- Name: balance_refund_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: -
+-- TOC entry 2837 (class 2606 OID 709040)
+-- Name: balance_refund_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: postgres
 --
 
 ALTER TABLE ONLY balance_refund
@@ -4090,8 +4523,8 @@ ALTER TABLE ONLY balance_refund
 
 
 --
--- TOC entry 2839 (class 2606 OID 36909)
--- Name: balance_withdrawal_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: -
+-- TOC entry 2839 (class 2606 OID 709042)
+-- Name: balance_withdrawal_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: postgres
 --
 
 ALTER TABLE ONLY balance_withdrawal
@@ -4099,8 +4532,8 @@ ALTER TABLE ONLY balance_withdrawal
 
 
 --
--- TOC entry 2847 (class 2606 OID 37134)
--- Name: borrower_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: -
+-- TOC entry 2847 (class 2606 OID 709044)
+-- Name: borrower_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: postgres
 --
 
 ALTER TABLE ONLY borrowers
@@ -4108,8 +4541,8 @@ ALTER TABLE ONLY borrowers
 
 
 --
--- TOC entry 2849 (class 2606 OID 36913)
--- Name: branch_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: -
+-- TOC entry 2849 (class 2606 OID 709046)
+-- Name: branch_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: postgres
 --
 
 ALTER TABLE ONLY branches
@@ -4117,8 +4550,8 @@ ALTER TABLE ONLY branches
 
 
 --
--- TOC entry 2853 (class 2606 OID 36915)
--- Name: cashbox_employee_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: -
+-- TOC entry 2853 (class 2606 OID 709048)
+-- Name: cashbox_employee_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: postgres
 --
 
 ALTER TABLE ONLY cashbox_employee
@@ -4126,8 +4559,8 @@ ALTER TABLE ONLY cashbox_employee
 
 
 --
--- TOC entry 2851 (class 2606 OID 36917)
--- Name: cashbox_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: -
+-- TOC entry 2851 (class 2606 OID 709050)
+-- Name: cashbox_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: postgres
 --
 
 ALTER TABLE ONLY cashbox
@@ -4135,8 +4568,8 @@ ALTER TABLE ONLY cashbox
 
 
 --
--- TOC entry 2855 (class 2606 OID 36919)
--- Name: char_of_account_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: -
+-- TOC entry 2855 (class 2606 OID 709052)
+-- Name: char_of_account_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: postgres
 --
 
 ALTER TABLE ONLY chart_of_accounts
@@ -4144,8 +4577,8 @@ ALTER TABLE ONLY chart_of_accounts
 
 
 --
--- TOC entry 2857 (class 2606 OID 36921)
--- Name: client_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: -
+-- TOC entry 2857 (class 2606 OID 709054)
+-- Name: client_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: postgres
 --
 
 ALTER TABLE ONLY clients
@@ -4153,8 +4586,8 @@ ALTER TABLE ONLY clients
 
 
 --
--- TOC entry 2863 (class 2606 OID 36923)
--- Name: company_account_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: -
+-- TOC entry 2863 (class 2606 OID 709056)
+-- Name: company_account_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: postgres
 --
 
 ALTER TABLE ONLY company_account
@@ -4162,8 +4595,8 @@ ALTER TABLE ONLY company_account
 
 
 --
--- TOC entry 2865 (class 2606 OID 36925)
--- Name: company_employee_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: -
+-- TOC entry 2865 (class 2606 OID 709058)
+-- Name: company_employee_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: postgres
 --
 
 ALTER TABLE ONLY company_employee
@@ -4171,8 +4604,8 @@ ALTER TABLE ONLY company_employee
 
 
 --
--- TOC entry 2861 (class 2606 OID 36927)
--- Name: company_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: -
+-- TOC entry 2861 (class 2606 OID 709060)
+-- Name: company_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: postgres
 --
 
 ALTER TABLE ONLY companies
@@ -4180,8 +4613,8 @@ ALTER TABLE ONLY companies
 
 
 --
--- TOC entry 2867 (class 2606 OID 36929)
--- Name: consume_product_list_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: -
+-- TOC entry 2867 (class 2606 OID 709062)
+-- Name: consume_product_list_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: postgres
 --
 
 ALTER TABLE ONLY consume_product_list
@@ -4189,8 +4622,8 @@ ALTER TABLE ONLY consume_product_list
 
 
 --
--- TOC entry 2875 (class 2606 OID 36931)
--- Name: consume_product_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: -
+-- TOC entry 2875 (class 2606 OID 709064)
+-- Name: consume_product_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: postgres
 --
 
 ALTER TABLE ONLY consume_products
@@ -4198,8 +4631,8 @@ ALTER TABLE ONLY consume_products
 
 
 --
--- TOC entry 2881 (class 2606 OID 36933)
--- Name: consume_raw_list_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: -
+-- TOC entry 2881 (class 2606 OID 709066)
+-- Name: consume_raw_list_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: postgres
 --
 
 ALTER TABLE ONLY consume_raw_list
@@ -4207,8 +4640,8 @@ ALTER TABLE ONLY consume_raw_list
 
 
 --
--- TOC entry 2883 (class 2606 OID 36935)
--- Name: consume_raw_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: -
+-- TOC entry 2883 (class 2606 OID 709068)
+-- Name: consume_raw_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: postgres
 --
 
 ALTER TABLE ONLY consume_raws
@@ -4216,8 +4649,8 @@ ALTER TABLE ONLY consume_raws
 
 
 --
--- TOC entry 2885 (class 2606 OID 36937)
--- Name: creditor_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: -
+-- TOC entry 2885 (class 2606 OID 709070)
+-- Name: creditor_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: postgres
 --
 
 ALTER TABLE ONLY creditors
@@ -4225,8 +4658,8 @@ ALTER TABLE ONLY creditors
 
 
 --
--- TOC entry 2843 (class 2606 OID 36939)
--- Name: currency_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: -
+-- TOC entry 2843 (class 2606 OID 709072)
+-- Name: currency_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: postgres
 --
 
 ALTER TABLE ONLY currencies
@@ -4234,8 +4667,8 @@ ALTER TABLE ONLY currencies
 
 
 --
--- TOC entry 2887 (class 2606 OID 36941)
--- Name: division_account_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: -
+-- TOC entry 2887 (class 2606 OID 709074)
+-- Name: division_account_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: postgres
 --
 
 ALTER TABLE ONLY division_account
@@ -4243,8 +4676,8 @@ ALTER TABLE ONLY division_account
 
 
 --
--- TOC entry 2891 (class 2606 OID 36943)
--- Name: division_employee_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: -
+-- TOC entry 2891 (class 2606 OID 709076)
+-- Name: division_employee_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: postgres
 --
 
 ALTER TABLE ONLY division_employee
@@ -4252,8 +4685,8 @@ ALTER TABLE ONLY division_employee
 
 
 --
--- TOC entry 2889 (class 2606 OID 36945)
--- Name: division_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: -
+-- TOC entry 2889 (class 2606 OID 709078)
+-- Name: division_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: postgres
 --
 
 ALTER TABLE ONLY divisions
@@ -4261,8 +4694,8 @@ ALTER TABLE ONLY divisions
 
 
 --
--- TOC entry 2877 (class 2606 OID 36947)
--- Name: employee_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: -
+-- TOC entry 2877 (class 2606 OID 709080)
+-- Name: employee_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: postgres
 --
 
 ALTER TABLE ONLY employees
@@ -4270,8 +4703,8 @@ ALTER TABLE ONLY employees
 
 
 --
--- TOC entry 2893 (class 2606 OID 36949)
--- Name: employee_product_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: -
+-- TOC entry 2893 (class 2606 OID 709082)
+-- Name: employee_product_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: postgres
 --
 
 ALTER TABLE ONLY employee_product
@@ -4279,8 +4712,8 @@ ALTER TABLE ONLY employee_product
 
 
 --
--- TOC entry 2898 (class 2606 OID 36951)
--- Name: entry_operation_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: -
+-- TOC entry 2898 (class 2606 OID 709084)
+-- Name: entry_operation_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: postgres
 --
 
 ALTER TABLE ONLY entry_operation
@@ -4288,8 +4721,8 @@ ALTER TABLE ONLY entry_operation
 
 
 --
--- TOC entry 2896 (class 2606 OID 36953)
--- Name: entry_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: -
+-- TOC entry 2896 (class 2606 OID 709086)
+-- Name: entry_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: postgres
 --
 
 ALTER TABLE ONLY entries
@@ -4297,8 +4730,8 @@ ALTER TABLE ONLY entries
 
 
 --
--- TOC entry 2900 (class 2606 OID 36955)
--- Name: entry_routing_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: -
+-- TOC entry 2900 (class 2606 OID 709088)
+-- Name: entry_routing_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: postgres
 --
 
 ALTER TABLE ONLY entry_routing
@@ -4306,8 +4739,8 @@ ALTER TABLE ONLY entry_routing
 
 
 --
--- TOC entry 2902 (class 2606 OID 36957)
--- Name: entry_subaccount_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: -
+-- TOC entry 2902 (class 2606 OID 709090)
+-- Name: entry_subaccount_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: postgres
 --
 
 ALTER TABLE ONLY entry_subaccount
@@ -4315,8 +4748,8 @@ ALTER TABLE ONLY entry_subaccount
 
 
 --
--- TOC entry 2904 (class 2606 OID 36959)
--- Name: financial_report_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: -
+-- TOC entry 2904 (class 2606 OID 709092)
+-- Name: financial_report_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: postgres
 --
 
 ALTER TABLE ONLY financial_report
@@ -4324,8 +4757,8 @@ ALTER TABLE ONLY financial_report
 
 
 --
--- TOC entry 2906 (class 2606 OID 36961)
--- Name: inventorization_list_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: -
+-- TOC entry 2906 (class 2606 OID 709094)
+-- Name: inventorization_list_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: postgres
 --
 
 ALTER TABLE ONLY inventorization_list
@@ -4333,8 +4766,8 @@ ALTER TABLE ONLY inventorization_list
 
 
 --
--- TOC entry 2908 (class 2606 OID 36963)
--- Name: inventorization_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: -
+-- TOC entry 2908 (class 2606 OID 709096)
+-- Name: inventorization_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: postgres
 --
 
 ALTER TABLE ONLY inventorizations
@@ -4342,8 +4775,8 @@ ALTER TABLE ONLY inventorizations
 
 
 --
--- TOC entry 2910 (class 2606 OID 36965)
--- Name: jobprice_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: -
+-- TOC entry 2910 (class 2606 OID 709098)
+-- Name: jobprice_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: postgres
 --
 
 ALTER TABLE ONLY jobprice
@@ -4351,8 +4784,8 @@ ALTER TABLE ONLY jobprice
 
 
 --
--- TOC entry 2912 (class 2606 OID 36967)
--- Name: jobsheet_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: -
+-- TOC entry 2912 (class 2606 OID 709100)
+-- Name: jobsheet_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: postgres
 --
 
 ALTER TABLE ONLY jobsheet
@@ -4360,8 +4793,8 @@ ALTER TABLE ONLY jobsheet
 
 
 --
--- TOC entry 2869 (class 2606 OID 36969)
--- Name: measure_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: -
+-- TOC entry 2869 (class 2606 OID 709102)
+-- Name: measure_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: postgres
 --
 
 ALTER TABLE ONLY measures
@@ -4369,8 +4802,8 @@ ALTER TABLE ONLY measures
 
 
 --
--- TOC entry 2815 (class 2606 OID 36971)
--- Name: menu_item_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: -
+-- TOC entry 2815 (class 2606 OID 709104)
+-- Name: menu_item_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: postgres
 --
 
 ALTER TABLE ONLY access_items
@@ -4378,8 +4811,8 @@ ALTER TABLE ONLY access_items
 
 
 --
--- TOC entry 2914 (class 2606 OID 36973)
--- Name: net_cost_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: -
+-- TOC entry 2914 (class 2606 OID 709106)
+-- Name: net_cost_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: postgres
 --
 
 ALTER TABLE ONLY net_cost
@@ -4387,8 +4820,8 @@ ALTER TABLE ONLY net_cost
 
 
 --
--- TOC entry 2916 (class 2606 OID 36975)
--- Name: order_list_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: -
+-- TOC entry 2916 (class 2606 OID 709108)
+-- Name: order_list_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: postgres
 --
 
 ALTER TABLE ONLY order_list
@@ -4396,8 +4829,8 @@ ALTER TABLE ONLY order_list
 
 
 --
--- TOC entry 2924 (class 2606 OID 36977)
--- Name: order_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: -
+-- TOC entry 2924 (class 2606 OID 709110)
+-- Name: order_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: postgres
 --
 
 ALTER TABLE ONLY orders
@@ -4405,8 +4838,8 @@ ALTER TABLE ONLY orders
 
 
 --
--- TOC entry 2918 (class 2606 OID 36979)
--- Name: order_raw_list_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: -
+-- TOC entry 2918 (class 2606 OID 709112)
+-- Name: order_raw_list_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: postgres
 --
 
 ALTER TABLE ONLY order_raw_list
@@ -4414,8 +4847,8 @@ ALTER TABLE ONLY order_raw_list
 
 
 --
--- TOC entry 2920 (class 2606 OID 36981)
--- Name: order_raw_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: -
+-- TOC entry 2920 (class 2606 OID 709114)
+-- Name: order_raw_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: postgres
 --
 
 ALTER TABLE ONLY order_raws
@@ -4423,8 +4856,8 @@ ALTER TABLE ONLY order_raws
 
 
 --
--- TOC entry 2926 (class 2606 OID 36983)
--- Name: payment_employee_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: -
+-- TOC entry 2926 (class 2606 OID 709116)
+-- Name: payment_employee_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: postgres
 --
 
 ALTER TABLE ONLY payment_employee
@@ -4432,8 +4865,8 @@ ALTER TABLE ONLY payment_employee
 
 
 --
--- TOC entry 2928 (class 2606 OID 36985)
--- Name: payment_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: -
+-- TOC entry 2928 (class 2606 OID 709118)
+-- Name: payment_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: postgres
 --
 
 ALTER TABLE ONLY payments
@@ -4441,8 +4874,8 @@ ALTER TABLE ONLY payments
 
 
 --
--- TOC entry 2930 (class 2606 OID 36987)
--- Name: payslip_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: -
+-- TOC entry 2930 (class 2606 OID 709120)
+-- Name: payslip_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: postgres
 --
 
 ALTER TABLE ONLY payslips
@@ -4450,8 +4883,8 @@ ALTER TABLE ONLY payslips
 
 
 --
--- TOC entry 2932 (class 2606 OID 36989)
--- Name: percent_rate_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: -
+-- TOC entry 2932 (class 2606 OID 709122)
+-- Name: percent_rate_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: postgres
 --
 
 ALTER TABLE ONLY percent_rate
@@ -4459,8 +4892,8 @@ ALTER TABLE ONLY percent_rate
 
 
 --
--- TOC entry 2934 (class 2606 OID 36991)
--- Name: photo_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: -
+-- TOC entry 2934 (class 2606 OID 709124)
+-- Name: photo_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: postgres
 --
 
 ALTER TABLE ONLY photos
@@ -4468,8 +4901,8 @@ ALTER TABLE ONLY photos
 
 
 --
--- TOC entry 2879 (class 2606 OID 36993)
--- Name: position_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: -
+-- TOC entry 2879 (class 2606 OID 709126)
+-- Name: position_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: postgres
 --
 
 ALTER TABLE ONLY positions
@@ -4477,8 +4910,8 @@ ALTER TABLE ONLY positions
 
 
 --
--- TOC entry 2936 (class 2606 OID 36995)
--- Name: price_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: -
+-- TOC entry 2936 (class 2606 OID 709128)
+-- Name: price_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: postgres
 --
 
 ALTER TABLE ONLY prices
@@ -4486,8 +4919,8 @@ ALTER TABLE ONLY prices
 
 
 --
--- TOC entry 2938 (class 2606 OID 36997)
--- Name: product_branch_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: -
+-- TOC entry 2938 (class 2606 OID 709130)
+-- Name: product_branch_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: postgres
 --
 
 ALTER TABLE ONLY product_branch
@@ -4495,8 +4928,8 @@ ALTER TABLE ONLY product_branch
 
 
 --
--- TOC entry 2871 (class 2606 OID 36999)
--- Name: product_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: -
+-- TOC entry 2871 (class 2606 OID 709132)
+-- Name: product_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: postgres
 --
 
 ALTER TABLE ONLY products
@@ -4504,8 +4937,8 @@ ALTER TABLE ONLY products
 
 
 --
--- TOC entry 2940 (class 2606 OID 37001)
--- Name: product_type_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: -
+-- TOC entry 2940 (class 2606 OID 709134)
+-- Name: product_type_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: postgres
 --
 
 ALTER TABLE ONLY product_type
@@ -4513,8 +4946,8 @@ ALTER TABLE ONLY product_type
 
 
 --
--- TOC entry 2944 (class 2606 OID 37003)
--- Name: production_consume_raw_list_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: -
+-- TOC entry 2944 (class 2606 OID 709136)
+-- Name: production_consume_raw_list_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: postgres
 --
 
 ALTER TABLE ONLY production_consume_raw_list
@@ -4522,8 +4955,8 @@ ALTER TABLE ONLY production_consume_raw_list
 
 
 --
--- TOC entry 2946 (class 2606 OID 37005)
--- Name: production_consume_raw_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: -
+-- TOC entry 2946 (class 2606 OID 709138)
+-- Name: production_consume_raw_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: postgres
 --
 
 ALTER TABLE ONLY production_consume_raws
@@ -4531,8 +4964,8 @@ ALTER TABLE ONLY production_consume_raws
 
 
 --
--- TOC entry 2948 (class 2606 OID 37007)
--- Name: production_list_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: -
+-- TOC entry 2948 (class 2606 OID 709140)
+-- Name: production_list_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: postgres
 --
 
 ALTER TABLE ONLY production_list
@@ -4540,8 +4973,8 @@ ALTER TABLE ONLY production_list
 
 
 --
--- TOC entry 2942 (class 2606 OID 37009)
--- Name: production_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: -
+-- TOC entry 2942 (class 2606 OID 709142)
+-- Name: production_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: postgres
 --
 
 ALTER TABLE ONLY production
@@ -4549,8 +4982,8 @@ ALTER TABLE ONLY production
 
 
 --
--- TOC entry 2952 (class 2606 OID 37011)
--- Name: production_plan_list_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: -
+-- TOC entry 2952 (class 2606 OID 709144)
+-- Name: production_plan_list_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: postgres
 --
 
 ALTER TABLE ONLY production_plan_list
@@ -4558,8 +4991,8 @@ ALTER TABLE ONLY production_plan_list
 
 
 --
--- TOC entry 2950 (class 2606 OID 37013)
--- Name: production_plan_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: -
+-- TOC entry 2950 (class 2606 OID 709146)
+-- Name: production_plan_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: postgres
 --
 
 ALTER TABLE ONLY production_plan
@@ -4567,8 +5000,8 @@ ALTER TABLE ONLY production_plan
 
 
 --
--- TOC entry 2954 (class 2606 OID 37015)
--- Name: production_stock_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: -
+-- TOC entry 2954 (class 2606 OID 709148)
+-- Name: production_stock_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: postgres
 --
 
 ALTER TABLE ONLY production_stock
@@ -4576,8 +5009,8 @@ ALTER TABLE ONLY production_stock
 
 
 --
--- TOC entry 2922 (class 2606 OID 37017)
--- Name: purveyor_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: -
+-- TOC entry 2922 (class 2606 OID 709150)
+-- Name: purveyor_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: postgres
 --
 
 ALTER TABLE ONLY purveyors
@@ -4585,8 +5018,8 @@ ALTER TABLE ONLY purveyors
 
 
 --
--- TOC entry 2958 (class 2606 OID 37019)
--- Name: receipt_product_list_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: -
+-- TOC entry 2958 (class 2606 OID 709152)
+-- Name: receipt_product_list_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: postgres
 --
 
 ALTER TABLE ONLY receipt_product_list
@@ -4594,8 +5027,8 @@ ALTER TABLE ONLY receipt_product_list
 
 
 --
--- TOC entry 2960 (class 2606 OID 37021)
--- Name: receipt_product_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: -
+-- TOC entry 2960 (class 2606 OID 709154)
+-- Name: receipt_product_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: postgres
 --
 
 ALTER TABLE ONLY receipt_products
@@ -4603,8 +5036,8 @@ ALTER TABLE ONLY receipt_products
 
 
 --
--- TOC entry 2962 (class 2606 OID 37023)
--- Name: refund_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: -
+-- TOC entry 2962 (class 2606 OID 709156)
+-- Name: refund_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: postgres
 --
 
 ALTER TABLE ONLY refunds
@@ -4612,8 +5045,8 @@ ALTER TABLE ONLY refunds
 
 
 --
--- TOC entry 2859 (class 2606 OID 37025)
--- Name: region_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: -
+-- TOC entry 2859 (class 2606 OID 709158)
+-- Name: region_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: postgres
 --
 
 ALTER TABLE ONLY locations
@@ -4621,8 +5054,8 @@ ALTER TABLE ONLY locations
 
 
 --
--- TOC entry 2964 (class 2606 OID 37027)
--- Name: relarion_type_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: -
+-- TOC entry 2964 (class 2606 OID 709160)
+-- Name: relarion_type_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: postgres
 --
 
 ALTER TABLE ONLY relation_type
@@ -4630,8 +5063,8 @@ ALTER TABLE ONLY relation_type
 
 
 --
--- TOC entry 2966 (class 2606 OID 37029)
--- Name: relation_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: -
+-- TOC entry 2966 (class 2606 OID 709162)
+-- Name: relation_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: postgres
 --
 
 ALTER TABLE ONLY relations
@@ -4639,8 +5072,8 @@ ALTER TABLE ONLY relations
 
 
 --
--- TOC entry 2968 (class 2606 OID 37031)
--- Name: return_list_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: -
+-- TOC entry 2968 (class 2606 OID 709164)
+-- Name: return_list_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: postgres
 --
 
 ALTER TABLE ONLY return_list
@@ -4648,8 +5081,8 @@ ALTER TABLE ONLY return_list
 
 
 --
--- TOC entry 2970 (class 2606 OID 37033)
--- Name: return_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: -
+-- TOC entry 2970 (class 2606 OID 709166)
+-- Name: return_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: postgres
 --
 
 ALTER TABLE ONLY returns
@@ -4657,8 +5090,8 @@ ALTER TABLE ONLY returns
 
 
 --
--- TOC entry 2819 (class 2606 OID 37035)
--- Name: role_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: -
+-- TOC entry 2819 (class 2606 OID 709168)
+-- Name: role_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: postgres
 --
 
 ALTER TABLE ONLY roles
@@ -4666,8 +5099,8 @@ ALTER TABLE ONLY roles
 
 
 --
--- TOC entry 2972 (class 2606 OID 37037)
--- Name: salary_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: -
+-- TOC entry 2972 (class 2606 OID 709170)
+-- Name: salary_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: postgres
 --
 
 ALTER TABLE ONLY salaries
@@ -4675,8 +5108,8 @@ ALTER TABLE ONLY salaries
 
 
 --
--- TOC entry 2974 (class 2606 OID 37039)
--- Name: salary_type_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: -
+-- TOC entry 2974 (class 2606 OID 709172)
+-- Name: salary_type_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: postgres
 --
 
 ALTER TABLE ONLY salary_type
@@ -4684,8 +5117,8 @@ ALTER TABLE ONLY salary_type
 
 
 --
--- TOC entry 2976 (class 2606 OID 37041)
--- Name: shareholder_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: -
+-- TOC entry 2976 (class 2606 OID 709174)
+-- Name: shareholder_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: postgres
 --
 
 ALTER TABLE ONLY shareholders
@@ -4693,8 +5126,8 @@ ALTER TABLE ONLY shareholders
 
 
 --
--- TOC entry 2978 (class 2606 OID 37043)
--- Name: specification_list_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: -
+-- TOC entry 2978 (class 2606 OID 709176)
+-- Name: specification_list_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: postgres
 --
 
 ALTER TABLE ONLY specification_list
@@ -4702,8 +5135,8 @@ ALTER TABLE ONLY specification_list
 
 
 --
--- TOC entry 2980 (class 2606 OID 37045)
--- Name: specification_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: -
+-- TOC entry 2980 (class 2606 OID 709178)
+-- Name: specification_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: postgres
 --
 
 ALTER TABLE ONLY specifications
@@ -4711,8 +5144,8 @@ ALTER TABLE ONLY specifications
 
 
 --
--- TOC entry 2984 (class 2606 OID 37047)
--- Name: spoilage_list_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: -
+-- TOC entry 2984 (class 2606 OID 709180)
+-- Name: spoilage_list_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: postgres
 --
 
 ALTER TABLE ONLY spoilage_list
@@ -4720,8 +5153,8 @@ ALTER TABLE ONLY spoilage_list
 
 
 --
--- TOC entry 2982 (class 2606 OID 37049)
--- Name: spoilage_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: -
+-- TOC entry 2982 (class 2606 OID 709182)
+-- Name: spoilage_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: postgres
 --
 
 ALTER TABLE ONLY spoilage
@@ -4729,8 +5162,8 @@ ALTER TABLE ONLY spoilage
 
 
 --
--- TOC entry 2986 (class 2606 OID 37051)
--- Name: state_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: -
+-- TOC entry 2986 (class 2606 OID 709184)
+-- Name: state_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: postgres
 --
 
 ALTER TABLE ONLY state
@@ -4738,8 +5171,8 @@ ALTER TABLE ONLY state
 
 
 --
--- TOC entry 2873 (class 2606 OID 37053)
--- Name: status_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: -
+-- TOC entry 2873 (class 2606 OID 709186)
+-- Name: status_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: postgres
 --
 
 ALTER TABLE ONLY status
@@ -4747,8 +5180,8 @@ ALTER TABLE ONLY status
 
 
 --
--- TOC entry 2988 (class 2606 OID 37055)
--- Name: status_rule_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: -
+-- TOC entry 2988 (class 2606 OID 709188)
+-- Name: status_rule_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: postgres
 --
 
 ALTER TABLE ONLY status_rule
@@ -4756,8 +5189,8 @@ ALTER TABLE ONLY status_rule
 
 
 --
--- TOC entry 2992 (class 2606 OID 37057)
--- Name: stock_history_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: -
+-- TOC entry 2992 (class 2606 OID 709190)
+-- Name: stock_history_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: postgres
 --
 
 ALTER TABLE ONLY stock_history
@@ -4765,8 +5198,8 @@ ALTER TABLE ONLY stock_history
 
 
 --
--- TOC entry 2990 (class 2606 OID 37059)
--- Name: stock_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: -
+-- TOC entry 2990 (class 2606 OID 709192)
+-- Name: stock_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: postgres
 --
 
 ALTER TABLE ONLY stock
@@ -4774,8 +5207,8 @@ ALTER TABLE ONLY stock
 
 
 --
--- TOC entry 2994 (class 2606 OID 37061)
--- Name: stock_transfer_list_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: -
+-- TOC entry 2994 (class 2606 OID 709194)
+-- Name: stock_transfer_list_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: postgres
 --
 
 ALTER TABLE ONLY stock_transfer_list
@@ -4783,8 +5216,8 @@ ALTER TABLE ONLY stock_transfer_list
 
 
 --
--- TOC entry 2996 (class 2606 OID 37063)
--- Name: stock_transfers_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: -
+-- TOC entry 2996 (class 2606 OID 709196)
+-- Name: stock_transfers_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: postgres
 --
 
 ALTER TABLE ONLY stock_transfers
@@ -4792,8 +5225,8 @@ ALTER TABLE ONLY stock_transfers
 
 
 --
--- TOC entry 2998 (class 2606 OID 37065)
--- Name: subaccount_history_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: -
+-- TOC entry 2998 (class 2606 OID 709198)
+-- Name: subaccount_history_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: postgres
 --
 
 ALTER TABLE ONLY subaccount_history
@@ -4801,8 +5234,8 @@ ALTER TABLE ONLY subaccount_history
 
 
 --
--- TOC entry 2845 (class 2606 OID 37067)
--- Name: subaccount_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: -
+-- TOC entry 2845 (class 2606 OID 709200)
+-- Name: subaccount_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: postgres
 --
 
 ALTER TABLE ONLY subaccounts
@@ -4810,8 +5243,8 @@ ALTER TABLE ONLY subaccounts
 
 
 --
--- TOC entry 3000 (class 2606 OID 37069)
--- Name: tax_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: -
+-- TOC entry 3000 (class 2606 OID 709202)
+-- Name: tax_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: postgres
 --
 
 ALTER TABLE ONLY taxes
@@ -4819,8 +5252,8 @@ ALTER TABLE ONLY taxes
 
 
 --
--- TOC entry 3002 (class 2606 OID 37071)
--- Name: timesheet_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: -
+-- TOC entry 3002 (class 2606 OID 709204)
+-- Name: timesheet_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: postgres
 --
 
 ALTER TABLE ONLY timesheet
@@ -4828,8 +5261,8 @@ ALTER TABLE ONLY timesheet
 
 
 --
--- TOC entry 3004 (class 2606 OID 37073)
--- Name: transport_list_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: -
+-- TOC entry 3004 (class 2606 OID 709206)
+-- Name: transport_list_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: postgres
 --
 
 ALTER TABLE ONLY transport_list
@@ -4837,8 +5270,8 @@ ALTER TABLE ONLY transport_list
 
 
 --
--- TOC entry 3006 (class 2606 OID 37075)
--- Name: transport_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: -
+-- TOC entry 3006 (class 2606 OID 709208)
+-- Name: transport_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: postgres
 --
 
 ALTER TABLE ONLY transports
@@ -4846,8 +5279,8 @@ ALTER TABLE ONLY transports
 
 
 --
--- TOC entry 2829 (class 2606 OID 37077)
--- Name: user_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: -
+-- TOC entry 2829 (class 2606 OID 709210)
+-- Name: user_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: postgres
 --
 
 ALTER TABLE ONLY users
@@ -4855,8 +5288,8 @@ ALTER TABLE ONLY users
 
 
 --
--- TOC entry 3008 (class 2606 OID 37079)
--- Name: warehouse_employee_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: -
+-- TOC entry 3008 (class 2606 OID 709212)
+-- Name: warehouse_employee_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: postgres
 --
 
 ALTER TABLE ONLY warehouse_employee
@@ -4864,8 +5297,8 @@ ALTER TABLE ONLY warehouse_employee
 
 
 --
--- TOC entry 2956 (class 2606 OID 37081)
--- Name: warehouse_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: -
+-- TOC entry 2956 (class 2606 OID 709214)
+-- Name: warehouse_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: postgres
 --
 
 ALTER TABLE ONLY warehouse
@@ -4873,8 +5306,8 @@ ALTER TABLE ONLY warehouse
 
 
 --
--- TOC entry 3010 (class 2606 OID 37083)
--- Name: warehouse_type_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: -
+-- TOC entry 3010 (class 2606 OID 709216)
+-- Name: warehouse_type_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: postgres
 --
 
 ALTER TABLE ONLY warehouse_type
@@ -4882,8 +5315,8 @@ ALTER TABLE ONLY warehouse_type
 
 
 --
--- TOC entry 3018 (class 2606 OID 37085)
--- Name: wite_off_raw_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: -
+-- TOC entry 3018 (class 2606 OID 709218)
+-- Name: wite_off_raw_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: postgres
 --
 
 ALTER TABLE ONLY write_off_raws
@@ -4891,8 +5324,8 @@ ALTER TABLE ONLY write_off_raws
 
 
 --
--- TOC entry 3012 (class 2606 OID 37087)
--- Name: withdrawal_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: -
+-- TOC entry 3012 (class 2606 OID 709220)
+-- Name: withdrawal_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: postgres
 --
 
 ALTER TABLE ONLY withdrawals
@@ -4900,8 +5333,8 @@ ALTER TABLE ONLY withdrawals
 
 
 --
--- TOC entry 3014 (class 2606 OID 37089)
--- Name: write_off_list_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: -
+-- TOC entry 3014 (class 2606 OID 709222)
+-- Name: write_off_list_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: postgres
 --
 
 ALTER TABLE ONLY write_off_list
@@ -4909,8 +5342,8 @@ ALTER TABLE ONLY write_off_list
 
 
 --
--- TOC entry 3020 (class 2606 OID 37091)
--- Name: write_off_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: -
+-- TOC entry 3020 (class 2606 OID 709224)
+-- Name: write_off_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: postgres
 --
 
 ALTER TABLE ONLY write_offs
@@ -4918,8 +5351,8 @@ ALTER TABLE ONLY write_offs
 
 
 --
--- TOC entry 3016 (class 2606 OID 37093)
--- Name: write_off_raw_list_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: -
+-- TOC entry 3016 (class 2606 OID 709226)
+-- Name: write_off_raw_list_pkey; Type: CONSTRAINT; Schema: OrmasSchema; Owner: postgres
 --
 
 ALTER TABLE ONLY write_off_raw_list
@@ -4927,16 +5360,16 @@ ALTER TABLE ONLY write_off_raw_list
 
 
 --
--- TOC entry 2894 (class 1259 OID 37094)
--- Name: entry_date_index; Type: INDEX; Schema: OrmasSchema; Owner: -
+-- TOC entry 2894 (class 1259 OID 709227)
+-- Name: entry_date_index; Type: INDEX; Schema: OrmasSchema; Owner: postgres
 --
 
 CREATE INDEX entry_date_index ON entries USING btree (entry_date DESC);
 
 
 --
--- TOC entry 3021 (class 2606 OID 37095)
--- Name: access_fkey; Type: FK CONSTRAINT; Schema: OrmasSchema; Owner: -
+-- TOC entry 3021 (class 2606 OID 709228)
+-- Name: access_fkey; Type: FK CONSTRAINT; Schema: OrmasSchema; Owner: postgres
 --
 
 ALTER TABLE ONLY accesses
@@ -4944,8 +5377,8 @@ ALTER TABLE ONLY accesses
 
 
 --
--- TOC entry 3022 (class 2606 OID 37100)
--- Name: balance_subaccount_fkey; Type: FK CONSTRAINT; Schema: OrmasSchema; Owner: -
+-- TOC entry 3022 (class 2606 OID 709233)
+-- Name: balance_subaccount_fkey; Type: FK CONSTRAINT; Schema: OrmasSchema; Owner: postgres
 --
 
 ALTER TABLE ONLY balances
@@ -4953,8 +5386,8 @@ ALTER TABLE ONLY balances
 
 
 --
--- TOC entry 3023 (class 2606 OID 37105)
--- Name: balance_user_fkey; Type: FK CONSTRAINT; Schema: OrmasSchema; Owner: -
+-- TOC entry 3023 (class 2606 OID 709238)
+-- Name: balance_user_fkey; Type: FK CONSTRAINT; Schema: OrmasSchema; Owner: postgres
 --
 
 ALTER TABLE ONLY balances
@@ -4962,8 +5395,8 @@ ALTER TABLE ONLY balances
 
 
 --
--- TOC entry 3024 (class 2606 OID 37110)
--- Name: client_fkey; Type: FK CONSTRAINT; Schema: OrmasSchema; Owner: -
+-- TOC entry 3024 (class 2606 OID 709243)
+-- Name: client_fkey; Type: FK CONSTRAINT; Schema: OrmasSchema; Owner: postgres
 --
 
 ALTER TABLE ONLY clients
@@ -4971,8 +5404,8 @@ ALTER TABLE ONLY clients
 
 
 --
--- TOC entry 3025 (class 2606 OID 37115)
--- Name: employee_fkey; Type: FK CONSTRAINT; Schema: OrmasSchema; Owner: -
+-- TOC entry 3025 (class 2606 OID 709248)
+-- Name: employee_fkey; Type: FK CONSTRAINT; Schema: OrmasSchema; Owner: postgres
 --
 
 ALTER TABLE ONLY employees
@@ -4980,8 +5413,8 @@ ALTER TABLE ONLY employees
 
 
 --
--- TOC entry 3026 (class 2606 OID 37120)
--- Name: purveyor_fkey; Type: FK CONSTRAINT; Schema: OrmasSchema; Owner: -
+-- TOC entry 3026 (class 2606 OID 709253)
+-- Name: purveyor_fkey; Type: FK CONSTRAINT; Schema: OrmasSchema; Owner: postgres
 --
 
 ALTER TABLE ONLY purveyors
@@ -4989,8 +5422,8 @@ ALTER TABLE ONLY purveyors
 
 
 --
--- TOC entry 3027 (class 2606 OID 37125)
--- Name: salary_fkey; Type: FK CONSTRAINT; Schema: OrmasSchema; Owner: -
+-- TOC entry 3027 (class 2606 OID 709258)
+-- Name: salary_fkey; Type: FK CONSTRAINT; Schema: OrmasSchema; Owner: postgres
 --
 
 ALTER TABLE ONLY salaries
@@ -5000,7 +5433,7 @@ ALTER TABLE ONLY salaries
 --
 -- TOC entry 3252 (class 0 OID 0)
 -- Dependencies: 7
--- Name: OrmasSchema; Type: ACL; Schema: -; Owner: -
+-- Name: OrmasSchema; Type: ACL; Schema: -; Owner: postgres
 --
 
 REVOKE ALL ON SCHEMA "OrmasSchema" FROM PUBLIC;
@@ -5012,7 +5445,7 @@ GRANT ALL ON SCHEMA "OrmasSchema" TO PUBLIC;
 --
 -- TOC entry 3254 (class 0 OID 0)
 -- Dependencies: 8
--- Name: public; Type: ACL; Schema: -; Owner: -
+-- Name: public; Type: ACL; Schema: -; Owner: postgres
 --
 
 REVOKE ALL ON SCHEMA public FROM PUBLIC;
@@ -5021,7 +5454,7 @@ GRANT ALL ON SCHEMA public TO postgres;
 GRANT ALL ON SCHEMA public TO PUBLIC;
 
 
--- Completed on 2019-07-16 12:15:41
+-- Completed on 2019-09-13 20:24:08
 
 --
 -- PostgreSQL database dump complete

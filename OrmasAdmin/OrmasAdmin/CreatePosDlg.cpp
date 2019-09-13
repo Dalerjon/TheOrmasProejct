@@ -15,6 +15,9 @@ CreatePosDlg::CreatePosDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, QWi
 	nameEdit->setMaxLength(50);
 	if (true == updateFlag)
 	{
+		DataForm *parentDataForm = (DataForm*)parentForm;
+		itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
+		mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
 		QObject::connect(okBtn, &QPushButton::released, this, &CreatePosDlg::EditPosition);
 	}
 	else
@@ -108,8 +111,7 @@ void CreatePosDlg::EditPosition()
 				{
 					if (!parentDataForm->IsClosed())
 					{
-						QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
-						QModelIndex mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
+						
 						itemModel->item(mIndex.row(), 1)->setText(position->GetName().c_str());
 						emit itemModel->dataChanged(mIndex, mIndex);
 					}

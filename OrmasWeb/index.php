@@ -24,6 +24,10 @@
 		{
 			$_SESSION['role_id_expeditor']=$role_row['role_id']; 
 		}
+		if($role_row['role_name'] == "STOCK INSPECTOR")
+		{
+			$_SESSION['role_id_stock_inspector']=$role_row['role_id']; 
+		}
 	}
 ?> 
 
@@ -94,6 +98,7 @@ if (isset($_POST['phone']) && isset($_POST['password']))
 					$_SESSION['id']=$user_row['user_id'];
 					$_SESSION['role_id']=$user_row['role_id'];
 					$_SESSION['password']=$user_row['password'];
+					echo ($user_row['role_id']);
 					header("location:menu.php");
 				}
 				else

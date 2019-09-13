@@ -16,6 +16,9 @@ CreateAcsItemDlg::CreateAcsItemDlg(BusinessLayer::OrmasBL *ormasBL, bool updateF
 	divisionEdit->setMaxLength(20);
 	if (true == updateFlag)
 	{
+		DataForm *parentDataForm = (DataForm*)parentForm;
+		itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
+		mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
 		QObject::connect(okBtn, &QPushButton::released, this, &CreateAcsItemDlg::EditAccessItem);
 	}
 	else
@@ -121,8 +124,6 @@ void CreateAcsItemDlg::EditAccessItem()
 				{
 					if (!parentDataForm->IsClosed())
 					{
-						QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
-						QModelIndex mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
 						itemModel->item(mIndex.row(), 1)->setText(accessItem->GetNameEng().c_str());
 						itemModel->item(mIndex.row(), 2)->setText(accessItem->GetNameRu().c_str());
 						itemModel->item(mIndex.row(), 3)->setText(accessItem->GetDivision().c_str());

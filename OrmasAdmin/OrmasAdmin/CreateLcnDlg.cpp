@@ -17,6 +17,9 @@ CreateLcnDlg::CreateLcnDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, QWi
 	parentForm = parent;
 	if (true == updateFlag)
 	{
+		DataForm *parentDataForm = (DataForm*)parentForm;
+		itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
+		mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
 		QObject::connect(okBtn, &QPushButton::released, this, &CreateLcnDlg::EditLocation);
 	}
 	else
@@ -130,8 +133,6 @@ void CreateLcnDlg::EditLocation()
 				{
 					if (!parentDataForm->IsClosed())
 					{
-						QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
-						QModelIndex mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
 						itemModel->item(mIndex.row(), 1)->setText(location->GetCountryName().c_str());
 						itemModel->item(mIndex.row(), 2)->setText(location->GetCountryCode().c_str());
 						itemModel->item(mIndex.row(), 3)->setText(location->GetRegionName().c_str());

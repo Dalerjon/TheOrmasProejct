@@ -2,6 +2,7 @@
 #define CREATEMSRDLG_H
 #include "ui_CreateMsrDlg.h"
 #include "OrmasBL.h"
+#include <QStandardItemModel>
 
 class CreateMsrDlg :public QDialog, public Ui::CreateMeasure
 {
@@ -23,5 +24,7 @@ private:
 	void FillEditElements(QString, QString, int);
 	QIntValidator *vInt = nullptr;
 	QWidget* parentForm;
+	QStandardItemModel *itemModel;
+	QModelIndex mIndex;
 };
 #endif //CREATEMSRDLG_H

@@ -3,6 +3,7 @@
 #include "ui_CreateNetCDlg.h"
 #include "OrmasBL.h"
 #include "MainForm.h"
+#include <QStandardItemModel>
 
 class CreateNetCDlg : public QDialog, public Ui::CreateNetCost
 {
@@ -31,6 +32,8 @@ private:
 	void InitComboBox();
 	QWidget* parentForm;
 	MainForm* mainForm;
+	QStandardItemModel *itemModel;
+	QModelIndex mIndex;
 };
 
 #endif //CREATENETCDLG_H

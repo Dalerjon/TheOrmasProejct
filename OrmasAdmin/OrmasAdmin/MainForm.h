@@ -109,6 +109,7 @@ private slots :
 	void ProfitabilityReportForm();
 	void SalesReportForm();
 	void AccountCardForm();
+	void WarehouseTurnoverForm();
 
 	void OpenCompanyForm();
 	void OpenCurrencyForm();

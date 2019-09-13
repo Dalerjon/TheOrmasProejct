@@ -3,6 +3,7 @@
 #include "ui_CreatePrcDlg.h"
 #include "OrmasBL.h"
 #include "MainForm.h"
+#include <QStandardItemModel>
 
 class CreatePrcDlg : public QDialog, public Ui::CreatePrice
 {
@@ -31,6 +32,8 @@ private:
 	void InitComboBox();
 	QWidget* parentForm;
 	MainForm* mainForm;
+	QStandardItemModel *itemModel;
+	QModelIndex mIndex;
 };
 
 #endif //CREATEPRCDLG_H

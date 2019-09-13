@@ -25,6 +25,9 @@ CreateStockTrDlg::CreateStockTrDlg(BusinessLayer::OrmasBL *ormasBL, bool updateF
 	sumLb->setVisible(false);
 	if (true == updateFlag)
 	{
+		DataForm *parentDataForm = (DataForm*)parentForm;
+		itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
+		mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
 		QObject::connect(okBtn, &QPushButton::released, this, &CreateStockTrDlg::EditStockTransfer);
 	}
 	else
@@ -101,8 +104,8 @@ void CreateStockTrDlg::FillEditElements(int rEmployeeID, QString rDate, QString 
 		execDateEdit->setDateTime(QDateTime::fromString(rExecDate, "dd.MM.yyyy hh:mm"));
 	}
 	toStkEmpEdit->setText(QString::number(rStockEmployeeID));
-	prodCountEdit->setText(QString::number(rCount));
-	sumEdit->setText(QString::number(rSum));
+	prodCountEdit->setText(QString::number(rCount, 'f', 3));
+	sumEdit->setText(QString::number(rSum, 'f', 3));
 	statusEdit->setText(QString::number(rStatusID));
 	currencyCmb->setCurrentIndex(currencyCmb->findData(QVariant(rCurrencyID)));
 	BusinessLayer::User user1;
@@ -401,8 +404,8 @@ void CreateStockTrDlg::CreateStockTransfer()
 							<< new QStandardItem("");
 					}
 
-					StockTransferItem << new QStandardItem(QString::number(stockTransfer->GetCount()))
-						<< new QStandardItem(QString::number(stockTransfer->GetSum()))
+					StockTransferItem << new QStandardItem(QString::number(stockTransfer->GetCount(), 'f', 3))
+						<< new QStandardItem(QString::number(stockTransfer->GetSum(),'f',3))
 						<< new QStandardItem(currency->GetShortName().c_str())
 						<< new QStandardItem(QString::number(stockTransfer->GetStockEmployeeID()))
 						<< new QStandardItem(QString::number(stockTransfer->GetEmployeeID()))
@@ -470,8 +473,6 @@ void CreateStockTrDlg::EditStockTransfer()
 					if (!parentDataForm->IsClosed())
 					{
 						//updating StockTransfer data
-						QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
-						QModelIndex mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
 						itemModel->item(mIndex.row(), 1)->setText(stockTransfer->GetDate().c_str());
 						itemModel->item(mIndex.row(), 2)->setText(stockTransfer->GetExecutionDate().c_str());
 
@@ -562,8 +563,8 @@ void CreateStockTrDlg::EditStockTransfer()
 							itemModel->item(mIndex.row(), 12)->setText("");
 						}
 
-						itemModel->item(mIndex.row(), 13)->setText(QString::number(stockTransfer->GetCount()));
-						itemModel->item(mIndex.row(), 14)->setText(QString::number(stockTransfer->GetSum()));
+						itemModel->item(mIndex.row(), 13)->setText(QString::number(stockTransfer->GetCount(), 'f', 3));
+						itemModel->item(mIndex.row(), 14)->setText(QString::number(stockTransfer->GetSum(),'f',3));
 						itemModel->item(mIndex.row(), 15)->setText(currency->GetShortName().c_str());
 						itemModel->item(mIndex.row(), 16)->setText(QString::number(stockTransfer->GetStockEmployeeID()));
 						itemModel->item(mIndex.row(), 17)->setText(QString::number(stockTransfer->GetEmployeeID()));
@@ -899,10 +900,17 @@ void CreateStockTrDlg::StatusWasChenged()
 {
 	errorMessage = "";
 	statusMap = BusinessLayer::Status::GetStatusesAsMap(dialogBL->GetOrmasDal(), errorMessage);
-	if (statusEdit->text().toInt() == statusMap.find("EXECUTED")->second)
+	if (statusEdit->text().toInt() == statusMap.find("EXECUTED")->second
+		|| statusEdit->text().toInt() == statusMap.find("RETURN")->second
+		|| statusEdit->text().toInt() == statusMap.find("ERROR")->second)
 	{
 		execDateWidget->setVisible(true);
 		execDateEdit->setDateTime(QDateTime::currentDateTime());
+	}
+	else
+	{
+		execDateWidget->setVisible(false);
+		execDateEdit->setDateTime(QDateTime::fromString("01.01.2000", "dd.mm.yyyy"));
 	}
 }
 

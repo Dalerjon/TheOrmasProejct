@@ -3,6 +3,7 @@
 #include "ui_CreateProdDlg.h"
 #include "OrmasBL.h"
 #include "MainForm.h"
+#include <QStandardItemModel>
 
 class CreateProdDlg : public QDialog, public Ui::CreateProduct
 {
@@ -31,5 +32,7 @@ private:
 	void InitComboBox();
 	QWidget* parentForm;
 	MainForm* mainForm;
+	QStandardItemModel *itemModel;
+	QModelIndex mIndex;
 };
 #endif //CREATEPRODDLG_H

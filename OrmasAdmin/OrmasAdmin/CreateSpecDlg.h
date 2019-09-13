@@ -4,6 +4,7 @@
 #include "ui_CreateSpecDlg.h"
 #include "OrmasBL.h"
 #include "MainForm.h"
+#include <QStandardItemModel>
 
 class CreateSpecDlg : public QDialog, public Ui::CreateSpecification
 {
@@ -36,5 +37,7 @@ private:
 	void InitComboBox();
 	QWidget* parentForm;
 	MainForm* mainForm;
+	QStandardItemModel *itemModel;
+	QModelIndex mIndex;
 };
 #endif //CreateSpecDLG_H

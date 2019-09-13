@@ -17,6 +17,9 @@ CreateEmpPrdDlg::CreateEmpPrdDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFla
 	productEdit->setValidator(vInt);
 	if (true == updateFlag)
 	{
+		DataForm *parentDataForm = (DataForm*)parentForm;
+		itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
+		mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
 		QObject::connect(okBtn, &QPushButton::released, this, &CreateEmpPrdDlg::EditEmployeeProduct);
 	}
 	else
@@ -218,8 +221,6 @@ void CreateEmpPrdDlg::EditEmployeeProduct()
 							return;
 						}
 
-						QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
-						QModelIndex mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
 						itemModel->item(mIndex.row(), 1)->setText(employee->GetName().c_str());
 						itemModel->item(mIndex.row(), 2)->setText(employee->GetSurname().c_str());
 						itemModel->item(mIndex.row(), 3)->setText(employee->GetPhone().c_str());

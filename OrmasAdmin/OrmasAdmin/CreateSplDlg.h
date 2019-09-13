@@ -4,6 +4,8 @@
 #include "ui_CreateSplDlg.h"
 #include "OrmasBL.h"
 #include "MainForm.h"
+#include <QStandardItemModel>
+
 
 class CreateSplDlg : public QDialog, public Ui::CreateSpoilage
 {
@@ -37,5 +39,7 @@ private:
 	void InitComboBox();
 	QWidget* parentForm;
 	MainForm* mainForm;
+	QStandardItemModel *itemModel;
+	QModelIndex mIndex;
 };
 #endif //CREATESPLDLG_H

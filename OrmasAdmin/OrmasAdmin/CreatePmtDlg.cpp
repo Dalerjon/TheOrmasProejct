@@ -19,6 +19,9 @@ CreatePmtDlg::CreatePmtDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, QWi
 	valueEdit->setMaxLength(17);
 	if (true == updateFlag)
 	{
+		DataForm *parentDataForm = (DataForm*)parentForm;
+		itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
+		mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
 		QObject::connect(okBtn, &QPushButton::released, this, &CreatePmtDlg::EditPayment);
 	}
 	else
@@ -47,9 +50,12 @@ CreatePmtDlg::CreatePmtDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, QWi
 	QObject::connect(userBtn, &QPushButton::released, this, &CreatePmtDlg::OpenUserDlg);
 	QObject::connect(statusBtn, &QPushButton::released, this, &CreatePmtDlg::OpenStatusDlg);
 	QObject::connect(accBtn, &QPushButton::released, this, &CreatePmtDlg::OpenAccDlg);
+	QObject::connect(subAccBtn, &QPushButton::released, this, &CreatePmtDlg::OpenSAccDlg);
 	QObject::connect(accNumberEdit, &QLineEdit::textChanged, this, &CreatePmtDlg::AccTextChanged);
+	QObject::connect(saNumberEdit, &QLineEdit::textChanged, this, &CreatePmtDlg::SATextChanged);
 	QObject::connect(valueEdit, &QLineEdit::textChanged, this, &CreatePmtDlg::TextEditChanged);
 	QObject::connect(accountCmb, &QComboBox::currentTextChanged, this, &CreatePmtDlg::AccountIsChenged);
+	QObject::connect(userEdit, &QLineEdit::textChanged, this, &CreatePmtDlg::UserIsChanged);
 	InitComboBox();
 }
 
@@ -84,6 +90,47 @@ void CreatePmtDlg::SetID(int ID, QString childName)
 					accountCmb->setDisabled(true);
 					accIDEdit->setText(QString::number(GetAccountIDFromCmb()));
 				}
+				BusinessLayer::Balance balance;
+				BusinessLayer::Subaccount subaccount;
+				BusinessLayer::Currency currency;
+				balance.SetUserID(ID);
+				std::string filter = balance.GenerateFilter(dialogBL->GetOrmasDal());
+				std::vector<BusinessLayer::BalanceView> balanceVector = dialogBL->GetAllDataForClass<BusinessLayer::BalanceView>(errorMessage, filter);
+				if (0 < balanceVector.size())
+				{
+					for each (auto item in balanceVector)
+					{
+						subaccount.Clear();
+						if (subaccount.GetSubaccountByID(dialogBL->GetOrmasDal(), item.GetSubaccountID(), errorMessage))
+						{
+							if (subaccount.GetParentAccountID() == GetAccountIDFromCmb())
+							{
+								balance.SetSubaccountID(subaccount.GetID());
+							}
+						}
+					}
+				}
+				subaccount.Clear();
+				if (subaccount.GetSubaccountByID(dialogBL->GetOrmasDal(), balance.GetSubaccountID(), errorMessage))
+				{
+					saIDEdit->setText(QString::number(subaccount.GetID()));
+					saNumberEdit->setReadOnly(true);
+					saNumberEdit->setText(subaccount.GetNumber().c_str());
+				}
+			}
+			if (childName == QString("subaccountForm"))
+			{
+				saIDEdit->setText(QString::number(ID));
+				BusinessLayer::Subaccount subaccount;
+				if (subaccount.GetSubaccountByID(dialogBL->GetOrmasDal(), ID, errorMessage))
+				{
+					saNumberEdit->setReadOnly(true);
+					saNumberEdit->setText(subaccount.GetNumber().c_str());
+				}
+				namePh->setText("");
+				surnamePh->setText("");
+				phonePh->setText("");
+				userEdit->setText("");
 			}
 			if (childName == QString("statusForm"))
 			{
@@ -112,7 +159,8 @@ void CreatePmtDlg::SetID(int ID, QString childName)
 	}
 }
 
-void CreatePmtDlg::SetPaymentParams(QString pDate, double pValue, QString pTarget, int pUserID, int pCurrencyID, int pStatusID, int accountID, int id)
+void CreatePmtDlg::SetPaymentParams(QString pDate, double pValue, QString pTarget, int pUserID, int pCurrencyID, int pStatusID, 
+	int pAccountID, int pSubaccountID, QString pWho, int id)
 {
 	payment->SetDate(pDate.toUtf8().constData());
 	payment->SetValue(pValue);
@@ -120,11 +168,14 @@ void CreatePmtDlg::SetPaymentParams(QString pDate, double pValue, QString pTarge
 	payment->SetUserID(pUserID);
 	payment->SetCurrencyID(pCurrencyID);
 	payment->SetStatusID(pStatusID);
-	payment->SetAccountID(accountID);
+	payment->SetAccountID(pAccountID);
+	payment->SetSubaccountID(pSubaccountID);
+	payment->SetWho(pWho.toUtf8().constData());
 	payment->SetID(id);
 }
 
-void CreatePmtDlg::FillEditElements(QString pDate, double pValue, QString pTarget, int pUserID, int pCurrencyID, int pStatusID, int pAccountID)
+void CreatePmtDlg::FillEditElements(QString pDate, double pValue, QString pTarget, int pUserID, int pCurrencyID, int pStatusID,
+	int pAccountID, int pSubaccountID, QString pWho)
 {
 	accountCmb->setDisabled(true);
 	dateEdit->setDateTime(QDateTime::fromString(pDate, "dd.MM.yyyy hh:mm"));
@@ -134,12 +185,18 @@ void CreatePmtDlg::FillEditElements(QString pDate, double pValue, QString pTarge
 	statusEdit->setText(QString::number(pStatusID));
 	currencyCmb->setCurrentIndex(currencyCmb->findData(QVariant(pCurrencyID)));
 	accIDEdit->setText(QString::number(pAccountID));
+	whoEdit->setText(pWho);
 	BusinessLayer::User user;
 	if (user.GetUserByID(dialogBL->GetOrmasDal(), pUserID, errorMessage))
 	{
 		namePh->setText(user.GetName().c_str());
 		surnamePh->setText(user.GetSurname().c_str());
 		phonePh->setText(user.GetPhone().c_str());
+	}
+	BusinessLayer::Subaccount sub;
+	if (sub.GetSubaccountByID(dialogBL->GetOrmasDal(), pSubaccountID, errorMessage))
+	{
+		saNumberEdit->setText(sub.GetNumber().c_str());
 	}
 	BusinessLayer::Status status;
 	if (status.GetStatusByID(dialogBL->GetOrmasDal(), pStatusID, errorMessage))
@@ -161,18 +218,22 @@ bool CreatePmtDlg::FillDlgElements(QTableView* pTable)
 		SetPaymentParams(pTable->model()->data(pTable->model()->index(mIndex.row(), 1)).toString().toUtf8().constData(),
 			pTable->model()->data(pTable->model()->index(mIndex.row(), 5)).toDouble(),
 			pTable->model()->data(pTable->model()->index(mIndex.row(), 7)).toString().toUtf8().constData(),
-			pTable->model()->data(pTable->model()->index(mIndex.row(), 10)).toInt(),
-			pTable->model()->data(pTable->model()->index(mIndex.row(), 11)).toInt(),
 			pTable->model()->data(pTable->model()->index(mIndex.row(), 12)).toInt(),
 			pTable->model()->data(pTable->model()->index(mIndex.row(), 13)).toInt(),
+			pTable->model()->data(pTable->model()->index(mIndex.row(), 14)).toInt(),
+			pTable->model()->data(pTable->model()->index(mIndex.row(), 15)).toInt(),
+			pTable->model()->data(pTable->model()->index(mIndex.row(), 16)).toInt(),
+			pTable->model()->data(pTable->model()->index(mIndex.row(), 10)).toString().toUtf8().constData(),
 			pTable->model()->data(pTable->model()->index(mIndex.row(), 0)).toInt());
 		FillEditElements(pTable->model()->data(pTable->model()->index(mIndex.row(), 1)).toString().toUtf8().constData(),
 			pTable->model()->data(pTable->model()->index(mIndex.row(), 5)).toDouble(),
 			pTable->model()->data(pTable->model()->index(mIndex.row(), 7)).toString().toUtf8().constData(),
-			pTable->model()->data(pTable->model()->index(mIndex.row(), 10)).toInt(),
-			pTable->model()->data(pTable->model()->index(mIndex.row(), 11)).toInt(),
 			pTable->model()->data(pTable->model()->index(mIndex.row(), 12)).toInt(),
-			pTable->model()->data(pTable->model()->index(mIndex.row(), 13)).toInt());
+			pTable->model()->data(pTable->model()->index(mIndex.row(), 13)).toInt(),
+			pTable->model()->data(pTable->model()->index(mIndex.row(), 14)).toInt(),
+			pTable->model()->data(pTable->model()->index(mIndex.row(), 15)).toInt(),
+			pTable->model()->data(pTable->model()->index(mIndex.row(), 16)).toInt(),
+			pTable->model()->data(pTable->model()->index(mIndex.row(), 10)).toString().toUtf8().constData());
 		
 		return CheckAccess();
 	}
@@ -186,11 +247,13 @@ void CreatePmtDlg::CreatePayment()
 {
 	errorMessage.clear();
 	if ( 0.0 != valueEdit->text().toDouble() && !currencyCmb->currentText().isEmpty()
-		&& !dateEdit->text().isEmpty() && 0 != statusEdit->text().toInt())
+		&& !dateEdit->text().isEmpty() && 0 != statusEdit->text().toInt()
+		&& !whoEdit->text().isEmpty())
 	{
 		DataForm *parentDataForm = (DataForm*) parentForm;
 		SetPaymentParams(dateEdit->text(), valueEdit->text().toDouble(), targetEdit->text(), userEdit->text().toInt(), 
-			currencyCmb->currentData().toInt(), statusEdit->text().toInt(), accIDEdit->text().toInt());
+			currencyCmb->currentData().toInt(), statusEdit->text().toInt(), accIDEdit->text().toInt(), saIDEdit->text().toInt(), 
+			whoEdit->text());
 		dialogBL->StartTransaction(errorMessage);
 		if (dialogBL->CreatePayment(payment, errorMessage))
 		{
@@ -226,6 +289,19 @@ void CreatePmtDlg::CreatePayment()
 							delete currency;
 							delete user;
 							delete status;
+							return;
+						}
+					}
+					BusinessLayer::Subaccount subacc;
+					if (saIDEdit->text().toInt() > 0)
+					{
+						if (!subacc.GetSubaccountByID(dialogBL->GetOrmasDal(), payment->GetSubaccountID(), errorMessage))
+						{
+							dialogBL->CancelTransaction(errorMessage);
+							QMessageBox::information(NULL, QString(tr("Warning")),
+								QString(tr(errorMessage.c_str())),
+								QString(tr("Ok")));
+							errorMessage.clear();
 							return;
 						}
 					}
@@ -269,11 +345,21 @@ void CreatePmtDlg::CreatePayment()
 					{
 						paymentItem << new QStandardItem("");
 					}
-					paymentItem << new QStandardItem(status->GetName().c_str())
+					if (saIDEdit->text().toInt() > 0)
+					{
+						paymentItem << new QStandardItem(subacc.GetNumber().c_str());
+					}
+					else
+					{
+						paymentItem << new QStandardItem("");
+					}
+					paymentItem << new QStandardItem(payment->GetWho().c_str())
+						<< new QStandardItem(status->GetName().c_str())
 						<< new QStandardItem(QString::number(payment->GetUserID()))
 						<< new QStandardItem(QString::number(payment->GetCurrencyID()))
 						<< new QStandardItem(QString::number(payment->GetStatusID()))
-						<< new QStandardItem(QString::number(payment->GetAccountID()));
+						<< new QStandardItem(QString::number(payment->GetAccountID()))
+						<< new QStandardItem(QString::number(payment->GetSubaccountID()));
 					QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
 					itemModel->appendRow(paymentItem);
 					delete currency;
@@ -309,7 +395,7 @@ void CreatePmtDlg::EditPayment()
 {
 	errorMessage.clear();
 	if (0.0 != valueEdit->text().toDouble() && !currencyCmb->currentText().isEmpty()
-		&& !dateEdit->text().isEmpty() && 0 != statusEdit->text().toInt())
+		&& !dateEdit->text().isEmpty() && !whoEdit->text().isEmpty() && 0 != statusEdit->text().toInt())
 	{
 		if (QString(payment->GetDate().c_str()) != dateEdit->text()
 			|| payment->GetValue() != valueEdit->text().toDouble() || payment->GetCurrencyID() != currencyCmb->currentData().toInt()
@@ -317,7 +403,8 @@ void CreatePmtDlg::EditPayment()
 		{
 			DataForm *parentDataForm = (DataForm*) parentForm;
 			SetPaymentParams(dateEdit->text(), valueEdit->text().toDouble(), targetEdit->text(), userEdit->text().toInt(),
-				currencyCmb->currentData().toInt(), statusEdit->text().toInt(), accIDEdit->text().toInt(), payment->GetID());
+				currencyCmb->currentData().toInt(), statusEdit->text().toInt(), accIDEdit->text().toInt(), saIDEdit->text().toInt(),
+				whoEdit->text(), payment->GetID());
 			dialogBL->StartTransaction(errorMessage);
 			if (dialogBL->UpdatePayment(payment, errorMessage))
 			{
@@ -356,6 +443,19 @@ void CreatePmtDlg::EditPayment()
 								return;
 							}
 						}
+						BusinessLayer::Subaccount subacc;
+						if (saIDEdit->text().toInt() > 0)
+						{
+							if (!subacc.GetSubaccountByID(dialogBL->GetOrmasDal(), payment->GetSubaccountID(), errorMessage))
+							{
+								dialogBL->CancelTransaction(errorMessage);
+								QMessageBox::information(NULL, QString(tr("Warning")),
+									QString(tr(errorMessage.c_str())),
+									QString(tr("Ok")));
+								errorMessage.clear();
+								return;
+							}
+						}
 						BusinessLayer::Account account;
 						if (accIDEdit->text().toInt() > 0)
 						{
@@ -370,8 +470,6 @@ void CreatePmtDlg::EditPayment()
 								return;
 							}
 						}
-						QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
-						QModelIndex mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
 						itemModel->item(mIndex.row(), 1)->setText(payment->GetDate().c_str());
 						if (userEdit->text().toInt() > 0)
 						{
@@ -396,11 +494,21 @@ void CreatePmtDlg::EditPayment()
 						{
 							itemModel->item(mIndex.row(), 8)->setText("");
 						}
-						itemModel->item(mIndex.row(), 9)->setText(status->GetName().c_str());
-						itemModel->item(mIndex.row(), 10)->setText(QString::number(payment->GetUserID()));
-						itemModel->item(mIndex.row(), 11)->setText(QString::number(payment->GetCurrencyID()));
-						itemModel->item(mIndex.row(), 12)->setText(QString::number(payment->GetStatusID()));
-						itemModel->item(mIndex.row(), 13)->setText(QString::number(payment->GetAccountID()));
+						if (saIDEdit->text().toInt() > 0)
+						{
+							itemModel->item(mIndex.row(), 9)->setText(subacc.GetNumber().c_str());
+						}
+						else
+						{
+							itemModel->item(mIndex.row(), 9)->setText("");
+						}
+						itemModel->item(mIndex.row(), 10)->setText(payment->GetWho().c_str());
+						itemModel->item(mIndex.row(), 11)->setText(status->GetName().c_str());
+						itemModel->item(mIndex.row(), 12)->setText(QString::number(payment->GetUserID()));
+						itemModel->item(mIndex.row(), 13)->setText(QString::number(payment->GetCurrencyID()));
+						itemModel->item(mIndex.row(), 14)->setText(QString::number(payment->GetStatusID()));
+						itemModel->item(mIndex.row(), 15)->setText(QString::number(payment->GetAccountID()));
+						itemModel->item(mIndex.row(), 16)->setText(QString::number(payment->GetSubaccountID()));
 						emit itemModel->dataChanged(mIndex, mIndex);
 						delete currency;
 						delete user;
@@ -582,6 +690,58 @@ void CreatePmtDlg::OpenAccDlg()
 
 }
 
+void CreatePmtDlg::OpenSAccDlg()
+{
+	this->hide();
+	this->setModal(false);
+	this->show();
+	QString message = tr("Loading...");
+	mainForm->statusBar()->showMessage(message);
+	DataForm *dForm = new DataForm(dialogBL, mainForm);
+	dForm->setWindowTitle(tr("Subccounts"));
+	dForm->hide();
+	dForm->setWindowModality(Qt::WindowModal);
+	std::string filter = "";
+	BusinessLayer::Subaccount sabaccount;
+	BusinessLayer::EntryRouting entryRouting;
+	if (entryRouting.GetEntryRoutingByID(dialogBL->GetOrmasDal(), accountCmb->currentData().toInt(), errorMessage))
+	{
+		sabaccount.SetParentAccountID(entryRouting.GetCreditAccountID());
+		filter = sabaccount.GenerateFilter(dialogBL->GetOrmasDal());
+	}
+	dForm->FillTable<BusinessLayer::SubaccountView>(errorMessage, filter);
+	if (errorMessage.empty())
+	{
+		dForm->parentDialog = this;
+		dForm->setObjectName("subaccountForm");
+		dForm->QtConnect<BusinessLayer::SubaccountView>();
+		QMdiSubWindow *dSAccountWindow = new QMdiSubWindow;
+		dSAccountWindow->setWidget(dForm);
+		dSAccountWindow->setAttribute(Qt::WA_DeleteOnClose);
+		mainForm->mdiArea->addSubWindow(dSAccountWindow);
+		dSAccountWindow->resize(dForm->size().width() + 18, dForm->size().height() + 30);
+		dForm->topLevelWidget();
+		dForm->activateWindow();
+		QApplication::setActiveWindow(dForm);
+		dForm->show();
+		dForm->raise();
+		dForm->setWindowFlags(dForm->windowFlags() | Qt::WindowStaysOnTopHint);
+		QString message = tr("All subaccounts are shown");
+		mainForm->statusBar()->showMessage(message);
+	}
+	else
+	{
+		delete dForm;
+		QString message = tr("End with error!");
+		mainForm->statusBar()->showMessage(message);
+		QMessageBox::information(NULL, QString(tr("Warning")),
+			QString(tr(errorMessage.c_str())),
+			QString(tr("Ok")));
+		errorMessage = "";
+	}
+}
+
+
 void CreatePmtDlg::InitComboBox()
 {
 	std::vector<BusinessLayer::Currency> curVector = dialogBL->GetAllDataForClass<BusinessLayer::Currency>(errorMessage);
@@ -642,6 +802,51 @@ int CreatePmtDlg::GetAccountIDFromCmb()
 	}
 }
 
+void CreatePmtDlg::SATextChanged()
+{
+	if (saNumberEdit->text().length() == 5 || saNumberEdit->text().length() == 6)
+	{
+		BusinessLayer::Account account;
+		if (account.GetAccountByNumber(dialogBL->GetOrmasDal(), saNumberEdit->text().toUtf8().constData(), errorMessage))
+		{
+			saIDEdit->setText(QString::number(account.GetID()));
+		}
+		else
+		{
+			saIDEdit->setText("");
+		}
+	}
+	else if (saNumberEdit->text().length() == 15)
+	{
+		BusinessLayer::Subaccount subaccount;
+		if (subaccount.GetSubaccountByNumber(dialogBL->GetOrmasDal(), saNumberEdit->text().toUtf8().constData(), errorMessage))
+		{
+			saIDEdit->setText(QString::number(subaccount.GetID()));
+		}
+		else
+		{
+			saIDEdit->setText("");
+		}
+	}
+	else
+	{
+		saIDEdit->setText("");
+	}
+}
+
+void CreatePmtDlg::UserIsChanged()
+{
+	BusinessLayer::Balance balance;
+	BusinessLayer::Subaccount suba;
+	if (balance.GetBalanceByUserID(dialogBL->GetOrmasDal(), userEdit->text().toInt(), errorMessage))
+	{
+		if (suba.GetSubaccountByID(dialogBL->GetOrmasDal(), balance.GetSubaccountID(), errorMessage))
+		{
+			saIDEdit->setText(QString::number(suba.GetID()));
+			saNumberEdit->setText(suba.GetNumber().c_str());
+		}
+	}
+}
 
 void CreatePmtDlg::AccTextChanged()
 {

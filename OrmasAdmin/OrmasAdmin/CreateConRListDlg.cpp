@@ -97,6 +97,23 @@ void CreateConRListDlg::SetID(int ID, QString childName)
 	}
 }
 
+void CreateConRListDlg::SetProductData(int productID)
+{
+	productEdit->setText(QString::number(productID));
+	BusinessLayer::Product product;
+	if (product.GetProductByID(dialogBL->GetOrmasDal(), productID, errorMessage))
+	{
+		prodNamePh->setText(product.GetName().c_str());
+		volumePh->setText(QString::number(product.GetVolume()));
+		BusinessLayer::Measure measure;
+		if (measure.GetMeasureByID(dialogBL->GetOrmasDal(), product.GetMeasureID(), errorMessage))
+		{
+			measurePh->setText(measure.GetName().c_str());
+		}
+	}
+}
+
+
 void CreateConRListDlg::SetConRListParams(int cConsumeRawID, int cProductID, double cCount, double cSum, int cStatusID, int cCurrencyID, int id)
 {
 	consumeRawList->SetConsumeRawID(cConsumeRawID);
@@ -112,8 +129,8 @@ void CreateConRListDlg::FillEditElements(int cConsumeRawID, int cProductID, doub
 {
 	consumeRawEdit->setText(QString::number(cConsumeRawID));
 	productEdit->setText(QString::number(cProductID));
-	countEdit->setText(QString::number(cCount));
-	sumEdit->setText(QString::number(cSum));
+	countEdit->setText(QString::number(cCount, 'f', 3));
+	sumEdit->setText(QString::number(cSum, 'f', 3));
 	statusEdit->setText(QString::number(cStatusID));
 	currencyCmb->setCurrentIndex(currencyCmb->findData(QVariant(cCurrencyID)));
 	BusinessLayer::Product product;
@@ -241,8 +258,8 @@ void CreateConRListDlg::AddProductToList()
 						<< new QStandardItem(currency->GetShortName().c_str())
 						<< new QStandardItem(QString::number(product->GetVolume()))
 						<< new QStandardItem(measure->GetName().c_str())
-						<< new QStandardItem(QString::number(consumeRawList->GetCount()))
-						<< new QStandardItem(QString::number(consumeRawList->GetSum()))
+						<< new QStandardItem(QString::number(consumeRawList->GetCount(), 'f', 3))
+						<< new QStandardItem(QString::number(consumeRawList->GetSum(),'f',3))
 						<< new QStandardItem(sumCurrency->GetShortName().c_str())
 						<< new QStandardItem(statusVector.at(0).GetName().c_str())
 						<< new QStandardItem(QString::number(consumeRawList->GetProductID()))
@@ -336,8 +353,8 @@ void CreateConRListDlg::EditProductInList()
 						itemModel->item(mIndex.row(), 4)->setText(currency->GetShortName().c_str());
 						itemModel->item(mIndex.row(), 5)->setText(QString::number(product->GetVolume()));
 						itemModel->item(mIndex.row(), 6)->setText(measure->GetName().c_str());
-						itemModel->item(mIndex.row(), 7)->setText(QString::number(consumeRawList->GetCount()));
-						itemModel->item(mIndex.row(), 8)->setText(QString::number(consumeRawList->GetSum()));
+						itemModel->item(mIndex.row(), 7)->setText(QString::number(consumeRawList->GetCount(), 'f', 3));
+						itemModel->item(mIndex.row(), 8)->setText(QString::number(consumeRawList->GetSum(),'f',3));
 						itemModel->item(mIndex.row(), 9)->setText(sumCurrency->GetShortName().c_str());
 						itemModel->item(mIndex.row(), 10)->setText(status->GetName().c_str());
 						itemModel->item(mIndex.row(), 11)->setText(QString::number(consumeRawList->GetProductID()));

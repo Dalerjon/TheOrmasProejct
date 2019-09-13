@@ -51,6 +51,7 @@ namespace BusinessLayer
 		bool StartTransaction(std::string& errorMessage);
 		bool CommitTransaction(std::string& errorMessage);
 		bool CancelTransaction(std::string& errorMessage);
+		std::string ConcatenateFilters(std::vector<std::string> filterList);
 
 		//Create, delete and update for all classes
 		bool CreateAccess(BusinessLayer::Access*, std::string&);
@@ -356,6 +357,7 @@ namespace BusinessLayer
 		bool CorrectingEntries();
 		bool CorrectingNetCostInStock();
 		bool CorrectingNetCostInTransport();
+		bool SaveStockState(std::string, std::string);
 		std::string wstring_to_utf8(const std::wstring& str);
 	};
 }

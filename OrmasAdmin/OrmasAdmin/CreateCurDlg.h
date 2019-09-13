@@ -2,6 +2,7 @@
 #define CREATECURDLG_H
 #include "ui_CreateCurDlg.h"
 #include "OrmasBL.h"
+#include <QStandardItemModel>
 
 class CreateCurDlg : public QDialog, public Ui::CreateCurrency
 {
@@ -23,6 +24,7 @@ private:
 	void FillEditElements(int, QString, QString, int, QString);
 	QIntValidator *vInt = nullptr;
 	QWidget* parentForm;
-
+	QStandardItemModel *itemModel;
+	QModelIndex mIndex;
 };
 #endif //CREATECURDLG_H

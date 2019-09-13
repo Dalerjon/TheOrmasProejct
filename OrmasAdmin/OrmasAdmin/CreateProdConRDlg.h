@@ -4,7 +4,8 @@
 #include "ui_CreateProdConRDlg.h"
 #include "OrmasBL.h"
 #include "MainForm.h"
-
+#include <QStandardItemModel>
+ 
 class CreateProdConRDlg : public QDialog, public Ui::CreateProductionConsumeRaw
 {
 	Q_OBJECT
@@ -40,5 +41,7 @@ private:
 	QWidget* parentForm;
 	MainForm* mainForm;
 	bool CheckAccess();
+	QStandardItemModel *itemModel;
+	QModelIndex mIndex;
 };
 #endif //CreateProdConRDLG_H

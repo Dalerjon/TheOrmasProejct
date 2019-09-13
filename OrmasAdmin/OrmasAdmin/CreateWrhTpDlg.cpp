@@ -16,6 +16,9 @@ CreateWrhTypeDlg::CreateWrhTypeDlg(BusinessLayer::OrmasBL *ormasBL, bool updateF
 	parentForm = parent;
 	if (true == updateFlag)
 	{
+		DataForm *parentDataForm = (DataForm*)parentForm;
+		itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
+		mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
 		QObject::connect(okBtn, &QPushButton::released, this, &CreateWrhTypeDlg::EditWarehouseType);
 	}
 	else
@@ -120,8 +123,7 @@ void CreateWrhTypeDlg::EditWarehouseType()
 				{
 					if (!parentDataForm->IsClosed())
 					{
-						QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
-						QModelIndex mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
+
 						itemModel->item(mIndex.row(), 1)->setText(warehouseType->GetCode().c_str());
 						itemModel->item(mIndex.row(), 2)->setText(warehouseType->GetPurpose().c_str());
 						itemModel->item(mIndex.row(), 3)->setText(warehouseType->GetName().c_str());

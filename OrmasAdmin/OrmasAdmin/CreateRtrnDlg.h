@@ -4,6 +4,8 @@
 #include "ui_CreateRtrnDlg.h"
 #include "OrmasBL.h"
 #include "MainForm.h"
+#include <QStandardItemModel>
+
 
 class CreateRtrnDlg : public QDialog, public Ui::CreateReturn
 {
@@ -40,5 +42,7 @@ private:
 	QWidget* parentForm;
 	MainForm* mainForm;
 	bool CheckAccess();
+	QStandardItemModel *itemModel;
+	QModelIndex mIndex;
 };
 #endif //CREATERTRNDLG_H

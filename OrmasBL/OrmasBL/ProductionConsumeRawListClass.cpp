@@ -3,6 +3,7 @@
 #include "ProductionConsumeRawClass.h"
 #include "StockClass.h"
 #include "WarehouseEmployeeRelationClass.h"
+#include "ProductClass.h"
 
 namespace BusinessLayer
 {
@@ -95,6 +96,15 @@ namespace BusinessLayer
 		if (0 == middlePrice)
 			return false;
 		sum = crlCount * middlePrice;
+		Product product;
+		if (!product.GetProductByID(ormasDal, pID, errorMessage))
+			return false;
+		/*if (sum> count *product.GetPrice()*1.25 || sum < count *product.GetPrice()*0.75)
+		{
+			errorMessage = "Sorry price is too different, please recheck price of product_id=";
+			errorMessage += std::to_string(product.GetID());
+			return false;
+		}*/
 		if (0 != id && ormasDal.CreateProductionConsumeRawList(id, productionConsumeRawID, productID, count, sum, statusID, currencyID, errorMessage))
 		{
 			return true;
@@ -108,6 +118,15 @@ namespace BusinessLayer
 			return false;
 		sum = count * middlePrice;
 		id = ormasDal.GenerateID();
+		Product product;
+		if (!product.GetProductByID(ormasDal, productID, errorMessage))
+			return false;
+		/*if (sum> count *product.GetPrice()*1.25 || sum < count *product.GetPrice()*0.75)
+		{
+			errorMessage = "Sorry price is too different, please recheck price of product_id=";
+			errorMessage += std::to_string(product.GetID());
+			return false;
+		}*/
 		if (0 != id && ormasDal.CreateProductionConsumeRawList(id, productionConsumeRawID, productID, count, sum, statusID, currencyID, errorMessage))
 		{
 			return true;

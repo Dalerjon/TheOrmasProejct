@@ -16,6 +16,9 @@ CreatePrdTpDlg::CreatePrdTpDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag,
 	parentForm = parent;
 	if (true == updateFlag)
 	{
+		DataForm *parentDataForm = (DataForm*)parentForm;
+		itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
+		mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
 		QObject::connect(okBtn, &QPushButton::released, this, &CreatePrdTpDlg::EditProductType);
 	}
 	else
@@ -119,8 +122,7 @@ void CreatePrdTpDlg::EditProductType()
 				{
 					if (!parentDataForm->IsClosed())
 					{
-						QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
-						QModelIndex mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
+						
 						itemModel->item(mIndex.row(), 1)->setText(prodType->GetName().c_str());
 						itemModel->item(mIndex.row(), 2)->setText(prodType->GetShortName().c_str());
 						itemModel->item(mIndex.row(), 3)->setText(prodType->GetCode().c_str());
