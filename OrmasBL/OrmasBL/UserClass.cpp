@@ -431,14 +431,15 @@ namespace BusinessLayer
 				return false;
 			Subaccount subaccount;
 			Account account;
-			Role role;
-			if (roleID == role.GetRoleIDByName(ormasDal, "CLIENT", errorMessage))
+			Role roleClient;
+			Role rolePurveyor;
+			if (roleID == roleClient.GetRoleIDByName(ormasDal, "CLIENT", errorMessage))
 			{
 				account.Clear();
 				if (account.GetAccountByNumber(ormasDal,"10410",errorMessage))
 					number = std::to_string(10410);
 			}
-			else if (roleID == role.GetRoleIDByName(ormasDal, "PURVEYOR", errorMessage))
+			else if (roleID == rolePurveyor.GetRoleIDByName(ormasDal, "PURVEYOR", errorMessage))
 			{
 				account.Clear();
 				if (account.GetAccountByNumber(ormasDal, "22010", errorMessage))

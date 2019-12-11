@@ -16,9 +16,16 @@ public:
 	~ReportForm(){};
 	void GetIDValue(QModelIndex index);
 	void FillStockTable(std::string, std::string, int, std::string);
+	void FillAccCrdTable(std::string, std::string, int, std::string);
+	void FillAccCrdTable(std::string, std::string, std::vector<int>, std::string);
+	void FillAccCrdTable(std::string, std::string, std::string);
 
 	private slots:
+	void View();
 	void ViewWTBS();
+	void ViewAcc();
+	void ViewOneAcc();
+	void ViewSubacc();
 signals:
 	void SendID(int ID, QString childName);
 
@@ -32,3 +39,4 @@ public:
 	std::string errorMessage = "";
 };
 #endif //ReportFORM_H
+

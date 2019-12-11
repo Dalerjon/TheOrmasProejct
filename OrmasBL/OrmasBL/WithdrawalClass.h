@@ -16,11 +16,12 @@ namespace BusinessLayer{
 		int statusID = 0;
 		int accountID = 0;
 		std::string who = "";
+		int cashboxAccountID = 0;
 	public:
 		Withdrawal();
-		Withdrawal(int pID, std::string pDate, double pValue, int uID, int sID, std::string wTarget, int cID, int stsID, int aID, std::string wWho) :id(pID), 
+		Withdrawal(int pID, std::string pDate, double pValue, int uID, int sID, std::string wTarget, int cID, int stsID, int aID, std::string wWho, int cashboxAccID) :id(pID), 
 			date(pDate), value(pValue), userID(uID), subaccountID(sID), target(wTarget), currencyID(cID), statusID(stsID), accountID(aID),
-			who(wWho){};
+			who(wWho), cashboxAccountID(cashboxAccID){};
 		Withdrawal(DataLayer::withdrawalsCollection);
 		~Withdrawal(){};
 
@@ -37,6 +38,7 @@ namespace BusinessLayer{
 		int GetStatusID();
 		int GetAccountID();
 		std::string GetWho();
+		int GetCashboxAccountID();
 
 		//Withdrawal class Mutators
 		void SetID(int);
@@ -49,14 +51,15 @@ namespace BusinessLayer{
 		void SetStatusID(int);
 		void SetAccountID(int);
 		void SetWho(std::string);
+		void SetCashboxAccountID(int);
 		// Create, delete and update Withdrawal
 		bool CreateWithdrawal(DataLayer::OrmasDal &ormasDal, std::string& errorMessage);
 		bool UpdateWithdrawal(DataLayer::OrmasDal &ormasDal, std::string& errorMessage);
 		bool DeleteWithdrawal(DataLayer::OrmasDal &ormasDal, std::string& errorMessage);
 		bool CreateWithdrawal(DataLayer::OrmasDal &ormasDal, std::string wDate, double wValue, int uID, int sID, std::string wTaeget,
-			int cID, int stsID, int aID, std::string wWho, std::string& errorMessage);
+			int cID, int stsID, int aID, std::string wWho,  int cashboxAccID, std::string& errorMessage);
 		bool UpdateWithdrawal(DataLayer::OrmasDal &ormasDal, std::string wDate, double wValue, int uID, int sID, std::string wTaeget,
-			int cID, int stsID, int aID,std::string wWho, std::string& errorMessage);
+			int cID, int stsID, int aID,std::string wWho, int cashboxAccID, std::string& errorMessage);
 
 		//Generate filter string for class
 		std::string GenerateFilter(DataLayer::OrmasDal& ormasDal);
@@ -70,13 +73,13 @@ namespace BusinessLayer{
 		bool IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string wDate, double wValue, int uID, int cID, int aID,
 			std::string& errorMessage);
 		bool IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string& errorMessage);
-		bool Payout(DataLayer::OrmasDal& ormasDal, int uID, int cID, int aID, std::string& errorMessage);
-		bool Payout(DataLayer::OrmasDal& ormasDal, int uID, int cID, int aID, double previousValue, std::string& errorMessage);
-		bool Payout(DataLayer::OrmasDal& ormasDal, int sID, std::string& errorMessage);
-		bool Payout(DataLayer::OrmasDal& ormasDal, int sID, double previousValue, std::string& errorMessage);
+		bool Payout(DataLayer::OrmasDal& ormasDal, int uID, int cID, int aID, int cashboxAccID, std::string& errorMessage);
+		bool Payout(DataLayer::OrmasDal& ormasDal, int uID, int cID, int aID, int cashboxAccID, double previousValue, std::string& errorMessage);
+		bool Payout(DataLayer::OrmasDal& ormasDal, int sID, int cashboxAccID, std::string& errorMessage);
+		bool Payout(DataLayer::OrmasDal& ormasDal, int sID, int cashboxAccID, double previousValue, std::string& errorMessage);
 		double GetCurrentValue(DataLayer::OrmasDal& ormasDal, int pID, std::string& errorMessage);
-		bool CancelWithdrawal(DataLayer::OrmasDal& ormasDal, int uID, int cID, int aID, std::string& errorMessage);
-		bool CancelWithdrawal(DataLayer::OrmasDal& ormasDal, int sID, std::string& errorMessage);
+		bool CancelWithdrawal(DataLayer::OrmasDal& ormasDal, int uID, int cID, int aID, int cashboxAccID, std::string& errorMessage);
+		bool CancelWithdrawal(DataLayer::OrmasDal& ormasDal, int sID, int cashboxAccID, std::string& errorMessage);
 		bool CreateEntry(DataLayer::OrmasDal& ormasDal, int debAccID, double currentSum, int credAccID, std::string oExecDate, std::string& errorMessage);
 		bool CreateEntry(DataLayer::OrmasDal& ormasDal, int debAccID, double currentSum, int credAccID, double previousSum, std::string oExecDate, std::string& errorMessage);
 		bool CorrectingEntry(DataLayer::OrmasDal& ormasDal, int debAccID, double currentSum, int credAccID, std::string oExecDate, std::string& errorMessage);

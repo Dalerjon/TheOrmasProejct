@@ -19,8 +19,8 @@
 
 QT_BEGIN_MOC_NAMESPACE
 struct qt_meta_stringdata_GenerateAccCardRep_t {
-    QByteArrayData data[11];
-    char stringdata0[110];
+    QByteArrayData data[14];
+    char stringdata0[154];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
@@ -37,14 +37,19 @@ QT_MOC_LITERAL(4, 47, 5), // "Close"
 QT_MOC_LITERAL(5, 53, 10), // "OpenAccDlg"
 QT_MOC_LITERAL(6, 64, 11), // "OpenSAccDlg"
 QT_MOC_LITERAL(7, 76, 14), // "AccTextChanged"
-QT_MOC_LITERAL(8, 91, 5), // "SetID"
-QT_MOC_LITERAL(9, 97, 2), // "ID"
-QT_MOC_LITERAL(10, 100, 9) // "childName"
+QT_MOC_LITERAL(8, 91, 15), // "CheckBoxChanged"
+QT_MOC_LITERAL(9, 107, 15), // "GetPrevMonthEnd"
+QT_MOC_LITERAL(10, 123, 11), // "std::string"
+QT_MOC_LITERAL(11, 135, 5), // "SetID"
+QT_MOC_LITERAL(12, 141, 2), // "ID"
+QT_MOC_LITERAL(13, 144, 9) // "childName"
 
     },
     "GenerateAccCardRep\0CloseCreatedForms\0"
     "\0Generate\0Close\0OpenAccDlg\0OpenSAccDlg\0"
-    "AccTextChanged\0SetID\0ID\0childName"
+    "AccTextChanged\0CheckBoxChanged\0"
+    "GetPrevMonthEnd\0std::string\0SetID\0ID\0"
+    "childName"
 };
 #undef QT_MOC_LITERAL
 
@@ -54,7 +59,7 @@ static const uint qt_meta_data_GenerateAccCardRep[] = {
        7,       // revision
        0,       // classname
        0,    0, // classinfo
-       7,   14, // methods
+       9,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -62,15 +67,17 @@ static const uint qt_meta_data_GenerateAccCardRep[] = {
        1,       // signalCount
 
  // signals: name, argc, parameters, tag, flags
-       1,    0,   49,    2, 0x06 /* Public */,
+       1,    0,   59,    2, 0x06 /* Public */,
 
  // slots: name, argc, parameters, tag, flags
-       3,    0,   50,    2, 0x08 /* Private */,
-       4,    0,   51,    2, 0x08 /* Private */,
-       5,    0,   52,    2, 0x08 /* Private */,
-       6,    0,   53,    2, 0x08 /* Private */,
-       7,    0,   54,    2, 0x08 /* Private */,
-       8,    2,   55,    2, 0x0a /* Public */,
+       3,    0,   60,    2, 0x08 /* Private */,
+       4,    0,   61,    2, 0x08 /* Private */,
+       5,    0,   62,    2, 0x08 /* Private */,
+       6,    0,   63,    2, 0x08 /* Private */,
+       7,    0,   64,    2, 0x08 /* Private */,
+       8,    0,   65,    2, 0x08 /* Private */,
+       9,    1,   66,    2, 0x08 /* Private */,
+      11,    2,   69,    2, 0x0a /* Public */,
 
  // signals: parameters
     QMetaType::Void,
@@ -81,7 +88,9 @@ static const uint qt_meta_data_GenerateAccCardRep[] = {
     QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void,
-    QMetaType::Void, QMetaType::Int, QMetaType::QString,    9,   10,
+    QMetaType::Void,
+    0x80000000 | 10, 0x80000000 | 10,    2,
+    QMetaType::Void, QMetaType::Int, QMetaType::QString,   12,   13,
 
        0        // eod
 };
@@ -98,7 +107,10 @@ void GenerateAccCardRep::qt_static_metacall(QObject *_o, QMetaObject::Call _c, i
         case 3: _t->OpenAccDlg(); break;
         case 4: _t->OpenSAccDlg(); break;
         case 5: _t->AccTextChanged(); break;
-        case 6: _t->SetID((*reinterpret_cast< int(*)>(_a[1])),(*reinterpret_cast< QString(*)>(_a[2]))); break;
+        case 6: _t->CheckBoxChanged(); break;
+        case 7: { std::string _r = _t->GetPrevMonthEnd((*reinterpret_cast< std::string(*)>(_a[1])));
+            if (_a[0]) *reinterpret_cast< std::string*>(_a[0]) = _r; }  break;
+        case 8: _t->SetID((*reinterpret_cast< int(*)>(_a[1])),(*reinterpret_cast< QString(*)>(_a[2]))); break;
         default: ;
         }
     } else if (_c == QMetaObject::IndexOfMethod) {
@@ -141,13 +153,13 @@ int GenerateAccCardRep::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 7)
+        if (_id < 9)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 7;
+        _id -= 9;
     } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 7)
+        if (_id < 9)
             *reinterpret_cast<int*>(_a[0]) = -1;
-        _id -= 7;
+        _id -= 9;
     }
     return _id;
 }

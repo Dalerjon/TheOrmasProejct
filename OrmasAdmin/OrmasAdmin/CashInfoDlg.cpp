@@ -12,7 +12,7 @@ CashInfoDlg::CashInfoDlg(BusinessLayer::OrmasBL *ormasBL, QWidget *parent) :QDia
 	BusinessLayer::CashboxEmployeeRelation ceRel;
 	BusinessLayer::Cashbox cashbox;
 	BusinessLayer::Subaccount subacc;
-	if (ceRel.GetCashboxByEmployeeID(dialogBL->GetOrmasDal(), mainForm->GetLoggedUser()->GetID(), errorMessage))
+	if (ceRel.GetCashboxEmployeeByEmployeeID(dialogBL->GetOrmasDal(), mainForm->GetLoggedUser()->GetID(), errorMessage))
 	{
 		if (cashbox.GetCashboxByID(dialogBL->GetOrmasDal(), ceRel.GetCashboxID(), errorMessage))
 		{

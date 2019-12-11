@@ -2,6 +2,7 @@
 #include "CashBookListDlg.h"
 #include "DocForm.h"
 
+
 CashBookListDlg::CashBookListDlg(BusinessLayer::OrmasBL *ormasBL, QWidget *parent) :QDialog(parent)
 {
 	setupUi(this);
@@ -11,7 +12,8 @@ CashBookListDlg::CashBookListDlg(BusinessLayer::OrmasBL *ormasBL, QWidget *paren
 	mainForm = (MainForm *)this->parent();
 
 	QDate currentDate = QDate::currentDate();
-	forDateEdit->setDate(QDate::fromString(QDate::currentDate().toString(), "dd.MM.yyyy"));
+	currDate = GetCurrentDate();
+	forDateEdit->setDate(QDate::fromString(currDate.c_str(), "dd.MM.yyyy"));
 	QObject::connect(okBtn, &QPushButton::released, this, &CashBookListDlg::Generate);
 	QObject::connect(cancelBtn, &QPushButton::released, this, &CashBookListDlg::Close);
 }
@@ -24,14 +26,19 @@ CashBookListDlg::~CashBookListDlg()
 
 void CashBookListDlg::Generate()
 {
+	BusinessLayer::Status status;
+	if (!status.GetStatusByName(dialogBL->GetOrmasDal(), "EXECUTED", errorMessage))
+		return;
 	std::string errorMessage = "";
 	BusinessLayer::Payment payment;
 	BusinessLayer::Withdrawal withdrowal;
 	payment.SetDate(forDateEdit->text().toUtf8().constData());
+	payment.SetStatusID(status.GetID());
 	std::string pmtFilter = payment.GenerateFilter(dialogBL->GetOrmasDal());
 	std::vector<BusinessLayer::PaymentView> vecPmtRep = dialogBL->GetAllDataForClass<BusinessLayer::PaymentView>(errorMessage, pmtFilter);
 	
 	withdrowal.SetDate(forDateEdit->text().toUtf8().constData());
+	withdrowal.SetStatusID(status.GetID());
 	std::string wthFilter = withdrowal.GenerateFilter(dialogBL->GetOrmasDal());
 	std::vector<BusinessLayer::WithdrawalView> vecWthRep = dialogBL->GetAllDataForClass<BusinessLayer::WithdrawalView>(errorMessage, wthFilter);
 
@@ -99,38 +106,150 @@ void CashBookListDlg::Generate()
 			accountant.SetSurname(vecEmpRep.at(0).GetSurname());
 		}
 
-		role.Clear();
-		if (0 == role.GetRoleIDByName(dialogBL->GetOrmasDal(), "CASHIER", errorMessage))
-		{
-			QMessageBox::information(NULL, QString(tr("Warning")),
-				QString(tr("Connot find 'CASHIER' role!")),
-				QString(tr("Ok")));
-			return;
-		}
-
-		cashier.SetRoleID(role.GetID());
-		std::string casFilter = cashier.GenerateFilter(dialogBL->GetOrmasDal());
-		std::vector<BusinessLayer::EmployeeView> vecCasRep = dialogBL->GetAllDataForClass<BusinessLayer::EmployeeView>(errorMessage, casFilter);
-		if (vecCasRep.size() == 0)
+		if (!cashier.GetEmployeeByID(dialogBL->GetOrmasDal(), dialogBL->loggedUser->GetID(), errorMessage))
 		{
 			QMessageBox::information(NULL, QString(tr("Warning")),
 				QString(tr("Connot find 'CASHIER' employee!")),
 				QString(tr("Ok")));
 			return;
 		}
-		else
+
+		BusinessLayer::CashboxEmployeeRelation ceRel;
+		int cashboxID = ceRel.GetCashboxIDByEmployeeID(dialogBL->GetOrmasDal(), dialogBL->loggedUser->GetID(), errorMessage);
+		BusinessLayer::Cashbox cashbox;
+		if (!cashbox.GetCashboxByID(dialogBL->GetOrmasDal(), cashboxID, errorMessage))
 		{
-			cashier.SetName(vecCasRep.at(0).GetName());
-			cashier.SetSurname(vecCasRep.at(0).GetSurname());
+			QMessageBox::information(NULL, QString(tr("Warning")),
+				QString(tr("Connot find 'CASHBOX' for this employee!")),
+				QString(tr("Ok")));
+			return;
 		}
 
+		BusinessLayer::Subaccount cahsboxSubacc;
+		if (!cahsboxSubacc.GetSubaccountByID(dialogBL->GetOrmasDal(), cashbox.GetSubaccountID(), errorMessage))
+		{
+			QMessageBox::information(NULL, QString(tr("Warning")),
+				QString(tr("Connot find subaccount for this employee!")),
+				QString(tr("Ok")));
+			return;
+		}
+
+		BusinessLayer::SubaccountHistory saccHistory;
+		BusinessLayer::Entry entry;
+		std::vector<BusinessLayer::SubaccountView> vecSubacc;
+		std::vector<BusinessLayer::SubaccountHistory> vecSubAccHistory;
+		std::vector<BusinessLayer::ExtendedEntryView> vecEntryDeb;
+		std::vector<BusinessLayer::ExtendedEntryView> vecEntryCred;
+		std::string filterDebit;
+		std::string filterCredit;
+		std::string filterSub;
+		std::string filterSubHistory;
+		std::string filterAccHistory;
+		
+		double debSum = 0.0;
+		double credSum = 0.0;
+		
+		BusinessLayer::SubaccountHistory saccHistoryEnd;
+		std::vector<BusinessLayer::SubaccountHistory> vecSubAccHistoryEnd;
+
+		std::string fromDate = "";
+		std::string tillDate = "";
+		std::string prevMonthEnd = "";
+		std::string prevDate = "";
+		std::string currentDate = forDateEdit->text().toUtf8().constData();
+
+		GetPrevMonthEnd(currentDate, fromDate, tillDate, prevMonthEnd, prevDate);
+
+		saccHistoryEnd.Clear();
+		saccHistoryEnd.SetSubaccountID(cahsboxSubacc.GetID());
+		if (!tillDate.empty())
+		{
+			saccHistoryEnd.SetTillDate(tillDate);
+		}
+		filterAccHistory.clear();
+		filterAccHistory = saccHistoryEnd.GenerateFilter(dialogBL->GetOrmasDal());
+		vecSubAccHistoryEnd = dialogBL->GetAllDataForClass<BusinessLayer::SubaccountHistory>(errorMessage, filterAccHistory);
+
+		/*filterDebit.clear();
+		entry.Clear();
+		vecEntryDeb.clear();
+		entry.SetDebitingAccountID(cahsboxSubacc.GetParentAccountID());
+		filterDebit = entry.GenerateFilterForPeriod(dialogBL->GetOrmasDal(), fromDate, currentDate);
+		vecEntryDeb = dialogBL->GetAllDataForClass<BusinessLayer::ExtendedEntryView>(errorMessage, filterDebit);
+
+		filterCredit.clear();
+		entry.Clear();
+		vecEntryCred.clear();
+		entry.SetCreditingAccountID(cahsboxSubacc.GetParentAccountID());
+		filterCredit = entry.GenerateFilterForPeriod(dialogBL->GetOrmasDal(), fromDate, currentDate);
+		vecEntryCred = dialogBL->GetAllDataForClass<BusinessLayer::ExtendedEntryView>(errorMessage, filterCredit);*/
+
+		QDate selectDate = QDate::fromString(currentDate.c_str(), "dd.MM.yyyy");
+		int selectMonth = selectDate.month();
+		
+		QDate prevDateFromSelectedDate = QDate::fromString(prevDate.c_str(), "dd.MM.yyyy");
+		int prevSelectMonth = prevDateFromSelectedDate.month();
+		
+
+		BusinessLayer::Payment paymentMonth;
+		BusinessLayer::Withdrawal withdrowalMonth;
+		double startValue = 0;
+		double endValue = 0;
+
+		if (selectMonth == prevSelectMonth)
+		{
+			pmtFilter.clear();
+			paymentMonth.SetStatusID(status.GetID());
+			std::string pmtFilter = paymentMonth.GenerateFilterForPeriod(dialogBL->GetOrmasDal(), fromDate, prevDate);
+			std::vector<BusinessLayer::PaymentView> vecPmtRepMonth = dialogBL->GetAllDataForClass<BusinessLayer::PaymentView>(errorMessage, pmtFilter);
+
+			wthFilter.clear();
+			withdrowalMonth.SetStatusID(status.GetID());
+			std::string wthFilter = withdrowalMonth.GenerateFilterForPeriod(dialogBL->GetOrmasDal(), fromDate, prevDate);
+			std::vector<BusinessLayer::WithdrawalView> vecWthRepMonth = dialogBL->GetAllDataForClass<BusinessLayer::WithdrawalView>(errorMessage, wthFilter);
+			
+			if (vecSubAccHistoryEnd.size() > 0)
+			{
+				startValue = vecSubAccHistoryEnd.at(0).GetStartBalance();
+			}
+			else
+			{
+				startValue = cahsboxSubacc.GetStartBalance();
+			}
+
+			for each (auto payItem in vecPmtRepMonth)
+			{
+				startValue += payItem.GetValue();
+			}
+			for each (auto withItem in vecWthRepMonth)
+			{
+				startValue -= withItem.GetValue();
+			}
+		}
+		else
+		{
+			if (vecSubAccHistoryEnd.size() > 0)
+			{
+				startValue = vecSubAccHistoryEnd.at(0).GetStartBalance();
+			}
+			else
+			{
+				startValue = cahsboxSubacc.GetStartBalance();
+			}
+		}
+		
 		if (vecPmtRep.size() > 0)
 		{
+			std::string accNumber = "";
+			BusinessLayer::Account acc;
 			for each (auto item in vecPmtRep)
 			{
+				acc.Clear();
+				accNumber.clear();
 				payment.Clear();
 				subAcc.Clear();
 				balance.Clear();
+				user.Clear();
 				if (!payment.GetPaymentByID(dialogBL->GetOrmasDal(), item.GetID(), errorMessage))
 				{
 					QMessageBox::information(NULL, QString(tr("Info")),
@@ -138,25 +257,58 @@ void CashBookListDlg::Generate()
 						QString(tr("Ok")));
 					return;
 				}
-				if (!balance.GetBalanceByUserID(dialogBL->GetOrmasDal(), item.GetUserID(), errorMessage))
+				if (item.GetUserID() > 0)
 				{
-					QMessageBox::information(NULL, QString(tr("Info")),
-						QString(tr("Can't find balance for this user!")),
-						QString(tr("Ok")));
-					return;
-				}
-				if (!subAcc.GetSubaccountByID(dialogBL->GetOrmasDal(), balance.GetSubaccountID(), errorMessage))
-				{
-					QMessageBox::information(NULL, QString(tr("Info")),
-						QString(tr("Can't find subaccount for this user!")),
-						QString(tr("Ok")));
-					return;
+					if (!user.GetUserByID(dialogBL->GetOrmasDal(), item.GetUserID(), errorMessage))
+					{
+						QMessageBox::information(NULL, QString(tr("Info")),
+							QString(tr("Can't find this user!")),
+							QString(tr("Ok")));
+						return;
+					}
+					if (!balance.GetBalanceByUserID(dialogBL->GetOrmasDal(), item.GetUserID(), errorMessage))
+					{
+						QMessageBox::information(NULL, QString(tr("Info")),
+							QString(tr("Can't find balance for this user!")),
+							QString(tr("Ok")));
+						return;
+					}
+					if (item.GetSubaccountID() > 0)
+					{
+						if (!subAcc.GetSubaccountByID(dialogBL->GetOrmasDal(), item.GetSubaccountID(), errorMessage))
+						{
+							QMessageBox::information(NULL, QString(tr("Info")),
+								QString(tr("Can't find subaccount for this user!")),
+								QString(tr("Ok")));
+							return;
+						}
+					}
+					else
+					{
+						if (!subAcc.GetSubaccountByID(dialogBL->GetOrmasDal(), balance.GetSubaccountID(), errorMessage))
+						{
+							QMessageBox::information(NULL, QString(tr("Info")),
+								QString(tr("Can't find subaccount for this user!")),
+								QString(tr("Ok")));
+							return;
+						}
+					}
+					
 				}
 				tableBody += "<tr>";
 				tableBody += "<td>" + QString::number(item.GetID()) + "</td>";
-				tableBody += "<td>" + QString("Принято от ") + QString(item.GetUserSurname().c_str()) + " " + QString(item.GetUsername().c_str()) + "</td>";
-				tableBody += "<td>" + QString(subAcc.GetNumber().c_str()) + "</td>";
-				tableBody += "<td>" + QString::number(item.GetValue()) + "</td>";
+				if (item.GetUserID() > 0)
+				{
+					tableBody += "<td>" + QString::fromWCharArray(L"Принято от: ") + QString(user.GetSurname().c_str()) + " " + QString(user.GetName().c_str()) + "</td>";
+					tableBody += "<td>" + QString(subAcc.GetNumber().c_str()) + "</td>";
+				}
+				else
+				{
+					acc.GetAccountByID(dialogBL->GetOrmasDal(), item.GetAccountID(), errorMessage);
+					tableBody += "<td>" + QString::fromWCharArray(L"Принято от: ") + QString(item.GetWho().c_str()) + "</td>";
+					tableBody += "<td>" + QString(acc.GetNumber().c_str()) + "</td>";
+				}
+				tableBody += "<td>" + QString::number(item.GetValue(),'f',3) + "</td>";
 				tableBody += "<td>" + QString("-") + "</td>";
 				tableBody += "</tr>";
 				InSum += item.GetValue();
@@ -164,8 +316,12 @@ void CashBookListDlg::Generate()
 		}
 		if (vecWthRep.size() > 0)
 		{
+			std::string accNumber = "";
+			BusinessLayer::Account acc;
 			for each (auto item in vecWthRep)
 			{
+				acc.Clear();
+				accNumber.clear();
 				withdrowal.Clear();
 				subAcc.Clear();
 				balance.Clear();
@@ -177,53 +333,70 @@ void CashBookListDlg::Generate()
 						QString(tr("Ok")));
 					return;
 				}
-				if (!user.GetUserByID(dialogBL->GetOrmasDal(), item.GetUserID(), errorMessage))
+				if (item.GetUserID() > 0)
 				{
-					QMessageBox::information(NULL, QString(tr("Info")),
-						QString(tr("Can't find this user!")),
-						QString(tr("Ok")));
-					return;
-				}
-				if (!balance.GetBalanceByUserID(dialogBL->GetOrmasDal(), item.GetUserID(), errorMessage))
-				{
-					QMessageBox::information(NULL, QString(tr("Info")),
-						QString(tr("Can't find balance for this user!")),
-						QString(tr("Ok")));
-					return;
-				}
-				if (!subAcc.GetSubaccountByID(dialogBL->GetOrmasDal(), balance.GetSubaccountID(), errorMessage))
-				{
-					QMessageBox::information(NULL, QString(tr("Info")),
-						QString(tr("Can't find subaccount for this user!")),
-						QString(tr("Ok")));
-					return;
+					if (!user.GetUserByID(dialogBL->GetOrmasDal(), item.GetUserID(), errorMessage))
+					{
+						QMessageBox::information(NULL, QString(tr("Info")),
+							QString(tr("Can't find this user!")),
+							QString(tr("Ok")));
+						return;
+					}
+					if (!balance.GetBalanceByUserID(dialogBL->GetOrmasDal(), item.GetUserID(), errorMessage))
+					{
+						QMessageBox::information(NULL, QString(tr("Info")),
+							QString(tr("Can't find balance for this user!")),
+							QString(tr("Ok")));
+						return;
+					}
+					if (item.GetSubaccountID() > 0)
+					{
+						if (!subAcc.GetSubaccountByID(dialogBL->GetOrmasDal(), item.GetSubaccountID(), errorMessage))
+						{
+							QMessageBox::information(NULL, QString(tr("Info")),
+								QString(tr("Can't find subaccount for this user!")),
+								QString(tr("Ok")));
+							return;
+						}
+					}
+					else
+					{
+						if (!subAcc.GetSubaccountByID(dialogBL->GetOrmasDal(), balance.GetSubaccountID(), errorMessage))
+						{
+							QMessageBox::information(NULL, QString(tr("Info")),
+								QString(tr("Can't find subaccount for this user!")),
+								QString(tr("Ok")));
+							return;
+						}
+					}
 				}
 				tableBody += "<tr>";
 				tableBody += "<td>" + QString::number(item.GetID()) + "</td>";
-				tableBody += "<td>" + QString("Принято от ") + QString(user.GetSurname().c_str()) + " " + QString(user.GetName().c_str()) + "</td>";
-				tableBody += "<td>" + QString(subAcc.GetNumber().c_str()) + "</td>";
+				if (item.GetUserID() > 0)
+				{
+					tableBody += "<td>" + QString::fromWCharArray(L"Выдано: ") + QString(user.GetSurname().c_str()) + " " + QString(user.GetName().c_str()) + "</td>";
+					tableBody += "<td>" + QString(subAcc.GetNumber().c_str()) + "</td>";
+				}
+				else
+				{
+					acc.GetAccountByID(dialogBL->GetOrmasDal(), item.GetAccountID(), errorMessage);
+					tableBody += "<td>" + QString::fromWCharArray(L"Выдано: ") + QString(item.GetWho().c_str()) + "</td>";
+					tableBody += "<td>" + QString(acc.GetNumber().c_str()) + "</td>";
+				}
 				tableBody += "<td>" + QString("-") + "</td>";
-				tableBody += "<td>" + QString::number(item.GetValue()) + "</td>";
+				tableBody += "<td>" + QString::number(item.GetValue(),'f',3) + "</td>";
 				tableBody += "</tr>";
 				OutSum += item.GetValue();
 			}
 		}
 
-		BusinessLayer::Account acc;
-		if (!acc.GetAccountByNumber(dialogBL->GetOrmasDal(), "10110", errorMessage))
-		{
-			QMessageBox::information(NULL, QString(tr("Info")),
-				QString(tr("Can't find account!")),
-				QString(tr("Ok")));
-			return;
-		}
-
+		endValue = startValue + InSum - OutSum;
 		reportText.replace(QString("DatePh"), forDateEdit->text(), Qt::CaseInsensitive);
-		reportText.replace(QString("CashSumPh"), QString::number(acc.GetCurrentBalance() + InSum - OutSum), Qt::CaseInsensitive);
+		reportText.replace(QString("CashSumPh"), QString::number(startValue,'f',3), Qt::CaseInsensitive);
 		reportText.replace(QString("TableBodyPh"), tableBody, Qt::CaseInsensitive);
-		reportText.replace(QString("TodayInSumPh"), QString::number(InSum), Qt::CaseInsensitive);
-		reportText.replace(QString("TodayOutSumPh"), QString::number(OutSum), Qt::CaseInsensitive);
-		reportText.replace(QString("TodayPastSumPh"), QString::number(acc.GetCurrentBalance()), Qt::CaseInsensitive);
+		reportText.replace(QString("TodayInSumPh"), QString::number(InSum,'f',3), Qt::CaseInsensitive);
+		reportText.replace(QString("TodayOutSumPh"), QString::number(OutSum,'f',3), Qt::CaseInsensitive);
+		reportText.replace(QString("TodayPastSumPh"), QString::number(endValue,'f',3), Qt::CaseInsensitive);
 		reportText.replace(QString("CachierNamePh"), QString(cashier.GetSurname().c_str()) + " " + QString(cashier.GetName().c_str()), Qt::CaseInsensitive);
 		reportText.replace(QString("AccounantNamePh"), QString(accountant.GetSurname().c_str()) + " " + QString(accountant.GetName().c_str()), Qt::CaseInsensitive);
 	}
@@ -240,3 +413,112 @@ void CashBookListDlg::Close()
 	this->parentWidget()->close();
 }
 
+void CashBookListDlg::GetPrevMonthEnd(std::string forDate, std::string& fromDate, std::string& tillDate, std::string& prevMonthEnd, std::string& prevDate)
+{
+	QDate currentDate = QDate::fromString(forDate.c_str(), "dd.MM.yyyy");
+	int day = currentDate.day();
+	int month = currentDate.month();
+	int year = currentDate.year();
+
+	std::string startDate;
+	std::string endDate;
+	
+	QDate curMonthDate;
+	QDate pastMonthDate;
+	int coundOfDaysCurr;
+	int coundOfDaysPast; //  = pastMonthDate.daysInMonth();
+
+	startDate = "01.";
+	startDate += std::to_string(month);
+	startDate += ".";
+	startDate += std::to_string(year);
+
+	curMonthDate = (QDate::fromString(startDate.c_str(), "dd.MM.yyyy"));
+	coundOfDaysCurr = curMonthDate.daysInMonth();
+	endDate = std::to_string(coundOfDaysCurr);
+	endDate += ".";
+	endDate += std::to_string(month);
+	endDate += ".";
+	endDate += std::to_string(year);
+
+	fromDate = startDate;
+	tillDate = endDate;
+
+	startDate = "";
+	endDate = "";
+
+	if (month == 1)
+	{
+		startDate = "01.";
+		startDate += std::to_string(12);
+		startDate += ".";
+		startDate += std::to_string(year - 1);
+		pastMonthDate = (QDate::fromString(startDate.c_str(), "dd.MM.yyyy"));
+		coundOfDaysPast = pastMonthDate.daysInMonth();
+		endDate = std::to_string(coundOfDaysPast);
+		endDate += ".";
+		endDate += std::to_string(12);
+		endDate += ".";
+		endDate += std::to_string(year - 1);
+
+		prevMonthEnd = endDate;
+	}
+	if (month > 1)
+	{
+		startDate = "01.";
+		startDate += std::to_string(month - 1);
+		startDate += ".";
+		startDate += std::to_string(year);
+		pastMonthDate = (QDate::fromString(startDate.c_str(), "dd.MM.yyyy"));
+		coundOfDaysPast = pastMonthDate.daysInMonth();
+		endDate = std::to_string(coundOfDaysPast);
+		endDate += ".";
+		endDate += std::to_string(month - 1);
+		endDate += ".";
+		endDate += std::to_string(year);
+		prevMonthEnd = endDate;
+	}
+
+	startDate = "";
+	endDate = "";
+
+	if (day == 1)
+	{
+		prevDate = prevMonthEnd;
+	}
+	else
+	{
+		if (day - 1 < 10)
+		{
+			startDate = "0";
+			startDate += std::to_string(day - 1);
+			startDate += ".";
+		}
+		else
+		{ 
+			startDate = std::to_string(day - 1);
+			startDate += ".";
+		}
+		startDate += std::to_string(month);
+		startDate += ".";
+		startDate += std::to_string(year); 
+		prevDate = startDate;
+	}
+}
+
+std::string CashBookListDlg::GetCurrentDate()
+{
+	QDate currentDate = QDate::currentDate();
+	int day = currentDate.day();
+	int month = currentDate.month();
+	int year = currentDate.year();
+
+	std::string startDate = "";
+	startDate = std::to_string(day);
+	startDate += ".";
+	startDate += std::to_string(month);
+	startDate += ".";
+	startDate += std::to_string(year);
+
+	return startDate;
+}

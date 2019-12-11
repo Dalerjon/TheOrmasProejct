@@ -21,6 +21,7 @@ namespace BusinessLayer{
 		subaccountID = std::get<14>(wCollection);
 		statusID = std::get<15>(wCollection);
 		accountID = std::get<16>(wCollection);
+		cashboxAccountID = std::get<17>(wCollection);
 	}
 
 	std::string WithdrawalView::GetUsername()

@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "GenerateAccRepDlg.h"
 #include "MainForm.h"
-#include "DocForm.h"
+#include "ReportForm.h"
 #include "DataForm.h"
 
 
@@ -12,6 +12,7 @@ GenerateAccCardRep::GenerateAccCardRep(BusinessLayer::OrmasBL *ormasBL, QWidget 
 	dialogBL = ormasBL;
 	parentForm = parent;
 	mainForm = (MainForm *)this->parent();
+	
 	vInt = new QIntValidator(0, 1000000000, this);
 	accIDEdit->setValidator(vInt);
 
@@ -156,6 +157,7 @@ GenerateAccCardRep::GenerateAccCardRep(BusinessLayer::OrmasBL *ormasBL, QWidget 
 	QObject::connect(okBtn, &QPushButton::released, this, &GenerateAccCardRep::Generate);
 	QObject::connect(this, SIGNAL(CloseCreatedForms()), ((MainForm*)((DataForm*)parent)->GetParent()), SLOT(CloseChildsByName()));
 	QObject::connect(cancelBtn, &QPushButton::released, this, &GenerateAccCardRep::Close);
+	QObject::connect(oneAccCbx, &QCheckBox::released, this, &GenerateAccCardRep::CheckBoxChanged);
 }
 
 GenerateAccCardRep::~GenerateAccCardRep()
@@ -203,128 +205,61 @@ void GenerateAccCardRep::SetID(int ID, QString childName)
 
 void GenerateAccCardRep::Generate()
 {
-	if (accIDEdit->text().isEmpty() || 0 == accIDEdit->text().toInt())
+	QString message = tr("Loading...");
+	QWidget* checkedWidget = IsWindowExist(((MainForm*)parentForm)->mdiArea->subWindowList(), QString("generateAccRepForm"));
+	if (checkedWidget == nullptr)
 	{
-		QMessageBox::information(NULL, QString(tr("Info")),
-			QString(tr("Please select account at first!")),
-			QString(tr("Ok")));
-		return;
-	}
-
-	BusinessLayer::Account acc;
-	BusinessLayer::Subaccount subacc;
-	BusinessLayer::Entry entry;
-	bool isSubaccount = false;
-	std::vector<BusinessLayer::EntryView> vecEntryDeb;
-	std::string filterDebit;
-	if (acc.GetAccountByID(dialogBL->GetOrmasDal(), accIDEdit->text().toInt(), errorMessage))
-	{
-		filterDebit.clear();
-		entry.Clear();
-		vecEntryDeb.clear();
-		entry.SetDebitingAccountID(accIDEdit->text().toInt());
-		filterDebit = entry.GenerateFilterForPeriod(dialogBL->GetOrmasDal(), fromDateEdit->text().toUtf8().constData(), tillDateEdit->text().toUtf8().constData());
-		vecEntryDeb = dialogBL->GetAllDataForClass<BusinessLayer::EntryView>(errorMessage, filterDebit);
-	}
-	else if (subacc.GetSubaccountByID(dialogBL->GetOrmasDal(), accIDEdit->text().toInt(), errorMessage))
-	{
-		filterDebit.clear();
-		entry.Clear();
-		vecEntryDeb.clear();
-		entry.SetDebitingAccountID(subacc.GetParentAccountID());
-		filterDebit = entry.GenerateFilterForPeriod(dialogBL->GetOrmasDal(), fromDateEdit->text().toUtf8().constData(), tillDateEdit->text().toUtf8().constData());
-		vecEntryDeb = dialogBL->GetAllDataForClass<BusinessLayer::EntryView>(errorMessage, filterDebit);
-		isSubaccount = true;
-	}
-	else
-	{
-		QMessageBox::information(NULL, QString(tr("Warrning")),
-			QString(tr("Cannot find account")),
-			QString(tr("Ok")));
-		return;
-	}
-	if (vecEntryDeb.size() == 0)
-	{
-		QMessageBox::information(NULL, QString(tr("Info")),
-			QString(tr("Cannot find any entry for this period!")),
-			QString(tr("Ok")));
-		return;
-	}
-	else
-	{
-		DocForm *docForm = new DocForm(dialogBL, this);
-		docForm->setAttribute(Qt::WA_DeleteOnClose);
-		docForm->setWindowTitle(tr("Print products account card report"));
-		QMdiSubWindow *generateAccRepWindow = new QMdiSubWindow;
-		generateAccRepWindow->setWidget(docForm);
-		generateAccRepWindow->setAttribute(Qt::WA_DeleteOnClose);
-		generateAccRepWindow->resize(docForm->size().width() + 18, docForm->size().height() + 30);
-		mainForm->mdiArea->addSubWindow(generateAccRepWindow);
-
-		//read template
-		QFile file;
-		file.setFileName(":/docs/account_card.html");
-		if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+		ReportForm *rForm = new ReportForm(dialogBL, this);
+		rForm->setWindowTitle(tr("Account turnover balance sheet"));
+		std::string prevMonthLastDate = GetPrevMonthEnd(fromDateEdit->text().toUtf8().constData());
+		if (oneAccCbx->isChecked())
 		{
-			QMessageBox::information(NULL, QString(tr("Info")),
-				QString(tr("Cannot find account card report tamplate!")),
-				QString(tr("Ok")));
-			return;
-		}
-		QString reportText = file.readAll();
-		QString tableBody;
-		double fromDebSum = 0;
-		double fromCredSum = 0;
-		double curDebSum = 0;
-		double curCredSum = 0;
-		double tillDebSumPh = 0;
-		double tillCredSumPh = 0;
-		reportText.replace(QString("fromDatePh"), fromDateEdit->text(), Qt::CaseInsensitive);
-		reportText.replace(QString("tillDatePh"), tillDateEdit->text(), Qt::CaseInsensitive);
-		//generating report
-		if (vecEntryDeb.size() > 0)
-		{
-			if (isSubaccount == false)
+			if (accIDEdit->text().toInt() >0)
 			{
-				for each (auto item in vecEntryDeb)
-				{
-					/*tableBody += "<tr>";
-					tableBody += "<td style='border: 1px solid black; text - align: center; padding:0px;'>";
-					tableBody += "<td>" + QString(product.GetName().c_str()) + "</td>";
-					tableBody += "<td>" + QString::number(mapCountItem.second) + "</td>";
-					tableBody += "<td>" + QString::number(nCost.GetValue()*mapCountItem.second) + "</td>";
-					tableBody += "<td>" + QString::number(productSum.find(mapCountItem.first)->second) + "</td>";
-					tableBody += "<td>" + QString::number(productSum.find(mapCountItem.first)->second - nCost.GetValue()*mapCountItem.second) + "</td>";
-					tableBody += "</tr>";*/
-				}
+				rForm->FillAccCrdTable(fromDateEdit->text().toUtf8().constData(), tillDateEdit->text().toUtf8().constData(), accIDEdit->text().toInt(), prevMonthLastDate);
 			}
 			else
 			{
-				for each (auto item in vecEntryDeb)
-				{
-					/*tableBody += "<tr>";
-					tableBody += "<td>" + QString::number(mapCountItem.first) + "</td>";
-					tableBody += "<td>" + QString(product.GetName().c_str()) + "</td>";
-					tableBody += "<td>" + QString::number(mapCountItem.second) + "</td>";
-					tableBody += "<td>" + QString::number(nCost.GetValue()*mapCountItem.second) + "</td>";
-					tableBody += "<td>" + QString::number(productSum.find(mapCountItem.first)->second) + "</td>";
-					tableBody += "<td>" + QString::number(productSum.find(mapCountItem.first)->second - nCost.GetValue()*mapCountItem.second) + "</td>";
-					tableBody += "</tr>";*/
-				}
+				delete rForm;
+				QMessageBox::information(NULL, QString(tr("Warning")),
+					QString(tr("Please select account ot subaccount")),
+					QString(tr("Ok")));
+				errorMessage = "";
 			}
-		
-
-			reportText.replace(QString("TableBodyPh"), tableBody, Qt::CaseInsensitive);
-
 		}
 		else
 		{
-			QMessageBox::information(NULL, QString(tr("Info")),
-				QString(tr("Report is empty! Cannot print it")),
+			rForm->FillAccCrdTable(fromDateEdit->text().toUtf8().constData(), tillDateEdit->text().toUtf8().constData(), prevMonthLastDate);
+		}
+		if (errorMessage.empty())
+		{
+			rForm->setObjectName("generateAccRepForm");
+			QMdiSubWindow *accountWindow = new QMdiSubWindow;
+			accountWindow->setWidget(rForm);
+			accountWindow->setAttribute(Qt::WA_DeleteOnClose);
+			((MainForm*)parentForm)->mdiArea->addSubWindow(accountWindow);
+			accountWindow->resize(rForm->size().width() + 18, rForm->size().height() + 30);
+			rForm->show();
+			rForm->topLevelWidget();
+			rForm->activateWindow();
+			rForm->raise();
+			rForm->setWindowFlags(rForm->windowFlags() | Qt::WindowStaysOnTopHint);
+		}
+		else
+		{
+			delete rForm;
+			QMessageBox::information(NULL, QString(tr("Warning")),
+				QString(tr(errorMessage.c_str())),
 				QString(tr("Ok")));
-			return;
+			errorMessage = "";
 		}
 	}
+	else
+	{
+		checkedWidget->topLevelWidget();
+		checkedWidget->activateWindow();
+	}
+	Close();
 }
 
 void GenerateAccCardRep::Close()
@@ -418,6 +353,13 @@ void GenerateAccCardRep::OpenSAccDlg()
 	}
 }
 
+void GenerateAccCardRep::CheckBoxChanged()
+{
+	if (oneAccCbx->isChecked())
+		oneAccWidget->setEnabled(true);
+	if (!oneAccCbx->isChecked())
+		oneAccWidget->setEnabled(false);
+}
 
 
 void GenerateAccCardRep::AccTextChanged()
@@ -457,4 +399,50 @@ void GenerateAccCardRep::AccTextChanged()
 		accNamePh->setText("");
 		accIDEdit->setText("");
 	}
+}
+
+std::string GenerateAccCardRep::GetPrevMonthEnd(std::string date)
+{
+	QDate currentDate = QDate::fromString(date.c_str(), "dd.MM.yyyy");
+	int day = currentDate.day();
+	int month = currentDate.month();
+	int year = currentDate.year();
+
+	std::string startDate;
+	std::string endDate;
+	QDate pastMonthDate;
+	int coundOfDays; //  = pastMonthDate.daysInMonth();
+
+	if (month == 1)
+	{
+		startDate = "01.";
+		startDate += std::to_string(12);
+		startDate += ".";
+		startDate += std::to_string(year - 1);
+		pastMonthDate = (QDate::fromString(startDate.c_str(), "dd.MM.yyyy"));
+		coundOfDays = pastMonthDate.daysInMonth();
+		endDate = std::to_string(coundOfDays);
+		endDate += ".";
+		endDate += std::to_string(12);
+		endDate += ".";
+		endDate += std::to_string(year - 1);
+		return endDate;
+	}
+	if (month > 1)
+	{
+		startDate = "01.";
+		startDate += std::to_string(month - 1);
+		startDate += ".";
+		startDate += std::to_string(year);
+		pastMonthDate = (QDate::fromString(startDate.c_str(), "dd.MM.yyyy"));
+		coundOfDays = pastMonthDate.daysInMonth();
+		endDate = std::to_string(coundOfDays);
+		endDate += ".";
+		endDate += std::to_string(month - 1);
+		endDate += ".";
+		endDate += std::to_string(year);
+		return endDate;
+	}
+
+	return "";
 }

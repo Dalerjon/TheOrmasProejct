@@ -4496,7 +4496,7 @@ namespace BusinessLayer
 						}
 						if (std::round((oldCount - item.GetCount()) * 1000) / 1000 != std::round(stock.GetCount() * 1000) / 1000)
 							return false;
-						if (std::round((oldSum - item.GetSum()) * 1000) / 1000 != std::round(stock.GetSum() * 1000) / 1000)
+						if (std::round((oldSum - item.GetSum()) * 10) / 10 != std::round(stock.GetSum() * 10) / 10)
 							return false;
 						totalNewCount += stock.GetCount();
 					}
@@ -4626,7 +4626,7 @@ namespace BusinessLayer
 					}
 					if (std::round((oldCount + item.GetCount()) * 1000) / 1000 != std::round(stock.GetCount() * 1000) / 1000)
 						return false;
-					if (std::round((oldSum + item.GetSum()) * 1000) / 1000 != std::round(stock.GetSum() * 1000) / 1000)
+					if (std::round((oldSum + item.GetSum()) * 10) / 10 != std::round(stock.GetSum() * 10) / 10)
 						return false;
 					totalNewCount += stock.GetCount();
 				}
@@ -4768,7 +4768,7 @@ namespace BusinessLayer
 						}
 						if (std::round((oldCount - item.GetCount()) * 1000) / 1000 != std::round(stock.GetCount() * 1000) / 1000)
 							return false;
-						if (std::round((oldSum - item.GetSum()) * 1000) / 1000 != std::round(stock.GetSum() * 1000) / 1000)
+						if (std::round((oldSum - item.GetSum()) * 10) / 10 != std::round(stock.GetSum() * 10) / 10)
 							return false;
 						totalNewCount += stock.GetCount();
 					}

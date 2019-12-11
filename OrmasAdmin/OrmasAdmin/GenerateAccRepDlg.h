@@ -19,7 +19,8 @@ public:
 	void OpenAccDlg();
 	void OpenSAccDlg();
 	void AccTextChanged();
-	
+	void CheckBoxChanged();
+	std::string GetPrevMonthEnd(std::string);
 	public slots:
 	void SetID(int ID, QString childName);
 	signals:

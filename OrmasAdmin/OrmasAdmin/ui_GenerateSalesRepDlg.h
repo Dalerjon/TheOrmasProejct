@@ -14,6 +14,7 @@
 #include <QtWidgets/QAction>
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QButtonGroup>
+#include <QtWidgets/QCheckBox>
 #include <QtWidgets/QDateEdit>
 #include <QtWidgets/QDialog>
 #include <QtWidgets/QGridLayout>
@@ -30,19 +31,20 @@ class Ui_GenerateSalesReport
 public:
     QGridLayout *gridLayout;
     QDateEdit *tillDateEdit;
+    QLabel *label_2;
     QHBoxLayout *horizontalLayout;
     QSpacerItem *horizontalSpacer;
     QPushButton *okBtn;
     QPushButton *cancelBtn;
-    QLabel *label_2;
-    QDateEdit *fromDateEdit;
     QLabel *fromLb;
+    QDateEdit *fromDateEdit;
+    QCheckBox *allSalesChb;
 
     void setupUi(QDialog *GenerateSalesReport)
     {
         if (GenerateSalesReport->objectName().isEmpty())
             GenerateSalesReport->setObjectName(QStringLiteral("GenerateSalesReport"));
-        GenerateSalesReport->resize(501, 73);
+        GenerateSalesReport->resize(501, 98);
         GenerateSalesReport->setLocale(QLocale(QLocale::English, QLocale::UnitedStates));
         GenerateSalesReport->setModal(false);
         gridLayout = new QGridLayout(GenerateSalesReport);
@@ -52,6 +54,11 @@ public:
         tillDateEdit->setObjectName(QStringLiteral("tillDateEdit"));
 
         gridLayout->addWidget(tillDateEdit, 0, 4, 1, 1);
+
+        label_2 = new QLabel(GenerateSalesReport);
+        label_2->setObjectName(QStringLiteral("label_2"));
+
+        gridLayout->addWidget(label_2, 0, 3, 1, 1);
 
         horizontalLayout = new QHBoxLayout();
         horizontalLayout->setObjectName(QStringLiteral("horizontalLayout"));
@@ -70,22 +77,22 @@ public:
         horizontalLayout->addWidget(cancelBtn);
 
 
-        gridLayout->addLayout(horizontalLayout, 1, 1, 1, 4);
+        gridLayout->addLayout(horizontalLayout, 2, 1, 1, 4);
 
-        label_2 = new QLabel(GenerateSalesReport);
-        label_2->setObjectName(QStringLiteral("label_2"));
+        fromLb = new QLabel(GenerateSalesReport);
+        fromLb->setObjectName(QStringLiteral("fromLb"));
 
-        gridLayout->addWidget(label_2, 0, 3, 1, 1);
+        gridLayout->addWidget(fromLb, 0, 1, 1, 1);
 
         fromDateEdit = new QDateEdit(GenerateSalesReport);
         fromDateEdit->setObjectName(QStringLiteral("fromDateEdit"));
 
         gridLayout->addWidget(fromDateEdit, 0, 2, 1, 1);
 
-        fromLb = new QLabel(GenerateSalesReport);
-        fromLb->setObjectName(QStringLiteral("fromLb"));
+        allSalesChb = new QCheckBox(GenerateSalesReport);
+        allSalesChb->setObjectName(QStringLiteral("allSalesChb"));
 
-        gridLayout->addWidget(fromLb, 0, 1, 1, 1);
+        gridLayout->addWidget(allSalesChb, 1, 1, 1, 4);
 
         QWidget::setTabOrder(fromDateEdit, tillDateEdit);
         QWidget::setTabOrder(tillDateEdit, okBtn);
@@ -99,10 +106,11 @@ public:
     void retranslateUi(QDialog *GenerateSalesReport)
     {
         GenerateSalesReport->setWindowTitle(QApplication::translate("GenerateSalesReport", "Generate sales report", 0));
+        label_2->setText(QApplication::translate("GenerateSalesReport", "Till date:", 0));
         okBtn->setText(QApplication::translate("GenerateSalesReport", "OK", 0));
         cancelBtn->setText(QApplication::translate("GenerateSalesReport", "Cancel", 0));
-        label_2->setText(QApplication::translate("GenerateSalesReport", "Till date:", 0));
         fromLb->setText(QApplication::translate("GenerateSalesReport", "From date:", 0));
+        allSalesChb->setText(QApplication::translate("GenerateSalesReport", "All sales report", 0));
     } // retranslateUi
 
 };

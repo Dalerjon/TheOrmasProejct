@@ -3256,7 +3256,19 @@ void MainForm::OpenPaymentForm()
 	{
 		DataForm *dForm = new DataForm(oBL, this);
 		dForm->setWindowTitle(tr("Payments"));
-		dForm->FillTable<BusinessLayer::PaymentView>(errorMessage);
+		std::string filter = "";
+		BusinessLayer::Cashbox cashbox;
+		BusinessLayer::CashboxEmployeeRelation ceRelation;
+		if (ceRelation.GetCashboxEmployeeByEmployeeID(oBL->GetOrmasDal(), oBL->loggedUser->GetID(), errorMessage))
+		{
+			if (cashbox.GetCashboxByID(oBL->GetOrmasDal(), ceRelation.GetCashboxID(), errorMessage))
+			{
+				BusinessLayer::Payment payment;
+				payment.SetCashboxAccountID(cashbox.GetSubaccountID());
+				filter = payment.GenerateFilter(oBL->GetOrmasDal());
+			}
+		}
+		dForm->FillTable<BusinessLayer::PaymentView>(errorMessage, filter);
 		if (errorMessage.empty())
 		{
 			dForm->setObjectName("paymentForm");
@@ -3400,7 +3412,19 @@ void MainForm::OpenWithdrawalForm()
 	{
 		DataForm *dForm = new DataForm(oBL, this);
 		dForm->setWindowTitle(tr("Withdrawals"));
-		dForm->FillTable<BusinessLayer::WithdrawalView>(errorMessage);
+		std::string filter = "";
+		BusinessLayer::Cashbox cashbox;
+		BusinessLayer::CashboxEmployeeRelation ceRelation;
+		if (ceRelation.GetCashboxEmployeeByEmployeeID(oBL->GetOrmasDal(), oBL->loggedUser->GetID(), errorMessage))
+		{
+			if (cashbox.GetCashboxByID(oBL->GetOrmasDal(), ceRelation.GetCashboxID(), errorMessage))
+			{
+				BusinessLayer::Withdrawal withdrawal;
+				withdrawal.SetCashboxAccountID(cashbox.GetSubaccountID());
+				filter = withdrawal.GenerateFilter(oBL->GetOrmasDal());
+			}
+		}
+		dForm->FillTable<BusinessLayer::WithdrawalView>(errorMessage, filter);
 		if (errorMessage.empty())
 		{
 			dForm->setObjectName("withdrawalForm");

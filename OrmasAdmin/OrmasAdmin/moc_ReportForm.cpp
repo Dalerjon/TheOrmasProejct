@@ -19,8 +19,8 @@
 
 QT_BEGIN_MOC_NAMESPACE
 struct qt_meta_stringdata_ReportForm_t {
-    QByteArrayData data[7];
-    char stringdata0[57];
+    QByteArrayData data[11];
+    char stringdata0[92];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
@@ -34,12 +34,17 @@ QT_MOC_LITERAL(1, 11, 6), // "SendID"
 QT_MOC_LITERAL(2, 18, 0), // ""
 QT_MOC_LITERAL(3, 19, 2), // "ID"
 QT_MOC_LITERAL(4, 22, 9), // "childName"
-QT_MOC_LITERAL(5, 32, 8), // "ViewWTBS"
-QT_MOC_LITERAL(6, 41, 15) // "CloseReportForm"
+QT_MOC_LITERAL(5, 32, 4), // "View"
+QT_MOC_LITERAL(6, 37, 8), // "ViewWTBS"
+QT_MOC_LITERAL(7, 46, 7), // "ViewAcc"
+QT_MOC_LITERAL(8, 54, 10), // "ViewOneAcc"
+QT_MOC_LITERAL(9, 65, 10), // "ViewSubacc"
+QT_MOC_LITERAL(10, 76, 15) // "CloseReportForm"
 
     },
-    "ReportForm\0SendID\0\0ID\0childName\0"
-    "ViewWTBS\0CloseReportForm"
+    "ReportForm\0SendID\0\0ID\0childName\0View\0"
+    "ViewWTBS\0ViewAcc\0ViewOneAcc\0ViewSubacc\0"
+    "CloseReportForm"
 };
 #undef QT_MOC_LITERAL
 
@@ -49,7 +54,7 @@ static const uint qt_meta_data_ReportForm[] = {
        7,       // revision
        0,       // classname
        0,    0, // classinfo
-       3,   14, // methods
+       7,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -57,16 +62,24 @@ static const uint qt_meta_data_ReportForm[] = {
        1,       // signalCount
 
  // signals: name, argc, parameters, tag, flags
-       1,    2,   29,    2, 0x06 /* Public */,
+       1,    2,   49,    2, 0x06 /* Public */,
 
  // slots: name, argc, parameters, tag, flags
-       5,    0,   34,    2, 0x08 /* Private */,
-       6,    0,   35,    2, 0x0a /* Public */,
+       5,    0,   54,    2, 0x08 /* Private */,
+       6,    0,   55,    2, 0x08 /* Private */,
+       7,    0,   56,    2, 0x08 /* Private */,
+       8,    0,   57,    2, 0x08 /* Private */,
+       9,    0,   58,    2, 0x08 /* Private */,
+      10,    0,   59,    2, 0x0a /* Public */,
 
  // signals: parameters
     QMetaType::Void, QMetaType::Int, QMetaType::QString,    3,    4,
 
  // slots: parameters
+    QMetaType::Void,
+    QMetaType::Void,
+    QMetaType::Void,
+    QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void,
 
@@ -80,8 +93,12 @@ void ReportForm::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, 
         Q_UNUSED(_t)
         switch (_id) {
         case 0: _t->SendID((*reinterpret_cast< int(*)>(_a[1])),(*reinterpret_cast< QString(*)>(_a[2]))); break;
-        case 1: _t->ViewWTBS(); break;
-        case 2: _t->CloseReportForm(); break;
+        case 1: _t->View(); break;
+        case 2: _t->ViewWTBS(); break;
+        case 3: _t->ViewAcc(); break;
+        case 4: _t->ViewOneAcc(); break;
+        case 5: _t->ViewSubacc(); break;
+        case 6: _t->CloseReportForm(); break;
         default: ;
         }
     } else if (_c == QMetaObject::IndexOfMethod) {
@@ -124,13 +141,13 @@ int ReportForm::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 3)
+        if (_id < 7)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 3;
+        _id -= 7;
     } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 3)
+        if (_id < 7)
             *reinterpret_cast<int*>(_a[0]) = -1;
-        _id -= 3;
+        _id -= 7;
     }
     return _id;
 }

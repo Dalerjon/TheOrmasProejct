@@ -33,7 +33,7 @@ public:
 	void SetID(int ID, QString childName);
 private:
 	BusinessLayer::Payment *payment = new BusinessLayer::Payment();
-	void SetPaymentParams(QString, double, QString, int, int, int, int, int, QString, int = 0);
+	void SetPaymentParams(QString, double, QString, int, int, int, int, int, QString, int, int = 0);
 	void FillEditElements(QString, double, QString, int, int, int, int, int, QString);
 	QDoubleValidator *vDouble = nullptr;
 	QIntValidator *vInt = nullptr;
@@ -42,6 +42,8 @@ private:
 	QWidget* parentForm;
 	MainForm* mainForm;
 	bool CheckAccess();
+	int GetCashboxAccountID();
+	bool CrateCashboxTransaction(int);
 	QStandardItemModel *itemModel;
 	QModelIndex mIndex;
 };

@@ -24,6 +24,7 @@ namespace BusinessLayer{
 		statusID = std::get<7>(wCollection);
 		accountID = std::get<8>(wCollection);
 		who = std::get<9>(wCollection);
+		cashboxAccountID = std::get<10>(wCollection);
 	}
 	Withdrawal::Withdrawal()
 	{
@@ -35,6 +36,7 @@ namespace BusinessLayer{
 		subaccountID = 0;
 		accountID = 0;
 		statusID = 0;
+		cashboxAccountID = 0;
 	}
 	int Withdrawal::GetID()
 	{
@@ -86,6 +88,11 @@ namespace BusinessLayer{
 		return who;
 	}
 
+	int Withdrawal::GetCashboxAccountID()
+	{
+		return cashboxAccountID;
+	}
+
 	void Withdrawal::SetID(int wID)
 	{
 		id = wID;
@@ -132,8 +139,12 @@ namespace BusinessLayer{
 		who = wWho;
 	}
 
+	void Withdrawal::SetCashboxAccountID(int cbID)
+	{
+		cashboxAccountID = cbID;
+	}
 	bool Withdrawal::CreateWithdrawal(DataLayer::OrmasDal &ormasDal, std::string wDate, double wValue, int uID, int sID, std::string wTaeget,
-		int cID, int stsID, int aID, std::string wWho, std::string& errorMessage)
+		int cID, int stsID, int aID, std::string wWho, int cashboxAccID,std::string& errorMessage)
 	{
 		if (IsDuplicate(ormasDal, wDate, wValue, uID, cID, aID, errorMessage))
 			return false;
@@ -150,14 +161,15 @@ namespace BusinessLayer{
 		statusID = stsID;
 		accountID = aID;
 		who = wWho;
+		cashboxAccountID = cashboxAccID;
 		//ormasDal.StartTransaction(errorMessage);
-		if (0 != id && ormasDal.CreateWithdrawal(id, date, value, userID,subaccountID,target, currencyID, statusID, accountID, who, errorMessage))
+		if (0 != id && ormasDal.CreateWithdrawal(id, date, value, userID,subaccountID,target, currencyID, statusID, accountID, who, cashboxAccountID, errorMessage))
 		{
 			if (statusID == statusMap.find("EXECUTED")->second)
 			{
 				if (userID <= 0 && accountID <= 0)
 				{
-					if (Payout(ormasDal, subaccountID, errorMessage))
+					if (Payout(ormasDal, subaccountID, cashboxAccountID, errorMessage))
 					{
 						//ormasDal.CommitTransaction(errorMessage);
 						return true;
@@ -169,7 +181,7 @@ namespace BusinessLayer{
 				}
 				else
 				{
-					if (Payout(ormasDal, userID, currencyID, accountID, errorMessage))
+					if (Payout(ormasDal, userID, currencyID, accountID, cashboxAccountID, errorMessage))
 					{
 						//ormasDal.CommitTransaction(errorMessage);
 						return true;
@@ -199,13 +211,13 @@ namespace BusinessLayer{
 			return false;
 		id = ormasDal.GenerateID();
 		//ormasDal.StartTransaction(errorMessage);
-		if (0 != id && ormasDal.CreateWithdrawal(id, date, value, userID, subaccountID, target, currencyID, statusID, accountID, who, errorMessage))
+		if (0 != id && ormasDal.CreateWithdrawal(id, date, value, userID, subaccountID, target, currencyID, statusID, accountID, who, cashboxAccountID, errorMessage))
 		{
 			if (statusID == statusMap.find("EXECUTED")->second)
 			{
 				if (userID <= 0 && accountID <= 0)
 				{
-					if (Payout(ormasDal, subaccountID, errorMessage))
+					if (Payout(ormasDal, subaccountID, cashboxAccountID, errorMessage))
 					{
 						//ormasDal.CommitTransaction(errorMessage);
 						return true;
@@ -217,7 +229,7 @@ namespace BusinessLayer{
 				}
 				else
 				{
-					if (Payout(ormasDal, userID, currencyID, accountID, errorMessage))
+					if (Payout(ormasDal, userID, currencyID, accountID, cashboxAccountID, errorMessage))
 					{
 						//ormasDal.CommitTransaction(errorMessage);
 						return true;
@@ -268,7 +280,7 @@ namespace BusinessLayer{
 	}
 
 	bool Withdrawal::UpdateWithdrawal(DataLayer::OrmasDal &ormasDal, std::string wDate, double wValue, int uID, int sID, std::string wTaeget,
-		int cID, int stsID, int aID, std::string wWho, std::string& errorMessage)
+		int cID, int stsID, int aID, std::string wWho, int cashboxAccID, std::string& errorMessage)
 	{
 		std::map<std::string, int> statusMap = BusinessLayer::Status::GetStatusesAsMap(ormasDal, errorMessage);
 		if (0 == statusMap.size())
@@ -282,10 +294,11 @@ namespace BusinessLayer{
 		statusID = stsID;
 		accountID = aID;
 		who = wWho;
+		cashboxAccountID = cashboxAccID;
 		currentValue = GetCurrentValue(ormasDal, id, errorMessage);
 		previousStatusID = GetCurrentStatusID(ormasDal, id, errorMessage);
 		//ormasDal.StartTransaction(errorMessage);
-		if (0 != id && ormasDal.UpdateWithdrawal(id, date, value, userID, subaccountID, target, currencyID, statusID, accountID, who, errorMessage))
+		if (0 != id && ormasDal.UpdateWithdrawal(id, date, value, userID, subaccountID, target, currencyID, statusID, accountID, who, cashboxAccountID, errorMessage))
 		{
 			if (previousStatusID != statusMap.find("EXECUTED")->second)
 			{
@@ -293,7 +306,7 @@ namespace BusinessLayer{
 				{
 					if (userID <= 0 && accountID <= 0)
 					{
-						if (Payout(ormasDal, subaccountID, errorMessage))
+						if (Payout(ormasDal, subaccountID, cashboxAccountID, errorMessage))
 						{
 							currentValue = 0.0;
 							//ormasDal.CommitTransaction(errorMessage);
@@ -307,7 +320,7 @@ namespace BusinessLayer{
 					}
 					else
 					{
-						if (Payout(ormasDal, userID, currencyID, accountID, errorMessage))
+						if (Payout(ormasDal, userID, currencyID, accountID, cashboxAccountID, errorMessage))
 						{
 							currentValue = 0.0;
 							//ormasDal.CommitTransaction(errorMessage);
@@ -330,7 +343,7 @@ namespace BusinessLayer{
 				if (statusID == statusMap.find("ERROR")->second)
 				{
 
-					if (CancelWithdrawal(ormasDal, userID, currencyID, accountID, errorMessage))
+					if (CancelWithdrawal(ormasDal, userID, currencyID, accountID, cashboxAccountID, errorMessage))
 					{
 						currentValue = 0.0;
 						//ormasDal.CommitTransaction(errorMessage);
@@ -393,7 +406,7 @@ namespace BusinessLayer{
 		currentValue = GetCurrentValue(ormasDal, id, errorMessage);
 		previousStatusID = GetCurrentStatusID(ormasDal, id, errorMessage);
 		//ormasDal.StartTransaction(errorMessage);
-		if (0 != id && ormasDal.UpdateWithdrawal(id, date, value, userID, subaccountID, target, currencyID, statusID, accountID, who, errorMessage))
+		if (0 != id && ormasDal.UpdateWithdrawal(id, date, value, userID, subaccountID, target, currencyID, statusID, accountID, who, cashboxAccountID, errorMessage))
 		{
 			if (previousStatusID != statusMap.find("EXECUTED")->second)
 			{
@@ -401,7 +414,7 @@ namespace BusinessLayer{
 				{
 					if (userID <= 0 && accountID <= 0)
 					{
-						if (Payout(ormasDal, subaccountID, errorMessage))
+						if (Payout(ormasDal, subaccountID, cashboxAccountID, errorMessage))
 						{
 							currentValue = 0.0;
 							//ormasDal.CommitTransaction(errorMessage);
@@ -415,7 +428,7 @@ namespace BusinessLayer{
 					}
 					else
 					{
-						if (Payout(ormasDal, userID, currencyID, accountID, errorMessage))
+						if (Payout(ormasDal, userID, currencyID, accountID, cashboxAccountID, errorMessage))
 						{
 							currentValue = 0.0;
 							//ormasDal.CommitTransaction(errorMessage);
@@ -438,7 +451,7 @@ namespace BusinessLayer{
 				if (statusID == statusMap.find("ERROR")->second)
 				{
 
-					if (CancelWithdrawal(ormasDal, userID, currencyID, accountID, errorMessage))
+					if (CancelWithdrawal(ormasDal, userID, currencyID, accountID, cashboxAccountID, errorMessage))
 					{
 						currentValue = 0.0;
 						//ormasDal.CommitTransaction(errorMessage);
@@ -497,9 +510,9 @@ namespace BusinessLayer{
 	std::string Withdrawal::GenerateFilter(DataLayer::OrmasDal& ormasDal)
 	{
 		if (0 != id || !date.empty() || !target.empty() || 0 != userID || 0 != subaccountID || 0 != currencyID || 0 != value
-			|| 0 != statusID || 0 != accountID ||  !who.empty())
+			|| 0 != statusID || 0 != accountID || !who.empty() || 0 != cashboxAccountID)
 		{
-			return ormasDal.GetFilterForWithdrawal(id, date, value, userID, subaccountID, target, currencyID, statusID, accountID, who);
+			return ormasDal.GetFilterForWithdrawal(id, date, value, userID, subaccountID, target, currencyID, statusID, accountID, who, cashboxAccountID);
 		}
 		return "";
 	}
@@ -508,7 +521,7 @@ namespace BusinessLayer{
 	{
 		if (!toDate.empty() && !fromDate.empty())
 		{
-			return ormasDal.GetFilterForWithdrawalForPeriod(id, date, value, userID, subaccountID, target, currencyID, statusID, accountID, who, fromDate, toDate);
+			return ormasDal.GetFilterForWithdrawalForPeriod(id, date, value, userID, subaccountID, target, currencyID, statusID, accountID, who, cashboxAccountID, fromDate, toDate);
 		}
 		return "";
 	}
@@ -532,6 +545,7 @@ namespace BusinessLayer{
 			currencyID = std::get<13>(withdrawalVector.at(0));
 			statusID = std::get<15>(withdrawalVector.at(0));
 			accountID = std::get<16>(withdrawalVector.at(0));
+			cashboxAccountID = std::get<16>(withdrawalVector.at(0));
 			return true;
 		}
 		else
@@ -544,7 +558,7 @@ namespace BusinessLayer{
 	bool Withdrawal::IsEmpty()
 	{
 		if (0 == id && date.empty() && 0.0 == value && 0 == userID && 0 == currencyID && 0== subaccountID && target.empty() 
-			&& 0 == statusID && 0 == accountID && who.empty())
+			&& 0 == statusID && 0 == accountID && who.empty() && 0 == cashboxAccountID)
 			return true;
 		return false;
 	}
@@ -561,6 +575,7 @@ namespace BusinessLayer{
 		statusID = 0;
 		accountID = 0;
 		who = "";
+		cashboxAccountID = 0;
 	}
 
 	bool Withdrawal::IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string pDate, double pValue, int uID, int cID, int aID,
@@ -608,9 +623,9 @@ namespace BusinessLayer{
 		return true;
 	}
 
-	bool Withdrawal::Payout(DataLayer::OrmasDal& ormasDal, int uID, int cID, int aID, std::string& errorMessage)
+	bool Withdrawal::Payout(DataLayer::OrmasDal& ormasDal, int uID, int cID, int aID, int cashboxAccID, std::string& errorMessage)
 	{
-		CashboxEmployeeRelation cashEmpRel;
+		/*CashboxEmployeeRelation cashEmpRel;
 		if (!cashEmpRel.GetCashboxByEmployeeID(ormasDal, loggedUserID, errorMessage))
 		{
 			errorMessage = "Access denied! You haven't rights for doing operations with cashbox!";
@@ -621,7 +636,7 @@ namespace BusinessLayer{
 		{
 			errorMessage = "Access denied! You haven't rights for doing operations with cashbox!";
 			return false;
-		}
+		}*/
 
 		if (uID > 0)
 		{
@@ -658,7 +673,7 @@ namespace BusinessLayer{
 			if (balance.GetBalanceBySubaccountID(ormasDal, balance.GetSubaccountID(), errorMessage))
 			{
 				int debAccID = balance.GetSubaccountID();
-				int credAccID = cashbox.GetSubaccountID();
+				int credAccID = cashboxAccID;
 				if (0 == debAccID || 0 == credAccID)
 				{
 					return false;
@@ -676,7 +691,7 @@ namespace BusinessLayer{
 		else if (aID > 0)
 		{
 			int debAccID = aID;
-			int credAccID = cashbox.GetSubaccountID();
+			int credAccID = cashboxAccID;
 			if (0 == debAccID || 0 == credAccID)
 			{
 				return false;
@@ -689,9 +704,9 @@ namespace BusinessLayer{
 		return false;
 	}
 
-	bool Withdrawal::Payout(DataLayer::OrmasDal& ormasDal, int sID, std::string& errorMessage)
+	bool Withdrawal::Payout(DataLayer::OrmasDal& ormasDal, int sID, int cashboxAccID, std::string& errorMessage)
 	{
-		CashboxEmployeeRelation cashEmpRel;
+		/*CashboxEmployeeRelation cashEmpRel;
 		if (!cashEmpRel.GetCashboxByEmployeeID(ormasDal, loggedUserID, errorMessage))
 		{
 			errorMessage = "Access denied! You haven't rights for doing operations with cashbox!";
@@ -702,9 +717,9 @@ namespace BusinessLayer{
 		{
 			errorMessage = "Access denied! You haven't rights for doing operations with cashbox!";
 			return false;
-		}
+		}*/
 		int debAccID = sID;
-		int credAccID = cashbox.GetSubaccountID();
+		int credAccID = cashboxAccID;
 		if (0 == debAccID || 0 == credAccID)
 		{
 			return false;
@@ -716,9 +731,9 @@ namespace BusinessLayer{
 		return false;
 	}
 
-	bool Withdrawal::Payout(DataLayer::OrmasDal& ormasDal, int uID, int cID, int aID, double previousValue, std::string& errorMessage)
+	bool Withdrawal::Payout(DataLayer::OrmasDal& ormasDal, int uID, int cID, int aID, int cashboxAccID, double previousValue, std::string& errorMessage)
 	{
-		CashboxEmployeeRelation cashEmpRel;
+		/*CashboxEmployeeRelation cashEmpRel;
 		if (!cashEmpRel.GetCashboxByEmployeeID(ormasDal, loggedUserID, errorMessage))
 		{
 			errorMessage = "Access denied! You haven't rights for doing operations with cashbox!";
@@ -730,7 +745,7 @@ namespace BusinessLayer{
 		{
 			errorMessage = "Access denied! You haven't rights for doing operations with cashbox!";
 			return false;
-		}
+		}*/
 		
 		if (userID > 0)
 		{
@@ -767,7 +782,7 @@ namespace BusinessLayer{
 			if (balance.GetBalanceBySubaccountID(ormasDal, balance.GetSubaccountID(), errorMessage))
 			{
 				int debAccID = balance.GetSubaccountID();
-				int credAccID = cashbox.GetSubaccountID();
+				int credAccID = cashboxAccID;
 				if (0 == debAccID || 0 == credAccID)
 				{
 					return false;
@@ -781,7 +796,7 @@ namespace BusinessLayer{
 		else if (aID > 0)
 		{
 			int debAccID = aID;
-			int credAccID = cashbox.GetSubaccountID();
+			int credAccID = cashboxAccID;
 			if (0 == debAccID || 0 == credAccID)
 			{
 				return false;
@@ -794,9 +809,9 @@ namespace BusinessLayer{
 		return false;
 	}
 
-	bool Withdrawal::Payout(DataLayer::OrmasDal& ormasDal, int sID, double previousValue, std::string& errorMessage)
+	bool Withdrawal::Payout(DataLayer::OrmasDal& ormasDal, int sID, int cashboxAccID, double previousValue, std::string& errorMessage)
 	{
-		CashboxEmployeeRelation cashEmpRel;
+		/*CashboxEmployeeRelation cashEmpRel;
 		if (!cashEmpRel.GetCashboxByEmployeeID(ormasDal, loggedUserID, errorMessage))
 		{
 			errorMessage = "Access denied! You haven't rights for doing operations with cashbox!";
@@ -808,10 +823,10 @@ namespace BusinessLayer{
 		{
 			errorMessage = "Access denied! You haven't rights for doing operations with cashbox!";
 			return false;
-		}
+		}*/
 		
 		int debAccID = sID;
-		int credAccID = cashbox.GetSubaccountID();
+		int credAccID = cashboxAccID;
 		if (0 == debAccID || 0 == credAccID)
 		{
 			return false;
@@ -831,9 +846,9 @@ namespace BusinessLayer{
 		return 0;
 	}
 
-	bool Withdrawal::CancelWithdrawal(DataLayer::OrmasDal& ormasDal, int uID, int cID, int aID, std::string& errorMessage)
+	bool Withdrawal::CancelWithdrawal(DataLayer::OrmasDal& ormasDal, int uID, int cID, int aID, int cashboxAccID, std::string& errorMessage)
 	{
-		CashboxEmployeeRelation cashEmpRel;
+		/*CashboxEmployeeRelation cashEmpRel;
 		if (!cashEmpRel.GetCashboxByEmployeeID(ormasDal, loggedUserID, errorMessage))
 		{
 			errorMessage = "Access denied! You haven't rights for doing operations with cashbox!";
@@ -844,7 +859,7 @@ namespace BusinessLayer{
 		{
 			errorMessage = "Access denied! You haven't rights for doing operations with cashbox!";
 			return false;
-		}
+		}*/
 
 		if (userID > 0)
 		{
@@ -881,7 +896,7 @@ namespace BusinessLayer{
 			if (balance.GetBalanceBySubaccountID(ormasDal, balance.GetSubaccountID(), errorMessage))
 			{
 				int credAccID = balance.GetSubaccountID();
-				int debAccID = cashbox.GetSubaccountID();
+				int debAccID = cashboxAccID;
 				if (0 == debAccID || 0 == credAccID)
 				{
 					return false;
@@ -899,7 +914,7 @@ namespace BusinessLayer{
 		else if (aID > 0)
 		{
 			int credAccID = aID;
-			int debAccID = cashbox.GetSubaccountID();
+			int debAccID = cashboxAccID;
 			if (0 == debAccID || 0 == credAccID)
 			{
 				return false;
@@ -912,10 +927,10 @@ namespace BusinessLayer{
 		return false;
 	}
 
-	bool Withdrawal::CancelWithdrawal(DataLayer::OrmasDal& ormasDal, int sID, std::string& errorMessage)
+	bool Withdrawal::CancelWithdrawal(DataLayer::OrmasDal& ormasDal, int sID, int cashboxAccID, std::string& errorMessage)
 	{
-		CashboxEmployeeRelation cashEmpRel;
-		if (!cashEmpRel.GetCashboxByEmployeeID(ormasDal, loggedUserID, errorMessage))
+		/*CashboxEmployeeRelation cashEmpRel;
+		if (!cashEmpRel.GetCashboxEmployeeByEmployeeID(ormasDal, loggedUserID, errorMessage))
 		{
 			errorMessage = "Access denied! You haven't rights for doing operations with cashbox!";
 			return false;
@@ -926,10 +941,10 @@ namespace BusinessLayer{
 		{
 			errorMessage = "Access denied! You haven't rights for doing operations with cashbox!";
 			return false;
-		}
+		}*/
 		
 		int credAccID = sID;
-		int debAccID = cashbox.GetSubaccountID();
+		int debAccID = cashboxAccID;
 		if (0 == debAccID || 0 == credAccID)
 		{
 			return false;
@@ -1048,3 +1063,4 @@ namespace BusinessLayer{
 		return myconv.to_bytes(str);
 	}
 }
+

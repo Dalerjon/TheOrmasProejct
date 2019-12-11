@@ -439,7 +439,7 @@ caption{
 
 .form-count{
 	height:22px;
-	width:100px;
+	width:80px;
 	padding-left:5px;
 }
 
@@ -458,7 +458,7 @@ caption{
 .approve-label
 {
 	display:table;
-	width: 200px;
+	width: 280px;
 	font-style: italic;
     font-weight: bold;
 	font-size: 1em;

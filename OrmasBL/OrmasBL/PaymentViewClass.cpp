@@ -21,6 +21,7 @@ namespace BusinessLayer{
 		statusID = std::get<14>(pCollection);
 		accountID = std::get<15>(pCollection);
 		subaccountID = std::get<16>(pCollection);
+		cashboxAccountID = std::get<17>(pCollection);
 	}
 
 	std::string PaymentView::GetUsername()

@@ -16,10 +16,13 @@ public:
 	private slots:
 	void Generate();
 	void Close();
+	void GetPrevMonthEnd(std::string, std::string&, std::string&, std::string&, std::string&);
+	std::string GetCurrentDate();
 private:
 	double InSum = 0;
 	double OutSum = 0;
 	QWidget* parentForm;
 	MainForm* mainForm;
+	std::string currDate = "";
 };
 #endif //CASHBOOKLISTDLG_H

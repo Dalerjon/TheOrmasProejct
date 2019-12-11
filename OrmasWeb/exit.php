@@ -11,7 +11,7 @@
 		<?php
           if(empty($_SESSION['login'])) 
           {
-				header("location:index.php");
+				echo '<script type="text/javascript"> window.location = "index.php";</script>';
           }
           	unset($_SESSION['password']);
             unset($_SESSION['login']); 

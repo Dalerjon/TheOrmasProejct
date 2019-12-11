@@ -16,6 +16,7 @@ CreatePmtDlg::CreatePmtDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, QWi
 	vInt = new QIntValidator(0, 1000000000, this);
 	userEdit->setValidator(vInt);
 	valueEdit->setValidator(vDouble);
+	targetEdit->setMaxLength(100);
 	valueEdit->setMaxLength(17);
 	if (true == updateFlag)
 	{
@@ -160,7 +161,7 @@ void CreatePmtDlg::SetID(int ID, QString childName)
 }
 
 void CreatePmtDlg::SetPaymentParams(QString pDate, double pValue, QString pTarget, int pUserID, int pCurrencyID, int pStatusID, 
-	int pAccountID, int pSubaccountID, QString pWho, int id)
+	int pAccountID, int pSubaccountID, QString pWho, int cashboxAccID, int id)
 {
 	payment->SetDate(pDate.toUtf8().constData());
 	payment->SetValue(pValue);
@@ -171,6 +172,7 @@ void CreatePmtDlg::SetPaymentParams(QString pDate, double pValue, QString pTarge
 	payment->SetAccountID(pAccountID);
 	payment->SetSubaccountID(pSubaccountID);
 	payment->SetWho(pWho.toUtf8().constData());
+	payment->SetCashboxAccountID(cashboxAccID);
 	payment->SetID(id);
 }
 
@@ -224,6 +226,7 @@ bool CreatePmtDlg::FillDlgElements(QTableView* pTable)
 			pTable->model()->data(pTable->model()->index(mIndex.row(), 15)).toInt(),
 			pTable->model()->data(pTable->model()->index(mIndex.row(), 16)).toInt(),
 			pTable->model()->data(pTable->model()->index(mIndex.row(), 10)).toString().toUtf8().constData(),
+			pTable->model()->data(pTable->model()->index(mIndex.row(), 17)).toInt(),
 			pTable->model()->data(pTable->model()->index(mIndex.row(), 0)).toInt());
 		FillEditElements(pTable->model()->data(pTable->model()->index(mIndex.row(), 1)).toString().toUtf8().constData(),
 			pTable->model()->data(pTable->model()->index(mIndex.row(), 5)).toDouble(),
@@ -251,12 +254,31 @@ void CreatePmtDlg::CreatePayment()
 		&& !whoEdit->text().isEmpty())
 	{
 		DataForm *parentDataForm = (DataForm*) parentForm;
+		int cashboxAccID = GetCashboxAccountID();
+		if (0 == cashboxAccID)
+		{
+			dialogBL->CancelTransaction(errorMessage);
+			QMessageBox::information(NULL, QString(tr("Warning")),
+				QString(tr("You have not rights to create payment")),
+				QString(tr("Ok")));
+			errorMessage.clear();
+			return;
+		}
 		SetPaymentParams(dateEdit->text(), valueEdit->text().toDouble(), targetEdit->text(), userEdit->text().toInt(), 
 			currencyCmb->currentData().toInt(), statusEdit->text().toInt(), accIDEdit->text().toInt(), saIDEdit->text().toInt(), 
-			whoEdit->text());
+			whoEdit->text(), cashboxAccID);
 		dialogBL->StartTransaction(errorMessage);
 		if (dialogBL->CreatePayment(payment, errorMessage))
 		{
+			if (!CrateCashboxTransaction(payment->GetID()))
+			{
+				dialogBL->CancelTransaction(errorMessage);
+				QMessageBox::information(NULL, QString(tr("Warning")),
+					QString(tr("Cannot create cashbox transaction!")),
+					QString(tr("Ok")));
+				errorMessage.clear();
+				return;
+			}
 			if (parentDataForm != nullptr)
 			{
 				if (!parentDataForm->IsClosed())
@@ -359,7 +381,8 @@ void CreatePmtDlg::CreatePayment()
 						<< new QStandardItem(QString::number(payment->GetCurrencyID()))
 						<< new QStandardItem(QString::number(payment->GetStatusID()))
 						<< new QStandardItem(QString::number(payment->GetAccountID()))
-						<< new QStandardItem(QString::number(payment->GetSubaccountID()));
+						<< new QStandardItem(QString::number(payment->GetSubaccountID()))
+						<< new QStandardItem(QString::number(payment->GetCashboxAccountID()));
 					QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
 					itemModel->appendRow(paymentItem);
 					delete currency;
@@ -404,7 +427,7 @@ void CreatePmtDlg::EditPayment()
 			DataForm *parentDataForm = (DataForm*) parentForm;
 			SetPaymentParams(dateEdit->text(), valueEdit->text().toDouble(), targetEdit->text(), userEdit->text().toInt(),
 				currencyCmb->currentData().toInt(), statusEdit->text().toInt(), accIDEdit->text().toInt(), saIDEdit->text().toInt(),
-				whoEdit->text(), payment->GetID());
+				whoEdit->text(),payment->GetCashboxAccountID(), payment->GetID());
 			dialogBL->StartTransaction(errorMessage);
 			if (dialogBL->UpdatePayment(payment, errorMessage))
 			{
@@ -509,6 +532,7 @@ void CreatePmtDlg::EditPayment()
 						itemModel->item(mIndex.row(), 14)->setText(QString::number(payment->GetStatusID()));
 						itemModel->item(mIndex.row(), 15)->setText(QString::number(payment->GetAccountID()));
 						itemModel->item(mIndex.row(), 16)->setText(QString::number(payment->GetSubaccountID()));
+						itemModel->item(mIndex.row(), 17)->setText(QString::number(payment->GetCashboxAccountID()));
 						emit itemModel->dataChanged(mIndex, mIndex);
 						delete currency;
 						delete user;
@@ -980,4 +1004,89 @@ bool CreatePmtDlg::CheckAccess()
 	}
 
 	return true;
+}
+
+int CreatePmtDlg::GetCashboxAccountID()
+{
+	BusinessLayer::Cashbox cashbox;
+	BusinessLayer::CashboxEmployeeRelation ceRelation;
+	if (ceRelation.GetCashboxEmployeeByEmployeeID(dialogBL->GetOrmasDal(), dialogBL->loggedUser->GetID(), errorMessage))
+	{
+		if (cashbox.GetCashboxByID(dialogBL->GetOrmasDal(), ceRelation.GetCashboxID(), errorMessage))
+		{
+			return cashbox.GetSubaccountID();
+		}
+	}
+	return 0;
+}
+
+bool CreatePmtDlg::CrateCashboxTransaction(int paymentID)
+{
+	BusinessLayer::Cashbox cashbox;
+	BusinessLayer::CashboxEmployeeRelation ceRelation;
+	if (ceRelation.GetCashboxEmployeeByEmployeeID(dialogBL->GetOrmasDal(), dialogBL->loggedUser->GetID(), errorMessage))
+	{
+		if (cashbox.GetCashboxByID(dialogBL->GetOrmasDal(), ceRelation.GetCashboxID(), errorMessage))
+		{
+			BusinessLayer::Employee accountant;
+			BusinessLayer::Employee owner;
+			BusinessLayer::Role role;
+			
+			if (0 == role.GetRoleIDByName(dialogBL->GetOrmasDal(), "CHIEF ACCOUNTANT", errorMessage))
+			{
+				QMessageBox::information(NULL, QString(tr("Warning")),
+					QString(tr("Connot find 'CHIEF ACCOUNTANT' role!")),
+					QString(tr("Ok")));
+				return false;
+			}
+
+			accountant.SetRoleID(role.GetID());
+			std::string empFilter = accountant.GenerateFilter(dialogBL->GetOrmasDal());
+			std::vector<BusinessLayer::EmployeeView> vecEmpRep = dialogBL->GetAllDataForClass<BusinessLayer::EmployeeView>(errorMessage, empFilter);
+			if (vecEmpRep.size() == 0)
+			{
+				QMessageBox::information(NULL, QString(tr("Warning")),
+					QString(tr("Connot find 'CHIEF ACCOUNTANT' employee!")),
+					QString(tr("Ok")));
+				return false;
+			}
+			else
+			{
+				accountant.SetID(vecEmpRep.at(0).GetID());
+				accountant.SetName(vecEmpRep.at(0).GetName());
+				accountant.SetSurname(vecEmpRep.at(0).GetSurname());
+			}
+
+			role.Clear();
+			if (0 == role.GetRoleIDByName(dialogBL->GetOrmasDal(), "DIRECTOR", errorMessage))
+			{
+				QMessageBox::information(NULL, QString(tr("Warning")),
+					QString(tr("Connot find 'OWNER' role!")),
+					QString(tr("Ok")));
+				return false;
+			}
+
+			owner.SetRoleID(role.GetID());
+			std::string ownFilter = owner.GenerateFilter(dialogBL->GetOrmasDal());
+			std::vector<BusinessLayer::EmployeeView> vecOwnRep = dialogBL->GetAllDataForClass<BusinessLayer::EmployeeView>(errorMessage, ownFilter);
+			if (vecOwnRep.size() == 0)
+			{
+				QMessageBox::information(NULL, QString(tr("Warning")),
+					QString(tr("Connot find 'OWNER' employee!")),
+					QString(tr("Ok")));
+				return false;
+			}
+			else
+			{
+				owner.SetID(vecOwnRep.at(0).GetID());
+				owner.SetName(vecOwnRep.at(0).GetName());
+				owner.SetSurname(vecOwnRep.at(0).GetSurname());
+			}
+
+			BusinessLayer::CashboxTransaction cTransaction;
+			if (cTransaction.CreateCashboxTransaction(dialogBL->GetOrmasDal(), cashbox.GetID(), dialogBL->loggedUser->GetID(), accountant.GetID(), owner.GetID(), paymentID, 0, errorMessage))
+				return true;
+		}
+	}
+	return false;
 }

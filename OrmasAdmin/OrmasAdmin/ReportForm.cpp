@@ -13,7 +13,7 @@ ReportForm::ReportForm(BusinessLayer::OrmasBL *ormasBL, QWidget *parent) :QWidge
 	reportFormBL = ormasBL;
 	parentForm = parent;
 	connect(closeBtn, &QPushButton::released, this, &ReportForm::CloseReportForm);
-	connect(viewBtn, &QPushButton::released, this, &ReportForm::ViewWTBS);
+	connect(viewBtn, &QPushButton::released, this, &ReportForm::View);
 }
 
 void ReportForm::GetIDValue(QModelIndex index)
@@ -32,6 +32,7 @@ void ReportForm::CloseReportForm()
 
 void ReportForm::FillStockTable(std::string fromDate, std::string tillDate, int warehouseID, std::string prevMonthEndDate)
 {
+	this->setObjectName("WTBS");
 	BusinessLayer::Status status;
 	if (!status.GetStatusByName(reportFormBL->GetOrmasDal(), "EXECUTED", errorMessage))
 	{
@@ -64,14 +65,24 @@ void ReportForm::FillStockTable(std::string fromDate, std::string tillDate, int 
 	std::map<int, double> stockHistoryCount;
 	std::map<int, double> stockHistorySum;
 
+
 	BusinessLayer::Stock stock;
 	stock.SetWarehouseID(warehouse.GetID());
 	std::string filterStock = stock.GenerateFilter(reportFormBL->GetOrmasDal());
 	std::vector<BusinessLayer::StockView> vecStock = reportFormBL->GetAllDataForClass<BusinessLayer::StockView>(errorMessage, filterStock);
-	
-	if (vecStock.size() > 0)
+
+
+	BusinessLayer::StockHistory stockHistoryEnd;
+	stockHistoryEnd.SetWarehouseID(warehouse.GetID());
+	if (!tillDate.empty())
 	{
-		for each (auto stockItem in vecStock)
+		stockHistoryEnd.SetHistoryDate(tillDate);
+	}
+	std::string filterStockHistoryEnd = stockHistoryEnd.GenerateFilter(reportFormBL->GetOrmasDal());
+	std::vector<BusinessLayer::StockHistoryView> vecStockHistoryEnd = reportFormBL->GetAllDataForClass<BusinessLayer::StockHistoryView>(errorMessage, filterStockHistoryEnd);
+	if (vecStockHistoryEnd.size() > 0)
+	{
+		for each (auto stockItem in vecStockHistoryEnd)
 		{
 			if (stockCount.find(stockItem.GetProductID()) != stockCount.end())
 			{
@@ -82,6 +93,25 @@ void ReportForm::FillStockTable(std::string fromDate, std::string tillDate, int 
 			{
 				stockCount.insert(std::make_pair(stockItem.GetProductID(), stockItem.GetCount()));
 				stockSum.insert(std::make_pair(stockItem.GetProductID(), stockItem.GetSum()));
+			}
+		}
+	}
+	else
+	{
+		if (vecStock.size() > 0)
+		{
+			for each (auto stockItem in vecStock)
+			{
+				if (stockCount.find(stockItem.GetProductID()) != stockCount.end())
+				{
+					stockCount.find(stockItem.GetProductID())->second = stockCount.find(stockItem.GetProductID())->second + stockItem.GetCount();
+					stockSum.find(stockItem.GetProductID())->second = stockSum.find(stockItem.GetProductID())->second + stockItem.GetSum();
+				}
+				else
+				{
+					stockCount.insert(std::make_pair(stockItem.GetProductID(), stockItem.GetCount()));
+					stockSum.insert(std::make_pair(stockItem.GetProductID(), stockItem.GetSum()));
+				}
 			}
 		}
 	}
@@ -123,6 +153,7 @@ void ReportForm::FillStockTable(std::string fromDate, std::string tillDate, int 
 		BusinessLayer::WarehouseEmployeeRelation weRelation;
 		employeeIDList = weRelation.GetEmployeeIDListByWarehouseID(reportFormBL->GetOrmasDal(), warehouse.GetID());
 		std::string empIDListFilter = employee.GenerateINFilterForEmployee(reportFormBL->GetOrmasDal(), employeeIDList);
+		
 		BusinessLayer::ConsumeRaw consumeRaw;
 		consumeRaw.SetStatusID(status.GetID());
 		std::string filterprRaw = consumeRaw.GenerateFilterForPeriod(reportFormBL->GetOrmasDal(), fromDate, tillDate);
@@ -404,6 +435,11 @@ void ReportForm::FillStockTable(std::string fromDate, std::string tillDate, int 
 		QStandardItemModel *itemModel = new QStandardItemModel(this);
 		itemModel->setHorizontalHeaderLabels(header);
 		tableView->setModel(itemModel);
+		tableView->hideColumn(9);
+		tableView->hideColumn(10);
+		tableView->hideColumn(11);
+		tableView->hideColumn(12);
+		tableView->hideColumn(13);
 
 		QList<QStandardItem*> wtosItem;
 		BusinessLayer::Product product;
@@ -508,6 +544,12 @@ void ReportForm::FillStockTable(std::string fromDate, std::string tillDate, int 
 		BusinessLayer::WarehouseEmployeeRelation weRelation;
 		employeeIDList = weRelation.GetEmployeeIDListByWarehouseID(reportFormBL->GetOrmasDal(), warehouse.GetID());
 		std::string empIDListFilter = employee.GenerateINFilterForEmployee(reportFormBL->GetOrmasDal(), employeeIDList);
+
+		std::vector<int> userIDList;
+		BusinessLayer::User user;
+		BusinessLayer::WarehouseEmployeeRelation wuRelation;
+		userIDList = wuRelation.GetEmployeeIDListByWarehouseID(reportFormBL->GetOrmasDal(), warehouse.GetID());
+		std::string userIDListFilter = user.GenerateINFilter(reportFormBL->GetOrmasDal(), employeeIDList);
 		
 		BusinessLayer::ReceiptProduct receiptProduct;
 		receiptProduct.SetStatusID(status.GetID());
@@ -595,24 +637,45 @@ void ReportForm::FillStockTable(std::string fromDate, std::string tillDate, int 
 
 		// select stock transfers for warehouse
 		filterList.clear();
-		BusinessLayer::StockTransfer sTransfer;
-		sTransfer.SetStatusID(status.GetID());
-		std::string filterStockTra = ret.GenerateFilterForPeriod(reportFormBL->GetOrmasDal(), fromDate, tillDate);
-		filterList.push_back(filterStockTra);
+		BusinessLayer::StockTransfer sInTransfer;
+		sInTransfer.SetStatusID(status.GetID());
+		std::string filterInStockTra = sInTransfer.GenerateFilterForPeriod(reportFormBL->GetOrmasDal(), fromDate, tillDate);
+		filterList.push_back(filterInStockTra);
 		filterList.push_back(empIDListFilter);
-		filterStockTra = reportFormBL->GetOrmasDal().ConcatenateFilters(filterList);
-		std::vector<BusinessLayer::StockTransferView> vecStockTra = reportFormBL->GetAllDataForClass<BusinessLayer::StockTransferView>(errorMessage, filterStockTra);
+		filterInStockTra = reportFormBL->GetOrmasDal().ConcatenateFilters(filterList);
+		std::vector<BusinessLayer::StockTransferView> vecStockInTra = reportFormBL->GetAllDataForClass<BusinessLayer::StockTransferView>(errorMessage, filterInStockTra);
 
 
 		// select stock transfers for return status
 		filterListReturn.clear();
-		BusinessLayer::StockTransfer sTransferReturn;
-		sTransferReturn.SetStatusID(statusReturn.GetID());
-		std::string filterStockTraReturn = sTransferReturn.GenerateFilterForPeriod(reportFormBL->GetOrmasDal(), fromDate, tillDate);
-		filterListReturn.push_back(filterStockTraReturn);
+		BusinessLayer::StockTransfer sInTransferReturn;
+		sInTransferReturn.SetStatusID(statusReturn.GetID());
+		std::string filterInStockTraReturn = sInTransferReturn.GenerateFilterForPeriod(reportFormBL->GetOrmasDal(), fromDate, tillDate);
+		filterListReturn.push_back(filterInStockTraReturn);
 		filterListReturn.push_back(empIDListFilter);
-		filterStockTraReturn = reportFormBL->GetOrmasDal().ConcatenateFilters(filterListReturn);
-		std::vector<BusinessLayer::StockTransferView> vecStockTraReturn = reportFormBL->GetAllDataForClass<BusinessLayer::StockTransferView>(errorMessage, filterStockTraReturn);
+		filterInStockTraReturn = reportFormBL->GetOrmasDal().ConcatenateFilters(filterListReturn);
+		std::vector<BusinessLayer::StockTransferView> vecStockInTraReturn = reportFormBL->GetAllDataForClass<BusinessLayer::StockTransferView>(errorMessage, filterInStockTraReturn);
+
+		// select stock transfers for warehouse
+		filterList.clear();
+		BusinessLayer::StockTransfer sOutTransfer;
+		sOutTransfer.SetStatusID(status.GetID());
+		std::string filterOutStockTra = sOutTransfer.GenerateFilterForPeriod(reportFormBL->GetOrmasDal(), fromDate, tillDate);
+		filterList.push_back(filterOutStockTra);
+		filterList.push_back(userIDListFilter);
+		filterOutStockTra = reportFormBL->GetOrmasDal().ConcatenateFilters(filterList);
+		std::vector<BusinessLayer::StockTransferView> vecStockOutTra = reportFormBL->GetAllDataForClass<BusinessLayer::StockTransferView>(errorMessage, filterOutStockTra);
+
+
+		// select stock transfers for return status
+		filterListReturn.clear();
+		BusinessLayer::StockTransfer sOutTransferReturn;
+		sOutTransferReturn.SetStatusID(statusReturn.GetID());
+		std::string filterOutStockTraReturn = sOutTransferReturn.GenerateFilterForPeriod(reportFormBL->GetOrmasDal(), fromDate, tillDate);
+		filterListReturn.push_back(filterOutStockTraReturn);
+		filterListReturn.push_back(userIDListFilter);
+		filterOutStockTraReturn = reportFormBL->GetOrmasDal().ConcatenateFilters(filterListReturn);
+		std::vector<BusinessLayer::StockTransferView> vecStockOutTraReturn = reportFormBL->GetAllDataForClass<BusinessLayer::StockTransferView>(errorMessage, filterOutStockTraReturn);
 
 		std::map<int, double> receiptCount;
 		std::map<int, double> receiptSum;
@@ -622,8 +685,10 @@ void ReportForm::FillStockTable(std::string fromDate, std::string tillDate, int 
 		std::map<int, double> returnSum;
 		std::map<int, double> writeOffCount;
 		std::map<int, double> writeOffSum;
-		std::map<int, double> stockTraCount;
-		std::map<int, double> stockTraSum;
+		std::map<int, double> stockInTraCount;
+		std::map<int, double> stockOutTraCount;
+		std::map<int, double> stockInTraSum;
+		std::map<int, double> stockOutTraSum;
 
 		std::map<int, double> receiptCountReturn;
 		std::map<int, double> receiptSumReturn;
@@ -633,8 +698,10 @@ void ReportForm::FillStockTable(std::string fromDate, std::string tillDate, int 
 		std::map<int, double> returnSumReturn;
 		std::map<int, double> writeOffCountReturn;
 		std::map<int, double> writeOffSumReturn;
-		std::map<int, double> stockTraCountReturn;
-		std::map<int, double> stockTraSumReturn;
+		std::map<int, double> stockInTraCountReturn;
+		std::map<int, double> stockInTraSumReturn;
+		std::map<int, double> stockOutTraCountReturn;
+		std::map<int, double> stockOutTraSumReturn;
 
 
 		if (vecRecProd.size() > 0)
@@ -655,7 +722,7 @@ void ReportForm::FillStockTable(std::string fromDate, std::string tillDate, int 
 				{
 					for each (auto listItem in vecRcpProdList)
 					{
-						if (consumeCount.find(listItem.GetProductID()) != consumeCount.end())
+						if (receiptCount.find(listItem.GetProductID()) != receiptCount.end())
 						{
 							receiptCount.find(listItem.GetProductID())->second = receiptCount.find(listItem.GetProductID())->second + listItem.GetCount();
 							receiptSum.find(listItem.GetProductID())->second = receiptSum.find(listItem.GetProductID())->second + listItem.GetSum();
@@ -739,7 +806,7 @@ void ReportForm::FillStockTable(std::string fromDate, std::string tillDate, int 
 			std::string condumeProductListFilter;
 			std::vector<BusinessLayer::ConsumeProductListView> vecConProdList;
 
-			for each (auto item in vecConProd)
+			for each (auto item in vecConProdReturn)
 			{
 				consumeProductList.Clear();
 				condumeProductListFilter.clear();
@@ -896,13 +963,13 @@ void ReportForm::FillStockTable(std::string fromDate, std::string tillDate, int 
 			}
 		}
 
-		if (vecStockTra.size() > 0)
+		if (vecStockInTra.size() > 0)
 		{
 			BusinessLayer::StockTransferList stTraList;
 			std::string stTraListFilter;
 			std::vector<BusinessLayer::StockTransferListView> vecStTraList;
 
-			for each (auto item in vecStockTra)
+			for each (auto item in vecStockInTra)
 			{
 				stTraList.Clear();
 				stTraListFilter.clear();
@@ -914,27 +981,27 @@ void ReportForm::FillStockTable(std::string fromDate, std::string tillDate, int 
 				{
 					for each (auto listItem in vecStTraList)
 					{
-						if (stockTraCount.find(listItem.GetProductID()) != stockTraCount.end())
+						if (stockInTraCount.find(listItem.GetProductID()) != stockInTraCount.end())
 						{
-							stockTraCount.find(listItem.GetProductID())->second = stockTraCount.find(listItem.GetProductID())->second + listItem.GetCount();
-							stockTraSum.find(listItem.GetProductID())->second = stockTraSum.find(listItem.GetProductID())->second + listItem.GetSum();
+							stockInTraCount.find(listItem.GetProductID())->second = stockInTraCount.find(listItem.GetProductID())->second + listItem.GetCount();
+							stockInTraSum.find(listItem.GetProductID())->second = stockInTraSum.find(listItem.GetProductID())->second + listItem.GetSum();
 						}
 						else
 						{
-							stockTraCount.insert(std::make_pair(listItem.GetProductID(), listItem.GetCount()));
-							stockTraSum.insert(std::make_pair(listItem.GetProductID(), listItem.GetSum()));
+							stockInTraCount.insert(std::make_pair(listItem.GetProductID(), listItem.GetCount()));
+							stockInTraSum.insert(std::make_pair(listItem.GetProductID(), listItem.GetSum()));
 						}
 					}
 				}
 			}
 		}
-		if (vecStockTraReturn.size() > 0)
+		if (vecStockInTraReturn.size() > 0)
 		{
 			BusinessLayer::StockTransferList stTraListReturn;
 			std::string stTraListFilterReturn;
 			std::vector<BusinessLayer::StockTransferListView> vecStTraListReturn;
 
-			for each (auto item in vecStockTraReturn)
+			for each (auto item in vecStockInTraReturn)
 			{
 				stTraListReturn.Clear();
 				stTraListFilterReturn.clear();
@@ -946,15 +1013,80 @@ void ReportForm::FillStockTable(std::string fromDate, std::string tillDate, int 
 				{
 					for each (auto listItem in vecStTraListReturn)
 					{
-						if (stockTraCountReturn.find(listItem.GetProductID()) != stockTraCount.end())
+						if (stockInTraCountReturn.find(listItem.GetProductID()) != stockInTraCountReturn.end())
 						{
-							stockTraCountReturn.find(listItem.GetProductID())->second = stockTraCountReturn.find(listItem.GetProductID())->second + listItem.GetCount();
-							stockTraSumReturn.find(listItem.GetProductID())->second = stockTraSumReturn.find(listItem.GetProductID())->second + listItem.GetSum();
+							stockInTraCountReturn.find(listItem.GetProductID())->second = stockInTraCountReturn.find(listItem.GetProductID())->second + listItem.GetCount();
+							stockInTraSumReturn.find(listItem.GetProductID())->second = stockInTraSumReturn.find(listItem.GetProductID())->second + listItem.GetSum();
 						}
 						else
 						{
-							stockTraCountReturn.insert(std::make_pair(listItem.GetProductID(), listItem.GetCount()));
-							stockTraSumReturn.insert(std::make_pair(listItem.GetProductID(), listItem.GetSum()));
+							stockInTraCountReturn.insert(std::make_pair(listItem.GetProductID(), listItem.GetCount()));
+							stockInTraSumReturn.insert(std::make_pair(listItem.GetProductID(), listItem.GetSum()));
+						}
+					}
+				}
+			}
+		}
+
+		if (vecStockOutTra.size() > 0)
+		{
+			BusinessLayer::StockTransferList stTraList;
+			std::string stTraListFilter;
+			std::vector<BusinessLayer::StockTransferListView> vecStTraList;
+
+			for each (auto item in vecStockOutTra)
+			{
+				stTraList.Clear();
+				stTraListFilter.clear();
+				stTraList.SetStockTransferID(item.GetID());
+				stTraListFilter = stTraList.GenerateFilter(reportFormBL->GetOrmasDal());
+				vecStTraList.clear();
+				vecStTraList = reportFormBL->GetAllDataForClass<BusinessLayer::StockTransferListView>(errorMessage, stTraListFilter);
+				if (vecStTraList.size() > 0)
+				{
+					for each (auto listItem in vecStTraList)
+					{
+						if (stockOutTraCount.find(listItem.GetProductID()) != stockOutTraCount.end())
+						{
+							stockOutTraCount.find(listItem.GetProductID())->second = stockOutTraCount.find(listItem.GetProductID())->second + listItem.GetCount();
+							stockOutTraSum.find(listItem.GetProductID())->second = stockOutTraSum.find(listItem.GetProductID())->second + listItem.GetSum();
+						}
+						else
+						{
+							stockOutTraCount.insert(std::make_pair(listItem.GetProductID(), listItem.GetCount()));
+							stockOutTraSum.insert(std::make_pair(listItem.GetProductID(), listItem.GetSum()));
+						}
+					}
+				}
+			}
+		}
+		if (vecStockOutTraReturn.size() > 0)
+		{
+			BusinessLayer::StockTransferList stTraListReturn;
+			std::string stTraListFilterReturn;
+			std::vector<BusinessLayer::StockTransferListView> vecStTraListReturn;
+
+			for each (auto item in vecStockOutTraReturn)
+			{
+				stTraListReturn.Clear();
+				stTraListFilterReturn.clear();
+				stTraListReturn.SetStockTransferID(item.GetID());
+				stTraListFilterReturn = stTraListReturn.GenerateFilter(reportFormBL->GetOrmasDal());
+				vecStTraListReturn.clear();
+				vecStTraListReturn = reportFormBL->GetAllDataForClass<BusinessLayer::StockTransferListView>(errorMessage, stTraListFilterReturn);
+				if (vecStTraListReturn.size() > 0)
+				{
+					for each (auto listItem in vecStTraListReturn)
+					{
+						if (stockOutTraCountReturn.find(listItem.GetProductID()) != stockOutTraCountReturn.end())
+						{
+							stockOutTraCountReturn.find(listItem.GetProductID())->second = stockOutTraCountReturn.find(listItem.GetProductID())->second + listItem.GetCount();
+							stockOutTraSumReturn.find(listItem.GetProductID())->second = stockOutTraSumReturn.find(listItem.GetProductID())->second + listItem.GetSum();
+						}
+						else
+						{
+							stockOutTraCountReturn.insert(std::make_pair(listItem.GetProductID(), listItem.GetCount()));
+							stockOutTraSumReturn.insert(std::make_pair(listItem.GetProductID(), listItem.GetSum()));
 						}
 					}
 				}
@@ -976,6 +1108,7 @@ void ReportForm::FillStockTable(std::string fromDate, std::string tillDate, int 
 		tableView->hideColumn(11);
 		tableView->hideColumn(12);
 		tableView->hideColumn(13);
+		
 
 		QList<QStandardItem*> wtosItem;
 		BusinessLayer::Product product;
@@ -998,7 +1131,8 @@ void ReportForm::FillStockTable(std::string fromDate, std::string tillDate, int 
 			}
 			if (receiptCount.find(mapItem.first) != receiptCount.end() || consumeCountReturn.find(mapItem.first) != consumeCountReturn.end()
 				|| writeOffCountReturn.find(mapItem.first) != writeOffCountReturn.end() || returnCount.find(mapItem.first) != returnCount.end()
-				|| stockTraCountReturn.find(mapItem.first) != stockTraCountReturn.end())
+				|| stockInTraCount.find(mapItem.first) != stockInTraCount.end()
+				|| stockOutTraCountReturn.find(mapItem.first) != stockOutTraCountReturn.end())
 			{
 				double tempCount = 0;
 				double tempSum = 0;
@@ -1022,10 +1156,15 @@ void ReportForm::FillStockTable(std::string fromDate, std::string tillDate, int 
 					tempCount += writeOffCountReturn.find(mapItem.first)->second;
 					tempSum += writeOffSumReturn.find(mapItem.first)->second;
 				}
-				if (stockTraCountReturn.find(mapItem.first) != stockTraCountReturn.end())
+				if (stockInTraCount.find(mapItem.first) != stockInTraCount.end())
 				{
-					tempCount += stockTraCountReturn.find(mapItem.first)->second;
-					tempSum += stockTraSumReturn.find(mapItem.first)->second;
+					tempCount += stockInTraCount.find(mapItem.first)->second;
+					tempSum += stockInTraSum.find(mapItem.first)->second;
+				}
+				if (stockOutTraCountReturn.find(mapItem.first) != stockOutTraCountReturn.end())
+				{
+					tempCount += stockOutTraCountReturn.find(mapItem.first)->second;
+					tempSum += stockOutTraSumReturn.find(mapItem.first)->second;
 				}
 				wtosItem << new QStandardItem(QString::number(tempCount, 'f', 3))
 					<< new QStandardItem(QString::number(tempSum, 'f', 3));
@@ -1037,7 +1176,8 @@ void ReportForm::FillStockTable(std::string fromDate, std::string tillDate, int 
 			}
 			if (consumeCount.find(mapItem.first) != consumeCount.end() || receiptCountReturn.find(mapItem.first) != receiptCountReturn.end()
 				|| writeOffCount.find(mapItem.first) != writeOffCount.end() || returnCountReturn.find(mapItem.first) != returnCountReturn.end()
-				|| stockTraCount.find(mapItem.first) != stockTraCount.end())
+				|| stockInTraCountReturn.find(mapItem.first) != stockInTraCountReturn.end() 
+				|| stockInTraCountReturn.find(mapItem.first) != stockInTraCountReturn.end())
 			{
 				double tempCount = 0;
 				double tempSum = 0;
@@ -1061,10 +1201,15 @@ void ReportForm::FillStockTable(std::string fromDate, std::string tillDate, int 
 					tempCount += writeOffCount.find(mapItem.first)->second;
 					tempSum += writeOffSum.find(mapItem.first)->second;
 				}
-				if (writeOffCount.find(mapItem.first) != writeOffCount.end())
+				if (stockInTraCountReturn.find(mapItem.first) != stockInTraCountReturn.end())
 				{
-					tempCount += stockTraCount.find(mapItem.first)->second;
-					tempSum += stockTraSum.find(mapItem.first)->second;
+					tempCount += stockInTraCountReturn.find(mapItem.first)->second;
+					tempSum += stockInTraSumReturn.find(mapItem.first)->second;
+				}
+				if (stockOutTraCount.find(mapItem.first) != stockOutTraCount.end())
+				{
+					tempCount += stockOutTraCount.find(mapItem.first)->second;
+					tempSum += stockOutTraSum.find(mapItem.first)->second;
 				}
 				wtosItem << new QStandardItem(QString::number(tempCount, 'f', 3))
 					<< new QStandardItem(QString::number(tempSum, 'f', 3));
@@ -1097,390 +1242,1207 @@ void ReportForm::FillStockTable(std::string fromDate, std::string tillDate, int 
 	if (warehouse.GetWarehouseTypeID() == warehouseTypeMap.find("PRODUCTION")->second)
 	{
 
-	}
+		//select consume raw from warehouse
+		std::vector<int> employeeIDList;
+		BusinessLayer::Employee employee;
+		BusinessLayer::WarehouseEmployeeRelation weRelation;
+		employeeIDList = weRelation.GetEmployeeIDListByWarehouseID(reportFormBL->GetOrmasDal(), warehouse.GetID());
+		std::string empIDListFilter = employee.GenerateINFilterForEmployee(reportFormBL->GetOrmasDal(), employeeIDList);
+
+		std::vector<int> userIDList;
+		BusinessLayer::User user;
+		BusinessLayer::WarehouseEmployeeRelation wuRelation;
+		userIDList = wuRelation.GetEmployeeIDListByWarehouseID(reportFormBL->GetOrmasDal(), warehouse.GetID());
+		std::string userIDListFilter = user.GenerateINFilter(reportFormBL->GetOrmasDal(), employeeIDList);
 
 
-	/*BusinessLayer::ProductionConsumeRaw prRaw;
-	prRaw.SetStatusID(status.GetID());
-	std::string filterprRaw = prRaw.GenerateFilterForPeriod(dialogBL->GetOrmasDal(), fromDateEdit->text().toUtf8().constData(), tillDateEdit->text().toUtf8().constData());
-	std::vector<BusinessLayer::ProductionConsumeRawView> vecConRaw = dialogBL->GetAllDataForClass<BusinessLayer::ProductionConsumeRawView>(errorMessage, filterprRaw);
-	if (vecConRaw.size() == 0)
-	{
-		QMessageBox::information(NULL, QString(tr("Info")),
-			QString(tr("Cannot find any consumption raw in production for this period!")),
-			QString(tr("Ok")));
-		return;
-	}
+		BusinessLayer::ConsumeRaw consumeRaw;
+		consumeRaw.SetStatusID(status.GetID());
+		std::string filterprRaw = consumeRaw.GenerateFilterForPeriod(reportFormBL->GetOrmasDal(), fromDate, tillDate);
+		std::vector<std::string> filterPList;
+		filterPList.push_back(filterprRaw);
+		filterPList.push_back(userIDListFilter);
+		filterprRaw = reportFormBL->GetOrmasDal().ConcatenateFilters(filterPList);
+		std::vector<BusinessLayer::ConsumeRawView> vecConRaw = reportFormBL->GetAllDataForClass<BusinessLayer::ConsumeRawView>(errorMessage, filterprRaw);
 
-	BusinessLayer::Production production;
-	std::string filter = production.GenerateFilterForPeriod(dialogBL->GetOrmasDal(), fromDateEdit->text().toUtf8().constData(), tillDateEdit->text().toUtf8().constData());
-	std::vector<BusinessLayer::Production> vecProdn = dialogBL->GetAllDataForClass<BusinessLayer::Production>(errorMessage, filter);
-	if (vecProdn.size() == 0)
-	{
-		QMessageBox::information(NULL, QString(tr("Info")),
-			QString(tr("Cannot find any production document for this period!")),
-			QString(tr("Ok")));
-		return;
-	}
-	else
-	{
-		//generating report
-		std::map<int, double> prodnProductCount;
-		std::map<int, double> consumeProductCount;
-		std::map<int, double> specProductCount;
 
-		if (vecProdn.size() > 0)
+		//Returned raws for warehouse
+		BusinessLayer::ConsumeRaw consumeRawReturn;
+		consumeRawReturn.SetStatusID(statusReturn.GetID());
+		std::string filterprRawReturn = consumeRawReturn.GenerateFilterForPeriod(reportFormBL->GetOrmasDal(), fromDate, tillDate);
+		std::vector<std::string> filterListPReturn;
+		filterListPReturn.push_back(filterprRawReturn);
+		filterListPReturn.push_back(userIDListFilter);
+		filterprRawReturn = reportFormBL->GetOrmasDal().ConcatenateFilters(filterListPReturn);
+		std::vector<BusinessLayer::ConsumeRawView> vecConRawReturn = reportFormBL->GetAllDataForClass<BusinessLayer::ConsumeRawView>(errorMessage, filterprRawReturn);
+
+
+		BusinessLayer::ProductionConsumeRaw pConsumeRaw;
+		pConsumeRaw.SetStatusID(status.GetID());
+		std::string filterprPRaw = pConsumeRaw.GenerateFilterForPeriod(reportFormBL->GetOrmasDal(), fromDate, tillDate);
+		std::vector<std::string> filterList;
+		filterList.push_back(filterprPRaw);
+		filterList.push_back(empIDListFilter);
+		filterprRaw = reportFormBL->GetOrmasDal().ConcatenateFilters(filterList);
+		std::vector<BusinessLayer::ProductionConsumeRawView> vecPConRaw = reportFormBL->GetAllDataForClass<BusinessLayer::ProductionConsumeRawView>(errorMessage, filterprRaw);
+
+
+		//Returned raws for warehouse
+		BusinessLayer::ProductionConsumeRaw pConsumeRawReturn;
+		pConsumeRawReturn.SetStatusID(statusReturn.GetID());
+		std::string filterpcRawReturn = pConsumeRawReturn.GenerateFilterForPeriod(reportFormBL->GetOrmasDal(), fromDate, tillDate);
+		std::vector<std::string> filterListReturn;
+		filterListReturn.push_back(filterpcRawReturn);
+		filterListReturn.push_back(empIDListFilter);
+		filterpcRawReturn = reportFormBL->GetOrmasDal().ConcatenateFilters(filterListReturn);
+		std::vector<BusinessLayer::ProductionConsumeRawView> vecPConRawReturn = reportFormBL->GetAllDataForClass<BusinessLayer::ProductionConsumeRawView>(errorMessage, filterpcRawReturn);
+
+
+		// select receipt raw for warehouse
+		BusinessLayer::ReceiptProduct receiptProduct;
+		receiptProduct.SetStatusID(status.GetID());
+		std::string filterrcProduct = receiptProduct.GenerateFilterForPeriod(reportFormBL->GetOrmasDal(), fromDate, tillDate);
+		std::vector<std::string> filterRcpList;
+		filterRcpList.push_back(filterrcProduct);
+		filterRcpList.push_back(userIDListFilter);
+		filterrcProduct = reportFormBL->GetOrmasDal().ConcatenateFilters(filterRcpList);
+		std::vector<BusinessLayer::ReceiptProductView> vecRecProd = reportFormBL->GetAllDataForClass<BusinessLayer::ReceiptProductView>(errorMessage, filterrcProduct);
+
+
+		//Returned products for warehouse
+		BusinessLayer::ReceiptProduct receiptProductReturn;
+		receiptProductReturn.SetStatusID(statusReturn.GetID());
+		std::string filterrcProductReturn = receiptProductReturn.GenerateFilterForPeriod(reportFormBL->GetOrmasDal(), fromDate, tillDate);
+		std::vector<std::string> filterListRcpReturn;
+		filterListRcpReturn.push_back(filterrcProductReturn);
+		filterListRcpReturn.push_back(userIDListFilter);
+		filterrcProductReturn = reportFormBL->GetOrmasDal().ConcatenateFilters(filterListRcpReturn);
+		std::vector<BusinessLayer::ReceiptProductView> vecRecProdReturn = reportFormBL->GetAllDataForClass<BusinessLayer::ReceiptProductView>(errorMessage, filterrcProductReturn);
+
+
+		std::map<int, double> consumeCount;
+		std::map<int, double> consumeSum;
+		std::map<int, double> pConsumeCount;
+		std::map<int, double> pConsumeSum;
+		std::map<int, double> receiptCount;
+		std::map<int, double> receiptSum;
+
+		std::map<int, double> consumeCountReturn;
+		std::map<int, double> consumeSumReturn;
+		std::map<int, double> pConsumeCountReturn;
+		std::map<int, double> pConsumeSumReturn;
+		std::map<int, double> receiptCountReturn;
+		std::map<int, double> receiptSumReturn;
+
+
+		if (vecConRaw.size() > 0)
 		{
-			BusinessLayer::ProductionList productionList;
-			std::string prodnListFilter;
-			std::vector<BusinessLayer::ProductionListView> vecProdnList;
+			BusinessLayer::ConsumeRawList consumeRawList;
+			std::string consumeRawListFilter;
+			std::vector<BusinessLayer::ConsumeRawListView> vecConRawList;
 
-			for each (auto item in vecProdn)
+			for each (auto item in vecConRaw)
 			{
-				productionList.Clear();
-				prodnListFilter.clear();
-				productionList.SetProductionID(item.GetID());
-				prodnListFilter = productionList.GenerateFilter(dialogBL->GetOrmasDal());
-				vecProdnList.clear();
-				vecProdnList = dialogBL->GetAllDataForClass<BusinessLayer::ProductionListView>(errorMessage, prodnListFilter);
-				if (vecProdnList.size() > 0)
+				consumeRawList.Clear();
+				consumeRawListFilter.clear();
+				consumeRawList.SetConsumeRawID(item.GetID());
+				consumeRawListFilter = consumeRawList.GenerateFilter(reportFormBL->GetOrmasDal());
+				vecConRawList.clear();
+				vecConRawList = reportFormBL->GetAllDataForClass<BusinessLayer::ConsumeRawListView>(errorMessage, consumeRawListFilter);
+				if (vecConRawList.size() > 0)
 				{
-					for each (auto listItem in vecProdnList)
+					for each (auto listItem in vecConRawList)
 					{
-						if (prodnProductCount.find(listItem.GetProductID()) != prodnProductCount.end())
+						if (consumeCount.find(listItem.GetProductID()) != consumeCount.end())
 						{
-							prodnProductCount.find(listItem.GetProductID())->second = prodnProductCount.find(listItem.GetProductID())->second + listItem.GetCount();
+							consumeCount.find(listItem.GetProductID())->second = consumeCount.find(listItem.GetProductID())->second + listItem.GetCount();
+							consumeSum.find(listItem.GetProductID())->second = consumeSum.find(listItem.GetProductID())->second + listItem.GetSum();
 						}
 						else
 						{
-							prodnProductCount.insert(std::make_pair(listItem.GetProductID(), listItem.GetCount()));
+							consumeCount.insert(std::make_pair(listItem.GetProductID(), listItem.GetCount()));
+							consumeSum.insert(std::make_pair(listItem.GetProductID(), listItem.GetSum()));
 						}
 					}
 				}
 			}
+		}
+		if (vecConRawReturn.size() > 0)
+		{
+			BusinessLayer::ConsumeRawList consumeRawList;
+			std::string consumeRawListFilter;
+			std::vector<BusinessLayer::ConsumeRawListView> vecConRawList;
 
-
-			if (vecConRaw.size() > 0)
+			for each (auto item in vecConRawReturn)
 			{
-				BusinessLayer::ProductionConsumeRawList cRawList;
-				std::string cRawListFilter;
-				std::vector<BusinessLayer::ProductionConsumeRawListView> vecCRawList;
-				for each (auto item in vecConRaw)
+				consumeRawList.Clear();
+				consumeRawListFilter.clear();
+				consumeRawList.SetConsumeRawID(item.GetID());
+				consumeRawListFilter = consumeRawList.GenerateFilter(reportFormBL->GetOrmasDal());
+				vecConRawList.clear();
+				vecConRawList = reportFormBL->GetAllDataForClass<BusinessLayer::ConsumeRawListView>(errorMessage, consumeRawListFilter);
+				if (vecConRawList.size() > 0)
 				{
-					cRawList.Clear();
-					cRawListFilter.clear();
-					cRawList.SetProductionConsumeRawID(item.GetID());
-					cRawListFilter = cRawList.GenerateFilter(dialogBL->GetOrmasDal());
-					vecCRawList.clear();
-					vecCRawList = dialogBL->GetAllDataForClass<BusinessLayer::ProductionConsumeRawListView>(errorMessage, cRawListFilter);
-					if (vecCRawList.size() > 0)
+					for each (auto listItem in vecConRawList)
 					{
-						for each (auto listItem in vecCRawList)
+						if (consumeCountReturn.find(listItem.GetProductID()) != consumeCountReturn.end())
 						{
-							if (consumeProductCount.find(listItem.GetProductID()) != consumeProductCount.end())
-							{
-								consumeProductCount.find(listItem.GetProductID())->second = consumeProductCount.find(listItem.GetProductID())->second + listItem.GetCount();
-							}
-							else
-							{
-								consumeProductCount.insert(std::make_pair(listItem.GetProductID(), listItem.GetCount()));
-							}
-						}
-					}
-				}
-			}
-
-			BusinessLayer::Specification specification;
-			BusinessLayer::SpecificationList specList;
-			std::vector<BusinessLayer::SpecificationListView> vecSpecList;
-			std::string specFilter;
-
-			for each (auto product in prodnProductCount)
-			{
-				specification.Clear();
-				if (!specification.GetSpecificationByProductID(dialogBL->GetOrmasDal(), product.first, errorMessage))
-				{
-					QMessageBox::information(NULL, QString(tr("Info")),
-						QString(tr("This product does't have specification! Cannot print it")),
-						QString(tr("Ok")));
-					return;
-				}
-				specFilter.clear();
-				specList.Clear();
-				specList.SetSpecificationID(specification.GetID());
-				specFilter = specList.GenerateFilter(dialogBL->GetOrmasDal());
-				vecSpecList.clear();
-				vecSpecList = dialogBL->GetAllDataForClass<BusinessLayer::SpecificationListView>(errorMessage, specFilter);
-				if (vecSpecList.size() > 0)
-				{
-					for each (auto specItem in vecSpecList)
-					{
-						if (specProductCount.find(specItem.GetProductID()) != specProductCount.end())
-						{
-							specProductCount.find(specItem.GetProductID())->second = specProductCount.find(specItem.GetProductID())->second + (specItem.GetCount() * product.second);
+							consumeCountReturn.find(listItem.GetProductID())->second = consumeCountReturn.find(listItem.GetProductID())->second + listItem.GetCount();
+							consumeSumReturn.find(listItem.GetProductID())->second = consumeSumReturn.find(listItem.GetProductID())->second + listItem.GetSum();
 						}
 						else
 						{
-							specProductCount.insert(std::make_pair(specItem.GetProductID(), (specItem.GetCount() * product.second)));
+							consumeCountReturn.insert(std::make_pair(listItem.GetProductID(), listItem.GetCount()));
+							consumeSumReturn.insert(std::make_pair(listItem.GetProductID(), listItem.GetSum()));
 						}
 					}
 				}
 			}
+		}
+		
+		if (vecPConRaw.size() > 0)
+		{
+			BusinessLayer::ProductionConsumeRawList consumeRawList;
+			std::string consumeRawListFilter;
+			std::vector<BusinessLayer::ProductionConsumeRawListView> vecConRawList;
 
-			BusinessLayer::Product product;
-			BusinessLayer::Measure measure;
-
-			reportText.replace(QString("fromDatePh"), fromDateEdit->text(), Qt::CaseInsensitive);
-			reportText.replace(QString("tillDatePh"), tillDateEdit->text(), Qt::CaseInsensitive);
-			double sum = 0;
-			double difSum = 0;
-			double prodSum = 0;
-			QString producedTableBody;
-			for each (auto producedProduct in prodnProductCount)
+			for each (auto item in vecPConRaw)
 			{
-				product.Clear();
-				product.GetProductByID(dialogBL->GetOrmasDal(), producedProduct.first, errorMessage);
-				producedTableBody += "<tr>";
-				producedTableBody += "<td style='border: 1px solid black; text - align: center; '>" + QString::number(producedProduct.first) + "</td>";
-				producedTableBody += "<td style='border: 1px solid black; text - align: center; '>" + QString(product.GetName().c_str()) + "</td>";
-				producedTableBody += "<td style='border: 1px solid black; text - align: center; '>" + QString::number(producedProduct.second) + "</td>";
-				producedTableBody += "<td style='border: 1px solid black; text - align: center; '>" + QString::number(product.GetPrice()) + "</td>";
-				producedTableBody += "<td style='border: 1px solid black; text - align: center; '>" + QString::number(producedProduct.second * product.GetPrice()) + "</td>";
-				producedTableBody += "</tr>";
-				prodSum += producedProduct.second * product.GetPrice();
-			}
-			reportText.replace(QString("ProductTableBodyPh"), producedTableBody, Qt::CaseInsensitive);
-
-			QString specTableBody;
-			for each (auto specProduct in specProductCount)
-			{
-				product.Clear();
-				if (product.GetProductByID(dialogBL->GetOrmasDal(), specProduct.first, errorMessage))
+				consumeRawList.Clear();
+				consumeRawListFilter.clear();
+				consumeRawList.SetProductionConsumeRawID(item.GetID());
+				consumeRawListFilter = consumeRawList.GenerateFilter(reportFormBL->GetOrmasDal());
+				vecConRawList.clear();
+				vecConRawList = reportFormBL->GetAllDataForClass<BusinessLayer::ProductionConsumeRawListView>(errorMessage, consumeRawListFilter);
+				if (vecConRawList.size() > 0)
 				{
-					measure.Clear();
-					if (measure.GetMeasureByID(dialogBL->GetOrmasDal(), product.GetMeasureID(), errorMessage))
+					for each (auto listItem in vecConRawList)
 					{
-						specTableBody += "<tr>";
-						specTableBody += "<td style='border: 1px solid black; text - align: center; '>" + QString(product.GetName().c_str()) + "</td>";
-						specTableBody += "<td style='border: 1px solid black; text - align: center; '>" + QString::number(specProduct.second) + "</td>";
-						specTableBody += "<td style='border: 1px solid black; text - align: center; '>" + QString(measure.GetShortName().c_str()) + "</td>";
-						if (consumeProductCount.find(product.GetID()) != consumeProductCount.end())
+						if (pConsumeCount.find(listItem.GetProductID()) != pConsumeCount.end())
 						{
-							specTableBody += "<td style='border: 1px solid black; text - align: center; '>" + QString::number(consumeProductCount.find(product.GetID())->second) + "</td>";
-							specTableBody += "<td style='border: 1px solid black; text - align: center; '>" + QString(measure.GetShortName().c_str()) + "</td>";
-							specTableBody += "<td style='border: 1px solid black; text - align: center; '>" + QString::number(consumeProductCount.find(product.GetID())->second - specProduct.second) + "</td>";
-							specTableBody += "<td style='border: 1px solid black; text - align: center; '>" + QString(measure.GetShortName().c_str()) + "</td>";
-							specTableBody += "<td style='border: 1px solid black; text - align: center; '>" + QString::number((consumeProductCount.find(product.GetID())->second - specProduct.second) * product.GetPrice()) + "</td>";
-							difSum += (consumeProductCount.find(product.GetID())->second - specProduct.second) * product.GetPrice();
-							sum += consumeProductCount.find(product.GetID())->second * product.GetPrice();
+							pConsumeCount.find(listItem.GetProductID())->second = pConsumeCount.find(listItem.GetProductID())->second + listItem.GetCount();
+							pConsumeSum.find(listItem.GetProductID())->second = pConsumeSum.find(listItem.GetProductID())->second + listItem.GetSum();
 						}
 						else
 						{
-							specTableBody += "<td style='border: 1px solid black; text - align: center; '> 0 </td>";
-							specTableBody += "<td style='border: 1px solid black; text - align: center; '>" + QString(measure.GetShortName().c_str()) + "</td>";
-							specTableBody += "<td style='border: 1px solid black; text - align: center; '>" + QString::number(specProduct.second * -1) + "</td>";
-							specTableBody += "<td style='border: 1px solid black; text - align: center; '>" + QString(measure.GetShortName().c_str()) + "</td>";
-							specTableBody += "<td style='border: 1px solid black; text - align: center; '>" + QString::number(specProduct.second * -1 * product.GetPrice()) + "</td>";
-							difSum += specProduct.second * -1 * product.GetPrice();
+							pConsumeCount.insert(std::make_pair(listItem.GetProductID(), listItem.GetCount()));
+							pConsumeSum.insert(std::make_pair(listItem.GetProductID(), listItem.GetSum()));
 						}
 					}
 				}
 			}
-			for each (auto consumedProduct in consumeProductCount)
+		}
+		if (vecPConRawReturn.size() > 0)
+		{
+			BusinessLayer::ProductionConsumeRawList consumeRawList;
+			std::string consumeRawListFilter;
+			std::vector<BusinessLayer::ProductionConsumeRawListView> vecConRawList;
+
+			for each (auto item in vecPConRawReturn)
 			{
-				product.Clear();
-				if (product.GetProductByID(dialogBL->GetOrmasDal(), consumedProduct.first, errorMessage))
+				consumeRawList.Clear();
+				consumeRawListFilter.clear();
+				consumeRawList.SetProductionConsumeRawID(item.GetID());
+				consumeRawListFilter = consumeRawList.GenerateFilter(reportFormBL->GetOrmasDal());
+				vecConRawList.clear();
+				vecConRawList = reportFormBL->GetAllDataForClass<BusinessLayer::ProductionConsumeRawListView>(errorMessage, consumeRawListFilter);
+				if (vecConRawList.size() > 0)
 				{
-					measure.Clear();
-					if (measure.GetMeasureByID(dialogBL->GetOrmasDal(), product.GetMeasureID(), errorMessage))
+					for each (auto listItem in vecConRawList)
 					{
-						if (specProductCount.find(product.GetID()) == specProductCount.end())
+						if (pConsumeCountReturn.find(listItem.GetProductID()) != pConsumeCountReturn.end())
 						{
-
-							specTableBody += "<tr>";
-							specTableBody += "<td style='border: 1px solid black; text - align: center; '>" + QString(product.GetName().c_str()) + "</td>";
-							specTableBody += "<td style='border: 1px solid black; text - align: center; '> 0 </td>";
-							specTableBody += "<td style='border: 1px solid black; text - align: center; '>" + QString(measure.GetShortName().c_str()) + "</td>";
-							specTableBody += "<td style='border: 1px solid black; text - align: center; '>" + QString::number(consumedProduct.second) + "</td>";
-							specTableBody += "<td style='border: 1px solid black; text - align: center; '>" + QString(measure.GetShortName().c_str()) + "</td>";
-							specTableBody += "<td style='border: 1px solid black; text - align: center; '>" + QString::number(consumedProduct.second) + "</td>";
-							specTableBody += "<td style='border: 1px solid black; text - align: center; '>" + QString(measure.GetShortName().c_str()) + "</td>";
-							specTableBody += "<td style='border: 1px solid black; text - align: center; '>" + QString::number(consumedProduct.second * product.GetPrice()) + "</td>";
-							difSum += consumedProduct.second * product.GetPrice();
-							sum += consumedProduct.second * product.GetPrice();
+							pConsumeCountReturn.find(listItem.GetProductID())->second = pConsumeCountReturn.find(listItem.GetProductID())->second + listItem.GetCount();
+							pConsumeSumReturn.find(listItem.GetProductID())->second = pConsumeSumReturn.find(listItem.GetProductID())->second + listItem.GetSum();
+						}
+						else
+						{
+							pConsumeCountReturn.insert(std::make_pair(listItem.GetProductID(), listItem.GetCount()));
+							pConsumeSumReturn.insert(std::make_pair(listItem.GetProductID(), listItem.GetSum()));
 						}
 					}
 				}
 			}
-			reportText.replace(QString("SpecTableBodyPh"), specTableBody, Qt::CaseInsensitive);
-			reportText.replace(QString("SumPh"), QString::number(difSum, 'f', 3), Qt::CaseInsensitive);
-			reportText.replace(QString("AllSummPh"), QString::number(sum, 'f', 3), Qt::CaseInsensitive);
-			reportText.replace(QString("AllProdPh"), QString::number(prodSum, 'f', 3), Qt::CaseInsensitive);
+		}
 
-			docForm->webEngineView->setHtml(reportText);
-			docForm->SetContent(reportText);
-			docForm->webEngineView->show();
-			docForm->show();
+		if (vecRecProd.size() > 0)
+		{
+			BusinessLayer::ReceiptProductList receiptProductList;
+			std::string receiptProductListFilter;
+			std::vector<BusinessLayer::ReceiptProductListView> vecRcpProdList;
+
+			for each (auto item in vecRecProd)
+			{
+				receiptProductList.Clear();
+				receiptProductListFilter.clear();
+				receiptProductList.SetReceiptProductID(item.GetID());
+				receiptProductListFilter = receiptProductList.GenerateFilter(reportFormBL->GetOrmasDal());
+				vecRcpProdList.clear();
+				vecRcpProdList = reportFormBL->GetAllDataForClass<BusinessLayer::ReceiptProductListView>(errorMessage, receiptProductListFilter);
+				if (vecRcpProdList.size() > 0)
+				{
+					for each (auto listItem in vecRcpProdList)
+					{
+						if (receiptCount.find(listItem.GetProductID()) != receiptCount.end())
+						{
+							receiptCount.find(listItem.GetProductID())->second = receiptCount.find(listItem.GetProductID())->second + listItem.GetCount();
+							receiptSum.find(listItem.GetProductID())->second = receiptSum.find(listItem.GetProductID())->second + listItem.GetSum();
+						}
+						else
+						{
+							receiptCount.insert(std::make_pair(listItem.GetProductID(), listItem.GetCount()));
+							receiptSum.insert(std::make_pair(listItem.GetProductID(), listItem.GetSum()));
+						}
+					}
+				}
+			}
+		}
+		if (vecRecProdReturn.size() > 0)
+		{
+			BusinessLayer::ReceiptProductList receiptProductList;
+			std::string receiptProductListFilter;
+			std::vector<BusinessLayer::ReceiptProductListView> vecRcpProdList;
+
+			for each (auto item in vecRecProdReturn)
+			{
+				receiptProductList.Clear();
+				receiptProductListFilter.clear();
+				receiptProductList.SetReceiptProductID(item.GetID());
+				receiptProductListFilter = receiptProductList.GenerateFilter(reportFormBL->GetOrmasDal());
+				vecRcpProdList.clear();
+				vecRcpProdList = reportFormBL->GetAllDataForClass<BusinessLayer::ReceiptProductListView>(errorMessage, receiptProductListFilter);
+				if (vecRcpProdList.size() > 0)
+				{
+					for each (auto listItem in vecRcpProdList)
+					{
+						if (receiptCountReturn.find(listItem.GetProductID()) != receiptCountReturn.end())
+						{
+							receiptCountReturn.find(listItem.GetProductID())->second = receiptCountReturn.find(listItem.GetProductID())->second + listItem.GetCount();
+							receiptSumReturn.find(listItem.GetProductID())->second = receiptSumReturn.find(listItem.GetProductID())->second + listItem.GetSum();
+						}
+						else
+						{
+							receiptCountReturn.insert(std::make_pair(listItem.GetProductID(), listItem.GetCount()));
+							receiptSumReturn.insert(std::make_pair(listItem.GetProductID(), listItem.GetSum()));
+						}
+					}
+				}
+			}
+		}
+
+		QStringList header;
+		header << QObject::tr("Product name") << QObject::tr("Start count saldo ") << QObject::tr("Start sum saldo")
+			<< QObject::tr("In count") << QObject::tr("In sum") << QObject::tr("Out count") << QObject::tr("Out sum")
+			<< QObject::tr("End count saldo") << QObject::tr("End sum saldo") << QObject::tr("Product ID")
+			<< QObject::tr("Warehouse ID") << QObject::tr("Start date") << QObject::tr("End date") << QObject::tr("Prev month end date");
+		QStandardItemModel *itemModel = new QStandardItemModel(this);
+		itemModel->setHorizontalHeaderLabels(header);
+		tableView->setModel(itemModel);
+		tableView->hideColumn(9);
+		tableView->hideColumn(10);
+		tableView->hideColumn(11);
+		tableView->hideColumn(12);
+		tableView->hideColumn(13);
+
+		QList<QStandardItem*> wtosItem;
+		BusinessLayer::Product product;
+
+		for each (auto mapItem in stockCount)
+		{
+			product.Clear();
+			if (!product.GetProductByID(reportFormBL->GetOrmasDal(), mapItem.first, errorMessage))
+				continue;
+			wtosItem << new QStandardItem(product.GetName().c_str());
+			if (stockHistoryCount.find(mapItem.first) != stockHistoryCount.end())
+			{
+				wtosItem << new QStandardItem(QString::number(stockHistoryCount.find(mapItem.first)->second, 'f', 3))
+					<< new QStandardItem(QString::number(stockHistorySum.find(mapItem.first)->second, 'f', 3));
+			}
+			else
+			{
+				wtosItem << new QStandardItem("0")
+					<< new QStandardItem("0");
+			}
+			if (pConsumeCountReturn.find(mapItem.first) != pConsumeCountReturn.end() || consumeCount.find(mapItem.first) != consumeCount.end()
+				|| receiptCount.find(mapItem.first) != receiptCount.end() || receiptCountReturn.find(mapItem.first) != receiptCountReturn.end())
+			{
+				double tempCount = 0;
+				double tempSum = 0;
+				if (pConsumeCountReturn.find(mapItem.first) != pConsumeCountReturn.end())
+				{
+					tempCount += pConsumeCountReturn.find(mapItem.first)->second;
+					tempSum += pConsumeSumReturn.find(mapItem.first)->second;
+				}
+				if (consumeCount.find(mapItem.first) != consumeCount.end())
+				{
+					tempCount += consumeCount.find(mapItem.first)->second;
+					tempSum += consumeSum.find(mapItem.first)->second;
+				}
+				if (receiptCount.find(mapItem.first) != receiptCount.end())
+				{
+					tempCount += receiptCount.find(mapItem.first)->second;
+					tempSum += receiptSum.find(mapItem.first)->second;
+				}
+				if (receiptCountReturn.find(mapItem.first) != receiptCountReturn.end())
+				{
+					tempCount += receiptCountReturn.find(mapItem.first)->second;
+					tempSum += receiptSumReturn.find(mapItem.first)->second;
+				}
+				wtosItem << new QStandardItem(QString::number(tempCount, 'f', 3))
+					<< new QStandardItem(QString::number(tempSum, 'f', 3));
+			}
+			else
+			{
+				wtosItem << new QStandardItem("0")
+					<< new QStandardItem("0");
+			}
+			if (pConsumeCount.find(mapItem.first) != pConsumeCount.end() || consumeCountReturn.find(mapItem.first) != consumeCountReturn.end()
+				|| receiptCount.find(mapItem.first) != receiptCount.end() || receiptCountReturn.find(mapItem.first) != receiptCountReturn.end())
+			{
+				double tempCount = 0;
+				double tempSum = 0;
+				if (pConsumeCount.find(mapItem.first) != pConsumeCount.end())
+				{
+					tempCount += pConsumeCount.find(mapItem.first)->second;
+					tempSum += pConsumeSum.find(mapItem.first)->second;
+				}
+				if (consumeCountReturn.find(mapItem.first) != consumeCountReturn.end())
+				{
+					tempCount += consumeCountReturn.find(mapItem.first)->second;
+					tempSum += consumeSumReturn.find(mapItem.first)->second;
+				}
+				if (receiptCount.find(mapItem.first) != receiptCount.end())
+				{
+					tempCount += receiptCount.find(mapItem.first)->second;
+					tempSum += receiptSum.find(mapItem.first)->second;
+				}
+				if (receiptCountReturn.find(mapItem.first) != receiptCountReturn.end())
+				{
+					tempCount += receiptCountReturn.find(mapItem.first)->second;
+					tempSum += receiptSumReturn.find(mapItem.first)->second;
+				}
+				wtosItem << new QStandardItem(QString::number(tempCount, 'f', 3))
+					<< new QStandardItem(QString::number(tempSum, 'f', 3));
+			}
+			else
+			{
+				wtosItem << new QStandardItem("0")
+					<< new QStandardItem("0");
+			}
+			if (stockCount.find(mapItem.first) != stockCount.end())
+			{
+				wtosItem << new QStandardItem(QString::number(stockCount.find(mapItem.first)->second, 'f', 3))
+					<< new QStandardItem(QString::number(stockSum.find(mapItem.first)->second, 'f', 3));
+			}
+			else
+			{
+				wtosItem << new QStandardItem("0")
+					<< new QStandardItem("0");
+			}
+			wtosItem << new QStandardItem(QString::number(mapItem.first))
+				<< new QStandardItem(QString::number(warehouse.GetID()))
+				<< new QStandardItem(fromDate.c_str())
+				<< new QStandardItem(tillDate.c_str())
+				<< new QStandardItem(prevMonthEndDate.c_str());
+			itemModel = (QStandardItemModel *)this->tableView->model();
+			itemModel->appendRow(wtosItem);
+			wtosItem.clear();
+		}
+	}
+}
+
+void ReportForm::FillAccCrdTable(std::string fromDate, std::string tillDate, std::string prevMonthEndDate)
+{
+	this->setObjectName("AccCrd");
+	BusinessLayer::Account acc;
+	BusinessLayer::ChartOfAccounts coAcc;
+	BusinessLayer::AccountHistory accHistory;
+	BusinessLayer::Entry entry;
+	std::vector<BusinessLayer::Account> vecAcc;
+	std::vector<BusinessLayer::AccountHistory> vecAccHistory;
+	std::vector<BusinessLayer::ExtendedEntryView> vecEntryDeb;
+	std::vector<BusinessLayer::ExtendedEntryView> vecEntryCred;
+	std::string filterDebit;
+	std::string filterCredit;
+	std::string filterAccHistory;
+	vecAcc = reportFormBL->GetAllDataForClass<BusinessLayer::Account>(errorMessage);
+	double debSum = 0.0;
+	double credSum = 0.0;
+
+
+	QStringList header;
+	header << QObject::tr("Account ID") << QObject::tr("Account name") << QObject::tr("Account number") << QObject::tr("Start saldo")
+		<< QObject::tr("Debit") << QObject::tr("Credit") << QObject::tr("End saldo") 
+		<< QObject::tr("Start date") << QObject::tr("End date") << QObject::tr("Prev month end date");
+	QStandardItemModel *itemModel = new QStandardItemModel(this);
+	itemModel->setHorizontalHeaderLabels(header);
+	tableView->setModel(itemModel);
+	tableView->hideColumn(0);
+	tableView->hideColumn(7);
+	tableView->hideColumn(8);
+	tableView->hideColumn(9);
+
+	BusinessLayer::AccountHistory accHistoryEnd;
+	std::vector<BusinessLayer::AccountHistory> vecAccHistoryEnd;
+
+	QList<QStandardItem*> wtosItem;
+
+	for each (auto accItem in vecAcc)
+	{
+		accHistoryEnd.Clear();
+		accHistoryEnd.SetAccountID(accItem.GetID());
+		if (!tillDate.empty())
+		{
+			accHistoryEnd.SetTillDate(tillDate);
+		}
+		filterAccHistory.clear();
+		filterAccHistory = accHistoryEnd.GenerateFilter(reportFormBL->GetOrmasDal());
+		vecAccHistoryEnd = reportFormBL->GetAllDataForClass<BusinessLayer::AccountHistory>(errorMessage, filterAccHistory);
+
+		coAcc.Clear();
+		if (!coAcc.GetChartOfAccountsByNumber(reportFormBL->GetOrmasDal(), accItem.GetNumber(), errorMessage))
+			continue;
+
+		acc.Clear();
+		if (acc.GetAccountByID(reportFormBL->GetOrmasDal(), accItem.GetID(), errorMessage))
+		{
+			filterDebit.clear();
+			entry.Clear();
+			vecEntryDeb.clear();
+			entry.SetDebitingAccountID(accItem.GetID());
+			filterDebit = entry.GenerateFilterForPeriod(reportFormBL->GetOrmasDal(), fromDate, tillDate);
+			vecEntryDeb = reportFormBL->GetAllDataForClass<BusinessLayer::ExtendedEntryView>(errorMessage, filterDebit);
+		}
+		acc.Clear();
+		if (acc.GetAccountByID(reportFormBL->GetOrmasDal(), accItem.GetID(), errorMessage))
+		{
+			filterCredit.clear();
+			entry.Clear();
+			vecEntryCred.clear();
+			entry.SetCreditingAccountID(accItem.GetID());
+			filterCredit = entry.GenerateFilterForPeriod(reportFormBL->GetOrmasDal(), fromDate, tillDate);
+			vecEntryCred = reportFormBL->GetAllDataForClass<BusinessLayer::ExtendedEntryView>(errorMessage, filterCredit);
+		}
+		debSum = 0;
+		credSum = 0;
+		for each (auto debEntryItem in vecEntryDeb)
+		{
+			debSum += debEntryItem.GetValue();
+		}
+		for each (auto credEntryItem in vecEntryCred)
+		{
+			credSum += credEntryItem.GetValue();
+		}
+
+
+		filterAccHistory.clear();
+		accHistory.SetAccountID(accItem.GetID());
+		accHistory.SetTillDate(prevMonthEndDate);
+		filterAccHistory = accHistory.GenerateFilter(reportFormBL->GetOrmasDal());
+		vecAccHistory = reportFormBL->GetAllDataForClass<BusinessLayer::AccountHistory>(errorMessage, filterAccHistory);
+
+		if (vecAccHistory.size() == 0)
+			continue;
+		wtosItem << new QStandardItem(QString::number(accItem.GetID()))
+			<< new QStandardItem(coAcc.GetName().c_str())
+			<< new QStandardItem(coAcc.GetNumber().c_str())
+			<< new QStandardItem(QString::number(vecAccHistory.at(0).GetCurrentBalance(), 'f', 3))
+			<< new QStandardItem(QString::number(debSum, 'f', 3))
+			<< new QStandardItem(QString::number(credSum, 'f', 3));
+		if (vecAccHistoryEnd.size()>0)
+		{
+			wtosItem << new QStandardItem(QString::number(vecAccHistoryEnd.at(0).GetCurrentBalance(), 'f', 3));
 		}
 		else
 		{
-			QMessageBox::information(NULL, QString(tr("Info")),
-				QString(tr("Cannot generate report for this period!")),
-				QString(tr("Ok")));
+			wtosItem << new QStandardItem(QString::number(acc.GetCurrentBalance(), 'f', 3));
+		}
+		wtosItem << new QStandardItem(fromDate.c_str())
+			<< new QStandardItem(tillDate.c_str())
+			<< new QStandardItem(prevMonthEndDate.c_str());
+		itemModel = (QStandardItemModel *)this->tableView->model();
+		itemModel->appendRow(wtosItem);
+		wtosItem.clear();
+	}
+	
+	int parentPosition = -1;
+	double totalDebSum = 0.0;
+	double totalCredSum = 0.0;
+	std::string parentPattern = "";
+	bool isHaveChild = false;
+	itemModel = (QStandardItemModel *)this->tableView->model();
+	for (int i = 0; i < tableView->model()->rowCount(); i++)
+	{
+		if (parentPosition == -1)
+		{
+			parentPosition = i;
+			parentPattern = itemModel->item(i, 2)->text().toStdString().substr(0, 3);
+		}
+		else
+		{
+			if (itemModel->item(i, 2)->text().toStdString().substr(0, 3).compare(parentPattern) == 0
+				&& i != parentPosition)
+			{
+				isHaveChild = true;
+				totalDebSum += itemModel->item(i, 4)->text().toDouble();
+				totalCredSum += itemModel->item(i, 5)->text().toDouble();
+			}
+			else
+			{
+				if (isHaveChild == true)
+				{
+					itemModel->item(parentPosition, 4)->setText(QString::number(totalDebSum, 'f', 3));
+					itemModel->item(parentPosition, 5)->setText(QString::number(totalCredSum, 'f', 3));
+					isHaveChild = false;
+					parentPosition = i;
+					parentPattern = itemModel->item(i, 2)->text().toStdString().substr(0, 3);
+					totalDebSum = 0;
+					totalCredSum = 0;
+				}
+				else
+				{
+					parentPosition = i;
+					parentPattern = itemModel->item(i, 2)->text().toStdString().substr(0, 3);
+					totalDebSum = 0;
+					totalCredSum = 0;
+				}
+			}
 		}
 	}
-	Close();
-	*/
+}
+
+void ReportForm::FillAccCrdTable(std::string fromDate, std::string tillDate, std::vector<int> subAccIDVec, std::string prevMonthEndDate)
+{
+	this->setObjectName("SubaccCrd");
+	BusinessLayer::Subaccount subacc;
+	BusinessLayer::SubaccountHistory saccHistory;
+	BusinessLayer::Entry entry;
+	std::vector<BusinessLayer::SubaccountView> vecSubacc;
+	std::vector<BusinessLayer::SubaccountHistory> vecSubAccHistory;
+	std::vector<BusinessLayer::ExtendedEntryView> vecEntryDeb;
+	std::vector<BusinessLayer::ExtendedEntryView> vecEntryCred;
+	std::string filterDebit;
+	std::string filterCredit;
+	std::string filterSub;
+	std::string filterSubHistory;
+	std::string filterAccHistory;
+	double debSum = 0.0;
+	double credSum = 0.0;
+	
+	BusinessLayer::SubaccountHistory saccHistoryEnd;
+	std::vector<BusinessLayer::SubaccountHistory> vecSubAccHistoryEnd;
+
+	QList<QStandardItem*> wtosItem;
+
+	if (subAccIDVec.size() <= 0)
+		return;
+
+	QStringList header;
+	header << QObject::tr("Subaccount ID") << QObject::tr("Subaccount number") << QObject::tr("Start saldo") 
+		<< QObject::tr("Debit") << QObject::tr("Credit") << QObject::tr("End saldo");
+	tableView->hideColumn(0);
+
+	QStandardItemModel *itemModel = new QStandardItemModel(this);
+	itemModel->setHorizontalHeaderLabels(header);
+	tableView->setModel(itemModel);
+
+	for each (auto subaccIDItem in subAccIDVec)
+	{
+		subacc.Clear();
+		if (!subacc.GetSubaccountByID(reportFormBL->GetOrmasDal(), subaccIDItem, errorMessage))
+			continue;
+		
+		saccHistoryEnd.Clear();
+		vecSubAccHistoryEnd.clear();
+		saccHistoryEnd.SetSubaccountID(subaccIDItem);
+		if (!tillDate.empty())
+		{
+			saccHistoryEnd.SetTillDate(tillDate);
+		}
+		filterAccHistory.clear();
+		filterAccHistory = saccHistoryEnd.GenerateFilter(reportFormBL->GetOrmasDal());
+		vecSubAccHistoryEnd = reportFormBL->GetAllDataForClass<BusinessLayer::SubaccountHistory>(errorMessage, filterAccHistory);
+
+
+		filterDebit.clear();
+		entry.Clear();
+		vecEntryDeb.clear();
+		entry.SetDebitingAccountID(subacc.GetParentAccountID());
+		filterDebit = entry.GenerateFilterForPeriod(reportFormBL->GetOrmasDal(), fromDate, tillDate);
+		vecEntryDeb = reportFormBL->GetAllDataForClass<BusinessLayer::ExtendedEntryView>(errorMessage, filterDebit);
+
+		filterCredit.clear();
+		entry.Clear();
+		vecEntryCred.clear();
+		entry.SetCreditingAccountID(subacc.GetParentAccountID());
+		filterCredit = entry.GenerateFilterForPeriod(reportFormBL->GetOrmasDal(), fromDate, tillDate);
+		vecEntryCred = reportFormBL->GetAllDataForClass<BusinessLayer::ExtendedEntryView>(errorMessage, filterCredit);
+
+		debSum = 0;
+		credSum = 0;
+
+		filterAccHistory.clear();
+		saccHistory.Clear();
+		vecSubAccHistory.clear();
+		saccHistory.SetSubaccountID(subacc.GetID());
+		saccHistory.SetTillDate(prevMonthEndDate);
+		filterAccHistory = saccHistory.GenerateFilter(reportFormBL->GetOrmasDal());
+		vecSubAccHistory = reportFormBL->GetAllDataForClass<BusinessLayer::SubaccountHistory>(errorMessage, filterAccHistory);
+
+		if (vecSubAccHistory.size() == 0)
+			return;
+
+		BusinessLayer::EntrySubaccountRelation esRel;
+		std::vector<BusinessLayer::EntrySubaccountRelation> vecESRel;
+		std::string esFilter;
+		for each (auto  debit in vecEntryDeb)
+		{
+			esRel.Clear();
+			vecESRel.clear();
+			esFilter.clear();
+			esRel.SetEntryID(debit.GetID());
+			esFilter = esRel.GenerateFilter(reportFormBL->GetOrmasDal());
+			vecESRel = reportFormBL->GetAllDataForClass<BusinessLayer::EntrySubaccountRelation>(errorMessage, esFilter);
+			if (vecESRel.size() > 0)
+			{
+				if (debit.GetSubaccountID() == subacc.GetID())
+				{
+					if (vecESRel.size() == 1)
+					{
+						debSum += debit.GetValue();
+					}
+					else if (vecESRel.size() == 2 && vecESRel.at(0).GetSubaccountID() == subacc.GetID())
+					{
+						debSum += debit.GetValue();
+					}
+				}
+			}
+		}
+
+		for each (auto  credit in vecEntryCred)
+		{
+			esRel.Clear();
+			vecESRel.clear();
+			esFilter.clear();
+			esRel.SetEntryID(credit.GetID());
+			esFilter = esRel.GenerateFilter(reportFormBL->GetOrmasDal());
+			vecESRel = reportFormBL->GetAllDataForClass<BusinessLayer::EntrySubaccountRelation>(errorMessage, esFilter);
+			if (vecESRel.size() > 0)
+			{
+				if (credit.GetSubaccountID() == subacc.GetID())
+				{
+					if (vecESRel.size() == 1)
+					{
+						credSum += credit.GetValue();
+					}
+					else if (vecESRel.size() == 2 && vecESRel.at(1).GetSubaccountID() == subacc.GetID())
+					{
+						credSum += credit.GetValue();
+					}
+				}
+			}
+		}
+		
+		header << QObject::tr("Subaccount ID") << QObject::tr("Subaccount number") << QObject::tr("Start saldo")
+			<< QObject::tr("Debit") << QObject::tr("Credit") << QObject::tr("End saldo");
+
+		wtosItem << new QStandardItem(QString::number(subacc.GetID()))
+			<< new QStandardItem(subacc.GetNumber().c_str())
+			<< new QStandardItem(QString::number(vecSubAccHistory.at(0).GetCurrentBalance(), 'f', 3))
+			<< new QStandardItem(QString::number(debSum, 'f', 3))
+			<< new QStandardItem(QString::number(credSum, 'f', 3));
+		if (vecSubAccHistoryEnd.size() > 0)
+		{
+			wtosItem << new QStandardItem(QString::number(vecSubAccHistoryEnd.at(0).GetCurrentBalance(), 'f', 3));
+		}
+		else
+		{
+			wtosItem << new QStandardItem(QString::number(subacc.GetCurrentBalance(), 'f', 3));
+		}
+		itemModel = (QStandardItemModel *)this->tableView->model();
+		itemModel->appendRow(wtosItem);
+		wtosItem.clear();
+
+
+	}
+	
+}
+
+
+void ReportForm::FillAccCrdTable(std::string fromDate, std::string tillDate, int accID, std::string prevMonthEndDate)
+{
+	this->setObjectName("OneAccCrd");
+	BusinessLayer::Account acc;
+	BusinessLayer::Subaccount subacc;
+	BusinessLayer::ChartOfAccounts coAcc;
+	BusinessLayer::AccountHistory accHistory;
+	BusinessLayer::SubaccountHistory saccHistory;
+	BusinessLayer::Entry entry;
+	std::vector<BusinessLayer::Account> vecAcc;
+	std::vector<BusinessLayer::SubaccountView> vecSubacc;
+	std::vector<BusinessLayer::AccountHistory> vecAccHistory;
+	std::vector<BusinessLayer::SubaccountHistory> vecSubAccHistory;
+	std::vector<BusinessLayer::ExtendedEntryView> vecEntryDeb;
+	std::vector<BusinessLayer::ExtendedEntryView> vecEntryCred;
+	std::string filterDebit;
+	std::string filterCredit;
+	std::string filterSub;
+	std::string filterSubHistory;
+	std::string filterAccHistory;
+	double debSum = 0.0;
+	double credSum = 0.0;
+	bool haveAChild = false;
+
+	BusinessLayer::AccountHistory accHistoryEnd;
+	std::vector<BusinessLayer::AccountHistory> vecAccHistoryEnd;
+
+	BusinessLayer::SubaccountHistory saccHistoryEnd;
+	std::vector<BusinessLayer::SubaccountHistory> vecSubAccHistoryEnd;
+
+	QList<QStandardItem*> wtosItem;
+
+	acc.Clear();
+	if (!acc.GetAccountByID(reportFormBL->GetOrmasDal(), accID, errorMessage))
+	{
+		subacc.Clear();
+		if (!subacc.GetSubaccountByID(reportFormBL->GetOrmasDal(), accID, errorMessage))
+		{
+			return;
+		}
+		else
+		{
+			acc.Clear();
+		}
+	}
+
+	if (!acc.IsEmpty())
+	{
+		BusinessLayer::Account tempAccount;
+		if (tempAccount.HaveSubaccount(reportFormBL->GetOrmasDal(), accID))
+		{
+			haveAChild = true;
+		}
+		else
+		{
+			haveAChild = false;
+		}
+		
+		QStringList header;
+		if (haveAChild == false)
+		{
+			header << QObject::tr("Date") << QObject::tr("Description") << QObject::tr("Start saldo") << QObject::tr("Debit account number")
+				<< QObject::tr("Debit") << QObject::tr("Credit") << QObject::tr("Credit account number") << QObject::tr("End saldo")
+				<< QObject::tr("Operation ID");
+			tableView->hideColumn(7);
+		}
+		else
+		{
+			header << QObject::tr("Subaccount ID") << QObject::tr("Subaccount number") << QObject::tr("Start saldo")
+				<< QObject::tr("Debit") << QObject::tr("Credit") << QObject::tr("End saldo")
+				<< QObject::tr("Start date") << QObject::tr("End date") << QObject::tr("Prev month end date")
+				<< QObject::tr("Operation ID");
+			tableView->hideColumn(0);
+			tableView->hideColumn(6);
+			tableView->hideColumn(7);
+			tableView->hideColumn(8);
+			tableView->hideColumn(9);
+		}
+		QStandardItemModel *itemModel = new QStandardItemModel(this);
+		itemModel->setHorizontalHeaderLabels(header);
+		tableView->setModel(itemModel);
+
+		if (haveAChild == true)
+		{
+			subacc.Clear();
+			subacc.SetParentAccountID(acc.GetID());
+			filterSub.clear();
+			filterSub = subacc.GenerateFilter(reportFormBL->GetOrmasDal());
+			vecSubacc = reportFormBL->GetAllDataForClass<BusinessLayer::SubaccountView>(errorMessage, filterSub);
+			
+			if (vecSubacc.size() > 0)
+			{
+				std::vector<int> subIDList;
+				for each (auto item in vecSubacc)
+				{
+					subIDList.push_back(item.GetID());
+				}
+				FillAccCrdTable(fromDate, tillDate, subIDList, prevMonthEndDate);
+			}
+		}
+		else
+		{
+			accHistoryEnd.Clear();
+			accHistoryEnd.SetAccountID(acc.GetID());
+			if (!tillDate.empty())
+			{
+				accHistoryEnd.SetTillDate(tillDate);
+			}
+			filterAccHistory.clear();
+			filterAccHistory = accHistoryEnd.GenerateFilter(reportFormBL->GetOrmasDal());
+			vecAccHistoryEnd = reportFormBL->GetAllDataForClass<BusinessLayer::AccountHistory>(errorMessage, filterAccHistory);
+
+			coAcc.Clear();
+			if (!coAcc.GetChartOfAccountsByNumber(reportFormBL->GetOrmasDal(), acc.GetNumber(), errorMessage))
+				return;
+
+			filterDebit.clear();
+			entry.Clear();
+			vecEntryDeb.clear();
+			entry.SetDebitingAccountID(acc.GetID());
+			filterDebit = entry.GenerateFilterForPeriod(reportFormBL->GetOrmasDal(), fromDate, tillDate);
+			vecEntryDeb = reportFormBL->GetAllDataForClass<BusinessLayer::ExtendedEntryView>(errorMessage, filterDebit);
+
+			filterCredit.clear();
+			entry.Clear();
+			vecEntryCred.clear();
+			entry.SetCreditingAccountID(acc.GetID());
+			filterCredit = entry.GenerateFilterForPeriod(reportFormBL->GetOrmasDal(), fromDate, tillDate);
+			vecEntryCred = reportFormBL->GetAllDataForClass<BusinessLayer::ExtendedEntryView>(errorMessage, filterCredit);
+
+			debSum = 0;
+			credSum = 0;
+			
+			filterAccHistory.clear();
+			accHistory.SetAccountID(acc.GetID());
+			accHistory.SetTillDate(prevMonthEndDate);
+			filterAccHistory = accHistory.GenerateFilter(reportFormBL->GetOrmasDal());
+			vecAccHistory = reportFormBL->GetAllDataForClass<BusinessLayer::AccountHistory>(errorMessage, filterAccHistory);
+
+			wtosItem << new QStandardItem("")
+				<< new QStandardItem("");
+			if(vecAccHistory.size() == 0)
+			{
+				wtosItem << new QStandardItem(QString::number(0, 'f', 3));
+			}
+			else
+			{
+				wtosItem << new QStandardItem(QString::number(vecAccHistory.at(0).GetCurrentBalance(), 'f', 3));
+			}
+			wtosItem << new QStandardItem("")
+				<< new QStandardItem("")
+				<< new QStandardItem("")
+				<< new QStandardItem("")
+				<< new QStandardItem("")
+				<< new QStandardItem("");
+			itemModel = (QStandardItemModel *)this->tableView->model();
+			itemModel->appendRow(wtosItem);
+			wtosItem.clear();
+
+			int count = 0;
+
+			for each (auto  debit in vecEntryDeb)
+			{
+				wtosItem << new QStandardItem(debit.GetDate().c_str())
+					<< new QStandardItem(debit.GetDescription().c_str())
+					<< new QStandardItem("")
+					<< new QStandardItem(debit.GetDebitingAccountNumber().c_str())
+					<< new QStandardItem(QString::number(debit.GetValue(), 'f', 3))
+					<< new QStandardItem("")
+					<< new QStandardItem(debit.GetCreditingAccountNumber().c_str())
+					<< new QStandardItem("")
+					<< new QStandardItem(QString::number(debit.GetOperationID()));
+				itemModel = (QStandardItemModel *)this->tableView->model();
+				itemModel->appendRow(wtosItem);
+				wtosItem.clear();
+				debSum += debit.GetValue();
+				count++;
+			}
+
+			for each (auto  credit in vecEntryCred)
+			{
+				wtosItem << new QStandardItem(credit.GetDate().c_str())
+					<< new QStandardItem(credit.GetDescription().c_str())
+					<< new QStandardItem("")
+					<< new QStandardItem(credit.GetDebitingAccountNumber().c_str())
+					<< new QStandardItem("")
+					<< new QStandardItem(QString::number(credit.GetValue(), 'f', 3))
+					<< new QStandardItem(credit.GetCreditingAccountNumber().c_str())
+					<< new QStandardItem("")
+					<< new QStandardItem(QString::number(credit.GetOperationID()));
+				itemModel = (QStandardItemModel *)this->tableView->model();
+				itemModel->appendRow(wtosItem);
+				wtosItem.clear();
+				credSum += credit.GetValue();
+				count++;
+			}
+			this->tableView->model()->sort(0);
+			wtosItem << new QStandardItem("")
+				<< new QStandardItem("")
+				<< new QStandardItem("")
+				<< new QStandardItem("")
+				<< new QStandardItem(QString::number(debSum, 'f', 3))
+				<< new QStandardItem(QString::number(credSum, 'f', 3))
+				<< new QStandardItem("")
+				<< new QStandardItem("")
+				<< new QStandardItem("");
+			itemModel = (QStandardItemModel *)this->tableView->model();
+			itemModel->appendRow(wtosItem);
+			wtosItem.clear();
+
+			wtosItem << new QStandardItem("")
+				<< new QStandardItem("")
+				<< new QStandardItem("")
+				<< new QStandardItem("")
+				<< new QStandardItem("")
+				<< new QStandardItem("")
+				<< new QStandardItem("");
+			if (vecAccHistoryEnd.size() > 0)
+			{
+				wtosItem << new QStandardItem(QString::number(vecAccHistoryEnd.at(0).GetCurrentBalance(), 'f', 3));
+			}
+			else
+			{
+				wtosItem << new QStandardItem(QString::number(acc.GetCurrentBalance(), 'f', 3));
+			}
+			wtosItem << new QStandardItem("");
+			itemModel = (QStandardItemModel *)this->tableView->model();
+			itemModel->appendRow(wtosItem);
+			wtosItem.clear();
+
+		}
+	}
+	else if (!subacc.IsEmpty())
+	{
+		QStringList header;
+		header << QObject::tr("Date") << QObject::tr("Description") << QObject::tr("Start saldo") << QObject::tr("Debit account number")
+				<< QObject::tr("Debit") << QObject::tr("Credit") << QObject::tr("Credit account number") << QObject::tr("End saldo")
+				<< QObject::tr("Operation ID");
+			tableView->hideColumn(7);
+		
+		QStandardItemModel *itemModel = new QStandardItemModel(this);
+		itemModel->setHorizontalHeaderLabels(header);
+		tableView->setModel(itemModel);
+
+		saccHistoryEnd.Clear();
+		saccHistoryEnd.SetSubaccountID(subacc.GetID());
+		if (!tillDate.empty())
+		{
+			saccHistoryEnd.SetTillDate(tillDate);
+		}
+		filterAccHistory.clear();
+		filterAccHistory = saccHistoryEnd.GenerateFilter(reportFormBL->GetOrmasDal());
+		vecSubAccHistoryEnd = reportFormBL->GetAllDataForClass<BusinessLayer::SubaccountHistory>(errorMessage, filterAccHistory);
+
+
+		filterDebit.clear();
+		entry.Clear();
+		vecEntryDeb.clear();
+		entry.SetDebitingAccountID(subacc.GetParentAccountID());
+		filterDebit = entry.GenerateFilterForPeriod(reportFormBL->GetOrmasDal(), fromDate, tillDate);
+		vecEntryDeb = reportFormBL->GetAllDataForClass<BusinessLayer::ExtendedEntryView>(errorMessage, filterDebit);
+
+		filterCredit.clear();
+		entry.Clear();
+		vecEntryCred.clear();
+		entry.SetCreditingAccountID(subacc.GetParentAccountID());
+		filterCredit = entry.GenerateFilterForPeriod(reportFormBL->GetOrmasDal(), fromDate, tillDate);
+		vecEntryCred = reportFormBL->GetAllDataForClass<BusinessLayer::ExtendedEntryView>(errorMessage, filterCredit);
+
+		debSum = 0;
+		credSum = 0;
+
+		filterAccHistory.clear();
+		saccHistory.SetSubaccountID(subacc.GetID());
+		saccHistory.SetTillDate(prevMonthEndDate);
+		filterAccHistory = saccHistory.GenerateFilter(reportFormBL->GetOrmasDal());
+		vecSubAccHistory = reportFormBL->GetAllDataForClass<BusinessLayer::SubaccountHistory>(errorMessage, filterAccHistory);
+
+		wtosItem << new QStandardItem("")
+			<< new QStandardItem("");
+		if (vecSubAccHistory.size() == 0)
+		{
+			wtosItem << new QStandardItem(QString::number(0, 'f', 3));
+		}
+		else
+		{
+			wtosItem << new QStandardItem(QString::number(vecSubAccHistory.at(0).GetCurrentBalance(), 'f', 3));
+		}
+		wtosItem << new QStandardItem("")
+			<< new QStandardItem("")
+			<< new QStandardItem("")
+			<< new QStandardItem("")
+			<< new QStandardItem("")
+			<< new QStandardItem("");
+		itemModel = (QStandardItemModel *)this->tableView->model();
+		itemModel->appendRow(wtosItem);
+		wtosItem.clear();
+
+		int count = 0;
+
+		BusinessLayer::EntrySubaccountRelation esRel;
+		std::vector<BusinessLayer::EntrySubaccountRelation> vecESRel;
+		std::string esFilter;
+		for each (auto  debit in vecEntryDeb)
+		{
+			esRel.Clear();
+			vecESRel.clear();
+			esFilter.clear();
+			esRel.SetEntryID(debit.GetID());
+			esFilter = esRel.GenerateFilter(reportFormBL->GetOrmasDal());
+			vecESRel = reportFormBL->GetAllDataForClass<BusinessLayer::EntrySubaccountRelation>(errorMessage, esFilter);
+			if (vecESRel.size() > 0)
+			{
+				if (debit.GetSubaccountID() == subacc.GetID())
+				{
+					if (vecESRel.size() == 1)
+					{
+						wtosItem << new QStandardItem(debit.GetDate().c_str())
+							<< new QStandardItem(debit.GetDescription().c_str())
+							<< new QStandardItem("")
+							<< new QStandardItem(debit.GetDebitingAccountNumber().c_str())
+							<< new QStandardItem(QString::number(debit.GetValue(), 'f', 3))
+							<< new QStandardItem("")
+							<< new QStandardItem(debit.GetCreditingAccountNumber().c_str())
+							<< new QStandardItem("")
+							<< new QStandardItem(QString::number(debit.GetOperationID()));
+						itemModel = (QStandardItemModel *)this->tableView->model();
+						itemModel->appendRow(wtosItem);
+						wtosItem.clear();
+						debSum += debit.GetValue();
+						count++;
+					}
+					else if (vecESRel.size() == 2 && vecESRel.at(0).GetSubaccountID() == subacc.GetID())
+					{
+						wtosItem << new QStandardItem(debit.GetDate().c_str())
+							<< new QStandardItem(debit.GetDescription().c_str())
+							<< new QStandardItem("")
+							<< new QStandardItem(debit.GetDebitingAccountNumber().c_str())
+							<< new QStandardItem(QString::number(debit.GetValue(), 'f', 3))
+							<< new QStandardItem("")
+							<< new QStandardItem(debit.GetCreditingAccountNumber().c_str())
+							<< new QStandardItem("")
+							<< new QStandardItem(QString::number(debit.GetOperationID()));
+						itemModel = (QStandardItemModel *)this->tableView->model();
+						itemModel->appendRow(wtosItem);
+						wtosItem.clear();
+						debSum += debit.GetValue();
+						count++;
+					}
+				}
+			}
+		}
+
+		for each (auto  credit in vecEntryCred)
+		{
+			esRel.Clear();
+			vecESRel.clear();
+			esFilter.clear();
+			esRel.SetEntryID(credit.GetID());
+			esFilter = esRel.GenerateFilter(reportFormBL->GetOrmasDal());
+			vecESRel = reportFormBL->GetAllDataForClass<BusinessLayer::EntrySubaccountRelation>(errorMessage, esFilter);
+			if (vecESRel.size() > 0)
+			{
+				if (credit.GetSubaccountID() == subacc.GetID())
+				{
+					if (vecESRel.size() == 1)
+					{
+						wtosItem << new QStandardItem(credit.GetDate().c_str())
+							<< new QStandardItem(credit.GetDescription().c_str())
+							<< new QStandardItem("")
+							<< new QStandardItem(credit.GetDebitingAccountNumber().c_str())
+							<< new QStandardItem("")
+							<< new QStandardItem(QString::number(credit.GetValue(), 'f', 3))
+							<< new QStandardItem(credit.GetCreditingAccountNumber().c_str())
+							<< new QStandardItem("")
+							<< new QStandardItem(QString::number(credit.GetOperationID()));
+						itemModel = (QStandardItemModel *)this->tableView->model();
+						itemModel->appendRow(wtosItem);
+						wtosItem.clear();
+						credSum += credit.GetValue();
+						count++;
+					}
+					else if (vecESRel.size() == 2 && vecESRel.at(1).GetSubaccountID() == subacc.GetID())
+					{
+						wtosItem << new QStandardItem(credit.GetDate().c_str())
+							<< new QStandardItem(credit.GetDescription().c_str())
+							<< new QStandardItem("")
+							<< new QStandardItem(credit.GetDebitingAccountNumber().c_str())
+							<< new QStandardItem("")
+							<< new QStandardItem(QString::number(credit.GetValue(), 'f', 3))
+							<< new QStandardItem(credit.GetCreditingAccountNumber().c_str())
+							<< new QStandardItem("")
+							<< new QStandardItem(QString::number(credit.GetOperationID()));
+						itemModel = (QStandardItemModel *)this->tableView->model();
+						itemModel->appendRow(wtosItem);
+						wtosItem.clear();
+						credSum += credit.GetValue();
+						count++;
+					}
+				}
+			}
+		}
+		this->tableView->model()->sort(0);
+		wtosItem << new QStandardItem("")
+			<< new QStandardItem("")
+			<< new QStandardItem("")
+			<< new QStandardItem("")
+			<< new QStandardItem(QString::number(debSum, 'f', 3))
+			<< new QStandardItem(QString::number(credSum, 'f', 3))
+			<< new QStandardItem("")
+			<< new QStandardItem("")
+			<< new QStandardItem("");
+		itemModel = (QStandardItemModel *)this->tableView->model();
+		itemModel->appendRow(wtosItem);
+		wtosItem.clear();
+
+		wtosItem << new QStandardItem("")
+			<< new QStandardItem("")
+			<< new QStandardItem("")
+			<< new QStandardItem("")
+			<< new QStandardItem("")
+			<< new QStandardItem("")
+			<< new QStandardItem("");
+		if (vecSubAccHistoryEnd.size() > 0)
+		{
+			wtosItem << new QStandardItem(QString::number(vecSubAccHistoryEnd.at(0).GetCurrentBalance(), 'f', 3));
+		}
+		else
+		{
+			wtosItem << new QStandardItem(QString::number(subacc.GetCurrentBalance(), 'f', 3));
+		}
+		wtosItem << new QStandardItem("");
+		itemModel = (QStandardItemModel *)this->tableView->model();
+		itemModel->appendRow(wtosItem);
+		wtosItem.clear();
+	}
+}
+
+void ReportForm::View()
+{
+	if (this->objectName() == "WTBS")
+	{
+		ViewWTBS();
+	}
+	else if (this->objectName() == "AccCrd")
+	{
+		ViewAcc();
+	}
+	else if (this->objectName() == "SubaccCrd")
+	{
+		ViewSubacc();
+	}
+	else if (this->objectName() == "OneAccCrd")
+	{
+		ViewOneAcc();
+	}
 }
 
 void ReportForm::ViewWTBS()
 {
-	/*DocForm *docForm = new DocForm(reportFormBL, this);
-	docForm->setAttribute(Qt::WA_DeleteOnClose);
-	docForm->setWindowTitle(tr("Print warehouse turnover balance sheet"));
-	QMdiSubWindow *generateWTBSWindow = new QMdiSubWindow;
-	generateWTBSWindow->setWidget(docForm);
-	generateWTBSWindow->setAttribute(Qt::WA_DeleteOnClose);
-	generateWTBSWindow->resize(docForm->size().width() + 18, docForm->size().height() + 30);
-	((MainForm*)parentForm)->mdiArea->addSubWindow(generateWTBSWindow);
 
-	//read template
-	QFile file;
-	file.setFileName(":/docs/warehouse_turnover.html");
-	if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
-	{
-		QMessageBox::information(NULL, QString(tr("Info")),
-			QString(tr("Cannot find warehouse turnover tamplate!")),
-			QString(tr("Ok")));
-		return;
-	}
-	QString reportText = file.readAll();
-	
-	
-	std::string errorMessage = "";
-	int id = GetIDFromTable(tableView, errorMessage);
-	BusinessLayer::Return ret;
-	if (!ret.GetReturnByID(reportFormBL->GetOrmasDal(), id, errorMessage))
-	{
-		QMessageBox::information(NULL, QString(tr("Warning")),
-			QString(tr("Connot show information for this row!")),
-			QString(tr("Ok")));
-		return;
-	}
-	BusinessLayer::ReturnList returnList;
-	BusinessLayer::Client client;
-	BusinessLayer::Employee employee;
-	BusinessLayer::Company company;
-	BusinessLayer::CompanyEmployeeRelation ceRel;
-	int companyID = 0;
-	companyID = ceRel.GetCompanyByEmployeeID(reportFormBL->GetOrmasDal(), ret.GetEmployeeID(), errorMessage);
-	if (!company.GetCompanyByID(reportFormBL->GetOrmasDal(), companyID, errorMessage) || 0 == companyID)
-	{
-		QMessageBox::information(NULL, QString(tr("Warning")),
-			QString(tr("Connot show information for this row!")),
-			QString(tr("Ok")));
-		return;
-	}
-	if (!client.GetClientByID(reportFormBL->GetOrmasDal(), ret.GetClientID(), errorMessage))
-	{
-		QMessageBox::information(NULL, QString(tr("Warning")),
-			QString(tr("Connot show information for this row!")),
-			QString(tr("Ok")));
-		return;
-	}
-	if (!employee.GetEmployeeByID(reportFormBL->GetOrmasDal(), ret.GetEmployeeID(), errorMessage))
-	{
-		QMessageBox::information(NULL, QString(tr("Warning")),
-			QString(tr("Connot show information for this row!")),
-			QString(tr("Ok")));
-		return;
-	}
+}
 
-	DocForm *docForm = new DocForm(reportFormBL, this);
-	docForm->setAttribute(Qt::WA_DeleteOnClose);
-	docForm->setWindowTitle(tr("Print report"));
-	QMdiSubWindow *printRepWindow = new QMdiSubWindow;
-	printRepWindow->setWidget(docForm);
-	printRepWindow->setAttribute(Qt::WA_DeleteOnClose);
-	printRepWindow->resize(docForm->size().width() + 18, docForm->size().height() + 30);
-	((MainForm*)parentForm)->mdiArea->addSubWindow(printRepWindow);
+void ReportForm::ViewAcc()
+{
 
-	QFile file;
-	file.setFileName(":/docs/return.html");
-	if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
-	{
-		QMessageBox::information(NULL, QString(tr("Info")),
-			QString(tr("Cannot find report tamplate!")),
-			QString(tr("Ok")));
-		return;
-	}
-	QString reportText = file.readAll();
-	returnList.SetReturnID(ret.GetID());
-	std::string filter = returnList.GenerateFilter(reportFormBL->GetOrmasDal());
-	std::vector<BusinessLayer::ReturnListView> vecRetList = reportFormBL->GetAllDataForClass<BusinessLayer::ReturnListView>(errorMessage, filter);
-	if (vecRetList.size() == 0)
-	{
-		QMessageBox::information(NULL, QString(tr("Info")),
-			QString(tr("List is empty!")),
-			QString(tr("Ok")));
-		return;
-	}
+}
 
-	//generating report
-	reportText.replace(QString("NumberPh"), QString::number(ret.GetID()), Qt::CaseInsensitive);
-	reportText.replace(QString("DatePh"), QString(ret.GetDate().c_str()), Qt::CaseInsensitive);
-	reportText.replace(QString("ComName1Ph"), QString(company.GetName().c_str()), Qt::CaseInsensitive);
-	reportText.replace(QString("UserName1Ph"), QString(employee.GetSurname().c_str()) + " " + QString(employee.GetName().c_str()), Qt::CaseInsensitive);
-	reportText.replace(QString("ComName2Ph"), QString(client.GetFirm().c_str()), Qt::CaseInsensitive);
-	reportText.replace(QString("UserName2Ph"), QString(client.GetSurname().c_str()) + " " + QString(client.GetName().c_str()), Qt::CaseInsensitive);
-	int i = 1;
-	BusinessLayer::Product product;
-	BusinessLayer::Measure measure;
-	BusinessLayer::Currency currency;
-	QString tableBody;
-	for each (auto item in vecRetList)
-	{
-		product.Clear();
-		measure.Clear();
-		currency.Clear();
-		if (!product.GetProductByID(reportFormBL->GetOrmasDal(), item.GetProductID(), errorMessage))
-		{
-			QMessageBox::information(NULL, QString(tr("Info")),
-				QString(tr("Product is wrong!")),
-				QString(tr("Ok")));
-			return;
-		}
-		if (!measure.GetMeasureByID(reportFormBL->GetOrmasDal(), product.GetMeasureID(), errorMessage))
-		{
-			QMessageBox::information(NULL, QString(tr("Info")),
-				QString(tr("Measure is wrong!")),
-				QString(tr("Ok")));
-			return;
-		}
-		if (!currency.GetCurrencyByID(reportFormBL->GetOrmasDal(), product.GetCurrencyID(), errorMessage))
-		{
-			QMessageBox::information(NULL, QString(tr("Info")),
-				QString(tr("Currency is wrong!")),
-				QString(tr("Ok")));
-			return;
-		}
-		tableBody += "<tr>";
-		tableBody += "<td>" + QString::number(i) + "</td>";
-		tableBody += "<td>" + QString(product.GetName().c_str()) + "</td>";
-		tableBody += "<td>" + QString(measure.GetShortName().c_str()) + "</td>";
-		tableBody += "<td>" + QString::number(item.GetCount()) + "</td>";
-		tableBody += "<td>" + QString::number(item.GetSum() / item.GetCount(), 'f', 3) + "</td>";
-		tableBody += "<td>" + QString::number(item.GetSum()) + "</td>";
-		tableBody += "<td>" + QString(currency.GetShortName().c_str()) + "</td>";
-		tableBody += "</tr>";
-		i++;
-	}
-	reportText.replace(QString("TableBodyPh"), tableBody, Qt::CaseInsensitive);
-	reportText.replace(QString("SumPh"), QString::number(ret.GetSum()), Qt::CaseInsensitive);
-	reportText.replace(QString("CurrencyPh"), QString(currency.GetShortName().c_str()), Qt::CaseInsensitive);
+void ReportForm::ViewSubacc()
+{
 
-	docForm->webEngineView->setHtml(reportText);
-	docForm->SetContent(reportText);
-	docForm->webEngineView->show();
-	docForm->show();*/
+}
+
+void ReportForm::ViewOneAcc()
+{
+
 }

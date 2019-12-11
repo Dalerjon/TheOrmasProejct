@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 	session_start();
 	if(empty($_SESSION['name']) or empty($_SESSION['surname']) or empty($_SESSION['id']) or empty($_SESSION['role_id']))
 	{
@@ -18,7 +18,7 @@
 			echo ("<LINK rel='stylesheet' media='screen' type='text/css' title='Style' href='css/select2.min.css'>");
 			echo ("<LINK rel='stylesheet' media='screen' type='text/css' href='css/datatables.min.css'/>");
 			echo ("<script type='text/javascript' src='js/jquery-3.2.1.min.js'></script>");
-			echo ("<script type='text/javascript' src='js/main.js'></script>");
+			echo ("<script type='text/javascript' src='js/main-1.1.js'></script>");
 			echo ("<script type='text/javascript' src='js/select2.min.js'></script>");
 			echo ("<script type='text/javascript' src='js/datatables.min.js'></script>");
 		}	
@@ -647,6 +647,10 @@
 <div id="main-content">
 		<div id="menu">
 		<?php
+			$product_list= Array();
+			$productPrice= Array();
+			$client_options = '';
+			$product_list_all ='';
 			if($_SESSION['role_id'] == $_SESSION['role_id_client'])
 			{
 				require_once ('client.php');

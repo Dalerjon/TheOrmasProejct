@@ -38,9 +38,9 @@ namespace BusinessLayer{
 		//Generate filter string for class
 		std::string GenerateFilter(DataLayer::OrmasDal& ormasDal);
 		bool GetCashboxEmployeeByID(DataLayer::OrmasDal& ormasDal, int id, std::string& errorMessage);
-		bool GetCashboxByEmployeeID(DataLayer::OrmasDal& ormasDal, int eID, std::string& errorMessage);
+		bool GetCashboxEmployeeByEmployeeID(DataLayer::OrmasDal& ormasDal, int eID, std::string& errorMessage);
 		int GetCashboxIDByEmployeeID(DataLayer::OrmasDal& ormasDal, int eID, std::string& errorMessage);
-		int GetEmployeeByCashboxID(DataLayer::OrmasDal& ormasDal, int cID, std::string& errorMessage);
+		int GetEmployeeIDByCashboxID(DataLayer::OrmasDal& ormasDal, int cID, std::string& errorMessage);
 		bool IsEmpty();
 		void Clear();
 	private:

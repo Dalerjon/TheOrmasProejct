@@ -16,6 +16,7 @@ CreateWdwDlg::CreateWdwDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, QWi
 	userEdit->setValidator(vInt);
 	valueEdit->setValidator(vDouble);
 	valueEdit->setMaxLength(17);
+	targetEdit->setMaxLength(100);
 	saIDEdit->setValidator(vInt);
 	if (true == updateFlag)
 	{
@@ -166,7 +167,7 @@ void CreateWdwDlg::SetID(int ID, QString childName)
 }
 
 void CreateWdwDlg::SetWithdrawalParams(QString wDate, double wValue, int wUserID, int wSubAccId, QString wTarget, int wCurrencyID, 
-	int wStatusID, int wAccountID, QString wWho, int id)
+	int wStatusID, int wAccountID, QString wWho, int cashboxAccID, int id)
 {
 	withdrawal->SetDate(wDate.toUtf8().constData());
 	withdrawal->SetValue(wValue);
@@ -177,6 +178,7 @@ void CreateWdwDlg::SetWithdrawalParams(QString wDate, double wValue, int wUserID
 	withdrawal->SetStatusID(wStatusID);
 	withdrawal->SetAccountID(wAccountID);
 	withdrawal->SetWho(wWho.toUtf8().constData());
+	withdrawal->SetCashboxAccountID(cashboxAccID);
 	withdrawal->SetID(id);
 }
 
@@ -231,6 +233,7 @@ bool CreateWdwDlg::FillDlgElements(QTableView* pTable)
 			pTable->model()->data(pTable->model()->index(mIndex.row(), 15)).toInt(),
 			pTable->model()->data(pTable->model()->index(mIndex.row(), 16)).toInt(),
 			pTable->model()->data(pTable->model()->index(mIndex.row(), 10)).toString().toUtf8().constData(),
+			pTable->model()->data(pTable->model()->index(mIndex.row(), 17)).toInt(),
 			pTable->model()->data(pTable->model()->index(mIndex.row(), 0)).toInt());
 		FillEditElements(pTable->model()->data(pTable->model()->index(mIndex.row(), 1)).toString().toUtf8().constData(),
 			pTable->model()->data(pTable->model()->index(mIndex.row(), 2)).toDouble(),
@@ -255,12 +258,31 @@ void CreateWdwDlg::CreateWithdrawal()
 	if (0.0 != valueEdit->text().toDouble() && !currencyCmb->currentText().isEmpty()
 		&& !dateEdit->text().isEmpty() && !whoEdit->text().isEmpty())
 	{
-		DataForm *parentDataForm = (DataForm*) parentForm;
+		DataForm *parentDataForm = (DataForm*)parentForm;
+		int cashboxAccID = GetCashboxAccountID();
+		if (0 == cashboxAccID)
+		{
+			dialogBL->CancelTransaction(errorMessage);
+			QMessageBox::information(NULL, QString(tr("Warning")),
+				QString(tr("You have not rights to create withdrawal")),
+				QString(tr("Ok")));
+			errorMessage.clear();
+			return;
+		}
 		SetWithdrawalParams(dateEdit->text(), valueEdit->text().toDouble(), userEdit->text().toInt(), saIDEdit->text().toInt(),
-			targetEdit->text(), currencyCmb->currentData().toInt(), statusEdit->text().toInt(), accIDEdit->text().toInt(), whoEdit->text());
+			targetEdit->text(), currencyCmb->currentData().toInt(), statusEdit->text().toInt(), accIDEdit->text().toInt(), whoEdit->text(), cashboxAccID);
 		dialogBL->StartTransaction(errorMessage);
 		if (dialogBL->CreateWithdrawal(withdrawal, errorMessage))
 		{
+			if (!CrateCashboxTransaction(withdrawal->GetID()))
+			{
+				dialogBL->CancelTransaction(errorMessage);
+				QMessageBox::information(NULL, QString(tr("Warning")),
+					QString(tr("Cannot create cashbox transaction!")),
+					QString(tr("Ok")));
+				errorMessage.clear();
+				return;
+			}
 			if (parentDataForm != nullptr)
 			{
 				if (!parentDataForm->IsClosed())
@@ -365,7 +387,8 @@ void CreateWdwDlg::CreateWithdrawal()
 						<< new QStandardItem(QString::number(withdrawal->GetCurrencyID()))
 						<< new QStandardItem(QString::number(withdrawal->GetSubaccountID()))
 						<< new QStandardItem(QString::number(withdrawal->GetStatusID()))
-						<< new QStandardItem(QString::number(withdrawal->GetAccountID()));
+						<< new QStandardItem(QString::number(withdrawal->GetAccountID()))
+						<< new QStandardItem(QString::number(withdrawal->GetCashboxAccountID()));
 					QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
 					itemModel->appendRow(withdrawalItem);
 				}
@@ -405,7 +428,7 @@ void CreateWdwDlg::EditWithdrawal()
 		{
 			DataForm *parentDataForm = (DataForm*) parentForm;
 			SetWithdrawalParams(dateEdit->text(), valueEdit->text().toDouble(), userEdit->text().toInt(), saIDEdit->text().toInt(), targetEdit->text(), 
-				currencyCmb->currentData().toInt(), statusEdit->text().toInt(), accIDEdit->text().toInt(), whoEdit->text(), withdrawal->GetID());
+				currencyCmb->currentData().toInt(), statusEdit->text().toInt(), accIDEdit->text().toInt(), whoEdit->text(), withdrawal->GetCashboxAccountID(), withdrawal->GetID());
 			dialogBL->StartTransaction(errorMessage);
 			if (dialogBL->UpdateWithdrawal(withdrawal, errorMessage))
 			{
@@ -512,6 +535,7 @@ void CreateWdwDlg::EditWithdrawal()
 						itemModel->item(mIndex.row(), 14)->setText(QString::number(withdrawal->GetSubaccountID()));
 						itemModel->item(mIndex.row(), 15)->setText(QString::number(withdrawal->GetStatusID()));
 						itemModel->item(mIndex.row(), 16)->setText(QString::number(withdrawal->GetAccountID()));
+						itemModel->item(mIndex.row(), 17)->setText(QString::number(withdrawal->GetCashboxAccountID()));
 						emit itemModel->dataChanged(mIndex, mIndex);
 					}
 				}
@@ -978,4 +1002,89 @@ bool CreateWdwDlg::CheckAccess()
 	}
 
 	return true;
+}
+
+int CreateWdwDlg::GetCashboxAccountID()
+{
+	BusinessLayer::Cashbox cashbox;
+	BusinessLayer::CashboxEmployeeRelation ceRelation;
+	if (ceRelation.GetCashboxEmployeeByEmployeeID(dialogBL->GetOrmasDal(), dialogBL->loggedUser->GetID(), errorMessage))
+	{
+		if (cashbox.GetCashboxByID(dialogBL->GetOrmasDal(), ceRelation.GetCashboxID(), errorMessage))
+		{
+			return cashbox.GetSubaccountID();
+		}
+	}
+	return 0;
+}
+
+bool CreateWdwDlg::CrateCashboxTransaction(int withdrawalID)
+{
+	BusinessLayer::Cashbox cashbox;
+	BusinessLayer::CashboxEmployeeRelation ceRelation;
+	if (ceRelation.GetCashboxEmployeeByEmployeeID(dialogBL->GetOrmasDal(), dialogBL->loggedUser->GetID(), errorMessage))
+	{
+		if (cashbox.GetCashboxByID(dialogBL->GetOrmasDal(), ceRelation.GetCashboxID(), errorMessage))
+		{
+			BusinessLayer::Employee accountant;
+			BusinessLayer::Employee owner;
+			BusinessLayer::Role role;
+
+			if (0 == role.GetRoleIDByName(dialogBL->GetOrmasDal(), "CHIEF ACCOUNTANT", errorMessage))
+			{
+				QMessageBox::information(NULL, QString(tr("Warning")),
+					QString(tr("Connot find 'CHIEF ACCOUNTANT' role!")),
+					QString(tr("Ok")));
+				return false;
+			}
+
+			accountant.SetRoleID(role.GetID());
+			std::string empFilter = accountant.GenerateFilter(dialogBL->GetOrmasDal());
+			std::vector<BusinessLayer::EmployeeView> vecEmpRep = dialogBL->GetAllDataForClass<BusinessLayer::EmployeeView>(errorMessage, empFilter);
+			if (vecEmpRep.size() == 0)
+			{
+				QMessageBox::information(NULL, QString(tr("Warning")),
+					QString(tr("Connot find 'CHIEF ACCOUNTANT' employee!")),
+					QString(tr("Ok")));
+				return false;
+			}
+			else
+			{
+				accountant.SetID(vecEmpRep.at(0).GetID());
+				accountant.SetName(vecEmpRep.at(0).GetName());
+				accountant.SetSurname(vecEmpRep.at(0).GetSurname());
+			}
+
+			role.Clear();
+			if (0 == role.GetRoleIDByName(dialogBL->GetOrmasDal(), "DIRECTOR", errorMessage))
+			{
+				QMessageBox::information(NULL, QString(tr("Warning")),
+					QString(tr("Connot find 'OWNER' role!")),
+					QString(tr("Ok")));
+				return false;
+			}
+
+			owner.SetRoleID(role.GetID());
+			std::string ownFilter = owner.GenerateFilter(dialogBL->GetOrmasDal());
+			std::vector<BusinessLayer::EmployeeView> vecOwnRep = dialogBL->GetAllDataForClass<BusinessLayer::EmployeeView>(errorMessage, ownFilter);
+			if (vecOwnRep.size() == 0)
+			{
+				QMessageBox::information(NULL, QString(tr("Warning")),
+					QString(tr("Connot find 'OWNER' employee!")),
+					QString(tr("Ok")));
+				return false;
+			}
+			else
+			{
+				owner.SetID(vecOwnRep.at(0).GetID());
+				owner.SetName(vecOwnRep.at(0).GetName());
+				owner.SetSurname(vecOwnRep.at(0).GetSurname());
+			}
+
+			BusinessLayer::CashboxTransaction cTransaction;
+			if (cTransaction.CreateCashboxTransaction(dialogBL->GetOrmasDal(), cashbox.GetID(), dialogBL->loggedUser->GetID(), accountant.GetID(), owner.GetID(), 0, withdrawalID, errorMessage))
+				return true;
+		}
+	}
+	return false;
 }

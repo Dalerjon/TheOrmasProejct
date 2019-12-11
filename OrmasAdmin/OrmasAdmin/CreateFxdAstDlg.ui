@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>CreateFxdAst</class>
+ <widget class="QDialog" name="CreateFxdAst">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>938</width>
+    <height>601</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Create/Update fixed assets</string>
+  </property>
+  <property name="locale">
+   <locale language="English" country="UnitedStates"/>
+  </property>
+  <property name="modal">
+   <bool>false</bool>
+  </property>
+  <layout class="QGridLayout" name="gridLayout">
+   <property name="leftMargin">
+    <number>11</number>
+   </property>
+   <property name="topMargin">
+    <number>11</number>
+   </property>
+   <property name="rightMargin">
+    <number>11</number>
+   </property>
+   <property name="bottomMargin">
+    <number>17</number>
+   </property>
+   <item row="2" column="0" colspan="2">
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QPushButton" name="addBtn">
+       <property name="text">
+        <string>Add</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="cancelBtn">
+       <property name="text">
+        <string>Cancel</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item row="0" column="0" colspan="2">
+    <widget class="QGroupBox" name="specGrpBox">
+     <property name="title">
+      <string>Fixed assets specification:</string>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_2">
+      <item row="1" column="1">
+       <widget class="QLineEdit" name="factoryNumEdit"/>
+      </item>
+      <item row="0" column="1">
+       <widget class="QLineEdit" name="faNameEdit"/>
+      </item>
+      <item row="0" column="0">
+       <widget class="QLabel" name="nameLB">
+        <property name="text">
+         <string>Fixed assets name:*</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="0">
+       <widget class="QLabel" name="documentLb">
+        <property name="text">
+         <string>Document:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="developerLb">
+        <property name="text">
+         <string>Developer:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="facNumberLb">
+        <property name="text">
+         <string>Factory number:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="QLineEdit" name="developerEdit"/>
+      </item>
+      <item row="3" column="1">
+       <widget class="QLineEdit" name="documentEdit"/>
+      </item>
+      <item row="0" column="2">
+       <widget class="QLabel" name="objCharLb">
+        <property name="text">
+         <string>Obeject characters:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="2">
+       <widget class="QLabel" name="dateOfConsLb">
+        <property name="text">
+         <string>Date of construction:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="3">
+       <widget class="QLineEdit" name="objCharEdit"/>
+      </item>
+      <item row="1" column="2">
+       <widget class="QLabel" name="conditionLb">
+        <property name="text">
+         <string>Condition:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="3">
+       <widget class="QLineEdit" name="conditionEdit"/>
+      </item>
+      <item row="4" column="0" colspan="4">
+       <widget class="QLabel" name="label">
+        <property name="text">
+         <string>* - mandatory fields</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="3">
+       <widget class="QDateEdit" name="consDateEdit"/>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="1" column="0" colspan="2">
+    <widget class="QGroupBox" name="fxdAssGrpBox">
+     <property name="title">
+      <string>Fixed assets:</string>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <tabstops>
+  <tabstop>addBtn</tabstop>
+  <tabstop>cancelBtn</tabstop>
+ </tabstops>
+ <resources/>
+ <connections/>
+</ui>

@@ -283,7 +283,7 @@ namespace BusinessLayer{
 	bool Refund::Replenishment(DataLayer::OrmasDal& ormasDal, int uID, int cID, std::string& errorMessage)
 	{
 		CashboxEmployeeRelation cashEmpRel;
-		if (!cashEmpRel.GetCashboxByEmployeeID(ormasDal, loggedUserID, errorMessage))
+		if (!cashEmpRel.GetCashboxEmployeeByEmployeeID(ormasDal, loggedUserID, errorMessage))
 		{
 			errorMessage = "Access denied! You haven't rights for doing operations with cashbox!";
 			return false;
@@ -319,7 +319,7 @@ namespace BusinessLayer{
 	bool Refund::Replenishment(DataLayer::OrmasDal& ormasDal, int uID, int cID, double previousValue, std::string& errorMessage)
 	{
 		CashboxEmployeeRelation cashEmpRel;
-		if (!cashEmpRel.GetCashboxByEmployeeID(ormasDal, loggedUserID, errorMessage))
+		if (!cashEmpRel.GetCashboxEmployeeByEmployeeID(ormasDal, loggedUserID, errorMessage))
 		{
 			errorMessage = "Access denied! You haven't rights for doing operations with cashbox!";
 			return false;
@@ -359,7 +359,7 @@ namespace BusinessLayer{
 	bool Refund::CancelRefund(DataLayer::OrmasDal& ormasDal, int uID, int cID, std::string& errorMessage)
 	{
 		CashboxEmployeeRelation cashEmpRel;
-		if (!cashEmpRel.GetCashboxByEmployeeID(ormasDal, loggedUserID, errorMessage))
+		if (!cashEmpRel.GetCashboxEmployeeByEmployeeID(ormasDal, loggedUserID, errorMessage))
 		{
 			errorMessage = "Access denied! You haven't rights for doing operations with cashbox!";
 			return false;

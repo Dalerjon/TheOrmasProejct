@@ -2,7 +2,8 @@
 session_start();
 require_once 'logsql.php';
 
-$productPrice = Array();
+	if(empty($product_list) or empty($productPrice))
+	{
 	$product_type_result = pg_query("SELECT product_type_id FROM \"OrmasSchema\".product_types_view where product_type_code = 'PRODUCT'");
     $product_type_row = pg_fetch_array($product_type_result);
 	$product_employee_result = pg_query("SELECT product_id FROM \"OrmasSchema\".employee_product_view where employee_id =".$_SESSION['id']);
@@ -39,15 +40,18 @@ $productPrice = Array();
 		$row_count = pg_num_rows($product_result);
 		for($i=0;$i<$row_count;$i++)
 		{
-			$product_list .= "<option value='".$product_row[$i]['product_id']."'>".$product_row[$i]['product_name']."</option>";
+			$product_list_all="";
+			$product_list_all .= "<option value='".$product_row[$i]['product_id']."'>".$product_row[$i]['product_name']."</option>";
+			$product_list[$i] = "<option value='".$product_row[$i]['product_id']."'>".$product_row[$i]['product_name']."</option>";
 			$productPrice[$i] = array("id" => $product_row[$i]['product_id'], "price" => $product_row[$i]['price']);
 		}
+	}
 	}
 	
 $status_result= pg_query("SELECT status_id FROM \"OrmasSchema\".status_view where status_name = 'TO RETURN'");
 $status_row = pg_fetch_all($status_result);
 $status_id ="";
-if(!empty($product_row[0]))
+if(!empty($status_row[0]))
 {
 	$row_count = pg_num_rows($status_result);
 	for($i=0;$i<$row_count;$i++)
@@ -128,6 +132,8 @@ echo ($form_string);
 }
 if($_SESSION['role_id_expeditor'] == $_SESSION['role_id'])
 {	
+if(empty($client_options))
+{
 $query_client = "SELECT user_id_2 FROM \"OrmasSchema\".relations_view WHERE user_id_1=".$_SESSION['id'];			
 $result_clinet = pg_query($query_client);
 $client_options = "";
@@ -138,7 +144,7 @@ while ($row_user = pg_fetch_array($result_clinet)) {
 		$client_options .= "<option value='".$row[0]."'>".$row[1].", ".$row[2].", ".$row[3].", ".$row[6]."</option>";
 	}
 }
-
+}
 $form_string= "
 <script>
   $(document).ready(function() { 
@@ -173,8 +179,10 @@ $form_string= "
 						".$client_options."
 						</select>
 					</div>
-			</div>
-			<div class='addable'>
+			</div>";
+			for($i = 0; $i < count($product_list) ; $i++)
+			{
+			$form_string .= "<div class='addable'>
 				<div class='close-bar'>
 					<!--<div class='close-img'>
 					</div>-->
@@ -184,17 +192,18 @@ $form_string= "
 					<div class='float-left'>
 						<label class='float-left form-label'>Виберите продукт:</label>
 						<select class='form-prod' name='product[]'>
-						".$product_list."
+						".$product_list[$i]."
 						</select>
 					</div>
 					<div >
 						<label class='float-left form-label'>Количество:</label>
-						<input class ='form-count' type='number' name='count[]'/>
+						<input class ='form-count' type='number' name='count[]' value='0' min='0'/>
 					</div>
 				</div>
-			</div>
-		</div>
-		<div id='form-button'>
+			</div>";
+			}
+		$form_string .= "</div>
+		<!--<div id='form-button'>
 			<div id='form-button-content'>
 				<div id='form-button-img'>
 				</div>
@@ -202,7 +211,7 @@ $form_string= "
 					Добавить еще...
 				</div>
 			</div>
-		</div>
+		</div>-->
 		<div id='from-submit'>
 			<input class='form-submit' type='button' value='Создать' onclick='SubmitReturnForm()' id='sub-button'/>
 		<div>

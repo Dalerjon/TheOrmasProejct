@@ -160,12 +160,13 @@ namespace BusinessLayer{
 		return 0;
 	}
 
-	bool CashboxEmployeeRelation::GetCashboxByEmployeeID(DataLayer::OrmasDal& ormasDal, int eID, std::string& errorMessage)
+	bool CashboxEmployeeRelation::GetCashboxEmployeeByEmployeeID(DataLayer::OrmasDal& ormasDal, int eID, std::string& errorMessage)
 	{
 		if (eID <= 0)
 			return false;
 		CashboxEmployeeRelation ceRelation;
-		ceRelation.SetID(id);
+		ceRelation.SetEmployeeID(eID);
+		ceRelation.SetCashboxID(0);
 		std::string filter = ceRelation.GenerateFilter(ormasDal);
 		std::vector<DataLayer::cashboxEmployeeViewCollection> CashboxEmployeeVector = ormasDal.GetCashboxEmployee(errorMessage, filter);
 		if (0 != CashboxEmployeeVector.size())
@@ -178,7 +179,7 @@ namespace BusinessLayer{
 		return false;
 	}
 
-	int CashboxEmployeeRelation::GetEmployeeByCashboxID(DataLayer::OrmasDal& ormasDal, int cID, std::string& errorMessage)
+	int CashboxEmployeeRelation::GetEmployeeIDByCashboxID(DataLayer::OrmasDal& ormasDal, int cID, std::string& errorMessage)
 	{
 		CashboxEmployeeRelation ceRelation;
 		ceRelation.SetEmployeeID(0);

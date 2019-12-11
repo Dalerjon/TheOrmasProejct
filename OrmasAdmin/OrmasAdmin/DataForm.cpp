@@ -4522,56 +4522,77 @@ void DataForm::ViewPmtDlg()
 	BusinessLayer::Role role;
 	BusinessLayer::Company company;
 	BusinessLayer::CompanyEmployeeRelation ceRel;
+	BusinessLayer::CashboxTransaction cTransaction;
 
-	if (0 == role.GetRoleIDByName(dataFormBL->GetOrmasDal(), "CHIEF ACCOUNTANT", errorMessage))
+	if (cTransaction.GetCashboxTransactionByPaymentID(dataFormBL->GetOrmasDal(), payment.GetID(), errorMessage))
 	{
-		QMessageBox::information(NULL, QString(tr("Warning")),
-			QString(tr("Connot find 'CHIEF ACCOUNTANT' role!")),
-			QString(tr("Ok")));
-		return;
-	}
-
-	accountant.SetRoleID(role.GetID());
-	std::string empFilter = accountant.GenerateFilter(dataFormBL->GetOrmasDal());
-	std::vector<BusinessLayer::EmployeeView> vecEmpRep = dataFormBL->GetAllDataForClass<BusinessLayer::EmployeeView>(errorMessage, empFilter);
-	if (vecEmpRep.size() == 0)
-	{
-		QMessageBox::information(NULL, QString(tr("Warning")),
-			QString(tr("Connot find 'CHIEF ACCOUNTANT' employee!")),
-			QString(tr("Ok")));
-		return;
+		if (!accountant.GetEmployeeByID(dataFormBL->GetOrmasDal(), cTransaction.GetAccountantID(), errorMessage))
+		{
+			QMessageBox::information(NULL, QString(tr("Warning")),
+				QString(tr("Connot find 'CHIEF ACCOUNTANT' employee!")),
+				QString(tr("Ok")));
+			return;
+		}
+		if (!cashier.GetEmployeeByID(dataFormBL->GetOrmasDal(), cTransaction.GetCashierID(), errorMessage))
+		{
+			QMessageBox::information(NULL, QString(tr("Warning")),
+				QString(tr("Connot find 'CASHIER' employee!")),
+				QString(tr("Ok")));
+			return;
+		}
 	}
 	else
 	{
-		accountant.SetName(vecEmpRep.at(0).GetName());
-		accountant.SetSurname(vecEmpRep.at(0).GetSurname());
-	}
 
-	role.Clear();
-	if (0 == role.GetRoleIDByName(dataFormBL->GetOrmasDal(), "CASHIER", errorMessage))
-	{
-		QMessageBox::information(NULL, QString(tr("Warning")),
-			QString(tr("Connot find 'CASHIER' role!")),
-			QString(tr("Ok")));
-		return;
-	}
+		if (0 == role.GetRoleIDByName(dataFormBL->GetOrmasDal(), "CHIEF ACCOUNTANT", errorMessage))
+		{
+			QMessageBox::information(NULL, QString(tr("Warning")),
+				QString(tr("Connot find 'CHIEF ACCOUNTANT' role!")),
+				QString(tr("Ok")));
+			return;
+		}
 
-	cashier.SetRoleID(role.GetID());
-	std::string casFilter = cashier.GenerateFilter(dataFormBL->GetOrmasDal());
-	std::vector<BusinessLayer::EmployeeView> vecCasRep = dataFormBL->GetAllDataForClass<BusinessLayer::EmployeeView>(errorMessage, casFilter);
-	if (vecCasRep.size() == 0)
-	{
-		QMessageBox::information(NULL, QString(tr("Warning")),
-			QString(tr("Connot find 'CASHIER' employee!")),
-			QString(tr("Ok")));
-		return;
-	}
-	else
-	{
-		cashier.SetName(vecCasRep.at(0).GetName());
-		cashier.SetSurname(vecCasRep.at(0).GetSurname());
-	}
+		accountant.SetRoleID(role.GetID());
+		std::string empFilter = accountant.GenerateFilter(dataFormBL->GetOrmasDal());
+		std::vector<BusinessLayer::EmployeeView> vecEmpRep = dataFormBL->GetAllDataForClass<BusinessLayer::EmployeeView>(errorMessage, empFilter);
+		if (vecEmpRep.size() == 0)
+		{
+			QMessageBox::information(NULL, QString(tr("Warning")),
+				QString(tr("Connot find 'CHIEF ACCOUNTANT' employee!")),
+				QString(tr("Ok")));
+			return;
+		}
+		else
+		{
+			accountant.SetName(vecEmpRep.at(0).GetName());
+			accountant.SetSurname(vecEmpRep.at(0).GetSurname());
+		}
 
+		role.Clear();
+		if (0 == role.GetRoleIDByName(dataFormBL->GetOrmasDal(), "CASHIER", errorMessage))
+		{
+			QMessageBox::information(NULL, QString(tr("Warning")),
+				QString(tr("Connot find 'CASHIER' role!")),
+				QString(tr("Ok")));
+			return;
+		}
+
+		cashier.SetRoleID(role.GetID());
+		std::string casFilter = cashier.GenerateFilter(dataFormBL->GetOrmasDal());
+		std::vector<BusinessLayer::EmployeeView> vecCasRep = dataFormBL->GetAllDataForClass<BusinessLayer::EmployeeView>(errorMessage, casFilter);
+		if (vecCasRep.size() == 0)
+		{
+			QMessageBox::information(NULL, QString(tr("Warning")),
+				QString(tr("Connot find 'CASHIER' employee!")),
+				QString(tr("Ok")));
+			return;
+		}
+		else
+		{
+			cashier.SetName(vecCasRep.at(0).GetName());
+			cashier.SetSurname(vecCasRep.at(0).GetSurname());
+		}
+	}
 	int companyID = 0;
 	companyID = ceRel.GetCompanyByEmployeeID(dataFormBL->GetOrmasDal(), accountant.GetID(), errorMessage);
 	if (!company.GetCompanyByID(dataFormBL->GetOrmasDal(), companyID, errorMessage) || 0 == companyID)
@@ -8507,81 +8528,109 @@ void DataForm::ViewWdwDlg()
 	BusinessLayer::Role role;
 	BusinessLayer::Company company;
 	BusinessLayer::CompanyEmployeeRelation ceRel;
+	BusinessLayer::CashboxTransaction cTransaction;
 
-	if (0 == role.GetRoleIDByName(dataFormBL->GetOrmasDal(), "CHIEF ACCOUNTANT", errorMessage))
+	if (cTransaction.GetCashboxTransactionByWithdrawalID(dataFormBL->GetOrmasDal(), withdrawal.GetID(), errorMessage))
 	{
-		QMessageBox::information(NULL, QString(tr("Warning")),
-			QString(tr("Connot find 'CHIEF ACCOUNTANT' role!")),
-			QString(tr("Ok")));
-		return;
-	}
-
-	accountant.SetRoleID(role.GetID());
-	std::string empFilter = accountant.GenerateFilter(dataFormBL->GetOrmasDal());
-	std::vector<BusinessLayer::EmployeeView> vecEmpRep = dataFormBL->GetAllDataForClass<BusinessLayer::EmployeeView>(errorMessage, empFilter);
-	if (vecEmpRep.size() == 0)
-	{
-		QMessageBox::information(NULL, QString(tr("Warning")),
-			QString(tr("Connot find 'CHIEF ACCOUNTANT' employee!")),
-			QString(tr("Ok")));
-		return;
+		if (!accountant.GetEmployeeByID(dataFormBL->GetOrmasDal(), cTransaction.GetAccountantID(), errorMessage))
+		{
+			QMessageBox::information(NULL, QString(tr("Warning")),
+				QString(tr("Connot find 'CHIEF ACCOUNTANT' employee!")),
+				QString(tr("Ok")));
+			return;
+		}
+		if (!cashier.GetEmployeeByID(dataFormBL->GetOrmasDal(), cTransaction.GetCashierID(), errorMessage))
+		{
+			QMessageBox::information(NULL, QString(tr("Warning")),
+				QString(tr("Connot find 'CASHIER' employee!")),
+				QString(tr("Ok")));
+			return;
+		}
+		if (!owner.GetEmployeeByID(dataFormBL->GetOrmasDal(), cTransaction.GetOwnerID(), errorMessage))
+		{
+			QMessageBox::information(NULL, QString(tr("Warning")),
+				QString(tr("Connot find 'OWNER' employee!")),
+				QString(tr("Ok")));
+			return;
+		}
 	}
 	else
 	{
-		accountant.SetName(vecEmpRep.at(0).GetName());
-		accountant.SetSurname(vecEmpRep.at(0).GetSurname());
-	}
 
-	role.Clear();
-	if (0 == role.GetRoleIDByName(dataFormBL->GetOrmasDal(), "CASHIER", errorMessage))
-	{
-		QMessageBox::information(NULL, QString(tr("Warning")),
-			QString(tr("Connot find 'CASHIER' role!")),
-			QString(tr("Ok")));
-		return;
-	}
+		if (0 == role.GetRoleIDByName(dataFormBL->GetOrmasDal(), "CHIEF ACCOUNTANT", errorMessage))
+		{
+			QMessageBox::information(NULL, QString(tr("Warning")),
+				QString(tr("Connot find 'CHIEF ACCOUNTANT' role!")),
+				QString(tr("Ok")));
+			return;
+		}
 
-	cashier.SetRoleID(role.GetID());
-	std::string casFilter = cashier.GenerateFilter(dataFormBL->GetOrmasDal());
-	std::vector<BusinessLayer::EmployeeView> vecCasRep = dataFormBL->GetAllDataForClass<BusinessLayer::EmployeeView>(errorMessage, casFilter);
-	if (vecCasRep.size() == 0)
-	{
-		QMessageBox::information(NULL, QString(tr("Warning")),
-			QString(tr("Connot find 'CASHIER' employee!")),
-			QString(tr("Ok")));
-		return;
-	}
-	else
-	{
-		cashier.SetName(vecCasRep.at(0).GetName());
-		cashier.SetSurname(vecCasRep.at(0).GetSurname());
-	}
+		accountant.SetRoleID(role.GetID());
+		std::string empFilter = accountant.GenerateFilter(dataFormBL->GetOrmasDal());
+		std::vector<BusinessLayer::EmployeeView> vecEmpRep = dataFormBL->GetAllDataForClass<BusinessLayer::EmployeeView>(errorMessage, empFilter);
+		if (vecEmpRep.size() == 0)
+		{
+			QMessageBox::information(NULL, QString(tr("Warning")),
+				QString(tr("Connot find 'CHIEF ACCOUNTANT' employee!")),
+				QString(tr("Ok")));
+			return;
+		}
+		else
+		{
+			accountant.SetName(vecEmpRep.at(0).GetName());
+			accountant.SetSurname(vecEmpRep.at(0).GetSurname());
+		}
 
-	role.Clear();
-	if (0 == role.GetRoleIDByName(dataFormBL->GetOrmasDal(), "DIRECTOR", errorMessage))
-	{
-		QMessageBox::information(NULL, QString(tr("Warning")),
-			QString(tr("Connot find 'OWNER' role!")),
-			QString(tr("Ok")));
-		return;
-	}
+		role.Clear();
+		if (0 == role.GetRoleIDByName(dataFormBL->GetOrmasDal(), "CASHIER", errorMessage))
+		{
+			QMessageBox::information(NULL, QString(tr("Warning")),
+				QString(tr("Connot find 'CASHIER' role!")),
+				QString(tr("Ok")));
+			return;
+		}
 
-	owner.SetRoleID(role.GetID());
-	std::string ownFilter = owner.GenerateFilter(dataFormBL->GetOrmasDal());
-	std::vector<BusinessLayer::EmployeeView> vecOwnRep = dataFormBL->GetAllDataForClass<BusinessLayer::EmployeeView>(errorMessage, ownFilter);
-	if (vecOwnRep.size() == 0)
-	{
-		QMessageBox::information(NULL, QString(tr("Warning")),
-			QString(tr("Connot find 'OWNER' employee!")),
-			QString(tr("Ok")));
-		return;
-	}
-	else
-	{
-		owner.SetName(vecOwnRep.at(0).GetName());
-		owner.SetSurname(vecOwnRep.at(0).GetSurname());
-	}
+		cashier.SetRoleID(role.GetID());
+		std::string casFilter = cashier.GenerateFilter(dataFormBL->GetOrmasDal());
+		std::vector<BusinessLayer::EmployeeView> vecCasRep = dataFormBL->GetAllDataForClass<BusinessLayer::EmployeeView>(errorMessage, casFilter);
+		if (vecCasRep.size() == 0)
+		{
+			QMessageBox::information(NULL, QString(tr("Warning")),
+				QString(tr("Connot find 'CASHIER' employee!")),
+				QString(tr("Ok")));
+			return;
+		}
+		else
+		{
+			cashier.SetName(vecCasRep.at(0).GetName());
+			cashier.SetSurname(vecCasRep.at(0).GetSurname());
+		}
 
+		role.Clear();
+		if (0 == role.GetRoleIDByName(dataFormBL->GetOrmasDal(), "DIRECTOR", errorMessage))
+		{
+			QMessageBox::information(NULL, QString(tr("Warning")),
+				QString(tr("Connot find 'OWNER' role!")),
+				QString(tr("Ok")));
+			return;
+		}
+
+		owner.SetRoleID(role.GetID());
+		std::string ownFilter = owner.GenerateFilter(dataFormBL->GetOrmasDal());
+		std::vector<BusinessLayer::EmployeeView> vecOwnRep = dataFormBL->GetAllDataForClass<BusinessLayer::EmployeeView>(errorMessage, ownFilter);
+		if (vecOwnRep.size() == 0)
+		{
+			QMessageBox::information(NULL, QString(tr("Warning")),
+				QString(tr("Connot find 'OWNER' employee!")),
+				QString(tr("Ok")));
+			return;
+		}
+		else
+		{
+			owner.SetName(vecOwnRep.at(0).GetName());
+			owner.SetSurname(vecOwnRep.at(0).GetSurname());
+		}
+	}
 	int companyID = 0;
 	companyID = ceRel.GetCompanyByEmployeeID(dataFormBL->GetOrmasDal(), accountant.GetID(), errorMessage);
 	if (!company.GetCompanyByID(dataFormBL->GetOrmasDal(), companyID, errorMessage) || 0 == companyID)
@@ -9630,7 +9679,8 @@ QStringList DataForm::GetTableHeader<BusinessLayer::PaymentView>()
 	header << QObject::tr("ID") << QObject::tr("Date") << QObject::tr("User name") << QObject::tr("User surname") 
 		<< QObject::tr("User Phone") << QObject::tr("Value") << QObject::tr("Currency name") << QObject::tr("Target")
 		<< QObject::tr("Account number") << QObject::tr("Subccount number") << QObject::tr("From who") << QObject::tr("Status name") 
-		<< QObject::tr("User ID") << QObject::tr("Currency ID") << QObject::tr("Status ID") << QObject::tr("Account ID") << QObject::tr("Subaccount ID");
+		<< QObject::tr("User ID") << QObject::tr("Currency ID") << QObject::tr("Status ID") << QObject::tr("Account ID") << QObject::tr("Subaccount ID")
+		<< QObject::tr("Cashbox account ID");
 	return header;
 }
 
@@ -10061,7 +10111,7 @@ QStringList DataForm::GetTableHeader<BusinessLayer::WithdrawalView>()
 	header << QObject::tr("ID") << QObject::tr("Date") << QObject::tr("Value") << QObject::tr("Currency name") 
 		<< QObject::tr("User name") << QObject::tr("User surname") << QObject::tr("User phone") << QObject::tr("Status name") << QObject::tr("Account number")
 		<< QObject::tr("Subaccount number") << QObject::tr("To who") << QObject::tr("Target") << QObject::tr("User ID") << QObject::tr("Currency ID")
-		<< QObject::tr("Subaccount ID") << QObject::tr("Status ID") << QObject::tr("Account ID");
+		<< QObject::tr("Subaccount ID") << QObject::tr("Status ID") << QObject::tr("Account ID") << QObject::tr("Cashbox account ID");
 	return header;
 }
 
@@ -10754,7 +10804,7 @@ QList<QStandardItem*> DataForm::GetDataFromClass<BusinessLayer::PaymentView>(Bus
 		<< new QStandardItem(data.GetUsername().c_str())
 		<< new QStandardItem(data.GetUserSurname().c_str())
 		<< new QStandardItem(data.GetUserPhone().c_str())
-		<< new QStandardItem(QString::number(data.GetValue()))
+		<< new QStandardItem(QString::number(data.GetValue(),'f', 3))
 		<< new QStandardItem(data.GetCurrencyName().c_str())
 		<< new QStandardItem(data.GetTarget().c_str())
 		<< new QStandardItem(data.GetAccountNumber().c_str())
@@ -10765,7 +10815,8 @@ QList<QStandardItem*> DataForm::GetDataFromClass<BusinessLayer::PaymentView>(Bus
 		<< new QStandardItem(QString::number(data.GetCurrencyID()))
 		<< new QStandardItem(QString::number(data.GetStatusID()))
 		<< new QStandardItem(QString::number(data.GetAccountID()))
-		<< new QStandardItem(QString::number(data.GetSubaccountID()));
+		<< new QStandardItem(QString::number(data.GetSubaccountID()))
+		<< new QStandardItem(QString::number(data.GetCashboxAccountID()));
 	return items;
 }
 
@@ -11528,7 +11579,8 @@ QList<QStandardItem*> DataForm::GetDataFromClass<BusinessLayer::WithdrawalView>(
 		<< new QStandardItem(QString::number(data.GetCurrencyID()))
 		<< new QStandardItem(QString::number(data.GetSubaccountID()))
 		<< new QStandardItem(QString::number(data.GetStatusID()))
-		<< new QStandardItem(QString::number(data.GetAccountID()));
+		<< new QStandardItem(QString::number(data.GetAccountID()))
+		<< new QStandardItem(QString::number(data.GetCashboxAccountID()));
 	return items;
 }
 
@@ -11689,6 +11741,11 @@ void DataForm::QtConnect<BusinessLayer::Account>()
 	{
 		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
 		connect(this, SIGNAL(SendID(int, QString)), ((CreateWdwDlg*)parentDialog), SLOT(SetID(int, QString)));
+	}
+	if (parentDialog != nullptr && parentDialog->objectName() == "GenerateAccountCardReport")
+	{
+		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
+		connect(this, SIGNAL(SendID(int, QString)), ((GenerateAccCardRep*)parentDialog), SLOT(SetID(int, QString)));
 	}
 }
 
@@ -15112,6 +15169,11 @@ void DataForm::QtConnect<BusinessLayer::SubaccountView>()
 	{
 		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
 		connect(this, SIGNAL(SendID(int, QString)), ((CreatePmtDlg*)parentDialog), SLOT(SetID(int, QString)));
+	}
+	if (parentDialog != nullptr && parentDialog->objectName() == "GenerateAccountCardReport")
+	{
+		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
+		connect(this, SIGNAL(SendID(int, QString)), ((GenerateAccCardRep*)parentDialog), SLOT(SetID(int, QString)));
 	}
 }
 

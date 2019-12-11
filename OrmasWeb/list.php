@@ -1,12 +1,12 @@
-﻿<?php
+<?php
 	session_start();
 	require_once 'logsql.php';
 ?>
 <?php
 	if($_SESSION['role_id_client'] == $_SESSION['role_id'])
 	{
-		$query_order = "SELECT order_id, status_name, count, sum, currency_name FROM \"OrmasSchema\".orders_view WHERE user_id=".$_SESSION['id']." AND status_name != 'EXECUTED' LIMIT 15";	
-		$query_return = "SELECT return_id, status_name, count, sum, currency_name FROM \"OrmasSchema\".returns_view WHERE user_id=".$_SESSION['id']." AND status_name != 'EXECUTED' LIMIT 15";			
+		$query_order = "SELECT order_id, status_name, count, sum, currency_name FROM \"OrmasSchema\".orders_view WHERE user_id=".$_SESSION['id']." AND status_name = 'ORDERED' LIMIT 15";	
+		$query_return = "SELECT return_id, status_name, count, sum, currency_name FROM \"OrmasSchema\".returns_view WHERE user_id=".$_SESSION['id']." AND status_name = 'TO RETURN' LIMIT 15";			
 		$result_order = pg_query($query_order);
 		$string_out = "<table id='order-table'><caption>Мои заказы</cation><thead><tr><th>ID заказа</th><th>Дата заказа</th><th>Клиент</th><th>Статус</th><th>Количество</th><th>Сумма</th><th>Валюта</th><th>Действие</th></tr></thead><tbody>";
 		while ($row = pg_fetch_array($result_order)) {

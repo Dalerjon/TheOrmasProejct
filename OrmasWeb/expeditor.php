@@ -15,11 +15,6 @@
 						<div id="list-img"></div>
 						<label class= "for-pannel">Список</label>
 					</div>
-					<!--<div class="pannel" id="search-element">
-						<div id="find-img"></div>
-						<label class= "for-pannel">Поиск по ID</label>
-					
-					</div>-->
 					<div class="pannel" id="transport">
 						<div id="transport-img"></div>
 						<label class= "for-pannel">Транспорт</label>

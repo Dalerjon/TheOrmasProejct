@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>501</width>
-    <height>73</height>
+    <height>98</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -35,7 +35,14 @@
    <item row="0" column="4">
     <widget class="QDateEdit" name="tillDateEdit"/>
    </item>
-   <item row="1" column="1" colspan="4">
+   <item row="0" column="3">
+    <widget class="QLabel" name="label_2">
+     <property name="text">
+      <string>Till date:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="1" colspan="4">
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
       <spacer name="horizontalSpacer">
@@ -66,20 +73,20 @@
      </item>
     </layout>
    </item>
-   <item row="0" column="3">
-    <widget class="QLabel" name="label_2">
+   <item row="0" column="1">
+    <widget class="QLabel" name="fromLb">
      <property name="text">
-      <string>Till date:</string>
+      <string>From date:</string>
      </property>
     </widget>
    </item>
    <item row="0" column="2">
     <widget class="QDateEdit" name="fromDateEdit"/>
    </item>
-   <item row="0" column="1">
-    <widget class="QLabel" name="fromLb">
+   <item row="1" column="1" colspan="4">
+    <widget class="QCheckBox" name="allSalesChb">
      <property name="text">
-      <string>From date:</string>
+      <string>All sales report</string>
      </property>
     </widget>
    </item>

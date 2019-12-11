@@ -11,6 +11,9 @@ CreateRoleDlg::CreateRoleDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, Q
 	nameEdit->setMaxLength(50);
 	codeEdit->setMaxLength(20);
 	dialogBL = ormasBL;
+	parentForm = parent;
+	DataForm *dataFormParent = (DataForm *)this->parentForm;
+	mainForm = (MainForm *)dataFormParent->GetParent();
 	if (true == updateFlag)
 	{
 		DataForm *parentDataForm = (DataForm*)parentForm;

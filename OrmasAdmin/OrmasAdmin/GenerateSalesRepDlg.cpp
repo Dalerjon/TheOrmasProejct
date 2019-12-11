@@ -233,193 +233,378 @@ void GenerateSalesRep::Generate()
 		QString documentBody;
 		QString tableBody;
 
+		std::map<int, double> totalCount;
+		std::map<int, double> totalSum;
+
+		std::map<int, double> totalReturnCount;
+		std::map<int, double> totalReturnSum;
 
 		reportText.replace(QString("fromDatePh"), fromDateEdit->text(), Qt::CaseInsensitive);
 		reportText.replace(QString("tillDatePh"), tillDateEdit->text(), Qt::CaseInsensitive);
 
-		for each (BusinessLayer::EmployeeView expeditor in vecEmployee)
+		if (!allSalesChb->isChecked())
 		{
-			tableBody.clear();
-
-			ret.Clear();
-			ret.SetStatusID(status.GetID());
-			ret.SetEmployeeID(expeditor.GetID());
-			std::string filterRet = ret.GenerateFilterForPeriod(dialogBL->GetOrmasDal(), fromDateEdit->text().toUtf8().constData(), tillDateEdit->text().toUtf8().constData());
-			std::vector<BusinessLayer::ReturnView> vecReturn = dialogBL->GetAllDataForClass<BusinessLayer::ReturnView>(errorMessage, filterRet);
-
-			order.Clear();
-			order.SetStatusID(status.GetID());
-			order.SetEmployeeID(expeditor.GetID());
-			std::string filter = order.GenerateFilterForPeriod(dialogBL->GetOrmasDal(), fromDateEdit->text().toUtf8().constData(), tillDateEdit->text().toUtf8().constData());
-			std::vector<BusinessLayer::OrderView> vecOrder = dialogBL->GetAllDataForClass<BusinessLayer::OrderView>(errorMessage, filter);
-			if (vecOrder.size() == 0)
+			for each (BusinessLayer::EmployeeView expeditor in vecEmployee)
 			{
-				continue;
-			}
-			else
-			{
-				//generating report
-				if (vecOrder.size() > 0)
+				tableBody.clear();
+
+				ret.Clear();
+				ret.SetStatusID(status.GetID());
+				ret.SetEmployeeID(expeditor.GetID());
+				std::string filterRet = ret.GenerateFilterForPeriod(dialogBL->GetOrmasDal(), fromDateEdit->text().toUtf8().constData(), tillDateEdit->text().toUtf8().constData());
+				std::vector<BusinessLayer::ReturnView> vecReturn = dialogBL->GetAllDataForClass<BusinessLayer::ReturnView>(errorMessage, filterRet);
+
+				order.Clear();
+				order.SetStatusID(status.GetID());
+				order.SetEmployeeID(expeditor.GetID());
+				std::string filter = order.GenerateFilterForPeriod(dialogBL->GetOrmasDal(), fromDateEdit->text().toUtf8().constData(), tillDateEdit->text().toUtf8().constData());
+				std::vector<BusinessLayer::OrderView> vecOrder = dialogBL->GetAllDataForClass<BusinessLayer::OrderView>(errorMessage, filter);
+				if (vecOrder.size() == 0)
 				{
-					productCount.clear();
-					productSum.clear();
-					productCountRet.clear();
-					productSumRet.clear();
-					sum = 0;
-					sumRet = 0;
-					tableBody += "Сотрудник: ";
-					tableBody += expeditor.GetSurname().c_str();
-					tableBody += " ";
-					tableBody += expeditor.GetName().c_str();
-					tableBody += "  ";
-					tableBody += "Телефон: ";
-					tableBody += expeditor.GetPhone().c_str();
-					tableBody += "<br/>";
-
-					tableBody += "<table width='100 % ' border = 1px  cellpadding=5 style='border-spacing:0px; '>";
-					tableBody += "<th><b>" + QString::fromUtf8("ID продукта")+"< / b>< / th>";
-					tableBody += "<th><b>Наименование продукта</b></th>";
-					tableBody += "<th><b>Продажа количество</b></th>";
-					tableBody += "<th><b>Продажа сумма</b></th>";
-					tableBody += "<th><b>Возврат количество</b></th>";
-					tableBody += "<th><b>Возврат сумма</b></th>";
-					tableBody += "<th><b>Итого количество</b></th>";
-					tableBody += "<th><b>Итого сумма</b></th>";
-					
-					for each (auto item in vecOrder)
-					{
-						orderList.Clear();
-						orderListFilter.clear();
-						orderList.SetOrderID(item.GetID());
-						orderListFilter = orderList.GenerateFilter(dialogBL->GetOrmasDal());
-						vecOrderList.clear();
-						vecOrderList = dialogBL->GetAllDataForClass<BusinessLayer::OrderListView>(errorMessage, orderListFilter);
-						if (vecOrderList.size() > 0)
-						{
-							for each (auto listItem in vecOrderList)
-							{
-								if (productCount.find(listItem.GetProductID()) != productCount.end())
-								{
-									productCount.find(listItem.GetProductID())->second = productCount.find(listItem.GetProductID())->second + listItem.GetCount();
-									productSum.find(listItem.GetProductID())->second = productSum.find(listItem.GetProductID())->second + listItem.GetSum();
-								}
-								else
-								{
-									productCount.insert(std::make_pair(listItem.GetProductID(), listItem.GetCount()));
-									productSum.insert(std::make_pair(listItem.GetProductID(), listItem.GetSum()));
-								}
-							}
-						}
-					}
-
-					for each (auto item in vecReturn)
-					{
-						returnList.Clear();
-						returnListFilter.clear();
-						returnList.SetReturnID(item.GetID());
-						returnListFilter = returnList.GenerateFilter(dialogBL->GetOrmasDal());
-						vecReturnList.clear();
-						vecReturnList = dialogBL->GetAllDataForClass<BusinessLayer::ReturnListView>(errorMessage, returnListFilter);
-						if (vecReturnList.size() > 0)
-						{
-							for each (auto listItem in vecReturnList)
-							{
-								if (productCountRet.find(listItem.GetProductID()) != productCountRet.end())
-								{
-									productCountRet.find(listItem.GetProductID())->second = productCountRet.find(listItem.GetProductID())->second + listItem.GetCount();
-									productSumRet.find(listItem.GetProductID())->second = productSumRet.find(listItem.GetProductID())->second + listItem.GetSum();
-								}
-								else
-								{
-									productCountRet.insert(std::make_pair(listItem.GetProductID(), listItem.GetCount()));
-									productSumRet.insert(std::make_pair(listItem.GetProductID(), listItem.GetSum()));
-								}
-							}
-						}
-					}
-
-
-					if (productCount.size() != productSum.size())
-					{
-						QMessageBox::information(NULL, QString(tr("Info")),
-							QString(tr("Calculation is failed. Please restart the report!")),
-							QString(tr("Ok")));
-						return;
-					}
-									
-					for each (auto mapCountItem in productCount)
-					{
-						product.Clear();
-						product.GetProductByID(dialogBL->GetOrmasDal(), mapCountItem.first, errorMessage);
-						nCost.Clear();
-						nCost.GetNetCostByProductID(dialogBL->GetOrmasDal(), mapCountItem.first, errorMessage);
-						
-						if (productCountRet.find(mapCountItem.first) != productCountRet.end())
-						{
-							sumRet += productSumRet.find(mapCountItem.first)->second;
-						}
-
-						sum += productSum.find(mapCountItem.first)->second;
-						tableBody += "<tr>";
-						tableBody += "<td>" + QString::number(mapCountItem.first) + "</td>";
-						tableBody += "<td>" + QString(product.GetName().c_str()) + "</td>";
-						tableBody += "<td>" + QString::number(mapCountItem.second) + "</td>";
-						tableBody += "<td>" + QString::number(productSum.find(mapCountItem.first)->second, 'f', 3) + "</td>";
-						if (productCountRet.find(mapCountItem.first) != productCountRet.end())
-						{
-							tableBody += "<td>" + QString::number(productCountRet.find(mapCountItem.first)->second) + "</td>";
-						}
-						else
-						{
-							tableBody += "<td> 0 </td>";
-						}
-						if (productCountRet.find(mapCountItem.first) != productCountRet.end())
-						{
-							tableBody += "<td>" + QString::number(productSumRet.find(mapCountItem.first)->second, 'f', 3) + "</td>";
-						}
-						else
-						{
-							tableBody += "<td> 0 </td>";
-						}
-						if (productCountRet.find(mapCountItem.first) != productCountRet.end())
-						{
-							tableBody += "<td>" + QString::number(mapCountItem.second - productCountRet.find(mapCountItem.first)->second) + "</td>";
-						}
-						else
-						{
-							tableBody += "<td>" + QString::number(mapCountItem.second) + "</td>";
-						}
-						if (productCountRet.find(mapCountItem.first) != productCountRet.end())
-						{
-							tableBody += "<td>" + QString::number(productSum.find(mapCountItem.first)->second - productSumRet.find(mapCountItem.first)->second) + "</td>";
-						}
-						else
-						{
-							tableBody += "<td>" + QString::number(productSum.find(mapCountItem.first)->second, 'f', 3) + "</td>";
-						}
-
-						
-						tableBody += "</tr>";
-					}
-
-					tableBody += "<tr>";
-					tableBody += "<td></td>";
-					tableBody += "<td></td>";
-					tableBody += "<td></td>";
-					tableBody += "<td></td>";
-					tableBody += "<td>" + QString::fromUtf8("Вся выручка") + "</td>";
-					tableBody += "<td>" + QString::number(sum, 'f', 3) + "</td>";
-					tableBody += "<td>"+ QString::fromUtf8("Вся выручка с вычетом возврата") + "</td>";
-					tableBody += "<td>" + QString::number(sum-sumRet, 'f', 3) + "</td>";
-					tableBody += "</tr>";
-					tableBody += "</table>";
-					tableBody += "<br/><br/>";
-
+					continue;
 				}
 				else
 				{
-					tableBody += "Нет данных!";
+					//generating report
+					if (vecOrder.size() > 0)
+					{
+						productCount.clear();
+						productSum.clear();
+						productCountRet.clear();
+						productSumRet.clear();
+						sum = 0;
+						sumRet = 0;
+						tableBody += QString::fromWCharArray(L"Сотрудник: ");
+						tableBody += expeditor.GetSurname().c_str();
+						tableBody += " ";
+						tableBody += expeditor.GetName().c_str();
+						tableBody += "  ";
+						tableBody += QString::fromWCharArray(L"Телефон: ");
+						tableBody += expeditor.GetPhone().c_str();
+						tableBody += "<br/>";
+
+						tableBody += "<table width='100 % ' border = 1px  cellpadding=5 style='border-spacing:0px; '>";
+						tableBody += "<th><b>" + QString::fromWCharArray(L"ID продукта") + "< / b>< / th>";
+						tableBody += "<th><b>" + QString::fromWCharArray(L"Наименование продукта")+"< / b>< / th>";
+						tableBody += "<th><b>" + QString::fromWCharArray(L"Продажа количество") + "</b></th>";
+						tableBody += "<th><b>" + QString::fromWCharArray(L"Продажа сумма") + "</b></th>";
+						tableBody += "<th><b>" + QString::fromWCharArray(L"Возврат количество")+"</b></th>";
+						tableBody += "<th><b>" + QString::fromWCharArray(L"Возврат сумма")+"</b></th>";
+						tableBody += "<th><b>" + QString::fromWCharArray(L"Итого количество")+"</b></th>";
+						tableBody += "<th><b>" + QString::fromWCharArray(L"Итого сумма")+"</b></th>";
+
+						for each (auto item in vecOrder)
+						{
+							orderList.Clear();
+							orderListFilter.clear();
+							orderList.SetOrderID(item.GetID());
+							orderListFilter = orderList.GenerateFilter(dialogBL->GetOrmasDal());
+							vecOrderList.clear();
+							vecOrderList = dialogBL->GetAllDataForClass<BusinessLayer::OrderListView>(errorMessage, orderListFilter);
+							if (vecOrderList.size() > 0)
+							{
+								for each (auto listItem in vecOrderList)
+								{
+									if (productCount.find(listItem.GetProductID()) != productCount.end())
+									{
+										productCount.find(listItem.GetProductID())->second = productCount.find(listItem.GetProductID())->second + listItem.GetCount();
+										productSum.find(listItem.GetProductID())->second = productSum.find(listItem.GetProductID())->second + listItem.GetSum();
+									}
+									else
+									{
+										productCount.insert(std::make_pair(listItem.GetProductID(), listItem.GetCount()));
+										productSum.insert(std::make_pair(listItem.GetProductID(), listItem.GetSum()));
+									}
+								}
+							}
+						}
+
+						for each (auto item in vecReturn)
+						{
+							returnList.Clear();
+							returnListFilter.clear();
+							returnList.SetReturnID(item.GetID());
+							returnListFilter = returnList.GenerateFilter(dialogBL->GetOrmasDal());
+							vecReturnList.clear();
+							vecReturnList = dialogBL->GetAllDataForClass<BusinessLayer::ReturnListView>(errorMessage, returnListFilter);
+							if (vecReturnList.size() > 0)
+							{
+								for each (auto listItem in vecReturnList)
+								{
+									if (productCountRet.find(listItem.GetProductID()) != productCountRet.end())
+									{
+										productCountRet.find(listItem.GetProductID())->second = productCountRet.find(listItem.GetProductID())->second + listItem.GetCount();
+										productSumRet.find(listItem.GetProductID())->second = productSumRet.find(listItem.GetProductID())->second + listItem.GetSum();
+									}
+									else
+									{
+										productCountRet.insert(std::make_pair(listItem.GetProductID(), listItem.GetCount()));
+										productSumRet.insert(std::make_pair(listItem.GetProductID(), listItem.GetSum()));
+									}
+								}
+							}
+						}
+
+
+						if (productCount.size() != productSum.size())
+						{
+							QMessageBox::information(NULL, QString(tr("Info")),
+								QString(tr("Calculation is failed. Please restart the report!")),
+								QString(tr("Ok")));
+							return;
+						}
+
+						for each (auto mapCountItem in productCount)
+						{
+							product.Clear();
+							product.GetProductByID(dialogBL->GetOrmasDal(), mapCountItem.first, errorMessage);
+							nCost.Clear();
+							nCost.GetNetCostByProductID(dialogBL->GetOrmasDal(), mapCountItem.first, errorMessage);
+
+							if (productCountRet.find(mapCountItem.first) != productCountRet.end())
+							{
+								sumRet += productSumRet.find(mapCountItem.first)->second;
+							}
+
+							sum += productSum.find(mapCountItem.first)->second;
+							tableBody += "<tr>";
+							tableBody += "<td>" + QString::number(mapCountItem.first) + "</td>";
+							tableBody += "<td>" + QString(product.GetName().c_str()) + "</td>";
+							tableBody += "<td>" + QString::number(mapCountItem.second) + "</td>";
+							tableBody += "<td>" + QString::number(productSum.find(mapCountItem.first)->second, 'f', 3) + "</td>";
+							if (productCountRet.find(mapCountItem.first) != productCountRet.end())
+							{
+								tableBody += "<td>" + QString::number(productCountRet.find(mapCountItem.first)->second) + "</td>";
+							}
+							else
+							{
+								tableBody += "<td> 0 </td>";
+							}
+							if (productCountRet.find(mapCountItem.first) != productCountRet.end())
+							{
+								tableBody += "<td>" + QString::number(productSumRet.find(mapCountItem.first)->second, 'f', 3) + "</td>";
+							}
+							else
+							{
+								tableBody += "<td> 0 </td>";
+							}
+							if (productCountRet.find(mapCountItem.first) != productCountRet.end())
+							{
+								tableBody += "<td>" + QString::number(mapCountItem.second - productCountRet.find(mapCountItem.first)->second) + "</td>";
+							}
+							else
+							{
+								tableBody += "<td>" + QString::number(mapCountItem.second) + "</td>";
+							}
+							if (productCountRet.find(mapCountItem.first) != productCountRet.end())
+							{
+								tableBody += "<td>" + QString::number(productSum.find(mapCountItem.first)->second - productSumRet.find(mapCountItem.first)->second) + "</td>";
+							}
+							else
+							{
+								tableBody += "<td>" + QString::number(productSum.find(mapCountItem.first)->second, 'f', 3) + "</td>";
+							}
+
+
+							tableBody += "</tr>";
+						}
+
+						tableBody += "<tr>";
+						tableBody += "<td></td>";
+						tableBody += "<td></td>";
+						tableBody += "<td></td>";
+						tableBody += "<td></td>";
+						tableBody += "<td>" + QString::fromWCharArray(L"Вся выручка") + "</td>";
+						tableBody += "<td>" + QString::number(sum, 'f', 3) + "</td>";
+						tableBody += "<td>" + QString::fromWCharArray(L"Вся выручка с вычетом возврата") + "</td>";
+						tableBody += "<td>" + QString::number(sum - sumRet, 'f', 3) + "</td>";
+						tableBody += "</tr>";
+						tableBody += "</table>";
+						tableBody += "<br/><br/>";
+
+					}
+					else
+					{
+						tableBody += "Нет данных!";
+					}
 				}
+				documentBody += tableBody;
+			}
+		}
+		else
+		{
+			std::vector<int> employeeIDList;
+			BusinessLayer::Employee employee;
+			for each (BusinessLayer::EmployeeView expeditor in vecEmployee)
+			{
+				employeeIDList.push_back(expeditor.GetID());
+			}
+			std::string empIDListFilter = employee.GenerateINFilterForEmployee(dialogBL->GetOrmasDal(), employeeIDList);
+			
+			ret.Clear();
+			ret.SetStatusID(status.GetID());
+			std::string filterRet = ret.GenerateFilterForPeriod(dialogBL->GetOrmasDal(), fromDateEdit->text().toUtf8().constData(), tillDateEdit->text().toUtf8().constData());
+			std::vector<std::string> filterList;
+			filterList.push_back(filterRet);
+			filterList.push_back(empIDListFilter);
+			filterRet = dialogBL->GetOrmasDal().ConcatenateFilters(filterList);
+			std::vector<BusinessLayer::ReturnView> vecReturn = dialogBL->GetAllDataForClass<BusinessLayer::ReturnView>(errorMessage, filterRet);
+			
+			order.Clear();
+			order.SetStatusID(status.GetID());
+			std::string filter = order.GenerateFilterForPeriod(dialogBL->GetOrmasDal(), fromDateEdit->text().toUtf8().constData(), tillDateEdit->text().toUtf8().constData());
+			std::vector<std::string> filterRetList;
+			filterRetList.push_back(filter);
+			filterRetList.push_back(empIDListFilter);
+			filter = dialogBL->GetOrmasDal().ConcatenateFilters(filterRetList);
+			std::vector<BusinessLayer::OrderView> vecOrder = dialogBL->GetAllDataForClass<BusinessLayer::OrderView>(errorMessage, filter);
+			
+			//generating report
+			if (vecOrder.size() > 0)
+			{
+				for each (auto item in vecOrder)
+				{
+					orderList.Clear();
+					orderListFilter.clear();
+					orderList.SetOrderID(item.GetID());
+					orderListFilter = orderList.GenerateFilter(dialogBL->GetOrmasDal());
+					vecOrderList.clear();
+					vecOrderList = dialogBL->GetAllDataForClass<BusinessLayer::OrderListView>(errorMessage, orderListFilter);
+					if (vecOrderList.size() > 0)
+					{
+						for each (auto listItem in vecOrderList)
+						{
+							if (totalCount.find(listItem.GetProductID()) != totalCount.end())
+							{
+								totalCount.find(listItem.GetProductID())->second = totalCount.find(listItem.GetProductID())->second + listItem.GetCount();
+								totalSum.find(listItem.GetProductID())->second = totalSum.find(listItem.GetProductID())->second + listItem.GetSum();
+							}
+							else
+							{
+								totalCount.insert(std::make_pair(listItem.GetProductID(), listItem.GetCount()));
+								totalSum.insert(std::make_pair(listItem.GetProductID(), listItem.GetSum()));
+							}
+						}
+					}
+				}
+
+				for each (auto item in vecReturn)
+				{
+					returnList.Clear();
+					returnListFilter.clear();
+					returnList.SetReturnID(item.GetID());
+					returnListFilter = returnList.GenerateFilter(dialogBL->GetOrmasDal());
+					vecReturnList.clear();
+					vecReturnList = dialogBL->GetAllDataForClass<BusinessLayer::ReturnListView>(errorMessage, returnListFilter);
+					if (vecReturnList.size() > 0)
+					{
+						for each (auto listItem in vecReturnList)
+						{
+							if (productCountRet.find(listItem.GetProductID()) != productCountRet.end())
+							{
+								productCountRet.find(listItem.GetProductID())->second = productCountRet.find(listItem.GetProductID())->second + listItem.GetCount();
+								productSumRet.find(listItem.GetProductID())->second = productSumRet.find(listItem.GetProductID())->second + listItem.GetSum();
+							}
+							else
+							{
+								productCountRet.insert(std::make_pair(listItem.GetProductID(), listItem.GetCount()));
+								productSumRet.insert(std::make_pair(listItem.GetProductID(), listItem.GetSum()));
+							}
+						}
+					}
+				}
+
+
+				if (totalCount.size() != totalSum.size())
+				{
+					QMessageBox::information(NULL, QString(tr("Info")),
+						QString(tr("Calculation is failed. Please restart the report!")),
+						QString(tr("Ok")));
+						return;
+				}
+				
+				tableBody += "Суммарная продажа продуктов: ";
+
+				tableBody += "<table width='100 % ' border = 1px  cellpadding=5 style='border-spacing:0px; '>";
+				tableBody += "<th><b>" + QString::fromWCharArray(L"ID продукта") + "< / b>< / th>";
+				tableBody += "<th><b>" + QString::fromWCharArray(L"Наименование продукта")+"</b></th>";
+				tableBody += "<th><b>" + QString::fromWCharArray(L"Продажа количество")+"</b></th>";
+				tableBody += "<th><b>" + QString::fromWCharArray(L"Продажа сумма")+"</b></th>";
+				tableBody += "<th><b>" + QString::fromWCharArray(L"Возврат количество")+"</b></th>";
+				tableBody += "<th><b>" + QString::fromWCharArray(L"Возврат сумма")+"</b></th>";
+				tableBody += "<th><b>" + QString::fromWCharArray(L"Итого количество")+"</b></th>";
+				tableBody += "<th><b>" + QString::fromWCharArray(L"Итого сумма")+"</b></th>";
+				for each (auto mapCountItem in totalCount)
+				{
+					product.Clear();
+					product.GetProductByID(dialogBL->GetOrmasDal(), mapCountItem.first, errorMessage);
+					nCost.Clear();
+					nCost.GetNetCostByProductID(dialogBL->GetOrmasDal(), mapCountItem.first, errorMessage);
+					
+					if (totalReturnCount.find(mapCountItem.first) != totalReturnCount.end())
+					{
+						sumRet += totalReturnSum.find(mapCountItem.first)->second;
+					}
+					
+					sum += totalSum.find(mapCountItem.first)->second;
+					tableBody += "<tr>";
+					tableBody += "<td>" + QString::number(mapCountItem.first) + "</td>";
+					tableBody += "<td>" + QString(product.GetName().c_str()) + "</td>";
+					tableBody += "<td>" + QString::number(mapCountItem.second) + "</td>";
+					tableBody += "<td>" + QString::number(totalSum.find(mapCountItem.first)->second, 'f', 3) + "</td>";
+					if (totalReturnCount.find(mapCountItem.first) != totalReturnCount.end())
+					{
+						tableBody += "<td>" + QString::number(totalReturnCount.find(mapCountItem.first)->second) + "</td>";
+					}
+					else
+					{
+						tableBody += "<td> 0 </td>";
+					}
+					if (totalReturnCount.find(mapCountItem.first) != totalReturnCount.end())
+					{
+						tableBody += "<td>" + QString::number(totalReturnSum.find(mapCountItem.first)->second, 'f', 3) + "</td>";
+					}
+					else
+					{
+						tableBody += "<td> 0 </td>";
+					}
+					if (totalReturnCount.find(mapCountItem.first) != totalReturnCount.end())
+					{
+						tableBody += "<td>" + QString::number(mapCountItem.second - totalReturnCount.find(mapCountItem.first)->second) + "</td>";
+					}
+					else
+					{
+						tableBody += "<td>" + QString::number(mapCountItem.second) + "</td>";
+					}
+					if (totalReturnCount.find(mapCountItem.first) != totalReturnCount.end())
+					{
+						tableBody += "<td>" + QString::number(totalSum.find(mapCountItem.first)->second - totalReturnSum.find(mapCountItem.first)->second) + "</td>";
+					}
+					else
+					{
+						tableBody += "<td>" + QString::number(totalSum.find(mapCountItem.first)->second, 'f', 3) + "</td>";
+					}
+					
+					tableBody += "</tr>";
+				}
+
+				tableBody += "<tr>";
+				tableBody += "<td></td>";
+				tableBody += "<td></td>";
+				tableBody += "<td></td>";
+				tableBody += "<td></td>";
+				tableBody += "<td>" + QString::fromWCharArray(L"Вся выручка") + "</td>";
+				tableBody += "<td>" + QString::number(sum, 'f', 3) + "</td>";
+				tableBody += "<td>" + QString::fromWCharArray(L"Вся выручка с вычетом возврата") + "</td>";
+				tableBody += "<td>" + QString::number(sum - sumRet, 'f', 3) + "</td>";
+				tableBody += "</tr>";
+				tableBody += "</table>";
+				tableBody += "<br/><br/>";
+
+			}
+			else
+			{
+				tableBody += "Нет данных!";
 			}
 			documentBody += tableBody;
 		}

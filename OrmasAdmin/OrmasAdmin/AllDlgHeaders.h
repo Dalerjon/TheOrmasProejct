@@ -92,6 +92,7 @@
 #include "CreateWOffRListDlg.h"
 #include "GenerateAccDlg.h"
 #include "GenerateOneAccDlg.h"
+#include "GenerateAccRepDlg.h"
 #include "ReworkRawDlg.h"
 #include "SearchDlg.h"
 

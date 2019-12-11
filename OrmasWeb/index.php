@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 	session_start();
 	$PageTitle="Ormas";
 	function customPageHeader()
@@ -58,6 +58,11 @@ if(!empty($_SESSION['name']) and !empty($_SESSION['surname']) and !empty($_SESSI
 	}
 ?>
 <?php
+unset($_SESSION['password']);
+unset($_SESSION['login']); 
+unset($_SESSION['role']); 
+unset($_SESSION['id']);
+
 if (isset($_POST['phone']) && isset($_POST['password'])) 
 { 
 	$phone = $_POST['phone']; 
@@ -98,8 +103,7 @@ if (isset($_POST['phone']) && isset($_POST['password']))
 					$_SESSION['id']=$user_row['user_id'];
 					$_SESSION['role_id']=$user_row['role_id'];
 					$_SESSION['password']=$user_row['password'];
-					echo ($user_row['role_id']);
-					header("location:menu.php");
+					echo '<script type="text/javascript"> window.location = "menu.php";</script>';
 				}
 				else
 				{

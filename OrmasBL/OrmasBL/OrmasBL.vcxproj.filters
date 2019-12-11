@@ -549,6 +549,45 @@
     <ClInclude Include="StockTransferViewClass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ExtendedEntryViewClass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CashboxTransactionClass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="AmortizeGroupClass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="AmortizeTypeClass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FixedAssetsClass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FixedAssetsViewClass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FixedAssetsDetailsClass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FixedAssetsDetailsViewClass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FixedAssetsOperationsClass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FixedAssetsSpecificationClass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="InventoryClass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="InventoryViewClass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="InventoryHistoryClass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -1074,6 +1113,45 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="StockTransfertViewClass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ExtendedEntryViewClass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CashboxTransactionClass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="AmortizeGroupClass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="AmortizeTypeClass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="FixedAssetsClass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="FixedAssetsViewClass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="FixedAssetsDetailsClass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="FixedAssetsDetailsViewClass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="FixedAssetsOperationsClass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="FixedAssetsSpecificationClass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="InventoryClass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="InventoryViewClass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="InvontoryHistoryClass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

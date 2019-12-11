@@ -73,7 +73,7 @@
 							<div class='row'>
 								<div>
 									<label class='float-left form-label'>Сумма к оплате:</label>
-									<input class ='form-count' type='number' min='0' name='value' id='value'/>
+									<input class ='form-count' type='number' min='0' name='value' id='value' step='.01'/>
 								</div>
 							</div>
 							<div id='from-submit'>

@@ -276,7 +276,7 @@ void GenerateProfRep::Generate()
 			tableBody += "<td style='border: 1px solid black; text - align: center; '></td>";
 			tableBody += "<td style='border: 1px solid black; text - align: center; '></td>";
 			tableBody += "<td style='border: 1px solid black; text - align: center; '></td>";
-			tableBody += "<td style='border: 1px solid black; text - align: center; '>Вся выручка</td>";
+			tableBody += "<td style='border: 1px solid black; text - align: center; '>" + QString::fromWCharArray(L"Вся выручка")+"</td>";
 			tableBody += "<td style='border: 1px solid black; text - align: center; '>" + QString::number(sum, 'f', 3) + "</td>";
 			tableBody += "</tr>";
 
@@ -285,7 +285,7 @@ void GenerateProfRep::Generate()
 			tableBody += "<td style='border: 1px solid black; text - align: center; '></td>";
 			tableBody += "<td style='border: 1px solid black; text - align: center; '></td>";
 			tableBody += "<td style='border: 1px solid black; text - align: center; '></td>";
-			tableBody += "<td style='border: 1px solid black; text - align: center; '>Сумма себестоимости по всем продуктам</td>";
+			tableBody += "<td style='border: 1px solid black; text - align: center; '>" + QString::fromWCharArray(L"Сумма себестоимости по всем продуктам")+"</td>";
 			tableBody += "<td style='border: 1px solid black; text - align: center; '>" + QString::number(netSum, 'f', 3) + "</td>";
 			tableBody += "</tr>";
 
@@ -294,7 +294,7 @@ void GenerateProfRep::Generate()
 			tableBody += "<td style='border: 1px solid black; text - align: center; '></td>";
 			tableBody += "<td style='border: 1px solid black; text - align: center; '></td>";
 			tableBody += "<td style='border: 1px solid black; text - align: center; '></td>";
-			tableBody += "<td style='border: 1px solid black; text - align: center; '>Сумма убыточной реализации</td>";
+			tableBody += "<td style='border: 1px solid black; text - align: center; '>" + QString::fromWCharArray(L"Сумма убыточной реализации")+"</td>";
 			tableBody += "<td style='border: 1px solid black; text - align: center; '>" + QString::number(negSum,'f',3) + "</td>";
 			tableBody += "</tr>";
 
