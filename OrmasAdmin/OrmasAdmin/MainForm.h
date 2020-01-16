@@ -66,6 +66,12 @@ private slots :
 	void OpenWriteOffForm();
 	void OpenWriteOffListForm();
 
+	void OpenFixedAssetsForm();
+	void OpenFixedAssetsOperationForm();
+	void OpenInventoryForm();
+	void OpenAmortizeGroupForm();
+	void OpenAmortizeTypeForm();
+
 	void OpenBalanceForm();
 	void OpenAccountForm();
 	void OpenSubaccountForm();
@@ -75,6 +81,7 @@ private slots :
 	void OpenSalaryTypeForm();
 	void OpenPayrollForm();
 	void OpenAccountTypeForm();
+	void OpenDivisionAccountsForm();
 	void OpenChartOfAccountsForm();
 	void OpenCompanyAccountForm();
 	void OpenEntryForm();

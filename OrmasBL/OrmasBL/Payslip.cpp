@@ -1,7 +1,9 @@
 #include "stdafx.h"
 #include "PayslipClass.h"
+#include "PaymentClass.h"
 #include "UserClass.h"
 #include "RoleClass.h"
+#include "SubaccountClass.h"
 #include "SalaryClass.h"
 #include "BalanceClass.h"
 #include "BalancePayslipRelationClass.h"
@@ -12,6 +14,7 @@
 #include "CompanyClass.h"
 #include "DivisionEmployeeRelationClass.h"
 #include "DivisionClass.h"
+#include "AccountClass.h"
 #include <codecvt>
 
 namespace BusinessLayer{
@@ -290,17 +293,51 @@ namespace BusinessLayer{
 		DivisionEmployeeRelation deRel;
 		Division division;
 		Balance balance;
+		Balance tempBalance;
 		Company company;
 		Salary salary;
 		User user;
 		Role role;
+		Subaccount sub;
+		Account acc;
+		if (!acc.GetAccountByNumber(ormasDal, "22210", errorMessage))
+		{
+			return false;
+		}
 		if (!salary.GetSalaryByID(ormasDal, sID, errorMessage))
 		{
 			if (errorMessage.empty())
 				errorMessage = "Cannot find salary with this ID!";
 			return false;
 		}
-		if (balance.GetBalanceByUserID(ormasDal, salary.GetEmployeeID(), errorMessage))
+		Payment payment;
+		payment.SetUserID(salary.GetEmployeeID());
+		std::string filter = payment.GenerateFilter(ormasDal);
+		std::vector<DataLayer::balancesViewCollection> balanceVector = ormasDal.GetBalances(errorMessage, filter);
+		if (0 < balanceVector.size())
+		{
+			for each (auto item in balanceVector)
+			{
+				sub.Clear();
+				tempBalance.Clear();
+				if (!tempBalance.GetBalanceByID(ormasDal, std::get<0>(item), errorMessage))
+					return false;
+				if (sub.GetSubaccountByID(ormasDal, tempBalance.GetSubaccountID(), errorMessage))
+				{
+					if (sub.GetParentAccountID() == acc.GetID())
+					{
+						balance.SetSubaccountID(sub.GetID());
+					}
+				}
+			}
+		}
+		else
+		{
+			return false;
+		}
+		if (balance.GetSubaccountID() <= 0)
+			return false;
+		if (balance.GetBalanceBySubaccountID(ormasDal, balance.GetSubaccountID(), errorMessage))
 		{
 			int companyID = company.GetCompanyID(ormasDal, errorMessage);
 			if (!user.GetUserByID(ormasDal, salary.GetEmployeeID(), errorMessage))
@@ -348,17 +385,51 @@ namespace BusinessLayer{
 		DivisionEmployeeRelation deRel;
 		Division division;
 		Balance balance;
+		Balance tempBalance;
 		Company company;
 		Salary salary;
 		User user;
 		Role role;
+		Subaccount sub;
+		Account acc;
+		if (!acc.GetAccountByNumber(ormasDal, "22210", errorMessage))
+		{
+			return false;
+		}
 		if (!salary.GetSalaryByID(ormasDal, sID, errorMessage))
 		{
 			if (errorMessage.empty())
 				errorMessage = "Cannot find salary with this ID!";
 			return false;
 		}
-		if (balance.GetBalanceByUserID(ormasDal, salary.GetEmployeeID(), errorMessage))
+		Payment payment;
+		payment.SetUserID(salary.GetEmployeeID());
+		std::string filter = payment.GenerateFilter(ormasDal);
+		std::vector<DataLayer::balancesViewCollection> balanceVector = ormasDal.GetBalances(errorMessage, filter);
+		if (0 < balanceVector.size())
+		{
+			for each (auto item in balanceVector)
+			{
+				sub.Clear();
+				tempBalance.Clear();
+				if (!tempBalance.GetBalanceByID(ormasDal, std::get<0>(item), errorMessage))
+					return false;
+				if (sub.GetSubaccountByID(ormasDal, tempBalance.GetSubaccountID(), errorMessage))
+				{
+					if (sub.GetParentAccountID() == acc.GetID())
+					{
+						balance.SetSubaccountID(sub.GetID());
+					}
+				}
+			}
+		}
+		else
+		{
+			return false;
+		}
+		if (balance.GetSubaccountID() <= 0)
+			return false;
+		if (balance.GetBalanceBySubaccountID(ormasDal, balance.GetSubaccountID(), errorMessage))
 		{
 			int companyID = company.GetCompanyID(ormasDal, errorMessage);
 			if (!user.GetUserByID(ormasDal, salary.GetEmployeeID(), errorMessage))
@@ -407,16 +478,54 @@ namespace BusinessLayer{
 	{
 		CompanyAccountRelation cAccRel;
 		CompanyEmployeeRelation cEmpRel;
+		DivisionEmployeeRelation deRel;
+		Division division;
 		Balance balance;
+		Balance tempBalance;
 		Company company;
 		Salary salary;
+		User user;
+		Role role;
+		Subaccount sub;
+		Account acc;
+		if (!acc.GetAccountByNumber(ormasDal, "22210", errorMessage))
+		{
+			return false;
+		}
 		if (!salary.GetSalaryByID(ormasDal, sID, errorMessage))
 		{
 			if (errorMessage.empty())
 				errorMessage = "Cannot find salary with this ID!";
 			return false;
 		}
-		if (balance.GetBalanceByUserID(ormasDal, salary.GetEmployeeID(), errorMessage))
+		Payment payment;
+		payment.SetUserID(salary.GetEmployeeID());
+		std::string filter = payment.GenerateFilter(ormasDal);
+		std::vector<DataLayer::balancesViewCollection> balanceVector = ormasDal.GetBalances(errorMessage, filter);
+		if (0 < balanceVector.size())
+		{
+			for each (auto item in balanceVector)
+			{
+				sub.Clear();
+				tempBalance.Clear();
+				if (!tempBalance.GetBalanceByID(ormasDal, std::get<0>(item), errorMessage))
+					return false;
+				if (sub.GetSubaccountByID(ormasDal, tempBalance.GetSubaccountID(), errorMessage))
+				{
+					if (sub.GetParentAccountID() == acc.GetID())
+					{
+						balance.SetSubaccountID(sub.GetID());
+					}
+				}
+			}
+		}
+		else
+		{
+			return false;
+		}
+		if (balance.GetSubaccountID() <= 0)
+			return false;
+		if (balance.GetBalanceBySubaccountID(ormasDal, balance.GetSubaccountID(), errorMessage))
 		{
 			int companyID = company.GetCompanyID(ormasDal, errorMessage);
 			int debAccID = cAccRel.GetAccountIDByCompanyID(ormasDal, companyID, "10730", errorMessage);
@@ -445,7 +554,7 @@ namespace BusinessLayer{
 		entry.SetDebitingAccountID(debAccID);
 		entry.SetValue(currentSum);
 		entry.SetCreditingAccountID(credAccID);
-		entry.SetDescription(wstring_to_utf8(L"Операция начисление денег"));
+		entry.SetDescription(wstring_to_utf8(L"Операция начисление заработной платы"));
 		if (entry.CreateEntry(ormasDal, errorMessage))
 		{
 			eoRelation.SetEntryID(entry.GetID());
@@ -469,7 +578,7 @@ namespace BusinessLayer{
 		entry.SetDebitingAccountID(credAccID);
 		entry.SetValue(previousSum);
 		entry.SetCreditingAccountID(debAccID);
-		entry.SetDescription(wstring_to_utf8(L"Отмена начисления денег, для коррекции"));
+		entry.SetDescription(wstring_to_utf8(L"Отмена начисление заработной платы, для коррекции"));
 		if (entry.CreateEntry(ormasDal, errorMessage, true))
 		{
 			eoRelation.SetEntryID(entry.GetID());
@@ -489,7 +598,7 @@ namespace BusinessLayer{
 		entry.SetDebitingAccountID(debAccID);
 		entry.SetValue(currentSum);
 		entry.SetCreditingAccountID(credAccID);
-		entry.SetDescription(wstring_to_utf8(L"Операция повторного начисления денег"));
+		entry.SetDescription(wstring_to_utf8(L"Операция начисление заработной платы"));
 		if (entry.CreateEntry(ormasDal, errorMessage))
 		{
 			eoRelation.SetEntryID(entry.GetID());
@@ -513,7 +622,7 @@ namespace BusinessLayer{
 		entry.SetDebitingAccountID(credAccID);
 		entry.SetValue(currentSum);
 		entry.SetCreditingAccountID(debAccID);
-		entry.SetDescription(wstring_to_utf8(L"Отмена начисления денег"));
+		entry.SetDescription(wstring_to_utf8(L"Отмена начисление заработной платы"));
 		if (entry.CreateEntry(ormasDal, errorMessage))
 		{
 			eoRelation.SetEntryID(entry.GetID());

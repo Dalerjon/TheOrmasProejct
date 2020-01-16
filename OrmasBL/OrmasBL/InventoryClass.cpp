@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "InventoryClass.h"
+#include "DivisionClass.h"
 
 namespace BusinessLayer
 {
@@ -150,6 +151,7 @@ namespace BusinessLayer
 	{
 		if (IsDuplicate(ormasDal, errorMessage))
 			return false;
+		id = ormasDal.GenerateID();
 		//ormasDal.StartTransaction(errorMessage);
 		if (0 != id && ormasDal.CreateInventory(id, name, cost, departmentID, location, statusID, startOfOperationDate,
 			endOfOperationDate, inventoryNumber, barcodeNumber, errorMessage))
@@ -319,5 +321,50 @@ namespace BusinessLayer
 		}
 		errorMessage = "inventory with these parameters are already exist! Please avoid the duplication!";
 		return true;
+	}
+	std::string Inventory::GenerateInventoryNumber(DataLayer::OrmasDal& ormasDal, int divID)
+	{
+		std::string errorMessage = "";
+		std::string invNumber = "";
+		invNumber += "I";
+		Division div;
+		if (!div.GetDivisionByID(ormasDal, divID, errorMessage))
+			return "";
+		if (0 == div.GetCode().compare("PRODUCTION"))
+		{
+			invNumber += "P";
+		}
+		if (0 == div.GetCode().compare("RELEASE"))
+		{
+			invNumber += "R";
+		}
+		if (0 == div.GetCode().compare("ADMINISTRATION"))
+		{
+			invNumber += "A";
+		}
+		std::string rawNumber = GenerateInvRawNumber(ormasDal, errorMessage);
+		invNumber += rawNumber;
+		if (invNumber.size() < 9)
+			return "";
+		return invNumber;
+	}
+
+	std::string Inventory::GenerateInvRawNumber(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
+	{
+		int countOfNulls;
+		int genNumber = ormasDal.GenerateInventoryNumber();
+		std::string invNumber = "";
+		std::string genNumberStr = std::to_string(genNumber);
+		if (genNumberStr.length() < 9)
+		{
+			countOfNulls = 9 - genNumberStr.length();
+			for (int i = 0; i < countOfNulls; i++)
+			{
+				invNumber.append("0");
+			}
+			invNumber.append(genNumberStr);
+			return invNumber;
+		}
+		return "";
 	}
 }

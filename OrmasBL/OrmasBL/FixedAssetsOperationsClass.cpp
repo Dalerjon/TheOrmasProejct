@@ -114,6 +114,7 @@ namespace BusinessLayer
 	{
 		if (IsDuplicate(ormasDal, errorMessage))
 			return false;
+		id = ormasDal.GenerateID();
 		//ormasDal.StartTransaction(errorMessage);
 		if (0 != id && ormasDal.CreateFixedAssetsOperations(id, date, name, value, increment,
 			decrement, fixedAssetsID, errorMessage))

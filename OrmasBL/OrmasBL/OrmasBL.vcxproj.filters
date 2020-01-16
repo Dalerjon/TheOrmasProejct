@@ -588,6 +588,15 @@
     <ClInclude Include="InventoryHistoryClass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="PostingFixedAssetsClass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PostingFixedAssetsViewClass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FixedAssetsUnionClass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -1152,6 +1161,15 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="InvontoryHistoryClass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PostingFixedAssetsClass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PostingFixedAssetsViewClass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="FixedAssetsUnionClass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

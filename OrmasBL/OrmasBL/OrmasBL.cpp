@@ -46,6 +46,11 @@ namespace BusinessLayer{
 		return ormasDal.GenerateID();
 	}
 
+	int OrmasBL::GenerateInventoryNumber()
+	{
+		return ormasDal.GenerateInventoryNumber();
+	}
+
 	bool OrmasBL::StartTransaction(std::string& errorMessage)
 	{
 		return ormasDal.StartTransaction(errorMessage);
@@ -881,6 +886,28 @@ namespace BusinessLayer{
 	}
 
 	template<>
+	std::vector<FixedAssetsUnion> OrmasBL::GetAllDataForClass<FixedAssetsUnion>(std::string& errorMessage, std::string filter)
+	{
+		std::vector<FixedAssetsUnion> vecFixedAssUnionRep;
+		std::vector<DataLayer::fixedAssetsUnionCollection> dataCollection;
+		if (filter.empty())
+		{
+			dataCollection = ormasDal.GetFixedAssetsUnion(errorMessage);
+		}
+		else
+		{
+			dataCollection = ormasDal.GetFixedAssetsUnion(errorMessage, filter);
+		}
+		if (!dataCollection.empty()){
+			for (auto data : dataCollection)
+			{
+				vecFixedAssUnionRep.push_back(FixedAssetsUnion(data));
+			}
+		}
+		return vecFixedAssUnionRep;
+	}
+
+	template<>
 	std::vector<FixedAssetsDetailsView> OrmasBL::GetAllDataForClass<FixedAssetsDetailsView>(std::string& errorMessage, std::string filter)
 	{
 		std::vector<FixedAssetsDetailsView> vecFixedAssDetailsRep;
@@ -1318,6 +1345,28 @@ namespace BusinessLayer{
 			}
 		}
 		return vecForPhoto;
+	}
+
+	template<>
+	std::vector<PostingFixedAssetsView> OrmasBL::GetAllDataForClass<PostingFixedAssetsView>(std::string& errorMessage, std::string filter)
+	{
+		std::vector<PostingFixedAssetsView> vecForPosFX;
+		std::vector<DataLayer::postingFixedAssetsViewCollection> dataCollection;
+		if (filter.empty())
+		{
+			dataCollection = ormasDal.GetPostingFixedAssets(errorMessage);
+		}
+		else
+		{
+			dataCollection = ormasDal.GetPostingFixedAssets(errorMessage, filter);
+		}
+		if (!dataCollection.empty()){
+			for (auto data : dataCollection)
+			{
+				vecForPosFX.push_back(PostingFixedAssetsView(data));
+			}
+		}
+		return vecForPosFX;
 	}
 
 	template<>
@@ -4624,6 +4673,69 @@ namespace BusinessLayer{
 		return false;
 	}
 
+	bool OrmasBL::CreateFixedAssetsUnion(BusinessLayer::FixedAssetsUnion* fixedAssetsUnion, std::string& errorMessage)
+	{
+		try
+		{
+			if (0 != fixedAssetsUnion->GetFixedAssets()->GetPrimaryCost() && 0 != fixedAssetsUnion->GetFixedAssetsDetails()->GetAmortizeValue() &&
+				!fixedAssetsUnion->GetFixedAssetsSpecification()->GetName().empty())
+			{
+				return fixedAssetsUnion->CreateFixedAssetsUnion(ormasDal, errorMessage);
+			}
+			else
+			{
+				errorMessage = "Error! All fienlds name must not be empty. Please fill up them!";
+			}
+		}
+		catch (...)
+		{
+			errorMessage = "Fatal error! Please contact with application provider.";
+		}
+		return false;
+	}
+
+	bool OrmasBL::UpdateFixedAssetsUnion(BusinessLayer::FixedAssetsUnion* fixedAssetsUnion, std::string& errorMessage)
+	{
+		try
+		{
+			if (0 != fixedAssetsUnion->GetFixedAssets()->GetPrimaryCost() && 0 != fixedAssetsUnion->GetFixedAssetsDetails()->GetAmortizeValue() &&
+				!fixedAssetsUnion->GetFixedAssetsSpecification()->GetName().empty())
+			{
+				return fixedAssetsUnion->UpdateFixedAssetsUnion(ormasDal, errorMessage);
+			}
+			else
+			{
+				errorMessage = "Error! All fienlds name must not be empty. Please fill up them!";
+			}
+		}
+		catch (...)
+		{
+			errorMessage = "Fatal error! Please contact with application provider.";
+		}
+		return false;
+	}
+
+	bool OrmasBL::DeleteFixedAssetsUnion(BusinessLayer::FixedAssetsUnion* fixedAssetsUnion, std::string& errorMessage)
+	{
+		try
+		{
+			if (!fixedAssetsUnion->GetFixedAssets()->IsEmpty() && !fixedAssetsUnion->GetFixedAssetsDetails()->IsEmpty() &&
+				!fixedAssetsUnion->GetFixedAssetsSpecification()->IsEmpty())
+			{
+				return fixedAssetsUnion->DeleteFixedAssetsUnion(ormasDal, errorMessage);
+			}
+			else
+			{
+				errorMessage = "Error! All fienlds name must not be empty. Some thing goes wrong!";
+			}
+		}
+		catch (...)
+		{
+			errorMessage = "Fatal error! Please contact with application provider.";
+		}
+		return false;
+	}
+
 	bool OrmasBL::CreateFixedAssetsDetails(BusinessLayer::FixedAssetsDetails* fixedAssetsDetails, std::string& errorMessage)
 	{
 		try
@@ -4649,8 +4761,9 @@ namespace BusinessLayer{
 	{
 		try
 		{
-			if (0 != fixedAssetsDetails->GetAmortizeGroupID() && 0 != fixedAssetsDetails->GetAmortizeAccountID()
-				&& 0 != fixedAssetsDetails->GetDepartmentID() && 0 != fixedAssetsDetails->GetPrimaryCostAccountID() && 0 != fixedAssetsDetails->GetAmortizeAccountID())
+			if (0 != fixedAssetsDetails->GetID() && 0 != fixedAssetsDetails->GetAmortizeValue() && 0 != fixedAssetsDetails->GetAmortizeGroupID() &&
+				0 != fixedAssetsDetails->GetAmortizeTypeID() && 0 != fixedAssetsDetails->GetDepartmentID() &&
+				0 != fixedAssetsDetails->GetPrimaryCostAccountID() && 0 != fixedAssetsDetails->GetAmortizeAccountID())
 			{
 				return fixedAssetsDetails->UpdateFixedAssetsDetails(ormasDal, errorMessage);
 			}
@@ -4670,7 +4783,9 @@ namespace BusinessLayer{
 	{
 		try
 		{
-			if (0 != fixedAssetsDetails->GetID())
+			if (0 != fixedAssetsDetails->GetID() && 0 != fixedAssetsDetails->GetAmortizeValue() && 0 != fixedAssetsDetails->GetAmortizeGroupID() && 
+				0 != fixedAssetsDetails->GetAmortizeTypeID() && 0 != fixedAssetsDetails->GetDepartmentID() &&
+				0 != fixedAssetsDetails->GetPrimaryCostAccountID() && 0 != fixedAssetsDetails->GetAmortizeAccountID())
 			{
 				return fixedAssetsDetails->DeleteFixedAssetsDetails(ormasDal, errorMessage);
 			}
@@ -5926,6 +6041,66 @@ namespace BusinessLayer{
 			else
 			{
 				errorMessage = "Error! Photo ID is 0. Some thing goes wrong!";
+			}
+		}
+		catch (...)
+		{
+			errorMessage = "Fatal error! Please contact with application provider.";
+		}
+		return false;
+	}
+
+	bool OrmasBL::CreatePostingFixedAssets(BusinessLayer::PostingFixedAssets* pfAssets, std::string& errorMessage)
+	{
+		try
+		{
+			if (0 != pfAssets->GetFixedAssetsID() || 0 != pfAssets->GetInventoryID())
+			{
+				return pfAssets->CreatePostingFixedAssets(ormasDal, errorMessage);
+			}
+			else
+			{
+				errorMessage = "Error! Posting fixed assets or inventory must not be empty. Please fill up them!";
+			}
+		}
+		catch (...)
+		{
+			errorMessage = "Fatal error! Please contact with application provider.";
+		}
+		return false;
+	}
+
+	bool OrmasBL::UpdatePostingFixedAssets(BusinessLayer::PostingFixedAssets* pfAssets, std::string& errorMessage)
+	{
+		try
+		{
+			if (0 != pfAssets->GetFixedAssetsID() || 0 != pfAssets->GetInventoryID())
+			{
+				return pfAssets->UpdatePostingFixedAssets(ormasDal, errorMessage);
+			}
+			else
+			{
+				errorMessage = "Error! osting fixed assets or inventory must not be empty. Please fill up them!";
+			}
+		}
+		catch (...)
+		{
+			errorMessage = "Fatal error! Please contact with application provider.";
+		}
+		return false;
+	}
+
+	bool OrmasBL::DeletePostingFixedAssets(BusinessLayer::PostingFixedAssets* pfAssets, std::string& errorMessage)
+	{
+		try
+		{
+			if (0 != pfAssets->GetID())
+			{
+				return pfAssets->DeletePostingFixedAssets(ormasDal, errorMessage);
+			}
+			else
+			{
+				errorMessage = "Error! Posting fixed assets ID is 0. Some thing goes wrong!";
 			}
 		}
 		catch (...)

@@ -169,6 +169,7 @@
     <addaction name="actionPayroll"/>
     <addaction name="separator"/>
     <addaction name="actionAccountType"/>
+    <addaction name="actionDivisionAccounts"/>
     <addaction name="actionChartOfAccounts"/>
     <addaction name="actionCompanyAccounts"/>
     <addaction name="actionEntry"/>
@@ -218,6 +219,16 @@
     <addaction name="actionAccountCard"/>
     <addaction name="actionWarehouseTurnover"/>
    </widget>
+   <widget class="QMenu" name="menuFixedAssets">
+    <property name="title">
+     <string>Fixed assets</string>
+    </property>
+    <addaction name="actionFixedAssets"/>
+    <addaction name="actionFixedAssetsOperation"/>
+    <addaction name="actionInventory"/>
+    <addaction name="actionAmortizeGroup"/>
+    <addaction name="actionAmortizeType"/>
+   </widget>
    <addaction name="menuUsers"/>
    <addaction name="menuProducts"/>
    <addaction name="menuOrders"/>
@@ -225,6 +236,7 @@
    <addaction name="menuWriteOffs"/>
    <addaction name="menuProductions"/>
    <addaction name="menuAccountings"/>
+   <addaction name="menuFixedAssets"/>
    <addaction name="menuCash"/>
    <addaction name="menuStock"/>
    <addaction name="menuReports"/>
@@ -730,6 +742,36 @@
   <action name="actionWarehouseTurnover">
    <property name="text">
     <string>Warehouse turnover</string>
+   </property>
+  </action>
+  <action name="actionFixedAssets">
+   <property name="text">
+    <string>Fixed assets</string>
+   </property>
+  </action>
+  <action name="actionFixedAssetsOperation">
+   <property name="text">
+    <string>Fixed assets operation</string>
+   </property>
+  </action>
+  <action name="actionInventory">
+   <property name="text">
+    <string>Inventory</string>
+   </property>
+  </action>
+  <action name="actionAmortizeGroup">
+   <property name="text">
+    <string>Amortize group</string>
+   </property>
+  </action>
+  <action name="actionAmortizeType">
+   <property name="text">
+    <string>Amortize type</string>
+   </property>
+  </action>
+  <action name="actionDivisionAccounts">
+   <property name="text">
+    <string>Division assounts</string>
    </property>
   </action>
  </widget>

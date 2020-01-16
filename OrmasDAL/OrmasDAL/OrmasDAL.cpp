@@ -302,6 +302,28 @@ namespace DataLayer{
 		PQclear(result);
 		return id;
 	}
+
+	int OrmasDal::GenerateInventoryNumber()
+	{
+		int id = 0;
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
+			return id; // return id as 0, just use 0 for logical statements in your functions, for example for canceling some actions
+		PGresult * result;
+		result = PQexec(dbConnection, "SELECT nextval('\"OrmasSchema\".inv_seq');");
+		if (PQresultStatus(result) == PGRES_TUPLES_OK)
+		{
+			if (PQntuples(result) > 0)
+			{
+				id = std::stoi(PQgetvalue(result, 0, 0) == "" ? 0 : PQgetvalue(result, 0, 0));
+				PQclear(result);
+				return id;
+			}
+			PQclear(result);
+			return id;
+		}
+		PQclear(result);
+		return id;
+	}
 	
 	std::string OrmasDal::GetSystemDateTime()
 	{
@@ -432,7 +454,7 @@ namespace DataLayer{
 			PGresult * result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".access_items_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY access_item_id DESC LIMIT 400;";
+			sqlCommand += " ORDER BY access_item_id DESC LIMIT 1000;";
 			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
@@ -486,7 +508,7 @@ namespace DataLayer{
 			PGresult* result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".accesses_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY access_id DESC LIMIT 400;";
+			sqlCommand += " ORDER BY access_id DESC LIMIT 1000;";
 			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
@@ -547,7 +569,7 @@ namespace DataLayer{
 			PGresult* result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".account_type_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY account_type_id DESC LIMIT 400;";
+			sqlCommand += " ORDER BY account_type_id DESC LIMIT 1000;";
 			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
@@ -655,7 +677,7 @@ namespace DataLayer{
 			PGresult* result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".account_history_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY account_history_id ASC LIMIT 400;";
+			sqlCommand += " ORDER BY account_history_id ASC LIMIT 1000;";
 			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
@@ -821,7 +843,7 @@ namespace DataLayer{
 		else
 		{
 			PGresult* result;
-			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".amortize_group_veiw ";
+			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".amortize_group_view ";
 			sqlCommand += filter;
 			sqlCommand += ";";
 			result = PQexec(dbConnection, sqlCommand.c_str());
@@ -872,7 +894,7 @@ namespace DataLayer{
 		else
 		{
 			PGresult* result;
-			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".amortize_type_veiw ";
+			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".amortize_type_view ";
 			sqlCommand += filter;
 			sqlCommand += ";";
 			result = PQexec(dbConnection, sqlCommand.c_str());
@@ -886,11 +908,7 @@ namespace DataLayer{
 						int amortizeTypeID = std::stoi(std::string(PQgetvalue(result, i, 0)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 0)));
 						std::string typeName = PQgetvalue(result, i, 1);
 						std::string typeCode = PQgetvalue(result, i, 2);
-						int percent = std::stoi(std::string(PQgetvalue(result, i, 3)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 3)));
-						double valueDepOnSales = std::stoi(std::string(PQgetvalue(result, i, 4)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 4)));
-						int year = std::stoi(std::string(PQgetvalue(result, i, 5)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 5)));
-						double coef = std::stoi(std::string(PQgetvalue(result, i, 6)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 6)));
-						rowTuple = std::make_tuple(amortizeTypeID, typeName, typeCode, percent, valueDepOnSales, year, coef);
+						rowTuple = std::make_tuple(amortizeTypeID, typeName, typeCode);
 						resultVector.push_back(rowTuple);
 					}
 					PQclear(result);
@@ -1140,7 +1158,7 @@ namespace DataLayer{
 			PGresult* result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".balances_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY balance_id DESC LIMIT 400;";
+			sqlCommand += " ORDER BY balance_id DESC LIMIT 1000;";
 			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
@@ -1203,7 +1221,7 @@ namespace DataLayer{
 			PGresult* result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".branches_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY branch_id DESC LIMIT 400;";
+			sqlCommand += " ORDER BY branch_id DESC LIMIT 1000;";
 			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
@@ -1259,7 +1277,7 @@ namespace DataLayer{
 			PGresult* result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".borrowers_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY user_id DESC LIMIT 400;";
+			sqlCommand += " ORDER BY user_id DESC LIMIT 1000;";
 			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
@@ -1318,7 +1336,7 @@ namespace DataLayer{
 			PGresult* result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".cashbox_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY cashbox_id DESC LIMIT 400;";
+			sqlCommand += " ORDER BY cashbox_id DESC LIMIT 1000;";
 			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
@@ -1374,7 +1392,7 @@ namespace DataLayer{
 			PGresult* result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".cashbox_transaction_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY cashbox_id DESC LIMIT 400;";
+			sqlCommand += " ORDER BY cashbox_id DESC LIMIT 1000;";
 			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
@@ -1428,7 +1446,7 @@ namespace DataLayer{
 			PGresult* result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".cashbox_employee_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY cashbox_employee_id DESC LIMIT 400;";
+			sqlCommand += " ORDER BY cashbox_employee_id DESC LIMIT 1000;";
 			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
@@ -1549,7 +1567,7 @@ namespace DataLayer{
 			PGresult* result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".clients_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY user_id DESC LIMIT 400;";
+			sqlCommand += " ORDER BY user_id DESC LIMIT 1000;";
 			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
@@ -1614,7 +1632,7 @@ namespace DataLayer{
 			PGresult* result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".companies_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY company_id DESC LIMIT 400;";
+			sqlCommand += " ORDER BY company_id DESC LIMIT 1000;";
 			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
@@ -1773,7 +1791,7 @@ namespace DataLayer{
 			PGresult * result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".consume_product_list_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY consume_product_id DESC LIMIT 400;";
+			sqlCommand += " ORDER BY consume_product_id DESC LIMIT 1000;";
 			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
@@ -1834,7 +1852,7 @@ namespace DataLayer{
 			PGresult * result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".consume_products_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY consume_product_id DESC LIMIT 400;";
+			sqlCommand += " ORDER BY consume_product_id DESC LIMIT 1000;";
 			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
@@ -1904,7 +1922,7 @@ namespace DataLayer{
 			PGresult * result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".consume_raw_list_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY consume_raw_id DESC LIMIT 400;";
+			sqlCommand += " ORDER BY consume_raw_id DESC LIMIT 1000;";
 			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
@@ -1965,7 +1983,7 @@ namespace DataLayer{
 			PGresult * result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".consume_raws_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY consume_raw_id DESC LIMIT 400;";
+			sqlCommand += " ORDER BY consume_raw_id DESC LIMIT 1000;";
 			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
@@ -2035,7 +2053,7 @@ namespace DataLayer{
 			PGresult * result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".currencies_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY currency_id DESC LIMIT 400;";
+			sqlCommand += " ORDER BY currency_id DESC LIMIT 1000;";
 			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
@@ -2088,7 +2106,7 @@ namespace DataLayer{
 			PGresult * result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".creditors_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY creditor_id DESC LIMIT 400;";
+			sqlCommand += " ORDER BY creditor_id DESC LIMIT 1000;";
 			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
@@ -2244,7 +2262,7 @@ namespace DataLayer{
 			PGresult * result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".divisions_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY division_id DESC LIMIT 400;";
+			sqlCommand += " ORDER BY division_id DESC LIMIT 1000;";
 			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
@@ -2293,7 +2311,7 @@ namespace DataLayer{
 			PGresult * result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".employee_product_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY employee_product_id DESC LIMIT 400;";
+			sqlCommand += " ORDER BY employee_product_id DESC LIMIT 1000;";
 			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
@@ -2348,7 +2366,7 @@ namespace DataLayer{
 			PGresult* result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".employees_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY user_id DESC LIMIT 400;";
+			sqlCommand += " ORDER BY user_id DESC LIMIT 1000;";
 			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
@@ -2414,7 +2432,7 @@ namespace DataLayer{
 			PGresult* result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".entries_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY entry_id DESC LIMIT 400;";
+			sqlCommand += " ORDER BY entry_id DESC LIMIT 1000;";
 			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
@@ -2526,7 +2544,7 @@ namespace DataLayer{
 			PGresult* result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".entry_routing_view  ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY entry_routing_id DESC LIMIT 400;";
+			sqlCommand += " ORDER BY entry_routing_id DESC LIMIT 1000;";
 			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
@@ -2674,7 +2692,7 @@ namespace DataLayer{
 			PGresult* result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".financial_report_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY financial_report_id DESC LIMIT 400;";
+			sqlCommand += " ORDER BY financial_report_id DESC LIMIT 1000;";
 			result = PQexec(dbConnection, sqlCommand.c_str());
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
 			{
@@ -2791,6 +2809,90 @@ namespace DataLayer{
 		return resultVector;
 	}
 
+	// Get fixed assets union
+	std::vector<fixedAssetsUnionCollection> OrmasDal::GetFixedAssetsUnion(std::string& errorMessage, std::string filter)
+	{
+		fixedAssetsUnionCollection rowTuple;
+		std::vector<fixedAssetsUnionCollection> resultVector;
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
+		{
+			errorMessage = "DB connection was lost! Please restart application!";
+		}
+		else
+		{
+			PGresult * result;
+			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".fixed_assets_union_view ";
+			sqlCommand += filter;
+			sqlCommand += " ;";
+			result = PQexec(dbConnection, sqlCommand.c_str());
+
+			if (PQresultStatus(result) == PGRES_TUPLES_OK)
+			{
+				if (PQntuples(result) > 0)
+				{
+					for (int i = 0; i < PQntuples(result); i++)
+					{
+						int fixedAssetsID = std::stoi(std::string(PQgetvalue(result, i, 0)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 0)));
+						std::string fixedAssetsName = PQgetvalue(result, i, 1);
+						std::string divisionName = PQgetvalue(result, i, 2);
+						double primaryCost = std::stoi(std::string(PQgetvalue(result, i, 3)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 3)));
+						double stopCost = std::stoi(std::string(PQgetvalue(result, i, 4)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 4)));
+						double amortizeSum = std::stoi(std::string(PQgetvalue(result, i, 5)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 5)));
+						std::string inventoryNumber = PQgetvalue(result, i, 6);
+						double amortizeValue= std::stoi(std::string(PQgetvalue(result, i, 7)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 7)));
+						int serviceLife = std::stoi(std::string(PQgetvalue(result, i, 8)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 8)));
+						std::string isAmortize = PQgetvalue(result, i, 9);
+						bool isamortize = (isAmortize.compare("t") == 0 ? true : false);
+						std::string statusName = PQgetvalue(result, i, 10);
+						std::string buyDate = PQgetvalue(result, i, 11);
+						std::string startDate = PQgetvalue(result, i, 12);
+						std::string endDate = PQgetvalue(result, i, 13);
+						std::string fixedAssetsLocation = PQgetvalue(result, i, 14);
+						std::string barcodeNumber = PQgetvalue(result, i, 15);
+						std::string factoryNumber = PQgetvalue(result, i, 16);
+						std::string developer = PQgetvalue(result, i, 17);
+						std::string document = PQgetvalue(result, i, 18);
+						std::string objectCharacter = PQgetvalue(result, i, 19);
+						std::string condition = PQgetvalue(result, i, 20);
+						std::string constructionDate = PQgetvalue(result, i, 21);
+						int faSpecID = std::stoi(std::string(PQgetvalue(result, i, 22)).length() == 0 ? "0" : PQgetvalue(result, i, 22));
+						int statusID = std::stoi(std::string(PQgetvalue(result, i, 23)).length() == 0 ? "0" : PQgetvalue(result, i, 23));
+						int faDetID = std::stoi(std::string(PQgetvalue(result, i, 24)).length() == 0 ? "0" : PQgetvalue(result, i, 24));
+						int amGroupID = std::stoi(std::string(PQgetvalue(result, i, 25)).length() == 0 ? "0" : PQgetvalue(result, i, 25));
+						int amTypeID = std::stoi(std::string(PQgetvalue(result, i, 26)).length() == 0 ? "0" : PQgetvalue(result, i, 26));
+						int divisionID = std::stoi(std::string(PQgetvalue(result, i, 27)).length() == 0 ? "0" : PQgetvalue(result, i, 27));
+						int primAccID = std::stoi(std::string(PQgetvalue(result, i, 28)).length() == 0 ? "0" : PQgetvalue(result, i, 28));
+						int amAccID = std::stoi(std::string(PQgetvalue(result, i, 29)).length() == 0 ? "0" : PQgetvalue(result, i, 29));
+						int postingFixedAssetsID = std::stoi(std::string(PQgetvalue(result, i, 26)).length() == 0 ? "0" : PQgetvalue(result, i, 26));
+						int userID = std::stoi(std::string(PQgetvalue(result, i, 27)).length() == 0 ? "0" : PQgetvalue(result, i, 27));
+						int subaccountID = std::stoi(std::string(PQgetvalue(result, i, 28)).length() == 0 ? "0" : PQgetvalue(result, i, 28));
+						int accountID = std::stoi(std::string(PQgetvalue(result, i, 29)).length() == 0 ? "0" : PQgetvalue(result, i, 29));
+						rowTuple = std::make_tuple(fixedAssetsID, fixedAssetsName, divisionName, primaryCost, stopCost, amortizeSum,
+							inventoryNumber, amortizeValue, serviceLife, isamortize, statusName, buyDate, startDate, endDate, fixedAssetsLocation,
+							barcodeNumber, factoryNumber, developer, document, objectCharacter, condition, constructionDate,
+							faSpecID, statusID, faDetID, amGroupID, amTypeID, divisionID, primAccID, amAccID, postingFixedAssetsID,
+							userID, subaccountID, accountID);
+					}
+					PQclear(result);
+					return resultVector;
+				}
+				else
+				{
+					PQclear(result);
+					// if result of query does not contain information and have 0 row, then function return an empty vector;
+				}
+			}
+			else
+			{
+				std::string logStr = PQresultErrorMessage(result);
+				//WriteLog(logStr);
+				PQclear(result);
+				errorMessage = "Cannot get information from DB for fixed assets union, please contact with appliction provider!";
+			}
+		}
+		return resultVector;
+	}
+
 	// Get fixed assets Details
 	std::vector<fixedAssetsDetailsViewCollection> OrmasDal::GetFixedAssetsDetails(std::string& errorMessage, std::string filter)
 	{
@@ -2818,18 +2920,19 @@ namespace DataLayer{
 						int groupNumber = std::stoi(std::string(PQgetvalue(result, i, 1)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 1)));
 						std::string amortizeTypeName = PQgetvalue(result, i, 2);
 						std::string amortizeTypeCode = PQgetvalue(result, i, 3);
-						std::string divisionName = PQgetvalue(result, i, 4);
-						double primaryValue = std::stoi(std::string(PQgetvalue(result, i, 5)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 5)));
-						double amortizeValue = std::stoi(std::string(PQgetvalue(result, i, 6)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 6)));
-						std::string barcode = PQgetvalue(result, i, 7);
-						std::string location = PQgetvalue(result, i, 8);
-						int primaryAccID = std::stoi(std::string(PQgetvalue(result, i, 9)).length() == 0 ? "0" : PQgetvalue(result, i, 9));
-						int amortizeID = std::stoi(std::string(PQgetvalue(result, i, 10)).length() == 0 ? "0" : PQgetvalue(result, i, 10));
-						int amortizeGroupID = std::stoi(std::string(PQgetvalue(result, i, 11)).length() == 0 ? "0" : PQgetvalue(result, i, 11));
-						int amortizeTypeID = std::stoi(std::string(PQgetvalue(result, i, 12)).length() == 0 ? "0" : PQgetvalue(result, i, 12));
-						int departmID = std::stoi(std::string(PQgetvalue(result, i, 13)).length() == 0 ? "0" : PQgetvalue(result, i, 13));
-						rowTuple = std::make_tuple(fixedAssetsDeID, groupNumber, amortizeTypeName, amortizeTypeCode, divisionName,
-							primaryValue, amortizeValue, barcode, location, primaryAccID, amortizeID, amortizeGroupID,
+						double amortizeValue = std::stoi(std::string(PQgetvalue(result, i, 4)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 4)));
+						std::string divisionName = PQgetvalue(result, i, 5);
+						double primaryValue = std::stoi(std::string(PQgetvalue(result, i, 6)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 6)));
+						double amortizeAccValue = std::stoi(std::string(PQgetvalue(result, i, 7)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 7)));
+						std::string barcode = PQgetvalue(result, i, 8);
+						std::string location = PQgetvalue(result, i, 9);
+						int primaryAccID = std::stoi(std::string(PQgetvalue(result, i, 10)).length() == 0 ? "0" : PQgetvalue(result, i, 10));
+						int amortizeID = std::stoi(std::string(PQgetvalue(result, i, 11)).length() == 0 ? "0" : PQgetvalue(result, i, 11));
+						int amortizeGroupID = std::stoi(std::string(PQgetvalue(result, i, 12)).length() == 0 ? "0" : PQgetvalue(result, i, 12));
+						int amortizeTypeID = std::stoi(std::string(PQgetvalue(result, i, 13)).length() == 0 ? "0" : PQgetvalue(result, i, 13));
+						int departmID = std::stoi(std::string(PQgetvalue(result, i, 14)).length() == 0 ? "0" : PQgetvalue(result, i, 14));
+						rowTuple = std::make_tuple(fixedAssetsDeID, groupNumber, amortizeTypeName, amortizeTypeCode, amortizeValue, divisionName,
+							amortizeAccValue, amortizeValue, barcode, location, primaryAccID, amortizeID, amortizeGroupID,
 							amortizeTypeID, departmID);
 						resultVector.push_back(rowTuple);
 					}
@@ -2978,7 +3081,7 @@ namespace DataLayer{
 			PGresult * result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".inventorization_list_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY inventorization_id DESC LIMIT 400;";
+			sqlCommand += " ORDER BY inventorization_id DESC LIMIT 1000;";
 			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
@@ -3039,7 +3142,7 @@ namespace DataLayer{
 			PGresult * result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".inventorizations_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY inventorization_id DESC LIMIT 400;";
+			sqlCommand += " ORDER BY inventorization_id DESC LIMIT 1000;";
 			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
@@ -3109,7 +3212,7 @@ namespace DataLayer{
 			PGresult * result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".inventory_view ";
 			sqlCommand += filter;
-			sqlCommand += " LIMIT 400;";
+			sqlCommand += " LIMIT 1000;";
 			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
@@ -3168,7 +3271,7 @@ namespace DataLayer{
 			PGresult * result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".inventory_history_view ";
 			sqlCommand += filter;
-			sqlCommand += " LIMIT 400;";
+			sqlCommand += " LIMIT 1000;";
 			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
@@ -3218,7 +3321,7 @@ namespace DataLayer{
 			PGresult * result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".jobprice_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY jobprice_id DESC LIMIT 400;";
+			sqlCommand += " ORDER BY jobprice_id DESC LIMIT 1000;";
 			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
@@ -3276,7 +3379,7 @@ namespace DataLayer{
 			PGresult * result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".jobsheet_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY jobsheet_id DESC LIMIT 400;";
+			sqlCommand += " ORDER BY jobsheet_id DESC LIMIT 1000;";
 			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
@@ -3333,7 +3436,7 @@ namespace DataLayer{
 			PGresult * result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".locations_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY location_id DESC LIMIT 400;";
+			sqlCommand += " ORDER BY location_id DESC LIMIT 1000;";
 			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
@@ -3384,7 +3487,7 @@ namespace DataLayer{
 			PGresult * result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".measures_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY measure_id DESC LIMIT 400;";
+			sqlCommand += " ORDER BY measure_id DESC LIMIT 1000;";
 			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
@@ -3435,7 +3538,7 @@ namespace DataLayer{
 			PGresult * result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".net_cost_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY net_cost_id DESC LIMIT 400;";
+			sqlCommand += " ORDER BY net_cost_id DESC LIMIT 1000;";
 			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
@@ -3493,7 +3596,7 @@ namespace DataLayer{
 			PGresult * result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".order_list_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY order_id DESC LIMIT 400;";
+			sqlCommand += " ORDER BY order_id DESC LIMIT 1000;";
 			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
@@ -3554,7 +3657,7 @@ namespace DataLayer{
 			PGresult * result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".orders_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY order_id DESC LIMIT 400;";
+			sqlCommand += " ORDER BY order_id DESC LIMIT 1000;";
 			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
@@ -3623,7 +3726,7 @@ namespace DataLayer{
 			PGresult * result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".order_raw_list_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY order_raw_id DESC LIMIT 400;";
+			sqlCommand += " ORDER BY order_raw_id DESC LIMIT 1000;";
 			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
@@ -3684,7 +3787,7 @@ namespace DataLayer{
 			PGresult * result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".order_raws_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY order_raw_id DESC LIMIT 400;";
+			sqlCommand += " ORDER BY order_raw_id DESC LIMIT 1000;";
 			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
@@ -3754,7 +3857,7 @@ namespace DataLayer{
 			PGresult * result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".payments_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY payment_id DESC LIMIT 400;";
+			sqlCommand += " ORDER BY payment_id DESC LIMIT 1000;";
 			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
@@ -3869,7 +3972,7 @@ namespace DataLayer{
 			PGresult * result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".payslips_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY payslip_id DESC LIMIT 400;";
+			sqlCommand += " ORDER BY payslip_id DESC LIMIT 1000;";
 			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
@@ -3970,7 +4073,7 @@ namespace DataLayer{
 			PGresult * result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".percent_rate_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY percent_rate_id DESC LIMIT 400;";
+			sqlCommand += " ORDER BY percent_rate_id DESC LIMIT 1000;";
 			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
@@ -4020,7 +4123,7 @@ namespace DataLayer{
 			PGresult * result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".photos_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY photo_id DESC LIMIT 400;";
+			sqlCommand += " ORDER BY photo_id DESC LIMIT 1000;";
 			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
@@ -4056,6 +4159,60 @@ namespace DataLayer{
 		return resultVector;
 	}
 
+	// Get posting fixed assets
+	std::vector<postingFixedAssetsViewCollection> OrmasDal::GetPostingFixedAssets(std::string& errorMessage, std::string filter)
+	{
+		postingFixedAssetsViewCollection rowTuple;
+		std::vector<postingFixedAssetsViewCollection> resultVector;
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
+		{
+			errorMessage = "DB connection was lost! Please restart application!";
+		}
+		else
+		{
+			PGresult * result;
+			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".postging_fixed_assets_view ";
+			sqlCommand += filter;
+			sqlCommand += " ORDER BY posting_fixed_assets_id DESC LIMIT 1000;";
+			result = PQexec(dbConnection, sqlCommand.c_str());
+
+			if (PQresultStatus(result) == PGRES_TUPLES_OK)
+			{
+				if (PQntuples(result) > 0)
+				{
+					for (int i = 0; i < PQntuples(result); i++)
+					{
+						int sfaID = std::stoi(std::string(PQgetvalue(result, i, 0)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 0)));
+						std::string userSurname = PQgetvalue(result, i, 1);
+						std::string accountName = PQgetvalue(result, i, 2);
+						int userID = std::stoi(std::string(PQgetvalue(result, i, 3)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 3)));
+						int subaccountID = std::stoi(std::string(PQgetvalue(result, i, 4)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 4)));
+						int accountID = std::stoi(std::string(PQgetvalue(result, i, 5)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 5)));
+						int fixedAssetsID = std::stoi(std::string(PQgetvalue(result, i, 6)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 6)));
+						int inventoryID = std::stoi(std::string(PQgetvalue(result, i, 7)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 7)));
+						rowTuple = std::make_tuple(sfaID, userSurname, accountName, userID, subaccountID, accountID, fixedAssetsID, inventoryID);
+						resultVector.push_back(rowTuple);
+					}
+					PQclear(result);
+					return resultVector;
+				}
+				else
+				{
+					// if result of query does not contain information and have 0 row, then function return an empty vector;
+					PQclear(result);
+				}
+			}
+			else
+			{
+				std::string logStr = PQresultErrorMessage(result);
+				//WriteLog(logStr);
+				PQclear(result);
+				errorMessage = "Cannot get information from DB for posting fixed assets, please contact with appliction provider!";
+			}
+		}
+		return resultVector;
+	}
+
 	// Get positions
 	std::vector<positionsCollection> OrmasDal::GetPositions(std::string& errorMessage, std::string filter)
 	{
@@ -4070,7 +4227,7 @@ namespace DataLayer{
 			PGresult * result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".positions_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY position_id DESC LIMIT 400;";
+			sqlCommand += " ORDER BY position_id DESC LIMIT 1000;";
 			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
@@ -4118,7 +4275,7 @@ namespace DataLayer{
 			PGresult * result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".product_branch_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY product_branch_id DESC LIMIT 400;";
+			sqlCommand += " ORDER BY product_branch_id DESC LIMIT 1000;";
 			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
@@ -4171,7 +4328,7 @@ namespace DataLayer{
 			PGresult * result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".prices_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY price_id DESC LIMIT 400;";
+			sqlCommand += " ORDER BY price_id DESC LIMIT 1000;";
 			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
@@ -4229,7 +4386,7 @@ namespace DataLayer{
 			PGresult * result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".product_types_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY product_type_id DESC LIMIT 400;";
+			sqlCommand += " ORDER BY product_type_id DESC LIMIT 1000;";
 			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
@@ -4279,7 +4436,7 @@ namespace DataLayer{
 			PGresult * result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".production_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY production_id DESC LIMIT 400;";
+			sqlCommand += " ORDER BY production_id DESC LIMIT 1000;";
 			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
@@ -4330,7 +4487,7 @@ namespace DataLayer{
 			PGresult * result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".production_list_view ";
 			sqlCommand += filter;
-			sqlCommand += "  ORDER BY production_id DESC LIMIT 400;";
+			sqlCommand += "  ORDER BY production_id DESC LIMIT 1000;";
 			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
@@ -4391,7 +4548,7 @@ namespace DataLayer{
 			PGresult * result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".production_consume_raw_list_view ";
 			sqlCommand += filter;
-			sqlCommand += "  ORDER BY consume_raw_id DESC LIMIT 400;";
+			sqlCommand += "  ORDER BY consume_raw_id DESC LIMIT 1000;";
 			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
@@ -4452,7 +4609,7 @@ namespace DataLayer{
 			PGresult * result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".production_consume_raws_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY consume_raw_id DESC LIMIT 400;";
+			sqlCommand += " ORDER BY consume_raw_id DESC LIMIT 1000;";
 			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
@@ -4522,7 +4679,7 @@ namespace DataLayer{
 			PGresult * result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".production_plan_list_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY production_plan_id DESC LIMIT 400;";
+			sqlCommand += " ORDER BY production_plan_id DESC LIMIT 1000;";
 			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
@@ -4583,7 +4740,7 @@ namespace DataLayer{
 			PGresult * result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".production_plan_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY production_plan_id DESC LIMIT 400;";
+			sqlCommand += " ORDER BY production_plan_id DESC LIMIT 1000;";
 			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
@@ -4644,7 +4801,7 @@ namespace DataLayer{
 			PGresult * result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".production_stock_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY production_stock_id ASC LIMIT 400;";
+			sqlCommand += " ORDER BY production_stock_id ASC LIMIT 1000;";
 			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
@@ -4707,7 +4864,7 @@ namespace DataLayer{
 			PGresult * result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".products_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY product_name ASC LIMIT 400;";
+			sqlCommand += " ORDER BY product_name ASC LIMIT 1000;";
 			result = PQexec(dbConnection, sqlCommand.c_str());
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
 			{
@@ -4767,7 +4924,7 @@ namespace DataLayer{
 			PGresult* result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".purveyors_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY user_id DESC LIMIT 400;";
+			sqlCommand += " ORDER BY user_id DESC LIMIT 1000;";
 			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
@@ -4831,7 +4988,7 @@ namespace DataLayer{
 			PGresult * result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".receipt_product_list_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY receipt_product_id DESC LIMIT 400;";
+			sqlCommand += " ORDER BY receipt_product_id DESC LIMIT 1000;";
 			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
@@ -4892,7 +5049,7 @@ namespace DataLayer{
 			PGresult * result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".receipt_products_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY receipt_product_id DESC LIMIT 400;";
+			sqlCommand += " ORDER BY receipt_product_id DESC LIMIT 1000;";
 			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
@@ -4962,7 +5119,7 @@ namespace DataLayer{
 			PGresult * result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".stock_transfer_list_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY stock_transfer_id DESC LIMIT 400;";
+			sqlCommand += " ORDER BY stock_transfer_id DESC LIMIT 1000;";
 			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
@@ -5023,7 +5180,7 @@ namespace DataLayer{
 			PGresult * result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".stock_transfers_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY stock_transfer_id DESC LIMIT 400;";
+			sqlCommand += " ORDER BY stock_transfer_id DESC LIMIT 1000;";
 			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
@@ -5093,7 +5250,7 @@ namespace DataLayer{
 			PGresult * result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".refunds_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY refund_id DESC LIMIT 400;";
+			sqlCommand += " ORDER BY refund_id DESC LIMIT 1000;";
 			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
@@ -5145,7 +5302,7 @@ namespace DataLayer{
 			PGresult * result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".relation_type_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY relation_type_id DESC  LIMIT 400;";
+			sqlCommand += " ORDER BY relation_type_id DESC  LIMIT 1000;";
 			result = PQexec(dbConnection, sqlCommand.c_str());
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
 			{
@@ -5193,7 +5350,7 @@ namespace DataLayer{
 			PGresult * result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".relations_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY user_id_1 ASC LIMIT 400;";
+			sqlCommand += " ORDER BY user_id_1 ASC LIMIT 1000;";
 			result = PQexec(dbConnection, sqlCommand.c_str());
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
 			{
@@ -5252,7 +5409,7 @@ namespace DataLayer{
 			PGresult * result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".return_list_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY return_id DESC LIMIT 400;";
+			sqlCommand += " ORDER BY return_id DESC LIMIT 1000;";
 			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
@@ -5313,7 +5470,7 @@ namespace DataLayer{
 			PGresult * result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".returns_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY return_id DESC LIMIT 400;";
+			sqlCommand += " ORDER BY return_id DESC LIMIT 1000;";
 			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
@@ -5382,7 +5539,7 @@ namespace DataLayer{
 			PGresult * result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".roles_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY role_id ASC LIMIT 400;";
+			sqlCommand += " ORDER BY role_id ASC LIMIT 1000;";
 			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
@@ -5432,7 +5589,7 @@ namespace DataLayer{
 			PGresult* result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".salaries_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY salary_id DESC LIMIT 400;";
+			sqlCommand += " ORDER BY salary_id DESC LIMIT 1000;";
 			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
@@ -5492,7 +5649,7 @@ namespace DataLayer{
 			PGresult* result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".salary_type_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY salary_type_id DESC  LIMIT 400;";
+			sqlCommand += " ORDER BY salary_type_id DESC  LIMIT 1000;";
 			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
@@ -5542,7 +5699,7 @@ namespace DataLayer{
 			PGresult* result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".shareholders_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY user_id DESC  LIMIT 400;";
+			sqlCommand += " ORDER BY user_id DESC  LIMIT 1000;";
 			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
@@ -5595,7 +5752,7 @@ namespace DataLayer{
 			PGresult * result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".specification_list_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY specification_id DESC LIMIT 400;";
+			sqlCommand += " ORDER BY specification_id DESC LIMIT 1000;";
 			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
@@ -5647,7 +5804,7 @@ namespace DataLayer{
 			PGresult * result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".specifications_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY specification_id DESC LIMIT 400;";
+			sqlCommand += " ORDER BY specification_id DESC LIMIT 1000;";
 			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
@@ -5707,7 +5864,7 @@ namespace DataLayer{
 			PGresult * result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".spoilage_list_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY spoilage_id DESC LIMIT 400;";
+			sqlCommand += " ORDER BY spoilage_id DESC LIMIT 1000;";
 			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
@@ -5768,7 +5925,7 @@ namespace DataLayer{
 			PGresult * result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".spoilage_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY spoilage_id DESC LIMIT 400;";
+			sqlCommand += " ORDER BY spoilage_id DESC LIMIT 1000;";
 			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
@@ -5829,7 +5986,7 @@ namespace DataLayer{
 			PGresult * result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".state_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY state_id DESC LIMIT 400;";
+			sqlCommand += " ORDER BY state_id DESC LIMIT 1000;";
 			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
@@ -5879,7 +6036,7 @@ namespace DataLayer{
 			PGresult * result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".status_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY status_id DESC LIMIT 400;";
+			sqlCommand += " ORDER BY status_id DESC LIMIT 1000;";
 			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
@@ -5929,7 +6086,7 @@ namespace DataLayer{
 			PGresult * result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".status_rule_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY status_id DESC LIMIT 400;";
+			sqlCommand += " ORDER BY status_id DESC LIMIT 1000;";
 			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
@@ -6042,7 +6199,7 @@ namespace DataLayer{
 			PGresult * result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".stock_history_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY product_name ASC LIMIT 400;";
+			sqlCommand += " ORDER BY product_name ASC LIMIT 1000;";
 			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
@@ -6106,7 +6263,7 @@ namespace DataLayer{
 			PGresult* result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".subaccounts_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY subaccount_id DESC LIMIT 400;";
+			sqlCommand += " ORDER BY subaccount_id DESC LIMIT 1000;";
 			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
@@ -6166,7 +6323,7 @@ namespace DataLayer{
 			PGresult* result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".subaccount_history_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY subaccount_history_id DESC LIMIT 400;";
+			sqlCommand += " ORDER BY subaccount_history_id DESC LIMIT 1000;";
 			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
@@ -6218,7 +6375,7 @@ namespace DataLayer{
 			PGresult* result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".taxes_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY taxes_id DESC LIMIT 400;";
+			sqlCommand += " ORDER BY taxes_id DESC LIMIT 1000;";
 			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
@@ -6270,7 +6427,7 @@ namespace DataLayer{
 			PGresult * result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".timesheet_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY timesheet_id DESC LIMIT 400;";
+			sqlCommand += " ORDER BY timesheet_id DESC LIMIT 1000;";
 			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
@@ -6323,7 +6480,7 @@ namespace DataLayer{
 			PGresult * result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".transport_list_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY product_name ASC LIMIT 400 ";
+			sqlCommand += " ORDER BY product_name ASC LIMIT 1000 ";
 			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
@@ -6384,7 +6541,7 @@ namespace DataLayer{
 			PGresult * result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".transports_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY transport_id DESC LIMIT 400;";
+			sqlCommand += " ORDER BY transport_id DESC LIMIT 1000;";
 			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
@@ -6454,7 +6611,7 @@ namespace DataLayer{
 			PGresult * result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".users_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY user_id DESC LIMIT 400;";
+			sqlCommand += " ORDER BY user_id DESC LIMIT 1000;";
 			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
@@ -6512,7 +6669,7 @@ namespace DataLayer{
 			PGresult * result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".warehouse_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY warehouse_id DESC LIMIT 400;";
+			sqlCommand += " ORDER BY warehouse_id DESC LIMIT 1000;";
 			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
@@ -6567,7 +6724,7 @@ namespace DataLayer{
 			PGresult * result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".warehouse_employee_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY warehouse_employee_id DESC LIMIT 400;";
+			sqlCommand += " ORDER BY warehouse_employee_id DESC LIMIT 1000;";
 			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
@@ -6623,7 +6780,7 @@ namespace DataLayer{
 			PGresult * result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".warehouse_type_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY warehouse_type_id DESC LIMIT 400;";
+			sqlCommand += " ORDER BY warehouse_type_id DESC LIMIT 1000;";
 			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
@@ -6673,7 +6830,7 @@ namespace DataLayer{
 			PGresult * result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".withdrawals_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY withdrawal_id DESC LIMIT 400;";
+			sqlCommand += " ORDER BY withdrawal_id DESC LIMIT 1000;";
 			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
@@ -6739,7 +6896,7 @@ namespace DataLayer{
 			PGresult * result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".write_off_list_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY write_off_id DESC LIMIT 400;";
+			sqlCommand += " ORDER BY write_off_id DESC LIMIT 1000;";
 			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
@@ -6800,7 +6957,7 @@ namespace DataLayer{
 			PGresult * result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".write_offs_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY write_off_id DESC LIMIT 400;";
+			sqlCommand += " ORDER BY write_off_id DESC LIMIT 1000;";
 			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
@@ -6869,7 +7026,7 @@ namespace DataLayer{
 			PGresult * result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".write_off_raw_list_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY write_off_raw_id DESC LIMIT 400;";
+			sqlCommand += " ORDER BY write_off_raw_id DESC LIMIT 1000;";
 			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
@@ -6930,7 +7087,7 @@ namespace DataLayer{
 			PGresult * result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".write_off_raws_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY write_off_raw_id DESC LIMIT 400;";
+			sqlCommand += " ORDER BY write_off_raw_id DESC LIMIT 1000;";
 			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
@@ -7001,7 +7158,7 @@ namespace DataLayer{
 			PGresult * result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".access_items_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY access_item_id DESC LIMIT 400 ";
+			sqlCommand += " ORDER BY access_item_id DESC LIMIT 1000 ";
 			if (offset > 0)
 			{
 				sqlCommand += " OFFSET ";
@@ -7057,7 +7214,7 @@ namespace DataLayer{
 			PGresult* result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".accesses_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY access_id DESC LIMIT 400 ";
+			sqlCommand += " ORDER BY access_id DESC LIMIT 1000 ";
 			if (offset > 0)
 			{
 				sqlCommand += " OFFSET ";
@@ -7118,7 +7275,7 @@ namespace DataLayer{
 			PGresult* result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".account_type_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY account_type_id DESC LIMIT 400 ";
+			sqlCommand += " ORDER BY account_type_id DESC LIMIT 1000 ";
 			if (offset > 0)
 			{
 				sqlCommand += " OFFSET ";
@@ -7175,7 +7332,7 @@ namespace DataLayer{
 			PGresult* result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".accounts_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY account_number ASC  LIMIT 400 ";
+			sqlCommand += " ORDER BY account_number ASC  LIMIT 1000 ";
 			if (offset > 0)
 			{
 				sqlCommand += " OFFSET ";
@@ -7231,7 +7388,7 @@ namespace DataLayer{
 			PGresult* result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".account_history_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY account_history_id ASC LIMIT 400 ";
+			sqlCommand += " ORDER BY account_history_id ASC LIMIT 1000 ";
 			if (offset > 0)
 			{
 				sqlCommand += " OFFSET ";
@@ -7485,11 +7642,7 @@ namespace DataLayer{
 						int amortizeTypeID = std::stoi(std::string(PQgetvalue(result, i, 0)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 0)));
 						std::string typeName = PQgetvalue(result, i, 1);
 						std::string typeCode = PQgetvalue(result, i, 2);
-						int percent = std::stoi(std::string(PQgetvalue(result, i, 3)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 3)));
-						double valueDepOnSales = std::stoi(std::string(PQgetvalue(result, i, 4)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 4)));
-						int year = std::stoi(std::string(PQgetvalue(result, i, 5)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 5)));
-						double coef = std::stoi(std::string(PQgetvalue(result, i, 6)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 6)));
-						rowTuple = std::make_tuple(amortizeTypeID, typeName, typeCode, percent, valueDepOnSales, year, coef);
+						rowTuple = std::make_tuple(amortizeTypeID, typeName, typeCode);
 						resultVector.push_back(rowTuple);
 					}
 					PQclear(result);
@@ -7747,7 +7900,7 @@ namespace DataLayer{
 			PGresult* result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".balances_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY balance_id DESC LIMIT 400 ";
+			sqlCommand += " ORDER BY balance_id DESC LIMIT 1000 ";
 			if (offset > 0)
 			{
 				sqlCommand += " OFFSET ";
@@ -7808,7 +7961,7 @@ namespace DataLayer{
 			PGresult* result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".branches_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY branch_id DESC LIMIT 400 ";
+			sqlCommand += " ORDER BY branch_id DESC LIMIT 1000 ";
 			if (offset > 0)
 			{
 				sqlCommand += " OFFSET ";
@@ -7870,7 +8023,7 @@ namespace DataLayer{
 			PGresult* result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".borrowers_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY user_id DESC LIMIT 400";
+			sqlCommand += " ORDER BY user_id DESC LIMIT 1000";
 			if (offset > 0)
 			{
 				sqlCommand += " OFFSET ";
@@ -7935,7 +8088,7 @@ namespace DataLayer{
 			PGresult* result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".cashbox_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY cashbox_id DESC LIMIT 400";
+			sqlCommand += " ORDER BY cashbox_id DESC LIMIT 1000";
 			if (offset > 0)
 			{
 				sqlCommand += " OFFSET ";
@@ -7997,7 +8150,7 @@ namespace DataLayer{
 			PGresult* result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".cashbox_transaction_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY cashbox_id DESC LIMIT 400";
+			sqlCommand += " ORDER BY cashbox_id DESC LIMIT 1000";
 			if (offset > 0)
 			{
 				sqlCommand += " OFFSET ";
@@ -8057,7 +8210,7 @@ namespace DataLayer{
 			PGresult* result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".cashbox_employee_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY cashbox_employee_id DESC LIMIT 400 ";
+			sqlCommand += " ORDER BY cashbox_employee_id DESC LIMIT 1000 ";
 			if (offset > 0)
 			{
 				sqlCommand += " OFFSET ";
@@ -8128,7 +8281,7 @@ namespace DataLayer{
 			PGresult* result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".chart_of_accounts_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY number_of_account ASC LIMIT 400 ";
+			sqlCommand += " ORDER BY number_of_account ASC LIMIT 1000 ";
 			if (offset > 0)
 			{
 				sqlCommand += " OFFSET ";
@@ -8185,7 +8338,7 @@ namespace DataLayer{
 			PGresult* result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".clients_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY user_id DESC LIMIT 400 ";
+			sqlCommand += " ORDER BY user_id DESC LIMIT 1000 ";
 			if (offset > 0)
 			{
 				sqlCommand += " OFFSET ";
@@ -8256,7 +8409,7 @@ namespace DataLayer{
 			PGresult* result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".companies_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY company_id DESC LIMIT 400 ";
+			sqlCommand += " ORDER BY company_id DESC LIMIT 1000 ";
 			if (offset > 0)
 			{
 				sqlCommand += " OFFSET ";
@@ -8433,7 +8586,7 @@ namespace DataLayer{
 			PGresult * result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".consume_product_list_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY consume_product_id DESC LIMIT 400 ";
+			sqlCommand += " ORDER BY consume_product_id DESC LIMIT 1000 ";
 			if (offset > 0)
 			{
 				sqlCommand += " OFFSET ";
@@ -8500,7 +8653,7 @@ namespace DataLayer{
 			PGresult * result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".consume_products_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY consume_product_id DESC LIMIT 400 ";
+			sqlCommand += " ORDER BY consume_product_id DESC LIMIT 1000 ";
 			if (offset > 0)
 			{
 				sqlCommand += " OFFSET ";
@@ -8576,7 +8729,7 @@ namespace DataLayer{
 			PGresult * result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".consume_raw_list_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY consume_raw_id DESC LIMIT 400 ";
+			sqlCommand += " ORDER BY consume_raw_id DESC LIMIT 1000 ";
 			if (offset > 0)
 			{
 				sqlCommand += " OFFSET ";
@@ -8643,7 +8796,7 @@ namespace DataLayer{
 			PGresult * result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".consume_raws_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY consume_raw_id DESC LIMIT 400 ";
+			sqlCommand += " ORDER BY consume_raw_id DESC LIMIT 1000 ";
 			if (offset > 0)
 			{
 				sqlCommand += " OFFSET ";
@@ -8719,7 +8872,7 @@ namespace DataLayer{
 			PGresult * result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".currencies_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY currency_id DESC LIMIT 400 ";
+			sqlCommand += " ORDER BY currency_id DESC LIMIT 1000 ";
 			if (offset > 0)
 			{
 				sqlCommand += " OFFSET ";
@@ -8778,7 +8931,7 @@ namespace DataLayer{
 			PGresult * result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".creditors_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY creditor_id DESC LIMIT 400";
+			sqlCommand += " ORDER BY creditor_id DESC LIMIT 1000";
 			if (offset > 0)
 			{
 				sqlCommand += " OFFSET ";
@@ -8952,7 +9105,7 @@ namespace DataLayer{
 			PGresult * result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".divisions_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY division_id DESC LIMIT 400 ";
+			sqlCommand += " ORDER BY division_id DESC LIMIT 1000 ";
 			if (offset > 0)
 			{
 				sqlCommand += " OFFSET ";
@@ -9007,7 +9160,7 @@ namespace DataLayer{
 			PGresult* result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".employees_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY user_id DESC LIMIT 400 ";
+			sqlCommand += " ORDER BY user_id DESC LIMIT 1000 ";
 			if (offset > 0)
 			{
 				sqlCommand += " OFFSET ";
@@ -9079,7 +9232,7 @@ namespace DataLayer{
 			PGresult * result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".employee_product_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY employee_product_id DESC LIMIT 400";
+			sqlCommand += " ORDER BY employee_product_id DESC LIMIT 1000";
 			if (offset > 0)
 			{
 				sqlCommand += " OFFSET ";
@@ -9140,7 +9293,7 @@ namespace DataLayer{
 			PGresult* result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".entries_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY entry_id DESC LIMIT 400 ";
+			sqlCommand += " ORDER BY entry_id DESC LIMIT 1000 ";
 			if (offset > 0)
 			{
 				sqlCommand += " OFFSET ";
@@ -9264,7 +9417,7 @@ namespace DataLayer{
 			PGresult* result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".entry_routing_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY entry_routing_id DESC LIMIT 400 ";
+			sqlCommand += " ORDER BY entry_routing_id DESC LIMIT 1000 ";
 			if (offset > 0)
 			{
 				sqlCommand += " OFFSET ";
@@ -9430,7 +9583,7 @@ namespace DataLayer{
 			PGresult* result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".financial_report_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY financial_report_id DESC LIMIT 400 ";
+			sqlCommand += " ORDER BY financial_report_id DESC LIMIT 1000 ";
 			if (offset > 0)
 			{
 				sqlCommand += " OFFSET ";
@@ -9501,7 +9654,7 @@ namespace DataLayer{
 			PGresult * result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".fixed_assets_view ";
 			sqlCommand += filter;
-			sqlCommand += "  LIMIT 400 ";
+			sqlCommand += "  LIMIT 1000 ";
 			if (offset > 0)
 			{
 				sqlCommand += " OFFSET ";
@@ -9559,6 +9712,97 @@ namespace DataLayer{
 		return resultVector;
 	}
 
+	// Get fixed assets union
+	std::vector<fixedAssetsUnionCollection> OrmasDal::GetFixedAssetsUnion(int offset, std::string& errorMessage, std::string filter)
+	{
+		fixedAssetsUnionCollection rowTuple;
+		std::vector<fixedAssetsUnionCollection> resultVector;
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
+		{
+			errorMessage = "DB connection was lost! Please restart application!";
+		}
+		else
+		{
+			PGresult * result;
+			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".fixed_assets_union_view ";
+			sqlCommand += filter;
+			sqlCommand += " ";
+			if (offset > 0)
+			{
+				sqlCommand += " OFFSET ";
+				sqlCommand += boost::lexical_cast<std::string>(offset);
+			}
+			sqlCommand += " ;";
+			result = PQexec(dbConnection, sqlCommand.c_str());
+
+			if (PQresultStatus(result) == PGRES_TUPLES_OK)
+			{
+				if (PQntuples(result) > 0)
+				{
+					for (int i = 0; i < PQntuples(result); i++)
+					{
+						int fixedAssetsID = std::stoi(std::string(PQgetvalue(result, i, 0)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 0)));
+						std::string fixedAssetsName = PQgetvalue(result, i, 1);
+						std::string divisionName = PQgetvalue(result, i, 2);
+						double primaryCost = std::stoi(std::string(PQgetvalue(result, i, 3)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 3)));
+						double stopCost = std::stoi(std::string(PQgetvalue(result, i, 4)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 4)));
+						double amortizeSum = std::stoi(std::string(PQgetvalue(result, i, 5)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 5)));
+						std::string inventoryNumber = PQgetvalue(result, i, 6);
+						double amortizeValue = std::stoi(std::string(PQgetvalue(result, i, 7)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 7)));
+						int serviceLife = std::stoi(std::string(PQgetvalue(result, i, 8)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 8)));
+						std::string isAmortize = PQgetvalue(result, i, 9);
+						bool isamortize = (isAmortize.compare("t") == 0 ? true : false);
+						std::string statusName = PQgetvalue(result, i, 10);
+						std::string buyDate = PQgetvalue(result, i, 11);
+						std::string startDate = PQgetvalue(result, i, 12);
+						std::string endDate = PQgetvalue(result, i, 13);
+						std::string fixedAssetsLocation = PQgetvalue(result, i, 14);
+						std::string barcodeNumber = PQgetvalue(result, i, 15);
+						std::string factoryNumber = PQgetvalue(result, i, 16);
+						std::string developer = PQgetvalue(result, i, 17);
+						std::string document = PQgetvalue(result, i, 18);
+						std::string objectCharacter = PQgetvalue(result, i, 19);
+						std::string condition = PQgetvalue(result, i, 20);
+						std::string constructionDate = PQgetvalue(result, i, 21);
+						int faSpecID = std::stoi(std::string(PQgetvalue(result, i, 22)).length() == 0 ? "0" : PQgetvalue(result, i, 22));
+						int statusID = std::stoi(std::string(PQgetvalue(result, i, 23)).length() == 0 ? "0" : PQgetvalue(result, i, 23));
+						int faDetID = std::stoi(std::string(PQgetvalue(result, i, 24)).length() == 0 ? "0" : PQgetvalue(result, i, 24));
+						int amGroupID = std::stoi(std::string(PQgetvalue(result, i, 25)).length() == 0 ? "0" : PQgetvalue(result, i, 25));
+						int amTypeID = std::stoi(std::string(PQgetvalue(result, i, 26)).length() == 0 ? "0" : PQgetvalue(result, i, 26));
+						int divisionID = std::stoi(std::string(PQgetvalue(result, i, 27)).length() == 0 ? "0" : PQgetvalue(result, i, 27));
+						int primAccID = std::stoi(std::string(PQgetvalue(result, i, 28)).length() == 0 ? "0" : PQgetvalue(result, i, 28));
+						int amAccID = std::stoi(std::string(PQgetvalue(result, i, 29)).length() == 0 ? "0" : PQgetvalue(result, i, 29));
+						int postingFixedAssetsID = std::stoi(std::string(PQgetvalue(result, i, 26)).length() == 0 ? "0" : PQgetvalue(result, i, 26));
+						int userID = std::stoi(std::string(PQgetvalue(result, i, 27)).length() == 0 ? "0" : PQgetvalue(result, i, 27));
+						int subaccountID = std::stoi(std::string(PQgetvalue(result, i, 28)).length() == 0 ? "0" : PQgetvalue(result, i, 28));
+						int accountID = std::stoi(std::string(PQgetvalue(result, i, 29)).length() == 0 ? "0" : PQgetvalue(result, i, 29));
+						rowTuple = std::make_tuple(fixedAssetsID, fixedAssetsName, divisionName, primaryCost, stopCost, amortizeSum,
+							inventoryNumber, amortizeValue, serviceLife, isamortize, statusName, buyDate, startDate, endDate, fixedAssetsLocation,
+							barcodeNumber, factoryNumber, developer, document, objectCharacter, condition, constructionDate,
+							faSpecID, statusID, faDetID, amGroupID, amTypeID, divisionID, primAccID, amAccID, postingFixedAssetsID,
+							userID, subaccountID, accountID);
+						resultVector.push_back(rowTuple);
+					}
+					PQclear(result);
+					return resultVector;
+				}
+				else
+				{
+					PQclear(result);
+					// if result of query does not contain information and have 0 row, then function return an empty vector;
+				}
+			}
+			else
+			{
+				std::string logStr = PQresultErrorMessage(result);
+				//WriteLog(logStr);
+				PQclear(result);
+				errorMessage = "Cannot get information from DB for fixed assets union, please contact with appliction provider!";
+			}
+		}
+		return resultVector;
+	}
+
 	// Get fixed assets Details
 	std::vector<fixedAssetsDetailsViewCollection> OrmasDal::GetFixedAssetsDetails(int offset, std::string& errorMessage, std::string filter)
 	{
@@ -9592,18 +9836,19 @@ namespace DataLayer{
 						int groupNumber = std::stoi(std::string(PQgetvalue(result, i, 1)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 1)));
 						std::string amortizeTypeName = PQgetvalue(result, i, 2);
 						std::string amortizeTypeCode = PQgetvalue(result, i, 3);
-						std::string divisionName = PQgetvalue(result, i, 4);
-						double primaryValue = std::stoi(std::string(PQgetvalue(result, i, 5)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 5)));
-						double amortizeValue = std::stoi(std::string(PQgetvalue(result, i, 6)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 6)));
-						std::string barcode = PQgetvalue(result, i, 7);
-						std::string location = PQgetvalue(result, i, 8);
-						int primaryAccID = std::stoi(std::string(PQgetvalue(result, i, 9)).length() == 0 ? "0" : PQgetvalue(result, i, 9));
-						int amortizeID = std::stoi(std::string(PQgetvalue(result, i, 10)).length() == 0 ? "0" : PQgetvalue(result, i, 10));
-						int amortizeGroupID = std::stoi(std::string(PQgetvalue(result, i, 11)).length() == 0 ? "0" : PQgetvalue(result, i, 11));
-						int amortizeTypeID = std::stoi(std::string(PQgetvalue(result, i, 12)).length() == 0 ? "0" : PQgetvalue(result, i, 12));
-						int departmID = std::stoi(std::string(PQgetvalue(result, i, 13)).length() == 0 ? "0" : PQgetvalue(result, i, 13));
-						rowTuple = std::make_tuple(fixedAssetsDeID, groupNumber, amortizeTypeName, amortizeTypeCode, divisionName,
-							primaryValue, amortizeValue, barcode, location, primaryAccID, amortizeID, amortizeGroupID,
+						double amortizeValue = std::stoi(std::string(PQgetvalue(result, i, 4)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 4)));
+						std::string divisionName = PQgetvalue(result, i, 5);
+						double primaryValue = std::stoi(std::string(PQgetvalue(result, i, 6)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 6)));
+						double amortizeAccValue = std::stoi(std::string(PQgetvalue(result, i, 7)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 7)));
+						std::string barcode = PQgetvalue(result, i, 8);
+						std::string location = PQgetvalue(result, i, 9);
+						int primaryAccID = std::stoi(std::string(PQgetvalue(result, i, 10)).length() == 0 ? "0" : PQgetvalue(result, i, 10));
+						int amortizeID = std::stoi(std::string(PQgetvalue(result, i, 11)).length() == 0 ? "0" : PQgetvalue(result, i, 11));
+						int amortizeGroupID = std::stoi(std::string(PQgetvalue(result, i, 12)).length() == 0 ? "0" : PQgetvalue(result, i, 12));
+						int amortizeTypeID = std::stoi(std::string(PQgetvalue(result, i, 13)).length() == 0 ? "0" : PQgetvalue(result, i, 13));
+						int departmID = std::stoi(std::string(PQgetvalue(result, i, 14)).length() == 0 ? "0" : PQgetvalue(result, i, 14));
+						rowTuple = std::make_tuple(fixedAssetsDeID, groupNumber, amortizeTypeName, amortizeTypeCode, amortizeValue, divisionName,
+							amortizeAccValue, amortizeValue, barcode, location, primaryAccID, amortizeID, amortizeGroupID,
 							amortizeTypeID, departmID);
 						resultVector.push_back(rowTuple);
 					}
@@ -9829,7 +10074,7 @@ namespace DataLayer{
 			PGresult * result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".inventory_history_view ";
 			sqlCommand += filter;
-			sqlCommand += "  LIMIT 400 ";
+			sqlCommand += "  LIMIT 1000 ";
 			if (offset > 0)
 			{
 				sqlCommand += " OFFSET ";
@@ -9885,7 +10130,7 @@ namespace DataLayer{
 			PGresult * result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".inventorization_list_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY inventorization_id DESC LIMIT 400 ";
+			sqlCommand += " ORDER BY inventorization_id DESC LIMIT 1000 ";
 			if (offset > 0)
 			{
 				sqlCommand += " OFFSET ";
@@ -9952,7 +10197,7 @@ namespace DataLayer{
 			PGresult * result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".inventorizations_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY inventorization_id DESC LIMIT 400 ";
+			sqlCommand += " ORDER BY inventorization_id DESC LIMIT 1000 ";
 			if (offset > 0)
 			{
 				sqlCommand += " OFFSET ";
@@ -10028,7 +10273,7 @@ namespace DataLayer{
 			PGresult * result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".jobprice_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY jobprice_id DESC LIMIT 400 ";
+			sqlCommand += " ORDER BY jobprice_id DESC LIMIT 1000 ";
 			if (offset > 0)
 			{
 				sqlCommand += " OFFSET ";
@@ -10092,7 +10337,7 @@ namespace DataLayer{
 			PGresult * result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".jobsheet_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY jobsheet_id DESC LIMIT 400 ";
+			sqlCommand += " ORDER BY jobsheet_id DESC LIMIT 1000 ";
 			if (offset > 0)
 			{
 				sqlCommand += " OFFSET ";
@@ -10155,7 +10400,7 @@ namespace DataLayer{
 			PGresult * result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".locations_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY location_id DESC LIMIT 400 ";
+			sqlCommand += " ORDER BY location_id DESC LIMIT 1000 ";
 			if (offset > 0)
 			{
 				sqlCommand += " OFFSET ";
@@ -10212,7 +10457,7 @@ namespace DataLayer{
 			PGresult * result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".measures_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY measure_id DESC LIMIT 400 ";
+			sqlCommand += " ORDER BY measure_id DESC LIMIT 1000 ";
 			if (offset > 0)
 			{
 				sqlCommand += " OFFSET ";
@@ -10269,7 +10514,7 @@ namespace DataLayer{
 			PGresult * result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".net_cost_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY net_cost_id DESC LIMIT 400 ";
+			sqlCommand += " ORDER BY net_cost_id DESC LIMIT 1000 ";
 			if (offset > 0)
 			{
 				sqlCommand += " OFFSET ";
@@ -10333,7 +10578,7 @@ namespace DataLayer{
 			PGresult * result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".order_list_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY order_id DESC LIMIT 400 ";
+			sqlCommand += " ORDER BY order_id DESC LIMIT 1000 ";
 			if (offset > 0)
 			{
 				sqlCommand += " OFFSET ";
@@ -10400,7 +10645,7 @@ namespace DataLayer{
 			PGresult * result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".orders_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY order_id DESC LIMIT 400 ";
+			sqlCommand += " ORDER BY order_id DESC LIMIT 1000 ";
 			if (offset > 0)
 			{
 				sqlCommand += " OFFSET ";
@@ -10475,7 +10720,7 @@ namespace DataLayer{
 			PGresult * result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".order_raw_list_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY order_raw_id DESC LIMIT 400 ";
+			sqlCommand += " ORDER BY order_raw_id DESC LIMIT 1000 ";
 			if (offset > 0)
 			{
 				sqlCommand += " OFFSET ";
@@ -10542,7 +10787,7 @@ namespace DataLayer{
 			PGresult * result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".order_raws_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY order_raw_id DESC LIMIT 400 ";
+			sqlCommand += " ORDER BY order_raw_id DESC LIMIT 1000 ";
 			if (offset > 0)
 			{
 				sqlCommand += " OFFSET ";
@@ -10618,7 +10863,7 @@ namespace DataLayer{
 			PGresult * result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".payments_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY payment_id DESC LIMIT 400 ";
+			sqlCommand += " ORDER BY payment_id DESC LIMIT 1000 ";
 			if (offset > 0)
 			{
 				sqlCommand += " OFFSET ";
@@ -10745,7 +10990,7 @@ namespace DataLayer{
 			PGresult * result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".payslips_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY payslip_id DESC LIMIT 400 ";
+			sqlCommand += " ORDER BY payslip_id DESC LIMIT 1000 ";
 			if (offset > 0)
 			{
 				sqlCommand += " OFFSET ";
@@ -10858,7 +11103,7 @@ namespace DataLayer{
 			PGresult * result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".percent_rate_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY percent_rate_id DESC LIMIT 400 ";
+			sqlCommand += " ORDER BY percent_rate_id DESC LIMIT 1000 ";
 			if (offset > 0)
 			{
 				sqlCommand += " OFFSET ";
@@ -10914,7 +11159,7 @@ namespace DataLayer{
 			PGresult * result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".photos_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY photo_id DESC LIMIT 400 ";
+			sqlCommand += " ORDER BY photo_id DESC LIMIT 1000 ";
 			if (offset > 0)
 			{
 				sqlCommand += " OFFSET ";
@@ -10956,6 +11201,66 @@ namespace DataLayer{
 		return resultVector;
 	}
 
+	// Get posting fixed assets
+	std::vector<postingFixedAssetsViewCollection> OrmasDal::GetPostingFixedAssets(int offset, std::string& errorMessage, std::string filter)
+	{
+		postingFixedAssetsViewCollection rowTuple;
+		std::vector<postingFixedAssetsViewCollection> resultVector;
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
+		{
+			errorMessage = "DB connection was lost! Please restart application!";
+		}
+		else
+		{
+			PGresult * result;
+			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".postging_fixed_assets_view ";
+			sqlCommand += filter;
+			sqlCommand += " ORDER BY posting_fixed_assets_id DESC LIMIT 1000 ";
+			if (offset > 0)
+			{
+				sqlCommand += " OFFSET ";
+				sqlCommand += boost::lexical_cast<std::string>(offset);
+			}
+			sqlCommand += " ;";
+			result = PQexec(dbConnection, sqlCommand.c_str());
+
+			if (PQresultStatus(result) == PGRES_TUPLES_OK)
+			{
+				if (PQntuples(result) > 0)
+				{
+					for (int i = 0; i < PQntuples(result); i++)
+					{
+						int sfaID = std::stoi(std::string(PQgetvalue(result, i, 0)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 0)));
+						std::string userSurname = PQgetvalue(result, i, 1);
+						std::string accountName = PQgetvalue(result, i, 2);
+						int userID = std::stoi(std::string(PQgetvalue(result, i, 3)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 3)));
+						int subaccountID = std::stoi(std::string(PQgetvalue(result, i, 4)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 4)));
+						int accountID = std::stoi(std::string(PQgetvalue(result, i, 5)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 5)));
+						int fixedAssetsID = std::stoi(std::string(PQgetvalue(result, i, 6)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 6)));
+						int inventoryID = std::stoi(std::string(PQgetvalue(result, i, 7)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 7)));
+						rowTuple = std::make_tuple(sfaID, userSurname, accountName, userID, subaccountID, accountID, fixedAssetsID, inventoryID);
+						resultVector.push_back(rowTuple);
+					}
+					PQclear(result);
+					return resultVector;
+				}
+				else
+				{
+					// if result of query does not contain information and have 0 row, then function return an empty vector;
+					PQclear(result);
+				}
+			}
+			else
+			{
+				std::string logStr = PQresultErrorMessage(result);
+				//WriteLog(logStr);
+				PQclear(result);
+				errorMessage = "Cannot get information from DB for posting fixed assets, please contact with appliction provider!";
+			}
+		}
+		return resultVector;
+	}
+
 	// Get positions
 	std::vector<positionsCollection> OrmasDal::GetPositions(int offset, std::string& errorMessage, std::string filter)
 	{
@@ -10970,7 +11275,7 @@ namespace DataLayer{
 			PGresult * result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".positions_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY position_id DESC LIMIT 400 ";
+			sqlCommand += " ORDER BY position_id DESC LIMIT 1000 ";
 			if (offset > 0)
 			{
 				sqlCommand += " OFFSET ";
@@ -11024,7 +11329,7 @@ namespace DataLayer{
 			PGresult * result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".prices_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY price_id DESC LIMIT 400 ";
+			sqlCommand += " ORDER BY price_id DESC LIMIT 1000 ";
 			result = PQexec(dbConnection, sqlCommand.c_str());
 
 			if (PQresultStatus(result) == PGRES_TUPLES_OK)
@@ -11082,7 +11387,7 @@ namespace DataLayer{
 			PGresult * result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".product_types_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY product_type_id DESC LIMIT 400 ";
+			sqlCommand += " ORDER BY product_type_id DESC LIMIT 1000 ";
 			if (offset > 0)
 			{
 				sqlCommand += " OFFSET ";
@@ -11138,7 +11443,7 @@ namespace DataLayer{
 			PGresult * result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".product_branch_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY product_branch_id DESC LIMIT 400";
+			sqlCommand += " ORDER BY product_branch_id DESC LIMIT 1000";
 			if (offset > 0)
 			{
 				sqlCommand += " OFFSET ";
@@ -11198,7 +11503,7 @@ namespace DataLayer{
 			PGresult * result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".production_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY production_id DESC LIMIT 400 ";
+			sqlCommand += " ORDER BY production_id DESC LIMIT 1000 ";
 			if (offset > 0)
 			{
 				sqlCommand += " OFFSET ";
@@ -11255,7 +11560,7 @@ namespace DataLayer{
 			PGresult * result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".production_list_view ";
 			sqlCommand += filter;
-			sqlCommand += "  ORDER BY production_id DESC LIMIT 400 ";
+			sqlCommand += "  ORDER BY production_id DESC LIMIT 1000 ";
 			if (offset > 0)
 			{
 				sqlCommand += " OFFSET ";
@@ -11322,7 +11627,7 @@ namespace DataLayer{
 			PGresult * result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".production_consume_raw_list_view ";
 			sqlCommand += filter;
-			sqlCommand += "  ORDER BY consume_raw_id DESC LIMIT 400 ";
+			sqlCommand += "  ORDER BY consume_raw_id DESC LIMIT 1000 ";
 			if (offset > 0)
 			{
 				sqlCommand += " OFFSET ";
@@ -11389,7 +11694,7 @@ namespace DataLayer{
 			PGresult * result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".production_consume_raws_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY consume_raw_id DESC LIMIT 400 ";
+			sqlCommand += " ORDER BY consume_raw_id DESC LIMIT 1000 ";
 			if (offset > 0)
 			{
 				sqlCommand += " OFFSET ";
@@ -11465,7 +11770,7 @@ namespace DataLayer{
 			PGresult * result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".production_plan_list_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY production_plan_id DESC LIMIT 400 ";
+			sqlCommand += " ORDER BY production_plan_id DESC LIMIT 1000 ";
 			if (offset > 0)
 			{
 				sqlCommand += " OFFSET ";
@@ -11532,7 +11837,7 @@ namespace DataLayer{
 			PGresult * result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".production_plan_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY production_plan_id DESC LIMIT 400 ";
+			sqlCommand += " ORDER BY production_plan_id DESC LIMIT 1000 ";
 			if (offset > 0)
 			{
 				sqlCommand += " OFFSET ";
@@ -11599,7 +11904,7 @@ namespace DataLayer{
 			PGresult * result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".production_stock_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY production_stock_id ASC LIMIT 400 ";
+			sqlCommand += " ORDER BY production_stock_id ASC LIMIT 1000 ";
 			if (offset > 0)
 			{
 				sqlCommand += " OFFSET ";
@@ -11668,7 +11973,7 @@ namespace DataLayer{
 			PGresult * result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".products_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY product_name ASC LIMIT 400 ";
+			sqlCommand += " ORDER BY product_name ASC LIMIT 1000 ";
 			if (offset > 0)
 			{
 				sqlCommand += " OFFSET ";
@@ -11734,7 +12039,7 @@ namespace DataLayer{
 			PGresult* result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".purveyors_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY user_id DESC LIMIT 400 ";
+			sqlCommand += " ORDER BY user_id DESC LIMIT 1000 ";
 			if (offset > 0)
 			{
 				sqlCommand += " OFFSET ";
@@ -11804,7 +12109,7 @@ namespace DataLayer{
 			PGresult * result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".receipt_product_list_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY receipt_product_id DESC LIMIT 400 ";
+			sqlCommand += " ORDER BY receipt_product_id DESC LIMIT 1000 ";
 			if (offset > 0)
 			{
 				sqlCommand += " OFFSET ";
@@ -11871,7 +12176,7 @@ namespace DataLayer{
 			PGresult * result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".receipt_products_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY receipt_product_id DESC LIMIT 400 ";
+			sqlCommand += " ORDER BY receipt_product_id DESC LIMIT 1000 ";
 			if (offset > 0)
 			{
 				sqlCommand += " OFFSET ";
@@ -11947,7 +12252,7 @@ namespace DataLayer{
 			PGresult * result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".stock_transfer_list_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY stock_transfer_id DESC LIMIT 400 ";
+			sqlCommand += " ORDER BY stock_transfer_id DESC LIMIT 1000 ";
 			if (offset > 0)
 			{
 				sqlCommand += " OFFSET ";
@@ -12014,7 +12319,7 @@ namespace DataLayer{
 			PGresult * result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".stock_transfers_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY stock_transfer_id DESC LIMIT 400 ";
+			sqlCommand += " ORDER BY stock_transfer_id DESC LIMIT 1000 ";
 			if (offset > 0)
 			{
 				sqlCommand += " OFFSET ";
@@ -12090,7 +12395,7 @@ namespace DataLayer{
 			PGresult * result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".refunds_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY refund_id DESC LIMIT 400 ";
+			sqlCommand += " ORDER BY refund_id DESC LIMIT 1000 ";
 			if (offset > 0)
 			{
 				sqlCommand += " OFFSET ";
@@ -12148,7 +12453,7 @@ namespace DataLayer{
 			PGresult * result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".relation_type_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY relation_type_id DESC  LIMIT 400 ";
+			sqlCommand += " ORDER BY relation_type_id DESC  LIMIT 1000 ";
 			if (offset > 0)
 			{
 				sqlCommand += " OFFSET ";
@@ -12202,7 +12507,7 @@ namespace DataLayer{
 			PGresult * result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".relations_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY user_id_1 ASC LIMIT 400 ";
+			sqlCommand += " ORDER BY user_id_1 ASC LIMIT 1000 ";
 			if (offset > 0)
 			{
 				sqlCommand += " OFFSET ";
@@ -12267,7 +12572,7 @@ namespace DataLayer{
 			PGresult * result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".return_list_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY return_id DESC LIMIT 400 ";
+			sqlCommand += " ORDER BY return_id DESC LIMIT 1000 ";
 			if (offset > 0)
 			{
 				sqlCommand += " OFFSET ";
@@ -12334,7 +12639,7 @@ namespace DataLayer{
 			PGresult * result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".returns_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY return_id DESC LIMIT 400 ";
+			sqlCommand += " ORDER BY return_id DESC LIMIT 1000 ";
 			if (offset > 0)
 			{
 				sqlCommand += " OFFSET ";
@@ -12409,7 +12714,7 @@ namespace DataLayer{
 			PGresult * result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".roles_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY role_id ASC LIMIT 400 ";
+			sqlCommand += " ORDER BY role_id ASC LIMIT 1000 ";
 			if (offset > 0)
 			{
 				sqlCommand += " OFFSET ";
@@ -12465,7 +12770,7 @@ namespace DataLayer{
 			PGresult* result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".salaries_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY salary_id DESC LIMIT 400 ";
+			sqlCommand += " ORDER BY salary_id DESC LIMIT 1000 ";
 			if (offset > 0)
 			{
 				sqlCommand += " OFFSET ";
@@ -12531,7 +12836,7 @@ namespace DataLayer{
 			PGresult* result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".salary_type_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY salary_type_id DESC  LIMIT 400 ";
+			sqlCommand += " ORDER BY salary_type_id DESC  LIMIT 1000 ";
 			if (offset > 0)
 			{
 				sqlCommand += " OFFSET ";
@@ -12587,7 +12892,7 @@ namespace DataLayer{
 			PGresult* result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".shareholders_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY user_id DESC  LIMIT 400 ";
+			sqlCommand += " ORDER BY user_id DESC  LIMIT 1000 ";
 			if (offset > 0)
 			{
 				sqlCommand += " OFFSET ";
@@ -12646,7 +12951,7 @@ namespace DataLayer{
 			PGresult * result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".specification_list_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY specification_id DESC LIMIT 400 ";
+			sqlCommand += " ORDER BY specification_id DESC LIMIT 1000 ";
 			if (offset > 0)
 			{
 				sqlCommand += " OFFSET ";
@@ -12704,7 +13009,7 @@ namespace DataLayer{
 			PGresult * result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".specifications_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY specification_id DESC LIMIT 400 ";
+			sqlCommand += " ORDER BY specification_id DESC LIMIT 1000 ";
 			if (offset > 0)
 			{
 				sqlCommand += " OFFSET ";
@@ -12770,7 +13075,7 @@ namespace DataLayer{
 			PGresult * result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".spoilage_list_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY spoilage_id DESC LIMIT 400 ";
+			sqlCommand += " ORDER BY spoilage_id DESC LIMIT 1000 ";
 			if (offset > 0)
 			{
 				sqlCommand += " OFFSET ";
@@ -12837,7 +13142,7 @@ namespace DataLayer{
 			PGresult * result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".spoilage_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY spoilage_id DESC LIMIT 400 ";
+			sqlCommand += " ORDER BY spoilage_id DESC LIMIT 1000 ";
 			if (offset > 0)
 			{
 				sqlCommand += " OFFSET ";
@@ -12904,7 +13209,7 @@ namespace DataLayer{
 			PGresult * result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".state_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY state_id DESC LIMIT 400 ";
+			sqlCommand += " ORDER BY state_id DESC LIMIT 1000 ";
 			if (offset > 0)
 			{
 				sqlCommand += " OFFSET ";
@@ -12960,7 +13265,7 @@ namespace DataLayer{
 			PGresult * result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".status_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY status_id DESC LIMIT 400 ";
+			sqlCommand += " ORDER BY status_id DESC LIMIT 1000 ";
 			if (offset > 0)
 			{
 				sqlCommand += " OFFSET ";
@@ -13016,7 +13321,7 @@ namespace DataLayer{
 			PGresult * result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".status_rule_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY status_id DESC LIMIT 400 ";
+			sqlCommand += " ORDER BY status_id DESC LIMIT 1000 ";
 			if (offset > 0)
 			{
 				sqlCommand += " OFFSET ";
@@ -13072,7 +13377,7 @@ namespace DataLayer{
 			PGresult * result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".stock_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY product_name ASC LIMIT 400 ";
+			sqlCommand += " ORDER BY product_name ASC LIMIT 1000 ";
 			if (offset > 0)
 			{
 				sqlCommand += " OFFSET ";
@@ -13141,7 +13446,7 @@ namespace DataLayer{
 			PGresult* result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".subaccounts_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY subaccount_id DESC LIMIT 400 ";
+			sqlCommand += " ORDER BY subaccount_id DESC LIMIT 1000 ";
 			if (offset > 0)
 			{
 				sqlCommand += " OFFSET ";
@@ -13207,7 +13512,7 @@ namespace DataLayer{
 			PGresult * result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".stock_history_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY product_name ASC LIMIT 400 ";
+			sqlCommand += " ORDER BY product_name ASC LIMIT 1000 ";
 			if (offset > 0)
 			{
 				sqlCommand += " OFFSET ";
@@ -13277,7 +13582,7 @@ namespace DataLayer{
 			PGresult* result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".subaccount_history_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY subaccount_history_id DESC LIMIT 400 ";
+			sqlCommand += " ORDER BY subaccount_history_id DESC LIMIT 1000 ";
 			if (offset > 0)
 			{
 				sqlCommand += " OFFSET ";
@@ -13335,7 +13640,7 @@ namespace DataLayer{
 			PGresult* result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".taxes_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY taxes_id DESC LIMIT 400 ";
+			sqlCommand += " ORDER BY taxes_id DESC LIMIT 1000 ";
 			if (offset > 0)
 			{
 				sqlCommand += " OFFSET ";
@@ -13393,7 +13698,7 @@ namespace DataLayer{
 			PGresult * result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".timesheet_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY timesheet_id DESC LIMIT 400 ";
+			sqlCommand += " ORDER BY timesheet_id DESC LIMIT 1000 ";
 			if (offset > 0)
 			{
 				sqlCommand += " OFFSET ";
@@ -13452,7 +13757,7 @@ namespace DataLayer{
 			PGresult * result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".transport_list_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY product_name ASC LIMIT 400 ";
+			sqlCommand += " ORDER BY product_name ASC LIMIT 1000 ";
 			if (offset > 0)
 			{
 				sqlCommand += " OFFSET ";
@@ -13519,7 +13824,7 @@ namespace DataLayer{
 			PGresult * result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".transports_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY transport_id DESC LIMIT 400 ";
+			sqlCommand += " ORDER BY transport_id DESC LIMIT 1000 ";
 			if (offset > 0)
 			{
 				sqlCommand += " OFFSET ";
@@ -13595,7 +13900,7 @@ namespace DataLayer{
 			PGresult * result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".users_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY user_id DESC LIMIT 400 ";
+			sqlCommand += " ORDER BY user_id DESC LIMIT 1000 ";
 			if (offset > 0)
 			{
 				sqlCommand += " OFFSET ";
@@ -13659,7 +13964,7 @@ namespace DataLayer{
 			PGresult * result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".warehouse_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY warehouse_id DESC LIMIT 400";
+			sqlCommand += " ORDER BY warehouse_id DESC LIMIT 1000";
 			if (offset > 0)
 			{
 				sqlCommand += " OFFSET ";
@@ -13720,7 +14025,7 @@ namespace DataLayer{
 			PGresult * result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".warehouse_employee_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY warehouse_employee_id DESC LIMIT 400";
+			sqlCommand += " ORDER BY warehouse_employee_id DESC LIMIT 1000";
 			if (offset > 0)
 			{
 				sqlCommand += " OFFSET ";
@@ -13782,7 +14087,7 @@ namespace DataLayer{
 			PGresult * result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".warehouse_type_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY warehouse_type_id DESC LIMIT 400";
+			sqlCommand += " ORDER BY warehouse_type_id DESC LIMIT 1000";
 			if (offset > 0)
 			{
 				sqlCommand += " OFFSET ";
@@ -13838,7 +14143,7 @@ namespace DataLayer{
 			PGresult * result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".withdrawals_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY withdrawal_id DESC LIMIT 400 ";
+			sqlCommand += " ORDER BY withdrawal_id DESC LIMIT 1000 ";
 			if (offset > 0)
 			{
 				sqlCommand += " OFFSET ";
@@ -13910,7 +14215,7 @@ namespace DataLayer{
 			PGresult * result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".write_off_list_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY write_off_id DESC LIMIT 400 ";
+			sqlCommand += " ORDER BY write_off_id DESC LIMIT 1000 ";
 			if (offset > 0)
 			{
 				sqlCommand += " OFFSET ";
@@ -13977,7 +14282,7 @@ namespace DataLayer{
 			PGresult * result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".write_offs_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY write_off_id DESC LIMIT 400 ";
+			sqlCommand += " ORDER BY write_off_id DESC LIMIT 1000 ";
 			if (offset > 0)
 			{
 				sqlCommand += " OFFSET ";
@@ -14052,7 +14357,7 @@ namespace DataLayer{
 			PGresult * result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".write_off_raw_list_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY write_off_raw_id DESC LIMIT 400 ";
+			sqlCommand += " ORDER BY write_off_raw_id DESC LIMIT 1000 ";
 			if (offset > 0)
 			{
 				sqlCommand += " OFFSET ";
@@ -14119,7 +14424,7 @@ namespace DataLayer{
 			PGresult * result;
 			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".write_off_raws_view ";
 			sqlCommand += filter;
-			sqlCommand += " ORDER BY write_off_raw_id DESC LIMIT 400 ";
+			sqlCommand += " ORDER BY write_off_raw_id DESC LIMIT 1000 ";
 			if (offset > 0)
 			{
 				sqlCommand += " OFFSET ";
@@ -14310,8 +14615,7 @@ namespace DataLayer{
 	}
 
 	// Create amortize type
-	bool OrmasDal::CreateAmortizeType(int amortizeTypeID, std::string typeName, std::string typeCode, int amortizePercent,
-		double valueDepOnSales, int amortize_year, double amortize_coef, std::string& errorMessage)
+	bool OrmasDal::CreateAmortizeType(int amortizeTypeID, std::string typeName, std::string typeCode, std::string& errorMessage)
 	{
 		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
@@ -14319,22 +14623,13 @@ namespace DataLayer{
 			return false;
 		}
 		PGresult * result;
-		std::string sqlCommand = "INSERT INTO \"OrmasSchema\".amortize_type(amortize_type_id, amortize_type_name, amortize_type_code, \
-								 					amortize_percent, value_depends_on_sales, amortize_year, amortize_coefficient) VALUES(";
+		std::string sqlCommand = "INSERT INTO \"OrmasSchema\".amortize_type(amortize_type_id, amortize_type_name, amortize_type_code) VALUES(";
 		sqlCommand += boost::lexical_cast<std::string>(amortizeTypeID);
 		sqlCommand += ", '";
 		sqlCommand += typeName;
 		sqlCommand += "', '";
 		sqlCommand += typeCode;
-		sqlCommand += "', ";
-		sqlCommand += boost::lexical_cast<std::string>(amortizePercent);
-		sqlCommand += ", ";
-		sqlCommand += boost::lexical_cast<std::string>(valueDepOnSales);
-		sqlCommand += ", ";
-		sqlCommand += boost::lexical_cast<std::string>(amortize_year);
-		sqlCommand += ", ";
-		sqlCommand += boost::lexical_cast<std::string>(amortize_coef);
-		sqlCommand += ");";
+		sqlCommand += "');";
 		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
@@ -15598,12 +15893,21 @@ namespace DataLayer{
 		sqlCommand += ", '";
 		sqlCommand += isAmortize ? "TRUE" : "FALSE";
 		sqlCommand += "', '";
-		sqlCommand += inventoryNumber;
+		sqlCommand += buyDate;
 		sqlCommand += "', '";
-		sqlCommand += inventoryNumber;
-		sqlCommand += "', '";
-		sqlCommand += inventoryNumber;
-		sqlCommand += "', ";
+		sqlCommand += startOfOperDate;
+		if (endOfOperDate.empty())
+		{
+			sqlCommand += "', ";
+			sqlCommand += "NULL";
+			sqlCommand += ", ";
+		}
+		else
+		{
+			sqlCommand += "', '";
+			sqlCommand += endOfOperDate;
+			sqlCommand += "', ";
+		}
 		sqlCommand += boost::lexical_cast<std::string>(statusID);
 		sqlCommand += ", ";
 		sqlCommand += boost::lexical_cast<std::string>(fixedAssetsDeID);
@@ -15665,7 +15969,7 @@ namespace DataLayer{
 	}
 
 	bool OrmasDal::CreateFixedAssetsDetails(int fixedAssetsDeID, int amGroupID, int amTypeID, int departmentID, std::string fixedAssetsLocation,
-		int primaryAccID, int amortizeAccID, std::string barcodeNumber, std::string& errorMessage)
+		int primaryAccID, int amortizeAccID, std::string barcodeNumber, double amValue, std::string& errorMessage)
 	{
 		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
@@ -15674,7 +15978,7 @@ namespace DataLayer{
 		}
 		PGresult * result;
 		std::string sqlCommand = "INSERT INTO \"OrmasSchema\".fixed_assets_details(fixed_assets_details_id, amortize_group_id \
-								 , amortize_type_id, department_id, fixed_assets_location, primary_cost_account_id, amortize_account_id, buy_date, barcode_number) VALUES(";
+								 , amortize_type_id, department_id, fixed_assets_location, primary_cost_account_id, amortize_account_id, barcode_number, amortize_value) VALUES(";
 		sqlCommand += boost::lexical_cast<std::string>(fixedAssetsDeID);
 		sqlCommand += ", ";
 		sqlCommand += boost::lexical_cast<std::string>(amGroupID);
@@ -15690,7 +15994,9 @@ namespace DataLayer{
 		sqlCommand += boost::lexical_cast<std::string>(amortizeAccID);
 		sqlCommand += ", '";
 		sqlCommand += barcodeNumber;
-		sqlCommand += "');";
+		sqlCommand += "', ";
+		sqlCommand += boost::lexical_cast<std::string>(amValue);
+		sqlCommand += ");";
 		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
@@ -16475,6 +16781,43 @@ namespace DataLayer{
 			//WriteLog(logStr);
 			PQclear(result);
 			errorMessage = "SQL command for the photo creation is failed, please contact with application provider!";
+			return false;
+		}
+		PQclear(result);
+		return true;
+	}
+
+	// Create posting fixed assets
+	bool OrmasDal::CreatePostingFixedAssets(int posFxdAstID, int userID, int subaccID, int accID, int fixedAssetsID, int inventoryID, std::string& errorMessage)
+	{
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
+		{
+			errorMessage = "DB connection was lost! Please restart application!";
+			return false;
+		}
+		PGresult * result;
+		std::string sqlCommand = "INSERT INTO \"OrmasSchema\".posting_fixed_assets(posting_fixed_assets_id, user_id, subaccount_id, \
+								  account_id, fixed_assets_id, inventory_id) VALUES(";
+		sqlCommand += boost::lexical_cast<std::string>(posFxdAstID);
+		sqlCommand += ", ";
+		sqlCommand += boost::lexical_cast<std::string>(userID);
+		sqlCommand += ", ";
+		sqlCommand += boost::lexical_cast<std::string>(subaccID);
+		sqlCommand += ", ";
+		sqlCommand += boost::lexical_cast<std::string>(accID);
+		sqlCommand += ", ";
+		sqlCommand += boost::lexical_cast<std::string>(fixedAssetsID);
+		sqlCommand += ", ";
+		sqlCommand += boost::lexical_cast<std::string>(inventoryID);
+		sqlCommand += ");";
+		result = PQexec(dbConnection, sqlCommand.c_str());
+
+		if (PQresultStatus(result) != PGRES_COMMAND_OK)
+		{
+			std::string logStr = PQresultErrorMessage(result);
+			//WriteLog(logStr);
+			PQclear(result);
+			errorMessage = "SQL command for the posting fixed assets creation is failed, please contact with application provider!";
 			return false;
 		}
 		PQclear(result);
@@ -20634,6 +20977,35 @@ namespace DataLayer{
 		}
 	}
 
+	// Delete posting fixed assets
+	bool OrmasDal::DeletePostingFixedAssets(int id, std::string& errorMessage)
+	{
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
+		{
+			errorMessage = "DB connection was lost! Please restart application!";
+			return false;
+		}
+		PGresult * result;
+		std::string sqlCommand = "DELETE FROM \"OrmasSchema\".posting_fixed_assets where posting_fixed_assets_id=";
+		sqlCommand += boost::lexical_cast<std::string>(id);
+		sqlCommand += ";";
+		result = PQexec(dbConnection, sqlCommand.c_str());
+
+		if (PQresultStatus(result) == PGRES_COMMAND_OK)
+		{
+			PQclear(result);
+			return true;
+		}
+		else
+		{
+			std::string logStr = PQresultErrorMessage(result);
+			//WriteLog(logStr);
+			PQclear(result);
+			errorMessage = "Could not delete photo! SQL command is failed. Please contact with application provider!";
+			return false;
+		}
+	}
+
 	// Delete position
 	bool OrmasDal::DeletePosition(int id, std::string& errorMessage)
 	{
@@ -22695,7 +23067,7 @@ namespace DataLayer{
 	}
 
 	//Update amortize group
-	bool OrmasDal::UpdateAmortizeType(int amortizeTypeID, std::string typeName, std::string typeCode, int amortizePercent, double valueDepOnSales, int amortize_year, double amortize_coef, std::string& errorMessage)
+	bool OrmasDal::UpdateAmortizeType(int amortizeTypeID, std::string typeName, std::string typeCode, std::string& errorMessage)
 	{
 		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
@@ -22703,20 +23075,11 @@ namespace DataLayer{
 			return false;
 		}
 		PGresult * result;
-		std::string sqlCommand = "UPDATE \"OrmasSchema\".amortize_type SET(amortize_type_name, amortize_type_code, amortize_percent, \
-								 value_depends_on_sales, amortize_year, amortize_coefficient) = ('";
+		std::string sqlCommand = "UPDATE \"OrmasSchema\".amortize_type SET(amortize_type_name, amortize_type_code) = ('";
 		sqlCommand += typeName;
 		sqlCommand += "', '";
 		sqlCommand += typeCode;
-		sqlCommand += "', ";
-		sqlCommand += boost::lexical_cast<std::string>(amortizePercent);
-		sqlCommand += ", ";
-		sqlCommand += boost::lexical_cast<std::string>(valueDepOnSales);
-		sqlCommand += ", ";
-		sqlCommand += boost::lexical_cast<std::string>(amortize_year);
-		sqlCommand += ", ";
-		sqlCommand += boost::lexical_cast<std::string>(amortize_coef);
-		sqlCommand += ") WHERE amortize_type_id=";
+		sqlCommand += "') WHERE amortize_type_id=";
 		sqlCommand += boost::lexical_cast<std::string>(amortizeTypeID);
 		sqlCommand += ";";
 		result = PQexec(dbConnection, sqlCommand.c_str());
@@ -23772,9 +24135,18 @@ namespace DataLayer{
 		sqlCommand += buyDate;
 		sqlCommand += "', '";
 		sqlCommand += startOfOperDate;
-		sqlCommand += "', '";
-		sqlCommand += endOfOperDate;
-		sqlCommand += "', ";
+		if (endOfOperDate.empty())
+		{
+			sqlCommand += "', ";
+			sqlCommand += "NULL";
+			sqlCommand += ", ";
+		}
+		else
+		{
+			sqlCommand += "', '";
+			sqlCommand += endOfOperDate;
+			sqlCommand += "', ";
+		}
 		sqlCommand += boost::lexical_cast<std::string>(statusID);
 		sqlCommand += ", ";
 		sqlCommand += boost::lexical_cast<std::string>(fixedAssetsDeID);
@@ -23841,7 +24213,7 @@ namespace DataLayer{
 	}
 	
 	bool OrmasDal::UpdateFixedAssetsDetails(int fixedAssetsDeID, int amGroupID, int amTypeID, int departmentID, std::string fixedAssetsLocation,
-		int primaryAccID, int amortizeAccID, std::string barcodeNumber, std::string& errorMessage)
+		int primaryAccID, int amortizeAccID, std::string barcodeNumber, double amValue, std::string& errorMessage)
 	{
 		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
@@ -23850,7 +24222,7 @@ namespace DataLayer{
 		}
 		PGresult * result;
 		std::string sqlCommand = "UPDATE \"OrmasSchema\".fixed_assets_details SET(amortize_group_id, amortize_type_id, department_id, \
-								 								  fixed_assets_location, primary_cost_account_id, amortize_account_id, barcode_number) = (";
+								 								  fixed_assets_location, primary_cost_account_id, amortize_account_id, barcode_number, amortize_value) = (";
 		sqlCommand += boost::lexical_cast<std::string>(fixedAssetsDeID);
 		sqlCommand += ", ";
 		sqlCommand += boost::lexical_cast<std::string>(amGroupID);
@@ -23866,7 +24238,9 @@ namespace DataLayer{
 		sqlCommand += boost::lexical_cast<std::string>(amortizeAccID);
 		sqlCommand += ", '";
 		sqlCommand += barcodeNumber;
-		sqlCommand += "') WHERE fixed_assets_details_id=";
+		sqlCommand += "', ";
+		sqlCommand += boost::lexical_cast<std::string>(amValue);
+		sqlCommand += ") WHERE fixed_assets_details_id=";
 		sqlCommand += boost::lexical_cast<std::string>(fixedAssetsDeID);
 		sqlCommand += ";";
 		result = PQexec(dbConnection, sqlCommand.c_str());
@@ -24575,6 +24949,43 @@ namespace DataLayer{
 			PQclear(result);
 			errorMessage = "SQL command is failing while updating the photo with this ID = ";
 			errorMessage += boost::lexical_cast<std::string>(photoID);
+			errorMessage += " .Please contact with application provider!";
+			return false;
+		}
+		PQclear(result);
+		return true;
+	}
+
+	bool OrmasDal::UpdatePostingFixedAssets(int posFxdAstID, int userID, int subaccID, int accID, int fixedAssetsID, int inventoryID, std::string& errorMessage)
+	{
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
+		{
+			errorMessage = "DB connection was lost! Please restart application!";
+			return false;
+		}
+		PGresult * result;
+		std::string sqlCommand = "UPDATE \"OrmasSchema\".posting_fixed_assets SET(user_id, subaccount_id, account_id, fixed_assets_id, inventory_id) = (";
+		sqlCommand += boost::lexical_cast<std::string>(userID);
+		sqlCommand += ", ";
+		sqlCommand += boost::lexical_cast<std::string>(subaccID);
+		sqlCommand += ", ";
+		sqlCommand += boost::lexical_cast<std::string>(accID);
+		sqlCommand += ", ";
+		sqlCommand += boost::lexical_cast<std::string>(fixedAssetsID);
+		sqlCommand += ", ";
+		sqlCommand += boost::lexical_cast<std::string>(inventoryID);
+		sqlCommand += ") WHERE posting_fixed_assets_id=";
+		sqlCommand += boost::lexical_cast<std::string>(posFxdAstID);
+		sqlCommand += ";";
+		result = PQexec(dbConnection, sqlCommand.c_str());
+
+		if (PQresultStatus(result) != PGRES_COMMAND_OK)
+		{
+			std::string logStr = PQresultErrorMessage(result);
+			//WriteLog(logStr);
+			PQclear(result);
+			errorMessage = "SQL command is failing while updating the posting fixed assets with this ID = ";
+			errorMessage += boost::lexical_cast<std::string>(posFxdAstID);
 			errorMessage += " .Please contact with application provider!";
 			return false;
 		}
@@ -27070,7 +27481,7 @@ namespace DataLayer{
 		return filter;
 	}
 
-	std::string OrmasDal::GetFilterForAmortizeType(int amortizeTypeID, std::string typeName, std::string typeCode, int amortizePercent, double valueDepOnSales, int amortize_year, double amortize_coef)
+	std::string OrmasDal::GetFilterForAmortizeType(int amortizeTypeID, std::string typeName, std::string typeCode)
 	{
 		std::string tempString = "";
 		std::string filter = " where ";
@@ -27096,34 +27507,6 @@ namespace DataLayer{
 			tempString += " amortize_type_code = '";
 			tempString += typeCode;
 			tempString += "'";
-			conditionVec.push_back(tempString);
-		}
-		if (0 != amortizePercent)
-		{
-			tempString = "";
-			tempString += " amortize_percent = ";
-			tempString += boost::lexical_cast<std::string>(amortizePercent);
-			conditionVec.push_back(tempString);
-		}
-		if (0 != valueDepOnSales)
-		{
-			tempString = "";
-			tempString += " value_depends_on_sales = ";
-			tempString += boost::lexical_cast<std::string>(valueDepOnSales);
-			conditionVec.push_back(tempString);
-		}
-		if (0 != amortize_year)
-		{
-			tempString = "";
-			tempString += " amortize_year = ";
-			tempString += boost::lexical_cast<std::string>(amortize_year);
-			conditionVec.push_back(tempString);
-		}
-		if (0 != amortize_coef)
-		{
-			tempString = "";
-			tempString += " amortize_coefficient = ";
-			tempString += boost::lexical_cast<std::string>(amortize_coef);
 			conditionVec.push_back(tempString);
 		}
 		if (conditionVec.size() >= 1)
@@ -29741,7 +30124,7 @@ namespace DataLayer{
 	}
 
 	std::string OrmasDal::GetFilterForFixedAssetsDetails(int fixedAssetsDeID, int amGroupID, int amTypeID, int departmentID, std::string fixedAssetsLocation,
-		int primaryAccID, int amortizeAccID, std::string barcodeNumber)
+		int primaryAccID, int amortizeAccID, std::string barcodeNumber, double amValue)
 	{
 		std::string tempString = "";
 		std::string filter = " where ";
@@ -29765,6 +30148,13 @@ namespace DataLayer{
 			tempString = "";
 			tempString += " amortize_type_id = ";
 			tempString += boost::lexical_cast<std::string>(amTypeID);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != amValue)
+		{
+			tempString = "";
+			tempString += " amortize_value = ";
+			tempString += boost::lexical_cast<std::string>(amValue);
 			conditionVec.push_back(tempString);
 		}
 		if (0 != departmentID)
@@ -31486,6 +31876,69 @@ namespace DataLayer{
 			tempString += " photo_source = '";
 			tempString += photoSource;
 			tempString += "'";
+			conditionVec.push_back(tempString);
+		}
+		if (conditionVec.size() >= 1)
+		{
+			filter += conditionVec.at(0);
+			for (unsigned int i = 1; i < conditionVec.size(); i++)
+			{
+				filter += " AND ";
+				filter += conditionVec.at(i);
+			}
+		}
+		else
+		{
+			return "";
+		}
+		return filter;
+	}
+
+	std::string OrmasDal::GetFilterForPostingFixedAssets(int posFxdAstID, int userID, int subaccID, int accID, int fixedAssetsID, int inventoryID)
+	{
+		std::string tempString = "";
+		std::string filter = " where ";
+		std::vector<std::string> conditionVec;
+		if (0 != posFxdAstID)
+		{
+			tempString = "";
+			tempString += " posting_fixed_assets_id = ";
+			tempString += boost::lexical_cast<std::string>(posFxdAstID);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != userID)
+		{
+			tempString = "";
+			tempString += " user_id = ";
+			tempString += boost::lexical_cast<std::string>(userID);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != subaccID)
+		{
+			tempString = "";
+			tempString += " subaccount_id = ";
+			tempString += boost::lexical_cast<std::string>(subaccID);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != accID)
+		{
+			tempString = "";
+			tempString += " account_id = ";
+			tempString += boost::lexical_cast<std::string>(accID);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != fixedAssetsID)
+		{
+			tempString = "";
+			tempString += " fixed_assets_id = ";
+			tempString += boost::lexical_cast<std::string>(fixedAssetsID);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != inventoryID)
+		{
+			tempString = "";
+			tempString += " inventory_id = ";
+			tempString += boost::lexical_cast<std::string>(inventoryID);
 			conditionVec.push_back(tempString);
 		}
 		if (conditionVec.size() >= 1)

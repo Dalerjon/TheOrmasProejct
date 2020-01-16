@@ -1,5 +1,16 @@
 #include "stdafx.h"
 #include "FixedAssetsClass.h"
+#include "BalanceClass.h"
+#include "UserClass.h"
+#include "EntryClass.h"
+#include "SubaccountClass.h"
+#include "AccountClass.h"
+#include "EntryOperationRelationClass.h"
+#include "StatusClass.h"
+#include "CompanyAccountRelationClass.h"
+#include "CompanyEmployeeRelationClass.h"
+#include "CompanyClass.h"
+#include <codecvt>
 
 namespace BusinessLayer
 {
@@ -174,6 +185,7 @@ namespace BusinessLayer
 	{
 		if (IsDuplicate(ormasDal, errorMessage))
 			return false;
+		id = ormasDal.GenerateID();
 		//ormasDal.StartTransaction(errorMessage);
 		if (0 != id && ormasDal.CreateFixedAssets(id, specificationID, inventoryNumber, primaryCost, stopCost, serviceLife,
 			isAmortize, buyDate, startOfOperationDate, endOfOperationDate, statusID, fixedAssetsDetailsID, errorMessage))
@@ -346,4 +358,260 @@ namespace BusinessLayer
 		errorMessage = "Fixed assets with these parameters are already exist! Please avoid the duplication!";
 		return true;
 	}
+
+	bool FixedAssets::CreatePostingFixedAssetsEntry(DataLayer::OrmasDal& ormasDal, int acctbID, int purID, int accID, int debitingAccID, double value, std::string execDate, std::string& errorMessage)
+	{
+		if (purID > 0)
+		{
+			Balance balance;
+			if (balance.GetBalanceByUserID(ormasDal, purID, errorMessage))
+			{
+				int debAccID = 0;
+				int credAccID = 0;
+				debAccID = debitingAccID;
+				credAccID = balance.GetSubaccountID();
+				if (this->CreateEntry(ormasDal, debAccID, value, credAccID, execDate, errorMessage))
+				{
+					return true;
+				}
+			}
+			return false;
+		}
+		if (acctbID > 0)
+		{
+			Balance balance;
+			Balance tempBalance;
+			Subaccount sub;
+			Account account;
+			if (!account.GetAccountByNumber(ormasDal, "10520", errorMessage))
+				return false;
+			balance.SetUserID(acctbID);
+			std::string filter = balance.GenerateFilter(ormasDal);
+			std::vector<DataLayer::balancesViewCollection> balanceVector = ormasDal.GetBalances(errorMessage, filter);
+			if (0 < balanceVector.size())
+			{
+				balance.Clear();
+				for each (auto item in balanceVector)
+				{
+					sub.Clear();
+					tempBalance.Clear();
+					if (!tempBalance.GetBalanceByID(ormasDal, std::get<0>(item), errorMessage))
+						return false;
+					if (sub.GetSubaccountByID(ormasDal, tempBalance.GetSubaccountID(), errorMessage))
+					{
+						if (sub.GetParentAccountID() == account.GetID())
+						{
+							balance.SetSubaccountID(sub.GetID());
+						}
+					}
+				}
+			}
+			else
+			{
+				return false;
+			}
+			if (balance.GetSubaccountID() <= 0)
+				return false;
+			if (balance.GetBalanceBySubaccountID(ormasDal, balance.GetSubaccountID(), errorMessage))
+			{
+				int credAccID = balance.GetSubaccountID();
+				int debAccID = debitingAccID;
+				if (0 == debAccID || 0 == credAccID)
+				{
+					return false;
+				}
+				if (this->CreateEntry(ormasDal, debAccID, value, credAccID, execDate, errorMessage))
+				{
+					return true;
+				}
+			}
+		}
+		else if (accID > 0)
+		{
+			int credAccID = accID;
+			int debAccID = debitingAccID;
+			if (0 == debAccID || 0 == credAccID)
+			{
+				return false;
+			}
+			if (this->CreateEntry(ormasDal, debAccID, value, credAccID, execDate, errorMessage))
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+
+	bool FixedAssets::CreatePostingFixedAssetsEntryReverce(DataLayer::OrmasDal& ormasDal, int acctbID, int purID, int accID, int debitingAccID, double value, std::string execDate, std::string& errorMessage)
+	{
+		if (purID > 0)
+		{
+			Balance balance;
+			if (balance.GetBalanceByUserID(ormasDal, purID, errorMessage))
+			{
+				int debAccID = 0;
+				int credAccID = 0;
+				debAccID = debitingAccID;
+				credAccID = balance.GetSubaccountID();
+				if (this->CreateEntry(ormasDal, debAccID, value, credAccID, execDate, errorMessage))
+				{
+					return true;
+				}
+			}
+			return false;
+		}
+		if (acctbID > 0)
+		{
+			Balance balance;
+			Balance tempBalance;
+			Subaccount sub;
+			Account account;
+			if (!account.GetAccountByNumber(ormasDal, "10520", errorMessage))
+				return false;
+			balance.SetUserID(acctbID);
+			std::string filter = balance.GenerateFilter(ormasDal);
+			std::vector<DataLayer::balancesViewCollection> balanceVector = ormasDal.GetBalances(errorMessage, filter);
+			if (0 < balanceVector.size())
+			{
+				balance.Clear();
+				for each (auto item in balanceVector)
+				{
+					sub.Clear();
+					tempBalance.Clear();
+					if (!tempBalance.GetBalanceByID(ormasDal, std::get<0>(item), errorMessage))
+						return false;
+					if (sub.GetSubaccountByID(ormasDal, tempBalance.GetSubaccountID(), errorMessage))
+					{
+						if (sub.GetParentAccountID() == account.GetID())
+						{
+							balance.SetSubaccountID(sub.GetID());
+						}
+					}
+				}
+			}
+			else
+			{
+				return false;
+			}
+			if (balance.GetSubaccountID() <= 0)
+				return false;
+			if (balance.GetBalanceBySubaccountID(ormasDal, balance.GetSubaccountID(), errorMessage))
+			{
+				int credAccID = balance.GetSubaccountID();
+				int debAccID = debitingAccID;
+				if (0 == debAccID || 0 == credAccID)
+				{
+					return false;
+				}
+				if (this->CreateEntry(ormasDal, credAccID, value, debAccID, execDate, errorMessage))
+				{
+					return true;
+				}
+			}
+		}
+		else if (accID > 0)
+		{
+			int credAccID = accID;
+			int debAccID = debitingAccID;
+			if (0 == debAccID || 0 == credAccID)
+			{
+				return false;
+			}
+			if (this->CreateEntry(ormasDal, credAccID, value, debAccID, execDate, errorMessage))
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+
+	bool FixedAssets::CreatePostingFixedAssetsEntryWriteOFF(DataLayer::OrmasDal& ormasDal, int fixedAssetsID, std::string& errorMessage)
+	{
+		FixedAssets fx;
+		if (!fx.GetFixedAssetsByID(ormasDal, fixedAssetsID, errorMessage))
+			return false;
+
+	}
+
+	bool FixedAssets::CreateEntry(DataLayer::OrmasDal& ormasDal, int debAccID, double currentSum, int credAccID, std::string oExecDate, std::string& errorMessage)
+	{
+		Entry entry;
+		EntryOperationRelation eoRelation;
+		entry.SetDate(oExecDate);
+		entry.SetDebitingAccountID(debAccID);
+		entry.SetValue(currentSum);
+		entry.SetCreditingAccountID(credAccID);
+		entry.SetDescription(wstring_to_utf8(L"Покупака основного средства!"));
+		if (entry.CreateEntry(ormasDal, errorMessage))
+		{
+			eoRelation.SetEntryID(entry.GetID());
+			eoRelation.SetOperationID(id);
+			if (!eoRelation.CreateEntryOperationRelation(ormasDal, errorMessage))
+			{
+				return false;
+			}
+		}
+		else
+		{
+			return false;
+		}
+		return true;
+	}
+
+	bool FixedAssets::CreateEntryCancel(DataLayer::OrmasDal& ormasDal, int debAccID, double currentSum, int credAccID, std::string oExecDate, std::string& errorMessage)
+	{
+		Entry entry;
+		EntryOperationRelation eoRelation;
+		entry.SetDate(oExecDate);
+		entry.SetDebitingAccountID(debAccID);
+		entry.SetValue(currentSum);
+		entry.SetCreditingAccountID(credAccID);
+		entry.SetDescription(wstring_to_utf8(L"Отмена покупки основного средства"));
+		if (entry.CreateEntry(ormasDal, errorMessage))
+		{
+			eoRelation.SetEntryID(entry.GetID());
+			eoRelation.SetOperationID(id);
+			if (!eoRelation.CreateEntryOperationRelation(ormasDal, errorMessage))
+			{
+				return false;
+			}
+		}
+		else
+		{
+			return false;
+		}
+		return true;
+	}
+
+	bool FixedAssets::CreateEntryWriteOFF(DataLayer::OrmasDal& ormasDal, int debAccID, double currentSum, int credAccID, std::string oExecDate, std::string& errorMessage)
+	{
+		Entry entry;
+		EntryOperationRelation eoRelation;
+		entry.SetDate(oExecDate);
+		entry.SetDebitingAccountID(debAccID);
+		entry.SetValue(currentSum);
+		entry.SetCreditingAccountID(credAccID);
+		entry.SetDescription(wstring_to_utf8(L"Списание основного средства"));
+		if (entry.CreateEntry(ormasDal, errorMessage))
+		{
+			eoRelation.SetEntryID(entry.GetID());
+			eoRelation.SetOperationID(id);
+			if (!eoRelation.CreateEntryOperationRelation(ormasDal, errorMessage))
+			{
+				return false;
+			}
+		}
+		else
+		{
+			return false;
+		}
+		return true;
+	}
+
+	std::string FixedAssets::wstring_to_utf8(const std::wstring& str)
+	{
+		std::wstring_convert<std::codecvt_utf8<wchar_t>> myconv;
+		return myconv.to_bytes(str);
+	}
 }
+

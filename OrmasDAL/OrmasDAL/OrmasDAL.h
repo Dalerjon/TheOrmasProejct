@@ -25,6 +25,7 @@ namespace DataLayer{
 		void SetDBParams(std::string dbname, std::string username, std::string password, std::string host, int port);
 		int GenerateID();
 		int GenerateAccountID();
+		int GenerateInventoryNumber();
 		std::string GetSystemDate();
 		std::string GetSystemDateTime();
 
@@ -79,6 +80,7 @@ namespace DataLayer{
 		std::vector<entryRoutingCollection> GetEntryRouting(std::string& errorMessage, std::string filter = std::string());
 		std::vector<financialReportCollection> GetFinancialReport(std::string& errorMessage, std::string filter = std::string());
 		std::vector<fixedAssetsViewCollection> GetFixedAssets(std::string& errorMessage, std::string filter = std::string());
+		std::vector<fixedAssetsUnionCollection> GetFixedAssetsUnion(std::string& errorMessage, std::string filter = std::string());
 		std::vector<fixedAssetsDetailsViewCollection> GetFixedAssetsDetails(std::string& errorMessage, std::string filter = std::string());
 		std::vector<fixedAssetsSpecificationCollection> GetFixedAssetsSpecification(std::string& errorMessage, std::string filter = std::string());
 		std::vector<fixedAssetsOperationsCollection> GetFixedAssetsOperation(std::string& errorMessage, std::string filter = std::string());
@@ -101,6 +103,7 @@ namespace DataLayer{
 		std::vector<payslipOrderCollection> GetPayslipOrder(std::string& errorMessage, std::string filter = std::string());
 		std::vector<percentRateCollection> GetPercentRate(std::string& errorMessage, std::string filter = std::string());
 		std::vector<photosCollection> GetPhotos(std::string& errorMessage, std::string filter = std::string());
+		std::vector<postingFixedAssetsViewCollection> GetPostingFixedAssets(std::string& errorMessage, std::string filter = std::string());
 		std::vector<positionsCollection> GetPositions(std::string& errorMessage, std::string filter = std::string());
 		std::vector<productBranchViewCollection> GetProductBranch(std::string& errorMessage, std::string filter = std::string());
 		std::vector<pricesViewCollection> GetPrices(std::string& errorMessage, std::string filter = std::string());
@@ -195,6 +198,7 @@ namespace DataLayer{
 		std::vector<entryOperationCollection> GetEntryOperation(int offset, std::string& errorMessage, std::string filter = std::string());
 		std::vector<financialReportCollection> GetFinancialReport(int offset, std::string& errorMessage, std::string filter = std::string());
 		std::vector<fixedAssetsViewCollection> GetFixedAssets(int offset, std::string& errorMessage, std::string filter = std::string());
+		std::vector<fixedAssetsUnionCollection> GetFixedAssetsUnion(int offset, std::string& errorMessage, std::string filter = std::string());
 		std::vector<fixedAssetsDetailsViewCollection> GetFixedAssetsDetails(int offset, std::string& errorMessage, std::string filter = std::string());
 		std::vector<fixedAssetsSpecificationCollection> GetFixedAssetsSpecification(int offset, std::string& errorMessage, std::string filter = std::string());
 		std::vector<fixedAssetsOperationsCollection> GetFixedAssetsOperation(int offset, std::string& errorMessage, std::string filter = std::string());
@@ -217,6 +221,7 @@ namespace DataLayer{
 		std::vector<payslipOrderCollection> GetPayslipOrder(int offset, std::string& errorMessage, std::string filter = std::string());
 		std::vector<percentRateCollection> GetPercentRate(int offset, std::string& errorMessage, std::string filter = std::string());
 		std::vector<photosCollection> GetPhotos(int offset, std::string& errorMessage, std::string filter = std::string());
+		std::vector<postingFixedAssetsViewCollection> GetPostingFixedAssets(int offset, std::string& errorMessage, std::string filter = std::string());
 		std::vector<positionsCollection> GetPositions(int offset, std::string& errorMessage, std::string filter = std::string());
 		std::vector<productBranchViewCollection> GetProductBranch(int offset, std::string& errorMessage, std::string filter = std::string());
 		std::vector<pricesViewCollection> GetPrices(int offset, std::string& errorMessage, std::string filter = std::string());
@@ -278,7 +283,7 @@ namespace DataLayer{
 		bool CreateAccountable(int userID, std::string aInformation, std::string& errorMessage);
 		bool CreateAccountableTransaction(int accTransID, int accountableID, double startValue, double endValue, int operationID, std::string& errorMessage);
 		bool CreateAmortizeGroup(int amortizeGroupID, int groupNumber, int fromMonth, int toMonth, std::string& errorMessage);
-		bool CreateAmortizeType(int amortizeTypeID, std::string typeName, std::string typeCode, int amortizePercent, double valueDepOnSales, int amortize_year, double amortize_coef, std::string& errorMessage);
+		bool CreateAmortizeType(int amortizeTypeID, std::string typeName, std::string typeCode, std::string& errorMessage);
 		bool CreateBalancePayment(int balancePaymentID, int balanceID, int paymentID, std::string& errorMessage);
 		bool CreateBalancePayslip(int balancePayslipID, int bananceID, int payslipID, std::string& errorMessage);
 		bool CreateBalanceRefund(int balanceRefundID, int balanceID, int refundID, std::string& errorMessage);
@@ -324,7 +329,7 @@ namespace DataLayer{
 		bool CreateFixedAssetsSpecification(int fixedAssetsSpecID, std::string fixedAssetsName, std::string factoryNumner, std::string developer,
 			std::string document, std::string objectCharacters, std::string condition, std::string dateOfConstruction, std::string& errorMessage);
 		bool CreateFixedAssetsDetails(int fixedAssetsDeID, int amGroupID, int amTypeID, int departmentID, std::string fixedAssetsLocation, 
-			int primaryAccID, int amortizeAccID, std::string barcodeNumber, std::string& errorMessage);
+			int primaryAccID, int amortizeAccID, std::string barcodeNumber, double amValue, std::string& errorMessage);
 		bool CreateFixedAssetsOperations(int fixedAssetsOperID, std::string operationDate, std::string operationName,
 			double operationValue, bool increment, bool decrement, int fixedAssetsID, std::string& errorMessage);
 		bool CreateInventorizationList(int inventorizationListID, int inventorizationID, int productID, double inventorizationListCount, 
@@ -353,6 +358,7 @@ namespace DataLayer{
 		bool CreatePayslipOrder(int payslipOrderID, int payslipID, int orderID, std::string& errorMessage);
 		bool CreatePercentRate(int percentRateID, double percentRateValue, std::string percentRateCondition, int positionID, std::string& errorMessage);
 		bool CreatePhoto(int photoID, int userID, int productionID, std::string photoSource, std::string& errorMessage);
+		bool CreatePostingFixedAssets(int posFxdAstID, int userID, int subaccID, int accID, int fixedAssetsID, int inventoryID, std::string& errorMessage);
 		bool CreatePosition(int positionID, std::string positionName, std::string& errorMessage);
 		bool CreatePrice(int priceID, std::string priceDate, double priceValue, int currencyID, int productID, bool priceIsOutdated, std::string& errorMessage);
 		bool CreateProductType(int productTypeID, std::string productTypeName, std::string productTypeShortName, std::string productTypeCode, std::string& errorMessage);
@@ -490,6 +496,7 @@ namespace DataLayer{
 		bool DeletePayslipOrder(int pID, int oID, std::string& errorMessage);
 		bool DeletePercentRate(int id, std::string& errorMessage);
 		bool DeletePhoto(int id, std::string& errorMessage);
+		bool DeletePostingFixedAssets(int id, std::string& errorMessage);
 		bool DeletePosition(int id, std::string& errorMessage);
 		bool DeleteProductBranch(int pID, int bID, std::string& errorMessage);
 		bool DeletePrice(int id, std::string& errorMessage);
@@ -562,7 +569,7 @@ namespace DataLayer{
 		bool UpdateAccountHistory(int accountHistoryID, int accountID, std::string accountNumber, double accountStartBalance,
 			double accountCurrentBalance, std::string fromDate, std::string tillDate, std::string& errorMessage);
 		bool UpdateAmortizeGroup(int amortizeGroupID, int groupNumber, int fromMonth, int toMonth, std::string& errorMessage);
-		bool UpdateAmortizeType(int amortizeTypeID, std::string typeName, std::string typeCode, int amortizePercent, double valueDepOnSales, int amortize_year, double amortize_coef, std::string& errorMessage);
+		bool UpdateAmortizeType(int amortizeTypeID, std::string typeName, std::string typeCode, std::string& errorMessage);
 		bool UpdateBalancePayment(int balancePaymentID, int balanceID, int paymentID, std::string& errorMessage);
 		bool UpdateBalancePayslip(int balancePayslipID, int bananceID, int payslipID, std::string& errorMessage);
 		bool UpdateBalanceRefund(int balanceRefundID, int balanceID, int refundID, std::string& errorMessage);
@@ -608,7 +615,7 @@ namespace DataLayer{
 		bool UpdateFixedAssetsSpecification(int fixedAssetsSpecID, std::string fixedAssetsName, std::string factoryNumner, std::string developer,
 			std::string document, std::string objectCharacters, std::string condition, std::string dateOfConstruction, std::string& errorMessage);
 		bool UpdateFixedAssetsDetails(int fixedAssetsDeID, int amGroupID, int amTypeID, int departmentID, std::string fixedAssetsLocation,
-			int primaryAccID, int amortizeAccID, std::string barcodeNumber, std::string& errorMessage);
+			int primaryAccID, int amortizeAccID, std::string barcodeNumber, double amVlaue, std::string& errorMessage);
 		bool UpdateFixedAssetsOperations(int fixedAssetsOperID, std::string operationDate, std::string operationName,
 			double operationValue, bool increment, bool decrement, int fixedAssetsID, std::string& errorMessage);
 		bool UpdateInventorizationList(int inventorizationListID, int inventorizationID, int productID, double inventorizationListCount,
@@ -636,6 +643,7 @@ namespace DataLayer{
 		bool UpdatePayslip(int payslipID, std::string payslipDate, double payslipValue, int statusID, int currencyID, std::string& errorMessage);
 		bool UpdatePercentRate(int percentRateID, double percentRateValue, std::string percentRateCondition, int positionID, std::string& errorMessage);
 		bool UpdatePhoto(int photoID, int userID, int productionID, std::string photoSource, std::string& errorMessage);
+		bool UpdatePostingFixedAssets(int posFxdAstID, int userID, int subaccID, int accID, int fixedAssetsID, int inventoryID, std::string& errorMessage);
 		bool UpdatePosition(int positionID, std::string positionName, std::string& errorMessage);
 		bool UpdatePrice(int priceID, std::string priceDate, double priceValue, int currencyID, int productID, bool priceIsOutdated, std::string& errorMessage);
 		bool UpdateProductType(int productTypeID, std::string productTypeName, std::string productTypeShortName, std::string productTypeCode, std::string& errorMessage);
@@ -717,7 +725,7 @@ namespace DataLayer{
 		std::string GetFilterForAccountHistory(int accountHistoryID, int accountID, std::string accountNumber, double accountStartBalance,
 			double aCurrentBalance, std::string fromDate, std::string tillDate);
 		std::string GetFilterForAmortizeGroup(int amortizeGroupID, int groupNumber, int fromMonth, int toMonth);
-		std::string GetFilterForAmortizeType(int amortizeTypeID, std::string typeName, std::string typeCode, int amortizePercent, double valueDepOnSales, int amortize_year, double amortize_coef);
+		std::string GetFilterForAmortizeType(int amortizeTypeID, std::string typeName, std::string typeCode);
 		std::string GetFilterForBalancePayment(int balancePaymentID, int balanceID, int paymentID);
 		std::string GetFilterForBalancePayslip(int balancePayslipID, int bananceID, int payslipID);
 		std::string GetFilterForBalanceRefund(int balanceRefundID, int balanceID, int refundID);
@@ -779,7 +787,7 @@ namespace DataLayer{
 		std::string GetFilterForFixedAssetsSpecification(int fixedAssetsSpecID, std::string fixedAssetsName, std::string factoryNumner, std::string developer,
 			std::string document, std::string objectCharacters, std::string condition, std::string dateOfConstruction);
 		std::string GetFilterForFixedAssetsDetails(int fixedAssetsDeID, int amGroupID, int amTypeID, int departmentID, std::string fixedAssetsLocation,
-			int primaryAccID, int amortizeAccID, std::string barcodeNumber);
+			int primaryAccID, int amortizeAccID, std::string barcodeNumber, double amValue);
 		std::string GetFilterForFixedAssetsOperations(int fixedAssetsOperID, std::string operationDate, std::string operationName,
 			double operationValue, bool increment, bool decrement, int fixedAssetsID);
 		std::string GetFilterForInventorizationList(int inventorizationListID, int inventorizationID, int productID, double inventorizationListCount,
@@ -815,6 +823,7 @@ namespace DataLayer{
 		std::string GetFilterForPayslipOrder(int payslipOrderID, int payslipID, int orderID);
 		std::string GetFilterForPercentRate(int percentRateID, double percentRateValue, std::string percentRateCondition, int positionID);
 		std::string GetFilterForPhoto(int photoID, int userID, int productionID, std::string photoSource);
+		std::string GetFilterForPostingFixedAssets(int posFxdAstID, int userID, int subaccID, int accID, int fixedAssetsID, int inventoryID);
 		std::string GetFilterForPosition(int positionID, std::string positionName);
 		std::string GetFilterForPrice(int priceID, std::string priceDate, double priceValue, int currencyID, int productID, bool priceIsOutdated);
 		std::string GetFilterForProductBranch(int pbID, int productID, int branchID);

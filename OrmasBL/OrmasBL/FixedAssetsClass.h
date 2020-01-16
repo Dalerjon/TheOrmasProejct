@@ -73,9 +73,16 @@ namespace BusinessLayer
 		bool GetFixedAssetsByID(DataLayer::OrmasDal& ormasDal, int cpID, std::string& errorMessage);
 		bool IsEmpty();
 		void Clear();
+		bool CreatePostingFixedAssetsEntry(DataLayer::OrmasDal& ormasDal, int acctbID, int purID, int accID, int debitingAccID, double value, std::string execDate, std::string& errorMessage);
+		bool CreatePostingFixedAssetsEntryReverce(DataLayer::OrmasDal& ormasDal, int acctbID, int purID, int accID, int debitingAccID, double value, std::string execDate, std::string& errorMessage);
+		bool CreatePostingFixedAssetsEntryWriteOFF(DataLayer::OrmasDal& ormasDal, int fixedAssetsID, std::string& errorMessage);
+		bool CreateEntry(DataLayer::OrmasDal& ormasDal, int debAccID, double currentSum, int credAccID, std::string oExecDate, std::string& errorMessage);
+		bool CreateEntryWriteOFF(DataLayer::OrmasDal& ormasDal, int debAccID, double currentSum, int credAccID, std::string oExecDate, std::string& errorMessage);
+		bool CreateEntryCancel(DataLayer::OrmasDal& ormasDal, int debAccID, double currentSum, int credAccID, std::string oExecDate, std::string& errorMessage);
 	private:
 		bool IsDuplicate(DataLayer::OrmasDal& ormasDal, int sID, std::string iNumber, std::string& errorMessage);
 		bool IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string& errorMessage);
+		std::string wstring_to_utf8(const std::wstring& str);
 	};
 }
 #endif //FixedAssetsCLASS_H

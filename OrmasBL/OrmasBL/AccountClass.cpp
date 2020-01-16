@@ -213,10 +213,6 @@ namespace BusinessLayer{
 			errorMessage = "Cannot find account with this id";
 			return true;
 		}
-		if (number.substr(0, 5).compare("22210") == 0)
-		{
-			return false;
-		}
 		if (number.substr(3,2).compare("00") == 0)
 		{
 			std::string accountRootNumber = number.substr(0, 3);

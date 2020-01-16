@@ -98,8 +98,8 @@ namespace BusinessLayer
 	bool FixedAssetsSpecification::CreateFixedAssetsSpecification(DataLayer::OrmasDal& ormasDal, std::string sName, std::string sFactoryNumber, 
 		std::string sDeveloper, std::string sDocument, std::string sObjChar, std::string sCondition, std::string sDateOfConst, std::string& errorMessage)
 	{
-		if (IsDuplicate(ormasDal, sFactoryNumber, errorMessage))
-			return false;
+		//if (IsDuplicate(ormasDal, sFactoryNumber, errorMessage))
+			//return false;
 		id = ormasDal.GenerateID();
 		name = sName;
 		factoryNumber = sFactoryNumber;
@@ -124,8 +124,9 @@ namespace BusinessLayer
 
 	bool FixedAssetsSpecification::CreateFixedAssetsSpecification(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
-		if (IsDuplicate(ormasDal, errorMessage))
-			return false;
+		//if (IsDuplicate(ormasDal, errorMessage))
+			//return false;
+		id = ormasDal.GenerateID();
 		//ormasDal.StartTransaction(errorMessage);
 		if (0 != id && ormasDal.CreateFixedAssetsSpecification(id, name, factoryNumber, developer, document,
 			objectCharacters, condition, dateOfConstruction, errorMessage))
@@ -249,7 +250,7 @@ namespace BusinessLayer
 		dateOfConstruction = "";
 	}
 
-	bool FixedAssetsSpecification::IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string sFactoryNumber, std::string& errorMessage)
+	/*bool FixedAssetsSpecification::IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string sFactoryNumber, std::string& errorMessage)
 	{
 		FixedAssetsSpecification fixedAssetsSpecification;
 		fixedAssetsSpecification.Clear();
@@ -283,5 +284,5 @@ namespace BusinessLayer
 		}
 		errorMessage = "Fixed assets specification with these parameters are already exist! Please avoid the duplication!";
 		return true;
-	}
+	}*/
 }

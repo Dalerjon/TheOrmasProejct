@@ -60,8 +60,8 @@ namespace BusinessLayer
 		bool IsEmpty();
 		void Clear();
 	private:
-		bool IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string sFactoryNumber, std::string& errorMessage);
-		bool IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string& errorMessage);
+		//bool IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string sFactoryNumber, std::string& errorMessage);
+		//bool IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string& errorMessage);
 	};
 }
 #endif //FixedAssetsSpecificationCLASS_H

@@ -32,6 +32,8 @@ namespace BusinessLayer
 		//Generate id
 		int GenerateID();
 
+		int GenerateInventoryNumber();
+
 		//ormasDal, connection to DB 
 		bool ConnectToDB(std::string dbname, std::string username, std::string password, std::string host, int port);
 
@@ -89,6 +91,7 @@ namespace BusinessLayer
 		bool CreateEntryRouting(BusinessLayer::EntryRouting*, std::string&);
 		bool CreateFinancialReport(BusinessLayer::FinancialReport*, std::string&);
 		bool CreateFixedAssets(BusinessLayer::FixedAssets*, std::string&);
+		bool CreateFixedAssetsUnion(BusinessLayer::FixedAssetsUnion*, std::string&);
 		bool CreateFixedAssetsDetails(BusinessLayer::FixedAssetsDetails*, std::string&);
 		bool CreateFixedAssetsOperation(BusinessLayer::FixedAssetsOperations*, std::string&);
 		bool CreateFixedAssetsSpecification(BusinessLayer::FixedAssetsSpecification*, std::string&);
@@ -109,6 +112,7 @@ namespace BusinessLayer
 		bool CreatePayslip(BusinessLayer::Payslip*, std::string&);
 		bool CreatePercentRate(BusinessLayer::PercentRate*, std::string&);
 		bool CreatePhoto(BusinessLayer::Photo*, std::string&);
+		bool CreatePostingFixedAssets(BusinessLayer::PostingFixedAssets*, std::string&);
 		bool CreatePosition(BusinessLayer::Position*, std::string&);
 		bool CreatePrice(BusinessLayer::Price*, std::string&);
 		bool CreateProduct(BusinessLayer::Product*, std::string&);
@@ -195,6 +199,7 @@ namespace BusinessLayer
 		bool DeleteEntryRouting(BusinessLayer::EntryRouting*, std::string&);
 		bool DeleteFinancialReport(BusinessLayer::FinancialReport*, std::string&);
 		bool DeleteFixedAssets(BusinessLayer::FixedAssets*, std::string&);
+		bool DeleteFixedAssetsUnion(BusinessLayer::FixedAssetsUnion*, std::string&);
 		bool DeleteFixedAssetsDetails(BusinessLayer::FixedAssetsDetails*, std::string&);
 		bool DeleteFixedAssetsOperation(BusinessLayer::FixedAssetsOperations*, std::string&);
 		bool DeleteFixedAssetsSpecification(BusinessLayer::FixedAssetsSpecification*, std::string&);
@@ -215,6 +220,7 @@ namespace BusinessLayer
 		bool DeletePayslip(BusinessLayer::Payslip*, std::string&);
 		bool DeletePercentRate(BusinessLayer::PercentRate*, std::string&);
 		bool DeletePhoto(BusinessLayer::Photo*, std::string&);
+		bool DeletePostingFixedAssets(BusinessLayer::PostingFixedAssets*, std::string&);
 		bool DeletePosition(BusinessLayer::Position*, std::string&);
 		bool DeletePrice(BusinessLayer::Price*, std::string&);
 		bool DeleteProduct(BusinessLayer::Product*, std::string&);
@@ -301,6 +307,7 @@ namespace BusinessLayer
 		bool UpdateEntryRouting(BusinessLayer::EntryRouting*, std::string&);
 		bool UpdateFinancialReport(BusinessLayer::FinancialReport*, std::string&);
 		bool UpdateFixedAssets(BusinessLayer::FixedAssets*, std::string&);
+		bool UpdateFixedAssetsUnion(BusinessLayer::FixedAssetsUnion*, std::string&);
 		bool UpdateFixedAssetsDetails(BusinessLayer::FixedAssetsDetails*, std::string&);
 		bool UpdateFixedAssetsOperation(BusinessLayer::FixedAssetsOperations*, std::string&);
 		bool UpdateFixedAssetsSpecification(BusinessLayer::FixedAssetsSpecification*, std::string&);
@@ -321,6 +328,7 @@ namespace BusinessLayer
 		bool UpdatePayslip(BusinessLayer::Payslip*, std::string&);
 		bool UpdatePercentRate(BusinessLayer::PercentRate*, std::string&);
 		bool UpdatePhoto(BusinessLayer::Photo*, std::string&);
+		bool UpdatePostingFixedAssets(BusinessLayer::PostingFixedAssets*, std::string&);
 		bool UpdatePosition(BusinessLayer::Position*, std::string&);
 		bool UpdatePrice(BusinessLayer::Price*, std::string&);
 		bool UpdateProduct(BusinessLayer::Product*, std::string&);

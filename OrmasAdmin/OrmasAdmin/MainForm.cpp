@@ -100,6 +100,7 @@ void MainForm::SetAllMenuInvisible()
 	menuWriteOffs->setEnabled(false);
 	menuProductions->setEnabled(false);
 	menuAccountings->setEnabled(false);
+	menuFixedAssets->setEnabled(false);
 	menuCash->setEnabled(false);
 	menuStock->setEnabled(false);
 	menuReports->setEnabled(false);
@@ -112,6 +113,7 @@ void MainForm::SetAllMenuInvisible()
 	actionEmployees->setVisible(false);
 	actionPurveyors->setVisible(false);
 	actionAccountables->setVisible(false);
+	menuFixedAssets->setEnabled(true);
 	actionBorrowers->setVisible(false);
 	actionCreditors->setVisible(false);
 	actionShareholders->setVisible(false);
@@ -161,6 +163,13 @@ void MainForm::SetAllMenuInvisible()
 	actionSpoilageList->setVisible(false);
 	actionReworkRaws->setVisible(false);
 		
+	//actions in menu fixed assets
+	actionFixedAssets->setVisible(false);
+	actionFixedAssetsOperation->setVisible(false);
+	actionInventory->setVisible(false);
+	actionAmortizeGroup->setVisible(false);
+	actionAmortizeType->setVisible(false);
+
 	//actions in menu accounting
 	actionBalances->setVisible(false);
 	actionAccounts->setVisible(false);
@@ -171,6 +180,7 @@ void MainForm::SetAllMenuInvisible()
 	actionSalaryType->setVisible(false);
 	actionPayroll->setVisible(false);
 	actionAccountType->setVisible(false);
+	actionDivisionAccounts->setVisible(false);
 	actionChartOfAccounts->setVisible(false);
 	actionCompanyAccounts->setVisible(false);
 	actionEntry->setVisible(false);
@@ -309,6 +319,7 @@ void MainForm::SetAllMenuVisible()
 	actionSalaryType->setVisible(true);
 	actionPayroll->setVisible(true);
 	actionAccountType->setVisible(true);
+	actionDivisionAccounts->setVisible(true);
 	actionChartOfAccounts->setVisible(true);
 	actionCompanyAccounts->setVisible(true);
 	actionEntry->setVisible(true);
@@ -316,6 +327,13 @@ void MainForm::SetAllMenuVisible()
 	actionCloseOfMonth->setVisible(true);
 	actionWarehouse->setVisible(true);
 	actionCashbox->setVisible(true);
+
+	//actions in menu fixed assets
+	actionFixedAssets->setVisible(true);
+	actionFixedAssetsOperation->setVisible(true);
+	actionInventory->setVisible(true);
+	actionAmortizeGroup->setVisible(true);
+	actionAmortizeType->setVisible(true);
 
 	//actions in menu cash
 	actionCash->setVisible(true);
@@ -470,6 +488,7 @@ void MainForm::CreateConnections()
 	QObject::connect(actionSalaryType, &QAction::triggered, this, &MainForm::OpenSalaryTypeForm);
 	QObject::connect(actionPayroll, &QAction::triggered, this, &MainForm::OpenPayrollForm);	
 	QObject::connect(actionAccountType, &QAction::triggered, this, &MainForm::OpenAccountTypeForm);
+	QObject::connect(actionDivisionAccounts, &QAction::triggered, this, &MainForm::OpenDivisionAccountsForm);
 	QObject::connect(actionChartOfAccounts, &QAction::triggered, this, &MainForm::OpenChartOfAccountsForm);
 	QObject::connect(actionCompanyAccounts, &QAction::triggered, this, &MainForm::OpenCompanyAccountForm);
 	QObject::connect(actionEntry, &QAction::triggered, this, &MainForm::OpenEntryForm);
@@ -478,6 +497,12 @@ void MainForm::CreateConnections()
 	QObject::connect(actionWarehouse, &QAction::triggered, this, &MainForm::OpenWarehouseForm);
 	QObject::connect(actionCashbox, &QAction::triggered, this, &MainForm::OpenCashboxForm);
 		
+	QObject::connect(actionFixedAssets, &QAction::triggered, this, &MainForm::OpenFixedAssetsForm);
+	QObject::connect(actionFixedAssetsOperation, &QAction::triggered, this, &MainForm::OpenFixedAssetsOperationForm);
+	QObject::connect(actionInventory, &QAction::triggered, this, &MainForm::OpenInventoryForm);
+	QObject::connect(actionAmortizeGroup, &QAction::triggered, this, &MainForm::OpenAmortizeGroupForm);
+	QObject::connect(actionAmortizeType, &QAction::triggered, this, &MainForm::OpenAmortizeTypeForm);
+
 	QObject::connect(actionCash, &QAction::triggered, this, &MainForm::OpenCashForm);
 	QObject::connect(actionPayments, &QAction::triggered, this, &MainForm::OpenPaymentForm);
 	QObject::connect(actionRefund, &QAction::triggered, this, &MainForm::OpenRefundForm);
@@ -3185,6 +3210,246 @@ void MainForm::OpenWarehouseForm()
 
 }
 
+void MainForm::OpenFixedAssetsForm()
+{
+	QString message = tr("Loading...");
+	statusBar()->showMessage(message);
+	QWidget* checkedWidget = IsWindowExist(mdiArea->subWindowList(), QString("fixedAstForm"));
+	if (checkedWidget == nullptr)
+	{
+		DataForm *dForm = new DataForm(oBL, this);
+		dForm->setWindowTitle(tr("Fixed assets"));
+		dForm->FillTable<BusinessLayer::FixedAssetsView>(errorMessage);
+		if (errorMessage.empty())
+		{
+			dForm->setObjectName("fixedAstForm");
+			dForm->QtConnect<BusinessLayer::FixedAssetsView>();
+			QMdiSubWindow *faWindow = new QMdiSubWindow;
+			faWindow->setWidget(dForm);
+			faWindow->setAttribute(Qt::WA_DeleteOnClose);
+			mdiArea->addSubWindow(faWindow);
+			faWindow->resize(dForm->size().width() + 18, dForm->size().height() + 30);
+			dForm->show();
+			dForm->topLevelWidget();
+			dForm->activateWindow();
+			dForm->raise();
+			dForm->setWindowFlags(dForm->windowFlags() | Qt::WindowStaysOnTopHint);
+			QString message = tr("Fixed assets are shown");
+			statusBar()->showMessage(message);
+		}
+		else
+		{
+			delete dForm;
+			QString message = tr("End with error!");
+			statusBar()->showMessage(message);
+			QMessageBox::information(NULL, QString(tr("Warning")),
+				QString(tr(errorMessage.c_str())),
+				QString(tr("Ok")));
+			errorMessage = "";
+		}
+	}
+	else
+	{
+		checkedWidget->topLevelWidget();
+		checkedWidget->activateWindow();
+		QString message = tr("Fixed assets are shown");
+		statusBar()->showMessage(message);
+	}
+
+}
+
+void MainForm::OpenFixedAssetsOperationForm()
+{
+	QString message = tr("Loading...");
+	statusBar()->showMessage(message);
+	QWidget* checkedWidget = IsWindowExist(mdiArea->subWindowList(), QString("fixedAstOperForm"));
+	if (checkedWidget == nullptr)
+	{
+		DataForm *dForm = new DataForm(oBL, this);
+		dForm->setWindowTitle(tr("Fixed assets operation"));
+		dForm->FillTable<BusinessLayer::FixedAssetsOperations>(errorMessage);
+		if (errorMessage.empty())
+		{
+			dForm->setObjectName("fixedAstOperForm");
+			dForm->QtConnect<BusinessLayer::FixedAssetsOperations>();
+			QMdiSubWindow *faoWindow = new QMdiSubWindow;
+			faoWindow->setWidget(dForm);
+			faoWindow->setAttribute(Qt::WA_DeleteOnClose);
+			mdiArea->addSubWindow(faoWindow);
+			faoWindow->resize(dForm->size().width() + 18, dForm->size().height() + 30);
+			dForm->show();
+			dForm->topLevelWidget();
+			dForm->activateWindow();
+			dForm->raise();
+			dForm->setWindowFlags(dForm->windowFlags() | Qt::WindowStaysOnTopHint);
+			QString message = tr("Fixed assets operation are shown");
+			statusBar()->showMessage(message);
+		}
+		else
+		{
+			delete dForm;
+			QString message = tr("End with error!");
+			statusBar()->showMessage(message);
+			QMessageBox::information(NULL, QString(tr("Warning")),
+				QString(tr(errorMessage.c_str())),
+				QString(tr("Ok")));
+			errorMessage = "";
+		}
+	}
+	else
+	{
+		checkedWidget->topLevelWidget();
+		checkedWidget->activateWindow();
+		QString message = tr("Fixed assets operation are shown");
+		statusBar()->showMessage(message);
+	}
+
+}
+
+void MainForm::OpenInventoryForm()
+{
+	QString message = tr("Loading...");
+	statusBar()->showMessage(message);
+	QWidget* checkedWidget = IsWindowExist(mdiArea->subWindowList(), QString("inventoryForm"));
+	if (checkedWidget == nullptr)
+	{
+		DataForm *dForm = new DataForm(oBL, this);
+		dForm->setWindowTitle(tr("Fixed assets operation"));
+		dForm->FillTable<BusinessLayer::InventoryView>(errorMessage);
+		if (errorMessage.empty())
+		{
+			dForm->setObjectName("inventoryForm");
+			dForm->QtConnect<BusinessLayer::InventoryView>();
+			QMdiSubWindow *inveWindow = new QMdiSubWindow;
+			inveWindow->setWidget(dForm);
+			inveWindow->setAttribute(Qt::WA_DeleteOnClose);
+			mdiArea->addSubWindow(inveWindow);
+			inveWindow->resize(dForm->size().width() + 18, dForm->size().height() + 30);
+			dForm->show();
+			dForm->topLevelWidget();
+			dForm->activateWindow();
+			dForm->raise();
+			dForm->setWindowFlags(dForm->windowFlags() | Qt::WindowStaysOnTopHint);
+			QString message = tr("Inventory are shown");
+			statusBar()->showMessage(message);
+		}
+		else
+		{
+			delete dForm;
+			QString message = tr("End with error!");
+			statusBar()->showMessage(message);
+			QMessageBox::information(NULL, QString(tr("Warning")),
+				QString(tr(errorMessage.c_str())),
+				QString(tr("Ok")));
+			errorMessage = "";
+		}
+	}
+	else
+	{
+		checkedWidget->topLevelWidget();
+		checkedWidget->activateWindow();
+		QString message = tr("Inventory are shown");
+		statusBar()->showMessage(message);
+	}
+
+}
+
+void MainForm::OpenAmortizeGroupForm()
+{
+	QString message = tr("Loading...");
+	statusBar()->showMessage(message);
+	QWidget* checkedWidget = IsWindowExist(mdiArea->subWindowList(), QString("amGroupForm"));
+	if (checkedWidget == nullptr)
+	{
+		DataForm *dForm = new DataForm(oBL, this);
+		dForm->setWindowTitle(tr("Amortize group"));
+		dForm->FillTable<BusinessLayer::AmortizeGroup>(errorMessage);
+		if (errorMessage.empty())
+		{
+			dForm->setObjectName("amGroupForm");
+			dForm->QtConnect<BusinessLayer::AmortizeGroup>();
+			QMdiSubWindow *amGrWindow = new QMdiSubWindow;
+			amGrWindow->setWidget(dForm);
+			amGrWindow->setAttribute(Qt::WA_DeleteOnClose);
+			mdiArea->addSubWindow(amGrWindow);
+			amGrWindow->resize(dForm->size().width() + 18, dForm->size().height() + 30);
+			dForm->show();
+			dForm->topLevelWidget();
+			dForm->activateWindow();
+			dForm->raise();
+			dForm->setWindowFlags(dForm->windowFlags() | Qt::WindowStaysOnTopHint);
+			QString message = tr("Amortize group are shown");
+			statusBar()->showMessage(message);
+		}
+		else
+		{
+			delete dForm;
+			QString message = tr("End with error!");
+			statusBar()->showMessage(message);
+			QMessageBox::information(NULL, QString(tr("Warning")),
+				QString(tr(errorMessage.c_str())),
+				QString(tr("Ok")));
+			errorMessage = "";
+		}
+	}
+	else
+	{
+		checkedWidget->topLevelWidget();
+		checkedWidget->activateWindow();
+		QString message = tr("Amortize group are shown");
+		statusBar()->showMessage(message);
+	}
+
+}
+
+void MainForm::OpenAmortizeTypeForm()
+{
+	QString message = tr("Loading...");
+	statusBar()->showMessage(message);
+	QWidget* checkedWidget = IsWindowExist(mdiArea->subWindowList(), QString("amTypeForm"));
+	if (checkedWidget == nullptr)
+	{
+		DataForm *dForm = new DataForm(oBL, this);
+		dForm->setWindowTitle(tr("Amortize type"));
+		dForm->FillTable<BusinessLayer::AmortizeType>(errorMessage);
+		if (errorMessage.empty())
+		{
+			dForm->setObjectName("amTypeForm");
+			dForm->QtConnect<BusinessLayer::AmortizeType>();
+			QMdiSubWindow *amTypeWindow = new QMdiSubWindow;
+			amTypeWindow->setWidget(dForm);
+			amTypeWindow->setAttribute(Qt::WA_DeleteOnClose);
+			mdiArea->addSubWindow(amTypeWindow);
+			amTypeWindow->resize(dForm->size().width() + 18, dForm->size().height() + 30);
+			dForm->show();
+			dForm->topLevelWidget();
+			dForm->activateWindow();
+			dForm->raise();
+			dForm->setWindowFlags(dForm->windowFlags() | Qt::WindowStaysOnTopHint);
+			QString message = tr("Amortize type are shown");
+			statusBar()->showMessage(message);
+		}
+		else
+		{
+			delete dForm;
+			QString message = tr("End with error!");
+			statusBar()->showMessage(message);
+			QMessageBox::information(NULL, QString(tr("Warning")),
+				QString(tr(errorMessage.c_str())),
+				QString(tr("Ok")));
+			errorMessage = "";
+		}
+	}
+	else
+	{
+		checkedWidget->topLevelWidget();
+		checkedWidget->activateWindow();
+		QString message = tr("Amortize type are shown");
+		statusBar()->showMessage(message);
+	}
+
+}
+
 void MainForm::OpenCashboxForm()
 {
 	QString message = tr("Loading...");
@@ -4676,6 +4941,54 @@ void MainForm::OpenDivisionForm()
 		checkedWidget->topLevelWidget();
 		checkedWidget->activateWindow();
 		QString message = tr("All divisions are shown");
+		statusBar()->showMessage(message);
+	}
+}
+
+void MainForm::OpenDivisionAccountsForm()
+{
+	QString message = tr("Loading...");
+	statusBar()->showMessage(message);
+	QWidget* checkedWidget = IsWindowExist(mdiArea->subWindowList(), QString("divisionForm"));
+	if (checkedWidget == nullptr)
+	{
+		DataForm *dForm = new DataForm(oBL, this);
+		dForm->setWindowTitle(tr("Division account"));
+		dForm->FillTable<BusinessLayer::DivisionAccountRelationView>(errorMessage);
+		if (errorMessage.empty())
+		{
+			dForm->setObjectName("divisionAccountForm");
+			dForm->QtConnect<BusinessLayer::DivisionAccountRelationView>();
+			QMdiSubWindow *divisionAccWindow = new QMdiSubWindow;
+			divisionAccWindow->setWidget(dForm);
+			divisionAccWindow->setAttribute(Qt::WA_DeleteOnClose);
+			mdiArea->addSubWindow(divisionAccWindow);
+			divisionAccWindow->resize(dForm->size().width() + 18, dForm->size().height() + 30);
+			dForm->show();
+			dForm->topLevelWidget();
+			dForm->activateWindow();
+			dForm->raise();
+			dForm->setWindowFlags(dForm->windowFlags() | Qt::WindowStaysOnTopHint);
+			QString message = tr("All division account are shown");
+			statusBar()->showMessage(message);
+		}
+		else
+		{
+			delete dForm;
+			QString message = tr("End with error!");
+			statusBar()->showMessage(message);
+			QMessageBox::information(NULL, QString(tr("Warning")),
+				QString(tr(errorMessage.c_str())),
+				QString(tr("Ok")));
+			QMessageBox msgBox;
+			errorMessage = "";
+		}
+	}
+	else
+	{
+		checkedWidget->topLevelWidget();
+		checkedWidget->activateWindow();
+		QString message = tr("All division account are shown");
 		statusBar()->showMessage(message);
 	}
 }

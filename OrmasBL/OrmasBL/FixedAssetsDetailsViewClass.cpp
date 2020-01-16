@@ -9,16 +9,17 @@ namespace BusinessLayer
 		groupNumber = std::get<1>(fCollection);
 		amortizeTypeName = std::get<2>(fCollection);
 		amortizeTypeCode = std::get<3>(fCollection);
-		divisionName = std::get<4>(fCollection);
-		primaryCostValue = std::get<5>(fCollection);
-		amortizeValue = std::get<6>(fCollection);
-		barcodeNumber = std::get<7>(fCollection);
-		fixedAssetsLocation = std::get<8>(fCollection);
-		primaryCostAccountID = std::get<9>(fCollection);
-		amortizeAccountID = std::get<10>(fCollection);
-		amortizeGroupID = std::get<11>(fCollection);
-		amortizeTypeID = std::get<12>(fCollection);
-		departmentID = std::get<13>(fCollection);
+		amortizeValue = std::get<4>(fCollection);
+		divisionName = std::get<5>(fCollection);
+		primaryAccValue = std::get<6>(fCollection);
+		amortizeAccValue = std::get<7>(fCollection);
+		barcodeNumber = std::get<8>(fCollection);
+		fixedAssetsLocation = std::get<9>(fCollection);
+		primaryCostAccountID = std::get<10>(fCollection);
+		amortizeAccountID = std::get<11>(fCollection);
+		amortizeGroupID = std::get<12>(fCollection);
+		amortizeTypeID = std::get<13>(fCollection);
+		departmentID = std::get<14>(fCollection);
 	}
 
 	int FixedAssetsDetailsView::GetGroupNumber()
@@ -37,13 +38,13 @@ namespace BusinessLayer
 	{
 		return divisionName;
 	}
-	double FixedAssetsDetailsView::GetPrimaryCostValue()
+	double FixedAssetsDetailsView::GetPrimaryAccValue()
 	{
-		return primaryCostValue;
+		return primaryAccValue;
 	}
-	double FixedAssetsDetailsView::GetAmortizeValue()
+	double FixedAssetsDetailsView::GetAmortizeAccValue()
 	{
-		return amortizeValue;
+		return amortizeAccValue;
 	}
 }
 

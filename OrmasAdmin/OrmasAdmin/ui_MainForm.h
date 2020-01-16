@@ -128,6 +128,12 @@ public:
     QAction *actionEmployeeProducts;
     QAction *actionBranchProducts;
     QAction *actionWarehouseTurnover;
+    QAction *actionFixedAssets;
+    QAction *actionFixedAssetsOperation;
+    QAction *actionInventory;
+    QAction *actionAmortizeGroup;
+    QAction *actionAmortizeType;
+    QAction *actionDivisionAccounts;
     QWidget *centrWidget;
     QGridLayout *gridLayout;
     QMdiArea *mdiArea;
@@ -144,6 +150,7 @@ public:
     QMenu *menuStock;
     QMenu *menuCash;
     QMenu *menuReports;
+    QMenu *menuFixedAssets;
     QStatusBar *statusbar;
 
     void setupUi(QMainWindow *MainWindow)
@@ -353,6 +360,18 @@ public:
         actionBranchProducts->setObjectName(QStringLiteral("actionBranchProducts"));
         actionWarehouseTurnover = new QAction(MainWindow);
         actionWarehouseTurnover->setObjectName(QStringLiteral("actionWarehouseTurnover"));
+        actionFixedAssets = new QAction(MainWindow);
+        actionFixedAssets->setObjectName(QStringLiteral("actionFixedAssets"));
+        actionFixedAssetsOperation = new QAction(MainWindow);
+        actionFixedAssetsOperation->setObjectName(QStringLiteral("actionFixedAssetsOperation"));
+        actionInventory = new QAction(MainWindow);
+        actionInventory->setObjectName(QStringLiteral("actionInventory"));
+        actionAmortizeGroup = new QAction(MainWindow);
+        actionAmortizeGroup->setObjectName(QStringLiteral("actionAmortizeGroup"));
+        actionAmortizeType = new QAction(MainWindow);
+        actionAmortizeType->setObjectName(QStringLiteral("actionAmortizeType"));
+        actionDivisionAccounts = new QAction(MainWindow);
+        actionDivisionAccounts->setObjectName(QStringLiteral("actionDivisionAccounts"));
         centrWidget = new QWidget(MainWindow);
         centrWidget->setObjectName(QStringLiteral("centrWidget"));
         gridLayout = new QGridLayout(centrWidget);
@@ -393,6 +412,8 @@ public:
         menuCash->setObjectName(QStringLiteral("menuCash"));
         menuReports = new QMenu(menuBar);
         menuReports->setObjectName(QStringLiteral("menuReports"));
+        menuFixedAssets = new QMenu(menuBar);
+        menuFixedAssets->setObjectName(QStringLiteral("menuFixedAssets"));
         MainWindow->setMenuBar(menuBar);
         statusbar = new QStatusBar(MainWindow);
         statusbar->setObjectName(QStringLiteral("statusbar"));
@@ -405,6 +426,7 @@ public:
         menuBar->addAction(menuWriteOffs->menuAction());
         menuBar->addAction(menuProductions->menuAction());
         menuBar->addAction(menuAccountings->menuAction());
+        menuBar->addAction(menuFixedAssets->menuAction());
         menuBar->addAction(menuCash->menuAction());
         menuBar->addAction(menuStock->menuAction());
         menuBar->addAction(menuReports->menuAction());
@@ -479,6 +501,7 @@ public:
         menuAccountings->addAction(actionPayroll);
         menuAccountings->addSeparator();
         menuAccountings->addAction(actionAccountType);
+        menuAccountings->addAction(actionDivisionAccounts);
         menuAccountings->addAction(actionChartOfAccounts);
         menuAccountings->addAction(actionCompanyAccounts);
         menuAccountings->addAction(actionEntry);
@@ -512,6 +535,11 @@ public:
         menuReports->addAction(actionSalesReport);
         menuReports->addAction(actionAccountCard);
         menuReports->addAction(actionWarehouseTurnover);
+        menuFixedAssets->addAction(actionFixedAssets);
+        menuFixedAssets->addAction(actionFixedAssetsOperation);
+        menuFixedAssets->addAction(actionInventory);
+        menuFixedAssets->addAction(actionAmortizeGroup);
+        menuFixedAssets->addAction(actionAmortizeType);
 
         retranslateUi(MainWindow);
 
@@ -621,6 +649,12 @@ public:
         actionEmployeeProducts->setText(QApplication::translate("MainWindow", "Employeee products", 0));
         actionBranchProducts->setText(QApplication::translate("MainWindow", "Branch products", 0));
         actionWarehouseTurnover->setText(QApplication::translate("MainWindow", "Warehouse turnover", 0));
+        actionFixedAssets->setText(QApplication::translate("MainWindow", "Fixed assets", 0));
+        actionFixedAssetsOperation->setText(QApplication::translate("MainWindow", "Fixed assets operation", 0));
+        actionInventory->setText(QApplication::translate("MainWindow", "Inventory", 0));
+        actionAmortizeGroup->setText(QApplication::translate("MainWindow", "Amortize group", 0));
+        actionAmortizeType->setText(QApplication::translate("MainWindow", "Amortize type", 0));
+        actionDivisionAccounts->setText(QApplication::translate("MainWindow", "Division assounts", 0));
         menuUsers->setTitle(QApplication::translate("MainWindow", "Users", 0));
         menuProducts->setTitle(QApplication::translate("MainWindow", "Products", 0));
         menuOrders->setTitle(QApplication::translate("MainWindow", "Orders", 0));
@@ -633,6 +667,7 @@ public:
         menuStock->setTitle(QApplication::translate("MainWindow", "Stock", 0));
         menuCash->setTitle(QApplication::translate("MainWindow", "Cash", 0));
         menuReports->setTitle(QApplication::translate("MainWindow", "Reports", 0));
+        menuFixedAssets->setTitle(QApplication::translate("MainWindow", "Fixed assets", 0));
     } // retranslateUi
 
 };

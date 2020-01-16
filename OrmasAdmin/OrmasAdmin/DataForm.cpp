@@ -80,7 +80,7 @@ void DataForm::Filter()
 			QModelIndex index = tableView->model()->index(i, columnCmb->currentData().toInt());
 			if (0 == typeCmb->currentData().toInt())
 			{
-				if (index.data().toString().compare(filterText, Qt::CaseInsensitive) > 0)
+				if (index.data().toString().contains(filterText))
 				{
 					tableView->showRow(i);
 				}
@@ -114,7 +114,7 @@ void DataForm::Filter()
 			}
 			if (3 == typeCmb->currentData().toInt())
 			{
-				if (index.data().toString().contains(filterText))
+				if (index.data().toString().compare(filterText, Qt::CaseInsensitive) > 0)
 				{
 					tableView->showRow(i);
 				}
@@ -141,10 +141,10 @@ void DataForm::SetColumnFilter(QStringList header)
 
 void DataForm::SetTypeFilter()
 {
-	typeCmb->addItem(tr("MORE(>)"), 0);
-	typeCmb->addItem(tr("LESS(<)"), 1);
-	typeCmb->addItem(tr("EQUAL(=)"), 2);
-	typeCmb->addItem(tr("LIKE"), 3);
+	typeCmb->addItem(tr("LIKE"), 0);
+	typeCmb->addItem(tr("EQUAL(=)"), 1);
+	typeCmb->addItem(tr("MORE(>)"), 2);
+	typeCmb->addItem(tr("LESS(<)"), 3);
 }
 
 bool DataForm::IsClosed()
@@ -1625,6 +1625,134 @@ void DataForm::DelAcsItemDlg()
 	}
 }
 
+void DataForm::CrtAmGrDlg()
+{
+	CreateAmGrDlg *amGrDlg = new CreateAmGrDlg(dataFormBL, false, this);
+	amGrDlg->setAttribute(Qt::WA_DeleteOnClose);
+	amGrDlg->setWindowTitle(tr("Create amortime group"));
+	QMdiSubWindow *amGrWindow = new QMdiSubWindow;
+	amGrWindow->setWidget(amGrDlg);
+	amGrWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(amGrWindow);
+	amGrDlg->show();
+}
+void DataForm::UdpAmGrDlg()
+{
+	CreateAmGrDlg *amGrDlg = new CreateAmGrDlg(dataFormBL, true, this);
+	amGrDlg->setAttribute(Qt::WA_DeleteOnClose);
+	amGrDlg->setWindowTitle(tr("Update amortime group"));
+	QMdiSubWindow *amGrWindow = new QMdiSubWindow;
+	amGrWindow->setWidget(amGrDlg);
+	amGrWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(amGrWindow);
+	if (amGrDlg->FillDlgElements(tableView))
+	{
+		amGrDlg->show();
+	}
+	else
+	{
+		QMessageBox::information(NULL, QString(tr("Warning")),
+			QString(tr("Please select one row at first!")),
+			QString(tr("Ok")));
+	}
+}
+void DataForm::DelAmGrDlg()
+{
+	int result = QMessageBox::question(this, QString(tr("Affirm")),
+		QString(tr("Do you really want to delete these data? (WARNING! All data will be irretrievable lost)")),
+		QString(tr("Yes")), QString(tr("No")));
+	if (result == 1)
+		return;
+	std::string errorMessage = "";
+	int id = GetIDFromTable(tableView, errorMessage);
+	BusinessLayer::AmortizeGroup amGr;
+	amGr.SetID(id);
+	if (0 != id)
+	{
+		if (dataFormBL->DeleteAmortizeGroup(&amGr, errorMessage))
+		{
+			tableView->model()->removeRow(tableView->selectionModel()->currentIndex().row());
+			ChangeBtnState();
+		}
+		else
+		{
+			QMessageBox::information(NULL, QString(tr("Warning")),
+				QString(tr(errorMessage.c_str())),
+				QString(tr("Ok")));
+		}
+	}
+	else
+	{
+		QMessageBox::information(NULL, QString(tr("Warning")),
+			QString(tr("Amortize group with this id does not exist!")),
+			QString(tr("Ok")));
+	}
+}
+
+void DataForm::CrtAmTypeDlg()
+{
+	CreateAmTypeDlg *amTypeDlg = new CreateAmTypeDlg(dataFormBL, false, this);
+	amTypeDlg->setAttribute(Qt::WA_DeleteOnClose);
+	amTypeDlg->setWindowTitle(tr("Create amortime type"));
+	QMdiSubWindow *amTypeWindow = new QMdiSubWindow;
+	amTypeWindow->setWidget(amTypeDlg);
+	amTypeWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(amTypeWindow);
+	amTypeDlg->show();
+}
+void DataForm::UdpAmTypeDlg()
+{
+	CreateAmTypeDlg *amTypeDlg = new CreateAmTypeDlg(dataFormBL, true, this);
+	amTypeDlg->setAttribute(Qt::WA_DeleteOnClose);
+	amTypeDlg->setWindowTitle(tr("Update amortime type"));
+	QMdiSubWindow *amTypeWindow = new QMdiSubWindow;
+	amTypeWindow->setWidget(amTypeDlg);
+	amTypeWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(amTypeWindow);
+	if (amTypeDlg->FillDlgElements(tableView))
+	{
+		amTypeDlg->show();
+	}
+	else
+	{
+		QMessageBox::information(NULL, QString(tr("Warning")),
+			QString(tr("Please select one row at first!")),
+			QString(tr("Ok")));
+	}
+}
+void DataForm::DelAmTypeDlg()
+{
+	int result = QMessageBox::question(this, QString(tr("Affirm")),
+		QString(tr("Do you really want to delete these data? (WARNING! All data will be irretrievable lost)")),
+		QString(tr("Yes")), QString(tr("No")));
+	if (result == 1)
+		return;
+	std::string errorMessage = "";
+	int id = GetIDFromTable(tableView, errorMessage);
+	BusinessLayer::AmortizeType amType;
+	amType.SetID(id);
+	if (0 != id)
+	{
+		if (dataFormBL->DeleteAmortizeType(&amType, errorMessage))
+		{
+			tableView->model()->removeRow(tableView->selectionModel()->currentIndex().row());
+			ChangeBtnState();
+		}
+		else
+		{
+			QMessageBox::information(NULL, QString(tr("Warning")),
+				QString(tr(errorMessage.c_str())),
+				QString(tr("Ok")));
+		}
+	}
+	else
+	{
+		QMessageBox::information(NULL, QString(tr("Warning")),
+			QString(tr("Amortize type with this id does not exist!")),
+			QString(tr("Ok")));
+	}
+}
+
 void DataForm::CrtBlcDlg()
 {
 	CreateBlcDlg *balanceDlg = new CreateBlcDlg(dataFormBL, false, this);
@@ -2936,6 +3064,70 @@ void DataForm::DelDivDlg()
 	}
 }
 
+void DataForm::CrtDivAccDlg()
+{
+	CreateDivAccDlg *divisionAccDlg = new CreateDivAccDlg(dataFormBL, false, this);
+	divisionAccDlg->setAttribute(Qt::WA_DeleteOnClose);
+	divisionAccDlg->setWindowTitle(tr("Create division account"));
+	QMdiSubWindow *divisionAccWindow = new QMdiSubWindow;
+	divisionAccWindow->setWidget(divisionAccDlg);
+	divisionAccWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(divisionAccWindow);
+	divisionAccDlg->show();
+}
+void DataForm::UdpDivAccDlg()
+{
+	CreateDivAccDlg *divisionAccDlg = new CreateDivAccDlg(dataFormBL, false, this);
+	divisionAccDlg->setAttribute(Qt::WA_DeleteOnClose);
+	divisionAccDlg->setWindowTitle(tr("Update division account"));
+	QMdiSubWindow *divisionAccWindow = new QMdiSubWindow;
+	divisionAccWindow->setWidget(divisionAccDlg);
+	divisionAccWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(divisionAccWindow);
+	if (divisionAccDlg->FillDlgElements(tableView))
+	{
+		divisionAccDlg->show();
+	}
+	else
+	{
+		QMessageBox::information(NULL, QString(tr("Warning")),
+			QString(tr("Please select one row at first!")),
+			QString(tr("Ok")));
+	}
+}
+void DataForm::DelDivAccDlg()
+{
+	int result = QMessageBox::question(this, QString(tr("Affirm")),
+		QString(tr("Do you really want to delete these data? (WARNING! All data will be irretrievable lost)")),
+		QString(tr("Yes")), QString(tr("No")));
+	if (result == 1)
+		return;
+	std::string errorMessage = "";
+	int id = GetIDFromTable(tableView, errorMessage);
+	BusinessLayer::DivisionAccountRelation divisionAcc;
+	divisionAcc.SetID(id);
+	if (0 != id)
+	{
+		if (dataFormBL->DeleteDivisionAccountRelation(&divisionAcc, errorMessage))
+		{
+			tableView->model()->removeRow(tableView->selectionModel()->currentIndex().row());
+			ChangeBtnState();
+		}
+		else
+		{
+			QMessageBox::information(NULL, QString(tr("Warning")),
+				QString(tr(errorMessage.c_str())),
+				QString(tr("Ok")));
+		}
+	}
+	else
+	{
+		QMessageBox::information(NULL, QString(tr("Warning")),
+			QString(tr("Division account with this id does not exist!")),
+			QString(tr("Ok")));
+	}
+}
+
 void DataForm::CrtEmpDlg()
 {
 	CreateEmpDlg *employeeDlg = new CreateEmpDlg(dataFormBL, false, this);
@@ -3188,6 +3380,208 @@ void DataForm::DelEtrRtDlg()
 	{
 		QMessageBox::information(NULL, QString(tr("Warning")),
 			QString(tr("Entry routing with this id does not exist!")),
+			QString(tr("Ok")));
+	}
+}
+
+void DataForm::CrtFxdAstDlg()
+{
+	CreateFxdAstDlg *fxdAstDlg = new CreateFxdAstDlg(dataFormBL, false, this);
+	fxdAstDlg->setAttribute(Qt::WA_DeleteOnClose);
+	fxdAstDlg->setWindowTitle(tr("Create fixed assets"));
+	QMdiSubWindow *fxdAstWindow = new QMdiSubWindow;
+	fxdAstWindow->setWidget(fxdAstDlg);
+	fxdAstWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(fxdAstWindow);
+	fxdAstDlg->show();
+}
+void DataForm::UdpFxdAstDlg()
+{
+	CreateFxdAstDlg *fxdAstDlg = new CreateFxdAstDlg(dataFormBL, true, this);
+	fxdAstDlg->setAttribute(Qt::WA_DeleteOnClose);
+	fxdAstDlg->setWindowTitle(tr("Update fixed assets"));
+	QMdiSubWindow *fxdAstWindow = new QMdiSubWindow;
+	fxdAstWindow->setWidget(fxdAstDlg);
+	fxdAstWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(fxdAstWindow);
+	if (fxdAstDlg->FillDlgElements(tableView))
+	{
+		fxdAstDlg->show();
+	}
+	else
+	{
+		QMessageBox::information(NULL, QString(tr("Warning")),
+			QString(tr("Please select one row at first!")),
+			QString(tr("Ok")));
+	}
+}
+void DataForm::DelFxdAstDlg()
+{
+	int result = QMessageBox::question(this, QString(tr("Affirm")),
+		QString(tr("Do you really want to delete these data? (WARNING! All data will be irretrievable lost)")),
+		QString(tr("Yes")), QString(tr("No")));
+	if (result == 1)
+		return;
+	std::string errorMessage = "";
+	int id = GetIDFromTable(tableView, errorMessage);
+	BusinessLayer::FixedAssets fxdAst;
+	fxdAst.SetID(id);
+	if (0 != id)
+	{
+		dataFormBL->StartTransaction(errorMessage);
+		if (dataFormBL->DeleteFixedAssets(&fxdAst, errorMessage))
+		{
+			dataFormBL->CommitTransaction(errorMessage);
+			tableView->model()->removeRow(tableView->selectionModel()->currentIndex().row());
+			ChangeBtnState();
+		}
+		else
+		{
+			dataFormBL->CancelTransaction(errorMessage);
+			QMessageBox::information(NULL, QString(tr("Warning")),
+				QString(tr(errorMessage.c_str())),
+				QString(tr("Ok")));
+		}
+	}
+	else
+	{
+		QMessageBox::information(NULL, QString(tr("Warning")),
+			QString(tr("Fixed assets with this id does not exist!")),
+			QString(tr("Ok")));
+	}
+}
+
+void DataForm::CrtFxdAstOperDlg()
+{
+	CreateFxdAstOperDlg *fxdAstOperDlg = new CreateFxdAstOperDlg(dataFormBL, false, this);
+	fxdAstOperDlg->setAttribute(Qt::WA_DeleteOnClose);
+	fxdAstOperDlg->setWindowTitle(tr("Create fixed assets operation"));
+	QMdiSubWindow *fxdAstOperWindow = new QMdiSubWindow;
+	fxdAstOperWindow->setWidget(fxdAstOperDlg);
+	fxdAstOperWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(fxdAstOperWindow);
+	fxdAstOperDlg->show();
+}
+void DataForm::UdpFxdAstOperDlg()
+{
+	CreateFxdAstOperDlg *fxdAstOperDlg = new CreateFxdAstOperDlg(dataFormBL, true, this);
+	fxdAstOperDlg->setAttribute(Qt::WA_DeleteOnClose);
+	fxdAstOperDlg->setWindowTitle(tr("Update fixed assets operation"));
+	QMdiSubWindow *fxdAstOperWindow = new QMdiSubWindow;
+	fxdAstOperWindow->setWidget(fxdAstOperDlg);
+	fxdAstOperWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(fxdAstOperWindow);
+	if (fxdAstOperDlg->FillDlgElements(tableView))
+	{
+		fxdAstOperDlg->show();
+	}
+	else
+	{
+		QMessageBox::information(NULL, QString(tr("Warning")),
+			QString(tr("Please select one row at first!")),
+			QString(tr("Ok")));
+	}
+}
+void DataForm::DelFxdAstOperDlg()
+{
+	int result = QMessageBox::question(this, QString(tr("Affirm")),
+		QString(tr("Do you really want to delete these data? (WARNING! All data will be irretrievable lost)")),
+		QString(tr("Yes")), QString(tr("No")));
+	if (result == 1)
+		return;
+	std::string errorMessage = "";
+	int id = GetIDFromTable(tableView, errorMessage);
+	BusinessLayer::FixedAssetsOperations fxdAstOper;
+	fxdAstOper.SetID(id);
+	if (0 != id)
+	{
+		dataFormBL->StartTransaction(errorMessage);
+		if (dataFormBL->DeleteFixedAssetsOperation(&fxdAstOper, errorMessage))
+		{
+			dataFormBL->CommitTransaction(errorMessage);
+			tableView->model()->removeRow(tableView->selectionModel()->currentIndex().row());
+			ChangeBtnState();
+		}
+		else
+		{
+			dataFormBL->CancelTransaction(errorMessage);
+			QMessageBox::information(NULL, QString(tr("Warning")),
+				QString(tr(errorMessage.c_str())),
+				QString(tr("Ok")));
+		}
+	}
+	else
+	{
+		QMessageBox::information(NULL, QString(tr("Warning")),
+			QString(tr("Fixed assets operation with this id does not exist!")),
+			QString(tr("Ok")));
+	}
+}
+
+void DataForm::CrtInveDlg()
+{
+	CreateInveDlg *inveDlg = new CreateInveDlg(dataFormBL, false, this);
+	inveDlg->setAttribute(Qt::WA_DeleteOnClose);
+	inveDlg->setWindowTitle(tr("Create inventory"));
+	QMdiSubWindow *inveWindow = new QMdiSubWindow;
+	inveWindow->setWidget(inveDlg);
+	inveWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(inveWindow);
+	inveDlg->show();
+}
+void DataForm::UdpInveDlg()
+{
+	CreateInveDlg *inveDlg = new CreateInveDlg(dataFormBL, true, this);
+	inveDlg->setAttribute(Qt::WA_DeleteOnClose);
+	inveDlg->setWindowTitle(tr("Update inventory"));
+	QMdiSubWindow *inveWindow = new QMdiSubWindow;
+	inveWindow->setWidget(inveDlg);
+	inveWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(inveWindow);
+	if (inveDlg->FillDlgElements(tableView))
+	{
+		inveDlg->show();
+	}
+	else
+	{
+	QMessageBox::information(NULL, QString(tr("Warning")),
+	QString(tr("Please select one row at first!")),
+	QString(tr("Ok")));
+	}
+}
+
+void DataForm::DelInveDlg()
+{
+	int result = QMessageBox::question(this, QString(tr("Affirm")),
+		QString(tr("Do you really want to delete these data? (WARNING! All data will be irretrievable lost)")),
+		QString(tr("Yes")), QString(tr("No")));
+	if (result == 1)
+		return;
+	std::string errorMessage = "";
+	int id = GetIDFromTable(tableView, errorMessage);
+	BusinessLayer::Inventory inve;
+	inve.SetID(id);
+	if (0 != id)
+	{
+		dataFormBL->StartTransaction(errorMessage);
+		if (dataFormBL->DeleteInventory(&inve, errorMessage))
+		{
+			dataFormBL->CommitTransaction(errorMessage);
+			tableView->model()->removeRow(tableView->selectionModel()->currentIndex().row());
+			ChangeBtnState();
+		}
+		else
+		{
+			dataFormBL->CancelTransaction(errorMessage);
+			QMessageBox::information(NULL, QString(tr("Warning")),
+				QString(tr(errorMessage.c_str())),
+				QString(tr("Ok")));
+		}
+	}
+	else
+	{
+		QMessageBox::information(NULL, QString(tr("Warning")),
+			QString(tr("Inventory with this id does not exist!")),
 			QString(tr("Ok")));
 	}
 }
@@ -9338,6 +9732,22 @@ QStringList DataForm::GetTableHeader<BusinessLayer::AccessItem>()
 }
 
 template<>
+QStringList DataForm::GetTableHeader<BusinessLayer::AmortizeGroup>()
+{
+	QStringList header;
+	header << QObject::tr("ID") << QObject::tr("Group number") << QObject::tr("From month") << QObject::tr("To month");
+	return header;
+}
+
+template<>
+QStringList DataForm::GetTableHeader<BusinessLayer::AmortizeType>()
+{
+	QStringList header;
+	header << QObject::tr("ID") << QObject::tr("Name") << QObject::tr("Code");
+	return header;
+}
+
+template<>
 QStringList DataForm::GetTableHeader<BusinessLayer::BalanceView>()
 {
 	QStringList header;
@@ -9496,6 +9906,16 @@ QStringList DataForm::GetTableHeader<BusinessLayer::Division>()
 }
 
 template<>
+QStringList DataForm::GetTableHeader<BusinessLayer::DivisionAccountRelationView>()
+{
+	QStringList header;
+	header << QObject::tr("ID") << QObject::tr("Division name") << QObject::tr("Account number") << QObject::tr("Account name")
+		<< QObject::tr("Code") << QObject::tr("Division ID") << QObject::tr("Account ID");
+	return header;
+}
+
+
+template<>
 QStringList DataForm::GetTableHeader<BusinessLayer::EmployeeView>()
 {
 	QStringList header;
@@ -9533,6 +9953,37 @@ QStringList DataForm::GetTableHeader<BusinessLayer::EntryRouting>()
 	QStringList header;
 	header << QObject::tr("ID") << QObject::tr("Operation") << QObject::tr("Debit") 
 		<< QObject::tr("Credit");
+	return header;
+}
+
+template<>
+QStringList DataForm::GetTableHeader<BusinessLayer::FixedAssetsView>()
+{
+	QStringList header;
+	header << QObject::tr("ID") << QObject::tr("Fixed assets name") << QObject::tr("Inventory number") << QObject::tr("Primary cost")
+		<< QObject::tr("Stop cost") << QObject::tr("Start primary value") << QObject::tr("Amortize value") << QObject::tr("Division name")
+		<< QObject::tr("Service life") << QObject::tr("Is amortize?") << QObject::tr("Buy date") << QObject::tr("Start of operation date")
+		<< QObject::tr("End of operation date") << QObject::tr("Specification ID") << QObject::tr("Status ID") << QObject::tr("Details ID");
+	return header;
+}
+
+template<>
+QStringList DataForm::GetTableHeader<BusinessLayer::FixedAssetsOperations>()
+{
+	QStringList header;
+	header << QObject::tr("ID") << QObject::tr("Date") << QObject::tr("Name") << QObject::tr("Value")
+		<< QObject::tr("Increment") << QObject::tr("Decrement") << QObject::tr("Fixed assets ID");
+	return header;
+}
+
+template<>
+QStringList DataForm::GetTableHeader<BusinessLayer::InventoryView>()
+{
+	QStringList header;
+	header << QObject::tr("ID") << QObject::tr("Name") << QObject::tr("Cost") << QObject::tr("Inventory number")
+		<< QObject::tr("Barcode number") << QObject::tr("Division name") << QObject::tr("Staus name")
+		<< QObject::tr("Location") << QObject::tr("Start of operation date") << QObject::tr("End of operation date")
+		<< QObject::tr("Status ID") << QObject::tr("Department ID");
 	return header;
 }
 
@@ -10224,6 +10675,24 @@ QList<QStandardItem*> DataForm::GetDataFromClass<BusinessLayer::AccessItem>(Busi
 }
 
 template<>
+QList<QStandardItem*> DataForm::GetDataFromClass<BusinessLayer::AmortizeGroup>(BusinessLayer::AmortizeGroup& data)
+{
+	QList<QStandardItem*> items;
+	items << new QStandardItem(QString::number(data.GetID())) << new QStandardItem(QString::number(data.GetGroupNumber()))
+		<< new QStandardItem(QString::number(data.GetFromMonth())) << new QStandardItem(QString::number(data.GetToMonth()));
+	return items;
+}
+
+template<>
+QList<QStandardItem*> DataForm::GetDataFromClass<BusinessLayer::AmortizeType>(BusinessLayer::AmortizeType& data)
+{
+	QList<QStandardItem*> items;
+	items << new QStandardItem(QString::number(data.GetID())) << new QStandardItem(data.GetName().c_str())
+		<< new QStandardItem(data.GetCode().c_str());
+	return items;
+}
+
+template<>
 QList<QStandardItem*> DataForm::GetDataFromClass<BusinessLayer::BalanceView>(BusinessLayer::BalanceView& data)
 {
 	QList<QStandardItem*> items;
@@ -10488,6 +10957,20 @@ QList<QStandardItem*> DataForm::GetDataFromClass<BusinessLayer::Division>(Busine
 }
 
 template<>
+QList<QStandardItem*> DataForm::GetDataFromClass<BusinessLayer::DivisionAccountRelationView>(BusinessLayer::DivisionAccountRelationView& data)
+{
+	QList<QStandardItem*> items;
+	items << new QStandardItem(QString::number(data.GetID()))
+		<< new QStandardItem(data.GetDivisionName().c_str()) 
+		<< new QStandardItem(data.GetAccountNumber().c_str())
+		<< new QStandardItem(data.GetAccountName().c_str())
+		<< new QStandardItem(data.GetCode().c_str())
+		<< new QStandardItem(QString::number(data.GetDivisionID()))
+		<< new QStandardItem(QString::number(data.GetAccountID()));
+	return items;
+}
+
+template<>
 QList<QStandardItem*> DataForm::GetDataFromClass<BusinessLayer::EmployeeView>(BusinessLayer::EmployeeView& data)
 {
 	QList<QStandardItem*> items;
@@ -10553,6 +11036,64 @@ QList<QStandardItem*> DataForm::GetDataFromClass<BusinessLayer::EntryRouting>(Bu
 	return items;
 }
 
+template<>
+QList<QStandardItem*> DataForm::GetDataFromClass<BusinessLayer::FixedAssetsView>(BusinessLayer::FixedAssetsView& data)
+{
+	QList<QStandardItem*> items;
+	QIcon icon;
+	items << new QStandardItem(QString::number(data.GetID()))
+		<< new QStandardItem(data.GetName().c_str())
+		<< new QStandardItem(data.GetInventoryNumber().c_str())
+		<< new QStandardItem(QString::number(data.GetPrimaryCost(), 'f', 3))
+		<< new QStandardItem(QString::number(data.GetStopCost(), 'f', 3))
+		<< new QStandardItem(QString::number(data.GetPrimaryCostValue(), 'f', 3))
+		<< new QStandardItem(QString::number(data.GetAmortizeValue(), 'f', 3))
+		<< new QStandardItem(data.GetDivisionName().c_str())
+		<< new QStandardItem(QString::number(data.GetServiceLife()))
+		<< new QStandardItem(data.GetIsAmortize() ? "true" : "false")
+		<< new QStandardItem(data.GetBuyDate().c_str())
+		<< new QStandardItem(data.GetStartOfOperationDate().c_str())
+		<< new QStandardItem(data.GetEndOfOperationDate().c_str())
+		<< new QStandardItem(QString::number(data.GetSpecificationID()))
+		<< new QStandardItem(QString::number(data.GetStatusID()))
+		<< new QStandardItem(QString::number(data.GetFixedAssetsDetailsID()));
+	return items;
+}
+
+template<>
+QList<QStandardItem*> DataForm::GetDataFromClass<BusinessLayer::FixedAssetsOperations>(BusinessLayer::FixedAssetsOperations& data)
+{
+	QList<QStandardItem*> items;
+	QIcon icon;
+	items << new QStandardItem(QString::number(data.GetID()))
+		<< new QStandardItem(data.GetDate().c_str())
+		<< new QStandardItem(data.GetName().c_str())
+		<< new QStandardItem(QString::number(data.GetValue(), 'f', 3))
+		<< new QStandardItem(data.GetIncrement()?"true":"false")
+		<< new QStandardItem(data.GetDecrement() ? "true" : "false")
+		<< new QStandardItem(QString::number(data.GetFixedAssetsID()));
+	return items;
+}
+
+template<>
+QList<QStandardItem*> DataForm::GetDataFromClass<BusinessLayer::InventoryView>(BusinessLayer::InventoryView& data)
+{
+	QList<QStandardItem*> items;
+	QIcon icon;
+	items << new QStandardItem(QString::number(data.GetID()))
+		<< new QStandardItem(data.GetName().c_str())
+		<< new QStandardItem(QString::number(data.GetCost(), 'f', 3))
+		<< new QStandardItem(data.GetInventoryNumber().c_str())
+		<< new QStandardItem(data.GetBarcodeNumber().c_str())
+		<< new QStandardItem(data.GetDivisionName().c_str())
+		<< new QStandardItem(data.GetStatusName().c_str())
+		<< new QStandardItem(data.GetLocation().c_str())
+		<< new QStandardItem(data.GetStartOfOperationDate().c_str())
+		<< new QStandardItem(data.GetEndOfOperationDate().c_str())
+		<< new QStandardItem(QString::number(data.GetStatusID()))
+		<< new QStandardItem(QString::number(data.GetDepartmentID()));
+	return items;
+}
 
 template<>
 QList<QStandardItem*> DataForm::GetDataFromClass<BusinessLayer::InventorizationView>(BusinessLayer::InventorizationView& data)
@@ -11747,6 +12288,16 @@ void DataForm::QtConnect<BusinessLayer::Account>()
 		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
 		connect(this, SIGNAL(SendID(int, QString)), ((GenerateAccCardRep*)parentDialog), SLOT(SetID(int, QString)));
 	}
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreateInventory")
+	{
+		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreateInveDlg*)parentDialog), SLOT(SetID(int, QString)));
+	}
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreateFxdAst")
+	{
+		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreateFxdAstDlg*)parentDialog), SLOT(SetID(int, QString)));
+	}
 }
 
 template<>
@@ -11785,6 +12336,16 @@ void DataForm::QtConnect<BusinessLayer::AccountableView>()
 	viewBtn->setVisible(false);
 	connect(closeBtn, &QPushButton::released, this, &DataForm::CloseDataForm);
 	connect(tableView->selectionModel(), SIGNAL(currentRowChanged(QModelIndex, QModelIndex)), this, SLOT(ChangeBtnState()));
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreateInventory")
+	{
+		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreateInveDlg*)parentDialog), SLOT(SetID(int, QString)));
+	}
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreateFxdAst")
+	{
+		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreateFxdAstDlg*)parentDialog), SLOT(SetID(int, QString)));
+	}
 }
 
 template<>
@@ -11910,6 +12471,81 @@ void DataForm::QtConnect<BusinessLayer::AccessItem>()
 	}
 }
 
+template<>
+void DataForm::QtConnect<BusinessLayer::AmortizeGroup>()
+{
+	BusinessLayer::Access access;
+	std::string crud = access.GetCRUDAccess(&dataFormBL->GetOrmasDal(), loggedUser, "actionAmortizeGroup");
+	std::size_t pos = crud.find("C");
+	if (pos != std::string::npos)
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::CrtAmGrDlg);
+	}
+	else
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("U");
+	if (pos != std::string::npos)
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::UdpAmGrDlg);
+	}
+	else
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("D");
+	if (pos != std::string::npos)
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::DelAmGrDlg);
+	}
+	else
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+
+	viewBtn->setVisible(false);
+	connect(closeBtn, &QPushButton::released, this, &DataForm::CloseDataForm);
+	connect(tableView->selectionModel(), SIGNAL(currentRowChanged(QModelIndex, QModelIndex)), this, SLOT(ChangeBtnState()));
+}
+
+template<>
+void DataForm::QtConnect<BusinessLayer::AmortizeType>()
+{
+	BusinessLayer::Access access;
+	std::string crud = access.GetCRUDAccess(&dataFormBL->GetOrmasDal(), loggedUser, "actionAmortizeType");
+	std::size_t pos = crud.find("C");
+	if (pos != std::string::npos)
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::CrtAmTypeDlg);
+	}
+	else
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("U");
+	if (pos != std::string::npos)
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::UdpAmTypeDlg);
+	}
+	else
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("D");
+	if (pos != std::string::npos)
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::DelAmTypeDlg);
+	}
+	else
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+
+	viewBtn->setVisible(false);
+	connect(closeBtn, &QPushButton::released, this, &DataForm::CloseDataForm);
+	connect(tableView->selectionModel(), SIGNAL(currentRowChanged(QModelIndex, QModelIndex)), this, SLOT(ChangeBtnState()));
+}
 
 template<>
 void DataForm::QtConnect<BusinessLayer::BalanceView>()
@@ -12573,6 +13209,44 @@ void DataForm::QtConnect<BusinessLayer::Division>()
 }
 
 template<>
+void DataForm::QtConnect<BusinessLayer::DivisionAccountRelationView>()
+{
+	BusinessLayer::Access access;
+	std::string crud = access.GetCRUDAccess(&dataFormBL->GetOrmasDal(), loggedUser, "actionDivisionAssounts");
+	std::size_t pos = crud.find("C");
+	if (pos != std::string::npos)
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::CrtDivAccDlg);
+	}
+	else
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("U");
+	if (pos != std::string::npos)
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::UdpDivAccDlg);
+	}
+	else
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("D");
+	if (pos != std::string::npos)
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::DelDivAccDlg);
+	}
+	else
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	viewBtn->setVisible(false);
+	connect(closeBtn, &QPushButton::released, this, &DataForm::CloseDataForm);
+	connect(tableView->selectionModel(), SIGNAL(currentRowChanged(QModelIndex, QModelIndex)), this, SLOT(ChangeBtnState()));
+}
+
+
+template<>
 void DataForm::QtConnect<BusinessLayer::EmployeeView>()
 {
 	BusinessLayer::Access access;
@@ -12841,6 +13515,121 @@ void DataForm::QtConnect<BusinessLayer::EntryRouting>()
 	connect(tableView->selectionModel(), SIGNAL(currentRowChanged(QModelIndex, QModelIndex)), this, SLOT(ChangeBtnState()));
 }
 
+template<>
+void DataForm::QtConnect<BusinessLayer::FixedAssetsView>()
+{
+	BusinessLayer::Access access;
+	std::string crud = access.GetCRUDAccess(&dataFormBL->GetOrmasDal(), loggedUser, "actionFixedAssets");
+	std::size_t pos = crud.find("C");
+	if (pos != std::string::npos)
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::CrtFxdAstDlg);
+	}
+	else
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("U");
+	if (pos != std::string::npos)
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::UdpFxdAstDlg);
+	}
+	else
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("D");
+	if (pos != std::string::npos)
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::DelFxdAstDlg);
+	}
+	else
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	connect(viewBtn, &QPushButton::released, this, &DataForm::ViewInvDlg);
+	connect(closeBtn, &QPushButton::released, this, &DataForm::CloseDataForm);
+	connect(tableView->selectionModel(), SIGNAL(currentRowChanged(QModelIndex, QModelIndex)), this, SLOT(ChangeBtnState()));
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreateFxdAstOper")
+	{
+		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreateFxdAstOperDlg*)parentDialog), SLOT(SetID(int, QString)));
+	}
+}
+
+template<>
+void DataForm::QtConnect<BusinessLayer::FixedAssetsOperations>()
+{
+	BusinessLayer::Access access;
+	std::string crud = access.GetCRUDAccess(&dataFormBL->GetOrmasDal(), loggedUser, "actionFixedAstOper");
+	std::size_t pos = crud.find("C");
+	if (pos != std::string::npos)
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::CrtFxdAstOperDlg);
+	}
+	else
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("U");
+	if (pos != std::string::npos)
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::UdpFxdAstOperDlg);
+	}
+	else
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("D");
+	if (pos != std::string::npos)
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::DelFxdAstOperDlg);
+	}
+	else
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	connect(viewBtn, &QPushButton::released, this, &DataForm::ViewInvDlg);
+	connect(closeBtn, &QPushButton::released, this, &DataForm::CloseDataForm);
+	connect(tableView->selectionModel(), SIGNAL(currentRowChanged(QModelIndex, QModelIndex)), this, SLOT(ChangeBtnState()));
+}
+
+template<>
+void DataForm::QtConnect<BusinessLayer::InventoryView>()
+{
+	BusinessLayer::Access access;
+	std::string crud = access.GetCRUDAccess(&dataFormBL->GetOrmasDal(), loggedUser, "actionInventory");
+	std::size_t pos = crud.find("C");
+	if (pos != std::string::npos)
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::CrtInveDlg);
+	}
+	else
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("U");
+	if (pos != std::string::npos)
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::UdpInveDlg);
+	}
+	else
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("D");
+	if (pos != std::string::npos)
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::DelInveDlg);
+	}
+	else
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	connect(viewBtn, &QPushButton::released, this, &DataForm::ViewInvDlg);
+	connect(closeBtn, &QPushButton::released, this, &DataForm::CloseDataForm);
+	connect(tableView->selectionModel(), SIGNAL(currentRowChanged(QModelIndex, QModelIndex)), this, SLOT(ChangeBtnState()));
+}
 
 template<>
 void DataForm::QtConnect<BusinessLayer::InventorizationView>()
@@ -14136,6 +14925,16 @@ void DataForm::QtConnect<BusinessLayer::PurveyorView>()
 		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
 		connect(this, SIGNAL(SendID(int, QString)), ((CreateOrdRDlg*)parentDialog), SLOT(SetID(int, QString)));
 	}
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreateInventory")
+	{
+		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreateInveDlg*)parentDialog), SLOT(SetID(int, QString)));
+	}
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreateFxdAst")
+	{
+		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreateFxdAstDlg*)parentDialog), SLOT(SetID(int, QString)));
+	}
 }
 
 template<>
@@ -14866,6 +15665,21 @@ void DataForm::QtConnect<BusinessLayer::Status>()
 	{
 		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
 		connect(this, SIGNAL(SendID(int, QString)), ((CreateAccDlg*)parentDialog), SLOT(SetID(int, QString)));
+	}
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreateInventory")
+	{
+		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreateInveDlg*)parentDialog), SLOT(SetID(int, QString)));
+	}
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreateFixedAssets")
+	{
+		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreateFxdAstDlg*)parentDialog), SLOT(SetID(int, QString)));
+	}
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreateDivisionAccount")
+	{
+		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreateDivAccDlg*)parentDialog), SLOT(SetID(int, QString)));
 	}
 }
 

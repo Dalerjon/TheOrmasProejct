@@ -66,8 +66,10 @@ namespace BusinessLayer
 		bool GetInventoryByID(DataLayer::OrmasDal& ormasDal, int iID, std::string& errorMessage);
 		bool IsEmpty();
 		void Clear();
+		std::string GenerateInventoryNumber(DataLayer::OrmasDal& ormasDal, int divID);
 	private:
 		bool IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string iName, std::string iNumber, std::string bNumber, double iCost, std::string& errorMessage);
+		std::string GenerateInvRawNumber(DataLayer::OrmasDal& ormasDal, std::string& errorMessage);
 		bool IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string& errorMessage);
 	};
 }

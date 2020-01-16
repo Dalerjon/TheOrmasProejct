@@ -76,6 +76,14 @@ private slots:
 	void UdpAcsItemDlg();
 	void DelAcsItemDlg();
 
+	void CrtAmGrDlg();
+	void UdpAmGrDlg();
+	void DelAmGrDlg();
+
+	void CrtAmTypeDlg();
+	void UdpAmTypeDlg();
+	void DelAmTypeDlg();
+
 	void CrtBlcDlg();
 	void UdpBlcDlg();
 	void DelBlcDlg();
@@ -142,6 +150,10 @@ private slots:
 	void UdpDivDlg();
 	void DelDivDlg();
 
+	void CrtDivAccDlg();
+	void UdpDivAccDlg();
+	void DelDivAccDlg();
+
 	void CrtEmpDlg();
 	void UdpEmpDlg();
 	void DelEmpDlg();
@@ -157,6 +169,18 @@ private slots:
 	void CrtEtrRtDlg();
 	void UdpEtrRtDlg();
 	void DelEtrRtDlg();
+
+	void CrtFxdAstDlg();
+	void UdpFxdAstDlg();
+	void DelFxdAstDlg();
+
+	void CrtFxdAstOperDlg();
+	void UdpFxdAstOperDlg();
+	void DelFxdAstOperDlg();
+
+	void CrtInveDlg();
+	void UdpInveDlg();
+	void DelInveDlg();
 
 	void CrtInvDlg();
 	void UdpInvDlg();

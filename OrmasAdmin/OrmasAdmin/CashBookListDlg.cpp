@@ -429,7 +429,15 @@ void CashBookListDlg::GetPrevMonthEnd(std::string forDate, std::string& fromDate
 	int coundOfDaysPast; //  = pastMonthDate.daysInMonth();
 
 	startDate = "01.";
-	startDate += std::to_string(month);
+	if (month < 10)
+	{
+		startDate += "0";
+		startDate += std::to_string(month);
+	}
+	else
+	{
+		startDate += std::to_string(month);
+	}
 	startDate += ".";
 	startDate += std::to_string(year);
 
@@ -437,7 +445,15 @@ void CashBookListDlg::GetPrevMonthEnd(std::string forDate, std::string& fromDate
 	coundOfDaysCurr = curMonthDate.daysInMonth();
 	endDate = std::to_string(coundOfDaysCurr);
 	endDate += ".";
-	endDate += std::to_string(month);
+	if (month < 10)
+	{
+		endDate += "0";
+		endDate += std::to_string(month);
+	}
+	else
+	{
+		endDate += std::to_string(month);
+	}
 	endDate += ".";
 	endDate += std::to_string(year);
 
@@ -466,14 +482,30 @@ void CashBookListDlg::GetPrevMonthEnd(std::string forDate, std::string& fromDate
 	if (month > 1)
 	{
 		startDate = "01.";
-		startDate += std::to_string(month - 1);
+		if (month<11)
+		{
+			startDate += "0";
+			startDate += std::to_string(month - 1);
+		}
+		else
+		{
+			startDate += std::to_string(month - 1);
+		}
 		startDate += ".";
 		startDate += std::to_string(year);
 		pastMonthDate = (QDate::fromString(startDate.c_str(), "dd.MM.yyyy"));
 		coundOfDaysPast = pastMonthDate.daysInMonth();
 		endDate = std::to_string(coundOfDaysPast);
 		endDate += ".";
-		endDate += std::to_string(month - 1);
+		if (month < 11)
+		{
+			endDate += "0";
+			endDate += std::to_string(month - 1);
+		}
+		else
+		{
+			endDate += std::to_string(month - 1);
+		}
 		endDate += ".";
 		endDate += std::to_string(year);
 		prevMonthEnd = endDate;
@@ -499,7 +531,15 @@ void CashBookListDlg::GetPrevMonthEnd(std::string forDate, std::string& fromDate
 			startDate = std::to_string(day - 1);
 			startDate += ".";
 		}
-		startDate += std::to_string(month);
+		if (month < 11)
+		{
+			startDate += "0";
+			startDate += std::to_string(month);
+		}
+		else
+		{
+			startDate += std::to_string(month);
+		}
 		startDate += ".";
 		startDate += std::to_string(year); 
 		prevDate = startDate;
@@ -516,7 +556,15 @@ std::string CashBookListDlg::GetCurrentDate()
 	std::string startDate = "";
 	startDate = std::to_string(day);
 	startDate += ".";
-	startDate += std::to_string(month);
+	if (month < 11)
+	{
+		startDate += "0";
+		startDate += std::to_string(month);
+	}
+	else
+	{
+		startDate += std::to_string(month);
+	}
 	startDate += ".";
 	startDate += std::to_string(year);
 

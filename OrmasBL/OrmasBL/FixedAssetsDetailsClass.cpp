@@ -1,5 +1,9 @@
 #include "stdafx.h"
 #include "FixedAssetsDetailsClass.h"
+#include "SubaccountClass.h"
+#include "AccountClass.h"
+#include "CurrencyClass.h"
+#include "StatusClass.h"
 
 namespace BusinessLayer
 {
@@ -13,6 +17,7 @@ namespace BusinessLayer
 		primaryCostAccountID = std::get<5>(fCollection);
 		amortizeAccountID = std::get<6>(fCollection);
 		barcodeNumber = std::get<7>(fCollection);
+		amortizeValue = std::get<8>(fCollection);
 	}
 
 	int FixedAssetsDetails::GetID()
@@ -53,6 +58,11 @@ namespace BusinessLayer
 	std::string FixedAssetsDetails::GetBarcodeNumber()
 	{
 		return barcodeNumber;
+	}
+	
+	double FixedAssetsDetails::GetAmortizeValue()
+	{
+		return amortizeValue;
 	}
 
 	void FixedAssetsDetails::SetID(int fID)
@@ -95,10 +105,15 @@ namespace BusinessLayer
 		barcodeNumber = bNumber;
 	}
 
-	bool FixedAssetsDetails::CreateFixedAssetsDetails(DataLayer::OrmasDal& ormasDal, int agID, int atID, int dID, std::string faLocation,
-		int paID, int aaID, std::string bNumber, std::string& errorMessage)
+	void FixedAssetsDetails::SetAmortizeValue(double amValue)
 	{
-		if (IsDuplicate(ormasDal, bNumber, errorMessage))
+		amortizeValue = amValue;
+	}
+
+	bool FixedAssetsDetails::CreateFixedAssetsDetails(DataLayer::OrmasDal& ormasDal, int agID, int atID, int dID, std::string faLocation,
+		int paID, int aaID, std::string bNumber, double amValue, std::string& errorMessage)
+	{
+		if (IsDuplicate(ormasDal, paID, aaID, errorMessage))
 			return false;
 		id = ormasDal.GenerateID();
 		amortizeGroupID = agID;
@@ -108,9 +123,10 @@ namespace BusinessLayer
 		primaryCostAccountID = paID;
 		amortizeAccountID = aaID;
 		barcodeNumber = bNumber;
+		amortizeValue = amValue;
 		//ormasDal.StartTransaction(errorMessage);
 		if (0 != id && ormasDal.CreateFixedAssetsDetails(id, amortizeGroupID, amortizeTypeID, departmentID, fixedAssetsLocation,
-			primaryCostAccountID, amortizeAccountID, barcodeNumber, errorMessage))
+			primaryCostAccountID, amortizeAccountID, barcodeNumber, amortizeValue, errorMessage))
 		{
 			return true;
 		}
@@ -126,9 +142,10 @@ namespace BusinessLayer
 	{
 		if (IsDuplicate(ormasDal, errorMessage))
 			return false;
+		id = ormasDal.GenerateID();
 		//ormasDal.StartTransaction(errorMessage);
 		if (0 != id && ormasDal.CreateFixedAssetsDetails(id, amortizeGroupID, amortizeTypeID, departmentID, fixedAssetsLocation,
-			primaryCostAccountID, amortizeAccountID, barcodeNumber, errorMessage))
+			primaryCostAccountID, amortizeAccountID, barcodeNumber, amortizeValue, errorMessage))
 		{
 			return true;
 		}
@@ -143,9 +160,21 @@ namespace BusinessLayer
 	{
 		//if (!ormasDal.StartTransaction(errorMessage))
 		//	return false;
+		FixedAssetsDetails fxd;
+		if (!fxd.GetFixedAssetsDetailsByID(ormasDal, id, errorMessage))
+			return false;
+		Subaccount primSub;
+		Subaccount amSub;
+		if (!primSub.GetSubaccountByID(ormasDal, fxd.GetPrimaryCostAccountID(), errorMessage))
+			return false;
+		if (!amSub.GetSubaccountByID(ormasDal, fxd.GetAmortizeAccountID(), errorMessage))
+			return false;
+		if (primSub.GetCurrentBalance() !=0 || amSub.GetCurrentBalance()!= 0)
+			return false;
 		if (ormasDal.DeleteFixedAssetsDetails(id, errorMessage))
 		{
-			return true;
+			if (primSub.DeleteSubaccount(ormasDal, errorMessage) && amSub.DeleteSubaccount(ormasDal, errorMessage))
+				return true;
 		}
 		if (errorMessage.empty())
 		{
@@ -154,7 +183,7 @@ namespace BusinessLayer
 		return false;
 	}
 	bool FixedAssetsDetails::UpdateFixedAssetsDetails(DataLayer::OrmasDal& ormasDal, int agID, int atID, int dID, std::string faLocation,
-		int paID, int aaID, std::string bNumber, std::string& errorMessage)
+		int paID, int aaID, std::string bNumber, double amValue, std::string& errorMessage)
 	{
 		amortizeGroupID = agID;
 		amortizeTypeID = atID;
@@ -163,9 +192,10 @@ namespace BusinessLayer
 		primaryCostAccountID = paID;
 		amortizeAccountID = aaID;
 		barcodeNumber = bNumber;
+		amortizeValue = amValue;
 		//ormasDal.StartTransaction(errorMessage);
 		if (0 != id && ormasDal.UpdateFixedAssetsDetails(id, amortizeGroupID, amortizeTypeID, departmentID, fixedAssetsLocation,
-			primaryCostAccountID, amortizeAccountID, barcodeNumber, errorMessage))
+			primaryCostAccountID, amortizeAccountID, barcodeNumber, amortizeValue, errorMessage))
 		{
 			return true;
 		}
@@ -180,7 +210,7 @@ namespace BusinessLayer
 	{
 		//ormasDal.StartTransaction(errorMessage);
 		if (0 != id && ormasDal.UpdateFixedAssetsDetails(id, amortizeGroupID, amortizeTypeID, departmentID, fixedAssetsLocation,
-			primaryCostAccountID, amortizeAccountID, barcodeNumber, errorMessage))
+			primaryCostAccountID, amortizeAccountID, barcodeNumber, amortizeValue, errorMessage))
 		{
 			return true;
 		}
@@ -195,10 +225,10 @@ namespace BusinessLayer
 	std::string FixedAssetsDetails::GenerateFilter(DataLayer::OrmasDal& ormasDal)
 	{
 		if (0 != id || 0 != amortizeGroupID || !fixedAssetsLocation.empty() ||0 != amortizeTypeID || 0 != departmentID 
-			|| !barcodeNumber.empty() || 0 != primaryCostAccountID || 0 != amortizeAccountID)
+			|| !barcodeNumber.empty() || 0 != primaryCostAccountID || 0 != amortizeAccountID || 0 != amortizeValue)
 		{
 			return ormasDal.GetFilterForFixedAssetsDetails(id, amortizeGroupID, amortizeTypeID, departmentID, fixedAssetsLocation,
-				primaryCostAccountID, amortizeAccountID, barcodeNumber);
+				primaryCostAccountID, amortizeAccountID, barcodeNumber, amortizeValue);
 		}
 		return "";
 	}
@@ -213,13 +243,14 @@ namespace BusinessLayer
 		if (0 != fixedAssetsDetailsVector.size())
 		{
 			id = std::get<0>(fixedAssetsDetailsVector.at(0));
-			amortizeGroupID = std::get<11>(fixedAssetsDetailsVector.at(0));
-			amortizeTypeID = std::get<12>(fixedAssetsDetailsVector.at(0));
-			departmentID = std::get<13>(fixedAssetsDetailsVector.at(0));
-			fixedAssetsLocation = std::get<8>(fixedAssetsDetailsVector.at(0));
-			primaryCostAccountID = std::get<9>(fixedAssetsDetailsVector.at(0));
-			amortizeAccountID = std::get<10>(fixedAssetsDetailsVector.at(0));
-			barcodeNumber = std::get<7>(fixedAssetsDetailsVector.at(0));
+			amortizeGroupID = std::get<12>(fixedAssetsDetailsVector.at(0));
+			amortizeTypeID = std::get<13>(fixedAssetsDetailsVector.at(0));
+			departmentID = std::get<14>(fixedAssetsDetailsVector.at(0));
+			fixedAssetsLocation = std::get<9>(fixedAssetsDetailsVector.at(0));
+			primaryCostAccountID = std::get<10>(fixedAssetsDetailsVector.at(0));
+			amortizeAccountID = std::get<11>(fixedAssetsDetailsVector.at(0));
+			barcodeNumber = std::get<8>(fixedAssetsDetailsVector.at(0));
+			amortizeValue = std::get<4>(fixedAssetsDetailsVector.at(0));
 			return true;
 		}
 		else
@@ -232,7 +263,7 @@ namespace BusinessLayer
 	bool FixedAssetsDetails::IsEmpty()
 	{
 		if (0 == id && 0 == amortizeGroupID && 0 == amortizeTypeID && 0 == departmentID && fixedAssetsLocation == ""
-			&& 0 == primaryCostAccountID && 0 == amortizeAccountID && barcodeNumber == "")
+			&& 0 == primaryCostAccountID && 0 == amortizeAccountID && barcodeNumber == "" && 0 !=amortizeValue)
 			return false;
 		return true;
 	}
@@ -247,14 +278,16 @@ namespace BusinessLayer
 		primaryCostAccountID = 0;
 		amortizeAccountID = 0;
 		barcodeNumber = "";
+		amortizeValue = 0;
 	}
 
-	bool FixedAssetsDetails::IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string bNumber, std::string& errorMessage)
+	bool FixedAssetsDetails::IsDuplicate(DataLayer::OrmasDal& ormasDal, int pID, int aID, std::string& errorMessage)
 	{
 		FixedAssetsDetails fixedAssetsDetails;
 		fixedAssetsDetails.Clear();
 		errorMessage.clear();
-		fixedAssetsDetails.SetBarcodeNumber(bNumber);
+		fixedAssetsDetails.SetPrimaryCostAccountID(pID);
+		fixedAssetsDetails.SetAmortizeAccountID(aID);
 		std::string filter = fixedAssetsDetails.GenerateFilter(ormasDal);
 		std::vector<DataLayer::fixedAssetsDetailsViewCollection> fixedAssetsDetailsVector = ormasDal.GetFixedAssetsDetails(errorMessage, filter);
 		if (!errorMessage.empty())
@@ -272,7 +305,8 @@ namespace BusinessLayer
 		FixedAssetsDetails fixedAssetsDetails;
 		fixedAssetsDetails.Clear();
 		errorMessage.clear();
-		fixedAssetsDetails.SetBarcodeNumber(barcodeNumber);
+		fixedAssetsDetails.SetPrimaryCostAccountID(primaryCostAccountID);
+		fixedAssetsDetails.SetAmortizeAccountID(amortizeAccountID);
 		std::string filter = fixedAssetsDetails.GenerateFilter(ormasDal);
 		std::vector<DataLayer::fixedAssetsDetailsViewCollection> fixedAssetsDetailsVector = ormasDal.GetFixedAssetsDetails(errorMessage, filter);
 		if (!errorMessage.empty())
@@ -283,5 +317,89 @@ namespace BusinessLayer
 		}
 		errorMessage = "Fixed assets details with these parameters are already exist! Please avoid the duplication!";
 		return true;
+	}
+
+	int FixedAssetsDetails::GeneratePrimeSubaccount(DataLayer::OrmasDal& ormasDal, double currentValue, std::string& errorMessage)
+	{
+		Account account;
+		Subaccount subaccount;
+		if (!account.GetAccountByID(ormasDal, fixedAssetsAccountID, errorMessage))
+			return 0;
+		Currency currency;
+		std::string number = "";
+		std::string genAccRawNumber = "";
+		int currID = currency.GetMainTradeCurrencyID(ormasDal, errorMessage);
+		if (0 != currID)
+		{
+			Status status;
+			if (!status.GetStatusByName(ormasDal, "OPEN", errorMessage))
+				return false;
+			if (!currency.GetCurrencyByID(ormasDal, currID, errorMessage))
+				return false;
+			number = account.GetNumber();
+			number.append(std::to_string(currency.GetCode()));
+			genAccRawNumber = subaccount.GenerateRawNumber(ormasDal, errorMessage);
+			if (genAccRawNumber.empty())
+				return false;
+			number.append(genAccRawNumber);
+			subaccount.SetParentAccountID(account.GetID());
+			subaccount.SetNumber(number);
+			subaccount.SetStartBalance(currentValue);
+			subaccount.SetCurrentBalance(currentValue);
+			subaccount.SetCurrencyID(currID);
+			subaccount.SetStatusID(status.GetID());
+			subaccount.SetOpenedDate(ormasDal.GetSystemDate());
+			subaccount.SetClosedDate("");
+			subaccount.SetDetails("Generated by system");
+			if (!subaccount.CreateSubaccount(ormasDal, errorMessage))
+				return 0;
+			return subaccount.GetID();
+		}
+		return 0;
+	}
+
+	int FixedAssetsDetails::GenerateAmortizeSubaccount(DataLayer::OrmasDal& ormasDal, double currentValue, std::string& errorMessage)
+	{
+		Account fxAccount;
+		Subaccount subaccount;
+		if (!fxAccount.GetAccountByID(ormasDal, fixedAssetsAccountID, errorMessage))
+			return 0;
+		std::string fxNumber = fxAccount.GetNumber().substr(3,5);
+		std::string amNumber = "111";
+		amNumber.append(fxNumber);
+		Account account;
+		if (!account.GetAccountByNumber(ormasDal, amNumber, errorMessage))
+			return 0;
+		Currency currency;
+		std::string number = "";
+		std::string genAccRawNumber = "";
+		int currID = currency.GetMainTradeCurrencyID(ormasDal, errorMessage);
+		if (0 != currID)
+		{
+			Status status;
+			if (!status.GetStatusByName(ormasDal, "OPEN", errorMessage))
+				return false;
+			if (!currency.GetCurrencyByID(ormasDal, currID, errorMessage))
+				return false;
+			number = account.GetNumber();
+			number.append(std::to_string(currency.GetCode()));
+			genAccRawNumber = subaccount.GenerateRawNumber(ormasDal, errorMessage);
+			if (genAccRawNumber.empty())
+				return false;
+			number.append(genAccRawNumber);
+			subaccount.SetParentAccountID(account.GetID());
+			subaccount.SetNumber(number);
+			subaccount.SetStartBalance(currentValue*(-1));
+			subaccount.SetCurrentBalance(currentValue*(-1));
+			subaccount.SetCurrencyID(currID);
+			subaccount.SetStatusID(status.GetID());
+			subaccount.SetOpenedDate(ormasDal.GetSystemDate());
+			subaccount.SetClosedDate("");
+			subaccount.SetDetails("Generated by system");
+			if (!subaccount.CreateSubaccount(ormasDal, errorMessage))
+				return 0;
+			return subaccount.GetID();
+		}
+		return 0;
 	}
 }

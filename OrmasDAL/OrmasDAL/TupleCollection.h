@@ -20,7 +20,7 @@ namespace DataLayer{
 
 	typedef std::tuple<int,int, double, double, int> accountableTransactionCollection;
 	
-	typedef std::tuple<int, std::string, std::string, int, double, int, double> amortizeTypeCollection;
+	typedef std::tuple<int, std::string, std::string> amortizeTypeCollection;
 
 	typedef std::tuple<int, int, int, int> amortizeGroupCollection;
 	
@@ -128,19 +128,27 @@ namespace DataLayer{
 	typedef std::tuple<int, double, double, double, double, double, double, double, double, double, double, double, double, double, 
 		double,	double, std::string, std::string> financialReportCollection;
 
-	typedef std::tuple<int, int, int, int, std::string, int, int, std::string> fixedAssetsDetailsCollection;
+	typedef std::tuple<int, int, int, int, std::string, int, int, std::string, double> fixedAssetsDetailsCollection;
 
-	typedef std::tuple<int, int, std::string, std::string, std::string, double, double, std::string, std::string, int, 
+	typedef std::tuple<int, int, std::string, std::string, double, std::string, double, double, std::string, std::string, int, 
 		int, int, int, int> fixedAssetsDetailsViewCollection;
 
-	typedef std::tuple<int, int, std::string, double, int, bool, int, std::string, std::string, std::string, int, int> fixedAssetsCollection;
+	typedef std::tuple<int, int, std::string, double, double, int, bool, std::string, std::string, std::string, int, int> fixedAssetsCollection;
 
 	typedef std::tuple<int, std::string, std::string, double, double, double, double, std::string, std::string, int, bool, std::string,
 		std::string, std::string, int, int, int> fixedAssetsViewCollection;
 
+	typedef std::tuple<int, std::string, std::string, double, double, double, std::string, double, int, bool, std::string,
+		std::string, std::string, std::string, std::string, std::string, std::string, std::string, std::string, std::string,
+		std::string, std::string, int, int, int, int, int, int, int, int, int, int, int, int> fixedAssetsUnionCollection;
+
 	typedef std::tuple<int, std::string, std::string, double, bool, bool, int> fixedAssetsOperationsCollection;
 	
 	typedef std::tuple<int, std::string, std::string, std::string, std::string, std::string, std::string, std::string> fixedAssetsSpecificationCollection;
+
+	typedef std::tuple<int, int, int, int, int, int> postingFixedAssetsCollection;
+
+	typedef std::tuple<int, std::string, std::string, int, int, int, int, int> postingFixedAssetsViewCollection;
 	
 	typedef std::tuple<int, int, int, double, double, int, int> inventorizationListCollection;
 

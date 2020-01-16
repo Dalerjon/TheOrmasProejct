@@ -12,8 +12,8 @@ namespace BusinessLayer
 		std::string amortizeTypeName = "";
 		std::string amortizeTypeCode = "";
 		std::string divisionName = "";
-		double primaryCostValue = 0;
-		double amortizeValue = 0;
+		double primaryAccValue = 0;
+		double amortizeAccValue = 0;
 	public:
 		FixedAssetsDetailsView(DataLayer::fixedAssetsDetailsViewCollection);
 		FixedAssetsDetailsView(){};
@@ -24,8 +24,8 @@ namespace BusinessLayer
 		std::string GetAmortizeTypeName();
 		std::string GetAmortizeTypeCode();
 		std::string GetDivisionName();
-		double GetPrimaryCostValue();
-		double GetAmortizeValue();
+		double GetPrimaryAccValue();
+		double GetAmortizeAccValue();
 	};
 }
 #endif //FixedAssetsDetailsVIEWCLASS_H
