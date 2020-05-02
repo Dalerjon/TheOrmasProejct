@@ -16,6 +16,7 @@ namespace BusinessLayer{
 		endOfOperationDate = std::get<9>(iCollection);
 		inventoryNumber = std::get<3>(iCollection);
 		barcodeNumber = std::get<4>(iCollection);
+		subaccountID = std::get<12>(iCollection);
 	}
 
 	std::string InventoryView::GetDivisionName()

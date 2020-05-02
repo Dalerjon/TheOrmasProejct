@@ -61,7 +61,7 @@ namespace BusinessLayer{
 	bool DivisionAccountRelation::CreateDivisionAccountRelation(DataLayer::OrmasDal &ormasDal, int dDivisionID, int dAccountID, 
 		std::string dCode, std::string& errorMessage)
 	{
-		if (IsDuplicate(ormasDal, dDivisionID, dAccountID, dCode, errorMessage))
+		if (IsDuplicate(ormasDal, dDivisionID, dCode, errorMessage))
 			return false;
 		id = ormasDal.GenerateID();
 		divisionID = dDivisionID;
@@ -95,7 +95,7 @@ namespace BusinessLayer{
 	}
 	bool DivisionAccountRelation::DeleteDivisionAccountRelation(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
-		if (ormasDal.DeleteDivisionAccount(divisionID, accountID, errorMessage))
+		if (ormasDal.DeleteDivisionAccount(id, errorMessage))
 		{
 			Clear();
 			return true;
@@ -168,6 +168,29 @@ namespace BusinessLayer{
 		return false;
 	}
 
+	bool DivisionAccountRelation::GetDARelationByDivisionIDAndCode(DataLayer::OrmasDal& ormasDal, int dID, std::string daCode, std::string& errorMessage)
+	{
+		if (dID <= 0 || daCode.empty())
+			return false;
+		divisionID = dID;
+		code = daCode;
+		std::string filter = GenerateFilter(ormasDal);
+		std::vector<DataLayer::divisionAccountViewCollection> divisionAccountRelationVector = ormasDal.GetDivisionAccount(errorMessage, filter);
+		if (0 != divisionAccountRelationVector.size())
+		{
+			id = std::get<0>(divisionAccountRelationVector.at(0));
+			divisionID = std::get<5>(divisionAccountRelationVector.at(0));
+			accountID = std::get<6>(divisionAccountRelationVector.at(0));
+			code = std::get<4>(divisionAccountRelationVector.at(0));
+			return true;
+		}
+		else
+		{
+			errorMessage = "Cannot find division account relation with this division id";
+		}
+		return false;
+	}
+
 	bool DivisionAccountRelation::IsEmpty()
 	{
 		if (0 == id && 0 == divisionID && 0 == accountID && code == "")
@@ -189,13 +212,12 @@ namespace BusinessLayer{
 			boost::trim(dCode);
 	}
 
-	bool DivisionAccountRelation::IsDuplicate(DataLayer::OrmasDal& ormasDal, int dDivisionID, int dAccountID, std::string cCode, std::string& errorMessage)
+	bool DivisionAccountRelation::IsDuplicate(DataLayer::OrmasDal& ormasDal, int dDivisionID, std::string cCode, std::string& errorMessage)
 	{
 		DivisionAccountRelation divisionAccountRelation;
 		divisionAccountRelation.Clear();
 		errorMessage.clear();
 		divisionAccountRelation.SetDivisionID(dDivisionID);
-		divisionAccountRelation.SetAccountID(dAccountID);
 		divisionAccountRelation.SetCode(cCode);
 		std::string filter = divisionAccountRelation.GenerateFilter(ormasDal);
 		std::vector<DataLayer::divisionAccountViewCollection> divisionAccountRelationVector = ormasDal.GetDivisionAccount(errorMessage, filter);
@@ -215,7 +237,6 @@ namespace BusinessLayer{
 		divisionAccountRelation.Clear();
 		errorMessage.clear();
 		divisionAccountRelation.SetDivisionID(divisionID);
-		divisionAccountRelation.SetAccountID(accountID);
 		divisionAccountRelation.SetCode(code);
 		std::string filter = divisionAccountRelation.GenerateFilter(ormasDal);
 		std::vector<DataLayer::divisionAccountViewCollection> divisionAccountRelationVector = ormasDal.GetDivisionAccount(errorMessage, filter);

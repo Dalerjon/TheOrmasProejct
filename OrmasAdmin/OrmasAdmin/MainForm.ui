@@ -91,6 +91,7 @@
     <addaction name="actionNetCost"/>
     <addaction name="actionEmployeeProducts"/>
     <addaction name="actionBranchProducts"/>
+    <addaction name="actionOtherStocks"/>
    </widget>
    <widget class="QMenu" name="menuOrders">
     <property name="title">
@@ -135,7 +136,6 @@
     </property>
     <addaction name="actionProduction"/>
     <addaction name="actionProductionList"/>
-    <addaction name="actionProductionStock"/>
     <addaction name="actionProductionConsumeRaws"/>
     <addaction name="actionProductionPlan"/>
     <addaction name="actionProductionPlanList"/>
@@ -194,6 +194,9 @@
     <addaction name="actionReceiptProducts"/>
     <addaction name="actionConsumptionProducts"/>
     <addaction name="actionInventorization"/>
+    <addaction name="actionLowValueStock"/>
+    <addaction name="actionConsumeOthSt"/>
+    <addaction name="actionReceiptOthSt"/>
    </widget>
    <widget class="QMenu" name="menuCash">
     <property name="title">
@@ -772,6 +775,26 @@
   <action name="actionDivisionAccounts">
    <property name="text">
     <string>Division assounts</string>
+   </property>
+  </action>
+  <action name="actionOtherStocks">
+   <property name="text">
+    <string>Other stocks</string>
+   </property>
+  </action>
+  <action name="actionLowValueStock">
+   <property name="text">
+    <string>Low value stock</string>
+   </property>
+  </action>
+  <action name="actionConsumeOthSt">
+   <property name="text">
+    <string>Consume other stocks</string>
+   </property>
+  </action>
+  <action name="actionReceiptOthSt">
+   <property name="text">
+    <string>Receipt other stocks</string>
    </property>
   </action>
  </widget>

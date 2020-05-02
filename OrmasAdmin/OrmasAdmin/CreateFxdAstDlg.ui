@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>946</width>
-    <height>615</height>
+    <height>621</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -191,8 +191,14 @@
       </item>
       <item row="2" column="5">
        <widget class="QCheckBox" name="isAmChx">
+        <property name="enabled">
+         <bool>true</bool>
+        </property>
         <property name="text">
          <string>Yes</string>
+        </property>
+        <property name="checked">
+         <bool>false</bool>
         </property>
        </widget>
       </item>
@@ -373,6 +379,14 @@
       </item>
       <item row="3" column="1">
        <widget class="QLabel" name="surnameLb">
+        <property name="font">
+         <font>
+          <pointsize>10</pointsize>
+          <weight>75</weight>
+          <italic>true</italic>
+          <bold>true</bold>
+         </font>
+        </property>
         <property name="text">
          <string/>
         </property>
@@ -392,7 +406,7 @@
        </widget>
       </item>
       <item row="3" column="0">
-       <widget class="QLabel" name="label_5">
+       <widget class="QLabel" name="surLb">
         <property name="text">
          <string>Surname:</string>
         </property>
@@ -420,7 +434,7 @@
        </widget>
       </item>
       <item row="5" column="0">
-       <widget class="QLabel" name="label_6">
+       <widget class="QLabel" name="accLB">
         <property name="text">
          <string>Account name:</string>
         </property>
@@ -428,6 +442,14 @@
       </item>
       <item row="5" column="1">
        <widget class="QLabel" name="accountName">
+        <property name="font">
+         <font>
+          <pointsize>10</pointsize>
+          <weight>75</weight>
+          <italic>true</italic>
+          <bold>true</bold>
+         </font>
+        </property>
         <property name="text">
          <string/>
         </property>

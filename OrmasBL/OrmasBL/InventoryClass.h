@@ -19,14 +19,17 @@ namespace BusinessLayer
 		std::string endOfOperationDate = "";
 		std::string inventoryNumber = "";
 		std::string barcodeNumber = "";
+		int subaccountID = 0;
 	public:
 		Inventory(int iID, std::string iName, double iCost, int depID, std::string iLocation, int sID, std::string sooDate,
-			std::string eooDate, std::string iNumber, std::string bNumber) : id(iID), name(iName), cost(iCost), departmentID(depID),
+			std::string eooDate, std::string iNumber, std::string bNumber, int subID) : id(iID), name(iName), cost(iCost), departmentID(depID),
 			location(iLocation), statusID(sID), startOfOperationDate(sooDate), endOfOperationDate(eooDate), inventoryNumber(iNumber),
-			barcodeNumber(bNumber){};
+			barcodeNumber(bNumber), subaccountID(subID){};
 		Inventory(DataLayer::inventoryCollection);
 		Inventory(){};
 		~Inventory(){};
+
+		int inventoryAccountID = 0;
 
 		//Consume Product class Accessors
 		int GetID();
@@ -39,6 +42,7 @@ namespace BusinessLayer
 		std::string GetEndOfOperationDate();
 		std::string GetInventoryNumber();
 		std::string GetBarcodeNumber();
+		int GetSubaccountID();
 
 		//Consume Product class Mutators
 		void SetID(int);
@@ -51,26 +55,33 @@ namespace BusinessLayer
 		void SetEndOfOperationDate(std::string);
 		void SetInventoryNumber(std::string);
 		void SetBarcodeNumber(std::string);
+		void SetSubaccountID(int);
 
 		//Create, delete, update methods
 		bool CreateInventory(DataLayer::OrmasDal& ormasDal, std::string& errorMessage);
 		bool UpdateInventory(DataLayer::OrmasDal& ormasDal, std::string& errorMessage);
 		bool DeleteInventory(DataLayer::OrmasDal& ormasDal, std::string& errorMessage);
 		bool CreateInventory(DataLayer::OrmasDal& ormasDal, std::string iName, double iCost, int depID, std::string iLocation, int sID, std::string sooDate,
-			std::string eooDate, std::string iNumber, std::string bNumber, std::string& errorMessage);
+			std::string eooDate, std::string iNumber, std::string bNumber, int subID, std::string& errorMessage);
 		bool UpdateInventory(DataLayer::OrmasDal& ormasDal, std::string iName, double iCost, int depID, std::string iLocation, int sID, std::string sooDate,
-			std::string eooDate, std::string iNumber, std::string bNumber, std::string& errorMessage);
+			std::string eooDate, std::string iNumber, std::string bNumber, int subID, std::string& errorMessage);
 
 		//Generate filter string for class
 		std::string GenerateFilter(DataLayer::OrmasDal& ormasDal);
 		bool GetInventoryByID(DataLayer::OrmasDal& ormasDal, int iID, std::string& errorMessage);
 		bool IsEmpty();
 		void Clear();
-		std::string GenerateInventoryNumber(DataLayer::OrmasDal& ormasDal, int divID);
+		bool CreateInventoryEntry(DataLayer::OrmasDal& ormasDal, int acctbID, int purID, int accID, int debitingAccID, double value, std::string execDate, std::string& errorMessage);
+		bool CreateInventoryEntryReverce(DataLayer::OrmasDal& ormasDal, int acctbID, int purID, int accID, int debitingAccID, double value, std::string execDate, std::string& errorMessage);
+		bool CreateInventoryEntryWriteOFF(DataLayer::OrmasDal& ormasDal, int inventoryID, std::string& errorMessage);
+		bool CreateEntry(DataLayer::OrmasDal& ormasDal, int debAccID, double currentSum, int credAccID, std::string oExecDate, std::string& errorMessage);
+		bool CreateEntryWriteOFF(DataLayer::OrmasDal& ormasDal, int debAccID, double currentSum, int credAccID, std::string oExecDate, std::string& errorMessage);
+		bool CreateEntryCancel(DataLayer::OrmasDal& ormasDal, int debAccID, double currentSum, int credAccID, std::string oExecDate, std::string& errorMessage);
+		int GenerateSubaccount(DataLayer::OrmasDal& ormasDal, double currentValue, std::string& errorMessage);
 	private:
 		bool IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string iName, std::string iNumber, std::string bNumber, double iCost, std::string& errorMessage);
-		std::string GenerateInvRawNumber(DataLayer::OrmasDal& ormasDal, std::string& errorMessage);
 		bool IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string& errorMessage);
+		std::string wstring_to_utf8(const std::wstring& str);
 	};
 }
 #endif //InventoryCLASS_H

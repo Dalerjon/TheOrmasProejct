@@ -113,7 +113,6 @@ void MainForm::SetAllMenuInvisible()
 	actionEmployees->setVisible(false);
 	actionPurveyors->setVisible(false);
 	actionAccountables->setVisible(false);
-	menuFixedAssets->setEnabled(true);
 	actionBorrowers->setVisible(false);
 	actionCreditors->setVisible(false);
 	actionShareholders->setVisible(false);
@@ -135,6 +134,7 @@ void MainForm::SetAllMenuInvisible()
 	actionNetCost->setVisible(false);
 	actionEmployeeProducts->setVisible(false);
 	actionBranchProducts->setVisible(false);
+	actionOtherStocks->setVisible(false);
 	
 	//actions in menu order
 	actionOrders->setVisible(false);
@@ -151,7 +151,6 @@ void MainForm::SetAllMenuInvisible()
 	//actions in menu production
 	actionProduction->setVisible(false);
 	actionProductionList->setVisible(false);
-	actionProductionStock->setVisible(false);
 	actionProductionConsumeRaws->setVisible(false);
 	actionProductionPlan->setVisible(false);
 	actionProductionPlanList->setVisible(false);
@@ -210,6 +209,9 @@ void MainForm::SetAllMenuInvisible()
 	actionReceiptProducts->setVisible(false);
 	actionConsumptionProducts->setVisible(false);
 	actionInventorization->setVisible(false);
+	actionLowValueStock->setVisible(false);
+	actionConsumeOthSt->setVisible(false);
+	actionReceiptOthSt->setVisible(false);
 	
 	//actions in menu reports
 	actionCompanyBalanceInfo->setVisible(false);
@@ -248,6 +250,7 @@ void MainForm::SetAllMenuVisible()
 	menuWriteOffs->setEnabled(true);
 	menuProductions->setEnabled(true);
 	menuAccountings->setEnabled(true);
+	menuFixedAssets->setEnabled(true);
 	menuCash->setEnabled(true);
 	menuStock->setEnabled(true);
 	menuReports->setEnabled(true);
@@ -281,6 +284,7 @@ void MainForm::SetAllMenuVisible()
 	actionNetCost->setVisible(true);
 	actionEmployeeProducts->setVisible(true);
 	actionBranchProducts->setVisible(true);
+	actionOtherStocks->setVisible(true);
 
 	//actions in menu order
 	actionOrders->setVisible(true);
@@ -297,7 +301,6 @@ void MainForm::SetAllMenuVisible()
 	//actions in menu production
 	actionProduction->setVisible(true);
 	actionProductionList->setVisible(true);
-	actionProductionStock->setVisible(true);
 	actionProductionConsumeRaws->setVisible(true);
 	actionProductionPlan->setVisible(true);
 	actionProductionPlanList->setVisible(true);
@@ -355,6 +358,9 @@ void MainForm::SetAllMenuVisible()
 	actionReceiptProducts->setVisible(true);
 	actionConsumptionProducts->setVisible(true);
 	actionInventorization->setVisible(true);
+	actionReceiptOthSt->setVisible(true);
+	actionConsumeOthSt->setVisible(true);
+	actionLowValueStock->setVisible(true);
 
 	//actions in menu reports
 	actionCompanyBalanceInfo->setVisible(true);
@@ -424,6 +430,10 @@ void MainForm::CloseChildsByName()
 		((DataForm*)this->findChild<QWidget*>("writeOffListForm"))->CloseDataForm();
 	if (0 != this->findChild<QWidget*>("writeOffRawListForm"))
 		((DataForm*)this->findChild<QWidget*>("writeOffRawListForm"))->CloseDataForm();
+	if (0 != this->findChild<QWidget*>("consumeOthStListForm"))
+		((DataForm*)this->findChild<QWidget*>("consumeOthStListForm"))->CloseDataForm();
+	if (0 != this->findChild<QWidget*>("receiptOthStListForm"))
+		((DataForm*)this->findChild<QWidget*>("receiptOthStListForm"))->CloseDataForm();
 }
 
 void MainForm::CreateConnections()
@@ -454,6 +464,7 @@ void MainForm::CreateConnections()
 	QObject::connect(actionNetCost, &QAction::triggered, this, &MainForm::OpenNetCostForm);
 	QObject::connect(actionEmployeeProducts, &QAction::triggered, this, &MainForm::OpenEmployeeProductForm);
 	QObject::connect(actionBranchProducts, &QAction::triggered, this, &MainForm::OpenBranchProductForm);
+	QObject::connect(actionOtherStocks, &QAction::triggered, this, &MainForm::OpenOtherStocksForm);
 	
 
 	QObject::connect(actionOrders, &QAction::triggered, this, &MainForm::OpenOrderForm);
@@ -464,7 +475,6 @@ void MainForm::CreateConnections()
 
 	QObject::connect(actionProduction, &QAction::triggered, this, &MainForm::OpenProductionForm);
 	QObject::connect(actionProductionList, &QAction::triggered, this, &MainForm::OpenProductionListForm);
-	QObject::connect(actionProductionStock, &QAction::triggered, this, &MainForm::OpenProductionStockForm);
 	QObject::connect(actionProductionConsumeRaws, &QAction::triggered, this, &MainForm::OpenProductionConsumeRawForm);
 	QObject::connect(actionProductionPlan, &QAction::triggered, this, &MainForm::OpenProductionPlanForm);
 	QObject::connect(actionProductionPlanList, &QAction::triggered, this, &MainForm::OpenProductionPlanListForm);
@@ -521,6 +531,9 @@ void MainForm::CreateConnections()
 	QObject::connect(actionReceiptProducts, &QAction::triggered, this, &MainForm::OpenReceiptProductForm);
 	QObject::connect(actionConsumptionProducts, &QAction::triggered, this, &MainForm::OpenConsumeProductForm);
 	QObject::connect(actionInventorization, &QAction::triggered, this, &MainForm::OpenInventorizationForm);
+	QObject::connect(actionLowValueStock, &QAction::triggered, this, &MainForm::OpenLowValueStockForm);
+	QObject::connect(actionReceiptOthSt, &QAction::triggered, this, &MainForm::OpenReceiptOthStForm);
+	QObject::connect(actionConsumeOthSt, &QAction::triggered, this, &MainForm::OpenConsumeOthStForm);
 
 	QObject::connect(actionCompanyBalanceInfo, &QAction::triggered, this, &MainForm::CompanyBalanceInfo);
 	QObject::connect(actionFinancialReport, &QAction::triggered, this, &MainForm::FinancialReportForm);
@@ -2144,96 +2157,6 @@ void MainForm::OpenProductionConsumeRawForm()
 }
 
 
-void MainForm::OpenProductionStockForm()
-{
-	BusinessLayer::WarehouseEmployeeRelation reRel;
-	BusinessLayer::Warehouse warehouse;
-	BusinessLayer::WarehouseType wType;
-	if (!reRel.GetWarehouseEmployeeByEmployeeID(oBL->GetOrmasDal(), loggedUser->GetID(), errorMessage))
-	{
-		QString message = tr("Access denied!");
-		statusBar()->showMessage(message);
-		QMessageBox::information(NULL, QString(tr("Warning")),
-			QString(tr("Access denied!")),
-			QString(tr("Ok")));
-		return;
-	}
-	if (!warehouse.GetWarehouseByID(oBL->GetOrmasDal(), reRel.GetWarehouseID(), errorMessage))
-	{
-		QString message = tr("Access denied!");
-		statusBar()->showMessage(message);
-		QMessageBox::information(NULL, QString(tr("Warning")),
-			QString(tr("Access denied!")),
-			QString(tr("Ok")));
-		return;
-	}
-	if (!wType.GetWarehouseTypeByCode(oBL->GetOrmasDal(), "PRODUCTION", errorMessage))
-	{
-		QString message = tr("Access denied!");
-		statusBar()->showMessage(message);
-		QMessageBox::information(NULL, QString(tr("Warning")),
-			QString(tr("Access denied!")),
-			QString(tr("Ok")));
-		return;
-	}
-	if (wType.GetID() != warehouse.GetWarehouseTypeID())
-	{
-		QString message = tr("Access denied!");
-		statusBar()->showMessage(message);
-		QMessageBox::information(NULL, QString(tr("Warning")),
-			QString(tr("Access denied!")),
-			QString(tr("Ok")));
-		return;
-	}
-	BusinessLayer::Stock stock;
-	stock.SetWarehouseID(reRel.GetWarehouseID());
-	std::string filter = stock.GenerateFilter(oBL->GetOrmasDal());
-	QString message = tr("Loading...");
-	statusBar()->showMessage(message);
-	QWidget* checkedWidget = IsWindowExist(mdiArea->subWindowList(), QString("productionStockForm"));
-	if (checkedWidget == nullptr)
-	{
-		DataForm *dForm = new DataForm(oBL, this);
-		dForm->setWindowTitle(tr("Production stock"));
-		dForm->FillTable<BusinessLayer::StockView>(errorMessage, filter);
-		if (errorMessage.empty())
-		{
-			dForm->QtConnect<BusinessLayer::StockView>();
-			dForm->setObjectName("productionStockForm");
-			QMdiSubWindow *stockWindow = new QMdiSubWindow;
-			stockWindow->setWidget(dForm);
-			stockWindow->setAttribute(Qt::WA_DeleteOnClose);
-			mdiArea->addSubWindow(stockWindow);
-			stockWindow->resize(dForm->size().width() + 18, dForm->size().height() + 30);
-			dForm->show();
-			dForm->topLevelWidget();
-			dForm->activateWindow();
-			dForm->raise();
-			dForm->setWindowFlags(dForm->windowFlags() | Qt::WindowStaysOnTopHint);
-			QString message = tr("All products are shown in production stock");
-			statusBar()->showMessage(message);
-		}
-		else
-		{
-			delete dForm;
-			QString message = tr("End with error!");
-			statusBar()->showMessage(message);
-			QMessageBox::information(NULL, QString(tr("Warning")),
-				QString(tr(errorMessage.c_str())),
-				QString(tr("Ok")));
-			errorMessage = "";
-		}
-	}
-	else
-	{
-		checkedWidget->topLevelWidget();
-		checkedWidget->activateWindow();
-		QString message = tr("All products are shown in production stock");
-		statusBar()->showMessage(message);
-	}
-
-}
-
 void MainForm::OpenProductionPlanForm()
 {
 	QString message = tr("Loading...");
@@ -3512,6 +3435,54 @@ void MainForm::OpenCashForm()
 	cashInfoDlg->show();
 }
 
+void MainForm::OpenOtherStocksForm()
+{
+	QString message = tr("Loading...");
+	statusBar()->showMessage(message);
+	QWidget* checkedWidget = IsWindowExist(mdiArea->subWindowList(), QString("otherStocksForm"));
+	if (checkedWidget == nullptr)
+	{
+		DataForm *dForm = new DataForm(oBL, this);
+		dForm->setWindowTitle(tr("Other stocks"));
+		dForm->FillTable<BusinessLayer::OtherStocksView>(errorMessage);
+		if (errorMessage.empty())
+		{
+			dForm->QtConnect<BusinessLayer::OtherStocksView>();
+			dForm->setObjectName("otherStocksForm");
+			QMdiSubWindow *otherStocksWindow = new QMdiSubWindow;
+			otherStocksWindow->setWidget(dForm);
+			otherStocksWindow->setAttribute(Qt::WA_DeleteOnClose);
+			mdiArea->addSubWindow(otherStocksWindow);
+			otherStocksWindow->resize(dForm->size().width() + 18, dForm->size().height() + 30);
+			dForm->show();
+			dForm->topLevelWidget();
+			dForm->activateWindow();
+			dForm->raise();
+			dForm->setWindowFlags(dForm->windowFlags() | Qt::WindowStaysOnTopHint);
+			QString message = tr("All other stocks are shown");
+			statusBar()->showMessage(message);
+		}
+		else
+		{
+			delete dForm;
+			QString message = tr("End with error!");
+			statusBar()->showMessage(message);
+			QMessageBox::information(NULL, QString(tr("Warning")),
+				QString(tr(errorMessage.c_str())),
+				QString(tr("Ok")));
+			errorMessage = "";
+		}
+	}
+	else
+	{
+		checkedWidget->topLevelWidget();
+		checkedWidget->activateWindow();
+		QString message = tr("All other stocks are shown");
+		statusBar()->showMessage(message);
+	}
+
+}
+
 void MainForm::OpenPaymentForm()
 {
 	QString message = tr("Loading...");
@@ -4113,6 +4084,55 @@ void MainForm::OpenConsumeRawForm()
 
 }
 
+void MainForm::OpenConsumeOthStForm()
+{
+	QString message = tr("Loading...");
+	statusBar()->showMessage(message);
+	QWidget* checkedWidget = IsWindowExist(mdiArea->subWindowList(), QString("consumeOthStForm"));
+	if (checkedWidget == nullptr)
+	{
+		DataForm *dForm = new DataForm(oBL, this);
+		dForm->setWindowTitle(tr("Consume other stocks"));
+		dForm->FillTable<BusinessLayer::ConsumeOtherStocksView>(errorMessage);
+		if (errorMessage.empty())
+		{
+			dForm->setObjectName("consumeOthStForm");
+			dForm->QtConnect<BusinessLayer::ConsumeOtherStocksView>();
+			QMdiSubWindow *consumeOthStWindow = new QMdiSubWindow;
+			consumeOthStWindow->setWidget(dForm);
+			consumeOthStWindow->setAttribute(Qt::WA_DeleteOnClose);
+			mdiArea->addSubWindow(consumeOthStWindow);
+			consumeOthStWindow->resize(dForm->size().width() + 18, dForm->size().height() + 30);
+			dForm->show();
+			dForm->topLevelWidget();
+			dForm->activateWindow();
+			dForm->raise();
+			dForm->setWindowFlags(dForm->windowFlags() | Qt::WindowStaysOnTopHint);
+			QString message = tr("All other stocks are shown in consume");
+			statusBar()->showMessage(message);
+		}
+		else
+		{
+			delete dForm;
+			QString message = tr("End with error!");
+			statusBar()->showMessage(message);
+			QMessageBox::information(NULL, QString(tr("Warning")),
+				QString(tr(errorMessage.c_str())),
+				QString(tr("Ok")));
+			errorMessage = "";
+		}
+	}
+	else
+	{
+		checkedWidget->topLevelWidget();
+		checkedWidget->activateWindow();
+		QString message = tr("All other stocks are shown in consume");
+		statusBar()->showMessage(message);
+	}
+
+}
+
+
 void MainForm::OpenWriteOffRawForm()
 {
 	QString message = tr("Loading...");
@@ -4209,6 +4229,53 @@ void MainForm::OpenTransportForm()
 
 }
 
+void MainForm::OpenReceiptOthStForm()
+{
+	QString message = tr("Loading...");
+	statusBar()->showMessage(message);
+	QWidget* checkedWidget = IsWindowExist(mdiArea->subWindowList(), QString("receiptOthStForm"));
+	if (checkedWidget == nullptr)
+	{
+		DataForm *dForm = new DataForm(oBL, this);
+		dForm->setWindowTitle(tr("Receipt other stocks"));
+		dForm->FillTable<BusinessLayer::ReceiptOtherStocksView>(errorMessage);
+		if (errorMessage.empty())
+		{
+			dForm->setObjectName("receiptOthStForm");
+			dForm->QtConnect<BusinessLayer::ReceiptOtherStocksView>();
+			QMdiSubWindow *rosWindow = new QMdiSubWindow;
+			rosWindow->setWidget(dForm);
+			rosWindow->setAttribute(Qt::WA_DeleteOnClose);
+			mdiArea->addSubWindow(rosWindow);
+			rosWindow->resize(dForm->size().width() + 18, dForm->size().height() + 30);
+			dForm->show();
+			dForm->topLevelWidget();
+			dForm->activateWindow();
+			dForm->raise();
+			dForm->setWindowFlags(dForm->windowFlags() | Qt::WindowStaysOnTopHint);
+			QString message = tr("All other stocks are shown in receipts");
+			statusBar()->showMessage(message);
+		}
+		else
+		{
+			delete dForm;
+			QString message = tr("End with error!");
+			statusBar()->showMessage(message);
+			QMessageBox::information(NULL, QString(tr("Warning")),
+				QString(tr(errorMessage.c_str())),
+				QString(tr("Ok")));
+			errorMessage = "";
+		}
+	}
+	else
+	{
+		checkedWidget->topLevelWidget();
+		checkedWidget->activateWindow();
+		QString message = tr("All other stocks are shown in receipts");
+		statusBar()->showMessage(message);
+	}
+
+}
 
 void MainForm::OpenReceiptProductForm()
 {
@@ -4652,6 +4719,96 @@ void MainForm::OpenLocationForm()
 		statusBar()->showMessage(message);
 	}
 	
+}
+
+void MainForm::OpenLowValueStockForm()
+{
+	BusinessLayer::WarehouseEmployeeRelation reRel;
+	BusinessLayer::Warehouse warehouse;
+	BusinessLayer::WarehouseType wType;
+	if (!reRel.GetWarehouseEmployeeByEmployeeID(oBL->GetOrmasDal(), loggedUser->GetID(), errorMessage))
+	{
+		QString message = tr("Access denied!");
+		statusBar()->showMessage(message);
+		QMessageBox::information(NULL, QString(tr("Warning")),
+			QString(tr("Access denied!")),
+			QString(tr("Ok")));
+		return;
+	}
+	if (!warehouse.GetWarehouseByID(oBL->GetOrmasDal(), reRel.GetWarehouseID(), errorMessage))
+	{
+		QString message = tr("Access denied!");
+		statusBar()->showMessage(message);
+		QMessageBox::information(NULL, QString(tr("Warning")),
+			QString(tr("Access denied!")),
+			QString(tr("Ok")));
+		return;
+	}
+	if (!wType.GetWarehouseTypeByCode(oBL->GetOrmasDal(), "LOW VALUE", errorMessage))
+	{
+		QString message = tr("Access denied!");
+		statusBar()->showMessage(message);
+		QMessageBox::information(NULL, QString(tr("Warning")),
+			QString(tr("Access denied!")),
+			QString(tr("Ok")));
+		return;
+	}
+	if (wType.GetID() != warehouse.GetWarehouseTypeID())
+	{
+		QString message = tr("Access denied!");
+		statusBar()->showMessage(message);
+		QMessageBox::information(NULL, QString(tr("Warning")),
+			QString(tr("Access denied!")),
+			QString(tr("Ok")));
+		return;
+	}
+	BusinessLayer::LowValueStock lowValStock;
+	lowValStock.SetWarehouseID(reRel.GetWarehouseID());
+	std::string filter = lowValStock.GenerateFilter(oBL->GetOrmasDal());
+	QString message = tr("Loading...");
+	statusBar()->showMessage(message);
+	QWidget* checkedWidget = IsWindowExist(mdiArea->subWindowList(), QString("lowValueStockForm"));
+	if (checkedWidget == nullptr)
+	{
+		DataForm *dForm = new DataForm(oBL, this);
+		dForm->setWindowTitle(tr("Low valuw stock"));
+		dForm->FillTable<BusinessLayer::LowValueStockView>(errorMessage, filter);
+		if (errorMessage.empty())
+		{
+			dForm->QtConnect<BusinessLayer::LowValueStockView>();
+			dForm->setObjectName("lowValueStockForm");
+			QMdiSubWindow *lvStockWindow = new QMdiSubWindow;
+			lvStockWindow->setWidget(dForm);
+			lvStockWindow->setAttribute(Qt::WA_DeleteOnClose);
+			mdiArea->addSubWindow(lvStockWindow);
+			lvStockWindow->resize(dForm->size().width() + 18, dForm->size().height() + 30);
+			dForm->show();
+			dForm->topLevelWidget();
+			dForm->activateWindow();
+			dForm->raise();
+			dForm->setWindowFlags(dForm->windowFlags() | Qt::WindowStaysOnTopHint);
+			QString message = tr("All other stocsk are shown in low value stock");
+			statusBar()->showMessage(message);
+		}
+		else
+		{
+			delete dForm;
+			QString message = tr("End with error!");
+			statusBar()->showMessage(message);
+			QMessageBox::information(NULL, QString(tr("Warning")),
+				QString(tr(errorMessage.c_str())),
+				QString(tr("Ok")));
+			errorMessage = "";
+		}
+	}
+	else
+	{
+		checkedWidget->topLevelWidget();
+		checkedWidget->activateWindow();
+		QString message = tr("All other stocsk are shown in low value stock");
+		statusBar()->showMessage(message);
+	}
+
 }
 
 void MainForm::OpenRoleForm()

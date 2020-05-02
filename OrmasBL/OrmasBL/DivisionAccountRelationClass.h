@@ -41,11 +41,12 @@ namespace BusinessLayer{
 		//Generate filter string for class
 		std::string GenerateFilter(DataLayer::OrmasDal& ormasDal);
 		bool GetDivisionAccountRelationByID(DataLayer::OrmasDal& ormasDal, int daID, std::string& errorMessage);
+		bool GetDARelationByDivisionIDAndCode(DataLayer::OrmasDal& ormasDal, int dID, std::string code, std::string& errorMessage);
 		bool IsEmpty();
 		void Clear();
 	private:
 		void TrimStrings(std::string&);
-		bool IsDuplicate(DataLayer::OrmasDal& ormasDal, int dDivisionID, int dAccountID, std::string cCode, std::string& errorMessage);
+		bool IsDuplicate(DataLayer::OrmasDal& ormasDal, int dDivisionID, std::string cCode, std::string& errorMessage);
 		bool IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string& errorMessage);
 	};
 }

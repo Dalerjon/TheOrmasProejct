@@ -56,6 +56,8 @@ namespace BusinessLayer
 		std::string GenerateInventoryNumber(DataLayer::OrmasDal& ormasDal, int divID);
 	private:
 		std::string GenerateInvRawNumber(DataLayer::OrmasDal& ormasDal, std::string& errorMessage);
+		int GetCurrentStatusID(DataLayer::OrmasDal& ormasDal, int fxID, std::string& errorMessage);
+		int previousStatusID = 0;
 	};
 }
 #endif //FixedAssetsUnionCLASS_H

@@ -133,6 +133,15 @@ private slots:
 	void UdpConPListDlg();
 	void DelConPListDlg();
 
+	void CrtConOthStDlg();
+	void UdpConOthStDlg();
+	void DelConOthStDlg();
+	void ViewConOthStDlg();
+
+	void CrtConOthStListDlg();
+	void UdpConOthStListDlg();
+	void DelConOthStListDlg();
+
 	void CrtConRDlg();
 	void UdpConRDlg();
 	void DelConRDlg();
@@ -199,6 +208,10 @@ private slots:
 	void UdpJbsDlg();
 	void DelJbsDlg();
 
+	void CrtLowValStockDlg();
+	void UdpLowValStockDlg();
+	void DelLowValStockDlg();
+
 	void CrtLcnDlg();
 	void UdpLcnDlg();
 	void DelLcnDlg();
@@ -228,6 +241,14 @@ private slots:
 	void CrtOrdRListDlg();
 	void UdpOrdRListDlg();
 	void DelOrdRListDlg();
+
+	void CrtOthStDlg();
+	void UdpOthStDlg();
+	void DelOthStDlg();
+
+	void CrtOthStTypeDlg();
+	void UdpOthStTypeDlg();
+	void DelOthStTypeDlg();
 
 	void CrtPcrDlg();
 	void UdpPcrDlg();
@@ -276,10 +297,6 @@ private slots:
 	void UdpProdConRListDlg();
 	void DelProdConRListDlg();
 
-	void CrtProdnStockDlg();
-	void UdpProdnStockDlg();
-	void DelProdnStockDlg();
-
 	void CrtProdnListDlg();
 	void UdpProdnListDlg();
 	void DelProdnListDlg();
@@ -312,6 +329,15 @@ private slots:
 	void CrtRoleDlg();
 	void UdpRoleDlg();
 	void DelRoleDlg();
+
+	void CrtRcpOthStDlg();
+	void UdpRcpOthStDlg();
+	void DelRcpOthStDlg();
+	void ViewRcpOthStDlg();
+
+	void CrtRcpOthStListDlg();
+	void UdpRcpOthStListDlg();
+	void DelRcpOthStListDlg();
 
 	void CrtRcpPDlg();
 	void UdpRcpPDlg();
@@ -465,12 +491,14 @@ public:
 	unsigned int returnID = 0;
 	unsigned int productionID = 0;
 	unsigned int writeOffID = 0;
+	unsigned int consumeOtherStocksID = 0;
 	unsigned int consumeProductID = 0;
 	unsigned int consumeRawID = 0;
 	unsigned int inventorizationID = 0;
 	unsigned int orderRawID = 0;
 	unsigned int productionPlanID = 0;
 	unsigned int pConsumeRawID = 0;
+	unsigned int receiptOtherStocksID = 0;
 	unsigned int receiptProductID = 0;
 	unsigned int stockTransferID = 0;
 	unsigned int specificationID = 0;

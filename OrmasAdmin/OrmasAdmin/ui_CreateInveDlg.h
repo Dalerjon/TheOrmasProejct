@@ -33,11 +33,12 @@ class Ui_CreateInventory
 {
 public:
     QGridLayout *gridLayout;
-    QPushButton *statusBtn;
-    QCheckBox *newInvCxb;
-    QLineEdit *locationEdit;
-    QLabel *label;
+    QLabel *label_7;
     QLabel *label_2;
+    QLabel *label;
+    QLineEdit *locationEdit;
+    QCheckBox *newInvCxb;
+    QPushButton *statusBtn;
     QHBoxLayout *horizontalLayout;
     QSpacerItem *horizontalSpacer;
     QPushButton *okBtn;
@@ -48,7 +49,6 @@ public:
     QComboBox *divisionCmb;
     QLabel *label_6;
     QLineEdit *barcodeEdit;
-    QLabel *label_7;
     QDateEdit *startDateEdit;
     QLabel *label_8;
     QDateEdit *endDateEdit;
@@ -61,13 +61,13 @@ public:
     QPushButton *accableBtn;
     QLabel *surnameLb;
     QPushButton *purveyorBtn;
-    QLabel *label_9;
+    QLabel *surLb;
     QLineEdit *accID;
-    QLineEdit *purEditID;
     QLineEdit *accableIDEdit;
     QPushButton *accountBtn;
-    QLabel *label_10;
+    QLabel *accLB;
     QLabel *accountName;
+    QLineEdit *purEditID;
 
     void setupUi(QDialog *CreateInventory)
     {
@@ -79,30 +79,36 @@ public:
         gridLayout = new QGridLayout(CreateInventory);
         gridLayout->setObjectName(QStringLiteral("gridLayout"));
         gridLayout->setContentsMargins(11, 11, 11, 17);
-        statusBtn = new QPushButton(CreateInventory);
-        statusBtn->setObjectName(QStringLiteral("statusBtn"));
+        label_7 = new QLabel(CreateInventory);
+        label_7->setObjectName(QStringLiteral("label_7"));
 
-        gridLayout->addWidget(statusBtn, 10, 0, 1, 1);
+        gridLayout->addWidget(label_7, 8, 0, 1, 1);
 
-        newInvCxb = new QCheckBox(CreateInventory);
-        newInvCxb->setObjectName(QStringLiteral("newInvCxb"));
+        label_2 = new QLabel(CreateInventory);
+        label_2->setObjectName(QStringLiteral("label_2"));
 
-        gridLayout->addWidget(newInvCxb, 0, 0, 1, 1);
-
-        locationEdit = new QLineEdit(CreateInventory);
-        locationEdit->setObjectName(QStringLiteral("locationEdit"));
-
-        gridLayout->addWidget(locationEdit, 4, 1, 1, 1);
+        gridLayout->addWidget(label_2, 3, 0, 1, 1);
 
         label = new QLabel(CreateInventory);
         label->setObjectName(QStringLiteral("label"));
 
         gridLayout->addWidget(label, 2, 0, 1, 1);
 
-        label_2 = new QLabel(CreateInventory);
-        label_2->setObjectName(QStringLiteral("label_2"));
+        locationEdit = new QLineEdit(CreateInventory);
+        locationEdit->setObjectName(QStringLiteral("locationEdit"));
 
-        gridLayout->addWidget(label_2, 3, 0, 1, 1);
+        gridLayout->addWidget(locationEdit, 4, 1, 1, 1);
+
+        newInvCxb = new QCheckBox(CreateInventory);
+        newInvCxb->setObjectName(QStringLiteral("newInvCxb"));
+        newInvCxb->setChecked(true);
+
+        gridLayout->addWidget(newInvCxb, 0, 0, 1, 1);
+
+        statusBtn = new QPushButton(CreateInventory);
+        statusBtn->setObjectName(QStringLiteral("statusBtn"));
+
+        gridLayout->addWidget(statusBtn, 10, 0, 1, 1);
 
         horizontalLayout = new QHBoxLayout();
         horizontalLayout->setObjectName(QStringLiteral("horizontalLayout"));
@@ -154,11 +160,6 @@ public:
 
         gridLayout->addWidget(barcodeEdit, 7, 1, 1, 1);
 
-        label_7 = new QLabel(CreateInventory);
-        label_7->setObjectName(QStringLiteral("label_7"));
-
-        gridLayout->addWidget(label_7, 8, 0, 1, 1);
-
         startDateEdit = new QDateEdit(CreateInventory);
         startDateEdit->setObjectName(QStringLiteral("startDateEdit"));
 
@@ -201,35 +202,37 @@ public:
         gridLayout_5->setObjectName(QStringLiteral("gridLayout_5"));
         accableBtn = new QPushButton(sourceGbx);
         accableBtn->setObjectName(QStringLiteral("accableBtn"));
+        accableBtn->setMinimumSize(QSize(130, 0));
 
         gridLayout_5->addWidget(accableBtn, 0, 0, 1, 1);
 
         surnameLb = new QLabel(sourceGbx);
         surnameLb->setObjectName(QStringLiteral("surnameLb"));
+        QFont font;
+        font.setPointSize(10);
+        font.setBold(true);
+        font.setItalic(true);
+        font.setWeight(75);
+        surnameLb->setFont(font);
 
-        gridLayout_5->addWidget(surnameLb, 2, 1, 1, 1);
+        gridLayout_5->addWidget(surnameLb, 3, 1, 1, 1);
 
         purveyorBtn = new QPushButton(sourceGbx);
         purveyorBtn->setObjectName(QStringLiteral("purveyorBtn"));
+        purveyorBtn->setMinimumSize(QSize(130, 0));
 
-        gridLayout_5->addWidget(purveyorBtn, 1, 0, 1, 1);
+        gridLayout_5->addWidget(purveyorBtn, 0, 2, 1, 1);
 
-        label_9 = new QLabel(sourceGbx);
-        label_9->setObjectName(QStringLiteral("label_9"));
+        surLb = new QLabel(sourceGbx);
+        surLb->setObjectName(QStringLiteral("surLb"));
 
-        gridLayout_5->addWidget(label_9, 2, 0, 1, 1);
+        gridLayout_5->addWidget(surLb, 3, 0, 1, 1);
 
         accID = new QLineEdit(sourceGbx);
         accID->setObjectName(QStringLiteral("accID"));
         accID->setReadOnly(true);
 
-        gridLayout_5->addWidget(accID, 3, 1, 1, 1);
-
-        purEditID = new QLineEdit(sourceGbx);
-        purEditID->setObjectName(QStringLiteral("purEditID"));
-        purEditID->setReadOnly(true);
-
-        gridLayout_5->addWidget(purEditID, 1, 1, 1, 1);
+        gridLayout_5->addWidget(accID, 4, 1, 1, 1);
 
         accableIDEdit = new QLineEdit(sourceGbx);
         accableIDEdit->setObjectName(QStringLiteral("accableIDEdit"));
@@ -240,17 +243,24 @@ public:
         accountBtn = new QPushButton(sourceGbx);
         accountBtn->setObjectName(QStringLiteral("accountBtn"));
 
-        gridLayout_5->addWidget(accountBtn, 3, 0, 1, 1);
+        gridLayout_5->addWidget(accountBtn, 4, 0, 1, 1);
 
-        label_10 = new QLabel(sourceGbx);
-        label_10->setObjectName(QStringLiteral("label_10"));
+        accLB = new QLabel(sourceGbx);
+        accLB->setObjectName(QStringLiteral("accLB"));
 
-        gridLayout_5->addWidget(label_10, 4, 0, 1, 1);
+        gridLayout_5->addWidget(accLB, 5, 0, 1, 1);
 
         accountName = new QLabel(sourceGbx);
         accountName->setObjectName(QStringLiteral("accountName"));
+        accountName->setFont(font);
 
-        gridLayout_5->addWidget(accountName, 4, 1, 1, 1);
+        gridLayout_5->addWidget(accountName, 5, 1, 1, 1);
+
+        purEditID = new QLineEdit(sourceGbx);
+        purEditID->setObjectName(QStringLiteral("purEditID"));
+        purEditID->setReadOnly(true);
+
+        gridLayout_5->addWidget(purEditID, 0, 3, 1, 1);
 
 
         gridLayout->addWidget(sourceGbx, 1, 0, 1, 2);
@@ -265,25 +275,25 @@ public:
     void retranslateUi(QDialog *CreateInventory)
     {
         CreateInventory->setWindowTitle(QApplication::translate("CreateInventory", "Create/Update inventory", 0));
-        statusBtn->setText(QApplication::translate("CreateInventory", "Select status", 0));
-        newInvCxb->setText(QApplication::translate("CreateInventory", "Posting a new fixed assets?", 0));
-        label->setText(QApplication::translate("CreateInventory", "Name:", 0));
+        label_7->setText(QApplication::translate("CreateInventory", "Start of operation date:", 0));
         label_2->setText(QApplication::translate("CreateInventory", "Cost:", 0));
+        label->setText(QApplication::translate("CreateInventory", "Name:", 0));
+        newInvCxb->setText(QApplication::translate("CreateInventory", "Posting a new fixed assets?", 0));
+        statusBtn->setText(QApplication::translate("CreateInventory", "Select status", 0));
         okBtn->setText(QApplication::translate("CreateInventory", "Ok", 0));
         cancelBtn->setText(QApplication::translate("CreateInventory", "Cancel", 0));
         label_4->setText(QApplication::translate("CreateInventory", "Inventory number:", 0));
         label_5->setText(QApplication::translate("CreateInventory", "Division:", 0));
         label_6->setText(QApplication::translate("CreateInventory", "Barcode number:", 0));
-        label_7->setText(QApplication::translate("CreateInventory", "Start of operation date:", 0));
         label_8->setText(QApplication::translate("CreateInventory", "End of operation date:", 0));
         label_3->setText(QApplication::translate("CreateInventory", "Location:", 0));
         sourceGbx->setTitle(QApplication::translate("CreateInventory", "Source account:", 0));
         accableBtn->setText(QApplication::translate("CreateInventory", "Select accountable", 0));
         surnameLb->setText(QString());
         purveyorBtn->setText(QApplication::translate("CreateInventory", "Select purveyor", 0));
-        label_9->setText(QApplication::translate("CreateInventory", "Surname:", 0));
+        surLb->setText(QApplication::translate("CreateInventory", "Surname:", 0));
         accountBtn->setText(QApplication::translate("CreateInventory", "Select account", 0));
-        label_10->setText(QApplication::translate("CreateInventory", "Account name:", 0));
+        accLB->setText(QApplication::translate("CreateInventory", "Account name:", 0));
         accountName->setText(QString());
     } // retranslateUi
 

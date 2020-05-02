@@ -86,11 +86,11 @@ public:
     QPushButton *accableBtn;
     QLabel *surnameLb;
     QPushButton *purveyorBtn;
-    QLabel *label_5;
+    QLabel *surLb;
     QLineEdit *accID;
     QLineEdit *accableIDEdit;
     QPushButton *accountBtn;
-    QLabel *label_6;
+    QLabel *accLB;
     QLabel *accountName;
     QLineEdit *purEditID;
     QCheckBox *newFACxb;
@@ -119,7 +119,7 @@ public:
     {
         if (CreateFxdAst->objectName().isEmpty())
             CreateFxdAst->setObjectName(QStringLiteral("CreateFxdAst"));
-        CreateFxdAst->resize(946, 615);
+        CreateFxdAst->resize(946, 621);
         CreateFxdAst->setLocale(QLocale(QLocale::English, QLocale::UnitedStates));
         CreateFxdAst->setModal(false);
         gridLayout = new QGridLayout(CreateFxdAst);
@@ -245,6 +245,8 @@ public:
 
         isAmChx = new QCheckBox(fixedAssGbx);
         isAmChx->setObjectName(QStringLiteral("isAmChx"));
+        isAmChx->setEnabled(true);
+        isAmChx->setChecked(false);
 
         gridLayout_4->addWidget(isAmChx, 2, 5, 1, 1);
 
@@ -380,6 +382,12 @@ public:
 
         surnameLb = new QLabel(sourceGbx);
         surnameLb->setObjectName(QStringLiteral("surnameLb"));
+        QFont font;
+        font.setPointSize(10);
+        font.setBold(true);
+        font.setItalic(true);
+        font.setWeight(75);
+        surnameLb->setFont(font);
 
         gridLayout_5->addWidget(surnameLb, 3, 1, 1, 1);
 
@@ -389,10 +397,10 @@ public:
 
         gridLayout_5->addWidget(purveyorBtn, 0, 2, 1, 1);
 
-        label_5 = new QLabel(sourceGbx);
-        label_5->setObjectName(QStringLiteral("label_5"));
+        surLb = new QLabel(sourceGbx);
+        surLb->setObjectName(QStringLiteral("surLb"));
 
-        gridLayout_5->addWidget(label_5, 3, 0, 1, 1);
+        gridLayout_5->addWidget(surLb, 3, 0, 1, 1);
 
         accID = new QLineEdit(sourceGbx);
         accID->setObjectName(QStringLiteral("accID"));
@@ -411,13 +419,14 @@ public:
 
         gridLayout_5->addWidget(accountBtn, 4, 0, 1, 1);
 
-        label_6 = new QLabel(sourceGbx);
-        label_6->setObjectName(QStringLiteral("label_6"));
+        accLB = new QLabel(sourceGbx);
+        accLB->setObjectName(QStringLiteral("accLB"));
 
-        gridLayout_5->addWidget(label_6, 5, 0, 1, 1);
+        gridLayout_5->addWidget(accLB, 5, 0, 1, 1);
 
         accountName = new QLabel(sourceGbx);
         accountName->setObjectName(QStringLiteral("accountName"));
+        accountName->setFont(font);
 
         gridLayout_5->addWidget(accountName, 5, 1, 1, 1);
 
@@ -578,9 +587,9 @@ public:
         accableBtn->setText(QApplication::translate("CreateFxdAst", "Select accountable", 0));
         surnameLb->setText(QString());
         purveyorBtn->setText(QApplication::translate("CreateFxdAst", "Select purveyor", 0));
-        label_5->setText(QApplication::translate("CreateFxdAst", "Surname:", 0));
+        surLb->setText(QApplication::translate("CreateFxdAst", "Surname:", 0));
         accountBtn->setText(QApplication::translate("CreateFxdAst", "Select account", 0));
-        label_6->setText(QApplication::translate("CreateFxdAst", "Account name:", 0));
+        accLB->setText(QApplication::translate("CreateFxdAst", "Account name:", 0));
         accountName->setText(QString());
         newFACxb->setText(QApplication::translate("CreateFxdAst", "Posting a new fixed assets?", 0));
         specGrpBox->setTitle(QApplication::translate("CreateFxdAst", "Fixed assets specification:", 0));

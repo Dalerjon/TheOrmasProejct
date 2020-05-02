@@ -134,6 +134,10 @@ public:
     QAction *actionAmortizeGroup;
     QAction *actionAmortizeType;
     QAction *actionDivisionAccounts;
+    QAction *actionOtherStocks;
+    QAction *actionLowValueStock;
+    QAction *actionConsumeOthSt;
+    QAction *actionReceiptOthSt;
     QWidget *centrWidget;
     QGridLayout *gridLayout;
     QMdiArea *mdiArea;
@@ -372,6 +376,14 @@ public:
         actionAmortizeType->setObjectName(QStringLiteral("actionAmortizeType"));
         actionDivisionAccounts = new QAction(MainWindow);
         actionDivisionAccounts->setObjectName(QStringLiteral("actionDivisionAccounts"));
+        actionOtherStocks = new QAction(MainWindow);
+        actionOtherStocks->setObjectName(QStringLiteral("actionOtherStocks"));
+        actionLowValueStock = new QAction(MainWindow);
+        actionLowValueStock->setObjectName(QStringLiteral("actionLowValueStock"));
+        actionConsumeOthSt = new QAction(MainWindow);
+        actionConsumeOthSt->setObjectName(QStringLiteral("actionConsumeOthSt"));
+        actionReceiptOthSt = new QAction(MainWindow);
+        actionReceiptOthSt->setObjectName(QStringLiteral("actionReceiptOthSt"));
         centrWidget = new QWidget(MainWindow);
         centrWidget->setObjectName(QStringLiteral("centrWidget"));
         gridLayout = new QGridLayout(centrWidget);
@@ -458,6 +470,7 @@ public:
         menuProducts->addAction(actionNetCost);
         menuProducts->addAction(actionEmployeeProducts);
         menuProducts->addAction(actionBranchProducts);
+        menuProducts->addAction(actionOtherStocks);
         menuOrders->addAction(actionOrders);
         menuOrders->addAction(actionOrderList);
         menuReturns->addAction(actionReturns);
@@ -477,7 +490,6 @@ public:
         menuHelp->addAction(actionAbout);
         menuProductions->addAction(actionProduction);
         menuProductions->addAction(actionProductionList);
-        menuProductions->addAction(actionProductionStock);
         menuProductions->addAction(actionProductionConsumeRaws);
         menuProductions->addAction(actionProductionPlan);
         menuProductions->addAction(actionProductionPlanList);
@@ -521,6 +533,9 @@ public:
         menuStock->addAction(actionReceiptProducts);
         menuStock->addAction(actionConsumptionProducts);
         menuStock->addAction(actionInventorization);
+        menuStock->addAction(actionLowValueStock);
+        menuStock->addAction(actionConsumeOthSt);
+        menuStock->addAction(actionReceiptOthSt);
         menuCash->addAction(actionCash);
         menuCash->addAction(actionPayments);
         menuCash->addAction(actionPayslip);
@@ -655,6 +670,10 @@ public:
         actionAmortizeGroup->setText(QApplication::translate("MainWindow", "Amortize group", 0));
         actionAmortizeType->setText(QApplication::translate("MainWindow", "Amortize type", 0));
         actionDivisionAccounts->setText(QApplication::translate("MainWindow", "Division assounts", 0));
+        actionOtherStocks->setText(QApplication::translate("MainWindow", "Other stocks", 0));
+        actionLowValueStock->setText(QApplication::translate("MainWindow", "Low value stock", 0));
+        actionConsumeOthSt->setText(QApplication::translate("MainWindow", "Consume other stocks", 0));
+        actionReceiptOthSt->setText(QApplication::translate("MainWindow", "Receipt other stocks", 0));
         menuUsers->setTitle(QApplication::translate("MainWindow", "Users", 0));
         menuProducts->setTitle(QApplication::translate("MainWindow", "Products", 0));
         menuOrders->setTitle(QApplication::translate("MainWindow", "Orders", 0));

@@ -222,6 +222,62 @@
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">moc_CreateDivAccDlg.cpp</Outputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">moc_CreateDivAccDlg.cpp</Outputs>
     </CustomBuild>
+    <CustomBuild Include="CreateConOthStDlg.h">
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\moc.exe"  "CreateConOthStDlg.h" -o "moc_CreateConothStDlg.cpp"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\moc.exe"  "CreateConOthStDlg.h" -o "moc_CreateConothStDlg.cpp"</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Geterating moc file form CreateConOthStDlg.h...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Geterating moc file form CreateConOthStDlg.h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">moc_CreateConOthStDlg.cpp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">moc_CreateConOthStDlg.cpp</Outputs>
+    </CustomBuild>
+    <CustomBuild Include="CreateConOthStListDlg.h">
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\moc.exe"  "CreateConOthStListDlg.h" -o "moc_CreateConOthStListDlg.cpp"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\moc.exe"  "CreateConOthStListDlg.h" -o "moc_CreateConOthStListDlg.cpp"</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Geterating moc file form CreateConOthStListDlg.h...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Geterating moc file form CreateConOthStListDlg.h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">moc_CreateConOthStListDlg.cpp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">moc_CreateConOthStListDlg.cpp</Outputs>
+    </CustomBuild>
+    <CustomBuild Include="CreateLowValStockDlg.h">
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\moc.exe"  "CreateLowValStockDlg.h" -o "moc_CreateLowValStockDlg.cpp"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\moc.exe"  "CreateLowValStockDlg.h" -o "moc_CreateLowValStockDlg.cpp"</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Geterating moc file form CreateLowValStockDlg.h...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Geterating moc file form CreateLowValStockDlg.h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">moc_CreateLowValStockDlg.cpp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">moc_CreateLowValStockDlg.cpp</Outputs>
+    </CustomBuild>
+    <CustomBuild Include="CreateOthStDlg.h">
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\moc.exe"  "CreateOthStDlg.h" -o "moc_CreateOthStDlg.cpp"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\moc.exe"  "CreateOthStDlg.h" -o "moc_CreateOthStDlg.cpp"</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Geterating moc file form CreateOthStDlg.h...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Geterating moc file form CreateOthStDlg.h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">moc_CreateOthStDlg.cpp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">moc_CreateOthStDlg.cpp</Outputs>
+    </CustomBuild>
+    <CustomBuild Include="CreateRcpOthStDlg.h">
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\moc.exe"  "CreateRcpOthStDlg.h" -o "moc_CreateRcpOthStDlg.cpp"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\moc.exe"  "CreateRcpOthStDlg.h" -o "moc_CreateRcpOthStDlg.cpp"</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Geterating moc file form CreateRcpOthStDlg.h...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Geterating moc file form CreateRcpOthStDlg.h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">moc_CreateRcpOthStDlg.cpp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">moc_CreateRcpOthStDlg.cpp</Outputs>
+    </CustomBuild>
+    <CustomBuild Include="CreateRcpOthStListDlg.h">
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\moc.exe"  "CreateRcpOthStListDlg.h" -o "moc_CreateRcpOthStListDlg.cpp"</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Geterating moc file form CreateRcpOthStListDlg.h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">moc_CreateRcpOthStListDlg.cpp</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\moc.exe"  "CreateRcpOthStListDlg.h" -o "moc_CreateRcpOthStListDlg.cpp"</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Geterating moc file form CreateRcpOthStListDlg.h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">moc_CreateRcpOthStListDlg.cpp</Outputs>
+    </CustomBuild>
+    <CustomBuild Include="CreateOthSTypeDlg.h">
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\moc.exe"  "CreateOthSTypeDlg.h" -o "moc_CreateOthSTypeDlg.cpp"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\moc.exe"  "CreateOthSTypeDlg.h" -o "moc_CreateOthSTypeDlg.cpp"</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Geterating moc file form CreateOthSTypeDlg.h...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Geterating moc file form CreateOthSTypeDlg.h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">moc_CreateOthSTypeDlg.cpp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">moc_CreateOthSTypeDlg.cpp</Outputs>
+    </CustomBuild>
     <ClInclude Include="resource.h" />
     <CustomBuild Include="SearchBox.h">
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\moc.exe"  "SearchBox.h" -o "moc_SearchBox.cpp"</Command>
@@ -235,13 +291,19 @@
     <ClInclude Include="ui_CreateAmGrDlg.h" />
     <ClInclude Include="ui_CreateAmTypeDlg.h" />
     <ClInclude Include="ui_CreateBrwDlg.h" />
+    <ClInclude Include="ui_CreateConOthStDlg.h" />
+    <ClInclude Include="ui_CreateConOthStListDlg.h" />
     <ClInclude Include="ui_CreateCrdDlg.h" />
     <ClInclude Include="ui_CreateDivAccDlg.h" />
     <ClInclude Include="ui_CreateEmpPrdDlg.h" />
     <ClInclude Include="ui_CreateFxdAstOperDlg.h" />
     <ClInclude Include="ui_CreateFxdAstDlg.h" />
     <ClInclude Include="ui_CreateInveDlg.h" />
+    <ClInclude Include="ui_CreateOthStDlg.h" />
+    <ClInclude Include="ui_CreateOthSTypeDlg.h" />
     <ClInclude Include="ui_CreatePrdBrnDlg.h" />
+    <ClInclude Include="ui_CreateRcpOthStDlg.h" />
+    <ClInclude Include="ui_CreateRcpOthStListDlg.h" />
     <ClInclude Include="ui_CreateShrDlg.h" />
     <ClInclude Include="ui_GenerateWTBSDlg.h" />
     <ClInclude Include="ui_ReportForm.h" />
@@ -1013,14 +1075,6 @@
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Geterating moc file form CreateSAccDlg.h...</Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">moc_CreateSAccDlg.cpp</Outputs>
     </CustomBuild>
-    <CustomBuild Include="CreateProdnStockDlg.h">
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\moc.exe"  "CreateProdnStockDlg.h" -o "moc_CreateProdnStockDlg.cpp"</Command>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Geterating moc file form CreateProdnStockDlg.h...</Message>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">moc_CreateProdnStockDlg.cpp</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\moc.exe"  "CreateProdnStockDlg.h" -o "moc_CreateProdnStockDlg.cpp"</Command>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Geterating moc file form CreateProdnStockDlg.h...</Message>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">moc_CreateProdnStockDlg.cpp</Outputs>
-    </CustomBuild>
     <CustomBuild Include="CreateStsRuleDlg.h">
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\moc.exe"  "CreateStsRuleDlg.h" -o "moc_CreateStsRuleDlg.cpp"</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Geterating moc file form CreateStsRuleDlg.h...</Message>
@@ -1113,7 +1167,6 @@
     <ClInclude Include="ui_CreateProdConRListDlg.h" />
     <ClInclude Include="ui_CreateProdDlg.h" />
     <ClInclude Include="ui_CreateProdnDlg.h" />
-    <ClInclude Include="ui_CreateProdnStockDlg.h" />
     <ClInclude Include="ui_CreatePspDlg.h" />
     <ClInclude Include="ui_CreatePurDlg.h" />
     <ClInclude Include="ui_CreateRcpPDlg.h" />
@@ -1179,6 +1232,8 @@
     <ClCompile Include="CreateCltDlg.cpp" />
     <ClCompile Include="CreateCmpDlg.cpp" />
     <ClCompile Include="CreateCOADlg.cpp" />
+    <ClCompile Include="CreateConOthStListDlg.cpp" />
+    <ClCompile Include="CreateConOthStDlg.cpp" />
     <ClCompile Include="CreateConPDlg.cpp" />
     <ClCompile Include="CreateConPListDlg.cpp" />
     <ClCompile Include="CreateConRDlg.cpp" />
@@ -1198,12 +1253,15 @@
     <ClCompile Include="CreateJbpDlg.cpp" />
     <ClCompile Include="CreateJbsDlg.cpp" />
     <ClCompile Include="CreateLcnDlg.cpp" />
+    <ClCompile Include="CreateLowValStockDlg.cpp" />
     <ClCompile Include="CreateMsrDlg.cpp" />
     <ClCompile Include="CreateNetCDlg.cpp" />
     <ClCompile Include="CreateOrdDlg.cpp" />
     <ClCompile Include="CreateOrdListDlg.cpp" />
     <ClCompile Include="CreateOrdRDlg.cpp" />
     <ClCompile Include="CreateOrdRListDlg.cpp" />
+    <ClCompile Include="CreateOthStDlg.cpp" />
+    <ClCompile Include="CreateOthSTypeDlg.cpp" />
     <ClCompile Include="CreatePcrDlg.cpp" />
     <ClCompile Include="CreatePhtDlg.cpp" />
     <ClCompile Include="CreatePmtDlg.cpp" />
@@ -1218,9 +1276,10 @@
     <ClCompile Include="CreatePrdTpDlg.cpp" />
     <ClCompile Include="CreateProdDlg.cpp" />
     <ClCompile Include="CreateProdnDlg.cpp" />
-    <ClCompile Include="CreateProdnStockDlg.cpp" />
     <ClCompile Include="CreatePspDlg.cpp" />
     <ClCompile Include="CreatePurDlg.cpp" />
+    <ClCompile Include="CreateRcpOthStDlg.cpp" />
+    <ClCompile Include="CreateRcpOthStListDlg.cpp" />
     <ClCompile Include="CreateRcpPDlg.cpp" />
     <ClCompile Include="CreateRcpPListDlg.cpp" />
     <ClCompile Include="CreateStockTrDlg.cpp" />
@@ -1357,6 +1416,14 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="moc_CreateConothStDlg.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="moc_CreateConOthStListDlg.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="moc_CreateConPDlg.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
@@ -1437,6 +1504,10 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="moc_CreateLowValStockDlg.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="moc_CreateMsrDlg.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
@@ -1460,6 +1531,14 @@
     <ClCompile Include="moc_CreateOrdRListDlg.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="moc_CreateOthStDlg.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="moc_CreateOthSTypeDlg.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="moc_CreatePcrDlg.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
@@ -1517,15 +1596,19 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="moc_CreateProdnStockDlg.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
-    </ClCompile>
     <ClCompile Include="moc_CreatePspDlg.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="moc_CreatePurDlg.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="moc_CreateRcpOthStDlg.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="moc_CreateRcpOthStListDlg.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
     </ClCompile>
@@ -2900,6 +2983,70 @@
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Generating ui_CreateDivAccDlg.h file...</Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">ui_CreateDivAccDlg.h</Outputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">ui_CreateDivAccDlg.h</Outputs>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="CreateConOthStDlg.ui">
+      <FileType>Document</FileType>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\uic.exe"  "CreateConOthStDlg.ui" -o "ui_CreateConOthStDlg.h"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\uic.exe"  "CreateConOthStDlg.ui" -o "ui_CreateConOthStDlg.h"</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Generating ui_CreateConOthStDlg.h file...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Generating ui_CreateConOthStDlg.h file...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">ui_CreateConOthStDlg.h</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">ui_CreateConOthStDlg.h</Outputs>
+    </CustomBuild>
+    <CustomBuild Include="CreateConOthStListDlg.ui">
+      <FileType>Document</FileType>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\uic.exe"  "CreateConOthStListDlg.ui" -o "ui_CreateConOthStListDlg.h"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\uic.exe"  "CreateConOthStListDlg.ui" -o "ui_CreateConOthStListDlg.h"</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Generating ui_CreateConOthStListDlg.h file...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Generating ui_CreateConOthStListDlg.h file...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">ui_CreateConOthStListDlg.h</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">ui_CreateConOthStListDlg.h</Outputs>
+    </CustomBuild>
+    <CustomBuild Include="CreateLowValStockDlg.ui">
+      <FileType>Document</FileType>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\uic.exe"  "CreateLowValStockDlg.ui" -o "ui_CreateLowValStockDlg.h"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\uic.exe"  "CreateLowValStockDlg.ui" -o "ui_CreateLowValStockDlg.h"</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Generating ui_CreateLowValStockDlg.h file...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Generating ui_CreateLowValStockDlg.h file...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">ui_CreateLowValStockDlg.h</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">ui_CreateLowValStockDlg.h</Outputs>
+    </CustomBuild>
+    <CustomBuild Include="CreateOthStDlg.ui">
+      <FileType>Document</FileType>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\uic.exe"  "CreateOthStDlg.ui" -o "ui_CreateOthStDlg.h"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\uic.exe"  "CreateOthStDlg.ui" -o "ui_CreateOthStDlg.h"</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Generating ui_CreateOthStDlg.h file...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Generating ui_CreateOthStDlg.h file...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">ui_CreateOthStDlg.h</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">ui_CreateOthStDlg.h</Outputs>
+    </CustomBuild>
+    <CustomBuild Include="CreateRcpOthStDlg.ui">
+      <FileType>Document</FileType>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\uic.exe"  "CreateRcpOthStDlg.ui" -o "ui_CreateRcpOthStDlg.h"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\uic.exe"  "CreateRcpOthStDlg.ui" -o "ui_CreateRcpOthStDlg.h"</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Generating ui_CreateRcpOthStDlg.h file...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Generating ui_CreateRcpOthStDlg.h file...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">ui_CreateRcpOthStDlg.h</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">ui_CreateRcpOthStDlg.h</Outputs>
+    </CustomBuild>
+    <CustomBuild Include="CreateRcpOthStListDlg.ui">
+      <FileType>Document</FileType>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\uic.exe"  "CreateRcpOthStListDlg.ui" -o "ui_CreateRcpOthStListDlg.h"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\uic.exe"  "CreateRcpOthStListDlg.ui" -o "ui_CreateRcpOthStListDlg.h"</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Generating ui_CreateRcpOthStListDlg.h file...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Generating ui_CreateRcpOthStListDlg.h file...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">ui_CreateRcpOthStListDlg.h</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">ui_CreateRcpOthStListDlg.h</Outputs>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="CreateOthSTypeDlg.ui">
+      <FileType>Document</FileType>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\uic.exe"  "CreateOthSTypeDlg.ui" -o "ui_CreateOthSTypeDlg.h"</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Generating ui_CreateOthSypeDlg.h file...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">ui_CreateOthSypeDlg.h</Outputs>
     </CustomBuild>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -77,7 +77,7 @@ public:
 
         codeEdit = new QLineEdit(CreateDivisionAccount);
         codeEdit->setObjectName(QStringLiteral("codeEdit"));
-        codeEdit->setReadOnly(true);
+        codeEdit->setReadOnly(false);
 
         gridLayout->addWidget(codeEdit, 3, 1, 1, 1);
 

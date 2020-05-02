@@ -129,9 +129,66 @@ namespace BusinessLayer
 				fixedAssets->SetSpecificationID(fixedAssetsSpecification->GetID());
 				if (fixedAssets->CreateFixedAssets(ormasDal, errorMessage))
 				{
+					if (0 != purveyorID || 0 != accountableID || 0 != accountID)
+					{
+						postingFixedAssets->SetAccountID(accountID);
+						if (accountableID > 0)
+						{
+							Balance balance;
+							Balance tempBalance;
+							Subaccount sub;
+							Account acc;
+							if (!acc.GetAccountByNumber(ormasDal, "10520", errorMessage))
+							{
+								return false;
+							}
+							PostingFixedAssets pFixedAssets;
+							pFixedAssets.SetUserID(accountableID);
+							std::string filter = pFixedAssets.GenerateFilter(ormasDal);
+							std::vector<DataLayer::balancesViewCollection> balanceVector = ormasDal.GetBalances(errorMessage, filter);
+							if (0 < balanceVector.size())
+							{
+								for each (auto item in balanceVector)
+								{
+									sub.Clear();
+									tempBalance.Clear();
+									if (!tempBalance.GetBalanceByID(ormasDal, std::get<0>(item), errorMessage))
+										return false;
+									if (sub.GetSubaccountByID(ormasDal, tempBalance.GetSubaccountID(), errorMessage))
+									{
+										if (sub.GetParentAccountID() == acc.GetID())
+										{
+											balance.SetSubaccountID(sub.GetID());
+										}
+									}
+								}
+							}
+							else
+							{
+								return false;
+							}
+							if (balance.GetSubaccountID() <= 0)
+								return false;
+							if (balance.GetBalanceBySubaccountID(ormasDal, balance.GetSubaccountID(), errorMessage))
+							{
+								postingFixedAssets->SetSubaccountID(balance.GetSubaccountID());
+							}
+						}
+						if (purveyorID > 0)
+						{
+							postingFixedAssets->SetUserID(purveyorID);
+						}
+						postingFixedAssets->SetFixedAssetsID(fixedAssets->GetID());
+						if (!postingFixedAssets->CreatePostingFixedAssets(ormasDal, errorMessage))
+						{
+							return false;
+						}
+					}
+					if (isNewFixedAssets == false)
+						return true;
 					if (fixedAssets->GetStatusID() == statusMap.find("IN USE")->second)
 					{
-						if (fixedAssets->CreatePostingFixedAssetsEntry(ormasDal, accountableID, purveyorID, accountID, fixedAssetsAccountID, fixedAssets->GetPrimaryCost(), fixedAssets->GetStartOfOperationDate(), errorMessage))
+						if (fixedAssets->CreatePostingFixedAssetsEntry(ormasDal, accountableID, purveyorID, accountID, fixedAssetsDetails->GetPrimaryCostAccountID(), fixedAssets->GetPrimaryCost(), fixedAssets->GetStartOfOperationDate(), errorMessage))
 						{
 							return true;
 						}
@@ -141,37 +198,10 @@ namespace BusinessLayer
 							return false;
 						}
 					}
-					if (fixedAssets->GetStatusID() == statusMap.find("ERROR")->second)
+					if (fixedAssets->GetStatusID() == statusMap.find("WRITE-OFFED")->second || fixedAssets->GetStatusID() == statusMap.find("ERROR")->second)
 					{
-						Subaccount sub;
-						if (!sub.GetSubaccountByID(ormasDal, fixedAssetsDetails->GetAmortizeAccountID(), errorMessage))
-							return false;
-						if (sub.GetCurrentBalance() != 0)
-						{
-							errorMessage = "Cannot set status to \"ERROR\", amortize account value does not equal to 0";
-							return false;
-						}
-						if (fixedAssets->CreatePostingFixedAssetsEntryReverce(ormasDal, accountableID, purveyorID, accountID, fixedAssetsAccountID, fixedAssets->GetPrimaryCost(), fixedAssets->GetStartOfOperationDate(), errorMessage))
-						{
-							return true;
-						}
-						else
-						{
-							//ormasDal.CancelTransaction(errorMessage);
-							return false;
-						}
-					}
-					if (fixedAssets->GetStatusID() == statusMap.find("WRITE-OFF")->second)
-					{
-						if (fixedAssets->CreatePostingFixedAssetsEntryWriteOFF(ormasDal, fixedAssets->GetID(), errorMessage))
-						{
-							return true;
-						}
-						else
-						{
-							//ormasDal.CancelTransaction(errorMessage);
-							return false;
-						}
+						errorMessage = "Cannot change status of this to \"WRITE-OFFED\" or \"ERROR\".";
+						return false;
 					}
 					else
 					{
@@ -219,9 +249,66 @@ namespace BusinessLayer
 				fixedAssets->SetSpecificationID(fixedAssetsSpecification->GetID());
 				if (fixedAssets->CreateFixedAssets(ormasDal, errorMessage))
 				{
+					if (0 != purveyorID || 0 != accountableID || 0 != accountID)
+					{
+						postingFixedAssets->SetAccountID(accountID);
+						if (accountableID > 0)
+						{
+							Balance balance;
+							Balance tempBalance;
+							Subaccount sub;
+							Account acc;
+							if (!acc.GetAccountByNumber(ormasDal, "10520", errorMessage))
+							{
+								return false;
+							}
+							PostingFixedAssets pFixedAssets;
+							pFixedAssets.SetUserID(accountableID);
+							std::string filter = pFixedAssets.GenerateFilter(ormasDal);
+							std::vector<DataLayer::balancesViewCollection> balanceVector = ormasDal.GetBalances(errorMessage, filter);
+							if (0 < balanceVector.size())
+							{
+								for each (auto item in balanceVector)
+								{
+									sub.Clear();
+									tempBalance.Clear();
+									if (!tempBalance.GetBalanceByID(ormasDal, std::get<0>(item), errorMessage))
+										return false;
+									if (sub.GetSubaccountByID(ormasDal, tempBalance.GetSubaccountID(), errorMessage))
+									{
+										if (sub.GetParentAccountID() == acc.GetID())
+										{
+											balance.SetSubaccountID(sub.GetID());
+										}
+									}
+								}
+							}
+							else
+							{
+								return false;
+							}
+							if (balance.GetSubaccountID() <= 0)
+								return false;
+							if (balance.GetBalanceBySubaccountID(ormasDal, balance.GetSubaccountID(), errorMessage))
+							{
+								postingFixedAssets->SetSubaccountID(balance.GetSubaccountID());
+							}
+						}
+						if (purveyorID > 0)
+						{
+							postingFixedAssets->SetUserID(purveyorID);
+						}
+						postingFixedAssets->SetFixedAssetsID(fixedAssets->GetID());
+						if (!postingFixedAssets->CreatePostingFixedAssets(ormasDal, errorMessage))
+						{
+							return false;
+						}
+					}
+					if (isNewFixedAssets == false)
+						return true;
 					if (fixedAssets->GetStatusID() == statusMap.find("IN USE")->second)
 					{
-						if (fixedAssets->CreatePostingFixedAssetsEntry(ormasDal, accountableID, purveyorID, accountID, fixedAssetsAccountID, fixedAssets->GetPrimaryCost(), fixedAssets->GetStartOfOperationDate(), errorMessage))
+						if (fixedAssets->CreatePostingFixedAssetsEntry(ormasDal, accountableID, purveyorID, accountID, fixedAssetsDetails->GetPrimaryCostAccountID(), fixedAssets->GetPrimaryCost(), fixedAssets->GetStartOfOperationDate(), errorMessage))
 						{
 							return true;
 						}
@@ -231,37 +318,10 @@ namespace BusinessLayer
 							return false;
 						}
 					}
-					if (fixedAssets->GetStatusID() == statusMap.find("ERROR")->second)
+					if (fixedAssets->GetStatusID() == statusMap.find("WRITE-OFFED")->second || fixedAssets->GetStatusID() == statusMap.find("ERROR")->second)
 					{
-						Subaccount sub;
-						if (!sub.GetSubaccountByID(ormasDal, fixedAssetsDetails->GetAmortizeAccountID(), errorMessage))
-							return false;
-						if (sub.GetCurrentBalance() != 0)
-						{
-							errorMessage = "Cannot set status to \"ERROR\", amortize account value does not equal to 0";
-							return false;
-						}
-						if (fixedAssets->CreatePostingFixedAssetsEntryReverce(ormasDal, accountableID, purveyorID, accountID, fixedAssetsAccountID, fixedAssets->GetPrimaryCost(), fixedAssets->GetStartOfOperationDate(), errorMessage))
-						{
-							return true;
-						}
-						else
-						{
-							//ormasDal.CancelTransaction(errorMessage);
-							return false;
-						}
-					}
-					if (fixedAssets->GetStatusID() == statusMap.find("WRITE-OFFED")->second)
-					{
-						if (fixedAssets->CreatePostingFixedAssetsEntryWriteOFF(ormasDal, fixedAssets->GetID(), errorMessage))
-						{
-							return true;
-						}
-						else
-						{
-							//ormasDal.CancelTransaction(errorMessage);
-							return false;
-						}
+						errorMessage = "Cannot change status of this to \"WRITE-OFFED\" or \"ERROR\".";
+						return false;
 					}
 					else
 					{
@@ -278,6 +338,7 @@ namespace BusinessLayer
 		//ormasDal.CancelTransaction(errorMessage);
 		return false;
 	}
+
 	bool FixedAssetsUnion::DeleteFixedAssetsUnion(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
 		std::map<std::string, int> statusMap = BusinessLayer::Status::GetStatusesAsMap(ormasDal, errorMessage);
@@ -297,13 +358,154 @@ namespace BusinessLayer
 	}
 	bool FixedAssetsUnion::UpdateFixedAssetsUnion(DataLayer::OrmasDal& ormasDal, FixedAssets* fAssets, FixedAssetsDetails* faDetails, FixedAssetsSpecification* faSpecification, PostingFixedAssets* pfAssets, std::string& errorMessage)
 	{
+		std::map<std::string, int> statusMap = BusinessLayer::Status::GetStatusesAsMap(ormasDal, errorMessage);
+		if (0 == statusMap.size())
+			return false;
 		fixedAssets = fAssets;
 		fixedAssetsDetails = faDetails;
 		fixedAssetsSpecification = faSpecification;
 		postingFixedAssets = pfAssets;
+
+		previousStatusID = GetCurrentStatusID(ormasDal, fixedAssets->GetID(), errorMessage);
 		//ormasDal.StartTransaction(errorMessage);
-		if (!fixedAssets->IsEmpty() && !fixedAssetsDetails->IsEmpty() && fixedAssetsSpecification->IsEmpty())
+		if (fixedAssetsSpecification->UpdateFixedAssetsSpecification(ormasDal, errorMessage))
 		{
+			if (fixedAssetsDetails->UpdateFixedAssetsDetails(ormasDal, errorMessage))
+			{
+				if (previousStatusID == statusMap.find("IN USE")->second && fixedAssets->GetStatusID() == statusMap.find("IN USE")->second)
+				{
+					return true;
+				}
+				if (previousStatusID != statusMap.find("IN USE")->second && fixedAssets->GetStatusID() == statusMap.find("WRITE-OFFED")->second)
+				{
+					errorMessage = "Cannot update the document, because \"WRITE-OFFED\" status is unchangeable state";
+					return false;
+				}
+				if (previousStatusID == statusMap.find("IN USE")->second)
+				{
+					if (fixedAssets->GetStatusID() != statusMap.find("WRITE-OFFED")->second && fixedAssets->GetStatusID() != statusMap.find("ERROR")->second)
+					{
+						errorMessage = "Cannot update the document, because \"IN USE\" status could be changed to \"WRITE-OFFED\" or \"ERROR\"";
+						return false;
+					}
+				}
+				if (fixedAssets->UpdateFixedAssets(ormasDal, errorMessage))
+				{
+					if (0 != purveyorID || 0 != accountableID || 0 != accountID)
+					{
+						postingFixedAssets->SetAccountID(accountID);
+						if (accountableID > 0)
+						{
+							Balance balance;
+							Balance tempBalance;
+							Subaccount sub;
+							Account acc;
+							if (!acc.GetAccountByNumber(ormasDal, "10520", errorMessage))
+							{
+								return false;
+							}
+							PostingFixedAssets pFixedAssets;
+							pFixedAssets.SetUserID(accountableID);
+							std::string filter = pFixedAssets.GenerateFilter(ormasDal);
+							std::vector<DataLayer::balancesViewCollection> balanceVector = ormasDal.GetBalances(errorMessage, filter);
+							if (0 < balanceVector.size())
+							{
+								for each (auto item in balanceVector)
+								{
+									sub.Clear();
+									tempBalance.Clear();
+									if (!tempBalance.GetBalanceByID(ormasDal, std::get<0>(item), errorMessage))
+										return false;
+									if (sub.GetSubaccountByID(ormasDal, tempBalance.GetSubaccountID(), errorMessage))
+									{
+										if (sub.GetParentAccountID() == acc.GetID())
+										{
+											balance.SetSubaccountID(sub.GetID());
+										}
+									}
+								}
+							}
+							else
+							{
+								return false;
+							}
+							if (balance.GetSubaccountID() <= 0)
+								return false;
+							if (balance.GetBalanceBySubaccountID(ormasDal, balance.GetSubaccountID(), errorMessage))
+							{
+								postingFixedAssets->SetSubaccountID(balance.GetSubaccountID());
+							}
+						}
+						if (purveyorID > 0)
+						{
+							postingFixedAssets->SetUserID(purveyorID);
+						}
+						postingFixedAssets->SetFixedAssetsID(fixedAssets->GetID());
+						if (!postingFixedAssets->UpdatePostingFixedAssets(ormasDal, errorMessage))
+						{
+							return false;
+						}
+					}
+					if (fixedAssets->GetStatusID() == statusMap.find("IN USE")->second && isNewFixedAssets == true)
+					{
+						if (fixedAssets->CreatePostingFixedAssetsEntry(ormasDal, accountableID, purveyorID, accountID, fixedAssetsDetails->GetPrimaryCostAccountID(), fixedAssets->GetPrimaryCost(), fixedAssets->GetStartOfOperationDate(), errorMessage))
+						{
+							return true;
+						}
+						else
+						{
+							//ormasDal.CancelTransaction(errorMessage);
+							return false;
+						}
+					}
+					if (previousStatusID == statusMap.find("IN USE")->second && fixedAssets->GetStatusID() == statusMap.find("ERROR")->second)
+					{
+						Subaccount sub;
+						if (!sub.GetSubaccountByID(ormasDal, fixedAssetsDetails->GetAmortizeAccountID(), errorMessage))
+							return false;
+						if (sub.GetCurrentBalance() != 0)
+						{
+							errorMessage = "Cannot set status to \"ERROR\", amortize account value does not equal to 0";
+							return false;
+						}
+						if (fixedAssets->CreatePostingFixedAssetsEntryReverce(ormasDal, accountableID, purveyorID, accountID, fixedAssetsDetails->GetPrimaryCostAccountID(), fixedAssets->GetPrimaryCost(), fixedAssets->GetStartOfOperationDate(), errorMessage))
+						{
+							return true;
+						}
+						else
+						{
+							//ormasDal.CancelTransaction(errorMessage);
+							return false;
+						}
+					}
+					if (previousStatusID == statusMap.find("IN USE")->second && fixedAssets->GetStatusID() == statusMap.find("WRITE-OFFED")->second)
+					{
+						if (fixedAssets->CreatePostingFixedAssetsEntryWriteOFF(ormasDal, fixedAssets->GetID(), errorMessage))
+						{
+							return true;
+						}
+						else
+						{
+							//ormasDal.CancelTransaction(errorMessage);
+							return false;
+						}
+					}
+					else
+					{
+						errorMessage = "Cannot change status to \"WRITE-OFFED\", fixed assets must be in \"IN USE\" state";
+						return false;
+					}
+					return true;
+				}
+				else
+				{
+					return false;
+				}
+			}
+			else
+			{
+				return false;
+			}
 			return true;
 		}
 		if (errorMessage.empty())
@@ -315,9 +517,151 @@ namespace BusinessLayer
 	}
 	bool FixedAssetsUnion::UpdateFixedAssetsUnion(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
+		std::map<std::string, int> statusMap = BusinessLayer::Status::GetStatusesAsMap(ormasDal, errorMessage);
+		if (0 == statusMap.size())
+			return false;
 		//ormasDal.StartTransaction(errorMessage);
-		if (!fixedAssets->IsEmpty() && !fixedAssetsDetails->IsEmpty() && fixedAssetsSpecification->IsEmpty())
+		
+		previousStatusID = GetCurrentStatusID(ormasDal, fixedAssets->GetID(), errorMessage);
+		//ormasDal.StartTransaction(errorMessage);
+		if (fixedAssetsSpecification->UpdateFixedAssetsSpecification(ormasDal, errorMessage))
 		{
+			if (fixedAssetsDetails->UpdateFixedAssetsDetails(ormasDal, errorMessage))
+			{
+				if (previousStatusID == statusMap.find("IN USE")->second && fixedAssets->GetStatusID() == statusMap.find("IN USE")->second)
+				{
+					return true;
+				}
+				if (previousStatusID != statusMap.find("IN USE")->second && fixedAssets->GetStatusID() == statusMap.find("WRITE-OFFED")->second)
+				{
+					errorMessage = "Cannot update the document, because \"WRITE-OFFED\" status is unchangeable state";
+					return false;
+				}
+				if (previousStatusID == statusMap.find("IN USE")->second)
+				{
+					if (fixedAssets->GetStatusID() != statusMap.find("WRITE-OFFED")->second && fixedAssets->GetStatusID() != statusMap.find("ERROR")->second)
+					{
+						errorMessage = "Cannot update the document, because \"IN USE\" status could be changed to \"WRITE-OFFED\" or \"ERROR\"";
+						return false;
+					}
+				}
+				if (fixedAssets->UpdateFixedAssets(ormasDal, errorMessage))
+				{
+					if (0 != purveyorID || 0 != accountableID || 0 != accountID)
+					{
+						postingFixedAssets->SetAccountID(accountID);
+						if (accountableID > 0)
+						{
+							Balance balance;
+							Balance tempBalance;
+							Subaccount sub;
+							Account acc;
+							if (!acc.GetAccountByNumber(ormasDal, "10520", errorMessage))
+							{
+								return false;
+							}
+							PostingFixedAssets pFixedAssets;
+							pFixedAssets.SetUserID(accountableID);
+							std::string filter = pFixedAssets.GenerateFilter(ormasDal);
+							std::vector<DataLayer::balancesViewCollection> balanceVector = ormasDal.GetBalances(errorMessage, filter);
+							if (0 < balanceVector.size())
+							{
+								for each (auto item in balanceVector)
+								{
+									sub.Clear();
+									tempBalance.Clear();
+									if (!tempBalance.GetBalanceByID(ormasDal, std::get<0>(item), errorMessage))
+										return false;
+									if (sub.GetSubaccountByID(ormasDal, tempBalance.GetSubaccountID(), errorMessage))
+									{
+										if (sub.GetParentAccountID() == acc.GetID())
+										{
+											balance.SetSubaccountID(sub.GetID());
+										}
+									}
+								}
+							}
+							else
+							{
+								return false;
+							}
+							if (balance.GetSubaccountID() <= 0)
+								return false;
+							if (balance.GetBalanceBySubaccountID(ormasDal, balance.GetSubaccountID(), errorMessage))
+							{
+								postingFixedAssets->SetSubaccountID(balance.GetSubaccountID());
+							}
+						}
+						if (purveyorID > 0)
+						{
+							postingFixedAssets->SetUserID(purveyorID);
+						}
+						postingFixedAssets->SetFixedAssetsID(fixedAssets->GetID());
+						if (!postingFixedAssets->UpdatePostingFixedAssets(ormasDal, errorMessage))
+						{
+							return false;
+						}
+					}
+					if (fixedAssets->GetStatusID() == statusMap.find("IN USE")->second && isNewFixedAssets == true)
+					{
+						if (fixedAssets->CreatePostingFixedAssetsEntry(ormasDal, accountableID, purveyorID, accountID, fixedAssetsDetails->GetPrimaryCostAccountID(), fixedAssets->GetPrimaryCost(), ormasDal.GetSystemDate(), errorMessage))
+						{
+							return true;
+						}
+						else
+						{
+							//ormasDal.CancelTransaction(errorMessage);
+							return false;
+						}
+					}
+					if (previousStatusID == statusMap.find("IN USE")->second && fixedAssets->GetStatusID() == statusMap.find("ERROR")->second)
+					{
+						Subaccount sub;
+						if (!sub.GetSubaccountByID(ormasDal, fixedAssetsDetails->GetAmortizeAccountID(), errorMessage))
+							return false;
+						if (sub.GetCurrentBalance() != 0)
+						{
+							errorMessage = "Cannot set status to \"ERROR\", amortize account value does not equal to 0";
+							return false;
+						}
+						if (fixedAssets->CreatePostingFixedAssetsEntryReverce(ormasDal, accountableID, purveyorID, accountID, fixedAssetsDetails->GetPrimaryCostAccountID(), fixedAssets->GetPrimaryCost(), ormasDal.GetSystemDate(), errorMessage))
+						{
+							return true;
+						}
+						else
+						{
+							//ormasDal.CancelTransaction(errorMessage);
+							return false;
+						}
+					}
+					if (previousStatusID == statusMap.find("IN USE")->second && fixedAssets->GetStatusID() == statusMap.find("WRITE-OFFED")->second)
+					{
+						if (fixedAssets->CreatePostingFixedAssetsEntryWriteOFF(ormasDal, fixedAssets->GetID(), errorMessage))
+						{
+							return true;
+						}
+						else
+						{
+							//ormasDal.CancelTransaction(errorMessage);
+							return false;
+						}
+					}
+					else
+					{
+						errorMessage = "Cannot change status to \"WRITE-OFFED\", fixed assets must be in \"IN USE\" state";
+						return false;
+					}
+					return true;
+				}
+				else
+				{
+					return false;
+				}
+			}
+			else
+			{
+				return false;
+			}
 			return true;
 		}
 		if (errorMessage.empty())
@@ -387,5 +731,13 @@ namespace BusinessLayer
 			return invNumber;
 		}
 		return "";
+	}
+
+	int FixedAssetsUnion::GetCurrentStatusID(DataLayer::OrmasDal& ormasDal, int fxID, std::string& errorMessage)
+	{
+		FixedAssets fixedAssets;
+		if (fixedAssets.GetFixedAssetsByID(ormasDal, fxID, errorMessage))
+			return fixedAssets.GetStatusID();
+		return 0;
 	}
 }

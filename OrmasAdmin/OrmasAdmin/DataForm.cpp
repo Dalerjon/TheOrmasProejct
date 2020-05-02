@@ -22,7 +22,8 @@ DataForm::DataForm(BusinessLayer::OrmasBL *ormasBL, QWidget *parent) :QWidget(pa
 		objectName() == "consumeProductForm" || objectName() == "consumeRawForm" || objectName() == "inventorizationForm" ||
 		objectName() == "orderRawForm" || objectName() == "receiptProductForm" || objectName() == "stockTransferForm" ||
 		objectName() == "productionPlanForm" || objectName() == "spoilageForm" || objectName() == "productionConsumeRawForm" ||
-		objectName() == "specificationForm" || objectName() == "transportForm" || objectName() == "writeOffRawForm")
+		objectName() == "specificationForm" || objectName() == "transportForm" || objectName() == "writeOffRawForm"
+		|| objectName() == "consumeOtherStocksForm" || objectName() == "receiptOtherStocksForm")
 	{
 		connect(tableView, SIGNAL(cellClicked(int, int)), this, SLOT(OpenList(int, int)));
 	}
@@ -998,7 +999,8 @@ void DataForm::OpenList(int row, int column)
 			writeOffList->SetWriteOffID(id);
 			filterString = dataFormBL->GenerateFilter<BusinessLayer::WriteOffList>(writeOffList);
 			delete writeOffList;
-			checkedWidget = IsWindowExist(((MainForm*)parentWidget())->mdiArea->subWindowList(), QString("writeOffListForm")); if (errorMessage.empty())
+			checkedWidget = IsWindowExist(((MainForm*)parentWidget())->mdiArea->subWindowList(), QString("writeOffListForm"));
+			if (errorMessage.empty())
 			{
 				if (checkedWidget == nullptr)
 				{
@@ -1049,7 +1051,8 @@ void DataForm::OpenList(int row, int column)
 			writeOffRawList->SetWriteOffRawID(id);
 			filterString = dataFormBL->GenerateFilter<BusinessLayer::WriteOffRawList>(writeOffRawList);
 			delete writeOffRawList;
-			checkedWidget = IsWindowExist(((MainForm*)parentWidget())->mdiArea->subWindowList(), QString("writeOffRawListForm")); if (errorMessage.empty())
+			checkedWidget = IsWindowExist(((MainForm*)parentWidget())->mdiArea->subWindowList(), QString("writeOffRawListForm")); 
+			if (errorMessage.empty())
 			{
 				if (checkedWidget == nullptr)
 				{
@@ -1087,6 +1090,110 @@ void DataForm::OpenList(int row, int column)
 					checkedWidget->topLevelWidget();
 					checkedWidget->activateWindow();
 					QString message = tr("All raws for write-off raw list are shown");
+					((MainForm*)parentWidget())->statusBar()->showMessage(message);
+				}
+			}
+		}
+		else if (objectName() == "consumeOtherStocksForm")
+		{
+			id = GetIDFromTable(tableView, errorMessage);
+			if (0 != id)
+				consumeOtherStocksID = id;
+			BusinessLayer::ConsumeOtherStocksList *conOthStList = new BusinessLayer::ConsumeOtherStocksList();
+			conOthStList->SetConsumeOtherStocksID(id);
+			filterString = dataFormBL->GenerateFilter<BusinessLayer::ConsumeOtherStocksList>(conOthStList);
+			delete conOthStList;
+			checkedWidget = IsWindowExist(((MainForm*)parentWidget())->mdiArea->subWindowList(), QString("consumeOtherStocksForm"));
+			if (errorMessage.empty())
+			{
+				if (checkedWidget == nullptr)
+				{
+					DataForm *dForm = new DataForm(dataFormBL, this);
+					dForm->setWindowTitle(tr("Consume other stocks list"));
+					dForm->FillTable<BusinessLayer::ConsumeOtherStocksListView>(errorMessage, filterString);
+					if (errorMessage.empty())
+					{
+						dForm->setObjectName("consumeOtherStocksForm");
+						QMdiSubWindow *cosListWindow = new QMdiSubWindow;
+						cosListWindow->setWidget(dForm);
+						cosListWindow->setAttribute(Qt::WA_DeleteOnClose);
+						((MainForm*)parentWidget())->mdiArea->addSubWindow(cosListWindow);
+						cosListWindow->resize(dForm->size().width() + 18, dForm->size().height() + 30);
+						dForm->setWindowModality(Qt::WindowModal);
+						dForm->show();
+						dForm->topLevelWidget();
+						dForm->activateWindow();
+						QString message = tr("All other stocks for consume list are shown");
+						((MainForm*)parentWidget())->statusBar()->showMessage(message);
+					}
+					else
+					{
+						delete dForm;
+						QString message = tr("End with error!");
+						((MainForm*)parentWidget())->statusBar()->showMessage(message);
+						QMessageBox::information(NULL, QString(tr("Warning")),
+							QString(tr(errorMessage.c_str())),
+							QString(tr("Ok")));
+						errorMessage = "";
+					}
+				}
+				else
+				{
+					checkedWidget->topLevelWidget();
+					checkedWidget->activateWindow();
+					QString message = tr("All other stocks for consume list are shown");
+					((MainForm*)parentWidget())->statusBar()->showMessage(message);
+				}
+			}
+		}
+		else if (objectName() == "receiptOtherStocksForm")
+		{
+			id = GetIDFromTable(tableView, errorMessage);
+			if (0 != id)
+				receiptOtherStocksID = id;
+			BusinessLayer::ReceiptOtherStocksList *receiptOtherStocksList = new BusinessLayer::ReceiptOtherStocksList();
+			receiptOtherStocksList->SetReceiptOtherStocksID(id);
+			filterString = dataFormBL->GenerateFilter<BusinessLayer::ReceiptOtherStocksList>(receiptOtherStocksList);
+			delete receiptOtherStocksList;
+			checkedWidget = IsWindowExist(((MainForm*)parentWidget())->mdiArea->subWindowList(), QString("receiptOtherStocksListForm")); 
+			if (errorMessage.empty())
+			{
+				if (checkedWidget == nullptr)
+				{
+					DataForm *dForm = new DataForm(dataFormBL, this);
+					dForm->setWindowTitle(tr("Receipt other stocks list"));
+					dForm->FillTable<BusinessLayer::ReceiptOtherStocksListView>(errorMessage, filterString);
+					if (errorMessage.empty())
+					{
+						dForm->setObjectName("receiptOtherStocksListForm");
+						QMdiSubWindow *rawListWindow = new QMdiSubWindow;
+						rawListWindow->setWidget(dForm);
+						rawListWindow->setAttribute(Qt::WA_DeleteOnClose);
+						((MainForm*)parentWidget())->mdiArea->addSubWindow(rawListWindow);
+						rawListWindow->resize(dForm->size().width() + 18, dForm->size().height() + 30);
+						dForm->setWindowModality(Qt::WindowModal);
+						dForm->show();
+						dForm->topLevelWidget();
+						dForm->activateWindow();
+						QString message = tr("All other stocks for receipt list are shown");
+						((MainForm*)parentWidget())->statusBar()->showMessage(message);
+					}
+					else
+					{
+						delete dForm;
+						QString message = tr("End with error!");
+						((MainForm*)parentWidget())->statusBar()->showMessage(message);
+						QMessageBox::information(NULL, QString(tr("Warning")),
+							QString(tr(errorMessage.c_str())),
+							QString(tr("Ok")));
+						errorMessage = "";
+					}
+				}
+				else
+				{
+					checkedWidget->topLevelWidget();
+					checkedWidget->activateWindow();
+					QString message = tr("All other stocks for receipt list are shown");
 					((MainForm*)parentWidget())->statusBar()->showMessage(message);
 				}
 			}
@@ -1209,6 +1316,12 @@ void DataForm::OnRowsNumberChanged()
 			((CreateConRDlg*)parentDialog)->sumEdit->setText(QString::number(sum, 'f', 3));
 			((CreateConRDlg*)parentDialog)->currencyCmb->setCurrentIndex(((CreateConRDlg*)parentDialog)->currencyCmb->findData(QVariant(currencyID)));
 		}
+		else if (parentDialog->objectName() == "CreateConsumeOthSt")
+		{
+			((CreateConOthStDlg*)parentDialog)->othStCountEdit->setText(QString::number(count, 'f', 3));
+			((CreateConOthStDlg*)parentDialog)->sumEdit->setText(QString::number(sum, 'f', 3));
+			((CreateConOthStDlg*)parentDialog)->currencyCmb->setCurrentIndex(((CreateConOthStDlg*)parentDialog)->currencyCmb->findData(QVariant(currencyID)));
+		}
 		else if (parentDialog->objectName() == "CreateInventorization")
 		{
 			((CreateInvDlg*)parentDialog)->prodCountEdit->setText(QString::number(count, 'f', 3));
@@ -1226,6 +1339,12 @@ void DataForm::OnRowsNumberChanged()
 			((CreateOrdRDlg*)parentDialog)->prodCountEdit->setText(QString::number(count, 'f', 3));
 			((CreateOrdRDlg*)parentDialog)->sumEdit->setText(QString::number(sum, 'f', 3));
 			((CreateOrdRDlg*)parentDialog)->currencyCmb->setCurrentIndex(((CreateOrdRDlg*)parentDialog)->currencyCmb->findData(QVariant(currencyID)));
+		}
+		else if (parentDialog->objectName() == "CreateReceiptOthSt")
+		{
+			((CreateRcpOthStDlg*)parentDialog)->othStCountEdit->setText(QString::number(count, 'f', 3));
+			((CreateRcpOthStDlg*)parentDialog)->sumEdit->setText(QString::number(sum, 'f', 3));
+			((CreateRcpOthStDlg*)parentDialog)->currencyCmb->setCurrentIndex(((CreateRcpOthStDlg*)parentDialog)->currencyCmb->findData(QVariant(currencyID)));
 		}
 		else if (parentDialog->objectName() == "CreateReceiptProduct")
 		{
@@ -2671,6 +2790,271 @@ void DataForm::DelConPListDlg()
 	}
 }
 
+void DataForm::CrtConOthStDlg()
+{
+	CreateConOthStDlg *conOthStDlg = new CreateConOthStDlg(dataFormBL, false, this);
+	conOthStDlg->setAttribute(Qt::WA_DeleteOnClose);
+	conOthStDlg->setWindowTitle(tr("Create consume other stocks"));
+	QMdiSubWindow *cosRWindow = new QMdiSubWindow;
+	cosRWindow->setWidget(conOthStDlg);
+	cosRWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(cosRWindow);
+	conOthStDlg->show();
+}
+void DataForm::UdpConOthStDlg()
+{
+	CreateConOthStDlg *conOthStDlg = new CreateConOthStDlg(dataFormBL, true, this);
+	conOthStDlg->setAttribute(Qt::WA_DeleteOnClose);
+	conOthStDlg->setWindowTitle(tr("Update consume other stocks"));
+	QMdiSubWindow *cosRWindow = new QMdiSubWindow;
+	cosRWindow->setWidget(conOthStDlg);
+	cosRWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(cosRWindow);
+	if (conOthStDlg->FillDlgElements(tableView))
+	{
+		conOthStDlg->show();
+	}
+	/*else
+	{
+	QMessageBox::information(NULL, QString(tr("Warning")),
+	QString(tr("Please select one row at first!")),
+	QString(tr("Ok")));
+	}*/
+}
+void DataForm::DelConOthStDlg()
+{
+	int result = QMessageBox::question(this, QString(tr("Affirm")),
+		QString(tr("Do you really want to delete these data? (WARNING! All data will be irretrievable lost)")),
+		QString(tr("Yes")), QString(tr("No")));
+	if (result == 1)
+		return;
+	std::string errorMessage = "";
+	int id = GetIDFromTable(tableView, errorMessage);
+	BusinessLayer::ConsumeOtherStocks consumeOtherStocks;
+	consumeOtherStocks.SetID(id);
+	if (0 != id)
+	{
+		dataFormBL->StartTransaction(errorMessage);
+		if (dataFormBL->DeleteConsumeOtherStocks(&consumeOtherStocks, errorMessage))
+		{
+			dataFormBL->CommitTransaction(errorMessage);
+			tableView->model()->removeRow(tableView->selectionModel()->currentIndex().row());
+			ChangeBtnState();
+		}
+		else
+		{
+			dataFormBL->CancelTransaction(errorMessage);
+			QMessageBox::information(NULL, QString(tr("Warning")),
+				QString(tr(errorMessage.c_str())),
+				QString(tr("Ok")));
+		}
+	}
+	else
+	{
+		QMessageBox::information(NULL, QString(tr("Warning")),
+			QString(tr("Consume other stocks with this id does not exist!")),
+			QString(tr("Ok")));
+	}
+}
+
+void DataForm::ViewConOthStDlg()
+{
+	std::string errorMessage = "";
+	int id = GetIDFromTable(tableView, errorMessage);
+	BusinessLayer::ConsumeOtherStocks consumeOtherStocks;
+	if (!consumeOtherStocks.GetConsumeOtherStocksByID(dataFormBL->GetOrmasDal(), id, errorMessage))
+	{
+		QMessageBox::information(NULL, QString(tr("Warning")),
+			QString(tr("Connot show information for this row!")),
+			QString(tr("Ok")));
+		return;
+	}
+	BusinessLayer::ConsumeOtherStocksList consumeOtherStocksList;
+	BusinessLayer::Employee employee;
+	BusinessLayer::Employee stockEmployee;
+	BusinessLayer::Company company;
+	BusinessLayer::CompanyEmployeeRelation ceRel;
+	int companyID = 0;
+	companyID = ceRel.GetCompanyByEmployeeID(dataFormBL->GetOrmasDal(), consumeOtherStocks.GetEmployeeID(), errorMessage);
+	if (!company.GetCompanyByID(dataFormBL->GetOrmasDal(), companyID, errorMessage) || 0 == companyID)
+	{
+		QMessageBox::information(NULL, QString(tr("Warning")),
+			QString(tr("Connot show information for this row!")),
+			QString(tr("Ok")));
+		return;
+	}
+	if (!employee.GetEmployeeByID(dataFormBL->GetOrmasDal(), consumeOtherStocks.GetEmployeeID(), errorMessage))
+	{
+		QMessageBox::information(NULL, QString(tr("Warning")),
+			QString(tr("Connot show information for this row!")),
+			QString(tr("Ok")));
+		return;
+	}
+	if (!stockEmployee.GetEmployeeByID(dataFormBL->GetOrmasDal(), consumeOtherStocks.GetStockEmployeeID(), errorMessage))
+	{
+		QMessageBox::information(NULL, QString(tr("Warning")),
+			QString(tr("Connot show information for this row!")),
+			QString(tr("Ok")));
+		return;
+	}
+
+	DocForm *docForm = new DocForm(dataFormBL, this);
+	docForm->setAttribute(Qt::WA_DeleteOnClose);
+	docForm->setWindowTitle(tr("Print report"));
+	QMdiSubWindow *printRepWindow = new QMdiSubWindow;
+	printRepWindow->setWidget(docForm);
+	printRepWindow->setAttribute(Qt::WA_DeleteOnClose);
+	printRepWindow->resize(docForm->size().width() + 18, docForm->size().height() + 30);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(printRepWindow);
+
+	QFile file;
+	file.setFileName(":/docs/invoice.html");
+	if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+	{
+		QMessageBox::information(NULL, QString(tr("Info")),
+			QString(tr("Cannot find report tamplate!")),
+			QString(tr("Ok")));
+		return;
+	}
+	QString reportText = file.readAll();
+	consumeOtherStocksList.SetConsumeOtherStocksID(consumeOtherStocks.GetID());
+	std::string filter = consumeOtherStocksList.GenerateFilter(dataFormBL->GetOrmasDal());
+	std::vector<BusinessLayer::ConsumeOtherStocksListView> vecConOthStList = dataFormBL->GetAllDataForClass<BusinessLayer::ConsumeOtherStocksListView>(errorMessage, filter);
+	if (vecConOthStList.size() == 0)
+	{
+		QMessageBox::information(NULL, QString(tr("Info")),
+			QString(tr("List is empty!")),
+			QString(tr("Ok")));
+		return;
+	}
+
+	//generating report
+	reportText.replace(QString("NumberPh"), QString::number(consumeOtherStocks.GetID()), Qt::CaseInsensitive);
+	reportText.replace(QString("DatePh"), QString(consumeOtherStocks.GetDate().c_str()), Qt::CaseInsensitive);
+	reportText.replace(QString("ComName1Ph"), QString(company.GetName().c_str()), Qt::CaseInsensitive);
+	reportText.replace(QString("UserName1Ph"), QString(employee.GetSurname().c_str()) + " " + QString(employee.GetName().c_str()), Qt::CaseInsensitive);
+	reportText.replace(QString("ComName2Ph"), QString(company.GetName().c_str()), Qt::CaseInsensitive);
+	reportText.replace(QString("UserName2Ph"), QString(stockEmployee.GetSurname().c_str()) + " " + QString(stockEmployee.GetName().c_str()), Qt::CaseInsensitive);
+	int i = 1;
+	BusinessLayer::OtherStocks otherStocks;
+	BusinessLayer::Measure measure;
+	BusinessLayer::Currency currency;
+	QString tableBody;
+	for each (auto item in vecConOthStList)
+	{
+		otherStocks.Clear();
+		measure.Clear();
+		currency.Clear();
+		if (!otherStocks.GetOtherStocksByID(dataFormBL->GetOrmasDal(), item.GetOtherStocksID(), errorMessage))
+		{
+			QMessageBox::information(NULL, QString(tr("Info")),
+				QString(tr("Other stocks is wrong!")),
+				QString(tr("Ok")));
+			return;
+		}
+		if (!measure.GetMeasureByID(dataFormBL->GetOrmasDal(), otherStocks.GetMeasureID(), errorMessage))
+		{
+			QMessageBox::information(NULL, QString(tr("Info")),
+				QString(tr("Measure is wrong!")),
+				QString(tr("Ok")));
+			return;
+		}
+		if (!currency.GetCurrencyByID(dataFormBL->GetOrmasDal(), otherStocks.GetCurrencyID(), errorMessage))
+		{
+			QMessageBox::information(NULL, QString(tr("Info")),
+				QString(tr("Currency is wrong!")),
+				QString(tr("Ok")));
+			return;
+		}
+		tableBody += "<tr>";
+		tableBody += "<td>" + QString::number(i) + "</td>";
+		tableBody += "<td>" + QString(otherStocks.GetName().c_str()) + "</td>";
+		tableBody += "<td>" + QString(measure.GetShortName().c_str()) + "</td>";
+		tableBody += "<td>" + QString::number(item.GetCount()) + "</td>";
+		tableBody += "<td>" + QString::number(item.GetSum() / item.GetCount(), 'f', 3) + "</td>";
+		tableBody += "<td>" + QString::number(item.GetSum()) + "</td>";
+		tableBody += "<td>" + QString(currency.GetShortName().c_str()) + "</td>";
+		tableBody += "</tr>";
+		i++;
+	}
+	reportText.replace(QString("TableBodyPh"), tableBody, Qt::CaseInsensitive);
+	reportText.replace(QString("SumPh"), QString::number(consumeOtherStocks.GetSum()), Qt::CaseInsensitive);
+	reportText.replace(QString("CurrencyPh"), QString(currency.GetShortName().c_str()), Qt::CaseInsensitive);
+
+	docForm->webEngineView->setHtml(reportText);
+	docForm->SetContent(reportText);
+	docForm->webEngineView->show();
+	docForm->show();
+}
+
+void DataForm::CrtConOthStListDlg()
+{
+	CreateConOthStListDlg *craeteConOthStListDlg = new CreateConOthStListDlg(dataFormBL, false, this);
+	if (0 != consumeOtherStocksID)
+	{
+		craeteConOthStListDlg->consumeOtherStocksID = consumeOtherStocksID;
+	}
+	craeteConOthStListDlg->setAttribute(Qt::WA_DeleteOnClose);
+	craeteConOthStListDlg->setWindowTitle(tr("Add other stocks to consume list"));
+	QMdiSubWindow *craeteConOthStListWindow = new QMdiSubWindow;
+	craeteConOthStListWindow->setWidget(craeteConOthStListDlg);
+	craeteConOthStListWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(craeteConOthStListWindow);
+	craeteConOthStListDlg->show();
+}
+void DataForm::UdpConOthStListDlg()
+{
+	CreateConOthStListDlg *craeteConOthStListDlg = new CreateConOthStListDlg(dataFormBL, true, this);
+	craeteConOthStListDlg->setAttribute(Qt::WA_DeleteOnClose);
+	craeteConOthStListDlg->setWindowTitle(tr("Update product in consume product list"));
+	QMdiSubWindow *craeteConOthStListWindow = new QMdiSubWindow;
+	craeteConOthStListWindow->setWidget(craeteConOthStListDlg);
+	craeteConOthStListWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(craeteConOthStListWindow);
+	if (craeteConOthStListDlg->FillDlgElements(tableView))
+	{
+		craeteConOthStListDlg->show();
+	}
+	else
+	{
+		QMessageBox::information(NULL, QString(tr("Warning")),
+			QString(tr("Please select one row at first!")),
+			QString(tr("Ok")));
+	}
+}
+void DataForm::DelConOthStListDlg()
+{
+	int result = QMessageBox::question(this, QString(tr("Affirm")),
+		QString(tr("Do you really want to delete these data? (WARNING! All data will be irretrievable lost)")),
+		QString(tr("Yes")), QString(tr("No")));
+	if (result == 1)
+		return;
+	std::string errorMessage = "";
+	int id = GetIDFromTable(tableView, errorMessage);
+	BusinessLayer::ConsumeOtherStocksList consumeOtherStocksList;
+	consumeOtherStocksList.SetID(id);
+	if (0 != id)
+	{
+		if (dataFormBL->DeleteConsumeOtherStocksList(&consumeOtherStocksList, errorMessage))
+		{
+			tableView->model()->removeRow(tableView->selectionModel()->currentIndex().row());
+			ChangeBtnState();
+		}
+		else
+		{
+			QMessageBox::information(NULL, QString(tr("Warning")),
+				QString(tr(errorMessage.c_str())),
+				QString(tr("Ok")));
+		}
+	}
+	else
+	{
+		QMessageBox::information(NULL, QString(tr("Warning")),
+			QString(tr("Wrong id, cannot delete data from this row!")),
+			QString(tr("Ok")));
+	}
+}
+
 void DataForm::CrtConRDlg()
 {
 	CreateConRDlg *conRDlg = new CreateConRDlg(dataFormBL, false, this);
@@ -3013,7 +3397,7 @@ void DataForm::CrtDivDlg()
 }
 void DataForm::UdpDivDlg()
 {
-	CreateDivDlg *divisionDlg = new CreateDivDlg(dataFormBL, false, this);
+	CreateDivDlg *divisionDlg = new CreateDivDlg(dataFormBL, true, this);
 	divisionDlg->setAttribute(Qt::WA_DeleteOnClose);
 	divisionDlg->setWindowTitle(tr("Update division"));
 	QMdiSubWindow *divisionWindow = new QMdiSubWindow;
@@ -3077,7 +3461,7 @@ void DataForm::CrtDivAccDlg()
 }
 void DataForm::UdpDivAccDlg()
 {
-	CreateDivAccDlg *divisionAccDlg = new CreateDivAccDlg(dataFormBL, false, this);
+	CreateDivAccDlg *divisionAccDlg = new CreateDivAccDlg(dataFormBL, true, this);
 	divisionAccDlg->setAttribute(Qt::WA_DeleteOnClose);
 	divisionAccDlg->setWindowTitle(tr("Update division account"));
 	QMdiSubWindow *divisionAccWindow = new QMdiSubWindow;
@@ -3981,6 +4365,70 @@ void DataForm::DelJbsDlg()
 	}
 }
 
+void DataForm::CrtLowValStockDlg()
+{
+	CreateLowValStockDlg *lowValStockDlg = new CreateLowValStockDlg(dataFormBL, false, this);
+	lowValStockDlg->setAttribute(Qt::WA_DeleteOnClose);
+	lowValStockDlg->setWindowTitle(tr("Create low value stock"));
+	QMdiSubWindow *lowValStockWindow = new QMdiSubWindow;
+	lowValStockWindow->setWidget(lowValStockDlg);
+	lowValStockWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(lowValStockWindow);
+	lowValStockDlg->show();
+}
+void DataForm::UdpLowValStockDlg()
+{
+	CreateLowValStockDlg *lowValStockDlg = new CreateLowValStockDlg(dataFormBL, true, this);
+	lowValStockDlg->setAttribute(Qt::WA_DeleteOnClose);
+	lowValStockDlg->setWindowTitle(tr("Update low value stock"));
+	QMdiSubWindow *lowValStockWindow = new QMdiSubWindow;
+	lowValStockWindow->setWidget(lowValStockDlg);
+	lowValStockWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(lowValStockWindow);
+	if (lowValStockDlg->FillDlgElements(tableView))
+	{
+		lowValStockDlg->show();
+	}
+	else
+	{
+		QMessageBox::information(NULL, QString(tr("Warning")),
+			QString(tr("Please select one row at first!")),
+			QString(tr("Ok")));
+	}
+}
+void DataForm::DelLowValStockDlg()
+{
+	int result = QMessageBox::question(this, QString(tr("Affirm")),
+		QString(tr("Do you really want to delete these data? (WARNING! All data will be irretrievable lost)")),
+		QString(tr("Yes")), QString(tr("No")));
+	if (result == 1)
+		return;
+	std::string errorMessage = "";
+	int id = GetIDFromTable(tableView, errorMessage);
+	BusinessLayer::LowValueStock lowValStock;
+	lowValStock.SetID(id);
+	if (0 != id)
+	{
+		if (dataFormBL->DeleteLowValueStock(&lowValStock, errorMessage))
+		{
+			tableView->model()->removeRow(tableView->selectionModel()->currentIndex().row());
+			ChangeBtnState();
+		}
+		else
+		{
+			QMessageBox::information(NULL, QString(tr("Warning")),
+				QString(tr(errorMessage.c_str())),
+				QString(tr("Ok")));
+		}
+	}
+	else
+	{
+		QMessageBox::information(NULL, QString(tr("Warning")),
+			QString(tr("Low value stock with this id does not exist!")),
+			QString(tr("Ok")));
+	}
+}
+
 void DataForm::CrtLcnDlg()
 {
 	CreateLcnDlg *locationDlg = new CreateLcnDlg(dataFormBL, false, this);
@@ -4737,6 +5185,7 @@ void DataForm::UdpPcrDlg()
 			QString(tr("Ok")));
 	}
 }
+
 void DataForm::DelPcrDlg()
 {
 	int result = QMessageBox::question(this, QString(tr("Affirm")),
@@ -4769,6 +5218,137 @@ void DataForm::DelPcrDlg()
 			QString(tr("Ok")));
 	}
 }
+
+void DataForm::CrtOthStDlg()
+{
+	CreateOthStDlg *othStDlg = new CreateOthStDlg(dataFormBL, false, this);
+	othStDlg->setAttribute(Qt::WA_DeleteOnClose);
+	othStDlg->setWindowTitle(tr("Create other stocks"));
+	QMdiSubWindow *othStWindow = new QMdiSubWindow;
+	othStWindow->setWidget(othStDlg);
+	othStWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(othStWindow);
+	othStDlg->show();
+}
+void DataForm::UdpOthStDlg()
+{
+	CreateOthStDlg *othStDlg = new CreateOthStDlg(dataFormBL, true, this);
+	othStDlg->setAttribute(Qt::WA_DeleteOnClose);
+	othStDlg->setWindowTitle(tr("Update other stocks"));
+	QMdiSubWindow *othStWindow = new QMdiSubWindow;
+	othStWindow->setWidget(othStDlg);
+	othStWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(othStWindow);
+	if (othStDlg->FillDlgElements(tableView))
+	{
+		othStDlg->show();
+	}
+	else
+	{
+		QMessageBox::information(NULL, QString(tr("Warning")),
+			QString(tr("Please select one row at first!")),
+			QString(tr("Ok")));
+	}
+}
+void DataForm::DelOthStDlg()
+{
+	int result = QMessageBox::question(this, QString(tr("Affirm")),
+		QString(tr("Do you really want to delete these data? (WARNING! All data will be irretrievable lost)")),
+		QString(tr("Yes")), QString(tr("No")));
+	if (result == 1)
+		return;
+	std::string errorMessage = "";
+	int id = GetIDFromTable(tableView, errorMessage);
+	BusinessLayer::OtherStocks otherStocks;
+	otherStocks.SetID(id);
+	if (0 != id)
+	{
+		if (dataFormBL->DeleteOtherStocks(&otherStocks, errorMessage))
+		{
+			tableView->model()->removeRow(tableView->selectionModel()->currentIndex().row());
+			ChangeBtnState();
+		}
+		else
+		{
+			QMessageBox::information(NULL, QString(tr("Warning")),
+				QString(tr(errorMessage.c_str())),
+				QString(tr("Ok")));
+		}
+	}
+	else
+	{
+		QMessageBox::information(NULL, QString(tr("Warning")),
+			QString(tr("Other stocks with this id does not exist!")),
+			QString(tr("Ok")));
+	}
+}
+
+void DataForm::CrtOthStTypeDlg()
+{
+	CreateOthSTypeDlg *othSTypeDlg = new CreateOthSTypeDlg(dataFormBL, false, this);
+	othSTypeDlg->setAttribute(Qt::WA_DeleteOnClose);
+	othSTypeDlg->setWindowTitle(tr("Create other stocks type"));
+	QMdiSubWindow *othSTypeWindow = new QMdiSubWindow;
+	othSTypeWindow->setWidget(othSTypeDlg);
+	othSTypeWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(othSTypeWindow);
+	othSTypeDlg->show();
+}
+void DataForm::UdpOthStTypeDlg()
+{
+	CreateOthSTypeDlg *othSTypeDlg = new CreateOthSTypeDlg(dataFormBL, true, this);
+	othSTypeDlg->setAttribute(Qt::WA_DeleteOnClose);
+	othSTypeDlg->setWindowTitle(tr("Update other stocks type"));
+	QMdiSubWindow *othSTypeWindow = new QMdiSubWindow;
+	othSTypeWindow->setWidget(othSTypeDlg);
+	othSTypeWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(othSTypeWindow);
+	if (othSTypeDlg->FillDlgElements(tableView))
+	{
+		othSTypeDlg->show();
+	}
+	else
+	{
+		QMessageBox::information(NULL, QString(tr("Warning")),
+			QString(tr("Please select one row at first!")),
+			QString(tr("Ok")));
+	}
+}
+void DataForm::DelOthStTypeDlg()
+{
+	int result = QMessageBox::question(this, QString(tr("Affirm")),
+		QString(tr("Do you really want to delete these data? (WARNING! All data will be irretrievable lost)")),
+		QString(tr("Yes")), QString(tr("No")));
+	if (result == 1)
+		return;
+	std::string errorMessage = "";
+	int id = GetIDFromTable(tableView, errorMessage);
+	BusinessLayer::OtherStocksType otherStocksType;
+	otherStocksType.SetID(id);
+	if (0 != id)
+	{
+		if (dataFormBL->DeleteOtherStocksType(&otherStocksType, errorMessage))
+		{
+			tableView->model()->removeRow(tableView->selectionModel()->currentIndex().row());
+			ChangeBtnState();
+		}
+		else
+		{
+			QMessageBox::information(NULL, QString(tr("Warning")),
+				QString(tr(errorMessage.c_str())),
+				QString(tr("Ok")));
+		}
+	}
+	else
+	{
+		QMessageBox::information(NULL, QString(tr("Warning")),
+			QString(tr("Other stocks with this id does not exist!")),
+			QString(tr("Ok")));
+	}
+}
+
+
+
 
 void DataForm::CrtPhotoDlg()
 {
@@ -5630,70 +6210,6 @@ void DataForm::ViewProdnDlg()
 	docForm->show();
 }
 
-void DataForm::CrtProdnStockDlg()
-{
-	CreateProdnStockDlg *prodnStockDlg = new CreateProdnStockDlg(dataFormBL, false, this);
-	prodnStockDlg->setAttribute(Qt::WA_DeleteOnClose);
-	prodnStockDlg->setWindowTitle(tr("Create production stock"));
-	QMdiSubWindow *prodnStockWindow = new QMdiSubWindow;
-	prodnStockWindow->setWidget(prodnStockDlg);
-	prodnStockWindow->setAttribute(Qt::WA_DeleteOnClose);
-	((MainForm*)parentForm)->mdiArea->addSubWindow(prodnStockWindow);
-	prodnStockDlg->show();
-}
-void DataForm::UdpProdnStockDlg()
-{
-	CreateProdnStockDlg *prodnStockDlg = new CreateProdnStockDlg(dataFormBL, true, this);
-	prodnStockDlg->setAttribute(Qt::WA_DeleteOnClose);
-	prodnStockDlg->setWindowTitle(tr("Update production stock"));
-	QMdiSubWindow *prodnStockWindow = new QMdiSubWindow;
-	prodnStockWindow->setWidget(prodnStockDlg);
-	prodnStockWindow->setAttribute(Qt::WA_DeleteOnClose);
-	((MainForm*)parentForm)->mdiArea->addSubWindow(prodnStockWindow);
-	if (prodnStockDlg->FillDlgElements(tableView))
-	{
-		prodnStockDlg->show();
-	}
-	else
-	{
-		QMessageBox::information(NULL, QString(tr("Warning")),
-			QString(tr("Please select one row at first!")),
-			QString(tr("Ok")));
-	}
-}
-void DataForm::DelProdnStockDlg()
-{
-	int result = QMessageBox::question(this, QString(tr("Affirm")),
-		QString(tr("Do you really want to delete these data? (WARNING! All data will be irretrievable lost)")),
-		QString(tr("Yes")), QString(tr("No")));
-	if (result == 1)
-		return;
-	std::string errorMessage = "";
-	int id = GetIDFromTable(tableView, errorMessage);
-	BusinessLayer::ProductionStock prodnStock;
-	prodnStock.SetID(id);
-	if (0 != id)
-	{
-		if (dataFormBL->DeleteProductionStock(&prodnStock, errorMessage))
-		{
-			tableView->model()->removeRow(tableView->selectionModel()->currentIndex().row());
-			ChangeBtnState();
-		}
-		else
-		{
-			QMessageBox::information(NULL, QString(tr("Warning")),
-				QString(tr(errorMessage.c_str())),
-				QString(tr("Ok")));
-		}
-	}
-	else
-	{
-		QMessageBox::information(NULL, QString(tr("Warning")),
-			QString(tr("Production stock with this id does not exist!")),
-			QString(tr("Ok")));
-	}
-}
-
 void DataForm::CrtProdnListDlg()
 {
 	CreateProdnListDlg *craeteProdnListDlg = new CreateProdnListDlg(dataFormBL, false, this);
@@ -6419,6 +6935,276 @@ void DataForm::DelRelTypeDlg()
 	}
 }
 
+void DataForm::CrtRcpOthStDlg()
+{
+	CreateRcpOthStDlg *rosDlg = new CreateRcpOthStDlg(dataFormBL, false, this);
+	rosDlg->setAttribute(Qt::WA_DeleteOnClose);
+	rosDlg->setWindowTitle(tr("Create receipt product"));
+	QMdiSubWindow *rosWindow = new QMdiSubWindow;
+	rosWindow->setWidget(rosDlg);
+	rosWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(rosWindow);
+	rosDlg->show();
+}
+void DataForm::UdpRcpOthStDlg()
+{
+	CreateRcpOthStDlg *rosDlg = new CreateRcpOthStDlg(dataFormBL, true, this);
+	rosDlg->setAttribute(Qt::WA_DeleteOnClose);
+	rosDlg->setWindowTitle(tr("Update receipt product"));
+	QMdiSubWindow *rosWindow = new QMdiSubWindow;
+	rosWindow->setWidget(rosDlg);
+	rosWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(rosWindow);
+	if (rosDlg->FillDlgElements(tableView))
+	{
+		rosDlg->show();
+	}
+	/*else
+	{
+	QMessageBox::information(NULL, QString(tr("Warning")),
+	QString(tr("Please select one row at first!")),
+	QString(tr("Ok")));
+	}*/
+}
+
+void DataForm::DelRcpOthStDlg()
+{
+	int result = QMessageBox::question(this, QString(tr("Affirm")),
+		QString(tr("Do you really want to delete these data? (WARNING! All data will be irretrievable lost)")),
+		QString(tr("Yes")), QString(tr("No")));
+	if (result == 1)
+		return;
+	std::string errorMessage = "";
+	int id = GetIDFromTable(tableView, errorMessage);
+	BusinessLayer::ReceiptOtherStocks receiptOtherStocks;
+	receiptOtherStocks.SetID(id);
+	if (0 != id)
+	{
+		dataFormBL->StartTransaction(errorMessage);
+		if (dataFormBL->DeleteReceiptOtherStocks(&receiptOtherStocks, errorMessage))
+		{
+			dataFormBL->CommitTransaction(errorMessage);
+			tableView->model()->removeRow(tableView->selectionModel()->currentIndex().row());
+			ChangeBtnState();
+		}
+		else
+		{
+			dataFormBL->CancelTransaction(errorMessage);
+			QMessageBox::information(NULL, QString(tr("Warning")),
+				QString(tr(errorMessage.c_str())),
+				QString(tr("Ok")));
+		}
+	}
+	else
+	{
+		QMessageBox::information(NULL, QString(tr("Warning")),
+			QString(tr("Receipt other stocks with this id does not exist!")),
+			QString(tr("Ok")));
+	}
+}
+
+void DataForm::ViewRcpOthStDlg()
+{
+	std::string errorMessage = "";
+	int id = GetIDFromTable(tableView, errorMessage);
+	BusinessLayer::ReceiptOtherStocks receiptOtherStocks;
+	if (!receiptOtherStocks.GetReceiptOtherStocksByID(dataFormBL->GetOrmasDal(), id, errorMessage))
+	{
+		QMessageBox::information(NULL, QString(tr("Warning")),
+			QString(tr("Connot show information for this row!")),
+			QString(tr("Ok")));
+		return;
+	}
+	BusinessLayer::ReceiptOtherStocksList receiptOtherStocksList;
+	BusinessLayer::Employee employee;
+	BusinessLayer::Employee stockEmployee;
+	BusinessLayer::Company company;
+	BusinessLayer::CompanyEmployeeRelation ceRel;
+	int companyID = 0;
+	companyID = ceRel.GetCompanyByEmployeeID(dataFormBL->GetOrmasDal(), receiptOtherStocks.GetEmployeeID(), errorMessage);
+	if (!company.GetCompanyByID(dataFormBL->GetOrmasDal(), companyID, errorMessage) || 0 == companyID)
+	{
+		QMessageBox::information(NULL, QString(tr("Warning")),
+			QString(tr("Connot show information for this row!")),
+			QString(tr("Ok")));
+		return;
+	}
+	if (!employee.GetEmployeeByID(dataFormBL->GetOrmasDal(), receiptOtherStocks.GetEmployeeID(), errorMessage))
+	{
+		QMessageBox::information(NULL, QString(tr("Warning")),
+			QString(tr("Connot show information for this row!")),
+			QString(tr("Ok")));
+		return;
+	}
+	if (!stockEmployee.GetEmployeeByID(dataFormBL->GetOrmasDal(), receiptOtherStocks.GetPurveyorID(), errorMessage))
+	{
+		QMessageBox::information(NULL, QString(tr("Warning")),
+			QString(tr("Connot show information for this row!")),
+			QString(tr("Ok")));
+		return;
+	}
+
+	DocForm *docForm = new DocForm(dataFormBL, this);
+	docForm->setAttribute(Qt::WA_DeleteOnClose);
+	docForm->setWindowTitle(tr("Print report"));
+	QMdiSubWindow *printRepWindow = new QMdiSubWindow;
+	printRepWindow->setWidget(docForm);
+	printRepWindow->setAttribute(Qt::WA_DeleteOnClose);
+	printRepWindow->resize(docForm->size().width() + 18, docForm->size().height() + 30);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(printRepWindow);
+
+	QFile file;
+	file.setFileName(":/docs/invoice.html");
+	if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+	{
+		QMessageBox::information(NULL, QString(tr("Info")),
+			QString(tr("Cannot find report tamplate!")),
+			QString(tr("Ok")));
+		return;
+	}
+	QString reportText = file.readAll();
+	receiptOtherStocksList.SetReceiptOtherStocksID(receiptOtherStocks.GetID());
+	std::string filter = receiptOtherStocksList.GenerateFilter(dataFormBL->GetOrmasDal());
+	std::vector<BusinessLayer::ReceiptOtherStocksListView> vecRcpOthStList = dataFormBL->GetAllDataForClass<BusinessLayer::ReceiptOtherStocksListView>(errorMessage, filter);
+	if (vecRcpOthStList.size() == 0)
+	{
+		QMessageBox::information(NULL, QString(tr("Info")),
+			QString(tr("List is empty!")),
+			QString(tr("Ok")));
+		return;
+	}
+
+	//generating report
+	reportText.replace(QString("NumberPh"), QString::number(receiptOtherStocks.GetID()), Qt::CaseInsensitive);
+	reportText.replace(QString("DatePh"), QString(receiptOtherStocks.GetDate().c_str()), Qt::CaseInsensitive);
+	reportText.replace(QString("ComName2Ph"), QString(company.GetName().c_str()), Qt::CaseInsensitive);
+	reportText.replace(QString("UserName2Ph"), QString(employee.GetSurname().c_str()) + " " + QString(employee.GetName().c_str()), Qt::CaseInsensitive);
+	reportText.replace(QString("ComName1Ph"), QString(company.GetName().c_str()), Qt::CaseInsensitive);
+	reportText.replace(QString("UserName1Ph"), QString(stockEmployee.GetSurname().c_str()) + " " + QString(stockEmployee.GetName().c_str()), Qt::CaseInsensitive);
+	int i = 1;
+	BusinessLayer::OtherStocks otherStocks;
+	BusinessLayer::Measure measure;
+	BusinessLayer::Currency currency;
+	BusinessLayer::NetCost netCost;
+	QString tableBody;
+	double sum = 0;
+	for each (auto item in vecRcpOthStList)
+	{
+		otherStocks.Clear();
+		measure.Clear();
+		currency.Clear();
+		netCost.Clear();
+		if (!otherStocks.GetOtherStocksByID(dataFormBL->GetOrmasDal(), item.GetOtherStocksID(), errorMessage))
+		{
+			QMessageBox::information(NULL, QString(tr("Info")),
+				QString(tr("Product is wrong!")),
+				QString(tr("Ok")));
+			return;
+		}
+		if (!measure.GetMeasureByID(dataFormBL->GetOrmasDal(), otherStocks.GetMeasureID(), errorMessage))
+		{
+			QMessageBox::information(NULL, QString(tr("Info")),
+				QString(tr("Measure is wrong!")),
+				QString(tr("Ok")));
+			return;
+		}
+		if (!currency.GetCurrencyByID(dataFormBL->GetOrmasDal(), otherStocks.GetCurrencyID(), errorMessage))
+		{
+			QMessageBox::information(NULL, QString(tr("Info")),
+				QString(tr("Currency is wrong!")),
+				QString(tr("Ok")));
+			return;
+		}
+		tableBody += "<tr>";
+		tableBody += "<td>" + QString::number(i) + "</td>";
+		tableBody += "<td>" + QString(otherStocks.GetName().c_str()) + "</td>";
+		tableBody += "<td>" + QString(measure.GetShortName().c_str()) + "</td>";
+		tableBody += "<td>" + QString::number(item.GetCount()) + "</td>";
+		tableBody += "<td>" + QString::number(otherStocks.GetPrice(), 'f', 3) + "</td>";
+		tableBody += "<td>" + QString::number(item.GetCount()*otherStocks.GetPrice(), 'f', 3) + "</td>";
+		tableBody += "<td>" + QString(currency.GetShortName().c_str()) + "</td>";
+		tableBody += "</tr>";
+		sum += item.GetCount() * otherStocks.GetPrice();
+		i++;
+	}
+	reportText.replace(QString("TableBodyPh"), tableBody, Qt::CaseInsensitive);
+	reportText.replace(QString("SumPh"), QString::number(sum, 'f', 3), Qt::CaseInsensitive);
+	reportText.replace(QString("CurrencyPh"), QString(currency.GetShortName().c_str()), Qt::CaseInsensitive);
+
+	docForm->webEngineView->setHtml(reportText);
+	docForm->SetContent(reportText);
+	docForm->webEngineView->show();
+	docForm->show();
+}
+
+void DataForm::CrtRcpOthStListDlg()
+{
+	CreateRcpOthStListDlg *craeteRcpOthStListDlg = new CreateRcpOthStListDlg(dataFormBL, false, this);
+	if (0 != receiptOtherStocksID)
+	{
+		craeteRcpOthStListDlg->receiptOtherStocksID = receiptOtherStocksID;
+	}
+	craeteRcpOthStListDlg->setAttribute(Qt::WA_DeleteOnClose);
+	craeteRcpOthStListDlg->setWindowTitle(tr("Add other stocks to receipt list"));
+	QMdiSubWindow *craeteRcpOthStListWindow = new QMdiSubWindow;
+	craeteRcpOthStListWindow->setWidget(craeteRcpOthStListDlg);
+	craeteRcpOthStListWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(craeteRcpOthStListWindow);
+	craeteRcpOthStListDlg->show();
+}
+void DataForm::UdpRcpOthStListDlg()
+{
+	CreateRcpOthStListDlg *craeteRcpOthStListDlg = new CreateRcpOthStListDlg(dataFormBL, true, this);
+	craeteRcpOthStListDlg->setAttribute(Qt::WA_DeleteOnClose);
+	craeteRcpOthStListDlg->setWindowTitle(tr("Update other stocks in receipt list"));
+	QMdiSubWindow *craeteRcpOthStListWindow = new QMdiSubWindow;
+	craeteRcpOthStListWindow->setWidget(craeteRcpOthStListDlg);
+	craeteRcpOthStListWindow->setAttribute(Qt::WA_DeleteOnClose);
+	((MainForm*)parentForm)->mdiArea->addSubWindow(craeteRcpOthStListWindow);
+	if (craeteRcpOthStListDlg->FillDlgElements(tableView))
+	{
+		craeteRcpOthStListDlg->show();
+	}
+	else
+	{
+		QMessageBox::information(NULL, QString(tr("Warning")),
+			QString(tr("Please select one row at first!")),
+			QString(tr("Ok")));
+	}
+}
+void DataForm::DelRcpOthStListDlg()
+{
+	int result = QMessageBox::question(this, QString(tr("Affirm")),
+		QString(tr("Do you really want to delete these data? (WARNING! All data will be irretrievable lost)")),
+		QString(tr("Yes")), QString(tr("No")));
+	if (result == 1)
+		return;
+	std::string errorMessage = "";
+	int id = GetIDFromTable(tableView, errorMessage);
+	BusinessLayer::ReceiptOtherStocksList receiptOtherStocksList;
+	receiptOtherStocksList.SetID(id);
+	if (0 != id)
+	{
+		if (dataFormBL->DeleteReceiptOtherStocksList(&receiptOtherStocksList, errorMessage))
+		{
+			tableView->model()->removeRow(tableView->selectionModel()->currentIndex().row());
+			ChangeBtnState();
+		}
+		else
+		{
+			QMessageBox::information(NULL, QString(tr("Warning")),
+				QString(tr(errorMessage.c_str())),
+				QString(tr("Ok")));
+		}
+	}
+	else
+	{
+		QMessageBox::information(NULL, QString(tr("Warning")),
+			QString(tr("Wrong id, cannot delete data from this row!")),
+			QString(tr("Ok")));
+	}
+}
+
 void DataForm::CrtRcpPDlg()
 {
 	CreateRcpPDlg *rcpPDlg = new CreateRcpPDlg(dataFormBL, false, this);
@@ -6450,6 +7236,7 @@ void DataForm::UdpRcpPDlg()
 			QString(tr("Ok")));
 	}*/
 }
+
 void DataForm::DelRcpPDlg()
 {
 	int result = QMessageBox::question(this, QString(tr("Affirm")),
@@ -9889,6 +10676,31 @@ QStringList DataForm::GetTableHeader<BusinessLayer::ConsumeRawListView>()
 }
 
 template<>
+QStringList DataForm::GetTableHeader<BusinessLayer::ConsumeOtherStocksView>()
+{
+	QStringList header;
+	header << QObject::tr("ID") << QObject::tr("Consume raw date") << QObject::tr("Execution date") << QObject::tr("Status code")
+		<< QObject::tr("Status name") << QObject::tr("Employee name") << QObject::tr("Employee surname") << QObject::tr("Employee phone")
+		<< QObject::tr("Employee position") << QObject::tr("Employee name") << QObject::tr("Employee surname") << QObject::tr("Employee phone")
+		<< QObject::tr("Employee position") << QObject::tr("Product count") << QObject::tr("Sum") << QObject::tr("Currency name")
+		<< QObject::tr("Employee ID") << QObject::tr("Client ID") << QObject::tr("Status ID") << QObject::tr("Currency ID")
+		<< QObject::tr("Product list");
+	return header;
+}
+
+template<>
+QStringList DataForm::GetTableHeader<BusinessLayer::ConsumeOtherStocksListView>()
+{
+	QStringList header;
+	header << QObject::tr("ID") << QObject::tr("Consume raw ID") << QObject::tr("Product name") << QObject::tr("Price")
+		<< QObject::tr("Currency name") << QObject::tr("Volume") << QObject::tr("Measure name") << QObject::tr("Count")
+		<< QObject::tr("Sum") << QObject::tr("Sum currency name") << QObject::tr("Status name")
+		<< QObject::tr("Product ID") << QObject::tr("Status ID") << QObject::tr("Currency ID");
+	return header;
+}
+
+
+template<>
 QStringList DataForm::GetTableHeader<BusinessLayer::Currency>()
 {
 	QStringList header;
@@ -9962,7 +10774,7 @@ QStringList DataForm::GetTableHeader<BusinessLayer::FixedAssetsView>()
 	QStringList header;
 	header << QObject::tr("ID") << QObject::tr("Fixed assets name") << QObject::tr("Inventory number") << QObject::tr("Primary cost")
 		<< QObject::tr("Stop cost") << QObject::tr("Start primary value") << QObject::tr("Amortize value") << QObject::tr("Division name")
-		<< QObject::tr("Service life") << QObject::tr("Is amortize?") << QObject::tr("Buy date") << QObject::tr("Start of operation date")
+		<< QObject::tr("Status name") << QObject::tr("Service life") << QObject::tr("Is amortize?") << QObject::tr("Buy date") << QObject::tr("Start of operation date")
 		<< QObject::tr("End of operation date") << QObject::tr("Specification ID") << QObject::tr("Status ID") << QObject::tr("Details ID");
 	return header;
 }
@@ -9983,7 +10795,7 @@ QStringList DataForm::GetTableHeader<BusinessLayer::InventoryView>()
 	header << QObject::tr("ID") << QObject::tr("Name") << QObject::tr("Cost") << QObject::tr("Inventory number")
 		<< QObject::tr("Barcode number") << QObject::tr("Division name") << QObject::tr("Staus name")
 		<< QObject::tr("Location") << QObject::tr("Start of operation date") << QObject::tr("End of operation date")
-		<< QObject::tr("Status ID") << QObject::tr("Department ID");
+		<< QObject::tr("Status ID") << QObject::tr("Department ID") << QObject::tr("Subaccount ID");
 	return header;
 }
 
@@ -10029,6 +10841,18 @@ QStringList DataForm::GetTableHeader<BusinessLayer::JobsheetView>()
 	header << QObject::tr("ID") << QObject::tr("Date") << QObject::tr("User name")
 		<< QObject::tr("User surname") << QObject::tr("User phone") << QObject::tr("Product name") << QObject::tr("Count")
 		<< QObject::tr("Measure name") << QObject::tr("Product ID") << QObject::tr("Measure ID");
+	return header;
+}
+
+template<>
+QStringList DataForm::GetTableHeader<BusinessLayer::LowValueStockView>()
+{
+	QStringList header;
+	header << QObject::tr("ID") << QObject::tr("Product name") << QObject::tr("Price")
+		<< QObject::tr("Currency name") << QObject::tr("Volume") << QObject::tr("Measure name") << QObject::tr("Count")
+		<< QObject::tr("Sum") << QObject::tr("Sum currency name") << QObject::tr("Warehouse name") << QObject::tr("Subaccount number")
+		<< QObject::tr("Status name") << QObject::tr("Product ID") << QObject::tr("Status ID") << QObject::tr("Currency ID")
+		<< QObject::tr("Warehouse ID");
 	return header;
 }
 
@@ -10120,6 +10944,16 @@ QStringList DataForm::GetTableHeader<BusinessLayer::Photo>()
 {
 	QStringList header;
 	header << QObject::tr("ID") << QObject::tr("User ID") << QObject::tr("Product ID") << QObject::tr("Source");
+	return header;
+}
+
+template<>
+QStringList DataForm::GetTableHeader<BusinessLayer::OtherStocksView>()
+{
+	QStringList header;
+	header << QObject::tr("ID") << QObject::tr("Name") << QObject::tr("Price") << QObject::tr("Currency name") << QObject::tr("Volume")
+		<< QObject::tr("Measure name") << QObject::tr("Company name")
+		<< QObject::tr("Company ID") << QObject::tr("Measure ID") << QObject::tr("Currency ID");
 	return header;
 }
 
@@ -10247,18 +11081,6 @@ QStringList DataForm::GetTableHeader<BusinessLayer::ProductionPlanListView>()
 }
 
 template<>
-QStringList DataForm::GetTableHeader<BusinessLayer::ProductionStockView>()
-{
-	QStringList header;
-	header << QObject::tr("ID") << QObject::tr("Product name") << QObject::tr("Price")
-		<< QObject::tr("Currency name") << QObject::tr("Volume") << QObject::tr("Measure name") << QObject::tr("Count")
-		<< QObject::tr("Sum") << QObject::tr("Sum currency name") << QObject::tr("Warehouse name") << QObject::tr("Subaccount number")
-		<< QObject::tr("Status name") << QObject::tr("Product ID") << QObject::tr("Status ID") << QObject::tr("Currency ID")
-		<< QObject::tr("Warehouse ID");
-	return header;
-}
-
-template<>
 QStringList DataForm::GetTableHeader<BusinessLayer::PayslipView>()
 {
 	QStringList header;
@@ -10275,6 +11097,30 @@ QStringList DataForm::GetTableHeader<BusinessLayer::PurveyorView>()
 		<< QObject::tr("Region name") << QObject::tr("City name") << QObject::tr("Address") << QObject::tr("Company name")
 		<< QObject::tr("Role name") << QObject::tr("Password") << QObject::tr("Email")
 		<< QObject::tr("Avtivated") << QObject::tr("Role ID") << QObject::tr("Location ID");
+	return header;
+}
+
+template<>
+QStringList DataForm::GetTableHeader<BusinessLayer::ReceiptOtherStocksView>()
+{
+	QStringList header;
+	header << QObject::tr("ID") << QObject::tr("Receipt date") << QObject::tr("Execution date") << QObject::tr("Status code")
+		<< QObject::tr("Status name") << QObject::tr("Employee name") << QObject::tr("Employee surname") << QObject::tr("Employee phone")
+		<< QObject::tr("Employee position") << QObject::tr("Employee name") << QObject::tr("Employee surname") << QObject::tr("Employee phone")
+		<< QObject::tr("Employee position") << QObject::tr("Product count") << QObject::tr("Sum") << QObject::tr("Currency name")
+		<< QObject::tr("Employee ID") << QObject::tr("Client ID") << QObject::tr("Status ID") << QObject::tr("Currency ID")
+		<< QObject::tr("Product list");
+	return header;
+}
+
+template<>
+QStringList DataForm::GetTableHeader<BusinessLayer::ReceiptOtherStocksListView>()
+{
+	QStringList header;
+	header << QObject::tr("ID") << QObject::tr("Receipt ID") << QObject::tr("Product name") << QObject::tr("Price")
+		<< QObject::tr("Currency name") << QObject::tr("Volume") << QObject::tr("Measure name") << QObject::tr("Count")
+		<< QObject::tr("Sum") << QObject::tr("Sum currency name") << QObject::tr("Status name")
+		<< QObject::tr("Product ID") << QObject::tr("Status ID") << QObject::tr("Currency ID");
 	return header;
 }
 
@@ -10938,6 +11784,56 @@ QList<QStandardItem*> DataForm::GetDataFromClass<BusinessLayer::ConsumeRawListVi
 }
 
 template<>
+QList<QStandardItem*> DataForm::GetDataFromClass<BusinessLayer::ConsumeOtherStocksView>(BusinessLayer::ConsumeOtherStocksView& data)
+{
+	QList<QStandardItem*> items;
+	QIcon icon;
+	items << new QStandardItem(QString::number(data.GetID()))
+		<< new QStandardItem(data.GetDate().c_str())
+		<< new QStandardItem(data.GetExecutionDate().c_str())
+		<< new QStandardItem(data.GetStatusCode().c_str())
+		<< new QStandardItem(data.GetStatusName().c_str())
+		<< new QStandardItem(data.GetEmployeeName().c_str())
+		<< new QStandardItem(data.GetEmployeeSurname().c_str())
+		<< new QStandardItem(data.GetEmployeePhone().c_str())
+		<< new QStandardItem(data.GetEmployeePosition().c_str())
+		<< new QStandardItem(data.GetStockEmployeeName().c_str())
+		<< new QStandardItem(data.GetStockEmployeeSurname().c_str())
+		<< new QStandardItem(data.GetStockEmployeePhone().c_str())
+		<< new QStandardItem(data.GetStockEmployeePosition().c_str())
+		<< new QStandardItem(QString::number(data.GetCount()))
+		<< new QStandardItem(QString::number(data.GetSum(), 'f', 3))
+		<< new QStandardItem(data.GetCurrencyName().c_str())
+		<< new QStandardItem(QString::number(data.GetStockEmployeeID()))
+		<< new QStandardItem(QString::number(data.GetEmployeeID()))
+		<< new QStandardItem(QString::number(data.GetStatusID()))
+		<< new QStandardItem(QString::number(data.GetCurrencyID()))
+		<< new QStandardItem(icon, "Detail");
+	return items;
+}
+
+template<>
+QList<QStandardItem*> DataForm::GetDataFromClass<BusinessLayer::ConsumeOtherStocksListView>(BusinessLayer::ConsumeOtherStocksListView& data)
+{
+	QList<QStandardItem*> items;
+	items << new QStandardItem(QString::number(data.GetID()))
+		<< new QStandardItem(QString::number(data.GetConsumeOtherStocksID()))
+		<< new QStandardItem(data.GetOtherStocksName().c_str())
+		<< new QStandardItem(QString::number(data.GetPrice()))
+		<< new QStandardItem(data.GetCurrencyName().c_str())
+		<< new QStandardItem(QString::number(data.GetVolume()))
+		<< new QStandardItem(data.GetMeasureName().c_str())
+		<< new QStandardItem(QString::number(data.GetCount()))
+		<< new QStandardItem(QString::number(data.GetSum(), 'f', 3))
+		<< new QStandardItem(data.GetCurrencyName().c_str())
+		<< new QStandardItem(data.GetStatusName().c_str())
+		<< new QStandardItem(QString::number(data.GetOtherStocksID()))
+		<< new QStandardItem(QString::number(data.GetStatusID()))
+		<< new QStandardItem(QString::number(data.GetCurrencyID()));
+	return items;
+}
+
+template<>
 QList<QStandardItem*> DataForm::GetDataFromClass<BusinessLayer::Currency>(BusinessLayer::Currency& data)
 {
 	QList<QStandardItem*> items;
@@ -11049,6 +11945,7 @@ QList<QStandardItem*> DataForm::GetDataFromClass<BusinessLayer::FixedAssetsView>
 		<< new QStandardItem(QString::number(data.GetPrimaryCostValue(), 'f', 3))
 		<< new QStandardItem(QString::number(data.GetAmortizeValue(), 'f', 3))
 		<< new QStandardItem(data.GetDivisionName().c_str())
+		<< new QStandardItem(data.GetStatusName().c_str())
 		<< new QStandardItem(QString::number(data.GetServiceLife()))
 		<< new QStandardItem(data.GetIsAmortize() ? "true" : "false")
 		<< new QStandardItem(data.GetBuyDate().c_str())
@@ -11091,7 +11988,8 @@ QList<QStandardItem*> DataForm::GetDataFromClass<BusinessLayer::InventoryView>(B
 		<< new QStandardItem(data.GetStartOfOperationDate().c_str())
 		<< new QStandardItem(data.GetEndOfOperationDate().c_str())
 		<< new QStandardItem(QString::number(data.GetStatusID()))
-		<< new QStandardItem(QString::number(data.GetDepartmentID()));
+		<< new QStandardItem(QString::number(data.GetDepartmentID()))
+		<< new QStandardItem(QString::number(data.GetSubaccountID()));
 	return items;
 }
 
@@ -11179,6 +12077,30 @@ QList<QStandardItem*> DataForm::GetDataFromClass<BusinessLayer::JobsheetView>(Bu
 		<< new QStandardItem(QString::number(data.GetEmployeeID()));
 	return items;
 }
+
+template<>
+QList<QStandardItem*> DataForm::GetDataFromClass<BusinessLayer::LowValueStockView>(BusinessLayer::LowValueStockView& data)
+{
+	QList<QStandardItem*> items;
+	items << new QStandardItem(QString::number(data.GetID()))
+		<< new QStandardItem(data.GetOtherStocksName().c_str())
+		<< new QStandardItem(QString::number(data.GetPrice()))
+		<< new QStandardItem(data.GetCurrencyName().c_str())
+		<< new QStandardItem(QString::number(data.GetVolume()))
+		<< new QStandardItem(data.GetMeasureName().c_str())
+		<< new QStandardItem(QString::number(data.GetCount()))
+		<< new QStandardItem(QString::number(data.GetSum(), 'f', 3))
+		<< new QStandardItem(data.GetCurrencyName().c_str())
+		<< new QStandardItem(data.GetWarehouseName().c_str())
+		<< new QStandardItem(data.GetSubaccountNumber().c_str())
+		<< new QStandardItem(data.GetStatusName().c_str())
+		<< new QStandardItem(QString::number(data.GetOtherStocksID()))
+		<< new QStandardItem(QString::number(data.GetStatusID()))
+		<< new QStandardItem(QString::number(data.GetCurrencyID()))
+		<< new QStandardItem(QString::number(data.GetWarehouseID()));
+	return items;
+}
+
 
 template<>
 QList<QStandardItem*> DataForm::GetDataFromClass<BusinessLayer::Location>(BusinessLayer::Location& data)
@@ -11312,6 +12234,40 @@ QList<QStandardItem*> DataForm::GetDataFromClass<BusinessLayer::OrderRawListView
 		<< new QStandardItem(data.GetStatusName().c_str())
 		<< new QStandardItem(QString::number(data.GetProductID()))
 		<< new QStandardItem(QString::number(data.GetStatusID()))
+		<< new QStandardItem(QString::number(data.GetCurrencyID()));
+	return items;
+}
+
+template<>
+QList<QStandardItem*> DataForm::GetDataFromClass<BusinessLayer::OtherStocksView>(BusinessLayer::OtherStocksView& data)
+{
+	QList<QStandardItem*> items;
+	items << new QStandardItem(QString::number(data.GetID()))
+		<< new QStandardItem(data.GetName().c_str())
+		<< new QStandardItem(QString(QString::number(data.GetPrice())))
+		<< new QStandardItem(data.GetCurrencyName().c_str())
+		<< new QStandardItem(QString(QString::number(data.GetVolume())))
+		<< new QStandardItem(data.GetMeasureName().c_str())
+		<< new QStandardItem(data.GetCompanyName().c_str())
+		<< new QStandardItem(QString::number(data.GetCompanyID()))
+		<< new QStandardItem(QString::number(data.GetMeasureID()))
+		<< new QStandardItem(QString::number(data.GetCurrencyID()));
+	return items;
+}
+
+template<>
+QList<QStandardItem*> DataForm::GetDataFromClass<BusinessLayer::OtherStocksView>(BusinessLayer::OtherStocksView& data)
+{
+	QList<QStandardItem*> items;
+	items << new QStandardItem(QString::number(data.GetID()))
+		<< new QStandardItem(data.GetName().c_str())
+		<< new QStandardItem(QString(QString::number(data.GetPrice())))
+		<< new QStandardItem(data.GetCurrencyName().c_str())
+		<< new QStandardItem(QString(QString::number(data.GetVolume())))
+		<< new QStandardItem(data.GetMeasureName().c_str())
+		<< new QStandardItem(data.GetCompanyName().c_str())
+		<< new QStandardItem(QString::number(data.GetCompanyID()))
+		<< new QStandardItem(QString::number(data.GetMeasureID()))
 		<< new QStandardItem(QString::number(data.GetCurrencyID()));
 	return items;
 }
@@ -11554,28 +12510,6 @@ QList<QStandardItem*> DataForm::GetDataFromClass<BusinessLayer::ProductionPlanLi
 	return items;
 }
 
-template<>
-QList<QStandardItem*> DataForm::GetDataFromClass<BusinessLayer::ProductionStockView>(BusinessLayer::ProductionStockView& data)
-{
-	QList<QStandardItem*> items;
-	items << new QStandardItem(QString::number(data.GetID()))
-		<< new QStandardItem(data.GetProductName().c_str())
-		<< new QStandardItem(QString::number(data.GetPrice()))
-		<< new QStandardItem(data.GetCurrencyName().c_str())
-		<< new QStandardItem(QString::number(data.GetVolume()))
-		<< new QStandardItem(data.GetMeasureName().c_str())
-		<< new QStandardItem(QString::number(data.GetCount()))
-		<< new QStandardItem(QString::number(data.GetSum(), 'f', 3))
-		<< new QStandardItem(data.GetCurrencyName().c_str())
-		<< new QStandardItem(data.GetWarehouseName().c_str())
-		<< new QStandardItem(data.GetSubaccountNumber().c_str())
-		<< new QStandardItem(data.GetStatusName().c_str())
-		<< new QStandardItem(QString::number(data.GetProductID()))
-		<< new QStandardItem(QString::number(data.GetStatusID()))
-		<< new QStandardItem(QString::number(data.GetCurrencyID()))
-		<< new QStandardItem(QString::number(data.GetWarehouseID()));
-	return items;
-}
 
 template<>
 QList<QStandardItem*> DataForm::GetDataFromClass<BusinessLayer::PayslipView>(BusinessLayer::PayslipView& data)
@@ -11688,6 +12622,57 @@ QList<QStandardItem*> DataForm::GetDataFromClass<BusinessLayer::ReceiptProductLi
 		<< new QStandardItem(QString::number(data.GetCurrencyID()));
 	return items;
 }
+
+template<>
+QList<QStandardItem*> DataForm::GetDataFromClass<BusinessLayer::ReceiptOtherStocksView>(BusinessLayer::ReceiptOtherStocksView& data)
+{
+	QList<QStandardItem*> items;
+	QIcon icon;
+	items << new QStandardItem(QString::number(data.GetID()))
+		<< new QStandardItem(data.GetDate().c_str())
+		<< new QStandardItem(data.GetExecutionDate().c_str())
+		<< new QStandardItem(data.GetStatusCode().c_str())
+		<< new QStandardItem(data.GetStatusName().c_str())
+		<< new QStandardItem(data.GetPurveyorName().c_str())
+		<< new QStandardItem(data.GetPurveyorSurname().c_str())
+		<< new QStandardItem(data.GetPurveyorPhone().c_str())
+		<< new QStandardItem(data.GetPurveyorCompanyName().c_str())
+		<< new QStandardItem(data.GetEmployeeName().c_str())
+		<< new QStandardItem(data.GetEmployeeSurname().c_str())
+		<< new QStandardItem(data.GetEmployeePhone().c_str())
+		<< new QStandardItem(data.GetEmployeePosition().c_str())
+		<< new QStandardItem(QString::number(data.GetCount()))
+		<< new QStandardItem(QString::number(data.GetSum(), 'f', 3))
+		<< new QStandardItem(data.GetCurrencyName().c_str())
+		<< new QStandardItem(QString::number(data.GetEmployeeID()))
+		<< new QStandardItem(QString::number(data.GetPurveyorID()))
+		<< new QStandardItem(QString::number(data.GetStatusID()))
+		<< new QStandardItem(QString::number(data.GetCurrencyID()))
+		<< new QStandardItem(icon, "Detail");
+	return items;
+}
+
+template<>
+QList<QStandardItem*> DataForm::GetDataFromClass<BusinessLayer::ReceiptOtherStocksListView>(BusinessLayer::ReceiptOtherStocksListView& data)
+{
+	QList<QStandardItem*> items;
+	items << new QStandardItem(QString::number(data.GetID()))
+		<< new QStandardItem(QString::number(data.GetReceiptOtherStocksID()))
+		<< new QStandardItem(data.GetOtherStocksName().c_str())
+		<< new QStandardItem(QString::number(data.GetPrice()))
+		<< new QStandardItem(data.GetCurrencyName().c_str())
+		<< new QStandardItem(QString::number(data.GetVolume()))
+		<< new QStandardItem(data.GetMeasureName().c_str())
+		<< new QStandardItem(QString::number(data.GetCount()))
+		<< new QStandardItem(QString::number(data.GetSum(), 'f', 3))
+		<< new QStandardItem(data.GetCurrencyName().c_str())
+		<< new QStandardItem(data.GetStatusName().c_str())
+		<< new QStandardItem(QString::number(data.GetOtherStocksID()))
+		<< new QStandardItem(QString::number(data.GetStatusID()))
+		<< new QStandardItem(QString::number(data.GetCurrencyID()));
+	return items;
+}
+
 
 template<>
 QList<QStandardItem*> DataForm::GetDataFromClass<BusinessLayer::StockTransferView>(BusinessLayer::StockTransferView& data)
@@ -12297,6 +13282,16 @@ void DataForm::QtConnect<BusinessLayer::Account>()
 	{
 		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
 		connect(this, SIGNAL(SendID(int, QString)), ((CreateFxdAstDlg*)parentDialog), SLOT(SetID(int, QString)));
+	}
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreateInventory")
+	{
+		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreateInveDlg*)parentDialog), SLOT(SetID(int, QString)));
+	}
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreateDivisionAccount")
+	{
+		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreateDivAccDlg*)parentDialog), SLOT(SetID(int, QString)));
 	}
 }
 
@@ -13135,6 +14130,93 @@ void DataForm::QtConnect<BusinessLayer::ConsumeRawListView>()
 }
 
 template<>
+void DataForm::QtConnect<BusinessLayer::ConsumeOtherStocksView>()
+{
+	BusinessLayer::Access access;
+	std::string crud = access.GetCRUDAccess(&dataFormBL->GetOrmasDal(), loggedUser, "actionConsumeOthSt");
+	std::size_t pos = crud.find("C");
+	if (pos != std::string::npos)
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::CrtConOthStDlg);
+	}
+	else
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("U");
+	if (pos != std::string::npos)
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::UdpConOthStDlg);
+	}
+	else
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("D");
+	if (pos != std::string::npos)
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::DelConOthStDlg);
+	}
+	else
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	connect(viewBtn, &QPushButton::released, this, &DataForm::ViewConOthStDlg);
+	connect(closeBtn, &QPushButton::released, this, &DataForm::CloseDataForm);
+	connect(tableView->selectionModel(), SIGNAL(currentRowChanged(QModelIndex, QModelIndex)), this, SLOT(ChangeBtnState()));
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreateConOthStList")
+	{
+		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreateConOthStListDlg*)parentDialog), SLOT(SetID(int, QString)));
+	}
+}
+
+template<>
+void DataForm::QtConnect<BusinessLayer::ConsumeOtherStocksListView>()
+{
+	BusinessLayer::Access access;
+	std::string crud = access.GetCRUDAccess(&dataFormBL->GetOrmasDal(), loggedUser, "actionConsumeOthStList");
+	std::size_t pos = crud.find("C");
+	if (pos != std::string::npos)
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::CrtConOthStListDlg);
+	}
+	else
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("U");
+	if (pos != std::string::npos)
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::UdpConOthStListDlg);
+	}
+	else
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("D");
+	if (pos != std::string::npos)
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::DelConOthStListDlg);
+	}
+	else
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	viewBtn->setVisible(false);
+	connect(closeBtn, &QPushButton::released, this, &DataForm::CloseDataForm);
+	connect(tableView->selectionModel(), SIGNAL(currentRowChanged(QModelIndex, QModelIndex)), this, SLOT(ChangeBtnState()));
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreateConsumeOthSt")
+	{
+		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreateConOthStDlg*)parentDialog), SLOT(SetID(int, QString)));
+		connect(tableView->model(), SIGNAL(rowsInserted(QModelIndex, int, int)), this, SLOT(OnRowsNumberChanged()));
+		connect(tableView->model(), SIGNAL(rowsRemoved(QModelIndex, int, int)), this, SLOT(OnRowsNumberChanged()));
+	}
+}
+
+
+template<>
 void DataForm::QtConnect<BusinessLayer::Currency>()
 {
 	BusinessLayer::Access access;
@@ -13400,6 +14482,16 @@ void DataForm::QtConnect<BusinessLayer::EmployeeView>()
 	{
 		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
 		connect(this, SIGNAL(SendID(int, QString)), ((CreateEmpPrdDlg*)parentDialog), SLOT(SetID(int, QString)));
+	}
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreateReceiptOthSt")
+	{
+		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreateRcpOthStDlg*)parentDialog), SLOT(SetID(int, QString)));
+	}
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreateConsumeOthSt")
+	{
+		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreateConOthStDlg*)parentDialog), SLOT(SetID(int, QString)));
 	}
 }
 
@@ -13838,6 +14930,42 @@ void DataForm::QtConnect<BusinessLayer::Location>()
 	}
 }
 
+template<>
+void DataForm::QtConnect<BusinessLayer::LowValueStockView>()
+{
+	BusinessLayer::Access access;
+	std::string crud = access.GetCRUDAccess(&dataFormBL->GetOrmasDal(), loggedUser, "actionLowValueStock");
+	std::size_t pos = crud.find("C");
+	if (pos != std::string::npos)
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::CrtLowValStockDlg);
+	}
+	else
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("U");
+	if (pos != std::string::npos)
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::UdpLowValStockDlg);
+	}
+	else
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("D");
+	if (pos != std::string::npos)
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::DelLowValStockDlg);
+	}
+	else
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	viewBtn->setVisible(false);
+	connect(closeBtn, &QPushButton::released, this, &DataForm::CloseDataForm);
+	connect(tableView->selectionModel(), SIGNAL(currentRowChanged(QModelIndex, QModelIndex)), this, SLOT(ChangeBtnState()));
+}
 
 template<>
 void DataForm::QtConnect<BusinessLayer::Measure>()
@@ -14084,6 +15212,58 @@ void DataForm::QtConnect<BusinessLayer::OrderRawListView>()
 		connect(this, SIGNAL(SendID(int, QString)), ((CreateOrdRDlg*)parentDialog), SLOT(SetID(int, QString)));
 		connect(tableView->model(), SIGNAL(rowsInserted(QModelIndex, int, int)), this, SLOT(OnRowsNumberChanged()));
 		connect(tableView->model(), SIGNAL(rowsRemoved(QModelIndex, int, int)), this, SLOT(OnRowsNumberChanged()));
+	}
+}
+
+template<>
+void DataForm::QtConnect<BusinessLayer::OtherStocksView>()
+{
+	BusinessLayer::Access access;
+	std::string crud = access.GetCRUDAccess(&dataFormBL->GetOrmasDal(), loggedUser, "actionOtherStocks");
+	std::size_t pos = crud.find("C");
+	if (pos != std::string::npos)
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::CrtOthStDlg);
+	}
+	else
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("U");
+	if (pos != std::string::npos)
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::UdpOthStDlg);
+	}
+	else
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("D");
+	if (pos != std::string::npos)
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::DelOthStDlg);
+	}
+	else
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	viewBtn->setVisible(false);
+	connect(closeBtn, &QPushButton::released, this, &DataForm::CloseDataForm);
+	connect(tableView->selectionModel(), SIGNAL(currentRowChanged(QModelIndex, QModelIndex)), this, SLOT(ChangeBtnState()));
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreateConOthStList")
+	{
+		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreateConOthStListDlg*)parentDialog), SLOT(SetID(int, QString)));
+	}
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreateRcpOthStList")
+	{
+		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreateRcpOthStListDlg*)parentDialog), SLOT(SetID(int, QString)));
+	}
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreateLowValueStock")
+	{
+		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreateLowValStockDlg*)parentDialog), SLOT(SetID(int, QString)));
 	}
 }
 
@@ -14413,11 +15593,6 @@ void DataForm::QtConnect<BusinessLayer::ProductView>()
 	{
 		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
 		connect(this, SIGNAL(SendID(int, QString)), ((CreatePPlanListDlg*)parentDialog), SLOT(SetID(int, QString)));
-	}
-	if (parentDialog != nullptr && parentDialog->objectName() == "CreateProdnStock")
-	{
-		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
-		connect(this, SIGNAL(SendID(int, QString)), ((CreateStockDlg*)parentDialog), SLOT(SetID(int, QString)));
 	}
 	if (parentDialog != nullptr && parentDialog->objectName() == "CreateRcpPList")
 	{
@@ -14812,43 +15987,6 @@ void DataForm::QtConnect<BusinessLayer::ProductionPlanListView>()
 }
 
 template<>
-void DataForm::QtConnect<BusinessLayer::ProductionStockView>()
-{
-	BusinessLayer::Access access;
-	std::string crud = access.GetCRUDAccess(&dataFormBL->GetOrmasDal(), loggedUser, "actionProductionStock");
-	std::size_t pos = crud.find("C");
-	if (pos != std::string::npos)
-	{
-		connect(createBtn, &QPushButton::released, this, &DataForm::CrtProdnStockDlg);
-	}
-	else
-	{
-		connect(createBtn, &QPushButton::released, this, &DataForm::AcsDenied);
-	}
-	pos = crud.find("U");
-	if (pos != std::string::npos)
-	{
-		connect(editBtn, &QPushButton::released, this, &DataForm::UdpProdnStockDlg);
-	}
-	else
-	{
-		connect(editBtn, &QPushButton::released, this, &DataForm::AcsDenied);
-	}
-	pos = crud.find("D");
-	if (pos != std::string::npos)
-	{
-		connect(deleteBtn, &QPushButton::released, this, &DataForm::DelProdnStockDlg);
-	}
-	else
-	{
-		connect(deleteBtn, &QPushButton::released, this, &DataForm::AcsDenied);
-	}
-	viewBtn->setVisible(false);
-	connect(closeBtn, &QPushButton::released, this, &DataForm::CloseDataForm);
-	connect(tableView->selectionModel(), SIGNAL(currentRowChanged(QModelIndex, QModelIndex)), this, SLOT(ChangeBtnState()));
-}
-
-template<>
 void DataForm::QtConnect<BusinessLayer::PayslipView>()
 {
 	BusinessLayer::Access access;
@@ -14934,6 +16072,11 @@ void DataForm::QtConnect<BusinessLayer::PurveyorView>()
 	{
 		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
 		connect(this, SIGNAL(SendID(int, QString)), ((CreateFxdAstDlg*)parentDialog), SLOT(SetID(int, QString)));
+	}
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreateReceiptOthSt")
+	{
+		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreateRcpOthStDlg*)parentDialog), SLOT(SetID(int, QString)));
 	}
 }
 
@@ -15054,6 +16197,92 @@ void DataForm::QtConnect<BusinessLayer::ReceiptProductView>()
 	{
 		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
 		connect(this, SIGNAL(SendID(int, QString)), ((CreateRcpPListDlg*)parentDialog), SLOT(SetID(int, QString)));
+	}
+}
+
+template<>
+void DataForm::QtConnect<BusinessLayer::ReceiptOtherStocksView>()
+{
+	BusinessLayer::Access access;
+	std::string crud = access.GetCRUDAccess(&dataFormBL->GetOrmasDal(), loggedUser, "actionReceiptOtherStocks");
+	std::size_t pos = crud.find("C");
+	if (pos != std::string::npos)
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::CrtRcpOthStDlg);
+	}
+	else
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("U");
+	if (pos != std::string::npos)
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::UdpRcpOthStDlg);
+	}
+	else
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("D");
+	if (pos != std::string::npos)
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::DelRcpOthStDlg);
+	}
+	else
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	connect(viewBtn, &QPushButton::released, this, &DataForm::ViewOrdRDlg);
+	connect(closeBtn, &QPushButton::released, this, &DataForm::CloseDataForm);
+	connect(tableView->selectionModel(), SIGNAL(currentRowChanged(QModelIndex, QModelIndex)), this, SLOT(ChangeBtnState()));
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreateRcpOthStList")
+	{
+		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreateRcpOthStListDlg*)parentDialog), SLOT(SetID(int, QString)));
+	}
+}
+
+template<>
+void DataForm::QtConnect<BusinessLayer::ReceiptOtherStocksListView>()
+{
+	BusinessLayer::Access access;
+	std::string crud = access.GetCRUDAccess(&dataFormBL->GetOrmasDal(), loggedUser, "actionReceiptOtherStocksList");
+	std::size_t pos = crud.find("C");
+	if (pos != std::string::npos)
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::CrtRcpOthStListDlg);
+	}
+	else
+	{
+		connect(createBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("U");
+	if (pos != std::string::npos)
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::UdpRcpOthStListDlg);
+	}
+	else
+	{
+		connect(editBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	pos = crud.find("D");
+	if (pos != std::string::npos)
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::DelRcpOthStListDlg);
+	}
+	else
+	{
+		connect(deleteBtn, &QPushButton::released, this, &DataForm::AcsDenied);
+	}
+	viewBtn->setVisible(false);
+	connect(closeBtn, &QPushButton::released, this, &DataForm::CloseDataForm);
+	connect(tableView->selectionModel(), SIGNAL(currentRowChanged(QModelIndex, QModelIndex)), this, SLOT(ChangeBtnState()));
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreateReceiptOthSt")
+	{
+		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreateRcpOthStDlg*)parentDialog), SLOT(SetID(int, QString)));
+		connect(tableView->model(), SIGNAL(rowsInserted(QModelIndex, int, int)), this, SLOT(OnRowsNumberChanged()));
+		connect(tableView->model(), SIGNAL(rowsRemoved(QModelIndex, int, int)), this, SLOT(OnRowsNumberChanged()));
 	}
 }
 
@@ -15671,15 +16900,30 @@ void DataForm::QtConnect<BusinessLayer::Status>()
 		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
 		connect(this, SIGNAL(SendID(int, QString)), ((CreateInveDlg*)parentDialog), SLOT(SetID(int, QString)));
 	}
-	if (parentDialog != nullptr && parentDialog->objectName() == "CreateFixedAssets")
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreateFxdAst")
 	{
 		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
 		connect(this, SIGNAL(SendID(int, QString)), ((CreateFxdAstDlg*)parentDialog), SLOT(SetID(int, QString)));
+	}
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreateInventory")
+	{
+		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreateInveDlg*)parentDialog), SLOT(SetID(int, QString)));
 	}
 	if (parentDialog != nullptr && parentDialog->objectName() == "CreateDivisionAccount")
 	{
 		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
 		connect(this, SIGNAL(SendID(int, QString)), ((CreateDivAccDlg*)parentDialog), SLOT(SetID(int, QString)));
+	}
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreateConsumeOthSt")
+	{
+		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreateConOthStDlg*)parentDialog), SLOT(SetID(int, QString)));
+	}
+	if (parentDialog != nullptr && parentDialog->objectName() == "CreateReceiptOthSt")
+	{
+		connect(tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(GetIDValue(QModelIndex)));
+		connect(this, SIGNAL(SendID(int, QString)), ((CreateRcpOthStDlg*)parentDialog), SLOT(SetID(int, QString)));
 	}
 }
 

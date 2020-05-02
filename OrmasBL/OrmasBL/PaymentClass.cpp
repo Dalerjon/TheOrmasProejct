@@ -226,7 +226,7 @@ namespace BusinessLayer{
 			{
 				if (userID <= 0 && accountID <= 0)
 				{
-					if (Replenishment(ormasDal, subaccountID, accountID, cashboxAccountID, errorMessage))
+					if (Replenishment(ormasDal, subaccountID, cashboxAccountID, errorMessage))
 					{
 						//ormasDal.CommitTransaction(errorMessage);
 						return true;
@@ -557,6 +557,7 @@ namespace BusinessLayer{
 		accountID = 0;
 		subaccountID = 0;
 		who = "";
+		cashboxAccountID = 0;
 	}
 
 	bool Payment::IsDuplicate(DataLayer::OrmasDal& ormasDal, std::string pDate, double pValue, int uID, int cID, int aID,

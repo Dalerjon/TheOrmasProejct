@@ -264,9 +264,6 @@
     <ClInclude Include="ui_CreateCARDlg.h">
       <Filter>Header Files\UI Headers</Filter>
     </ClInclude>
-    <ClInclude Include="ui_CreateProdnStockDlg.h">
-      <Filter>Header Files\UI Headers</Filter>
-    </ClInclude>
     <ClInclude Include="ui_CreateRListDlg.h">
       <Filter>Header Files\UI Headers</Filter>
     </ClInclude>
@@ -407,6 +404,27 @@
     </ClInclude>
     <ClInclude Include="ui_CreateDivAccDlg.h">
       <Filter>Header Files\UI Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="ui_CreateConOthStDlg.h">
+      <Filter>Header Files\UI Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="ui_CreateConOthStListDlg.h">
+      <Filter>Header Files\UI Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="ui_CreateOthStDlg.h">
+      <Filter>Header Files\UI Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="ui_CreateRcpOthStDlg.h">
+      <Filter>Header Files\UI Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="ui_CreateRcpOthStListDlg.h">
+      <Filter>Header Files\UI Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="ui_CreateOthSTypeDlg.h">
+      <Filter>Header Files\UI Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="CreateOthSTypeDlg.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -860,12 +878,6 @@
     <ClCompile Include="moc_CreateSAccDlg.cpp">
       <Filter>MOC Files</Filter>
     </ClCompile>
-    <ClCompile Include="CreateProdnStockDlg.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="moc_CreateProdnStockDlg.cpp">
-      <Filter>MOC Files</Filter>
-    </ClCompile>
     <ClCompile Include="CreateStsRuleDlg.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -1138,6 +1150,48 @@
     </ClCompile>
     <ClCompile Include="moc_CreateDivAccDlg.cpp">
       <Filter>MOC Files</Filter>
+    </ClCompile>
+    <ClCompile Include="moc_CreateLowValStockDlg.cpp">
+      <Filter>MOC Files</Filter>
+    </ClCompile>
+    <ClCompile Include="moc_CreateConothStDlg.cpp">
+      <Filter>MOC Files</Filter>
+    </ClCompile>
+    <ClCompile Include="moc_CreateConOthStListDlg.cpp">
+      <Filter>MOC Files</Filter>
+    </ClCompile>
+    <ClCompile Include="moc_CreateOthStDlg.cpp">
+      <Filter>MOC Files</Filter>
+    </ClCompile>
+    <ClCompile Include="moc_CreateRcpOthStDlg.cpp">
+      <Filter>MOC Files</Filter>
+    </ClCompile>
+    <ClCompile Include="moc_CreateRcpOthStListDlg.cpp">
+      <Filter>MOC Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CreateConOthStDlg.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CreateLowValStockDlg.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CreateRcpOthStDlg.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CreateRcpOthStListDlg.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CreateConOthStListDlg.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CreateOthStDlg.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="moc_CreateOthSTypeDlg.cpp">
+      <Filter>MOC Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CreateOthSTypeDlg.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1591,9 +1645,6 @@
     <CustomBuild Include="CreateProdnStockDlg.ui">
       <Filter>User Interface</Filter>
     </CustomBuild>
-    <CustomBuild Include="CreateProdnStockDlg.h">
-      <Filter>Header Files</Filter>
-    </CustomBuild>
     <CustomBuild Include="CreateStsRuleDlg.ui">
       <Filter>User Interface</Filter>
     </CustomBuild>
@@ -1846,6 +1897,42 @@
     <CustomBuild Include="CreateDivAccDlg.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
+    <CustomBuild Include="CreateRcpOthStListDlg.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="CreateConOthStDlg.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="CreateConOthStListDlg.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="CreateLowValStockDlg.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="CreateOthStDlg.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="CreateRcpOthStDlg.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="CreateConOthStDlg.ui">
+      <Filter>User Interface</Filter>
+    </CustomBuild>
+    <CustomBuild Include="CreateConOthStListDlg.ui">
+      <Filter>User Interface</Filter>
+    </CustomBuild>
+    <CustomBuild Include="CreateLowValStockDlg.ui">
+      <Filter>User Interface</Filter>
+    </CustomBuild>
+    <CustomBuild Include="CreateOthStDlg.ui">
+      <Filter>User Interface</Filter>
+    </CustomBuild>
+    <CustomBuild Include="CreateRcpOthStDlg.ui">
+      <Filter>User Interface</Filter>
+    </CustomBuild>
+    <CustomBuild Include="CreateRcpOthStListDlg.ui">
+      <Filter>User Interface</Filter>
+    </CustomBuild>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="OrmasAdmin.rc">
@@ -1856,5 +1943,10 @@
     <Image Include="ormas.ico">
       <Filter>Resource Files</Filter>
     </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="CreateOthSTypeDlg.ui">
+      <Filter>User Interface</Filter>
+    </None>
   </ItemGroup>
 </Project>

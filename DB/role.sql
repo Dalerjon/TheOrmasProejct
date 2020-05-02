@@ -79,6 +79,18 @@ INSERT INTO "OrmasSchema".roles(
 INSERT INTO "OrmasSchema".roles(
             role_id, role_code, role_name, comment)
     VALUES ((SELECT nextval('"OrmasSchema".id_seq')), '0027', 'MEDICAL OFFICER', 'The medical offincer in company');
+INSERT INTO "OrmasSchema".roles(
+            role_id, role_code, role_name, comment)
+    VALUES ((SELECT nextval('"OrmasSchema".id_seq')), '0028', 'SUPERVISOR', 'A supervisor');
+INSERT INTO "OrmasSchema".roles(
+            role_id, role_code, role_name, comment)
+    VALUES ((SELECT nextval('"OrmasSchema".id_seq')), '0029', 'DIRECTOR', 'The director of comapny');
+INSERT INTO "OrmasSchema".roles(
+            role_id, role_code, role_name, comment)
+    VALUES ((SELECT nextval('"OrmasSchema".id_seq')), '0030', 'STOCK INSPECTOR', 'Inspecting a warehouses');
+INSERT INTO "OrmasSchema".roles(
+            role_id, role_code, role_name, comment)
+    VALUES ((SELECT nextval('"OrmasSchema".id_seq')), '0030', 'PURVEYOR MANEGER', 'Control all purveyors');
 
 
 

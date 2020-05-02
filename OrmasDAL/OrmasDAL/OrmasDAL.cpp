@@ -200,6 +200,34 @@ namespace DataLayer{
 		}
 
 		sqlCommand.clear();
+		sqlCommand = "UPDATE \"OrmasSchema\".consume_other_stocks set consume_other_stocks_date ='";
+		sqlCommand += closeDate;
+		sqlCommand += "', execution_date ='";
+		sqlCommand += closeDate;
+		sqlCommand += "' where execution_date > '";
+		sqlCommand += closeDate;
+		sqlCommand += "';";
+		result = PQexec(dbConnection, sqlCommand.c_str());
+		if (PQresultStatus(result) != PGRES_COMMAND_OK)
+		{
+			return false;
+		}
+
+		sqlCommand.clear();
+		sqlCommand = "UPDATE \"OrmasSchema\".receipt_other_stocks set receipt_other_stocks_date ='";
+		sqlCommand += closeDate;
+		sqlCommand += "', execution_date ='";
+		sqlCommand += closeDate;
+		sqlCommand += "' where execution_date > '";
+		sqlCommand += closeDate;
+		sqlCommand += "';";
+		result = PQexec(dbConnection, sqlCommand.c_str());
+		if (PQresultStatus(result) != PGRES_COMMAND_OK)
+		{
+			return false;
+		}
+
+		sqlCommand.clear();
 		sqlCommand = "UPDATE \"OrmasSchema\".entries set entry_date ='";
 		sqlCommand += closeDate;
 		sqlCommand += "' where entry_date > '";
@@ -2039,6 +2067,137 @@ namespace DataLayer{
 		return resultVector;
 	}
 
+	//Get consume raw list
+	std::vector<consumeOtherStocksListViewCollection> OrmasDal::GetConsumeOtherStocksList(std::string& errorMessage, std::string filter)
+	{
+		consumeOtherStocksListViewCollection rowTuple;
+		std::vector<consumeOtherStocksListViewCollection> resultVector;
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
+		{
+			errorMessage = "DB connection was lost! Please restart application!";
+		}
+		else
+		{
+			PGresult * result;
+			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".consume_other_stocks_list_view ";
+			sqlCommand += filter;
+			sqlCommand += " ORDER BY consume_other_stock_id DESC LIMIT 1000;";
+			result = PQexec(dbConnection, sqlCommand.c_str());
+
+			if (PQresultStatus(result) == PGRES_TUPLES_OK)
+			{
+				if (PQntuples(result) > 0)
+				{
+					for (int i = 0; i < PQntuples(result); i++)
+					{
+						int clID = std::stoi(std::string(PQgetvalue(result, i, 0)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 0)));
+						int consumeOtherStocksID = std::stoi(std::string(PQgetvalue(result, i, 1)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 1)));
+						std::string otherStocksName = PQgetvalue(result, i, 2);
+						double price = std::stod(std::string(PQgetvalue(result, i, 3)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 3)));
+						std::string currencyName = std::string(PQgetvalue(result, i, 4));
+						double volume = std::stod(std::string(PQgetvalue(result, i, 5)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 5)));
+						std::string measureName = std::string(PQgetvalue(result, i, 6));
+						double count = std::stod(std::string(PQgetvalue(result, i, 7)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 7)));
+						double sum = std::stod(std::string(PQgetvalue(result, i, 8)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 8)));
+						std::string sumCurrencyName = std::string(PQgetvalue(result, i, 9));
+						std::string statusName = std::string(PQgetvalue(result, i, 10));
+						int otherStocksID = std::stoi(std::string(PQgetvalue(result, i, 11)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 11)));
+						int statusID = std::stoi(std::string(PQgetvalue(result, i, 12)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 12)));
+						int currencyID = std::stoi(std::string(PQgetvalue(result, i, 13)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 13)));
+						rowTuple = std::make_tuple(clID, consumeOtherStocksID, otherStocksName, price, currencyName, volume, measureName, count, sum, sumCurrencyName,
+							statusName, otherStocksID, statusID, currencyID);
+						resultVector.push_back(rowTuple);
+					}
+					PQclear(result);
+					return resultVector;
+				}
+				else
+				{
+					// if result of query does not contain information and have 0 row, then function return an empty vector;
+					PQclear(result);
+				}
+			}
+			else
+			{
+				std::string logStr = PQresultErrorMessage(result);
+				//WriteLog(logStr);
+				PQclear(result);
+				errorMessage = "Cannot get information from DB for consume other stocks list, please contact with appliction provider!";
+			}
+		}
+		return resultVector;
+	}
+
+	//Get consume raws
+	std::vector<consumeOtherStocksViewCollection> OrmasDal::GetConsumeOtherStocks(std::string& errorMessage, std::string filter)
+	{
+		consumeOtherStocksViewCollection rowTuple;
+		std::vector<consumeOtherStocksViewCollection> resultVector;
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
+		{
+			errorMessage = "DB connection was lost! Please restart application!";
+		}
+		else
+		{
+			PGresult * result;
+			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".consume_other_stocks_view ";
+			sqlCommand += filter;
+			sqlCommand += " ORDER BY consume_other_stocks_id DESC LIMIT 1000;";
+			result = PQexec(dbConnection, sqlCommand.c_str());
+
+			if (PQresultStatus(result) == PGRES_TUPLES_OK)
+			{
+				if (PQntuples(result) > 0)
+				{
+					for (int i = 0; i < PQntuples(result); i++)
+					{
+						int consumeOtherStocksID = std::stoi(std::string(PQgetvalue(result, i, 0)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 0)));
+						std::string consumeOtherStocksDate = PQgetvalue(result, i, 1);
+						std::string consumeOtherStocksExecutionDate = PQgetvalue(result, i, 2);
+						std::string statusCode = PQgetvalue(result, i, 3);
+						std::string statusName = PQgetvalue(result, i, 4);
+						std::string employeeName = PQgetvalue(result, i, 5);
+						std::string employeeSurname = PQgetvalue(result, i, 6);
+						std::string employeePhone = PQgetvalue(result, i, 7);
+						std::string employeePosition = PQgetvalue(result, i, 8);
+						std::string stockEmployeeName = PQgetvalue(result, i, 9);
+						std::string stockEmployeeSurname = PQgetvalue(result, i, 10);
+						std::string stockEmployeePhone = PQgetvalue(result, i, 11);
+						std::string stockEmployeePosition = PQgetvalue(result, i, 12);
+						double count = std::stod(std::string(PQgetvalue(result, i, 13)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 13)));
+						double sum = std::stod(std::string(PQgetvalue(result, i, 14)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 14)));
+						std::string currencyName = PQgetvalue(result, i, 15);
+						int employeeID = std::stoi(std::string(PQgetvalue(result, i, 16)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 16)));
+						int userID = std::stoi(std::string(PQgetvalue(result, i, 17)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 17)));
+						int statusID = std::stoi(std::string(PQgetvalue(result, i, 18)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 18)));
+						int currencyID = std::stoi(std::string(PQgetvalue(result, i, 19)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 19)));
+
+						rowTuple = std::make_tuple(consumeOtherStocksID, consumeOtherStocksDate, consumeOtherStocksExecutionDate, statusCode,
+							statusName, employeeName, employeeSurname, employeePhone, employeePosition, stockEmployeeName,
+							stockEmployeeSurname, stockEmployeePhone, stockEmployeePosition, count, sum, currencyName, employeeID,
+							userID, statusID, currencyID);
+						resultVector.push_back(rowTuple);
+					}
+					PQclear(result);
+					return resultVector;
+				}
+				else
+				{
+					// if result of query does not contain information and have 0 row, then function return an empty vector;
+					PQclear(result);
+				}
+			}
+			else
+			{
+				std::string logStr = PQresultErrorMessage(result);
+				//WriteLog(logStr);
+				PQclear(result);
+				errorMessage = "Cannot get information from DB for consume other stocks, please contact with appliction provider!";
+			}
+		}
+		return resultVector;
+	}
+
 	//Get all currencies
 	std::vector<currenciesCollection> OrmasDal::GetCurrencies(std::string& errorMessage, std::string filter)
 	{
@@ -2508,6 +2667,87 @@ namespace DataLayer{
 						std::string description = PQgetvalue(result, i, 9);
 						rowTuple = std::make_tuple(entryID, entryDate, debitingAccountNumber, value, creditingAccountNumber, operationID,
 							subaccountID, debitingAccountID, creditingAccountID, description);
+						resultVector.push_back(rowTuple);
+					}
+					PQclear(result);
+					return resultVector;
+				}
+				else
+				{
+					// if result of query does not contain information and have 0 row, then function return an empty vector;
+					PQclear(result);
+				}
+			}
+			else
+			{
+				std::string logStr = PQresultErrorMessage(result);
+				//WriteLog(logStr);
+				PQclear(result);
+				errorMessage = "Cannot get information from DB for entries, please contact with appliction provider!";
+			}
+		}
+		return resultVector;
+	}
+
+	// Get all entries from DB
+	std::vector<entriesFullJoinViewCollection> OrmasDal::GetFullExtendedEntries(std::string& errorMessage, std::string filter)
+	{
+		entriesFullJoinViewCollection rowTuple;
+		std::vector<entriesFullJoinViewCollection> resultVector;
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
+		{
+			errorMessage = "DB connection was lost! Please restart application!";
+		}
+		else
+		{
+			PGresult* result;
+			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".entries_all_joins_view ";
+			sqlCommand += filter;
+			sqlCommand += ";";
+			result = PQexec(dbConnection, sqlCommand.c_str());
+
+			if (PQresultStatus(result) == PGRES_TUPLES_OK)
+			{
+				if (PQntuples(result) > 0)
+				{
+					for (int i = 0; i < PQntuples(result); i++)
+					{
+						int entryID = std::stoi(std::string(PQgetvalue(result, i, 0)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 0)));
+						std::string entryDate = PQgetvalue(result, i, 1);
+						std::string debitingAccountNumber = PQgetvalue(result, i, 2);
+						double value = std::stod(std::string(PQgetvalue(result, i, 3)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 3)));
+						std::string creditingAccountNumber = PQgetvalue(result, i, 4);
+						int operationID = std::stoi(std::string(PQgetvalue(result, i, 5)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 5)));
+						int subaccountID = std::stoi(std::string(PQgetvalue(result, i, 6)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 6)));
+						int debitingAccountID = std::stoi(std::string(PQgetvalue(result, i, 7)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 7)));
+						int creditingAccountID = std::stoi(std::string(PQgetvalue(result, i, 8)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 8)));
+						std::string description = PQgetvalue(result, i, 9);
+						int conProdID = std::stoi(std::string(PQgetvalue(result, i, 10)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 10)));
+						int conRawID = std::stoi(std::string(PQgetvalue(result, i, 11)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 11)));
+						int fixAstID = std::stoi(std::string(PQgetvalue(result, i, 12)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 12)));
+						int fixAstOperID = std::stoi(std::string(PQgetvalue(result, i, 13)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 13)));
+						int invenID = std::stoi(std::string(PQgetvalue(result, i, 14)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 14)));
+						int orderID = std::stoi(std::string(PQgetvalue(result, i, 15)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 15)));
+						int ordRawID = std::stoi(std::string(PQgetvalue(result, i, 16)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 16)));
+						int paymentID = std::stoi(std::string(PQgetvalue(result, i, 17)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 17)));
+						int payslipID = std::stoi(std::string(PQgetvalue(result, i, 18)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 18)));
+						int prodConRawID = std::stoi(std::string(PQgetvalue(result, i, 19)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 19)));
+						int rcpProdID = std::stoi(std::string(PQgetvalue(result, i, 20)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 20)));
+						int returnID = std::stoi(std::string(PQgetvalue(result, i, 21)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 21)));
+						int spoilageID = std::stoi(std::string(PQgetvalue(result, i, 22)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 22)));
+						int stockTrID = std::stoi(std::string(PQgetvalue(result, i, 23)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 23)));
+						int withdrawalID = std::stoi(std::string(PQgetvalue(result, i, 24)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 24)));
+						int writeOFFID = std::stoi(std::string(PQgetvalue(result, i, 25)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 25)));
+						int writeOFFRawID = std::stoi(std::string(PQgetvalue(result, i, 26)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 26)));
+						int productID = std::stoi(std::string(PQgetvalue(result, i, 27)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 27)));
+						int otherStockID = std::stoi(std::string(PQgetvalue(result, i, 28)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 28)));
+						int rcpOthStID = std::stoi(std::string(PQgetvalue(result, i, 29)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 29)));
+						int conOthStID = std::stoi(std::string(PQgetvalue(result, i, 30)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 30)));
+						rowTuple = std::make_tuple(entryID, entryDate, debitingAccountNumber, value, creditingAccountNumber, operationID,
+							subaccountID, debitingAccountID, creditingAccountID, description, conProdID, conRawID, fixAstID,
+							fixAstOperID, invenID, invenID, orderID, ordRawID, paymentID, payslipID, prodConRawID, rcpProdID,
+							returnID, spoilageID, stockTrID, withdrawalID, writeOFFID, writeOFFRawID, productID, otherStockID, 
+							rcpOthStID, conOthStID);
 						resultVector.push_back(rowTuple);
 					}
 					PQclear(result);
@@ -3233,8 +3473,74 @@ namespace DataLayer{
 						std::string endDate = std::string(PQgetvalue(result, i, 9));
 						int statusID = std::stoi(std::string(PQgetvalue(result, i, 10)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 10)));
 						int departmentID = std::stoi(std::string(PQgetvalue(result, i, 11)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 11)));
+						int subaccountID = std::stoi(std::string(PQgetvalue(result, i, 12)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 12)));
 						rowTuple = std::make_tuple(inventoryID, inventoryName, cost, inventoryNumber, barcodeNumber, divisionName, 
-							statusName, location, startDate, endDate, statusID, departmentID);
+							statusName, location, startDate, endDate, statusID, departmentID, subaccountID);
+						resultVector.push_back(rowTuple);
+					}
+					PQclear(result);
+					return resultVector;
+				}
+				else
+				{
+					// if result of query does not contain information and have 0 row, then function return an empty vector;
+					PQclear(result);
+				}
+			}
+			else
+			{
+				std::string logStr = PQresultErrorMessage(result);
+				//WriteLog(logStr);
+				PQclear(result);
+				errorMessage = "Cannot get information from DB for inventory, please contact with appliction provider!";
+			}
+		}
+		return resultVector;
+	}
+
+	//Get inventory
+	std::vector<inventoryUnionViewCollection> OrmasDal::GetInventoryUnion(std::string& errorMessage, std::string filter)
+	{
+		inventoryUnionViewCollection rowTuple;
+		std::vector<inventoryUnionViewCollection> resultVector;
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
+		{
+			errorMessage = "DB connection was lost! Please restart application!";
+		}
+		else
+		{
+			PGresult * result;
+			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".inventory_union_view ";
+			sqlCommand += filter;
+			sqlCommand += " LIMIT 1000;";
+			result = PQexec(dbConnection, sqlCommand.c_str());
+
+			if (PQresultStatus(result) == PGRES_TUPLES_OK)
+			{
+				if (PQntuples(result) > 0)
+				{
+					for (int i = 0; i < PQntuples(result); i++)
+					{
+						int inventoryID = std::stoi(std::string(PQgetvalue(result, i, 0)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 0)));
+						std::string inventoryName = PQgetvalue(result, i, 1);
+						double cost = std::stod(std::string(PQgetvalue(result, i, 2)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 2)));
+						std::string inventoryNumber = std::string(PQgetvalue(result, i, 3));
+						std::string barcodeNumber = std::string(PQgetvalue(result, i, 4));
+						std::string divisionName = std::string(PQgetvalue(result, i, 5));
+						std::string statusName = std::string(PQgetvalue(result, i, 6));
+						std::string location = std::string(PQgetvalue(result, i, 7));
+						std::string startDate = std::string(PQgetvalue(result, i, 8));
+						std::string endDate = std::string(PQgetvalue(result, i, 9));
+						int statusID = std::stoi(std::string(PQgetvalue(result, i, 10)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 10)));
+						int departmentID = std::stoi(std::string(PQgetvalue(result, i, 11)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 11)));
+						int invSubID = std::stoi(std::string(PQgetvalue(result, i, 12)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 12)));
+						int posFixedAssetsID = std::stoi(std::string(PQgetvalue(result, i, 13)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 13)));
+						int userID = std::stoi(std::string(PQgetvalue(result, i, 14)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 14)));
+						int subaccountID = std::stoi(std::string(PQgetvalue(result, i, 15)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 15)));
+						int accountID = std::stoi(std::string(PQgetvalue(result, i, 16)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 16)));
+						rowTuple = std::make_tuple(inventoryID, inventoryName, cost, inventoryNumber, barcodeNumber, divisionName,
+							statusName, location, startDate, endDate, statusID, departmentID, invSubID, posFixedAssetsID, userID,
+							subaccountID, accountID);
 						resultVector.push_back(rowTuple);
 					}
 					PQclear(result);
@@ -3838,6 +4144,115 @@ namespace DataLayer{
 				//WriteLog(logStr);
 				PQclear(result);
 				errorMessage = "Cannot get information from DB for order raw, please contact with appliction provider!";
+			}
+		}
+		return resultVector;
+	}
+
+	// Get products
+	std::vector<otherStocksViewCollection> OrmasDal::GetOtherStocks(std::string& errorMessage, std::string filter)
+	{
+		otherStocksViewCollection rowTuple;
+		std::vector<otherStocksViewCollection> resultVector;
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
+		{
+			errorMessage = "DB connection was lost! Please restart application!";
+		}
+		else
+		{
+			PGresult * result;
+			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".other_stocks_view ";
+			sqlCommand += filter;
+			sqlCommand += " ORDER BY other_stocks_name ASC LIMIT 1000;";
+			result = PQexec(dbConnection, sqlCommand.c_str());
+			if (PQresultStatus(result) == PGRES_TUPLES_OK)
+			{
+				if (PQntuples(result) > 0)
+				{
+					for (int i = 0; i < PQntuples(result); i++)
+					{
+						int otherStocksID = std::stoi(std::string(PQgetvalue(result, i, 0)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 0)));
+						std::string otherStocksName = PQgetvalue(result, i, 1);
+						double price = std::stod(std::string(PQgetvalue(result, i, 2)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 2)));
+						std::string currencyName = PQgetvalue(result, i, 3);
+						double volume = std::stod(std::string(PQgetvalue(result, i, 4)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 4)));
+						std::string measureName = PQgetvalue(result, i, 5);
+						std::string companyName = PQgetvalue(result, i, 6);
+						std::string otherStocksTypeName = PQgetvalue(result, i, 7);
+						int companyID = std::stoi(std::string(PQgetvalue(result, i, 8)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 8)));
+						int measureID = std::stoi(std::string(PQgetvalue(result, i, 9)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 9)));
+						int currencyID = std::stoi(std::string(PQgetvalue(result, i, 10)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 10)));
+						int otherStocksTypeID = std::stoi(std::string(PQgetvalue(result, i, 11)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 11)));
+
+						rowTuple = std::make_tuple(otherStocksID, otherStocksName, price, currencyName, volume, measureName,
+							companyName, otherStocksTypeName, companyID, measureID, currencyID, otherStocksTypeID);
+						resultVector.push_back(rowTuple);
+					}
+					PQclear(result);
+					return resultVector;
+				}
+				else
+				{
+					// if result of query does not contain information and have 0 row, then function return an empty vector;
+					PQclear(result);
+				}
+			}
+			else
+			{
+				std::string logStr = PQresultErrorMessage(result);
+				//WriteLog(logStr);
+				PQclear(result);
+				errorMessage = "Cannot get information from DB for other stocks, please contact with appliction provider!";
+			}
+		}
+		return resultVector;
+	}
+
+	// Get other stocks type
+	std::vector<otherStocksTypeCollection> OrmasDal::GetOtherStocksType(std::string& errorMessage, std::string filter)
+	{
+		otherStocksTypeCollection rowTuple;
+		std::vector<otherStocksTypeCollection> resultVector;
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
+		{
+			errorMessage = "DB connection was lost! Please restart application!";
+		}
+		else
+		{
+			PGresult * result;
+			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".other_stocks_types_view ";
+			sqlCommand += filter;
+			sqlCommand += " ORDER BY other_stocks_type_id DESC LIMIT 1000;";
+			result = PQexec(dbConnection, sqlCommand.c_str());
+
+			if (PQresultStatus(result) == PGRES_TUPLES_OK)
+			{
+				if (PQntuples(result) > 0)
+				{
+					for (int i = 0; i < PQntuples(result); i++)
+					{
+						int otherStocksTypeID = std::stoi(std::string(PQgetvalue(result, i, 0)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 0)));
+						std::string otherStocksTypeName = PQgetvalue(result, i, 1);
+						std::string otherStocksTypeShortName = PQgetvalue(result, i, 2);
+						std::string otherStocksCode = PQgetvalue(result, i, 3);
+						rowTuple = std::make_tuple(otherStocksTypeID, otherStocksTypeName, otherStocksTypeShortName, otherStocksCode);
+						resultVector.push_back(rowTuple);
+					}
+					PQclear(result);
+					return resultVector;
+				}
+				else
+				{
+					// if result of query does not contain information and have 0 row, then function return an empty vector;
+					PQclear(result);
+				}
+			}
+			else
+			{
+				std::string logStr = PQresultErrorMessage(result);
+				//WriteLog(logStr);
+				PQclear(result);
+				errorMessage = "Cannot get information from DB for product type, please contact with appliction provider!";
 			}
 		}
 		return resultVector;
@@ -5105,6 +5520,137 @@ namespace DataLayer{
 		return resultVector;
 	}
 
+	//Get receipt product list
+	std::vector<receiptOtherStocksListViewCollection> OrmasDal::GetReceiptOtherStocksList(std::string& errorMessage, std::string filter)
+	{
+		receiptOtherStocksListViewCollection rowTuple;
+		std::vector<receiptOtherStocksListViewCollection> resultVector;
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
+		{
+			errorMessage = "DB connection was lost! Please restart application!";
+		}
+		else
+		{
+			PGresult * result;
+			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".receipt_other_stocks_list_view ";
+			sqlCommand += filter;
+			sqlCommand += " ORDER BY receipt_other_stocks_id DESC LIMIT 1000;";
+			result = PQexec(dbConnection, sqlCommand.c_str());
+
+			if (PQresultStatus(result) == PGRES_TUPLES_OK)
+			{
+				if (PQntuples(result) > 0)
+				{
+					for (int i = 0; i < PQntuples(result); i++)
+					{
+						int rlID = std::stoi(std::string(PQgetvalue(result, i, 0)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 0)));
+						int receiptOtherStocksID = std::stoi(std::string(PQgetvalue(result, i, 1)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 1)));
+						std::string otherStocksName = PQgetvalue(result, i, 2);
+						double price = std::stod(std::string(PQgetvalue(result, i, 3)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 3)));
+						std::string currencyName = std::string(PQgetvalue(result, i, 4));
+						double volume = std::stod(std::string(PQgetvalue(result, i, 5)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 5)));
+						std::string measureName = std::string(PQgetvalue(result, i, 6));
+						double count = std::stod(std::string(PQgetvalue(result, i, 7)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 7)));
+						double sum = std::stod(std::string(PQgetvalue(result, i, 8)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 8)));
+						std::string sumCurrencyName = std::string(PQgetvalue(result, i, 9));
+						std::string statusName = std::string(PQgetvalue(result, i, 10));
+						int otherStocksID = std::stoi(std::string(PQgetvalue(result, i, 11)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 11)));
+						int statusID = std::stoi(std::string(PQgetvalue(result, i, 12)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 12)));
+						int currencyID = std::stoi(std::string(PQgetvalue(result, i, 13)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 13)));
+						rowTuple = std::make_tuple(rlID, receiptOtherStocksID, otherStocksName, price, currencyName, volume, measureName, count, sum, sumCurrencyName,
+							statusName, otherStocksID, statusID, currencyID);
+						resultVector.push_back(rowTuple);
+					}
+					PQclear(result);
+					return resultVector;
+				}
+				else
+				{
+					// if result of query does not contain information and have 0 row, then function return an empty vector;
+					PQclear(result);
+				}
+			}
+			else
+			{
+				std::string logStr = PQresultErrorMessage(result);
+				//WriteLog(logStr);
+				PQclear(result);
+				errorMessage = "Cannot get information from DB for receipt other stocks list, please contact with appliction provider!";
+			}
+		}
+		return resultVector;
+	}
+
+	//Get receipt products
+	std::vector<receiptOtherStocksViewCollection> OrmasDal::GetReceiptOtherStocks(std::string& errorMessage, std::string filter)
+	{
+		receiptOtherStocksViewCollection rowTuple;
+		std::vector<receiptOtherStocksViewCollection> resultVector;
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
+		{
+			errorMessage = "DB connection was lost! Please restart application!";
+		}
+		else
+		{
+			PGresult * result;
+			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".receipt_other_stocks_view ";
+			sqlCommand += filter;
+			sqlCommand += " ORDER BY receipt_other_stocks_id DESC LIMIT 1000;";
+			result = PQexec(dbConnection, sqlCommand.c_str());
+
+			if (PQresultStatus(result) == PGRES_TUPLES_OK)
+			{
+				if (PQntuples(result) > 0)
+				{
+					for (int i = 0; i < PQntuples(result); i++)
+					{
+						int receiptOtherStocksID = std::stoi(std::string(PQgetvalue(result, i, 0)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 0)));
+						std::string receiptOtherStocksDate = PQgetvalue(result, i, 1);
+						std::string receiptOtherStocksExecutionDate = PQgetvalue(result, i, 2);
+						std::string statusCode = PQgetvalue(result, i, 3);
+						std::string statusName = PQgetvalue(result, i, 4);
+						std::string employeeName = PQgetvalue(result, i, 5);
+						std::string employeeSurname = PQgetvalue(result, i, 6);
+						std::string employeePhone = PQgetvalue(result, i, 7);
+						std::string employeePosition = PQgetvalue(result, i, 8);
+						std::string stockEmployeeName = PQgetvalue(result, i, 9);
+						std::string stockEmployeeSurname = PQgetvalue(result, i, 10);
+						std::string stockEmployeePhone = PQgetvalue(result, i, 11);
+						std::string stockEmployeePosition = PQgetvalue(result, i, 12);
+						double count = std::stod(std::string(PQgetvalue(result, i, 13)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 13)));
+						double sum = std::stod(std::string(PQgetvalue(result, i, 14)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 14)));
+						std::string currencyName = PQgetvalue(result, i, 15);
+						int employeeID = std::stoi(std::string(PQgetvalue(result, i, 16)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 16)));
+						int userID = std::stoi(std::string(PQgetvalue(result, i, 17)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 17)));
+						int statusID = std::stoi(std::string(PQgetvalue(result, i, 18)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 18)));
+						int currencyID = std::stoi(std::string(PQgetvalue(result, i, 19)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 19)));
+
+						rowTuple = std::make_tuple(receiptOtherStocksID, receiptOtherStocksDate, receiptOtherStocksExecutionDate, statusCode,
+							statusName, employeeName, employeeSurname, employeePhone, employeePosition, stockEmployeeName,
+							stockEmployeeSurname, stockEmployeePhone, stockEmployeePosition, count, sum, currencyName, employeeID,
+							userID, statusID, currencyID);
+						resultVector.push_back(rowTuple);
+					}
+					PQclear(result);
+					return resultVector;
+				}
+				else
+				{
+					// if result of query does not contain information and have 0 row, then function return an empty vector;
+					PQclear(result);
+				}
+			}
+			else
+			{
+				std::string logStr = PQresultErrorMessage(result);
+				//WriteLog(logStr);
+				PQclear(result);
+				errorMessage = "Cannot get information from DB for receipt other stocks, please contact with appliction provider!";
+			}
+		}
+		return resultVector;
+	}
+
 	//Get receipt raw list
 	std::vector<stockTransferListViewCollection> OrmasDal::GetStockTransferList(std::string& errorMessage, std::string filter)
 	{
@@ -6249,6 +6795,133 @@ namespace DataLayer{
 		return resultVector;
 	}
 
+	//Get stock
+	std::vector<lowValueStockViewCollection> OrmasDal::GetLowValueStock(std::string& errorMessage, std::string filter)
+	{
+		lowValueStockViewCollection rowTuple;
+		std::vector<lowValueStockViewCollection> resultVector;
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
+		{
+			errorMessage = "DB connection was lost! Please restart application!";
+		}
+		else
+		{
+			PGresult * result;
+			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".low_value_stock_view ";
+			sqlCommand += filter;
+			sqlCommand += " ORDER BY other_stocks_name ASC;";
+			result = PQexec(dbConnection, sqlCommand.c_str());
+
+			if (PQresultStatus(result) == PGRES_TUPLES_OK)
+			{
+				if (PQntuples(result) > 0)
+				{
+					for (int i = 0; i < PQntuples(result); i++)
+					{
+						int sID = std::stoi(std::string(PQgetvalue(result, i, 0)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 0)));
+						std::string otherStocksName = PQgetvalue(result, i, 1);
+						double price = std::stod(std::string(PQgetvalue(result, i, 2)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 2)));
+						std::string currencyName = std::string(PQgetvalue(result, i, 3));
+						double volume = std::stod(std::string(PQgetvalue(result, i, 4)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 4)));
+						std::string measureName = std::string(PQgetvalue(result, i, 5));
+						double count = std::stod(std::string(PQgetvalue(result, i, 6)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 6)));
+						double sum = std::stod(std::string(PQgetvalue(result, i, 7)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 7)));
+						std::string sumCurrencyName = std::string(PQgetvalue(result, i, 8));
+						std::string warehouseName = std::string(PQgetvalue(result, i, 9));
+						std::string subaccNumber = std::string(PQgetvalue(result, i, 10));
+						std::string statusName = std::string(PQgetvalue(result, i, 11));
+						int otherStocksID = std::stoi(std::string(PQgetvalue(result, i, 12)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 12)));
+						int statusID = std::stoi(std::string(PQgetvalue(result, i, 13)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 13)));
+						int currencyID = std::stoi(std::string(PQgetvalue(result, i, 14)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 14)));
+						int warehouseID = std::stoi(std::string(PQgetvalue(result, i, 15)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 15)));
+						rowTuple = std::make_tuple(sID, otherStocksName, price, currencyName, volume, measureName, count, sum, sumCurrencyName,
+							warehouseName, subaccNumber, statusName, otherStocksID, statusID, currencyID, warehouseID);
+						resultVector.push_back(rowTuple);
+					}
+					PQclear(result);
+					return resultVector;
+				}
+				else
+				{
+					// if result of query does not contain information and have 0 row, then function return an empty vector;
+					PQclear(result);
+				}
+			}
+			else
+			{
+				std::string logStr = PQresultErrorMessage(result);
+				//WriteLog(logStr);
+				PQclear(result);
+				errorMessage = "Cannot get information from DB for low value stock, please contact with appliction provider!";
+			}
+		}
+		return resultVector;
+	}
+
+	//Get stock
+	std::vector<lowValueStockHistoryViewCollection> OrmasDal::GetLowValueStockHistory(std::string& errorMessage, std::string filter)
+	{
+		lowValueStockHistoryViewCollection rowTuple;
+		std::vector<lowValueStockHistoryViewCollection> resultVector;
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
+		{
+			errorMessage = "DB connection was lost! Please restart application!";
+		}
+		else
+		{
+			PGresult * result;
+			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".low_value_stock_history_view ";
+			sqlCommand += filter;
+			sqlCommand += " ORDER BY other_stocks_name ASC LIMIT 1000;";
+			result = PQexec(dbConnection, sqlCommand.c_str());
+
+			if (PQresultStatus(result) == PGRES_TUPLES_OK)
+			{
+				if (PQntuples(result) > 0)
+				{
+					for (int i = 0; i < PQntuples(result); i++)
+					{
+						int sID = std::stoi(std::string(PQgetvalue(result, i, 0)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 0)));
+						std::string otherStocksName = PQgetvalue(result, i, 1);
+						double price = std::stod(std::string(PQgetvalue(result, i, 2)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 2)));
+						std::string currencyName = std::string(PQgetvalue(result, i, 3));
+						double volume = std::stod(std::string(PQgetvalue(result, i, 4)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 4)));
+						std::string measureName = std::string(PQgetvalue(result, i, 5));
+						double count = std::stod(std::string(PQgetvalue(result, i, 6)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 6)));
+						double sum = std::stod(std::string(PQgetvalue(result, i, 7)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 7)));
+						std::string sumCurrencyName = std::string(PQgetvalue(result, i, 8));
+						std::string warehouseName = std::string(PQgetvalue(result, i, 9));
+						std::string subaccNumber = std::string(PQgetvalue(result, i, 10));
+						std::string statusName = std::string(PQgetvalue(result, i, 11));
+						int otherStocksID = std::stoi(std::string(PQgetvalue(result, i, 12)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 12)));
+						int statusID = std::stoi(std::string(PQgetvalue(result, i, 13)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 13)));
+						int currencyID = std::stoi(std::string(PQgetvalue(result, i, 14)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 14)));
+						int warehouseID = std::stoi(std::string(PQgetvalue(result, i, 15)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 15)));
+						std::string historyDate = std::string(PQgetvalue(result, i, 16));
+						rowTuple = std::make_tuple(sID, otherStocksName, price, currencyName, volume, measureName, count, sum, sumCurrencyName,
+							warehouseName, subaccNumber, statusName, otherStocksID, statusID, currencyID, warehouseID, historyDate);
+						resultVector.push_back(rowTuple);
+					}
+					PQclear(result);
+					return resultVector;
+				}
+				else
+				{
+					// if result of query does not contain information and have 0 row, then function return an empty vector;
+					PQclear(result);
+				}
+			}
+			else
+			{
+				std::string logStr = PQresultErrorMessage(result);
+				//WriteLog(logStr);
+				PQclear(result);
+				errorMessage = "Cannot get information from DB for stock, please contact with appliction provider!";
+			}
+		}
+		return resultVector;
+	}
+
 	// Get all subaccounts from DB
 	std::vector<subaccountsViewCollection> OrmasDal::GetSubaccounts(std::string& errorMessage, std::string filter)
 	{
@@ -6592,6 +7265,60 @@ namespace DataLayer{
 				//WriteLog(logStr);
 				PQclear(result);
 				errorMessage = "Cannot get information from DB for transports, please contact with appliction provider!";
+			}
+		}
+		return resultVector;
+	}
+
+	//Get transport history
+	std::vector<transportHistoryCollection> OrmasDal::GetTransportHistory(std::string& errorMessage, std::string filter)
+	{
+		transportHistoryCollection rowTuple;
+		std::vector<transportHistoryCollection> resultVector;
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
+		{
+			errorMessage = "DB connection was lost! Please restart application!";
+		}
+		else
+		{
+			PGresult * result;
+			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".transport_history_view ";
+			sqlCommand += filter;
+			sqlCommand += " ORDER BY product_name ASC LIMIT 1000 ";
+			result = PQexec(dbConnection, sqlCommand.c_str());
+
+			if (PQresultStatus(result) == PGRES_TUPLES_OK)
+			{
+				if (PQntuples(result) > 0)
+				{
+					for (int i = 0; i < PQntuples(result); i++)
+					{
+						int thID = std::stoi(std::string(PQgetvalue(result, i, 0)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 0)));
+						int transportID = std::stoi(std::string(PQgetvalue(result, i, 1)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 1)));
+						int productID = std::stoi(std::string(PQgetvalue(result, i, 2)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 2)));
+						double count = std::stoi(std::string(PQgetvalue(result, i, 3)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 3)));
+						double sum = std::stoi(std::string(PQgetvalue(result, i, 4)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 4)));
+						int statusID = std::stoi(std::string(PQgetvalue(result, i, 5)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 5)));
+						int currencyID = std::stoi(std::string(PQgetvalue(result, i, 6)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 6)));
+						std::string historyDate = PQgetvalue(result, i, 7);
+						rowTuple = std::make_tuple(thID, transportID, productID, count, sum, statusID, currencyID, historyDate);
+						resultVector.push_back(rowTuple);
+					}
+					PQclear(result);
+					return resultVector;
+				}
+				else
+				{
+					// if result of query does not contain information and have 0 row, then function return an empty vector;
+					PQclear(result);
+				}
+			}
+			else
+			{
+				std::string logStr = PQresultErrorMessage(result);
+				//WriteLog(logStr);
+				PQclear(result);
+				errorMessage = "Cannot get information from DB for transport list, please contact with appliction provider!";
 			}
 		}
 		return resultVector;
@@ -8858,6 +9585,149 @@ namespace DataLayer{
 		return resultVector;
 	}
 
+	//Get consume raw list
+	std::vector<consumeOtherStocksListViewCollection> OrmasDal::GetConsumeOtherStocksList(int offset, std::string& errorMessage, std::string filter)
+	{
+		consumeOtherStocksListViewCollection rowTuple;
+		std::vector<consumeOtherStocksListViewCollection> resultVector;
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
+		{
+			errorMessage = "DB connection was lost! Please restart application!";
+		}
+		else
+		{
+			PGresult * result;
+			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".consume_other_stocks_list_view ";
+			sqlCommand += filter;
+			sqlCommand += " ORDER BY consume_other_stocks_id DESC LIMIT 1000 ";
+			if (offset > 0)
+			{
+				sqlCommand += " OFFSET ";
+				sqlCommand += boost::lexical_cast<std::string>(offset);
+			}
+			sqlCommand += " ;";
+			result = PQexec(dbConnection, sqlCommand.c_str());
+
+			if (PQresultStatus(result) == PGRES_TUPLES_OK)
+			{
+				if (PQntuples(result) > 0)
+				{
+					for (int i = 0; i < PQntuples(result); i++)
+					{
+						int clID = std::stoi(std::string(PQgetvalue(result, i, 0)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 0)));
+						int consumeOtherStocksID = std::stoi(std::string(PQgetvalue(result, i, 1)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 1)));
+						std::string otherStocksName = PQgetvalue(result, i, 2);
+						double price = std::stod(std::string(PQgetvalue(result, i, 3)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 3)));
+						std::string currencyName = std::string(PQgetvalue(result, i, 4));
+						double volume = std::stod(std::string(PQgetvalue(result, i, 5)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 5)));
+						std::string measureName = std::string(PQgetvalue(result, i, 6));
+						double count = std::stod(std::string(PQgetvalue(result, i, 7)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 7)));
+						double sum = std::stod(std::string(PQgetvalue(result, i, 8)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 8)));
+						std::string sumCurrencyName = std::string(PQgetvalue(result, i, 9));
+						std::string statusName = std::string(PQgetvalue(result, i, 10));
+						int otherStocksID = std::stoi(std::string(PQgetvalue(result, i, 11)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 11)));
+						int statusID = std::stoi(std::string(PQgetvalue(result, i, 12)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 12)));
+						int currencyID = std::stoi(std::string(PQgetvalue(result, i, 13)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 13)));
+						rowTuple = std::make_tuple(clID, consumeOtherStocksID, otherStocksName, price, currencyName, volume, measureName, count, sum, sumCurrencyName,
+							statusName, otherStocksID, statusID, currencyID);
+						resultVector.push_back(rowTuple);
+					}
+					PQclear(result);
+					return resultVector;
+				}
+				else
+				{
+					// if result of query does not contain information and have 0 row, then function return an empty vector;
+					PQclear(result);
+				}
+			}
+			else
+			{
+				std::string logStr = PQresultErrorMessage(result);
+				//WriteLog(logStr);
+				PQclear(result);
+				errorMessage = "Cannot get information from DB for consume other stocks list, please contact with appliction provider!";
+			}
+		}
+		return resultVector;
+	}
+
+	//Get consume raws
+	std::vector<consumeOtherStocksViewCollection> OrmasDal::GetConsumeOtherStocks(int offset, std::string& errorMessage, std::string filter)
+	{
+		consumeOtherStocksViewCollection rowTuple;
+		std::vector<consumeOtherStocksViewCollection> resultVector;
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
+		{
+			errorMessage = "DB connection was lost! Please restart application!";
+		}
+		else
+		{
+			PGresult * result;
+			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".consume_other_stocks_view ";
+			sqlCommand += filter;
+			sqlCommand += " ORDER BY consume_other_stocks_id DESC LIMIT 1000 ";
+			if (offset > 0)
+			{
+				sqlCommand += " OFFSET ";
+				sqlCommand += boost::lexical_cast<std::string>(offset);
+			}
+			sqlCommand += " ;";
+			result = PQexec(dbConnection, sqlCommand.c_str());
+
+			if (PQresultStatus(result) == PGRES_TUPLES_OK)
+			{
+				if (PQntuples(result) > 0)
+				{
+					for (int i = 0; i < PQntuples(result); i++)
+					{
+						int consumeOtherStocksID = std::stoi(std::string(PQgetvalue(result, i, 0)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 0)));
+						std::string consumeOtherStocksDate = PQgetvalue(result, i, 1);
+						std::string consumeOtherStocksExecutionDate = PQgetvalue(result, i, 2);
+						std::string statusCode = PQgetvalue(result, i, 3);
+						std::string statusName = PQgetvalue(result, i, 4);
+						std::string employeeName = PQgetvalue(result, i, 5);
+						std::string employeeSurname = PQgetvalue(result, i, 6);
+						std::string employeePhone = PQgetvalue(result, i, 7);
+						std::string employeePosition = PQgetvalue(result, i, 8);
+						std::string stockEmployeeName = PQgetvalue(result, i, 9);
+						std::string stockEmployeeSurname = PQgetvalue(result, i, 10);
+						std::string stockEmployeePhone = PQgetvalue(result, i, 11);
+						std::string stockEmployeePosition = PQgetvalue(result, i, 12);
+						double count = std::stod(std::string(PQgetvalue(result, i, 13)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 13)));
+						double sum = std::stod(std::string(PQgetvalue(result, i, 14)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 14)));
+						std::string currencyName = PQgetvalue(result, i, 15);
+						int employeeID = std::stoi(std::string(PQgetvalue(result, i, 16)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 16)));
+						int userID = std::stoi(std::string(PQgetvalue(result, i, 17)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 17)));
+						int statusID = std::stoi(std::string(PQgetvalue(result, i, 18)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 18)));
+						int currencyID = std::stoi(std::string(PQgetvalue(result, i, 19)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 19)));
+
+						rowTuple = std::make_tuple(consumeOtherStocksID, consumeOtherStocksDate, consumeOtherStocksExecutionDate, statusCode,
+							statusName, employeeName, employeeSurname, employeePhone, employeePosition, stockEmployeeName,
+							stockEmployeeSurname, stockEmployeePhone, stockEmployeePosition, count, sum, currencyName, employeeID,
+							userID, statusID, currencyID);
+						resultVector.push_back(rowTuple);
+					}
+					PQclear(result);
+					return resultVector;
+				}
+				else
+				{
+					// if result of query does not contain information and have 0 row, then function return an empty vector;
+					PQclear(result);
+				}
+			}
+			else
+			{
+				std::string logStr = PQresultErrorMessage(result);
+				//WriteLog(logStr);
+				PQclear(result);
+				errorMessage = "Cannot get information from DB for consume raw, please contact with appliction provider!";
+			}
+		}
+		return resultVector;
+	}
+
 	//Get all currencies
 	std::vector<currenciesCollection> OrmasDal::GetCurrencies(int offset, std::string& errorMessage, std::string filter)
 	{
@@ -9382,6 +10252,92 @@ namespace DataLayer{
 						rowTuple = std::make_tuple(entryID, entryDate, debitingAccountNumber, value, creditingAccountNumber, operationID,
 							subaccountID, debitingAccountID, creditingAccountID, description);
 						resultVector.push_back(rowTuple);
+					}
+					PQclear(result);
+					return resultVector;
+				}
+				else
+				{
+					// if result of query does not contain information and have 0 row, then function return an empty vector;
+					PQclear(result);
+				}
+			}
+			else
+			{
+				std::string logStr = PQresultErrorMessage(result);
+				//WriteLog(logStr);
+				PQclear(result);
+				errorMessage = "Cannot get information from DB for entries, please contact with appliction provider!";
+			}
+		}
+		return resultVector;
+	}
+
+	// Get all entries from DB
+	std::vector<entriesFullJoinViewCollection> OrmasDal::GetFullExtendedEntries(int offset, std::string& errorMessage, std::string filter)
+	{
+		entriesFullJoinViewCollection rowTuple;
+		std::vector<entriesFullJoinViewCollection> resultVector;
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
+		{
+			errorMessage = "DB connection was lost! Please restart application!";
+		}
+		else
+		{
+			PGresult* result;
+			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".entries_all_joins_view ";
+			sqlCommand += filter;
+			sqlCommand += " ";
+			if (offset > 0)
+			{
+				sqlCommand += " OFFSET ";
+				sqlCommand += boost::lexical_cast<std::string>(offset);
+			}
+			sqlCommand += " ;";
+			result = PQexec(dbConnection, sqlCommand.c_str());
+
+			if (PQresultStatus(result) == PGRES_TUPLES_OK)
+			{
+				if (PQntuples(result) > 0)
+				{
+					for (int i = 0; i < PQntuples(result); i++)
+					{
+						int entryID = std::stoi(std::string(PQgetvalue(result, i, 0)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 0)));
+						std::string entryDate = PQgetvalue(result, i, 1);
+						std::string debitingAccountNumber = PQgetvalue(result, i, 2);
+						double value = std::stod(std::string(PQgetvalue(result, i, 3)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 3)));
+						std::string creditingAccountNumber = PQgetvalue(result, i, 4);
+						int operationID = std::stoi(std::string(PQgetvalue(result, i, 5)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 5)));
+						int subaccountID = std::stoi(std::string(PQgetvalue(result, i, 6)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 6)));
+						int debitingAccountID = std::stoi(std::string(PQgetvalue(result, i, 7)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 7)));
+						int creditingAccountID = std::stoi(std::string(PQgetvalue(result, i, 8)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 8)));
+						std::string description = PQgetvalue(result, i, 9);
+						int conProdID = std::stoi(std::string(PQgetvalue(result, i, 10)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 10)));
+						int conRawID = std::stoi(std::string(PQgetvalue(result, i, 11)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 11)));
+						int fixAstID = std::stoi(std::string(PQgetvalue(result, i, 12)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 12)));
+						int fixAstOperID = std::stoi(std::string(PQgetvalue(result, i, 13)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 13)));
+						int invenID = std::stoi(std::string(PQgetvalue(result, i, 14)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 14)));
+						int orderID = std::stoi(std::string(PQgetvalue(result, i, 15)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 15)));
+						int ordRawID = std::stoi(std::string(PQgetvalue(result, i, 16)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 16)));
+						int paymentID = std::stoi(std::string(PQgetvalue(result, i, 17)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 17)));
+						int payslipID = std::stoi(std::string(PQgetvalue(result, i, 18)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 18)));
+						int prodConRawID = std::stoi(std::string(PQgetvalue(result, i, 19)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 19)));
+						int rcpProdID = std::stoi(std::string(PQgetvalue(result, i, 20)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 20)));
+						int returnID = std::stoi(std::string(PQgetvalue(result, i, 21)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 21)));
+						int spoilageID = std::stoi(std::string(PQgetvalue(result, i, 22)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 22)));
+						int stockTrID = std::stoi(std::string(PQgetvalue(result, i, 23)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 23)));
+						int withdrawalID = std::stoi(std::string(PQgetvalue(result, i, 24)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 24)));
+						int writeOFFID = std::stoi(std::string(PQgetvalue(result, i, 25)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 25)));
+						int writeOFFRawID = std::stoi(std::string(PQgetvalue(result, i, 26)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 26)));
+						int productID = std::stoi(std::string(PQgetvalue(result, i, 27)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 27)));
+						int otherStockID = std::stoi(std::string(PQgetvalue(result, i, 28)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 28)));
+						int rcpOthStID = std::stoi(std::string(PQgetvalue(result, i, 29)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 29)));
+						int conOthStID = std::stoi(std::string(PQgetvalue(result, i, 30)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 30)));
+						rowTuple = std::make_tuple(entryID, entryDate, debitingAccountNumber, value, creditingAccountNumber, operationID,
+							subaccountID, debitingAccountID, creditingAccountID, description, conProdID, conRawID, fixAstID,
+							fixAstOperID, invenID, invenID, orderID, ordRawID, paymentID, payslipID, prodConRawID, rcpProdID,
+							returnID, spoilageID, stockTrID, withdrawalID, writeOFFID, writeOFFRawID, productID, otherStockID,
+							rcpOthStID, conOthStID);
 					}
 					PQclear(result);
 					return resultVector;
@@ -10036,8 +10992,80 @@ namespace DataLayer{
 						std::string endDate = std::string(PQgetvalue(result, i, 9));
 						int statusID = std::stoi(std::string(PQgetvalue(result, i, 10)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 10)));
 						int departmentID = std::stoi(std::string(PQgetvalue(result, i, 11)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 11)));
+						int subaccountID = std::stoi(std::string(PQgetvalue(result, i, 12)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 12)));
 						rowTuple = std::make_tuple(inventoryID, inventoryName, cost, inventoryNumber, barcodeNumber, divisionName,
-							statusName, location, startDate, endDate, statusID, departmentID);
+							statusName, location, startDate, endDate, statusID, departmentID, subaccountID);
+						resultVector.push_back(rowTuple);
+					}
+					PQclear(result);
+					return resultVector;
+				}
+				else
+				{
+					// if result of query does not contain information and have 0 row, then function return an empty vector;
+					PQclear(result);
+				}
+			}
+			else
+			{
+				std::string logStr = PQresultErrorMessage(result);
+				//WriteLog(logStr);
+				PQclear(result);
+				errorMessage = "Cannot get information from DB for inventory, please contact with appliction provider!";
+			}
+		}
+		return resultVector;
+	}
+
+	//Get inventory
+	std::vector<inventoryUnionViewCollection> OrmasDal::GetInventoryUnion(int offset, std::string& errorMessage, std::string filter)
+	{
+		inventoryUnionViewCollection rowTuple;
+		std::vector<inventoryUnionViewCollection> resultVector;
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
+		{
+			errorMessage = "DB connection was lost! Please restart application!";
+		}
+		else
+		{
+			PGresult * result;
+			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".inventory_union_view ";
+			sqlCommand += filter;
+			sqlCommand += " ";
+			if (offset > 0)
+			{
+				sqlCommand += " OFFSET ";
+				sqlCommand += boost::lexical_cast<std::string>(offset);
+			}
+			sqlCommand += " ;";
+			result = PQexec(dbConnection, sqlCommand.c_str());
+
+			if (PQresultStatus(result) == PGRES_TUPLES_OK)
+			{
+				if (PQntuples(result) > 0)
+				{
+					for (int i = 0; i < PQntuples(result); i++)
+					{
+						int inventoryID = std::stoi(std::string(PQgetvalue(result, i, 0)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 0)));
+						std::string inventoryName = PQgetvalue(result, i, 1);
+						double cost = std::stod(std::string(PQgetvalue(result, i, 2)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 2)));
+						std::string inventoryNumber = std::string(PQgetvalue(result, i, 3));
+						std::string barcodeNumber = std::string(PQgetvalue(result, i, 4));
+						std::string divisionName = std::string(PQgetvalue(result, i, 5));
+						std::string statusName = std::string(PQgetvalue(result, i, 6));
+						std::string location = std::string(PQgetvalue(result, i, 7));
+						std::string startDate = std::string(PQgetvalue(result, i, 8));
+						std::string endDate = std::string(PQgetvalue(result, i, 9));
+						int statusID = std::stoi(std::string(PQgetvalue(result, i, 10)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 10)));
+						int departmentID = std::stoi(std::string(PQgetvalue(result, i, 11)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 11)));
+						int invSubID = std::stoi(std::string(PQgetvalue(result, i, 12)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 12)));
+						int posFixedAssetsID = std::stoi(std::string(PQgetvalue(result, i, 13)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 13)));
+						int userID = std::stoi(std::string(PQgetvalue(result, i, 14)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 14)));
+						int subaccountID = std::stoi(std::string(PQgetvalue(result, i, 15)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 15)));
+						int accountID = std::stoi(std::string(PQgetvalue(result, i, 16)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 16)));
+						rowTuple = std::make_tuple(inventoryID, inventoryName, cost, inventoryNumber, barcodeNumber, divisionName,
+							statusName, location, startDate, endDate, statusID, departmentID, invSubID, posFixedAssetsID, userID,
+							subaccountID, accountID);
 						resultVector.push_back(rowTuple);
 					}
 					PQclear(result);
@@ -10844,6 +11872,127 @@ namespace DataLayer{
 				//WriteLog(logStr);
 				PQclear(result);
 				errorMessage = "Cannot get information from DB for order raw, please contact with appliction provider!";
+			}
+		}
+		return resultVector;
+	}
+
+	// Get products
+	std::vector<otherStocksViewCollection> OrmasDal::GetOtherStocks(int offset, std::string& errorMessage, std::string filter)
+	{
+		otherStocksViewCollection rowTuple;
+		std::vector<otherStocksViewCollection> resultVector;
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
+		{
+			errorMessage = "DB connection was lost! Please restart application!";
+		}
+		else
+		{
+			PGresult * result;
+			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".other_stocks_view ";
+			sqlCommand += filter;
+			sqlCommand += " ORDER BY other_stocks_name ASC LIMIT 1000 ";
+			if (offset > 0)
+			{
+				sqlCommand += " OFFSET ";
+				sqlCommand += boost::lexical_cast<std::string>(offset);
+			}
+			sqlCommand += " ;";
+			result = PQexec(dbConnection, sqlCommand.c_str());
+			if (PQresultStatus(result) == PGRES_TUPLES_OK)
+			{
+				if (PQntuples(result) > 0)
+				{
+					for (int i = 0; i < PQntuples(result); i++)
+					{
+						int otherStocksID = std::stoi(std::string(PQgetvalue(result, i, 0)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 0)));
+						std::string otherStocksName = PQgetvalue(result, i, 1);
+						double price = std::stod(std::string(PQgetvalue(result, i, 2)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 2)));
+						std::string currencyName = PQgetvalue(result, i, 3);
+						double volume = std::stod(std::string(PQgetvalue(result, i, 4)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 4)));
+						std::string measureName = PQgetvalue(result, i, 5);
+						std::string companyName = PQgetvalue(result, i, 6);
+						std::string otherStocksTypeName = PQgetvalue(result, i, 7);
+						int companyID = std::stoi(std::string(PQgetvalue(result, i, 8)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 8)));
+						int measureID = std::stoi(std::string(PQgetvalue(result, i, 9)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 9)));
+						int currencyID = std::stoi(std::string(PQgetvalue(result, i, 10)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 10)));
+						int otherStocksTypeID = std::stoi(std::string(PQgetvalue(result, i, 11)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 11)));
+
+						rowTuple = std::make_tuple(otherStocksID, otherStocksName, price, currencyName, volume, measureName,
+							companyName, otherStocksTypeName, companyID, measureID, currencyID, otherStocksTypeID);
+						resultVector.push_back(rowTuple);
+					}
+					PQclear(result);
+					return resultVector;
+				}
+				else
+				{
+					// if result of query does not contain information and have 0 row, then function return an empty vector;
+					PQclear(result);
+				}
+			}
+			else
+			{
+				std::string logStr = PQresultErrorMessage(result);
+				//WriteLog(logStr);
+				PQclear(result);
+				errorMessage = "Cannot get information from DB for other stocks, please contact with appliction provider!";
+			}
+		}
+		return resultVector;
+	}
+
+	// Get other stocks type
+	std::vector<otherStocksTypeCollection> OrmasDal::GetOtherStocksType(int offset, std::string& errorMessage, std::string filter)
+	{
+		otherStocksTypeCollection rowTuple;
+		std::vector<otherStocksTypeCollection> resultVector;
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
+		{
+			errorMessage = "DB connection was lost! Please restart application!";
+		}
+		else
+		{
+			PGresult * result;
+			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".other_stocks_types_view ";
+			sqlCommand += filter;
+			sqlCommand += " ORDER BY other_stocks_type_id DESC LIMIT 1000 ";
+			if (offset > 0)
+			{
+				sqlCommand += " OFFSET ";
+				sqlCommand += boost::lexical_cast<std::string>(offset);
+			}
+			sqlCommand += " ;";
+			result = PQexec(dbConnection, sqlCommand.c_str());
+
+			if (PQresultStatus(result) == PGRES_TUPLES_OK)
+			{
+				if (PQntuples(result) > 0)
+				{
+					for (int i = 0; i < PQntuples(result); i++)
+					{
+						int otherStocksTypeID = std::stoi(std::string(PQgetvalue(result, i, 0)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 0)));
+						std::string otherStocksTypeName = PQgetvalue(result, i, 1);
+						std::string otherStocksTypeShortName = PQgetvalue(result, i, 2);
+						std::string otherStocksCode = PQgetvalue(result, i, 3);
+						rowTuple = std::make_tuple(otherStocksTypeID, otherStocksTypeName, otherStocksTypeShortName, otherStocksCode);
+						resultVector.push_back(rowTuple);
+					}
+					PQclear(result);
+					return resultVector;
+				}
+				else
+				{
+					// if result of query does not contain information and have 0 row, then function return an empty vector;
+					PQclear(result);
+				}
+			}
+			else
+			{
+				std::string logStr = PQresultErrorMessage(result);
+				//WriteLog(logStr);
+				PQclear(result);
+				errorMessage = "Cannot get information from DB for other stocks type, please contact with appliction provider!";
 			}
 		}
 		return resultVector;
@@ -12238,6 +13387,149 @@ namespace DataLayer{
 		return resultVector;
 	}
 
+	//Get receipt product list
+	std::vector<receiptOtherStocksListViewCollection> OrmasDal::GetReceiptOtherStocksList(int offset, std::string& errorMessage, std::string filter)
+	{
+		receiptOtherStocksListViewCollection rowTuple;
+		std::vector<receiptOtherStocksListViewCollection> resultVector;
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
+		{
+			errorMessage = "DB connection was lost! Please restart application!";
+		}
+		else
+		{
+			PGresult * result;
+			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".receipt_other_stocks_list_view ";
+			sqlCommand += filter;
+			sqlCommand += " ORDER BY receipt_other_stocks_id DESC LIMIT 1000 ";
+			if (offset > 0)
+			{
+				sqlCommand += " OFFSET ";
+				sqlCommand += boost::lexical_cast<std::string>(offset);
+			}
+			sqlCommand += " ;";
+			result = PQexec(dbConnection, sqlCommand.c_str());
+
+			if (PQresultStatus(result) == PGRES_TUPLES_OK)
+			{
+				if (PQntuples(result) > 0)
+				{
+					for (int i = 0; i < PQntuples(result); i++)
+					{
+						int rlID = std::stoi(std::string(PQgetvalue(result, i, 0)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 0)));
+						int receiptOtherStocksID = std::stoi(std::string(PQgetvalue(result, i, 1)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 1)));
+						std::string otherStocksName = PQgetvalue(result, i, 2);
+						double price = std::stod(std::string(PQgetvalue(result, i, 3)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 3)));
+						std::string currencyName = std::string(PQgetvalue(result, i, 4));
+						double volume = std::stod(std::string(PQgetvalue(result, i, 5)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 5)));
+						std::string measureName = std::string(PQgetvalue(result, i, 6));
+						double count = std::stod(std::string(PQgetvalue(result, i, 7)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 7)));
+						double sum = std::stod(std::string(PQgetvalue(result, i, 8)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 8)));
+						std::string sumCurrencyName = std::string(PQgetvalue(result, i, 9));
+						std::string statusName = std::string(PQgetvalue(result, i, 10));
+						int otherStocksID = std::stoi(std::string(PQgetvalue(result, i, 11)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 11)));
+						int statusID = std::stoi(std::string(PQgetvalue(result, i, 12)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 12)));
+						int currencyID = std::stoi(std::string(PQgetvalue(result, i, 13)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 13)));
+						rowTuple = std::make_tuple(rlID, receiptOtherStocksID, otherStocksName, price, currencyName, volume, measureName, count, sum, sumCurrencyName,
+							statusName, otherStocksID, statusID, currencyID);
+						resultVector.push_back(rowTuple);
+					}
+					PQclear(result);
+					return resultVector;
+				}
+				else
+				{
+					// if result of query does not contain information and have 0 row, then function return an empty vector;
+					PQclear(result);
+				}
+			}
+			else
+			{
+				std::string logStr = PQresultErrorMessage(result);
+				//WriteLog(logStr);
+				PQclear(result);
+				errorMessage = "Cannot get information from DB for receipt other stocks list, please contact with appliction provider!";
+			}
+		}
+		return resultVector;
+	}
+
+	//Get receipt products
+	std::vector<receiptOtherStocksViewCollection> OrmasDal::GetReceiptOtherStocks(int offset, std::string& errorMessage, std::string filter)
+	{
+		receiptOtherStocksViewCollection rowTuple;
+		std::vector<receiptOtherStocksViewCollection> resultVector;
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
+		{
+			errorMessage = "DB connection was lost! Please restart application!";
+		}
+		else
+		{
+			PGresult * result;
+			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".receipt_other_stocks_view ";
+			sqlCommand += filter;
+			sqlCommand += " ORDER BY receipt_other_stocks_id DESC LIMIT 1000 ";
+			if (offset > 0)
+			{
+				sqlCommand += " OFFSET ";
+				sqlCommand += boost::lexical_cast<std::string>(offset);
+			}
+			sqlCommand += " ;";
+			result = PQexec(dbConnection, sqlCommand.c_str());
+
+			if (PQresultStatus(result) == PGRES_TUPLES_OK)
+			{
+				if (PQntuples(result) > 0)
+				{
+					for (int i = 0; i < PQntuples(result); i++)
+					{
+						int receiptOtherStocksID = std::stoi(std::string(PQgetvalue(result, i, 0)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 0)));
+						std::string receiptOtherStocksDate = PQgetvalue(result, i, 1);
+						std::string receiptOtherStocksExecutionDate = PQgetvalue(result, i, 2);
+						std::string statusCode = PQgetvalue(result, i, 3);
+						std::string statusName = PQgetvalue(result, i, 4);
+						std::string employeeName = PQgetvalue(result, i, 5);
+						std::string employeeSurname = PQgetvalue(result, i, 6);
+						std::string employeePhone = PQgetvalue(result, i, 7);
+						std::string employeePosition = PQgetvalue(result, i, 8);
+						std::string stockEmployeeName = PQgetvalue(result, i, 9);
+						std::string stockEmployeeSurname = PQgetvalue(result, i, 10);
+						std::string stockEmployeePhone = PQgetvalue(result, i, 11);
+						std::string stockEmployeePosition = PQgetvalue(result, i, 12);
+						double count = std::stod(std::string(PQgetvalue(result, i, 13)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 13)));
+						double sum = std::stod(std::string(PQgetvalue(result, i, 14)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 14)));
+						std::string currencyName = PQgetvalue(result, i, 15);
+						int employeeID = std::stoi(std::string(PQgetvalue(result, i, 16)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 16)));
+						int userID = std::stoi(std::string(PQgetvalue(result, i, 17)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 17)));
+						int statusID = std::stoi(std::string(PQgetvalue(result, i, 18)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 18)));
+						int currencyID = std::stoi(std::string(PQgetvalue(result, i, 19)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 19)));
+
+						rowTuple = std::make_tuple(receiptOtherStocksID, receiptOtherStocksDate, receiptOtherStocksExecutionDate, statusCode,
+							statusName, employeeName, employeeSurname, employeePhone, employeePosition, stockEmployeeName,
+							stockEmployeeSurname, stockEmployeePhone, stockEmployeePosition, count, sum, currencyName, employeeID,
+							userID, statusID, currencyID);
+						resultVector.push_back(rowTuple);
+					}
+					PQclear(result);
+					return resultVector;
+				}
+				else
+				{
+					// if result of query does not contain information and have 0 row, then function return an empty vector;
+					PQclear(result);
+				}
+			}
+			else
+			{
+				std::string logStr = PQresultErrorMessage(result);
+				//WriteLog(logStr);
+				PQclear(result);
+				errorMessage = "Cannot get information from DB for receipt other stocks, please contact with appliction provider!";
+			}
+		}
+		return resultVector;
+	}
+
 	//Get receipt raw list
 	std::vector<stockTransferListViewCollection> OrmasDal::GetStockTransferList(int offset, std::string& errorMessage, std::string filter)
 	{
@@ -13499,6 +14791,75 @@ namespace DataLayer{
 	}
 
 	//Get stock
+	std::vector<lowValueStockViewCollection> OrmasDal::GetLowValueStock(int offset, std::string& errorMessage, std::string filter)
+	{
+		lowValueStockViewCollection rowTuple;
+		std::vector<lowValueStockViewCollection> resultVector;
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
+		{
+			errorMessage = "DB connection was lost! Please restart application!";
+		}
+		else
+		{
+			PGresult * result;
+			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".low_value_stock_view ";
+			sqlCommand += filter;
+			sqlCommand += " ORDER BY other_stocks_name ASC LIMIT 1000 ";
+			if (offset > 0)
+			{
+				sqlCommand += " OFFSET ";
+				sqlCommand += boost::lexical_cast<std::string>(offset);
+			}
+			sqlCommand += " ;";
+			result = PQexec(dbConnection, sqlCommand.c_str());
+
+			if (PQresultStatus(result) == PGRES_TUPLES_OK)
+			{
+				if (PQntuples(result) > 0)
+				{
+					for (int i = 0; i < PQntuples(result); i++)
+					{
+						int sID = std::stoi(std::string(PQgetvalue(result, i, 0)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 0)));
+						std::string otherStocksName = PQgetvalue(result, i, 1);
+						double price = std::stod(std::string(PQgetvalue(result, i, 2)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 2)));
+						std::string currencyName = std::string(PQgetvalue(result, i, 3));
+						double volume = std::stod(std::string(PQgetvalue(result, i, 4)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 4)));
+						std::string measureName = std::string(PQgetvalue(result, i, 5));
+						double count = std::stod(std::string(PQgetvalue(result, i, 6)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 6)));
+						double sum = std::stod(std::string(PQgetvalue(result, i, 7)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 7)));
+						std::string sumCurrencyName = std::string(PQgetvalue(result, i, 8));
+						std::string warehouseName = std::string(PQgetvalue(result, i, 9));
+						std::string subaccNumber = std::string(PQgetvalue(result, i, 10));
+						std::string statusName = std::string(PQgetvalue(result, i, 11));
+						int otherStocksID = std::stoi(std::string(PQgetvalue(result, i, 12)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 12)));
+						int statusID = std::stoi(std::string(PQgetvalue(result, i, 13)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 13)));
+						int currencyID = std::stoi(std::string(PQgetvalue(result, i, 14)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 14)));
+						int warehouseID = std::stoi(std::string(PQgetvalue(result, i, 15)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 15)));
+						rowTuple = std::make_tuple(sID, otherStocksName, price, currencyName, volume, measureName, count, sum, sumCurrencyName,
+							warehouseName, subaccNumber, statusName, otherStocksID, statusID, currencyID, warehouseID);
+						resultVector.push_back(rowTuple);
+					}
+					PQclear(result);
+					return resultVector;
+				}
+				else
+				{
+					// if result of query does not contain information and have 0 row, then function return an empty vector;
+					PQclear(result);
+				}
+			}
+			else
+			{
+				std::string logStr = PQresultErrorMessage(result);
+				//WriteLog(logStr);
+				PQclear(result);
+				errorMessage = "Cannot get information from DB for low value stock, please contact with appliction provider!";
+			}
+		}
+		return resultVector;
+	}
+
+	//Get stock
 	std::vector<stockHistoryViewCollection> OrmasDal::GetStockHistory(int offset, std::string& errorMessage, std::string filter)
 	{
 		stockHistoryViewCollection rowTuple;
@@ -13563,6 +14924,76 @@ namespace DataLayer{
 				//WriteLog(logStr);
 				PQclear(result);
 				errorMessage = "Cannot get information from DB for stock, please contact with appliction provider!";
+			}
+		}
+		return resultVector;
+	}
+
+	//Get stock
+	std::vector<lowValueStockHistoryViewCollection> OrmasDal::GetLowValueStockHistory(int offset, std::string& errorMessage, std::string filter)
+	{
+		lowValueStockHistoryViewCollection rowTuple;
+		std::vector<lowValueStockHistoryViewCollection> resultVector;
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
+		{
+			errorMessage = "DB connection was lost! Please restart application!";
+		}
+		else
+		{
+			PGresult * result;
+			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".low_value_stock_history_view ";
+			sqlCommand += filter;
+			sqlCommand += " ORDER BY other_stock_name ASC LIMIT 1000 ";
+			if (offset > 0)
+			{
+				sqlCommand += " OFFSET ";
+				sqlCommand += boost::lexical_cast<std::string>(offset);
+			}
+			sqlCommand += " ;";
+			result = PQexec(dbConnection, sqlCommand.c_str());
+
+			if (PQresultStatus(result) == PGRES_TUPLES_OK)
+			{
+				if (PQntuples(result) > 0)
+				{
+					for (int i = 0; i < PQntuples(result); i++)
+					{
+						int sID = std::stoi(std::string(PQgetvalue(result, i, 0)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 0)));
+						std::string otherStocksName = PQgetvalue(result, i, 1);
+						double price = std::stod(std::string(PQgetvalue(result, i, 2)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 2)));
+						std::string currencyName = std::string(PQgetvalue(result, i, 3));
+						double volume = std::stod(std::string(PQgetvalue(result, i, 4)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 4)));
+						std::string measureName = std::string(PQgetvalue(result, i, 5));
+						double count = std::stod(std::string(PQgetvalue(result, i, 6)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 6)));
+						double sum = std::stod(std::string(PQgetvalue(result, i, 7)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 7)));
+						std::string sumCurrencyName = std::string(PQgetvalue(result, i, 8));
+						std::string warehouseName = std::string(PQgetvalue(result, i, 9));
+						std::string subaccNumber = std::string(PQgetvalue(result, i, 10));
+						std::string statusName = std::string(PQgetvalue(result, i, 11));
+						int otherStocksID = std::stoi(std::string(PQgetvalue(result, i, 12)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 12)));
+						int statusID = std::stoi(std::string(PQgetvalue(result, i, 13)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 13)));
+						int currencyID = std::stoi(std::string(PQgetvalue(result, i, 14)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 14)));
+						int warehouseID = std::stoi(std::string(PQgetvalue(result, i, 15)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 15)));
+						std::string historyDate = std::string(PQgetvalue(result, i, 16));
+						rowTuple = std::make_tuple(sID, otherStocksName, price, currencyName, volume, measureName, count, sum, sumCurrencyName,
+							warehouseName, subaccNumber, statusName, otherStocksID, statusID, currencyID, warehouseID, historyDate);
+						resultVector.push_back(rowTuple);
+					}
+					PQclear(result);
+					return resultVector;
+				}
+				else
+				{
+					// if result of query does not contain information and have 0 row, then function return an empty vector;
+					PQclear(result);
+				}
+			}
+			else
+			{
+				std::string logStr = PQresultErrorMessage(result);
+				//WriteLog(logStr);
+				PQclear(result);
+				errorMessage = "Cannot get information from DB for low value stock history, please contact with appliction provider!";
 			}
 		}
 		return resultVector;
@@ -13881,6 +15312,66 @@ namespace DataLayer{
 				//WriteLog(logStr);
 				PQclear(result);
 				errorMessage = "Cannot get information from DB for transports, please contact with appliction provider!";
+			}
+		}
+		return resultVector;
+	}
+
+	//Get transport history
+	std::vector<transportHistoryCollection> OrmasDal::GetTransportHistory(int offset, std::string& errorMessage, std::string filter)
+	{
+		transportHistoryCollection rowTuple;
+		std::vector<transportHistoryCollection> resultVector;
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
+		{
+			errorMessage = "DB connection was lost! Please restart application!";
+		}
+		else
+		{
+			PGresult * result;
+			std::string sqlCommand = "SELECT * FROM \"OrmasSchema\".transport_history_view ";
+			sqlCommand += filter;
+			sqlCommand += " ORDER BY product_name ASC LIMIT 1000 ";
+			if (offset > 0)
+			{
+				sqlCommand += " OFFSET ";
+				sqlCommand += boost::lexical_cast<std::string>(offset);
+			}
+			sqlCommand += " ;";
+			result = PQexec(dbConnection, sqlCommand.c_str());
+
+			if (PQresultStatus(result) == PGRES_TUPLES_OK)
+			{
+				if (PQntuples(result) > 0)
+				{
+					for (int i = 0; i < PQntuples(result); i++)
+					{
+						int thID = std::stoi(std::string(PQgetvalue(result, i, 0)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 0)));
+						int transportID = std::stoi(std::string(PQgetvalue(result, i, 1)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 1)));
+						int productID = std::stoi(std::string(PQgetvalue(result, i, 2)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 2)));
+						double count = std::stoi(std::string(PQgetvalue(result, i, 3)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 3)));
+						double sum = std::stoi(std::string(PQgetvalue(result, i, 4)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 4)));
+						int statusID = std::stoi(std::string(PQgetvalue(result, i, 5)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 5)));
+						int currencyID = std::stoi(std::string(PQgetvalue(result, i, 6)).length() == 0 ? "0" : std::string(PQgetvalue(result, i, 6)));
+						std::string historyDate = PQgetvalue(result, i, 7);
+						rowTuple = std::make_tuple(thID, transportID, productID, count, sum, statusID, currencyID, historyDate);
+						resultVector.push_back(rowTuple);
+					}
+					PQclear(result);
+					return resultVector;
+				}
+				else
+				{
+					// if result of query does not contain information and have 0 row, then function return an empty vector;
+					PQclear(result);
+				}
+			}
+			else
+			{
+				std::string logStr = PQresultErrorMessage(result);
+				//WriteLog(logStr);
+				PQclear(result);
+				errorMessage = "Cannot get information from DB for transport list, please contact with appliction provider!";
 			}
 		}
 		return resultVector;
@@ -15437,6 +16928,98 @@ namespace DataLayer{
 		return true;
 	}
 
+	// Create an item in consume raw list
+	bool OrmasDal::CreateConsumeOtherStocksList(int cOtherStocksListID, int cOtherStocksID, int otherStocksID, double cOtherStocksListCount, double cOtherStocksListSum,
+		int statusID, int currencyID, std::string& errorMessage)
+	{
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
+		{
+			errorMessage = "DB connection was lost! Please restart application!";
+			return false;
+		}
+		PGresult * result;
+		std::string sqlCommand = "INSERT INTO \"OrmasSchema\".consume_other_stocks_list(consume_other_stocks_list_id, consume_other_stocks_id, \
+								 								 										other_consume_id, count, sum, status_id, currency_id) VALUES(";
+		sqlCommand += boost::lexical_cast<std::string>(cOtherStocksListID);
+		sqlCommand += ", ";
+		sqlCommand += boost::lexical_cast<std::string>(cOtherStocksID);
+		sqlCommand += ", ";
+		sqlCommand += boost::lexical_cast<std::string>(otherStocksID);
+		sqlCommand += ", ";
+		sqlCommand += boost::lexical_cast<std::string>(cOtherStocksListCount);
+		sqlCommand += ", ";
+		sqlCommand += boost::lexical_cast<std::string>(cOtherStocksListSum);
+		sqlCommand += ", ";
+		sqlCommand += boost::lexical_cast<std::string>(statusID);
+		sqlCommand += ", ";
+		sqlCommand += boost::lexical_cast<std::string>(currencyID);
+		sqlCommand += ");";
+		result = PQexec(dbConnection, sqlCommand.c_str());
+
+		if (PQresultStatus(result) != PGRES_COMMAND_OK)
+		{
+			std::string logStr = PQresultErrorMessage(result);
+			//WriteLog(logStr);
+			PQclear(result);
+			errorMessage = "SQL command for the item creation in consume other stocks list is failed, please contact with application provider!";
+			return false;
+		}
+		PQclear(result);
+		return true;
+	}
+
+	bool OrmasDal::CreateConsumeOtherStocks(int cOtherStocksID, int userID, std::string cOtherStocksDate, std::string cOtherStocksExecutionDate,
+		int stockEmployeeID, double cOtherStocksCount, double cOtherStocksSum, int statusID, int currencyID, std::string& errorMessage)
+	{
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
+		{
+			errorMessage = "DB connection was lost! Please restart application!";
+			return false;
+		}
+		PGresult * result;
+		std::string sqlCommand = "INSERT INTO \"OrmasSchema\".consume_other_stocks(consume_other_stocks_id, user_id, consume_other_stocks_date, \
+								 								 										execution_date, employee_id, count, sum, status_id, currency_id) VALUES(";
+		sqlCommand += boost::lexical_cast<std::string>(cOtherStocksID);
+		sqlCommand += ", ";
+		sqlCommand += boost::lexical_cast<std::string>(userID);
+		sqlCommand += ", '";
+		sqlCommand += cOtherStocksDate;
+		if (cOtherStocksExecutionDate.empty())
+		{
+			sqlCommand += "', ";
+			sqlCommand += "NULL";
+			sqlCommand += ", ";
+		}
+		else
+		{
+			sqlCommand += "', '";
+			sqlCommand += cOtherStocksExecutionDate;
+			sqlCommand += "', ";
+		}
+		sqlCommand += boost::lexical_cast<std::string>(stockEmployeeID);
+		sqlCommand += ", ";
+		sqlCommand += boost::lexical_cast<std::string>(cOtherStocksCount);
+		sqlCommand += ", ";
+		sqlCommand += boost::lexical_cast<std::string>(cOtherStocksSum);
+		sqlCommand += ", ";
+		sqlCommand += boost::lexical_cast<std::string>(statusID);
+		sqlCommand += ", ";
+		sqlCommand += boost::lexical_cast<std::string>(currencyID);
+		sqlCommand += ");";
+		result = PQexec(dbConnection, sqlCommand.c_str());
+
+		if (PQresultStatus(result) != PGRES_COMMAND_OK)
+		{
+			std::string logStr = PQresultErrorMessage(result);
+			//WriteLog(logStr);
+			PQclear(result);
+			errorMessage = "SQL command for the consume other stocks creation is failed, please contact with application provider!";
+			return false;
+		}
+		PQclear(result);
+		return true;
+	}
+
 	bool OrmasDal::CreateCurrency(int currenycID, int currencyCode, std::string currencyShortName, std::string currencyName,
 		int currencyUnit, bool cMainTrade, std::string& errorMessage)
 	{
@@ -16145,7 +17728,8 @@ namespace DataLayer{
 
 	//Create inventory
 	bool OrmasDal::CreateInventory(int inventoryID, std::string inventoryName, double inventoryCost, int departamentID, std::string location,
-		int statusID, std::string startOfOperDate, std::string endOfOperDate, std::string inventoryNumber, std::string barcodeNumber, std::string& errorMessage)
+		int statusID, std::string startOfOperDate, std::string endOfOperDate, std::string inventoryNumber, std::string barcodeNumber,
+		int invSubID, std::string& errorMessage)
 	{
 		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
@@ -16154,7 +17738,7 @@ namespace DataLayer{
 		}
 		PGresult * result;
 		std::string sqlCommand = "INSERT INTO \"OrmasSchema\".inventory(inventory_id, inventory_name, inventory_cost, department_id,\
-								 					location, status_id, start_of_operation_date, end_of_operation_date, inventory_number, barcode_number) VALUES(";
+								 					location, status_id, start_of_operation_date, end_of_operation_date, inventory_number, barcode_number, inventory_subaccount_id) VALUES(";
 		sqlCommand += boost::lexical_cast<std::string>(inventoryID);
 		sqlCommand += ", '";
 		sqlCommand += inventoryName;
@@ -16168,13 +17752,24 @@ namespace DataLayer{
 		sqlCommand += boost::lexical_cast<std::string>(statusID);
 		sqlCommand += ", '";
 		sqlCommand += startOfOperDate;
-		sqlCommand += "', '";
-		sqlCommand += endOfOperDate;
-		sqlCommand += "', '";
+		if (endOfOperDate.empty())
+		{
+			sqlCommand += "', ";
+			sqlCommand += "NULL";
+			sqlCommand += ", '";
+		}
+		else
+		{
+			sqlCommand += "', '";
+			sqlCommand += endOfOperDate;
+			sqlCommand += "', '";
+		}
 		sqlCommand += inventoryNumber;
 		sqlCommand += "', '";
 		sqlCommand += barcodeNumber;
-		sqlCommand += "');";
+		sqlCommand += "', ";
+		sqlCommand += boost::lexical_cast<std::string>(invSubID);
+		sqlCommand += ");";
 		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) != PGRES_COMMAND_OK)
@@ -16322,6 +17917,88 @@ namespace DataLayer{
 			//WriteLog(logStr);
 			PQclear(result);
 			errorMessage = "SQL command for the Location creation is failed, please contact with application provider!";
+			return false;
+		}
+		PQclear(result);
+		return true;
+	}
+
+	// Create stock
+	bool OrmasDal::CreateLowValueStock(int lwStockID, int otherStocksID, double stockCount, double stockSum, int statusID, int currencyID,
+		int warehouseID, std::string& errorMessage)
+	{
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
+		{
+			errorMessage = "DB connection was lost! Please restart application!";
+			return false;
+		}
+		PGresult * result;
+		std::string sqlCommand = "INSERT INTO \"OrmasSchema\".low_value_stock(low_value_stock_id, other_stocks_id, \
+								 								 								 count, sum, status_id, currency_id, warehouse_id) VALUES(";
+		sqlCommand += boost::lexical_cast<std::string>(lwStockID);
+		sqlCommand += ", ";
+		sqlCommand += boost::lexical_cast<std::string>(otherStocksID);
+		sqlCommand += ", ";
+		sqlCommand += boost::lexical_cast<std::string>(stockCount);
+		sqlCommand += ", ";
+		sqlCommand += boost::lexical_cast<std::string>(stockSum);
+		sqlCommand += ", ";
+		sqlCommand += boost::lexical_cast<std::string>(statusID);
+		sqlCommand += ", ";
+		sqlCommand += boost::lexical_cast<std::string>(currencyID);
+		sqlCommand += ", ";
+		sqlCommand += boost::lexical_cast<std::string>(warehouseID);
+		sqlCommand += ");";
+		result = PQexec(dbConnection, sqlCommand.c_str());
+
+		if (PQresultStatus(result) != PGRES_COMMAND_OK)
+		{
+			std::string logStr = PQresultErrorMessage(result);
+			//WriteLog(logStr);
+			PQclear(result);
+			errorMessage = "SQL command for the item creation in  low value stock is failed, please contact with application provider!";
+			return false;
+		}
+		PQclear(result);
+		return true;
+	}
+
+	// Create stock history
+	bool OrmasDal::CreateLowValueStockHistory(int lwStockID, int otherStocksID, double stockCount, double stockSum, int statusID, int currencyID,
+		int warehouseID, std::string historyDate, std::string& errorMessage)
+	{
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
+		{
+			errorMessage = "DB connection was lost! Please restart application!";
+			return false;
+		}
+		PGresult * result;
+		std::string sqlCommand = "INSERT INTO \"OrmasSchema\".low_value_stock_history(low_value_stock_id, other_stocks_id, \
+								 								 				count, sum, status_id, currency_id, warehouse_id, history_date) VALUES(";
+		sqlCommand += boost::lexical_cast<std::string>(lwStockID);
+		sqlCommand += ", ";
+		sqlCommand += boost::lexical_cast<std::string>(otherStocksID);
+		sqlCommand += ", ";
+		sqlCommand += boost::lexical_cast<std::string>(stockCount);
+		sqlCommand += ", ";
+		sqlCommand += boost::lexical_cast<std::string>(stockSum);
+		sqlCommand += ", ";
+		sqlCommand += boost::lexical_cast<std::string>(statusID);
+		sqlCommand += ", ";
+		sqlCommand += boost::lexical_cast<std::string>(currencyID);
+		sqlCommand += ", ";
+		sqlCommand += boost::lexical_cast<std::string>(warehouseID);
+		sqlCommand += ", '";
+		sqlCommand += historyDate;
+		sqlCommand += "');";
+		result = PQexec(dbConnection, sqlCommand.c_str());
+
+		if (PQresultStatus(result) != PGRES_COMMAND_OK)
+		{
+			std::string logStr = PQresultErrorMessage(result);
+			//WriteLog(logStr);
+			PQclear(result);
+			errorMessage = "SQL command for the item creation in low value stock history is failed, please contact with application provider!";
 			return false;
 		}
 		PQclear(result);
@@ -16575,6 +18252,80 @@ namespace DataLayer{
 			//WriteLog(logStr);
 			PQclear(result);
 			errorMessage = "SQL command for the order raw creation is failed, please contact with application provider!";
+			return false;
+		}
+		PQclear(result);
+		return true;
+	}
+
+	bool OrmasDal::CreateOtherStocks(int otherSID, int companyID, std::string otherStockName, double productVolume, int measureID, double productPrice,
+		int currencyID, int otherStocksTypeID, std::string& errorMessage)
+	{
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
+		{
+			errorMessage = "DB connection was lost! Please restart application!";
+			return false;
+		}
+		PGresult * result;
+		std::string sqlCommand = "INSERT INTO \"OrmasSchema\".other_stocks(other_stocks_id, company_id, other_stocks_name, volume, measure_id,\
+								 								 price, currency_id, other_stocks_type_id) VALUES(";
+		sqlCommand += boost::lexical_cast<std::string>(otherSID);
+		sqlCommand += ", ";
+		sqlCommand += boost::lexical_cast<std::string>(companyID);
+		sqlCommand += ", '";
+		sqlCommand += otherStockName;
+		sqlCommand += "', ";
+		sqlCommand += boost::lexical_cast<std::string>(productVolume);
+		sqlCommand += ", ";
+		sqlCommand += boost::lexical_cast<std::string>(measureID);
+		sqlCommand += ", ";
+		sqlCommand += boost::lexical_cast<std::string>(productPrice);
+		sqlCommand += ",";
+		sqlCommand += boost::lexical_cast<std::string>(currencyID);
+		sqlCommand += ",";
+		sqlCommand += boost::lexical_cast<std::string>(otherStocksTypeID);
+		sqlCommand += ");";
+		result = PQexec(dbConnection, sqlCommand.c_str());
+
+		if (PQresultStatus(result) != PGRES_COMMAND_OK)
+		{
+			std::string logStr = PQresultErrorMessage(result);
+			//WriteLog(logStr);
+			PQclear(result);
+			errorMessage = "SQL command for the other stocks creation is failed, please contact with application provider!";
+			return false;
+		}
+		PQclear(result);
+		return true;
+	}
+
+	bool OrmasDal::CreateOtherStocksType(int otherStocksTypeID, std::string otherStocksTypeName, std::string otherStocksTypeShortName,
+		std::string otherStocksTypeCode, std::string& errorMessage)
+	{
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
+		{
+			errorMessage = "DB connection was lost! Please restart application!";
+			return false;
+		}
+		PGresult * result;
+		std::string sqlCommand = "INSERT INTO \"OrmasSchema\".other_stocks_type(other_stocks_type_id, other_stocks_type_name,\
+								 								  other_stocks_type_short_name, other_stocks_type_code) VALUES(";
+		sqlCommand += boost::lexical_cast<std::string>(otherStocksTypeID);
+		sqlCommand += ", '";
+		sqlCommand += otherStocksTypeName;
+		sqlCommand += "', '";
+		sqlCommand += otherStocksTypeShortName;
+		sqlCommand += "', '";
+		sqlCommand += otherStocksTypeCode;
+		sqlCommand += "');";
+		result = PQexec(dbConnection, sqlCommand.c_str());
+
+		if (PQresultStatus(result) != PGRES_COMMAND_OK)
+		{
+			std::string logStr = PQresultErrorMessage(result);
+			//WriteLog(logStr);
+			PQclear(result);
+			errorMessage = "SQL command for the ptoduct type creation is failed, please contact with application provider!";
 			return false;
 		}
 		PQclear(result);
@@ -17397,6 +19148,99 @@ namespace DataLayer{
 			//WriteLog(logStr);
 			PQclear(result);
 			errorMessage = "SQL command for the receipt product creation is failed, please contact with application provider!";
+			return false;
+		}
+		PQclear(result);
+		return true;
+	}
+
+	// Create an item in consume product list
+	bool OrmasDal::CreateReceiptOtherStocksList(int receiptOtherStocksListID, int receiptOtherStocksID, int otherStocksID, double receiptOtherStocksCount,
+		double receiptOtherStocksSum, int statusID, int currencyID, std::string& errorMessage)
+	{
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
+		{
+			errorMessage = "DB connection was lost! Please restart application!";
+			return false;
+		}
+		PGresult * result;
+		std::string sqlCommand = "INSERT INTO \"OrmasSchema\".receipt_other_stocks_list(receipt_other_stocks_list_id, receipt_other_stocks_id, \
+								 								 										other_stocks_id, count, sum, status_id, currency_id) VALUES(";
+		sqlCommand += boost::lexical_cast<std::string>(receiptOtherStocksListID);
+		sqlCommand += ", ";
+		sqlCommand += boost::lexical_cast<std::string>(receiptOtherStocksID);
+		sqlCommand += ", ";
+		sqlCommand += boost::lexical_cast<std::string>(otherStocksID);
+		sqlCommand += ", ";
+		sqlCommand += boost::lexical_cast<std::string>(receiptOtherStocksCount);
+		sqlCommand += ", ";
+		sqlCommand += boost::lexical_cast<std::string>(receiptOtherStocksSum);
+		sqlCommand += ", ";
+		sqlCommand += boost::lexical_cast<std::string>(statusID);
+		sqlCommand += ", ";
+		sqlCommand += boost::lexical_cast<std::string>(currencyID);
+		sqlCommand += ");";
+		result = PQexec(dbConnection, sqlCommand.c_str());
+
+		if (PQresultStatus(result) != PGRES_COMMAND_OK)
+		{
+			std::string logStr = PQresultErrorMessage(result);
+			//WriteLog(logStr);
+			PQclear(result);
+			errorMessage = "SQL command for the item creation in receipt other stocks list is failed, please contact with application provider!";
+			return false;
+		}
+		PQclear(result);
+		return true;
+	}
+
+	bool OrmasDal::CreateReceiptOtherStocks(int receiptOtherStocksID, int employeeID, std::string receiptOtherStocksDate,
+		std::string receiptOtherStocksExecutionDate, int stockEmployeeID, double receiptOtherStocksCount, double receiptOtherStocksSum,
+		int statusID, int currencyID, std::string& errorMessage)
+	{
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
+		{
+			errorMessage = "DB connection was lost! Please restart application!";
+			return false;
+		}
+		PGresult * result;
+		std::string sqlCommand = "INSERT INTO \"OrmasSchema\".receipt_other_stocks(receipt_other_stocks_id, user_id, receipt_other_stocks_date, \
+								 								 										execution_date, employee_id, count, sum, status_id, currency_id) VALUES(";
+		sqlCommand += boost::lexical_cast<std::string>(receiptOtherStocksID);
+		sqlCommand += ", ";
+		sqlCommand += boost::lexical_cast<std::string>(employeeID);
+		sqlCommand += ", '";
+		sqlCommand += receiptOtherStocksDate;
+		if (receiptOtherStocksExecutionDate.empty())
+		{
+			sqlCommand += "', ";
+			sqlCommand += "NULL";
+			sqlCommand += ", ";
+		}
+		else
+		{
+			sqlCommand += "', '";
+			sqlCommand += receiptOtherStocksExecutionDate;
+			sqlCommand += "', ";
+		}
+		sqlCommand += boost::lexical_cast<std::string>(stockEmployeeID);
+		sqlCommand += ", ";
+		sqlCommand += boost::lexical_cast<std::string>(receiptOtherStocksCount);
+		sqlCommand += ", ";
+		sqlCommand += boost::lexical_cast<std::string>(receiptOtherStocksSum);
+		sqlCommand += ", ";
+		sqlCommand += boost::lexical_cast<std::string>(statusID);
+		sqlCommand += ", ";
+		sqlCommand += boost::lexical_cast<std::string>(currencyID);
+		sqlCommand += ");";
+		result = PQexec(dbConnection, sqlCommand.c_str());
+
+		if (PQresultStatus(result) != PGRES_COMMAND_OK)
+		{
+			std::string logStr = PQresultErrorMessage(result);
+			//WriteLog(logStr);
+			PQclear(result);
+			errorMessage = "SQL command for the receipt other stocks creation is failed, please contact with application provider!";
 			return false;
 		}
 		PQclear(result);
@@ -18386,6 +20230,48 @@ namespace DataLayer{
 			//WriteLog(logStr);
 			PQclear(result);
 			errorMessage = "SQL command for the transport creation is failed, please contact with application provider!";
+			return false;
+		}
+		PQclear(result);
+		return true;
+	}
+
+	// Create an item in transport history
+	bool OrmasDal::CreateTransportHistory(int transportHistoryID, int transportID, int productID, double transportHistoryCount, double transportHistorySum,
+		int statusID, int currencyID, std::string historyDate, std::string& errorMessage)
+	{
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
+		{
+			errorMessage = "DB connection was lost! Please restart application!";
+			return false;
+		}
+		PGresult * result;
+		std::string sqlCommand = "INSERT INTO \"OrmasSchema\".transport_list(transport_list_id, transport_id, \
+								 				product_id, count, sum, status_id, currency_id, history_date) VALUES(";
+		sqlCommand += boost::lexical_cast<std::string>(transportHistoryID);
+		sqlCommand += ", ";
+		sqlCommand += boost::lexical_cast<std::string>(transportID);
+		sqlCommand += ", ";
+		sqlCommand += boost::lexical_cast<std::string>(productID);
+		sqlCommand += ", ";
+		sqlCommand += boost::lexical_cast<std::string>(transportHistoryCount);
+		sqlCommand += ", ";
+		sqlCommand += boost::lexical_cast<std::string>(transportHistorySum);
+		sqlCommand += ", ";
+		sqlCommand += boost::lexical_cast<std::string>(statusID);
+		sqlCommand += ", ";
+		sqlCommand += boost::lexical_cast<std::string>(currencyID);
+		sqlCommand += "', '";
+		sqlCommand += historyDate;
+		sqlCommand += "');";
+		result = PQexec(dbConnection, sqlCommand.c_str());
+
+		if (PQresultStatus(result) != PGRES_COMMAND_OK)
+		{
+			std::string logStr = PQresultErrorMessage(result);
+			//WriteLog(logStr);
+			PQclear(result);
+			errorMessage = "SQL command for the item creation in transport history is failed, please contact with application provider!";
 			return false;
 		}
 		PQclear(result);
@@ -19768,6 +21654,90 @@ namespace DataLayer{
 		return true;
 	}
 
+	// Delete list in consume other stocks list by consume raw id
+	bool OrmasDal::DeleteItemInConsumeOtherStocksList(int id, std::string& errorMessage)
+	{
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
+		{
+			errorMessage = "DB connection was lost! Please restart application!";
+			return false;
+		}
+		PGresult * result;
+		std::string sqlCommand = "DELETE FROM \"OrmasSchema\".consume_other_stocks_list where consume_other_stocks_list_id=";
+		sqlCommand += boost::lexical_cast<std::string>(id);
+		sqlCommand += ";";
+		result = PQexec(dbConnection, sqlCommand.c_str());
+
+		if (PQresultStatus(result) == PGRES_COMMAND_OK)
+		{
+			PQclear(result);
+			return true;
+		}
+		else
+		{
+			std::string logStr = PQresultErrorMessage(result);
+			//WriteLog(logStr);
+			PQclear(result);
+			errorMessage = "Could not delete item from consume other stocks list! SQL command is failed. Please contact with application provider!";
+			return false;
+		}
+	}
+
+	// Delete consume raw
+	bool OrmasDal::DeleteConsumeOtherStocks(int id, std::string& errorMessage)
+	{
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
+		{
+			errorMessage = "DB connection was lost! Please restart application!";
+			return false;
+		}
+
+		PGresult * result;
+		std::string sqlCommand = "DELETE FROM \"OrmasSchema\".consume_other_stocks where consume_other_stocks_id=";
+		sqlCommand += boost::lexical_cast<std::string>(id);
+		sqlCommand += ";";
+		result = PQexec(dbConnection, sqlCommand.c_str());
+		if (PQresultStatus(result) != PGRES_COMMAND_OK)
+		{
+			std::string logStr = PQresultErrorMessage(result);
+			//WriteLog(logStr);
+			PQclear(result);
+			errorMessage = "Could not delete consume other stocks! SQL command is failed. Please contact with application provider!";
+			return false;
+		}
+		PQclear(result);
+		return true;
+	}
+
+	// Delete list in consume raw list by consume raw id
+	bool OrmasDal::DeleteListByConsumeOtherStocksID(int id, std::string& errorMessage)
+	{
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
+		{
+			errorMessage = "DB connection was lost! Please restart application!";
+			return false;
+		}
+		PGresult * result;
+		std::string sqlCommand = "DELETE FROM \"OrmasSchema\".consume_other_stocks_list where consume_other_stocks_id=";
+		sqlCommand += boost::lexical_cast<std::string>(id);
+		sqlCommand += ";";
+		result = PQexec(dbConnection, sqlCommand.c_str());
+
+		if (PQresultStatus(result) == PGRES_COMMAND_OK)
+		{
+			PQclear(result);
+			return true;
+		}
+		else
+		{
+			std::string logStr = PQresultErrorMessage(result);
+			//WriteLog(logStr);
+			PQclear(result);
+			errorMessage = "Could not delete item from consume other stocks list! SQL command is failed. Please contact with application provider!";
+			return false;
+		}
+	}
+
 	// Delete currency
 	bool OrmasDal::DeleteCurrency(int id, std::string& errorMessage)
 	{
@@ -19827,7 +21797,7 @@ namespace DataLayer{
 	}
 
 	// Delete division-account
-	bool OrmasDal::DeleteDivisionAccount(int divisionID, int accountID, std::string& errorMessage)
+	bool OrmasDal::DeleteDivisionAccount(int daID, std::string& errorMessage)
 	{
 		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
@@ -19835,28 +21805,9 @@ namespace DataLayer{
 			return false;
 		}
 		PGresult * result;
-		std::string sqlCommand = "DELETE FROM \"OrmasSchema\".division_account where ";
-		if (0 == divisionID)
-		{
-			sqlCommand += "division_id = ";
-			sqlCommand += boost::lexical_cast<std::string>(divisionID);
-			sqlCommand += ";";
-		}
-		if (0 == accountID)
-		{
-			sqlCommand += "account_id = ";
-			sqlCommand += boost::lexical_cast<std::string>(accountID);
-			sqlCommand += ";";
-		}
-		if (0 != divisionID && 0 != accountID)
-		{
-			sqlCommand += "division_id = ";
-			sqlCommand += boost::lexical_cast<std::string>(divisionID);
-			sqlCommand += " AND ";
-			sqlCommand += "account_id = ";
-			sqlCommand += boost::lexical_cast<std::string>(accountID);
-			sqlCommand += ";";
-		}
+		std::string sqlCommand = "DELETE FROM \"OrmasSchema\".division_account where division_account_id=";
+		sqlCommand += boost::lexical_cast<std::string>(daID);
+		sqlCommand += ";"; 
 		result = PQexec(dbConnection, sqlCommand.c_str());
 
 		if (PQresultStatus(result) == PGRES_COMMAND_OK)
@@ -20449,6 +22400,64 @@ namespace DataLayer{
 		PQclear(result);
 		return true;
 	}
+	
+	// Delete low value stock
+	bool OrmasDal::DeleteLowValueStock(int id, std::string& errorMessage)
+	{
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
+		{
+			errorMessage = "DB connection was lost! Please restart application!";
+			return false;
+		}
+		PGresult * result;
+		std::string sqlCommand = "DELETE FROM \"OrmasSchema\".low_value_stock where low_value_stock_id=";
+		sqlCommand += boost::lexical_cast<std::string>(id);
+		sqlCommand += ";";
+		result = PQexec(dbConnection, sqlCommand.c_str());
+
+		if (PQresultStatus(result) == PGRES_COMMAND_OK)
+		{
+			PQclear(result);
+			return true;
+		}
+		else
+		{
+			std::string logStr = PQresultErrorMessage(result);
+			//WriteLog(logStr);
+			PQclear(result);
+			errorMessage = "Could not delete low value stocks! SQL command is failed. Please contact with application provider!";
+			return false;
+		}
+	}
+
+	// Delete low value stocks histoty
+	bool OrmasDal::DeleteLowValueStockHistory(int id, std::string& errorMessage)
+	{
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
+		{
+			errorMessage = "DB connection was lost! Please restart application!";
+			return false;
+		}
+		PGresult * result;
+		std::string sqlCommand = "DELETE FROM \"OrmasSchema\".low_value_stock_history where low_value_stock_id=";
+		sqlCommand += boost::lexical_cast<std::string>(id);
+		sqlCommand += ";";
+		result = PQexec(dbConnection, sqlCommand.c_str());
+
+		if (PQresultStatus(result) == PGRES_COMMAND_OK)
+		{
+			PQclear(result);
+			return true;
+		}
+		else
+		{
+			std::string logStr = PQresultErrorMessage(result);
+			//WriteLog(logStr);
+			PQclear(result);
+			errorMessage = "Could not delete low value stocks history! SQL command is failed. Please contact with application provider!";
+			return false;
+		}
+	}
 
 	// Delete jobprice
 	bool OrmasDal::DeleteJobprice(int id, std::string& errorMessage)
@@ -20763,6 +22772,64 @@ namespace DataLayer{
 		}
 		PQclear(result);
 		return true;
+	}
+
+	// Delete other stocks
+	bool OrmasDal::DeleteOtherStocks(int id, std::string& errorMessage)
+	{
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
+		{
+			errorMessage = "DB connection was lost! Please restart application!";
+			return false;
+		}
+		PGresult * result;
+		std::string sqlCommand = "DELETE FROM \"OrmasSchema\".other_stocks where other_stocks_id=";
+		sqlCommand += boost::lexical_cast<std::string>(id);
+		sqlCommand += ";";
+		result = PQexec(dbConnection, sqlCommand.c_str());
+
+		if (PQresultStatus(result) == PGRES_COMMAND_OK)
+		{
+			PQclear(result);
+			return true;
+		}
+		else
+		{
+			std::string logStr = PQresultErrorMessage(result);
+			//WriteLog(logStr);
+			PQclear(result);
+			errorMessage = "Could not delete other stocks! SQL command is failed. Please contact with application provider!";
+			return false;
+		}
+	}
+
+	// Delete other stocks type
+	bool OrmasDal::DeleteOtherStocksType(int id, std::string& errorMessage)
+	{
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
+		{
+			errorMessage = "DB connection was lost! Please restart application!";
+			return false;
+		}
+		PGresult * result;
+		std::string sqlCommand = "DELETE FROM \"OrmasSchema\".other_stocks_type where other_stocks_type_id=";
+		sqlCommand += boost::lexical_cast<std::string>(id);
+		sqlCommand += ";";
+		result = PQexec(dbConnection, sqlCommand.c_str());
+
+		if (PQresultStatus(result) == PGRES_COMMAND_OK)
+		{
+			PQclear(result);
+			return true;
+		}
+		else
+		{
+			std::string logStr = PQresultErrorMessage(result);
+			//WriteLog(logStr);
+			PQclear(result);
+			errorMessage = "Could not delete other stocks type! SQL command is failed. Please contact with application provider!";
+			return false;
+		}
 	}
 	
 	// Delete payment
@@ -21564,6 +23631,90 @@ namespace DataLayer{
 			//WriteLog(logStr);
 			PQclear(result);
 			errorMessage = "Could not delete receipt product! SQL command is failed. Please contact with application provider!";
+			return false;
+		}
+		PQclear(result);
+		return true;
+	}
+
+	// Delete item in receipt other stocks list
+	bool OrmasDal::DeleteItemInReceiptOtherStocksList(int id, std::string& errorMessage)
+	{
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
+		{
+			errorMessage = "DB connection was lost! Please restart application!";
+			return false;
+		}
+		PGresult * result;
+		std::string sqlCommand = "DELETE FROM \"OrmasSchema\".receipt_other_stocks_list where receipt_other_stocks_list_id=";
+		sqlCommand += boost::lexical_cast<std::string>(id);
+		sqlCommand += ";";
+		result = PQexec(dbConnection, sqlCommand.c_str());
+
+		if (PQresultStatus(result) == PGRES_COMMAND_OK)
+		{
+			PQclear(result);
+			return true;
+		}
+		else
+		{
+			std::string logStr = PQresultErrorMessage(result);
+			//WriteLog(logStr);
+			PQclear(result);
+			errorMessage = "Could not delete item from receipt other stocks list! SQL command is failed. Please contact with application provider!";
+			return false;
+		}
+	}
+
+	// Delete list in receipt product list by receipt product id
+	bool OrmasDal::DeleteListByReceiptOtherStocksID(int id, std::string& errorMessage)
+	{
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
+		{
+			errorMessage = "DB connection was lost! Please restart application!";
+			return false;
+		}
+		PGresult * result;
+		std::string sqlCommand = "DELETE FROM \"OrmasSchema\".receipt_other_stocks_list where receipt_other_stocks_id=";
+		sqlCommand += boost::lexical_cast<std::string>(id);
+		sqlCommand += ";";
+		result = PQexec(dbConnection, sqlCommand.c_str());
+
+		if (PQresultStatus(result) == PGRES_COMMAND_OK)
+		{
+			PQclear(result);
+			return true;
+		}
+		else
+		{
+			std::string logStr = PQresultErrorMessage(result);
+			//WriteLog(logStr);
+			PQclear(result);
+			errorMessage = "Could not delete item from receipt other stocks list! SQL command is failed. Please contact with application provider!";
+			return false;
+		}
+	}
+
+	// Delete consume other stocks
+	bool OrmasDal::DeleteReceiptOtherStocks(int id, std::string& errorMessage)
+	{
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
+		{
+			errorMessage = "DB connection was lost! Please restart application!";
+			return false;
+		}
+
+		PGresult * result;
+		std::string sqlCommand = "DELETE FROM \"OrmasSchema\".receipt_other_stocks where receipt_other_stocks_id=";
+		sqlCommand += boost::lexical_cast<std::string>(id);
+		sqlCommand += ";";
+		result = PQexec(dbConnection, sqlCommand.c_str());
+		if (PQresultStatus(result) != PGRES_COMMAND_OK)
+		{
+			std::string logStr = PQresultErrorMessage(result);
+			//WriteLog(logStr);
+			PQclear(result);
+			errorMessage = "Could not delete receipt other stocks! SQL command is failed. Please contact with application provider!";
 			return false;
 		}
 		PQclear(result);
@@ -22449,6 +24600,32 @@ namespace DataLayer{
 			//WriteLog(logStr);
 			PQclear(result);
 			errorMessage = "Could not delete transport! SQL command is failed. Please contact with application provider!";
+			return false;
+		}
+		PQclear(result);
+		return true;
+	}
+
+	// Delete transport
+	bool OrmasDal::DeleteTransportHistory(int id, std::string& errorMessage)
+	{
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
+		{
+			errorMessage = "DB connection was lost! Please restart application!";
+			return false;
+		}
+
+		PGresult * result;
+		std::string sqlCommand = "DELETE FROM \"OrmasSchema\".transport_history where transport_history_id=";
+		sqlCommand += boost::lexical_cast<std::string>(id);
+		sqlCommand += ";";
+		result = PQexec(dbConnection, sqlCommand.c_str());
+		if (PQresultStatus(result) != PGRES_COMMAND_OK)
+		{
+			std::string logStr = PQresultErrorMessage(result);
+			//WriteLog(logStr);
+			PQclear(result);
+			errorMessage = "Could not delete transport history! SQL command is failed. Please contact with application provider!";
 			return false;
 		}
 		PQclear(result);
@@ -23660,6 +25837,99 @@ namespace DataLayer{
 		return true;
 	}
 
+	bool OrmasDal::UpdateConsumeOtherStocksList(int cOtherStocksListID, int cOtherStocksID, int otherStocksID, double cOtherStocksListCount, double cOtherStocksListSum,
+		int statusID, int currencyID, std::string& errorMessage)
+	{
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
+		{
+			errorMessage = "DB connection was lost! Please restart application!";
+			return false;
+		}
+		PGresult * result;
+		std::string sqlCommand = "UPDATE \"OrmasSchema\".consume_other_stocks_list SET(consume_other_stocks_id, other_stocks_id, count, sum, status_id, currency_id) = (";
+		sqlCommand += boost::lexical_cast<std::string>(cOtherStocksID);
+		sqlCommand += ", ";
+		sqlCommand += boost::lexical_cast<std::string>(otherStocksID);
+		sqlCommand += ", ";
+		sqlCommand += boost::lexical_cast<std::string>(cOtherStocksListCount);
+		sqlCommand += ", ";
+		sqlCommand += boost::lexical_cast<std::string>(cOtherStocksListSum);
+		sqlCommand += ", ";
+		sqlCommand += boost::lexical_cast<std::string>(statusID);
+		sqlCommand += ", ";
+		sqlCommand += boost::lexical_cast<std::string>(currencyID);
+		sqlCommand += ") WHERE consume_other_stocks_list_id=";
+		sqlCommand += boost::lexical_cast<std::string>(cOtherStocksListID);
+		sqlCommand += ";";
+		result = PQexec(dbConnection, sqlCommand.c_str());
+
+		if (PQresultStatus(result) != PGRES_COMMAND_OK)
+		{
+			std::string logStr = PQresultErrorMessage(result);
+			//WriteLog(logStr);
+			PQclear(result);
+			errorMessage = "SQL command is failing while updating the item in consume other stocks list with this ID = ";
+			errorMessage += boost::lexical_cast<std::string>(cOtherStocksListID);
+			errorMessage += " .Please contact with application provider!";
+			return false;
+		}
+		PQclear(result);
+		return true;
+	}
+
+	bool OrmasDal::UpdateConsumeOtherStocks(int cOtherStocksID, int userID, std::string cOtherStocksDate, std::string cOtherStocksExecutionDate,
+		int stockEmployeeID, double cOtherStocksCount, double cOtherStocksSum, int statusID, int currencyID, std::string& errorMessage)
+	{
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
+		{
+			errorMessage = "DB connection was lost! Please restart application!";
+			return false;
+		}
+		PGresult * result;
+		std::string sqlCommand = "UPDATE \"OrmasSchema\".consume_other_stocks SET(user_id, consume_other_stocks_date, execution_date, employee_id, count, sum, status_id, currency_id) = (";
+		sqlCommand += boost::lexical_cast<std::string>(userID);
+		sqlCommand += ", '";
+		sqlCommand += cOtherStocksDate;
+		if (cOtherStocksExecutionDate.empty())
+		{
+			sqlCommand += "', ";
+			sqlCommand += "NULL";
+			sqlCommand += ", ";
+		}
+		else
+		{
+			sqlCommand += "', '";
+			sqlCommand += cOtherStocksExecutionDate;
+			sqlCommand += "', ";
+		}
+		sqlCommand += boost::lexical_cast<std::string>(stockEmployeeID);
+		sqlCommand += ", ";
+		sqlCommand += boost::lexical_cast<std::string>(cOtherStocksCount);
+		sqlCommand += ", ";
+		sqlCommand += boost::lexical_cast<std::string>(cOtherStocksSum);
+		sqlCommand += ", ";
+		sqlCommand += boost::lexical_cast<std::string>(statusID);
+		sqlCommand += ", ";
+		sqlCommand += boost::lexical_cast<std::string>(currencyID);
+		sqlCommand += ") WHERE consume_other_stocks_id=";
+		sqlCommand += boost::lexical_cast<std::string>(cOtherStocksID);
+		sqlCommand += ";";
+		result = PQexec(dbConnection, sqlCommand.c_str());
+
+		if (PQresultStatus(result) != PGRES_COMMAND_OK)
+		{
+			std::string logStr = PQresultErrorMessage(result);
+			//WriteLog(logStr);
+			PQclear(result);
+			errorMessage = "SQL command is failing while updating the consume other stocks with this ID = ";
+			errorMessage += boost::lexical_cast<std::string>(cOtherStocksID);
+			errorMessage += " .Please contact with application provider!";
+			return false;
+		}
+		PQclear(result);
+		return true;
+	}
+
 	bool OrmasDal::UpdateCurrency(int currenycID, int currencyCode, std::string currencyShortName, std::string currencyName, int currencyUnit,
 		bool cMainTrade, std::string& errorMessage)
 	{
@@ -24222,9 +26492,7 @@ namespace DataLayer{
 		}
 		PGresult * result;
 		std::string sqlCommand = "UPDATE \"OrmasSchema\".fixed_assets_details SET(amortize_group_id, amortize_type_id, department_id, \
-								 								  fixed_assets_location, primary_cost_account_id, amortize_account_id, barcode_number, amortize_value) = (";
-		sqlCommand += boost::lexical_cast<std::string>(fixedAssetsDeID);
-		sqlCommand += ", ";
+								 fixed_assets_location, primary_cost_account_id, amortize_account_id, barcode_number, amortize_value) = (";
 		sqlCommand += boost::lexical_cast<std::string>(amGroupID);
 		sqlCommand += ", ";
 		sqlCommand += boost::lexical_cast<std::string>(amTypeID);
@@ -24354,7 +26622,7 @@ namespace DataLayer{
 	}
 
 	bool OrmasDal::UpdateInventory(int inventoryID, std::string inventoryName, double inventoryCost, int departamentID, std::string location,
-		int statusID, std::string startOfOperDate, std::string endOfOperDate, std::string inventoryNumber, std::string barcodeNumber, std::string& errorMessage)
+		int statusID, std::string startOfOperDate, std::string endOfOperDate, std::string inventoryNumber, std::string barcodeNumber, int invSubID, std::string& errorMessage)
 	{
 		if (PQstatus(dbConnection) == CONNECTION_BAD)
 		{
@@ -24363,7 +26631,7 @@ namespace DataLayer{
 		}
 		PGresult * result;
 		std::string sqlCommand = "UPDATE \"OrmasSchema\".inventory SET(inventory_name, inventory_cost, department_id, location, \
-								 status_id, start_of_operation_date, end_of_operation_date, inventory_number, barcode_number) = ('";
+								 status_id, start_of_operation_date, end_of_operation_date, inventory_number, barcode_number, inventory_subaccount_id) = ('";
 		sqlCommand += inventoryName;
 		sqlCommand += "', ";
 		sqlCommand += boost::lexical_cast<std::string>(inventoryCost);
@@ -24375,13 +26643,24 @@ namespace DataLayer{
 		sqlCommand += boost::lexical_cast<std::string>(statusID);
 		sqlCommand += ", '";
 		sqlCommand += startOfOperDate;
-		sqlCommand += "', '";
-		sqlCommand += endOfOperDate;
-		sqlCommand += "', '";
+		if (endOfOperDate.empty())
+		{
+			sqlCommand += "', ";
+			sqlCommand += "NULL";
+			sqlCommand += ", '";
+		}
+		else
+		{
+			sqlCommand += "', '";
+			sqlCommand += endOfOperDate;
+			sqlCommand += "', '";
+		}
 		sqlCommand += inventoryNumber;
 		sqlCommand += "', '";
 		sqlCommand += barcodeNumber;
-		sqlCommand += "') WHERE inventory_id=";
+		sqlCommand += "', ";
+		sqlCommand += boost::lexical_cast<std::string>(invSubID);
+		sqlCommand += ") WHERE inventory_id=";
 		sqlCommand += boost::lexical_cast<std::string>(inventoryID);
 		sqlCommand += ";";
 		result = PQexec(dbConnection, sqlCommand.c_str());
@@ -24547,6 +26826,88 @@ namespace DataLayer{
 		return true;
 	}
 
+	bool OrmasDal::UpdateLowValueStock(int lwStockID, int otherStocksID, double stockCount, double stockSum, int statusID, int currencyID,
+		int warehouseID, std::string& errorMessage)
+	{
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
+		{
+			errorMessage = "DB connection was lost! Please restart application!";
+			return false;
+		}
+		PGresult * result;
+		std::string sqlCommand = "UPDATE \"OrmasSchema\".low_value_stock SET(other_stocks_id, count, sum, status_id, currency_id, warehouse_id) = (";
+		sqlCommand += boost::lexical_cast<std::string>(otherStocksID);
+		sqlCommand += ", ";
+		sqlCommand += boost::lexical_cast<std::string>(stockCount);
+		sqlCommand += ", ";
+		sqlCommand += boost::lexical_cast<std::string>(stockSum);
+		sqlCommand += ", ";
+		sqlCommand += boost::lexical_cast<std::string>(statusID);
+		sqlCommand += ", ";
+		sqlCommand += boost::lexical_cast<std::string>(currencyID);
+		sqlCommand += ", ";
+		sqlCommand += boost::lexical_cast<std::string>(warehouseID);
+		sqlCommand += ") WHERE low_value_stock_id=";
+		sqlCommand += boost::lexical_cast<std::string>(lwStockID);
+		sqlCommand += ";";
+		result = PQexec(dbConnection, sqlCommand.c_str());
+
+		if (PQresultStatus(result) != PGRES_COMMAND_OK)
+		{
+			std::string logStr = PQresultErrorMessage(result);
+			//WriteLog(logStr);
+			PQclear(result);
+			errorMessage = "SQL command is failing while updating the item in low value stock with this ID = ";
+			errorMessage += boost::lexical_cast<std::string>(lwStockID);
+			errorMessage += " .Please contact with application provider!";
+			return false;
+		}
+		PQclear(result);
+		return true;
+	}
+
+	bool OrmasDal::UpdateLowValueStockHistory(int lwStockID, int otherStocksID, double stockCount, double stockSum, int statusID, int currencyID,
+		int warehouseID, std::string historyDate, std::string& errorMessage)
+	{
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
+		{
+			errorMessage = "DB connection was lost! Please restart application!";
+			return false;
+		}
+		PGresult * result;
+		std::string sqlCommand = "UPDATE \"OrmasSchema\".low_value_stock_history SET(other_stocks_id, count, sum, status_id, currency_id,\
+								 								  warehouse_id, history_date) = (";
+		sqlCommand += boost::lexical_cast<std::string>(otherStocksID);
+		sqlCommand += ", ";
+		sqlCommand += boost::lexical_cast<std::string>(stockCount);
+		sqlCommand += ", ";
+		sqlCommand += boost::lexical_cast<std::string>(stockSum);
+		sqlCommand += ", ";
+		sqlCommand += boost::lexical_cast<std::string>(statusID);
+		sqlCommand += ", ";
+		sqlCommand += boost::lexical_cast<std::string>(currencyID);
+		sqlCommand += ", ";
+		sqlCommand += boost::lexical_cast<std::string>(warehouseID);
+		sqlCommand += ", '";
+		sqlCommand += historyDate;
+		sqlCommand += "') WHERE stock_id=";
+		sqlCommand += boost::lexical_cast<std::string>(lwStockID);
+		sqlCommand += ";";
+		result = PQexec(dbConnection, sqlCommand.c_str());
+
+		if (PQresultStatus(result) != PGRES_COMMAND_OK)
+		{
+			std::string logStr = PQresultErrorMessage(result);
+			//WriteLog(logStr);
+			PQclear(result);
+			errorMessage = "SQL command is failing while updating the item in low valuw stock with this ID = ";
+			errorMessage += boost::lexical_cast<std::string>(lwStockID);
+			errorMessage += " .Please contact with application provider!";
+			return false;
+		}
+		PQclear(result);
+		return true;
+	}
 
 	bool OrmasDal::UpdateMeasure(int measureID, std::string measureName, std::string measureShortName, int measureUnit, std::string& errorMessage)
 	{
@@ -24805,7 +27166,84 @@ namespace DataLayer{
 		return true;
 	}
 
+	bool OrmasDal::UpdateOtherStocks(int otherSID, int companyID, std::string otherStockName, double productVolume, int measureID, double productPrice,
+		int currencyID, int otherStocksTypeID, std::string& errorMessage)
+	{
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
+		{
+			errorMessage = "DB connection was lost! Please restart application!";
+			return false;
+		}
+		PGresult * result;
+		std::string sqlCommand = "UPDATE \"OrmasSchema\".other_stocks SET(company_id, product_name, volume, measure_id,\
+								 								 price,  currency_id, other_stocks_type_id) = (";
+		sqlCommand += boost::lexical_cast<std::string>(companyID);
+		sqlCommand += ", '";
+		sqlCommand += otherStockName;
+		sqlCommand += "', ";
+		sqlCommand += boost::lexical_cast<std::string>(productVolume);
+		sqlCommand += ", ";
+		sqlCommand += boost::lexical_cast<std::string>(measureID);
+		sqlCommand += ", ";
+		sqlCommand += boost::lexical_cast<std::string>(productPrice);
+		sqlCommand += ", ";
+		sqlCommand += boost::lexical_cast<std::string>(currencyID);
+		sqlCommand += ", ";
+		sqlCommand += boost::lexical_cast<std::string>(otherStocksTypeID);
+		sqlCommand += ") WHERE other_stocks_id=";
+		sqlCommand += boost::lexical_cast<std::string>(otherSID);
+		sqlCommand += ";";
+		result = PQexec(dbConnection, sqlCommand.c_str());
+
+		if (PQresultStatus(result) != PGRES_COMMAND_OK)
+		{
+			std::string logStr = PQresultErrorMessage(result);
+			//WriteLog(logStr);
+			PQclear(result);
+			errorMessage = "SQL command is failing while updating the other stocks with this ID = ";
+			errorMessage += boost::lexical_cast<std::string>(otherSID);
+			errorMessage += " .Please contact with application provider!";
+			return false;
+		}
+		PQclear(result);
+		return true;
+	}
 	
+	bool OrmasDal::UpdateOtherStocksType(int otherStocksTypeID, std::string otherStocksTypeName, std::string otherStocksTypeShortName,
+		std::string otherStocksTypeCode, std::string& errorMessage)
+	{
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
+		{
+			errorMessage = "DB connection was lost! Please restart application!";
+			return false;
+		}
+		PGresult * result;
+		std::string sqlCommand = "UPDATE \"OrmasSchema\".other_stocks_type SET(other_stocks_type_name,\
+								 								  other_stocks_type_short_name, other_stocks_type_code) = ('";
+		sqlCommand += otherStocksTypeName;
+		sqlCommand += "', '";
+		sqlCommand += otherStocksTypeShortName;
+		sqlCommand += "', '";
+		sqlCommand += otherStocksTypeCode;
+		sqlCommand += "') WHERE other_stocks_type_id=";
+		sqlCommand += boost::lexical_cast<std::string>(otherStocksTypeID);
+		sqlCommand += ";";
+		result = PQexec(dbConnection, sqlCommand.c_str());
+
+		if (PQresultStatus(result) != PGRES_COMMAND_OK)
+		{
+			std::string logStr = PQresultErrorMessage(result);
+			//WriteLog(logStr);
+			PQclear(result);
+			errorMessage = "SQL command is failing while updating the product type with this ID = ";
+			errorMessage += boost::lexical_cast<std::string>(otherStocksTypeID);
+			errorMessage += " .Please contact with application provider!";
+			return false;
+		}
+		PQclear(result);
+		return true;
+	}
+
 	bool OrmasDal::UpdatePayment(int paymentID, std::string paymentDate, double paymentValue, std::string paymentTarget, 
 		int userID, int currencyID, int statusID, int accountID, int subaccountID, std::string paymentWho, int cashboxAccID, std::string& errorMessage)
 	{
@@ -25581,6 +28019,100 @@ namespace DataLayer{
 			PQclear(result);
 			errorMessage = "SQL command is failing while updating the receipt product with this ID = ";
 			errorMessage += boost::lexical_cast<std::string>(receiptProductID);
+			errorMessage += " .Please contact with application provider!";
+			return false;
+		}
+		PQclear(result);
+		return true;
+	}
+
+	bool OrmasDal::UpdateReceiptOtherStocksList(int receiptOthSListID, int receiptOthSID, int otherStocksID, double receiptOthSCount,
+		double receiptOthSSum, int statusID, int currencyID, std::string& errorMessage)
+	{
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
+		{
+			errorMessage = "DB connection was lost! Please restart application!";
+			return false;
+		}
+		PGresult * result;
+		std::string sqlCommand = "UPDATE \"OrmasSchema\".receipt_other_stocks_list SET(receipt_other_stocks_id, other_stocks_id, count, sum, status_id, currency_id) = (";
+		sqlCommand += boost::lexical_cast<std::string>(receiptOthSID);
+		sqlCommand += ", ";
+		sqlCommand += boost::lexical_cast<std::string>(otherStocksID);
+		sqlCommand += ", ";
+		sqlCommand += boost::lexical_cast<std::string>(receiptOthSCount);
+		sqlCommand += ", ";
+		sqlCommand += boost::lexical_cast<std::string>(receiptOthSSum);
+		sqlCommand += ", ";
+		sqlCommand += boost::lexical_cast<std::string>(statusID);
+		sqlCommand += ", ";
+		sqlCommand += boost::lexical_cast<std::string>(currencyID);
+		sqlCommand += ") WHERE receipt_other_stocks_list_id=";
+		sqlCommand += boost::lexical_cast<std::string>(receiptOthSListID);
+		sqlCommand += ";";
+		result = PQexec(dbConnection, sqlCommand.c_str());
+
+		if (PQresultStatus(result) != PGRES_COMMAND_OK)
+		{
+			std::string logStr = PQresultErrorMessage(result);
+			//WriteLog(logStr);
+			PQclear(result);
+			errorMessage = "SQL command is failing while updating the item in receipt other stocks list with this ID = ";
+			errorMessage += boost::lexical_cast<std::string>(receiptOthSListID);
+			errorMessage += " .Please contact with application provider!";
+			return false;
+		}
+		PQclear(result);
+		return true;
+	}
+
+	bool OrmasDal::UpdateReceiptOtherStocks(int receiptOthSID, int employeeID, std::string receiptOthSDate,
+		std::string receiptOthSExecutionDate, int stockEmployeeID, double receiptothSCount, double receiptOthSSum,
+		int statusID, int currencyID, std::string& errorMessage)
+	{
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
+		{
+			errorMessage = "DB connection was lost! Please restart application!";
+			return false;
+		}
+		PGresult * result;
+		std::string sqlCommand = "UPDATE \"OrmasSchema\".receipt_other_stocks SET(user_id, receipt_other_stocks_date, execution_date, employee_id, count, sum, status_id, currency_id) = (";
+		sqlCommand += boost::lexical_cast<std::string>(employeeID);
+		sqlCommand += ", '";
+		sqlCommand += receiptOthSDate;
+		if (receiptOthSExecutionDate.empty())
+		{
+			sqlCommand += "', ";
+			sqlCommand += "NULL";
+			sqlCommand += ", ";
+		}
+		else
+		{
+			sqlCommand += "', '";
+			sqlCommand += receiptOthSExecutionDate;
+			sqlCommand += "', ";
+		}
+		sqlCommand += boost::lexical_cast<std::string>(stockEmployeeID);
+		sqlCommand += ", ";
+		sqlCommand += boost::lexical_cast<std::string>(receiptothSCount);
+		sqlCommand += ", ";
+		sqlCommand += boost::lexical_cast<std::string>(receiptOthSSum);
+		sqlCommand += ", ";
+		sqlCommand += boost::lexical_cast<std::string>(statusID);
+		sqlCommand += ", ";
+		sqlCommand += boost::lexical_cast<std::string>(currencyID);
+		sqlCommand += ") WHERE receipt_product_id=";
+		sqlCommand += boost::lexical_cast<std::string>(receiptOthSID);
+		sqlCommand += ";";
+		result = PQexec(dbConnection, sqlCommand.c_str());
+
+		if (PQresultStatus(result) != PGRES_COMMAND_OK)
+		{
+			std::string logStr = PQresultErrorMessage(result);
+			//WriteLog(logStr);
+			PQclear(result);
+			errorMessage = "SQL command is failing while updating the receipt other stocks with this ID = ";
+			errorMessage += boost::lexical_cast<std::string>(receiptOthSID);
 			errorMessage += " .Please contact with application provider!";
 			return false;
 		}
@@ -26597,6 +29129,48 @@ namespace DataLayer{
 			PQclear(result);
 			errorMessage = "SQL command is failing while updating the transport with this ID = ";
 			errorMessage += boost::lexical_cast<std::string>(transportID);
+			errorMessage += " .Please contact with application provider!";
+			return false;
+		}
+		PQclear(result);
+		return true;
+	}
+
+	bool OrmasDal::UpdateTransportHistory(int transportHistoryID, int transportID, int productID, double transportHistoryCount, double transportHistorySum,
+		int statusID, int currencyID, std::string historyDate, std::string& errorMessage)
+	{
+		if (PQstatus(dbConnection) == CONNECTION_BAD)
+		{
+			errorMessage = "DB connection was lost! Please restart application!";
+			return false;
+		}
+		PGresult * result;
+		std::string sqlCommand = "UPDATE \"OrmasSchema\".transport_history SET(transport_id, product_id, count, sum, status_id, currency_id, history_date) = (";
+		sqlCommand += boost::lexical_cast<std::string>(transportID);
+		sqlCommand += ", ";
+		sqlCommand += boost::lexical_cast<std::string>(productID);
+		sqlCommand += ", ";
+		sqlCommand += boost::lexical_cast<std::string>(transportHistoryCount);
+		sqlCommand += ", ";
+		sqlCommand += boost::lexical_cast<std::string>(transportHistorySum);
+		sqlCommand += ", ";
+		sqlCommand += boost::lexical_cast<std::string>(statusID);
+		sqlCommand += ", ";
+		sqlCommand += boost::lexical_cast<std::string>(currencyID);
+		sqlCommand += ", '";
+		sqlCommand += historyDate;
+		sqlCommand += "') WHERE transport_history_id=";
+		sqlCommand += boost::lexical_cast<std::string>(transportHistoryID);
+		sqlCommand += ";";
+		result = PQexec(dbConnection, sqlCommand.c_str());
+
+		if (PQresultStatus(result) != PGRES_COMMAND_OK)
+		{
+			std::string logStr = PQresultErrorMessage(result);
+			//WriteLog(logStr);
+			PQclear(result);
+			errorMessage = "SQL command is failing while updating the item in transport list with this ID = ";
+			errorMessage += boost::lexical_cast<std::string>(transportHistoryID);
 			errorMessage += " .Please contact with application provider!";
 			return false;
 		}
@@ -28860,6 +31434,254 @@ namespace DataLayer{
 		return filter;
 	}
 
+	std::string OrmasDal::GetFilterForConsumeOtherStocksList(int cOtherStocksListID, int cOtherStocksID, int otherStocksID, 
+		double cOtherStocksListCount, double cOtherStocksListSum, int statusID, int currencyID)
+	{
+		std::string tempString = "";
+		std::string filter = " where ";
+		std::vector<std::string> conditionVec;
+		if (0 != cOtherStocksListID)
+		{
+			tempString = "";
+			tempString += " consume_other_stocks_list_id = ";
+			tempString += boost::lexical_cast<std::string>(cOtherStocksListID);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != cOtherStocksID)
+		{
+			tempString = "";
+			tempString += " consume_other_stocks_id = ";
+			tempString += boost::lexical_cast<std::string>(cOtherStocksID);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != otherStocksID)
+		{
+			tempString = "";
+			tempString += " other_stocks_id = ";
+			tempString += boost::lexical_cast<std::string>(otherStocksID);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != cOtherStocksListCount)
+		{
+			tempString = "";
+			tempString += " count = ";
+			tempString += boost::lexical_cast<std::string>(cOtherStocksListCount);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != cOtherStocksListSum)
+		{
+			tempString = "";
+			tempString += " sum = ";
+			tempString += boost::lexical_cast<std::string>(cOtherStocksListSum);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != statusID)
+		{
+			tempString = "";
+			tempString += " status_id = ";
+			tempString += boost::lexical_cast<std::string>(statusID);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != currencyID)
+		{
+			tempString = "";
+			tempString += " currency_id = ";
+			tempString += boost::lexical_cast<std::string>(currencyID);
+			conditionVec.push_back(tempString);
+		}
+		if (conditionVec.size() >= 1)
+		{
+			filter += conditionVec.at(0);
+			for (unsigned int i = 1; i < conditionVec.size(); i++)
+			{
+				filter += " AND ";
+				filter += conditionVec.at(i);
+			}
+		}
+		else
+		{
+			return "";
+		}
+		return filter;
+	}
+
+	std::string OrmasDal::GetFilterForConsumeOtherStocks(int cOtherStocksID, int userID, std::string cOtherStocksDate, 
+		std::string cOtherStocksExecutionDate, 	int stockEmployeeID, double cOtherStocksCount, double cOtherStocksSum, 
+		int statusID, int currencyID)
+	{
+		std::string tempString = "";
+		std::string filter = " where ";
+		std::vector<std::string> conditionVec;
+		if (0 != cOtherStocksID)
+		{
+			tempString = "";
+			tempString += " consume_other_stocks_id = ";
+			tempString += boost::lexical_cast<std::string>(cOtherStocksID);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != userID)
+		{
+			tempString = "";
+			tempString += " user_id = ";
+			tempString += boost::lexical_cast<std::string>(userID);
+			conditionVec.push_back(tempString);
+		}
+		if (!cOtherStocksDate.empty())
+		{
+			tempString = "";
+			tempString += " consume_other_stocks_date = '";
+			tempString += cOtherStocksDate;
+			tempString += "'";
+			conditionVec.push_back(tempString);
+		}
+		if (!cOtherStocksExecutionDate.empty())
+		{
+			tempString = "";
+			tempString += " execution_date = '";
+			tempString += cOtherStocksExecutionDate;
+			tempString += "'";
+			conditionVec.push_back(tempString);
+		}
+		if (0 != stockEmployeeID)
+		{
+			tempString = "";
+			tempString += " employee_id = ";
+			tempString += boost::lexical_cast<std::string>(stockEmployeeID);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != cOtherStocksCount)
+		{
+			tempString = "";
+			tempString += " count = ";
+			tempString += boost::lexical_cast<std::string>(cOtherStocksCount);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != cOtherStocksSum)
+		{
+			tempString = "";
+			tempString += " sum = ";
+			tempString += boost::lexical_cast<std::string>(cOtherStocksSum);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != statusID)
+		{
+			tempString = "";
+			tempString += " status_id = ";
+			tempString += boost::lexical_cast<std::string>(statusID);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != currencyID)
+		{
+			tempString = "";
+			tempString += " currency_id = ";
+			tempString += boost::lexical_cast<std::string>(currencyID);
+			conditionVec.push_back(tempString);
+		}
+		if (conditionVec.size() >= 1)
+		{
+			filter += conditionVec.at(0);
+			for (unsigned int i = 1; i < conditionVec.size(); i++)
+			{
+				filter += " AND ";
+				filter += conditionVec.at(i);
+			}
+		}
+		else
+		{
+			return "";
+		}
+		return filter;
+	}
+
+	std::string OrmasDal::GetFilterForConsumeOtherStocksForPeriod(int cOtherStocksID, int userID, std::string cOtherStocksDate, 
+		std::string cOtherStocksExecutionDate, int stockEmployeeID, double cOtherStocksCount, double cOtherStocksSum, 
+		int statusID, int currencyID, std::string fromDate, std::string toDate)
+	{
+		std::string tempString = "";
+		std::string filter = " where ";
+		std::vector<std::string> conditionVec;
+		if (0 != cOtherStocksID)
+		{
+			tempString = "";
+			tempString += " consume_other_stocks_id = ";
+			tempString += boost::lexical_cast<std::string>(cOtherStocksID);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != userID)
+		{
+			tempString = "";
+			tempString += " user_id = ";
+			tempString += boost::lexical_cast<std::string>(userID);
+			conditionVec.push_back(tempString);
+		}
+		if (!fromDate.empty() && !toDate.empty())
+		{
+			tempString = "";
+			tempString += " (DATE(execution_date) BETWEEN '";
+			tempString += fromDate;
+			tempString += "' AND '";
+			if (toDate.empty())
+			{
+				tempString += GetSystemDate();
+			}
+			else
+			{
+				tempString += toDate;
+			}
+			tempString += "')";
+			conditionVec.push_back(tempString);
+		}
+		if (0 != stockEmployeeID)
+		{
+			tempString = "";
+			tempString += " employee_id = ";
+			tempString += boost::lexical_cast<std::string>(stockEmployeeID);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != cOtherStocksCount)
+		{
+			tempString = "";
+			tempString += " count = ";
+			tempString += boost::lexical_cast<std::string>(cOtherStocksCount);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != cOtherStocksSum)
+		{
+			tempString = "";
+			tempString += " sum = ";
+			tempString += boost::lexical_cast<std::string>(cOtherStocksSum);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != statusID)
+		{
+			tempString = "";
+			tempString += " status_id = ";
+			tempString += boost::lexical_cast<std::string>(statusID);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != currencyID)
+		{
+			tempString = "";
+			tempString += " currency_id = ";
+			tempString += boost::lexical_cast<std::string>(currencyID);
+			conditionVec.push_back(tempString);
+		}
+		if (conditionVec.size() >= 1)
+		{
+			filter += conditionVec.at(0);
+			for (unsigned int i = 1; i < conditionVec.size(); i++)
+			{
+				filter += " AND ";
+				filter += conditionVec.at(i);
+			}
+		}
+		else
+		{
+			return "";
+		}
+		return filter;
+	}
+
 	std::string OrmasDal::GetFilterForCurrency(int currenycID, int currencyCode, std::string currencyShortName, 
 		std::string currencyName, int currencyUnit, bool cMainTrade)
 	{
@@ -29556,6 +32378,236 @@ namespace DataLayer{
 		return filter;
 	}
 
+	std::string OrmasDal::GetFilterForFullExtendedEntry(int entryID, std::string entryDate, int debbitingAccountID, double entryValue, 
+		int creditingAccountID, int operationID, int subaccountID, std::string description, int conProdID,
+		int conRawID, int fixAstID, int fixAstOperID, int invID, int orderID, int ordRawID, int paymentID, int payslipID,
+		int prodConRawID, int rcpProdID, int returnID, int spoilageID, int skTrID, int withdrawalID, int wofID, int wofRawID,
+		int productID, int othStID, int rcpOthStID, int conOthStID)
+	{
+		std::string tempString = "";
+		std::string filter = " where ";
+		std::vector<std::string> conditionVec;
+		if (0 != entryID)
+		{
+			tempString = "";
+			tempString += " entry_id = ";
+			tempString += boost::lexical_cast<std::string>(entryID);
+			conditionVec.push_back(tempString);
+		}
+		if (!entryDate.empty())
+		{
+			tempString = "";
+			tempString += " entry_date like '";
+			tempString += entryDate;
+			tempString += "%'";
+			conditionVec.push_back(tempString);
+		}
+		if (0 != debbitingAccountID)
+		{
+			tempString = "";
+			tempString += " debiting_account_id = ";
+			tempString += boost::lexical_cast<std::string>(debbitingAccountID);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != entryValue)
+		{
+			tempString = "";
+			tempString += " value = ";
+			tempString += boost::lexical_cast<std::string>(entryValue);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != creditingAccountID)
+		{
+			tempString = "";
+			tempString += " crediting_account_id = ";
+			tempString += boost::lexical_cast<std::string>(creditingAccountID);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != operationID)
+		{
+			tempString = "";
+			tempString += " operation_id = ";
+			tempString += boost::lexical_cast<std::string>(operationID);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != subaccountID)
+		{
+			tempString = "";
+			tempString += " subaccount_id = ";
+			tempString += boost::lexical_cast<std::string>(subaccountID);
+			conditionVec.push_back(tempString);
+		}
+		if (!description.empty())
+		{
+			tempString = "";
+			tempString += " description = '";
+			tempString += description;
+			tempString += "'";
+			conditionVec.push_back(tempString);
+		}
+		if (0 != conProdID)
+		{
+			tempString = "";
+			tempString += " consume_product_id = ";
+			tempString += boost::lexical_cast<std::string>(conProdID);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != conRawID)
+		{
+			tempString = "";
+			tempString += " consume_raw_id = ";
+			tempString += boost::lexical_cast<std::string>(conRawID);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != fixAstID)
+		{
+			tempString = "";
+			tempString += " fixed_assets_id = ";
+			tempString += boost::lexical_cast<std::string>(fixAstID);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != fixAstOperID)
+		{
+			tempString = "";
+			tempString += " fixed_assets_operation_id = ";
+			tempString += boost::lexical_cast<std::string>(fixAstOperID);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != invID)
+		{
+			tempString = "";
+			tempString += " inventory_id = ";
+			tempString += boost::lexical_cast<std::string>(invID);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != orderID)
+		{
+			tempString = "";
+			tempString += " order_id = ";
+			tempString += boost::lexical_cast<std::string>(orderID);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != ordRawID)
+		{
+			tempString = "";
+			tempString += " order_raw_id = ";
+			tempString += boost::lexical_cast<std::string>(ordRawID);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != paymentID)
+		{
+			tempString = "";
+			tempString += " payment_id = ";
+			tempString += boost::lexical_cast<std::string>(paymentID);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != payslipID)
+		{
+			tempString = "";
+			tempString += " payslip_id = ";
+			tempString += boost::lexical_cast<std::string>(payslipID);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != prodConRawID)
+		{
+			tempString = "";
+			tempString += " production_consume_raw_id = ";
+			tempString += boost::lexical_cast<std::string>(prodConRawID);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != rcpProdID)
+		{
+			tempString = "";
+			tempString += " receipt_product_id = ";
+			tempString += boost::lexical_cast<std::string>(rcpProdID);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != returnID)
+		{
+			tempString = "";
+			tempString += " return_id = ";
+			tempString += boost::lexical_cast<std::string>(returnID);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != spoilageID)
+		{
+			tempString = "";
+			tempString += " spoilage_id = ";
+			tempString += boost::lexical_cast<std::string>(spoilageID);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != skTrID)
+		{
+			tempString = "";
+			tempString += " stock_transfer_id = ";
+			tempString += boost::lexical_cast<std::string>(skTrID);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != withdrawalID)
+		{
+			tempString = "";
+			tempString += " withdrawal_id = ";
+			tempString += boost::lexical_cast<std::string>(withdrawalID);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != wofID)
+		{
+			tempString = "";
+			tempString += " write_off_id = ";
+			tempString += boost::lexical_cast<std::string>(wofID);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != wofRawID)
+		{
+			tempString = "";
+			tempString += " write_off_raw_id = ";
+			tempString += boost::lexical_cast<std::string>(wofRawID);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != productID)
+		{
+			tempString = "";
+			tempString += " product_id = ";
+			tempString += boost::lexical_cast<std::string>(productID);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != othStID)
+		{
+			tempString = "";
+			tempString += " other_stocks_id = ";
+			tempString += boost::lexical_cast<std::string>(othStID);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != rcpOthStID)
+		{
+			tempString = "";
+			tempString += " receipt_other_stocks_id = ";
+			tempString += boost::lexical_cast<std::string>(rcpOthStID);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != conOthStID)
+		{
+			tempString = "";
+			tempString += " consume_other_stocks_id = ";
+			tempString += boost::lexical_cast<std::string>(conOthStID);
+			conditionVec.push_back(tempString);
+		}
+		if (conditionVec.size() >= 1)
+		{
+			filter += conditionVec.at(0);
+			for (unsigned int i = 1; i < conditionVec.size(); i++)
+			{
+				filter += " AND ";
+				filter += conditionVec.at(i);
+			}
+		}
+		else
+		{
+			return "";
+		}
+		return filter;
+	}
+
 	std::string OrmasDal::GetFilterForExtendedEntryForPeriod(int entryID, std::string entryDate, int debbitingAccountID, double entryValue,
 		int creditingAccountID, int operationID, int subaccountID, std::string description, std::string fromDate, std::string toDate)
 	{
@@ -29627,6 +32679,245 @@ namespace DataLayer{
 			tempString += " description = '";
 			tempString += description;
 			tempString += "'";
+			conditionVec.push_back(tempString);
+		}
+		if (conditionVec.size() >= 1)
+		{
+			filter += conditionVec.at(0);
+			for (unsigned int i = 1; i < conditionVec.size(); i++)
+			{
+				filter += " AND ";
+				filter += conditionVec.at(i);
+			}
+		}
+		else
+		{
+			return "";
+		}
+		return filter;
+	}
+
+	std::string OrmasDal::GetFilterForFullExtendedEntry(int entryID, std::string entryDate, int debbitingAccountID, double entryValue,
+		int creditingAccountID, int operationID, int subaccountID, std::string description, int conProdID,
+		int conRawID, int fixAstID, int fixAstOperID, int invID, int orderID, int ordRawID, int paymentID, int payslipID,
+		int prodConRawID, int rcpProdID, int returnID, int spoilageID, int skTrID, int withdrawalID, int wofID, int wofRawID,
+		int productID, int othStID, int rcpOthStID, int conOthStID, std::string fromDate, std::string toDate)
+	{
+		std::string tempString = "";
+		std::string filter = " where ";
+		std::vector<std::string> conditionVec;
+		if (0 != entryID)
+		{
+			tempString = "";
+			tempString += " entry_id = ";
+			tempString += boost::lexical_cast<std::string>(entryID);
+			conditionVec.push_back(tempString);
+		}
+		if (!fromDate.empty() && !toDate.empty())
+		{
+			tempString = "";
+			tempString += " (DATE(entry_date) BETWEEN '";
+			tempString += fromDate;
+			tempString += "' AND '";
+			if (toDate.empty())
+			{
+				tempString += GetSystemDate();
+			}
+			else
+			{
+				tempString += toDate;
+			}
+			tempString += "')";
+			conditionVec.push_back(tempString);
+		}
+		if (0 != debbitingAccountID)
+		{
+			tempString = "";
+			tempString += " debiting_account_id = ";
+			tempString += boost::lexical_cast<std::string>(debbitingAccountID);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != entryValue)
+		{
+			tempString = "";
+			tempString += " value = ";
+			tempString += boost::lexical_cast<std::string>(entryValue);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != creditingAccountID)
+		{
+			tempString = "";
+			tempString += " crediting_account_id = ";
+			tempString += boost::lexical_cast<std::string>(creditingAccountID);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != operationID)
+		{
+			tempString = "";
+			tempString += " operation_id = ";
+			tempString += boost::lexical_cast<std::string>(operationID);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != subaccountID)
+		{
+			tempString = "";
+			tempString += " subaccount_id = ";
+			tempString += boost::lexical_cast<std::string>(subaccountID);
+			conditionVec.push_back(tempString);
+		}
+		if (!description.empty())
+		{
+			tempString = "";
+			tempString += " description = '";
+			tempString += description;
+			tempString += "'";
+			conditionVec.push_back(tempString);
+		}
+		if (0 != conProdID)
+		{
+			tempString = "";
+			tempString += " consume_product_id = ";
+			tempString += boost::lexical_cast<std::string>(conProdID);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != conRawID)
+		{
+			tempString = "";
+			tempString += " consume_raw_id = ";
+			tempString += boost::lexical_cast<std::string>(conRawID);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != fixAstID)
+		{
+			tempString = "";
+			tempString += " fixed_assets_id = ";
+			tempString += boost::lexical_cast<std::string>(fixAstID);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != fixAstOperID)
+		{
+			tempString = "";
+			tempString += " fixed_assets_operation_id = ";
+			tempString += boost::lexical_cast<std::string>(fixAstOperID);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != invID)
+		{
+			tempString = "";
+			tempString += " inventory_id = ";
+			tempString += boost::lexical_cast<std::string>(invID);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != orderID)
+		{
+			tempString = "";
+			tempString += " order_id = ";
+			tempString += boost::lexical_cast<std::string>(orderID);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != ordRawID)
+		{
+			tempString = "";
+			tempString += " order_raw_id = ";
+			tempString += boost::lexical_cast<std::string>(ordRawID);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != paymentID)
+		{
+			tempString = "";
+			tempString += " payment_id = ";
+			tempString += boost::lexical_cast<std::string>(paymentID);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != payslipID)
+		{
+			tempString = "";
+			tempString += " payslip_id = ";
+			tempString += boost::lexical_cast<std::string>(payslipID);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != prodConRawID)
+		{
+			tempString = "";
+			tempString += " production_consume_raw_id = ";
+			tempString += boost::lexical_cast<std::string>(prodConRawID);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != rcpProdID)
+		{
+			tempString = "";
+			tempString += " receipt_product_id = ";
+			tempString += boost::lexical_cast<std::string>(rcpProdID);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != returnID)
+		{
+			tempString = "";
+			tempString += " return_id = ";
+			tempString += boost::lexical_cast<std::string>(returnID);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != spoilageID)
+		{
+			tempString = "";
+			tempString += " spoilage_id = ";
+			tempString += boost::lexical_cast<std::string>(spoilageID);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != skTrID)
+		{
+			tempString = "";
+			tempString += " stock_transfer_id = ";
+			tempString += boost::lexical_cast<std::string>(skTrID);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != withdrawalID)
+		{
+			tempString = "";
+			tempString += " withdrawal_id = ";
+			tempString += boost::lexical_cast<std::string>(withdrawalID);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != wofID)
+		{
+			tempString = "";
+			tempString += " write_off_id = ";
+			tempString += boost::lexical_cast<std::string>(wofID);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != wofRawID)
+		{
+			tempString = "";
+			tempString += " write_off_raw_id = ";
+			tempString += boost::lexical_cast<std::string>(wofRawID);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != productID)
+		{
+			tempString = "";
+			tempString += " product_id = ";
+			tempString += boost::lexical_cast<std::string>(productID);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != othStID)
+		{
+			tempString = "";
+			tempString += " other_stocks_id = ";
+			tempString += boost::lexical_cast<std::string>(othStID);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != rcpOthStID)
+		{
+			tempString = "";
+			tempString += " receipt_other_stocks_id = ";
+			tempString += boost::lexical_cast<std::string>(rcpOthStID);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != conOthStID)
+		{
+			tempString = "";
+			tempString += " consume_other_stocks_id = ";
+			tempString += boost::lexical_cast<std::string>(conOthStID);
 			conditionVec.push_back(tempString);
 		}
 		if (conditionVec.size() >= 1)
@@ -30047,7 +33338,7 @@ namespace DataLayer{
 		if (0 != fixedAssetsSpecID)
 		{
 			tempString = "";
-			tempString += " fixed_assets_id = ";
+			tempString += " fixed_assets_specification_id = ";
 			tempString += boost::lexical_cast<std::string>(fixedAssetsSpecID);
 			conditionVec.push_back(tempString);
 		}
@@ -30432,7 +33723,8 @@ namespace DataLayer{
 	}
 
 	std::string OrmasDal::GetFilterForInventory(int inventoryID, std::string inventoryName, double inventoryCost, int departamentID, std::string location,
-		int statusID, std::string startOfOperDate, std::string endOfOperDate, std::string inventoryNumber, std::string barcodeNumber)
+		int statusID, std::string startOfOperDate, std::string endOfOperDate, std::string inventoryNumber, std::string barcodeNumber,
+		int invSubAccID)
 	{
 		std::string tempString = "";
 		std::string filter = " where ";
@@ -30511,6 +33803,13 @@ namespace DataLayer{
 			tempString += " barcode_number = '";
 			tempString += barcodeNumber;
 			tempString += "'";
+			conditionVec.push_back(tempString);
+		}
+		if (0 != invSubAccID)
+		{
+			tempString = "";
+			tempString += " inventory_subaccount_id = ";
+			tempString += boost::lexical_cast<std::string>(invSubAccID);
 			conditionVec.push_back(tempString);
 		}
 		if (conditionVec.size() >= 1)
@@ -30818,6 +34117,156 @@ namespace DataLayer{
 			tempString = "";
 			tempString += " cityName = '";
 			tempString += cityName;
+			tempString += "'";
+			conditionVec.push_back(tempString);
+		}
+		if (conditionVec.size() >= 1)
+		{
+			filter += conditionVec.at(0);
+			for (unsigned int i = 1; i < conditionVec.size(); i++)
+			{
+				filter += " AND ";
+				filter += conditionVec.at(i);
+			}
+		}
+		else
+		{
+			return "";
+		}
+		return filter;
+	}
+
+	std::string OrmasDal::GetFilterForLowValueStock(int lvStockID, int otherStocksID, double stockCount, double stockSum, 
+		int statusID, int currencyID, int warehouseID)
+	{
+		std::string tempString = "";
+		std::string filter = " where ";
+		std::vector<std::string> conditionVec;
+		if (0 != lvStockID)
+		{
+			tempString = "";
+			tempString += " low_value_stock_id = ";
+			tempString += boost::lexical_cast<std::string>(lvStockID);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != otherStocksID)
+		{
+			tempString = "";
+			tempString += " other_stocks_id = ";
+			tempString += boost::lexical_cast<std::string>(otherStocksID);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != stockCount)
+		{
+			tempString = "";
+			tempString += " count = ";
+			tempString += boost::lexical_cast<std::string>(stockCount);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != stockSum)
+		{
+			tempString = "";
+			tempString += " sum = ";
+			tempString += boost::lexical_cast<std::string>(stockSum);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != statusID)
+		{
+			tempString = "";
+			tempString += " status_id = ";
+			tempString += boost::lexical_cast<std::string>(statusID);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != currencyID)
+		{
+			tempString = "";
+			tempString += " currency_id = ";
+			tempString += boost::lexical_cast<std::string>(currencyID);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != warehouseID)
+		{
+			tempString = "";
+			tempString += " warehouse_id = ";
+			tempString += boost::lexical_cast<std::string>(warehouseID);
+			conditionVec.push_back(tempString);
+		}
+		if (conditionVec.size() >= 1)
+		{
+			filter += conditionVec.at(0);
+			for (unsigned int i = 1; i < conditionVec.size(); i++)
+			{
+				filter += " AND ";
+				filter += conditionVec.at(i);
+			}
+		}
+		else
+		{
+			return "";
+		}
+		return filter;
+	}
+
+	std::string OrmasDal::GetFilterForLowValueStockHistory(int lvStockID, int otherStocksID, double stockCount, double stockSum, int statusID, int currencyID,
+		int warehouseID, std::string historyDate)
+	{
+		std::string tempString = "";
+		std::string filter = " where ";
+		std::vector<std::string> conditionVec;
+		if (0 != lvStockID)
+		{
+			tempString = "";
+			tempString += " low_value_stock_id = ";
+			tempString += boost::lexical_cast<std::string>(lvStockID);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != otherStocksID)
+		{
+			tempString = "";
+			tempString += " other_stocks_id = ";
+			tempString += boost::lexical_cast<std::string>(otherStocksID);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != stockCount)
+		{
+			tempString = "";
+			tempString += " count = ";
+			tempString += boost::lexical_cast<std::string>(stockCount);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != stockSum)
+		{
+			tempString = "";
+			tempString += " sum = ";
+			tempString += boost::lexical_cast<std::string>(stockSum);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != statusID)
+		{
+			tempString = "";
+			tempString += " status_id = ";
+			tempString += boost::lexical_cast<std::string>(statusID);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != currencyID)
+		{
+			tempString = "";
+			tempString += " currency_id = ";
+			tempString += boost::lexical_cast<std::string>(currencyID);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != warehouseID)
+		{
+			tempString = "";
+			tempString += " warehouse_id = ";
+			tempString += boost::lexical_cast<std::string>(warehouseID);
+			conditionVec.push_back(tempString);
+		}
+		if (!historyDate.empty())
+		{
+			tempString = "";
+			tempString += " history_date = '";
+			tempString += historyDate;
 			tempString += "'";
 			conditionVec.push_back(tempString);
 		}
@@ -31437,6 +34886,172 @@ namespace DataLayer{
 		}
 		return filter;
 	}
+
+	std::string OrmasDal::GetFilterForOtherStocks(int otherSID, int companyID, std::string otherStockName, double productVolume,
+		int measureID, double productPrice, int currencyID, int otherStocksTypeID)
+	{
+		std::string tempString = "";
+		std::string filter = " where ";
+		std::vector<std::string> conditionVec;
+		if (0 != otherSID)
+		{
+			tempString = "";
+			tempString += " other_stocks_id = ";
+			tempString += boost::lexical_cast<std::string>(otherSID);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != companyID)
+		{
+			tempString = "";
+			tempString += " company_id = ";
+			tempString += boost::lexical_cast<std::string>(companyID);
+			conditionVec.push_back(tempString);
+		}
+		if (!otherStockName.empty())
+		{
+			tempString = "";
+			tempString += " other_stocks_name = '";
+			tempString += otherStockName;
+			tempString += "'";
+			conditionVec.push_back(tempString);
+		}
+		if (0 != productVolume)
+		{
+			tempString = "";
+			tempString += " volume = ";
+			tempString += boost::lexical_cast<std::string>(productVolume);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != measureID)
+		{
+			tempString = "";
+			tempString += " measure_id = ";
+			tempString += boost::lexical_cast<std::string>(measureID);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != productPrice)
+		{
+			tempString = "";
+			tempString += " price = ";
+			tempString += boost::lexical_cast<std::string>(productPrice);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != currencyID)
+		{
+			tempString = "";
+			tempString += " currency_id = ";
+			tempString += boost::lexical_cast<std::string>(currencyID);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != otherStocksTypeID)
+		{
+			tempString = "";
+			tempString += " other_stocks_type_id = ";
+			tempString += boost::lexical_cast<std::string>(otherStocksTypeID);
+			conditionVec.push_back(tempString);
+		}
+		if (conditionVec.size() >= 1)
+		{
+			filter += conditionVec.at(0);
+			for (unsigned int i = 1; i < conditionVec.size(); i++)
+			{
+				filter += " AND ";
+				filter += conditionVec.at(i);
+			}
+		}
+		else
+		{
+			return "";
+		}
+		return filter;
+	}
+
+	std::string OrmasDal::GetFilterForOtherStocksType(int otherStocksTypeID, std::string otherStocksTypeName, std::string otherStocksTypeShortName,
+		std::string otherStocksTypeCode)
+	{
+		std::string tempString = "";
+		std::string filter = " where ";
+		std::vector<std::string> conditionVec;
+		if (0 != otherStocksTypeID)
+		{
+			tempString = "";
+			tempString += " other_stocks_type_id = ";
+			tempString += boost::lexical_cast<std::string>(otherStocksTypeID);
+			conditionVec.push_back(tempString);
+		}
+		if (!otherStocksTypeName.empty())
+		{
+			tempString = "";
+			tempString += " other_stocks_type_name = '";
+			tempString += otherStocksTypeName;
+			tempString += "'";
+			conditionVec.push_back(tempString);
+		}
+		if (!otherStocksTypeShortName.empty())
+		{
+			tempString = "";
+			tempString += " other_stocks_type_short_name = '";
+			tempString += otherStocksTypeShortName;
+			tempString += "'";
+			conditionVec.push_back(tempString);
+		}
+		if (!otherStocksTypeCode.empty())
+		{
+			tempString = "";
+			tempString += " other_stocks_type_code = '";
+			tempString += otherStocksTypeCode;
+			tempString += "'";
+			conditionVec.push_back(tempString);
+		}
+		if (conditionVec.size() >= 1)
+		{
+			filter += conditionVec.at(0);
+			for (unsigned int i = 1; i < conditionVec.size(); i++)
+			{
+				filter += " AND ";
+				filter += conditionVec.at(i);
+			}
+		}
+		else
+		{
+			return "";
+		}
+		return filter;
+	}
+
+	std::string OrmasDal::GetINFilterForOtherStocksID(std::vector<int> otherStocksIDList)
+	{
+		std::string filter = " where other_stocks_id IN(";
+		std::vector<std::string> conditionVec;
+		if (otherStocksIDList.size() > 0)
+		{
+			filter += boost::lexical_cast<std::string>(otherStocksIDList.at(0));
+			for (unsigned int i = 1; i < otherStocksIDList.size(); i++)
+			{
+				filter += ", ";
+				filter += boost::lexical_cast<std::string>(otherStocksIDList.at(i));
+			}
+			filter += ")";
+		}
+		else
+		{
+			return "";
+		}
+		return filter;
+	}
+
+	std::string OrmasDal::GetLikeFilterForOtherStocksName(std::string searchKey)
+	{
+		std::string filter = "";
+		if (searchKey.size() > 0)
+		{
+			filter = " where LOWER(other_stocks_name) LIKE LOWER('";
+			filter += searchKey;
+			filter += "%')";
+		}
+		return filter;
+	}
+
 
 	std::string OrmasDal::GetFilterForPayment(int paymentID, std::string paymentDate, double paymentValue, std::string paymentTarget,
 		int userID, int currencyID, int statusID, int accountID, int subaccountID, std::string paymentWho, int cashboxAccID)
@@ -33356,6 +36971,254 @@ namespace DataLayer{
 		return filter;
 	}
 
+	std::string OrmasDal::GetFilterForReceiptOtherStocksList(int receiptOthSListID, int receiptOthSID, int otherStocksID,
+		double receiptOthSCount, double receiptOthSSum, int statusID, int currencyID)
+	{
+		std::string tempString = "";
+		std::string filter = " where ";
+		std::vector<std::string> conditionVec;
+		if (0 != receiptOthSListID)
+		{
+			tempString = "";
+			tempString += " receipt_other_stocks_list_id = ";
+			tempString += boost::lexical_cast<std::string>(receiptOthSListID);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != receiptOthSID)
+		{
+			tempString = "";
+			tempString += " receipt_other_stocks_id = ";
+			tempString += boost::lexical_cast<std::string>(receiptOthSID);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != otherStocksID)
+		{
+			tempString = "";
+			tempString += " other_stocks_id = ";
+			tempString += boost::lexical_cast<std::string>(otherStocksID);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != receiptOthSCount)
+		{
+			tempString = "";
+			tempString += " count = ";
+			tempString += boost::lexical_cast<std::string>(receiptOthSCount);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != receiptOthSSum)
+		{
+			tempString = "";
+			tempString += " sum = ";
+			tempString += boost::lexical_cast<std::string>(receiptOthSSum);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != statusID)
+		{
+			tempString = "";
+			tempString += " status_id = ";
+			tempString += boost::lexical_cast<std::string>(statusID);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != currencyID)
+		{
+			tempString = "";
+			tempString += " currency_id = ";
+			tempString += boost::lexical_cast<std::string>(currencyID);
+			conditionVec.push_back(tempString);
+		}
+		if (conditionVec.size() >= 1)
+		{
+			filter += conditionVec.at(0);
+			for (unsigned int i = 1; i < conditionVec.size(); i++)
+			{
+				filter += " AND ";
+				filter += conditionVec.at(i);
+			}
+		}
+		else
+		{
+			return "";
+		}
+		return filter;
+	}
+
+	std::string OrmasDal::GetFilterForReceiptOtherStocks(int receiptOthSID, int employeeID, std::string receiptOthSDate,
+		std::string receiptOthSExecutionDate, int stockEmployeeID, double receiptothSCount, double receiptOthSSum,
+		int statusID, int currencyID)
+	{
+		std::string tempString = "";
+		std::string filter = " where ";
+		std::vector<std::string> conditionVec;
+		if (0 != receiptOthSID)
+		{
+			tempString = "";
+			tempString += " receipt_other_stocks_id = ";
+			tempString += boost::lexical_cast<std::string>(receiptOthSID);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != employeeID)
+		{
+			tempString = "";
+			tempString += " user_id = ";
+			tempString += boost::lexical_cast<std::string>(employeeID);
+			conditionVec.push_back(tempString);
+		}
+		if (!receiptOthSDate.empty())
+		{
+			tempString = "";
+			tempString += " receipt_other_stocks_date = '";
+			tempString += receiptOthSDate;
+			tempString += "'";
+			conditionVec.push_back(tempString);
+		}
+		if (!receiptOthSExecutionDate.empty())
+		{
+			tempString = "";
+			tempString += " execution_date = '";
+			tempString += receiptOthSExecutionDate;
+			tempString += "'";
+			conditionVec.push_back(tempString);
+		}
+		if (0 != stockEmployeeID)
+		{
+			tempString = "";
+			tempString += " employee_id = ";
+			tempString += boost::lexical_cast<std::string>(stockEmployeeID);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != receiptothSCount)
+		{
+			tempString = "";
+			tempString += " count = ";
+			tempString += boost::lexical_cast<std::string>(receiptothSCount);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != receiptOthSSum)
+		{
+			tempString = "";
+			tempString += " sum = ";
+			tempString += boost::lexical_cast<std::string>(receiptOthSSum);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != statusID)
+		{
+			tempString = "";
+			tempString += " status_id = ";
+			tempString += boost::lexical_cast<std::string>(statusID);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != currencyID)
+		{
+			tempString = "";
+			tempString += " currency_id = ";
+			tempString += boost::lexical_cast<std::string>(currencyID);
+			conditionVec.push_back(tempString);
+		}
+		if (conditionVec.size() >= 1)
+		{
+			filter += conditionVec.at(0);
+			for (unsigned int i = 1; i < conditionVec.size(); i++)
+			{
+				filter += " AND ";
+				filter += conditionVec.at(i);
+			}
+		}
+		else
+		{
+			return "";
+		}
+		return filter;
+	}
+
+	std::string OrmasDal::GetFilterForReceiptOtherStocksForPeriod(int receiptOthSID, int employeeID, std::string receiptOthSDate,
+		std::string receiptOthSExecutionDate, int stockEmployeeID, double receiptothSCount, double receiptOthSSum,
+		int statusID, int currencyID, std::string fromDate, std::string toDate)
+	{
+		std::string tempString = "";
+		std::string filter = " where ";
+		std::vector<std::string> conditionVec;
+		if (0 != receiptOthSID)
+		{
+			tempString = "";
+			tempString += " receipt_other_stocks_id = ";
+			tempString += boost::lexical_cast<std::string>(receiptOthSID);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != employeeID)
+		{
+			tempString = "";
+			tempString += " user_id = ";
+			tempString += boost::lexical_cast<std::string>(employeeID);
+			conditionVec.push_back(tempString);
+		}
+		if (!fromDate.empty() && !toDate.empty())
+		{
+			tempString = "";
+			tempString += " (DATE(execution_date) BETWEEN '";
+			tempString += fromDate;
+			tempString += "' AND '";
+			if (toDate.empty())
+			{
+				tempString += GetSystemDate();
+			}
+			else
+			{
+				tempString += toDate;
+			}
+			tempString += "')";
+			conditionVec.push_back(tempString);
+		}
+		if (0 != stockEmployeeID)
+		{
+			tempString = "";
+			tempString += " employee_id = ";
+			tempString += boost::lexical_cast<std::string>(stockEmployeeID);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != receiptothSCount)
+		{
+			tempString = "";
+			tempString += " count = ";
+			tempString += boost::lexical_cast<std::string>(receiptothSCount);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != receiptOthSSum)
+		{
+			tempString = "";
+			tempString += " sum = ";
+			tempString += boost::lexical_cast<std::string>(receiptOthSSum);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != statusID)
+		{
+			tempString = "";
+			tempString += " status_id = ";
+			tempString += boost::lexical_cast<std::string>(statusID);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != currencyID)
+		{
+			tempString = "";
+			tempString += " currency_id = ";
+			tempString += boost::lexical_cast<std::string>(currencyID);
+			conditionVec.push_back(tempString);
+		}
+		if (conditionVec.size() >= 1)
+		{
+			filter += conditionVec.at(0);
+			for (unsigned int i = 1; i < conditionVec.size(); i++)
+			{
+				filter += " AND ";
+				filter += conditionVec.at(i);
+			}
+		}
+		else
+		{
+			return "";
+		}
+		return filter;
+	}
+
 	std::string OrmasDal::GetFilterForStockTransferList(int stockTransferListID, int stockTransferID, int productID, 
 		double stockTransferListCount, double stockTransferListSum, int statusID, int currencyID)
 	{
@@ -35157,6 +39020,85 @@ namespace DataLayer{
 			tempString = "";
 			tempString += " currency_id = ";
 			tempString += boost::lexical_cast<std::string>(currencyID);
+			conditionVec.push_back(tempString);
+		}
+		if (conditionVec.size() >= 1)
+		{
+			filter += conditionVec.at(0);
+			for (unsigned int i = 1; i < conditionVec.size(); i++)
+			{
+				filter += " AND ";
+				filter += conditionVec.at(i);
+			}
+		}
+		else
+		{
+			return "";
+		}
+		return filter;
+	}
+
+	std::string OrmasDal::GetFilterForTransportHistory(int transportHistoryID, int transportID, int productID, double transportHistoryCount, double transportHistorySum,
+		int statusID, int currencyID, std::string historyDate)
+	{
+		std::string tempString = "";
+		std::string filter = " where ";
+		std::vector<std::string> conditionVec;
+		if (0 != transportHistoryID)
+		{
+			tempString = "";
+			tempString += " transport_history_id = ";
+			tempString += boost::lexical_cast<std::string>(transportHistoryID);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != transportID)
+		{
+			tempString = "";
+			tempString += " transport_id = ";
+			tempString += boost::lexical_cast<std::string>(transportID);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != productID)
+		{
+			tempString = "";
+			tempString += " product_id = ";
+			tempString += boost::lexical_cast<std::string>(productID);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != transportHistoryCount)
+		{
+			tempString = "";
+			tempString += " count = ";
+			tempString += boost::lexical_cast<std::string>(transportHistoryCount);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != transportHistorySum)
+		{
+			tempString = "";
+			tempString += " sum = ";
+			tempString += boost::lexical_cast<std::string>(transportHistorySum);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != statusID)
+		{
+			tempString = "";
+			tempString += " status_id = ";
+			tempString += boost::lexical_cast<std::string>(statusID);
+			conditionVec.push_back(tempString);
+		}
+		if (0 != currencyID)
+		{
+			tempString = "";
+			tempString += " currency_id = ";
+			tempString += boost::lexical_cast<std::string>(currencyID);
+			conditionVec.push_back(tempString);
+		}
+		if (!historyDate.empty())
+		{
+			tempString = "";
+			tempString += " history_date = '";
+			tempString += historyDate;
+			tempString += "'";
 			conditionVec.push_back(tempString);
 		}
 		if (conditionVec.size() >= 1)

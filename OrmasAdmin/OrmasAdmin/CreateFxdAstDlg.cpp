@@ -59,7 +59,18 @@ CreateFxdAstDlg::CreateFxdAstDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFla
 		accountBtn->hide();
 		purveyorBtn->hide();
 		fAstTypeCmb->setAcceptDrops(false);
-		specGrpBox->hide();
+		//specGrpBox->hide();
+		existSpecCxb->hide();
+		newFACxb->hide();
+		specBtn->hide();
+		specIDEdit->hide();
+		isAmChx->setEnabled(false);
+		factoryNumEdit->setReadOnly(true);
+		documentEdit->setReadOnly(true);
+		objCharEdit->setReadOnly(true);
+		conditionEdit->setReadOnly(true);
+		developerEdit->setReadOnly(true);
+		consDateEdit->setReadOnly(true);
 		amValueEdit->setReadOnly(true);
 		amortizeEdit->setReadOnly(true);
 		primaryEdit->setReadOnly(true);
@@ -68,6 +79,13 @@ CreateFxdAstDlg::CreateFxdAstDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFla
 		amGrpCmb->hide();
 		amTypeCmb->hide();
 		divisionCmb->hide();
+		fAstTypeCmb->hide();
+		amGroupLb->hide();
+		amTypeLb->hide();
+		depLb->hide();
+		endDateEdit->setReadOnly(true);
+		startDateEdit->setReadOnly(true);
+		buyDateEdit->setReadOnly(true);
 		DataForm *parentDataForm = (DataForm*)parentForm;
 		itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
 		mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
@@ -160,7 +178,7 @@ void CreateFxdAstDlg::SetFixedAssetsParams(int specID, QString invNumber, double
 	fixedAssets->SetEndOfOperationDate(endOfOperDate.toUtf8().constData());
 	fixedAssets->SetStatusID(statID);
 	fixedAssets->SetFixedAssetsDetailsID(fxID);
-	fixedAssetsDetails->SetID(id);
+	fixedAssets->SetID(id);
 }
 
 void CreateFxdAstDlg::SetPostingFixedAssetsParams(int userID, int subaccID, int accID, int fxID, int invID, int id)
@@ -170,7 +188,7 @@ void CreateFxdAstDlg::SetPostingFixedAssetsParams(int userID, int subaccID, int 
 	postingFixedAssets->SetAccountID(accID);
 	postingFixedAssets->SetFixedAssetsID(fxID);
 	postingFixedAssets->SetInventoryID(invID);
-	fixedAssetsDetails->SetID(id);
+	postingFixedAssets->SetID(id);
 }
 
 void CreateFxdAstDlg::SetFixedAssetsUnionParams(BusinessLayer::FixedAssets* fa, BusinessLayer::FixedAssetsSpecification* fas, BusinessLayer::FixedAssetsDetails* fad, BusinessLayer::PostingFixedAssets* pfa)
@@ -182,48 +200,110 @@ void CreateFxdAstDlg::SetFixedAssetsUnionParams(BusinessLayer::FixedAssets* fa, 
 }
 
 void CreateFxdAstDlg::FillEditElements(int specID, QString invNumber, double primCost, double stopCost, int servLife, QString isAmor,
-	QString buyDate, QString sartOfOperDate, QString endOfOperDate, int statID, int fxDetID)
+	QString buyDate, QString sartOfOperDate, QString endOfOperDate, int statID, int fxDetID, int faID)
 {
 	specIDEdit->setText(QString::number(specID));
-	BusinessLayer::FixedAssetsSpecification spec;
-	if (spec.GetFixedAssetsSpecificationByID(dialogBL->GetOrmasDal(), specID, errorMessage))
+	if (fixedAssetsSpecification->GetFixedAssetsSpecificationByID(dialogBL->GetOrmasDal(), specID, errorMessage))
 	{
-		faNameEdit->setText(spec.GetName().c_str());
-		factoryNumEdit->setText(spec.GetFactoryNumber().c_str());
-		developerEdit->setText(spec.GetDeveloper().c_str());
-		documentEdit->setText(spec.GetDocument().c_str());
-		objCharEdit->setText(spec.GetObjectCharacters().c_str());
-		conditionEdit->setText(spec.GetCondition().c_str());
-		consDateEdit->setDate(QDate::fromString(spec.GetDateOfConstruction().c_str(), "dd.MM.yyyy"));
+		faNameEdit->setText(fixedAssetsSpecification->GetName().c_str());
+		factoryNumEdit->setText(fixedAssetsSpecification->GetFactoryNumber().c_str());
+		developerEdit->setText(fixedAssetsSpecification->GetDeveloper().c_str());
+		documentEdit->setText(fixedAssetsSpecification->GetDocument().c_str());
+		objCharEdit->setText(fixedAssetsSpecification->GetObjectCharacters().c_str());
+		conditionEdit->setText(fixedAssetsSpecification->GetCondition().c_str());
+		consDateEdit->setDate(QDate::fromString(fixedAssetsSpecification->GetDateOfConstruction().c_str(), "dd.MM.yyyy"));
 	}
 	detailsIDEdit->setText(QString::number(fxDetID));
-	BusinessLayer::FixedAssetsDetails det;
-	if (det.GetFixedAssetsDetailsByID(dialogBL->GetOrmasDal(), fxDetID, errorMessage))
+	if (fixedAssetsDetails->GetFixedAssetsDetailsByID(dialogBL->GetOrmasDal(), fxDetID, errorMessage))
 	{
-		amGrpCmb->setCurrentIndex(amGrpCmb->findData(QVariant(det.GetAmortizeGroupID())));
-		amTypeCmb->setCurrentIndex(amTypeCmb->findData(QVariant(det.GetAmortizeTypeID())));
-		divisionCmb->setCurrentIndex(divisionCmb->findData(QVariant(det.GetDepartmentID())));
-		locationEdit->setText(det.GetFixedAssetsLocation().c_str());
+		amGrpCmb->setCurrentIndex(amGrpCmb->findData(QVariant(fixedAssetsDetails->GetAmortizeGroupID())));
+		amTypeCmb->setCurrentIndex(amTypeCmb->findData(QVariant(fixedAssetsDetails->GetAmortizeTypeID())));
+		divisionCmb->setCurrentIndex(divisionCmb->findData(QVariant(fixedAssetsDetails->GetDepartmentID())));
+		locationEdit->setText(fixedAssetsDetails->GetFixedAssetsLocation().c_str());
 		BusinessLayer::Subaccount priSub;
 		BusinessLayer::Subaccount amorSub;
-		if (priSub.GetSubaccountByID(dialogBL->GetOrmasDal(), det.GetPrimaryCostAccountID(), errorMessage))
+		if (priSub.GetSubaccountByID(dialogBL->GetOrmasDal(), fixedAssetsDetails->GetPrimaryCostAccountID(), errorMessage))
 		{
 			primaryCostEdit->setText(QString::number(priSub.GetCurrentBalance(),'f', 3));
 			fAstTypeCmb->setCurrentIndex(fAstTypeCmb->findData(QVariant(priSub.GetParentAccountID())));
 		}
-		if (amorSub.GetSubaccountByID(dialogBL->GetOrmasDal(), det.GetAmortizeAccountID(), errorMessage))
+		if (amorSub.GetSubaccountByID(dialogBL->GetOrmasDal(), fixedAssetsDetails->GetAmortizeAccountID(), errorMessage))
 		{
 			primaryCostEdit->setText(QString::number(amorSub.GetCurrentBalance(), 'f', 3));
 		}
-		barcodeEdit->setText(det.GetBarcodeNumber().c_str());
-		amValueEdit->setText(QString::number(det.GetAmortizeValue(), 'f', 3));
+		barcodeEdit->setText(fixedAssetsDetails->GetBarcodeNumber().c_str());
+		amValueEdit->setText(QString::number(fixedAssetsDetails->GetAmortizeValue(), 'f', 3));
+	}
+
+	if (postingFixedAssets->GetPostingFixedAssetsByFixedAssetsID(dialogBL->GetOrmasDal(), faID, errorMessage))
+	{
+		if (postingFixedAssets->GetAccountID() > 0)
+		{
+			accableIDEdit->setText(QString::number(postingFixedAssets->GetAccountID()));
+			BusinessLayer::ChartOfAccounts coa;
+			BusinessLayer::Account acc;
+			if (acc.GetAccountByID(dialogBL->GetOrmasDal(), postingFixedAssets->GetAccountID(), errorMessage))
+			{
+				if (coa.GetChartOfAccountsByNumber(dialogBL->GetOrmasDal(), acc.GetNumber(), errorMessage))
+				{
+					surnameLb->setText("");
+					accountName->setText(coa.GetName().c_str());
+					accableIDEdit->hide();
+					accableIDEdit->setText("");
+					purEditID->hide();
+					purEditID->setText("");
+					surLb->hide();
+				}
+			}
+		}
+		if (postingFixedAssets->GetUserID() > 0)
+		{
+			purEditID->setText(QString::number(postingFixedAssets->GetUserID()));
+			BusinessLayer::User user;
+			if (user.GetUserByID(dialogBL->GetOrmasDal(), postingFixedAssets->GetUserID(), errorMessage))
+			{
+				surnameLb->setText(user.GetSurname().c_str());
+				accableIDEdit->hide();
+				accableIDEdit->setText("");
+				accLB->hide();
+				accountName->hide();
+				accID->hide();
+				accID->setText("");
+			}
+		}
+		if (postingFixedAssets->GetSubaccountID() > 0)
+		{
+			BusinessLayer::Balance balance;
+			if (balance.GetBalanceBySubaccountID(dialogBL->GetOrmasDal(), postingFixedAssets->GetSubaccountID(), errorMessage))
+			{
+				accableIDEdit->setText(QString::number(balance.GetUserID()));
+				BusinessLayer::User user;
+				if (user.GetUserByID(dialogBL->GetOrmasDal(), balance.GetUserID(), errorMessage))
+				{
+					surnameLb->setText(user.GetSurname().c_str());
+					purEditID->hide();
+					purEditID->setText("");
+					accLB->hide();
+					accountName->hide();
+					accID->hide();
+					accID->setText("");
+				}
+			}
+		}
 	}
 
 	invNumberEdit->setText(invNumber);
 	primaryEdit->setText(QString::number(primCost, 'f', 3));
-	stopCostLb->setText(QString::number(stopCost, 'f', 3));
+	stopEdit->setText(QString::number(stopCost, 'f', 3));
 	serviceLifeEdit->setText(QString::number(servLife));
-	isAmChx->setChecked(servLife);
+	if (isAmor.toStdString().compare("true") == 0)
+	{
+		isAmChx->setCheckState(Qt::Checked);
+	}
+	else
+	{
+		isAmChx->setCheckState(Qt::Unchecked);
+	}
 	buyDateEdit->setDate(QDate::fromString(buyDate, "dd.MM.yyyy"));
 	startDateEdit->setDate(QDate::fromString(sartOfOperDate, "dd.MM.yyyy"));
 	endDateEdit->setDate(QDate::fromString(endOfOperDate, "dd.MM.yyyy"));
@@ -253,6 +333,7 @@ void CreateFxdAstDlg::SetID(int ID, QString childName)
 				BusinessLayer::User user;
 				if (user.GetUserByID(dialogBL->GetOrmasDal(), ID, errorMessage))
 				{
+					accountName->setText("");
 					surnameLb->setText(user.GetSurname().c_str());
 				}
 			}
@@ -265,6 +346,7 @@ void CreateFxdAstDlg::SetID(int ID, QString childName)
 					BusinessLayer::User user;
 					if (user.GetUserByID(dialogBL->GetOrmasDal(), accountable.GetEmployeeID(), errorMessage))
 					{
+						accountName->setText("");
 						surnameLb->setText(user.GetSurname().c_str());
 					}
 				}
@@ -278,7 +360,8 @@ void CreateFxdAstDlg::SetID(int ID, QString childName)
 					BusinessLayer::ChartOfAccounts coA;
 					if (coA.GetChartOfAccountsByNumber(dialogBL->GetOrmasDal(), account.GetNumber(), errorMessage))
 					{
-						surnameLb->setText(coA.GetName().c_str());
+						surnameLb->setText("");
+						accountName->setText(coA.GetName().c_str());
 					}
 				}
 			}
@@ -291,29 +374,30 @@ bool CreateFxdAstDlg::FillDlgElements(QTableView* cTable)
 	QModelIndex mIndex = cTable->selectionModel()->currentIndex();
 	if (mIndex.row() >= 0)
 	{
-		SetFixedAssetsParams(cTable->model()->data(cTable->model()->index(mIndex.row(), 13)).toInt(),
+		SetFixedAssetsParams(cTable->model()->data(cTable->model()->index(mIndex.row(), 14)).toInt(),
 			cTable->model()->data(cTable->model()->index(mIndex.row(), 2)).toString().toUtf8().constData(),
 			cTable->model()->data(cTable->model()->index(mIndex.row(), 3)).toDouble(),
 			cTable->model()->data(cTable->model()->index(mIndex.row(), 4)).toDouble(),
-			cTable->model()->data(cTable->model()->index(mIndex.row(), 8)).toInt(),
-			cTable->model()->data(cTable->model()->index(mIndex.row(), 9)).toString().toUtf8().constData(),
+			cTable->model()->data(cTable->model()->index(mIndex.row(), 9)).toInt(),
 			cTable->model()->data(cTable->model()->index(mIndex.row(), 10)).toString().toUtf8().constData(),
 			cTable->model()->data(cTable->model()->index(mIndex.row(), 11)).toString().toUtf8().constData(),
 			cTable->model()->data(cTable->model()->index(mIndex.row(), 12)).toString().toUtf8().constData(),
-			cTable->model()->data(cTable->model()->index(mIndex.row(), 14)).toInt(),
+			cTable->model()->data(cTable->model()->index(mIndex.row(), 13)).toString().toUtf8().constData(),
 			cTable->model()->data(cTable->model()->index(mIndex.row(), 15)).toInt(),
+			cTable->model()->data(cTable->model()->index(mIndex.row(), 16)).toInt(),
 			cTable->model()->data(cTable->model()->index(mIndex.row(), 0)).toInt());
-		FillEditElements(cTable->model()->data(cTable->model()->index(mIndex.row(), 13)).toInt(),
+		FillEditElements(cTable->model()->data(cTable->model()->index(mIndex.row(), 14)).toInt(),
 			cTable->model()->data(cTable->model()->index(mIndex.row(), 2)).toString().toUtf8().constData(),
 			cTable->model()->data(cTable->model()->index(mIndex.row(), 3)).toDouble(),
 			cTable->model()->data(cTable->model()->index(mIndex.row(), 4)).toDouble(),
-			cTable->model()->data(cTable->model()->index(mIndex.row(), 8)).toInt(),
-			cTable->model()->data(cTable->model()->index(mIndex.row(), 9)).toString().toUtf8().constData(),
+			cTable->model()->data(cTable->model()->index(mIndex.row(), 9)).toInt(),
 			cTable->model()->data(cTable->model()->index(mIndex.row(), 10)).toString().toUtf8().constData(),
 			cTable->model()->data(cTable->model()->index(mIndex.row(), 11)).toString().toUtf8().constData(),
 			cTable->model()->data(cTable->model()->index(mIndex.row(), 12)).toString().toUtf8().constData(),
-			cTable->model()->data(cTable->model()->index(mIndex.row(), 14)).toInt(),
-			cTable->model()->data(cTable->model()->index(mIndex.row(), 15)).toInt());
+			cTable->model()->data(cTable->model()->index(mIndex.row(), 13)).toString().toUtf8().constData(),
+			cTable->model()->data(cTable->model()->index(mIndex.row(), 15)).toInt(),
+			cTable->model()->data(cTable->model()->index(mIndex.row(), 16)).toInt(),
+			cTable->model()->data(cTable->model()->index(mIndex.row(), 0)).toInt());
 		return true;
 	}
 	else
@@ -422,7 +506,7 @@ void CreateFxdAstDlg::CreateFixedAssets()
 						<< new QStandardItem(division.GetName().c_str())
 						<< new QStandardItem(status->GetName().c_str())
 						<< new QStandardItem(QString::number(fixedAssets->GetServiceLife()))
-						<< new QStandardItem(fixedAssets->GetIsAmortize())
+						<< new QStandardItem(fixedAssets->GetIsAmortize() ? "true" : "false")
 						<< new QStandardItem(fixedAssets->GetBuyDate().c_str())
 						<< new QStandardItem(fixedAssets->GetStartOfOperationDate().c_str())
 						<< new QStandardItem(fixedAssets->GetEndOfOperationDate().c_str())
@@ -464,28 +548,46 @@ void CreateFxdAstDlg::EditFixedAssets()
 		&& 0 != statusEdit->text().toInt() && !amGrpCmb->currentText().isEmpty() && !amTypeCmb->currentText().isEmpty()
 		&& !divisionCmb->currentText().isEmpty() && 0 != serviceLifeEdit->text().toInt())
 	{
-		if (fixedAssetsDetails->GetDepartmentID() != divisionCmb->currentData().toInt()
-			&& invNumberEdit->text() != QString(fixedAssets->GetInventoryNumber().c_str()) && primaryEdit->text().toDouble() != fixedAssets->GetPrimaryCost()
-			&& stopEdit->text().toDouble() != fixedAssets->GetStopCost() && stopEdit->text().toInt() != fixedAssets->GetServiceLife()
-			&& invNumberEdit->text() != QString(fixedAssets->GetInventoryNumber().c_str()) && primaryEdit->text().toDouble() != fixedAssets->GetPrimaryCost()
-			&& fixedAssets->GetIsAmortize() != isAmChx->isChecked() ? "true" : "false" && buyDateEdit->text() != QString(fixedAssets->GetBuyDate().c_str())
-			&& startDateEdit->text() != QString(fixedAssets->GetStartOfOperationDate().c_str()) && endDateEdit->text() != QString(fixedAssets->GetEndOfOperationDate().c_str())
-			&& statusEdit->text().toInt() != fixedAssets->GetServiceLife())
+		if (faNameEdit->text() != QString(fixedAssetsSpecification->GetName().c_str()) || barcodeEdit->text() != QString(fixedAssetsDetails->GetBarcodeNumber().c_str())
+			|| locationEdit->text() != QString(fixedAssetsDetails->GetFixedAssetsLocation().c_str())
+			|| statusEdit->text().toInt() != fixedAssets->GetStatusID())
 		{
 			dialogBL->StartTransaction(errorMessage);
-			SetFixedAssetsSpecificationParams(faNameEdit->text(), factoryNumEdit->text(), developerEdit->text(), documentEdit->text(),
-				objCharEdit->text(), conditionEdit->text(), consDateEdit->text());
-
-			fixedAssetsDetails->fixedAssetsAccountID = fAstTypeCmb->currentData().toInt();
-			SetFixedAssetsDetailsParams(amGrpCmb->currentData().toInt(), amTypeCmb->currentData().toInt(), divisionCmb->currentData().toInt(),
-				locationEdit->text(), 0, 0, barcodeEdit->text(),
-				amValueEdit->text().toDouble());
-
 			DataForm *parentDataForm = (DataForm*)parentForm;
-			SetFixedAssetsParams(fixedAssetsSpecification->GetID(), invNumberEdit->text(), primaryEdit->text().toDouble(), stopEdit->text().toDouble(),
-				serviceLifeEdit->text().toInt(), isAmChx->isChecked() ? "true" : "false", buyDateEdit->text(),
-				startDateEdit->text(), "", statusEdit->text().toInt(), fixedAssetsDetails->GetID());
+			BusinessLayer::Status sts;
 
+			if (faNameEdit->text() != QString(fixedAssetsSpecification->GetName().c_str()))
+			{
+				fixedAssetsSpecification->SetName(faNameEdit->text().toUtf8().constData());
+			}
+			if (barcodeEdit->text() != QString(fixedAssetsDetails->GetBarcodeNumber().c_str()) || locationEdit->text() != QString(fixedAssetsDetails->GetFixedAssetsLocation().c_str()))
+			{
+				fixedAssetsDetails->SetBarcodeNumber(barcodeEdit->text().toUtf8().constData());
+				fixedAssetsDetails->SetFixedAssetsLocation(locationEdit->text().toUtf8().constData());
+			}
+			if (!sts.GetStatusByName(dialogBL->GetOrmasDal(), "WRITE-OFFED", errorMessage))
+			{
+				return;
+			}
+			if (fixedAssets->GetStatusID() == sts.GetID())
+			{
+				SetFixedAssetsParams(fixedAssetsSpecification->GetID(), invNumberEdit->text(), primaryEdit->text().toDouble(), stopEdit->text().toDouble(),
+					serviceLifeEdit->text().toInt(), isAmChx->isChecked() ? "true" : "false", buyDateEdit->text(),
+					startDateEdit->text(), dialogBL->GetOrmasDal().GetSystemDate().c_str(), statusEdit->text().toInt(), fixedAssetsDetails->GetID(), fixedAssets->GetID());
+			}
+			else
+			{
+				SetFixedAssetsParams(fixedAssetsSpecification->GetID(), invNumberEdit->text(), primaryEdit->text().toDouble(), stopEdit->text().toDouble(),
+					serviceLifeEdit->text().toInt(), isAmChx->isChecked() ? "true" : "false", buyDateEdit->text(),
+					startDateEdit->text(), "", statusEdit->text().toInt(), fixedAssetsDetails->GetID(), fixedAssets->GetID());
+			}
+			fixedAssetsUnion->isNewFixedAssets = newFACxb->isChecked();
+			fixedAssetsUnion->amortizeValue = amortizeEdit->text().toDouble();
+			fixedAssetsUnion->primaryValue = primaryCostEdit->text().toDouble();
+			fixedAssetsUnion->fixedAssetsAccountID = fAstTypeCmb->currentData().toInt();
+			fixedAssetsUnion->purveyorID = purEditID->text().toInt();
+			fixedAssetsUnion->accountableID = accableIDEdit->text().toInt();
+			fixedAssetsUnion->accountID = accID->text().toInt();
 			SetFixedAssetsUnionParams(fixedAssets, fixedAssetsSpecification, fixedAssetsDetails, postingFixedAssets);
 			if (dialogBL->UpdateFixedAssetsUnion(fixedAssetsUnion, errorMessage))
 			{
@@ -594,6 +696,7 @@ void CreateFxdAstDlg::Close()
 
 void CreateFxdAstDlg::OpenStsDlg()
 {
+	errorMessage.clear();
 	this->hide();
 	this->setModal(false);
 	this->show();
@@ -638,6 +741,7 @@ void CreateFxdAstDlg::OpenStsDlg()
 
 void CreateFxdAstDlg::OpenAccDlg()
 {
+	errorMessage.clear();
 	this->hide();
 	this->setModal(false);
 	this->show();
@@ -682,6 +786,7 @@ void CreateFxdAstDlg::OpenAccDlg()
 
 void CreateFxdAstDlg::OpenPurDlg()
 {
+	errorMessage.clear();
 	this->hide();
 	this->setModal(false);
 	this->show();
@@ -744,6 +849,7 @@ void CreateFxdAstDlg::OpenPurDlg()
 
 void CreateFxdAstDlg::OpenActDlg()
 {
+	errorMessage.clear();
 	this->hide();
 	this->setModal(false);
 	this->show();
@@ -849,6 +955,8 @@ void CreateFxdAstDlg::HideSpecButton()
 	if (newFACxb->isChecked())
 	{
 		sourceGbx->show();
+		amortizeEdit->setText("");
+		amortizeEdit->setReadOnly(true);
 	}
 	else
 	{
@@ -858,6 +966,7 @@ void CreateFxdAstDlg::HideSpecButton()
 		accableIDEdit->setText("");
 		purEditID->setText("");
 		accID->setText("");
+		amortizeEdit->setReadOnly(false);
 	}
 }
 

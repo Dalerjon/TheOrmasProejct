@@ -131,14 +131,28 @@ GenerateCmpBlc::GenerateCmpBlc(BusinessLayer::OrmasBL *ormasBL, QWidget *parent)
 		}
 		if (month > 2)
 		{
-			prevFromMonth = "01.";
+			if (month > 11)
+			{
+				prevFromMonth = "01.";
+			}
+			else
+			{
+				prevFromMonth = "01.0";
+			}
 			prevFromMonth += std::to_string(month - 2);
 			prevFromMonth += ".";
 			prevFromMonth += std::to_string(year);
 			pastMonthDate = (QDate::fromString(startDate.c_str(), "dd.MM.yyyy"));
 			coundOfDays = pastMonthDate.daysInMonth();
 			prevTillMonth = std::to_string(coundOfDays);
-			prevTillMonth += ".";
+			if (month > 11)
+			{
+				prevTillMonth += ".";
+			}
+			else
+			{
+				prevTillMonth += ".0";
+			}
 			prevTillMonth += std::to_string(month - 2);
 			prevTillMonth += ".";
 			prevTillMonth += std::to_string(year);

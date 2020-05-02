@@ -162,9 +162,9 @@ void CashBookListDlg::Generate()
 
 		saccHistoryEnd.Clear();
 		saccHistoryEnd.SetSubaccountID(cahsboxSubacc.GetID());
-		if (!tillDate.empty())
+		if (!prevMonthEnd.empty())
 		{
-			saccHistoryEnd.SetTillDate(tillDate);
+			saccHistoryEnd.SetTillDate(prevMonthEnd);
 		}
 		filterAccHistory.clear();
 		filterAccHistory = saccHistoryEnd.GenerateFilter(dialogBL->GetOrmasDal());
@@ -199,12 +199,14 @@ void CashBookListDlg::Generate()
 		if (selectMonth == prevSelectMonth)
 		{
 			pmtFilter.clear();
+			paymentMonth.SetCashboxAccountID(cashbox.GetSubaccountID());
 			paymentMonth.SetStatusID(status.GetID());
 			std::string pmtFilter = paymentMonth.GenerateFilterForPeriod(dialogBL->GetOrmasDal(), fromDate, prevDate);
 			std::vector<BusinessLayer::PaymentView> vecPmtRepMonth = dialogBL->GetAllDataForClass<BusinessLayer::PaymentView>(errorMessage, pmtFilter);
 
 			wthFilter.clear();
 			withdrowalMonth.SetStatusID(status.GetID());
+			withdrowalMonth.SetCashboxAccountID(cashbox.GetSubaccountID());
 			std::string wthFilter = withdrowalMonth.GenerateFilterForPeriod(dialogBL->GetOrmasDal(), fromDate, prevDate);
 			std::vector<BusinessLayer::WithdrawalView> vecWthRepMonth = dialogBL->GetAllDataForClass<BusinessLayer::WithdrawalView>(errorMessage, wthFilter);
 			
@@ -244,74 +246,77 @@ void CashBookListDlg::Generate()
 			BusinessLayer::Account acc;
 			for each (auto item in vecPmtRep)
 			{
-				acc.Clear();
-				accNumber.clear();
-				payment.Clear();
-				subAcc.Clear();
-				balance.Clear();
-				user.Clear();
-				if (!payment.GetPaymentByID(dialogBL->GetOrmasDal(), item.GetID(), errorMessage))
+				if (item.GetCashboxAccountID() == cashbox.GetSubaccountID())
 				{
-					QMessageBox::information(NULL, QString(tr("Info")),
-						QString(tr("Payment is wrong!")),
-						QString(tr("Ok")));
-					return;
-				}
-				if (item.GetUserID() > 0)
-				{
-					if (!user.GetUserByID(dialogBL->GetOrmasDal(), item.GetUserID(), errorMessage))
+					acc.Clear();
+					accNumber.clear();
+					payment.Clear();
+					subAcc.Clear();
+					balance.Clear();
+					user.Clear();
+					if (!payment.GetPaymentByID(dialogBL->GetOrmasDal(), item.GetID(), errorMessage))
 					{
 						QMessageBox::information(NULL, QString(tr("Info")),
-							QString(tr("Can't find this user!")),
+							QString(tr("Payment is wrong!")),
 							QString(tr("Ok")));
 						return;
 					}
-					if (!balance.GetBalanceByUserID(dialogBL->GetOrmasDal(), item.GetUserID(), errorMessage))
+					if (item.GetUserID() > 0)
 					{
-						QMessageBox::information(NULL, QString(tr("Info")),
-							QString(tr("Can't find balance for this user!")),
-							QString(tr("Ok")));
-						return;
-					}
-					if (item.GetSubaccountID() > 0)
-					{
-						if (!subAcc.GetSubaccountByID(dialogBL->GetOrmasDal(), item.GetSubaccountID(), errorMessage))
+						if (!user.GetUserByID(dialogBL->GetOrmasDal(), item.GetUserID(), errorMessage))
 						{
 							QMessageBox::information(NULL, QString(tr("Info")),
-								QString(tr("Can't find subaccount for this user!")),
+								QString(tr("Can't find this user!")),
 								QString(tr("Ok")));
 							return;
 						}
+						if (!balance.GetBalanceByUserID(dialogBL->GetOrmasDal(), item.GetUserID(), errorMessage))
+						{
+							QMessageBox::information(NULL, QString(tr("Info")),
+								QString(tr("Can't find balance for this user!")),
+								QString(tr("Ok")));
+							return;
+						}
+						if (item.GetSubaccountID() > 0)
+						{
+							if (!subAcc.GetSubaccountByID(dialogBL->GetOrmasDal(), item.GetSubaccountID(), errorMessage))
+							{
+								QMessageBox::information(NULL, QString(tr("Info")),
+									QString(tr("Can't find subaccount for this user!")),
+									QString(tr("Ok")));
+								return;
+							}
+						}
+						else
+						{
+							if (!subAcc.GetSubaccountByID(dialogBL->GetOrmasDal(), balance.GetSubaccountID(), errorMessage))
+							{
+								QMessageBox::information(NULL, QString(tr("Info")),
+									QString(tr("Can't find subaccount for this user!")),
+									QString(tr("Ok")));
+								return;
+							}
+						}
+
+					}
+					tableBody += "<tr>";
+					tableBody += "<td>" + QString::number(item.GetID()) + "</td>";
+					if (item.GetUserID() > 0)
+					{
+						tableBody += "<td>" + QString::fromWCharArray(L"Принято от: ") + QString(user.GetSurname().c_str()) + " " + QString(user.GetName().c_str()) + "</td>";
+						tableBody += "<td>" + QString(subAcc.GetNumber().c_str()) + "</td>";
 					}
 					else
 					{
-						if (!subAcc.GetSubaccountByID(dialogBL->GetOrmasDal(), balance.GetSubaccountID(), errorMessage))
-						{
-							QMessageBox::information(NULL, QString(tr("Info")),
-								QString(tr("Can't find subaccount for this user!")),
-								QString(tr("Ok")));
-							return;
-						}
+						acc.GetAccountByID(dialogBL->GetOrmasDal(), item.GetAccountID(), errorMessage);
+						tableBody += "<td>" + QString::fromWCharArray(L"Принято от: ") + QString(item.GetWho().c_str()) + "</td>";
+						tableBody += "<td>" + QString(acc.GetNumber().c_str()) + "</td>";
 					}
-					
+					tableBody += "<td>" + QString::number(item.GetValue(), 'f', 3) + "</td>";
+					tableBody += "<td>" + QString("-") + "</td>";
+					tableBody += "</tr>";
+					InSum += item.GetValue();
 				}
-				tableBody += "<tr>";
-				tableBody += "<td>" + QString::number(item.GetID()) + "</td>";
-				if (item.GetUserID() > 0)
-				{
-					tableBody += "<td>" + QString::fromWCharArray(L"Принято от: ") + QString(user.GetSurname().c_str()) + " " + QString(user.GetName().c_str()) + "</td>";
-					tableBody += "<td>" + QString(subAcc.GetNumber().c_str()) + "</td>";
-				}
-				else
-				{
-					acc.GetAccountByID(dialogBL->GetOrmasDal(), item.GetAccountID(), errorMessage);
-					tableBody += "<td>" + QString::fromWCharArray(L"Принято от: ") + QString(item.GetWho().c_str()) + "</td>";
-					tableBody += "<td>" + QString(acc.GetNumber().c_str()) + "</td>";
-				}
-				tableBody += "<td>" + QString::number(item.GetValue(),'f',3) + "</td>";
-				tableBody += "<td>" + QString("-") + "</td>";
-				tableBody += "</tr>";
-				InSum += item.GetValue();
 			}
 		}
 		if (vecWthRep.size() > 0)
@@ -320,73 +325,76 @@ void CashBookListDlg::Generate()
 			BusinessLayer::Account acc;
 			for each (auto item in vecWthRep)
 			{
-				acc.Clear();
-				accNumber.clear();
-				withdrowal.Clear();
-				subAcc.Clear();
-				balance.Clear();
-				user.Clear();
-				if (!withdrowal.GetWithdrawalByID(dialogBL->GetOrmasDal(), item.GetID(), errorMessage))
+				if (item.GetCashboxAccountID() == cashbox.GetSubaccountID())
 				{
-					QMessageBox::information(NULL, QString(tr("Info")),
-						QString(tr("Withdrawal is wrong!")),
-						QString(tr("Ok")));
-					return;
-				}
-				if (item.GetUserID() > 0)
-				{
-					if (!user.GetUserByID(dialogBL->GetOrmasDal(), item.GetUserID(), errorMessage))
+					acc.Clear();
+					accNumber.clear();
+					withdrowal.Clear();
+					subAcc.Clear();
+					balance.Clear();
+					user.Clear();
+					if (!withdrowal.GetWithdrawalByID(dialogBL->GetOrmasDal(), item.GetID(), errorMessage))
 					{
 						QMessageBox::information(NULL, QString(tr("Info")),
-							QString(tr("Can't find this user!")),
+							QString(tr("Withdrawal is wrong!")),
 							QString(tr("Ok")));
 						return;
 					}
-					if (!balance.GetBalanceByUserID(dialogBL->GetOrmasDal(), item.GetUserID(), errorMessage))
+					if (item.GetUserID() > 0)
 					{
-						QMessageBox::information(NULL, QString(tr("Info")),
-							QString(tr("Can't find balance for this user!")),
-							QString(tr("Ok")));
-						return;
-					}
-					if (item.GetSubaccountID() > 0)
-					{
-						if (!subAcc.GetSubaccountByID(dialogBL->GetOrmasDal(), item.GetSubaccountID(), errorMessage))
+						if (!user.GetUserByID(dialogBL->GetOrmasDal(), item.GetUserID(), errorMessage))
 						{
 							QMessageBox::information(NULL, QString(tr("Info")),
-								QString(tr("Can't find subaccount for this user!")),
+								QString(tr("Can't find this user!")),
 								QString(tr("Ok")));
 							return;
 						}
+						if (!balance.GetBalanceByUserID(dialogBL->GetOrmasDal(), item.GetUserID(), errorMessage))
+						{
+							QMessageBox::information(NULL, QString(tr("Info")),
+								QString(tr("Can't find balance for this user!")),
+								QString(tr("Ok")));
+							return;
+						}
+						if (item.GetSubaccountID() > 0)
+						{
+							if (!subAcc.GetSubaccountByID(dialogBL->GetOrmasDal(), item.GetSubaccountID(), errorMessage))
+							{
+								QMessageBox::information(NULL, QString(tr("Info")),
+									QString(tr("Can't find subaccount for this user!")),
+									QString(tr("Ok")));
+								return;
+							}
+						}
+						else
+						{
+							if (!subAcc.GetSubaccountByID(dialogBL->GetOrmasDal(), balance.GetSubaccountID(), errorMessage))
+							{
+								QMessageBox::information(NULL, QString(tr("Info")),
+									QString(tr("Can't find subaccount for this user!")),
+									QString(tr("Ok")));
+								return;
+							}
+						}
+					}
+					tableBody += "<tr>";
+					tableBody += "<td>" + QString::number(item.GetID()) + "</td>";
+					if (item.GetUserID() > 0)
+					{
+						tableBody += "<td>" + QString::fromWCharArray(L"Выдано: ") + QString(user.GetSurname().c_str()) + " " + QString(user.GetName().c_str()) + "</td>";
+						tableBody += "<td>" + QString(subAcc.GetNumber().c_str()) + "</td>";
 					}
 					else
 					{
-						if (!subAcc.GetSubaccountByID(dialogBL->GetOrmasDal(), balance.GetSubaccountID(), errorMessage))
-						{
-							QMessageBox::information(NULL, QString(tr("Info")),
-								QString(tr("Can't find subaccount for this user!")),
-								QString(tr("Ok")));
-							return;
-						}
+						acc.GetAccountByID(dialogBL->GetOrmasDal(), item.GetAccountID(), errorMessage);
+						tableBody += "<td>" + QString::fromWCharArray(L"Выдано: ") + QString(item.GetWho().c_str()) + "</td>";
+						tableBody += "<td>" + QString(acc.GetNumber().c_str()) + "</td>";
 					}
+					tableBody += "<td>" + QString("-") + "</td>";
+					tableBody += "<td>" + QString::number(item.GetValue(), 'f', 3) + "</td>";
+					tableBody += "</tr>";
+					OutSum += item.GetValue();
 				}
-				tableBody += "<tr>";
-				tableBody += "<td>" + QString::number(item.GetID()) + "</td>";
-				if (item.GetUserID() > 0)
-				{
-					tableBody += "<td>" + QString::fromWCharArray(L"Выдано: ") + QString(user.GetSurname().c_str()) + " " + QString(user.GetName().c_str()) + "</td>";
-					tableBody += "<td>" + QString(subAcc.GetNumber().c_str()) + "</td>";
-				}
-				else
-				{
-					acc.GetAccountByID(dialogBL->GetOrmasDal(), item.GetAccountID(), errorMessage);
-					tableBody += "<td>" + QString::fromWCharArray(L"Выдано: ") + QString(item.GetWho().c_str()) + "</td>";
-					tableBody += "<td>" + QString(acc.GetNumber().c_str()) + "</td>";
-				}
-				tableBody += "<td>" + QString("-") + "</td>";
-				tableBody += "<td>" + QString::number(item.GetValue(),'f',3) + "</td>";
-				tableBody += "</tr>";
-				OutSum += item.GetValue();
 			}
 		}
 

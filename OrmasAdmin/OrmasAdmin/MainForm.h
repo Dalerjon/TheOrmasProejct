@@ -42,6 +42,7 @@ private slots :
 	void OpenNetCostForm();
 	void OpenEmployeeProductForm();
 	void OpenBranchProductForm();
+	void OpenOtherStocksForm();
 
 	void OpenOrderForm();	
 	void OpenOrderListForm();
@@ -51,7 +52,6 @@ private slots :
 
 	void OpenProductionForm();
 	void OpenProductionListForm();
-	void OpenProductionStockForm();
 	void OpenProductionConsumeRawForm();
 	void OpenProductionPlanForm();
 	void OpenProductionPlanListForm();
@@ -108,6 +108,9 @@ private slots :
 	void OpenReceiptProductForm();
 	void OpenConsumeProductForm();
 	void OpenInventorizationForm();
+	void OpenLowValueStockForm();
+	void OpenReceiptOthStForm();
+	void OpenConsumeOthStForm();
 
 	void CompanyBalanceInfo();
 	void FinancialReportForm();

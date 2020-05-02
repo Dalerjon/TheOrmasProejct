@@ -1,11 +1,13 @@
 #include "stdafx.h"
 #include "FixedAssetsClass.h"
+#include "DivisionAccountRelationClass.h"
+#include "FixedAssetsDetailsClass.h"
 #include "BalanceClass.h"
 #include "UserClass.h"
 #include "EntryClass.h"
+#include "EntryOperationRelationClass.h"
 #include "SubaccountClass.h"
 #include "AccountClass.h"
-#include "EntryOperationRelationClass.h"
 #include "StatusClass.h"
 #include "CompanyAccountRelationClass.h"
 #include "CompanyEmployeeRelationClass.h"
@@ -414,8 +416,8 @@ namespace BusinessLayer
 				return false;
 			if (balance.GetBalanceBySubaccountID(ormasDal, balance.GetSubaccountID(), errorMessage))
 			{
-				int credAccID = balance.GetSubaccountID();
 				int debAccID = debitingAccID;
+				int credAccID = balance.GetSubaccountID();
 				if (0 == debAccID || 0 == credAccID)
 				{
 					return false;
@@ -428,8 +430,8 @@ namespace BusinessLayer
 		}
 		else if (accID > 0)
 		{
-			int credAccID = accID;
 			int debAccID = debitingAccID;
+			int credAccID = accID;
 			if (0 == debAccID || 0 == credAccID)
 			{
 				return false;
@@ -451,8 +453,8 @@ namespace BusinessLayer
 			{
 				int debAccID = 0;
 				int credAccID = 0;
-				debAccID = debitingAccID;
-				credAccID = balance.GetSubaccountID();
+				debAccID = balance.GetSubaccountID();
+				credAccID = debitingAccID;
 				if (this->CreateEntry(ormasDal, debAccID, value, credAccID, execDate, errorMessage))
 				{
 					return true;
@@ -497,13 +499,13 @@ namespace BusinessLayer
 				return false;
 			if (balance.GetBalanceBySubaccountID(ormasDal, balance.GetSubaccountID(), errorMessage))
 			{
-				int credAccID = balance.GetSubaccountID();
-				int debAccID = debitingAccID;
+				int debAccID = balance.GetSubaccountID();
+				int credAccID = debitingAccID;
 				if (0 == debAccID || 0 == credAccID)
 				{
 					return false;
 				}
-				if (this->CreateEntry(ormasDal, credAccID, value, debAccID, execDate, errorMessage))
+				if (this->CreateEntry(ormasDal, debAccID, value, credAccID, execDate, errorMessage))
 				{
 					return true;
 				}
@@ -511,13 +513,13 @@ namespace BusinessLayer
 		}
 		else if (accID > 0)
 		{
-			int credAccID = accID;
-			int debAccID = debitingAccID;
+			int debAccID = accID;
+			int credAccID = debitingAccID;
 			if (0 == debAccID || 0 == credAccID)
 			{
 				return false;
 			}
-			if (this->CreateEntry(ormasDal, credAccID, value, debAccID, execDate, errorMessage))
+			if (this->CreateEntry(ormasDal, debAccID, value, credAccID, execDate, errorMessage))
 			{
 				return true;
 			}
@@ -528,9 +530,43 @@ namespace BusinessLayer
 	bool FixedAssets::CreatePostingFixedAssetsEntryWriteOFF(DataLayer::OrmasDal& ormasDal, int fixedAssetsID, std::string& errorMessage)
 	{
 		FixedAssets fx;
+		FixedAssetsDetails fxDetails;
+		DivisionAccountRelation daRel;
 		if (!fx.GetFixedAssetsByID(ormasDal, fixedAssetsID, errorMessage))
 			return false;
+		if (!fxDetails.GetFixedAssetsDetailsByID(ormasDal, fx.GetFixedAssetsDetailsID(), errorMessage))
+			return false;
+		if (fxDetails.GetAmortizeAccountID() <= 0 || fxDetails.GetPrimaryCostAccountID() <= 0)
+			return false;
+		if (!daRel.GetDARelationByDivisionIDAndCode(ormasDal, fxDetails.GetDepartmentID(), "TO WRITE-OFF", errorMessage))
+			return false;
 
+		Subaccount primAcc;
+		Subaccount amotAcc;
+		if (!amotAcc.GetSubaccountByID(ormasDal, fxDetails.GetAmortizeAccountID(), errorMessage))
+			return false;
+		if (!primAcc.GetSubaccountByID(ormasDal, fxDetails.GetPrimaryCostAccountID(), errorMessage))
+			return false;
+		int debAccID = fxDetails.GetAmortizeAccountID();
+		int credAccID = daRel.GetAccountID();
+		if (0 == debAccID || 0 == credAccID)
+		{
+			return false;
+		}
+		if (this->CreateEntryWriteOFF(ormasDal, debAccID, amotAcc.GetCurrentBalance()*(-1), credAccID, ormasDal.GetSystemDate(), errorMessage))
+		{
+			debAccID = daRel.GetAccountID();
+			credAccID = fxDetails.GetPrimaryCostAccountID();
+			if (0 == debAccID || 0 == credAccID)
+			{
+				return false;
+			}
+			if (this->CreateEntryWriteOFF(ormasDal, debAccID, primAcc.GetCurrentBalance(), credAccID, ormasDal.GetSystemDate(), errorMessage))
+			{
+				return true;
+			}
+		}
+		return false;
 	}
 
 	bool FixedAssets::CreateEntry(DataLayer::OrmasDal& ormasDal, int debAccID, double currentSum, int credAccID, std::string oExecDate, std::string& errorMessage)

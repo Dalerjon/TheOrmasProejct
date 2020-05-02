@@ -29,10 +29,19 @@ CreateInveDlg::CreateInveDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, Q
 	accableIDEdit->setValidator(vInt);
 	purEditID->setValidator(vInt);
 	accID->setValidator(vInt);
-	sourceGbx->hide();
+	//sourceGbx->hide();
+	InitComboBox();
 
 	if (true == updateFlag)
 	{
+		newInvCxb->hide();
+		accableBtn->hide();
+		accountBtn->hide();
+		purveyorBtn->hide();
+		divisionCmb->hide();
+		label_5->hide();
+		endDateEdit->setReadOnly(true);
+		startDateEdit->setReadOnly(true);
 		DataForm *parentDataForm = (DataForm*)parentForm;
 		itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
 		mIndex = parentDataForm->tableView->selectionModel()->currentIndex();
@@ -40,8 +49,10 @@ CreateInveDlg::CreateInveDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, Q
 	}
 	else
 	{
+		startDateEdit->setDate(QDate::currentDate());
+		endDateEdit->setReadOnly(true);
 		BusinessLayer::Status *status = new BusinessLayer::Status();
-		status->SetName("IN USE");
+		status->SetName("IN STOCK");
 		std::string statusFilter = dialogBL->GenerateFilter<BusinessLayer::Status>(status);
 		std::vector<BusinessLayer::Status> statusVector = dialogBL->GetAllDataForClass<BusinessLayer::Status>(errorMessage, statusFilter);
 		delete status;
@@ -53,6 +64,7 @@ CreateInveDlg::CreateInveDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, Q
 			errorMessage.clear();
 			return;
 		}
+		GenerateInventoryNumber();
 		statusEdit->setText(QString::number(statusVector.at(0).GetID()));
 		QObject::connect(okBtn, &QPushButton::released, this, &CreateInveDlg::CreateInventory);
 	}
@@ -64,9 +76,7 @@ CreateInveDlg::CreateInveDlg(BusinessLayer::OrmasBL *ormasBL, bool updateFlag, Q
 	QObject::connect(newInvCxb, &QCheckBox::released, this, &CreateInveDlg::HideSpecButton);
 	QObject::connect(costEdit, &QLineEdit::textChanged, this, &CreateInveDlg::TextEditChanged);
 	QObject::connect(this, SIGNAL(CloseCreatedForms()), ((MainForm*)((DataForm*)parent)->GetParent()), SLOT(CloseChildsByName()));
-	QObject::connect(divisionCmb, &QComboBox::currentTextChanged, this, &CreateInveDlg::GenerateInventoryNumber);
-	InitComboBox();
-	GenerateInventoryNumber();
+	//QObject::connect(divisionCmb, &QComboBox::currentTextChanged, this, &CreateInveDlg::GenerateInventoryNumber);
 }
 
 CreateInveDlg::~CreateInveDlg()
@@ -78,7 +88,7 @@ CreateInveDlg::~CreateInveDlg()
 }
 
 void CreateInveDlg::SetInventoryParams(QString iName, double iCost, QString iLocation, QString iInvNumber, int iDivID, QString iBarcode,
-	QString iStartO, QString iEndO, int iStatusID, int id)
+	QString iStartO, QString iEndO, int iStatusID, int subAccID, int id)
 {
 	inventory->SetName(iName.toUtf8().constData());
 	inventory->SetCost(iCost);
@@ -89,17 +99,90 @@ void CreateInveDlg::SetInventoryParams(QString iName, double iCost, QString iLoc
 	inventory->SetStartOfOperationDate(iStartO.toUtf8().constData());
 	inventory->SetEndOfOperationDate(iEndO.toUtf8().constData());
 	inventory->SetStatusID(iStatusID);
+	inventory->SetSubaccountID(subAccID);
 	inventory->SetID(id);
 }
 
-void CreateInveDlg::FillEditElements(QString iName, double iCost, QString iLocation, QString iInvNumber, int iDivID, QString iBarcode,
-	QString iStartO, QString iEndO, int iStatusID)
+void CreateInveDlg::SetPostingFixedAssetsParams(int userID, int subaccID, int accID, int fxID, int invID, int id)
 {
+	postingFixedAssets->SetUserID(userID);
+	postingFixedAssets->SetSubaccountID(subaccID);
+	postingFixedAssets->SetAccountID(accID);
+	postingFixedAssets->SetFixedAssetsID(fxID);
+	postingFixedAssets->SetInventoryID(invID);
+	postingFixedAssets->SetID(id);
+}
+
+void CreateInveDlg::SetInventoryUnionParams(BusinessLayer::Inventory* inv, BusinessLayer::PostingFixedAssets* pfa)
+{
+	inventoryUnion->SetInventory(inv);
+	inventoryUnion->SetPostingFixedAssets(pfa);
+}
+
+void CreateInveDlg::FillEditElements(QString iName, double iCost, QString iLocation, QString iInvNumber, int iDivID, QString iBarcode,
+	QString iStartO, QString iEndO, int iStatusID, int subAccID, int iID)
+{
+	if (postingFixedAssets->GetPostingFixedAssetsByInventoryID(dialogBL->GetOrmasDal(), iID, errorMessage))
+	{
+		if (postingFixedAssets->GetAccountID() > 0)
+		{
+			accableIDEdit->setText(QString::number(postingFixedAssets->GetAccountID()));
+			BusinessLayer::ChartOfAccounts coa;
+			BusinessLayer::Account acc;
+			if (acc.GetAccountByID(dialogBL->GetOrmasDal(), postingFixedAssets->GetAccountID(), errorMessage))
+			{
+				if (coa.GetChartOfAccountsByNumber(dialogBL->GetOrmasDal(), acc.GetNumber(), errorMessage))
+				{
+					surnameLb->setText("");
+					accountName->setText(coa.GetName().c_str());
+					accableIDEdit->hide();
+					accableIDEdit->setText("");
+					purEditID->hide();
+					purEditID->setText("");
+					surLb->hide();
+				}
+			}
+		}
+		if (postingFixedAssets->GetUserID() > 0)
+		{
+			purEditID->setText(QString::number(postingFixedAssets->GetUserID()));
+			BusinessLayer::User user;
+			if (user.GetUserByID(dialogBL->GetOrmasDal(), postingFixedAssets->GetUserID(), errorMessage))
+			{
+				surnameLb->setText(user.GetSurname().c_str());
+				accableIDEdit->hide();
+				accableIDEdit->setText("");
+				accLB->hide();
+				accountName->hide();
+				accID->hide();
+				accID->setText("");
+			}
+		}
+		if (postingFixedAssets->GetSubaccountID() > 0)
+		{
+			BusinessLayer::Balance balance;
+			if (balance.GetBalanceBySubaccountID(dialogBL->GetOrmasDal(), postingFixedAssets->GetSubaccountID(), errorMessage))
+			{
+				accableIDEdit->setText(QString::number(balance.GetUserID()));
+				BusinessLayer::User user;
+				if (user.GetUserByID(dialogBL->GetOrmasDal(), balance.GetUserID(), errorMessage))
+				{
+					surnameLb->setText(user.GetSurname().c_str());
+					purEditID->hide();
+					purEditID->setText("");
+					accLB->hide();
+					accountName->hide();
+					accID->hide();
+					accID->setText("");
+				}
+			}
+		}
+	}
 	nameEdit->setText(iName);
 	costEdit->setText(QString::number(iCost, 'f', 3));
 	locationEdit->setText(iLocation);
 	numberEdit->setText(iInvNumber);
-	divisionCmb->setCurrentIndex(divisionCmb->findData(QVariant(iDivID)));
+	divisionCmb->setCurrentIndex(divisionCmb->findData(QVariant(inventory->GetDepartmentID())));
 	barcodeEdit->setText(iBarcode);
 	startDateEdit->setDate(QDate::fromString(iStartO, "dd.MM.yyyy"));
 	endDateEdit->setDate(QDate::fromString(iEndO, "dd.MM.yyyy"));
@@ -176,6 +259,7 @@ bool CreateInveDlg::FillDlgElements(QTableView* cTable)
 			cTable->model()->data(cTable->model()->index(mIndex.row(), 8)).toString().toUtf8().constData(),
 			cTable->model()->data(cTable->model()->index(mIndex.row(), 9)).toString().toUtf8().constData(),
 			cTable->model()->data(cTable->model()->index(mIndex.row(), 10)).toInt(),
+			cTable->model()->data(cTable->model()->index(mIndex.row(), 12)).toInt(),
 			cTable->model()->data(cTable->model()->index(mIndex.row(), 0)).toInt());
 		FillEditElements(cTable->model()->data(cTable->model()->index(mIndex.row(), 1)).toString().toUtf8().constData(),
 			cTable->model()->data(cTable->model()->index(mIndex.row(), 2)).toDouble(),
@@ -185,7 +269,9 @@ bool CreateInveDlg::FillDlgElements(QTableView* cTable)
 			cTable->model()->data(cTable->model()->index(mIndex.row(), 4)).toString().toUtf8().constData(),
 			cTable->model()->data(cTable->model()->index(mIndex.row(), 8)).toString().toUtf8().constData(),
 			cTable->model()->data(cTable->model()->index(mIndex.row(), 9)).toString().toUtf8().constData(),
-			cTable->model()->data(cTable->model()->index(mIndex.row(), 10)).toInt());
+			cTable->model()->data(cTable->model()->index(mIndex.row(), 10)).toInt(),
+			cTable->model()->data(cTable->model()->index(mIndex.row(), 12)).toInt(),
+			cTable->model()->data(cTable->model()->index(mIndex.row(), 0)).toInt());
 		return true;
 	}
 	else
@@ -202,9 +288,15 @@ void CreateInveDlg::CreateInventory()
 	{
 		DataForm *parentDataForm = (DataForm*)parentForm;
 		SetInventoryParams(nameEdit->text(), costEdit->text().toDouble(), locationEdit->text(), numberEdit->text(), divisionCmb->currentData().toInt(),
-			barcodeEdit->text(), startDateEdit->text(), endDateEdit->text(), statusEdit->text().toInt());
+			barcodeEdit->text(), startDateEdit->text(), "", statusEdit->text().toInt(), 0);
+		inventoryUnion->isNewInventory = newInvCxb->isChecked();
+		//inventoryUnion->inventoryAccountID = fInvCmb->currentData().toInt();
+		inventoryUnion->purveyorID = purEditID->text().toInt();
+		inventoryUnion->accountableID = accableIDEdit->text().toInt();
+		inventoryUnion->accountID = accID->text().toInt();
+		SetInventoryUnionParams(inventory, postingFixedAssets);
 		dialogBL->StartTransaction(errorMessage);
-		if (dialogBL->CreateInventory(inventory, errorMessage))
+		if (dialogBL->CreateInventoryUnion(inventoryUnion, errorMessage))
 		{
 			if (parentDataForm != nullptr)
 			{
@@ -245,7 +337,8 @@ void CreateInveDlg::CreateInventory()
 						<< new QStandardItem(inventory->GetStartOfOperationDate().c_str())
 						<< new QStandardItem(inventory->GetEndOfOperationDate().c_str())
 						<< new QStandardItem(QString::number(inventory->GetStatusID()))
-						<< new QStandardItem(QString::number(inventory->GetDepartmentID()));
+						<< new QStandardItem(QString::number(inventory->GetDepartmentID()))
+						<< new QStandardItem(QString::number(inventory->GetSubaccountID()));
 
 					QStandardItemModel *itemModel = (QStandardItemModel *)parentDataForm->tableView->model();
 					itemModel->appendRow(InventoryItem);
@@ -287,10 +380,29 @@ void CreateInveDlg::EditInventory()
 			|| inventory->GetDepartmentID() != divisionCmb->currentData().toInt())
 		{
 			DataForm *parentDataForm = (DataForm*)parentForm;
-			SetInventoryParams(nameEdit->text(), costEdit->text().toDouble(), locationEdit->text(), numberEdit->text(), divisionCmb->currentData().toInt(),
-				barcodeEdit->text(), startDateEdit->text(), endDateEdit->text(), statusEdit->text().toInt(), inventory->GetID());
+			BusinessLayer::Status sts;
+			if (!sts.GetStatusByName(dialogBL->GetOrmasDal(), "WRITE-OFFED", errorMessage))
+			{
+				return;
+			}
+			if (inventory->GetStatusID() == sts.GetID())
+			{
+				SetInventoryParams(nameEdit->text(), costEdit->text().toDouble(), locationEdit->text(), numberEdit->text(), divisionCmb->currentData().toInt(),
+					barcodeEdit->text(), startDateEdit->text(), dialogBL->GetOrmasDal().GetSystemDate().c_str(), statusEdit->text().toInt(), inventory->GetSubaccountID(), inventory->GetID());
+			}
+			else
+			{
+				SetInventoryParams(nameEdit->text(), costEdit->text().toDouble(), locationEdit->text(), numberEdit->text(), divisionCmb->currentData().toInt(),
+					barcodeEdit->text(), startDateEdit->text(), "", statusEdit->text().toInt(), inventory->GetSubaccountID(), inventory->GetID());
+			}
+			inventoryUnion->isNewInventory = newInvCxb->isChecked();
+			//inventoryUnion->inventoryAccountID = fInvCmb->currentData().toInt();
+			inventoryUnion->purveyorID = purEditID->text().toInt();
+			inventoryUnion->accountableID = accableIDEdit->text().toInt();
+			inventoryUnion->accountID = accID->text().toInt();
+			SetInventoryUnionParams(inventory, postingFixedAssets);
 			dialogBL->StartTransaction(errorMessage);
-			if (dialogBL->UpdateInventory(inventory, errorMessage))
+			if (dialogBL->UpdateInventoryUnion(inventoryUnion, errorMessage))
 			{
 				if (parentDataForm != nullptr)
 				{
@@ -331,6 +443,7 @@ void CreateInveDlg::EditInventory()
 						itemModel->item(mIndex.row(), 9)->setText(inventory->GetEndOfOperationDate().c_str());
 						itemModel->item(mIndex.row(), 10)->setText(QString::number(inventory->GetStatusID()));
 						itemModel->item(mIndex.row(), 11)->setText(QString::number(inventory->GetDepartmentID()));
+						itemModel->item(mIndex.row(), 12)->setText(QString::number(inventory->GetSubaccountID()));
 
 						emit itemModel->dataChanged(mIndex, mIndex);
 						delete division;
@@ -372,6 +485,7 @@ void CreateInveDlg::Close()
 
 void CreateInveDlg::OpenStsDlg()
 {
+	errorMessage.clear();
 	this->hide();
 	this->setModal(false);
 	this->show();
@@ -416,6 +530,7 @@ void CreateInveDlg::OpenStsDlg()
 
 void CreateInveDlg::OpenAccDlg()
 {
+	errorMessage.clear();
 	this->hide();
 	this->setModal(false);
 	this->show();
@@ -460,6 +575,7 @@ void CreateInveDlg::OpenAccDlg()
 
 void CreateInveDlg::OpenPurDlg()
 {
+	errorMessage.clear();
 	this->hide();
 	this->setModal(false);
 	this->show();
@@ -522,6 +638,7 @@ void CreateInveDlg::OpenPurDlg()
 
 void CreateInveDlg::OpenActDlg()
 {
+	errorMessage.clear();
 	this->hide();
 	this->setModal(false);
 	this->show();
@@ -608,7 +725,7 @@ void CreateInveDlg::TextEditChanged()
 void CreateInveDlg::GenerateInventoryNumber()
 {
 	std::string invNumber = "";
-	invNumber = inventory->GenerateInventoryNumber(dialogBL->GetOrmasDal(), divisionCmb->currentData().toInt());
+	invNumber =  inventoryUnion->GenerateInventoryNumber(dialogBL->GetOrmasDal(), divisionCmb->currentData().toInt());
 	numberEdit->setText(invNumber.c_str());
 }
 

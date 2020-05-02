@@ -54,7 +54,7 @@ namespace BusinessLayer
 	bool InventoryHistory::CreateInventoryHistory(DataLayer::OrmasDal& ormasDal, int invID, std::string iComment, std::string iChangeDate, std::string& errorMessage)
 	{
 		if (IsDuplicate(ormasDal, invID, iComment, iChangeDate, errorMessage))
-			return false;
+			return true;
 		id = ormasDal.GenerateID();
 		inventoryID = invID;
 		comment = iComment;
@@ -75,7 +75,7 @@ namespace BusinessLayer
 	bool InventoryHistory::CreateInventoryHistory(DataLayer::OrmasDal& ormasDal, std::string& errorMessage)
 	{
 		if (IsDuplicate(ormasDal, errorMessage))
-			return false;
+			return true;
 		//ormasDal.StartTransaction(errorMessage);
 		if (0 != id && ormasDal.CreateInventoryHistory(id, inventoryID, comment, changeDate, errorMessage))
 		{

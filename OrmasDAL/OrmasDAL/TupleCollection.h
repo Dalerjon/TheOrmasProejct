@@ -91,6 +91,16 @@ namespace DataLayer{
 
 	typedef std::tuple<int, std::string, std::string, std::string, std::string, std::string, std::string, std::string, std::string,
 		std::string, std::string, std::string, std::string, double, double, std::string, int, int, int, int> consumeRawsViewCollection;
+
+	typedef std::tuple<int, int, int, double, double, int, int> consumeOtherStocksListCollection;
+
+	typedef std::tuple<int, int, std::string, double, std::string, double, std::string, double, double, std::string,
+		std::string, int, int, int> consumeOtherStocksListViewCollection;
+
+	typedef std::tuple<int, int, std::string, std::string, int, double, double, int, int> consumeOtherStocksCollection;
+
+	typedef std::tuple<int, std::string, std::string, std::string, std::string, std::string, std::string, std::string, std::string,
+		std::string, std::string, std::string, std::string, double, double, std::string, int, int, int, int> consumeOtherStocksViewCollection;
 	
 	typedef std::tuple<int, std::string, std::string, std::string, int, int> creditorsCollection;
 
@@ -118,6 +128,9 @@ namespace DataLayer{
 	typedef std::tuple<int, std::string, std::string, double, std::string, int, int, std::string> entriesViewCollection;
 
 	typedef std::tuple<int, std::string, std::string, double, std::string, int, int, int, int, std::string> entriesFullViewCollection;
+
+	typedef std::tuple<int, std::string, std::string, double, std::string, int, int, int, int, std::string, int, int, int, int, 
+		int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int> entriesFullJoinViewCollection;
 
 	typedef std::tuple<int, std::string, int, int> entryRoutingCollection;
 
@@ -160,10 +173,13 @@ namespace DataLayer{
 	typedef std::tuple<int, std::string, std::string, std::string, std::string, std::string, std::string, std::string, std::string,
 		std::string, std::string, std::string, std::string, double, double, std::string, int, int, int, int> inventorizationsViewCollection;
 
-	typedef std::tuple<int, std::string, double, int, std::string, int, std::string, std::string, std::string, std::string> inventoryCollection;
+	typedef std::tuple<int, std::string, double, int, std::string, int, std::string, std::string, std::string, std::string, int> inventoryCollection;
 
 	typedef std::tuple<int, std::string, double, std::string, std::string, std::string, std::string, std::string, std::string, 
-		std::string, int,  int> inventoryViewCollection;
+		std::string, int,  int, int> inventoryViewCollection;
+
+	typedef std::tuple<int, std::string, double, std::string, std::string, std::string, std::string, std::string, std::string,
+		std::string, int, int, int, int, int, int, int> inventoryUnionViewCollection;
 
 	typedef std::tuple<int, int, std::string, std::string> inventoryHistoryCollection;
 	
@@ -176,6 +192,16 @@ namespace DataLayer{
 	typedef std::tuple<int, std::string, std::string, std::string, std::string, std::string, double, std::string, int, int> jobsheetViewCollection;
 
 	typedef std::tuple<int, std::string, std::string, std::string, std::string> locationsCollection;
+
+	typedef std::tuple<int, int, double, double, int, int, int> lowValueStockCollection;
+
+	typedef std::tuple<int, int, double, double, int, int, int, std::string> lowValueStockHistoryCollection;
+
+	typedef std::tuple<int, std::string, double, std::string, double, std::string, double, double, std::string,
+		std::string, std::string, std::string, int, int, int, int> lowValueStockViewCollection;
+
+	typedef std::tuple<int, std::string, double, std::string, double, std::string, double, double, std::string,
+		std::string, std::string, std::string, int, int, int, int, std::string> lowValueStockHistoryViewCollection;
 	
 	typedef std::tuple<int, std::string, std::string, int> measuresCollection;
 
@@ -202,6 +228,12 @@ namespace DataLayer{
 
 	typedef std::tuple<int, std::string, std::string, std::string, std::string, std::string, std::string, std::string, std::string,
 		std::string, std::string, std::string, std::string, double, double, std::string, int, int, int, int> orderRawsViewCollection;
+
+	typedef std::tuple<int, int, std::string, double, int, double, int, int> otherStocksCollection;
+
+	typedef std::tuple<int, std::string, std::string, std::string> otherStocksTypeCollection;
+
+	typedef std::tuple<int, std::string, double, std::string, double, std::string, std::string, std::string, int, int, int, int> otherStocksViewCollection;
 
 	typedef std::tuple<int, std::string, double, std::string, int, int, int, int, int, std::string, int> paymentsCollection;
 
@@ -283,6 +315,16 @@ namespace DataLayer{
 
 	typedef std::tuple<int, std::string, std::string, std::string, std::string, std::string, std::string, std::string, std::string,
 		std::string, std::string, std::string, std::string, double, double, std::string, int, int, int, int> receiptProductsViewCollection;
+
+	typedef std::tuple<int, int, int, double, double, int, int> receiptOtherStocksListCollection;
+
+	typedef std::tuple<int, int, std::string, double, std::string, double, std::string, double, double, std::string,
+		std::string, int, int, int> receiptOtherStocksListViewCollection;
+
+	typedef std::tuple<int, int, std::string, std::string, int, double, double, int, int> receiptOtherStocksCollection;
+
+	typedef std::tuple<int, std::string, std::string, std::string, std::string, std::string, std::string, std::string, std::string,
+		std::string, std::string, std::string, std::string, double, double, std::string, int, int, int, int> receiptOtherStocksViewCollection;
 
 	typedef std::tuple<int, int, int, double, double, int, int> stockTransferListCollection;
 
@@ -379,6 +421,8 @@ namespace DataLayer{
 	typedef std::tuple<int, std::string, std::string, std::string, std::string, double, int> timesheetViewCollection;
 
 	typedef std::tuple<int, int, int, double, double, int, int> transportListCollection;
+
+	typedef std::tuple<int, int, int, double, double, int, int, std::string> transportHistoryCollection;
 
 	typedef std::tuple<int, int, std::string, double, std::string, double, std::string, double, double, std::string,
 		std::string, int, int, int> transportListViewCollection;

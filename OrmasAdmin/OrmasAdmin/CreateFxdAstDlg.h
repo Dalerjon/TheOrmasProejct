@@ -38,7 +38,7 @@ private:
 	BusinessLayer::PostingFixedAssets *postingFixedAssets = new BusinessLayer::PostingFixedAssets();
 	void SetFixedAssetsUnionParams(BusinessLayer::FixedAssets*, BusinessLayer::FixedAssetsSpecification*, BusinessLayer::FixedAssetsDetails*, BusinessLayer::PostingFixedAssets*);
 	void SetFixedAssetsParams(int, QString, double, double, int, QString, QString, QString, QString, int, int, int = 0);
-	void FillEditElements(int, QString, double, double, int, QString, QString, QString, QString, int, int);
+	void FillEditElements(int, QString, double, double, int, QString, QString, QString, QString, int, int, int);
 	void SetFixedAssetsSpecificationParams(QString, QString, QString, QString, QString, QString, QString, int = 0);
 	void SetFixedAssetsDetailsParams(int, int, int, QString, int, int, QString, double, int = 0);
 	void SetPostingFixedAssetsParams(int, int, int, int, int, int = 0);

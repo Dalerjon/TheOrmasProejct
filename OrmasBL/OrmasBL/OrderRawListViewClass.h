@@ -1,5 +1,5 @@
 #ifndef ORDERRAWLISTVIEWCLASS_H
-#define ORDEREAWLISTVIEWCLASS_H
+#define ORDERRAWLISTVIEWCLASS_H
 
 #include "OrderRawListClass.h"
 
